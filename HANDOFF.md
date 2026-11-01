@@ -1,5 +1,13 @@
 # Handoff
 
+## Oct 31, night shift: the owner's photo helpers switch (TRACKER R17, branch claude/project-thread-kzt7by-n1031, draft PR)
+- **Where things stood:** the release plan (M1.1) is finished and every PR through #84 is merged; 0020 and 0021 are deployed. So tonight took the next unblocked P2 row that needs nothing from Chase.
+- **Built, test-first (HELP-R6, DEC-46, persona check all Green):** the family's owner gets a "Photo helpers" card on Me with two switches, "Set aside repeats" and "Set aside screenshots and blurry photos", for the whole family. Nobody else sees it. A failed save says so and leaves the switch as it was. The switch shows what `my_features` says, so Hearth's global kill switch still wins. Words from grandparent-ux (7/10 first draft; its replacement lines are what was built).
+- **App only, no migration or deploy:** the owner could already write `space_features` under RLS (0013). `setFamilyFeature` updates, then inserts if there was no row (a PostgREST upsert also sets the key columns, which authenticated can't update).
+- **Tests:** contract HELP-R6 (fake and the real PostgREST harness: off, viewer refused 42501, back on), `helperSwitch.test.tsx` ×5. Docs: API.md, architecture 05 (Last checked), SPEC-PHOTO-HELPERS HELP-R6, TRACKER R17.
+- **Decisions to review:** DEC-46.
+- **Next exact step:** merged on Chase's "Merge all" (Nov 1; renumbered DEC-45 to DEC-46 because #86 took DEC-45). Republish the Expo preview and look at Me as the owner.
+
 ## Oct 31: studio demo bar (intake #82, TRACKER R28, DEC-45; branch claude/project-thread-v54okb, PR)
 - **Why:** Product Studio intake #82 (Chase, Oct 31: one demo banner standard, pm-tools `docs/DEMO-BANNER.md`). Picked up by the new "Intake check" scheduled task (4x a day, owned by thread "Set up intake check routine").
 - **Done, test-first:** `app/src/demo/DemoBar.tsx` is the slim Demo bar (← Portfolio, Demo badge, Details) with a push-down drawer: standard copy, See it as Grandma Jo, Reset demo that asks first and says "Sample data restored." once, and the way back. `DemoTip.tsx` adds one tip line on the phone's Photos. The old chip bar is gone. Tests: DEMO-BAR in `demoBar.test.tsx` and `demoTip.test.tsx`, browser cases in `e2e-web/demo.spec.js`; the demo, site and showcase specs open Details first.

@@ -331,5 +331,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** the same bar on every demo reads as one studio; the drawer keeps the app in view; the tip keeps Hearth's key feature findable on a phone. Demo build only, so relatives never see it and no persona check applies.
 - **Source:** intake #82, `docs/reviews/2026-10-31-demo-bar.md`
 
+### DEC-46 · The family's owner turns the photo helpers off and on from Me (HELP-R6)
+- **When / status:** Oct 31 · Night shift, under "Decisions to review" (Chase to confirm)
+- **Chose:** a "Photo helpers" card on Me, owner only, with two family-wide switches in grandparent-ux's words. No migration: the owner already had write access to `space_features` (0013). Persona check `decisions/2026-10-31-photo-helpers-switch.md`.
+- **Over:** leaving it as a database row (Chase can't change it from his phone), and a per-person switch (more to explain; the spec's control model is family-wide, DEC-18).
+- **Because:** the helpers set photos aside, so the person who set the family up must be able to stop that in one tap (A1, A2).
+- **Source:** `docs/product/decisions/2026-10-31-photo-helpers-switch.md`
+
 ---
-Last updated: Oct 31, 2026 (DEC-45)
+Last updated: Nov 1, 2026 (DEC-46)
