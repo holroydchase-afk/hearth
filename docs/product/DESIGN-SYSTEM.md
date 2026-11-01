@@ -44,6 +44,7 @@ The web viewer (for GG and anyone without the app) follows the iPhone column wit
 | DS-10 | **Anyone can pick a light or dark screen** (Same as my phone, Light, Dark) on Help or Me, right after Bigger text | Apps usually just follow the phone | Chase, Nov 1 2026 (DEC-47); a relative can be told one step instead of changing the whole phone |
 | DS-11 | **One warm Hearth palette on every phone**: warm off-white and warm charcoal (never pure black), one blue for taps, body text 7:1 (AAA), waiting buttons solid gray (no see-through) | Each platform's own system colors at 4.5:1 | Chase found the system colors "rough" (DEC-47); one look across phones and the web |
 | DS-12 | **Atkinson Hyperlegible Next** (Braille Institute, SIL OFL) on every phone and the web, in three weights only: Regular for reading, Medium for Android buttons and unpicked tabs, SemiBold for names, titles, buttons and the picked tab. Never Light, Bold, ExtraBold, italics or all caps | Each phone's own font | Made for low-vision readers; Chase picked it from three side by side and found bold too heavy (DEC-47) |
+| DS-13 | **One spacing scale and four corner sizes**: gaps from `SPACE` (4, 8, 12, 16, 24, 32), corners from `RADIUS` (small 4, medium 12, large 20, pill). Dialogs keep each phone's own corner (14 pt iPhone, 28 dp Android) | Platforms give guidance, not one scale | The Nov 1 sweep found 9 corner sizes and 13 gaps picked by hand (V3, V5). New code uses the tokens; old screens move as they're touched (R30) |
 
 ## How the app does it (built Oct 19, 2026; Chase picked "All now")
 
@@ -56,6 +57,51 @@ The web viewer (for GG and anyone without the app) follows the iPhone column wit
 - **Fields and cards:** iPhone grouped-list style; Android outlined field and outlined card.
 - **Confirm dialogs:** a custom dialog shaped like the phone's own (14 pt corners on iPhone, 28 dp on Android). This is a custom control on purpose: Android's system dialog uses 14 sp buttons (DS-2), and the system alert doesn't work on the web or in tests.
 - **Tests:** `app/src/ui/__tests__/designSystem.test.tsx` checks the font and its three weights, the type ramp, every color pair at 4.5:1 (body text 7:1) in light and dark, the waiting-button look, and tab icons and labels.
+- **Tokens (DS-13) and the Nov 1 sweep:** `SPACE`, `RADIUS` and `dialogRadius()` in `theme.ts`; `app/src/ui/__tests__/a11ySweep.test.tsx` checks the tokens, that `kit.tsx` has no hand-picked corners, heading levels (A11Y-1) and the switch colors (A11Y-2, A11Y-3).
 - **Old look:** saved in `docs/design/versions/` (screenshots of every main screen, before and after).
 
 **Confirm on a phone (milestone 1 UAT):** the native tab bar with 17 pt labels on an iPhone (Liquid Glass) and on Android, and whether gray buttons stand out enough on the light gray background.
+
+## Palette (DS-11): what each color is for
+
+Every pair below is measured (WCAG 2 contrast). Text needs 4.5:1, body text aims for 7:1, and a control's edge needs 3:1. `line` is for dividers only, never the only edge of something you tap.
+
+| Token | Use it for | Light | Dark | Contrast (light / dark) |
+|---|---|---|---|---|
+| `bg` | The screen behind the cards | `#F7F5F2` | `#151413` | |
+| `surface` | Cards, sheets, the tab bar | `#FFFFFF` | `#232120` | |
+| `ink` | Everything you read | `#1C1B19` | `#F4F1EC` | 17.2 / 14.2 on surface |
+| `muted` | Dates, hints, "Sent by"; a switch's Off track | `#5D5953` | `#B9B3AB` | 7.0 / 7.7 on surface |
+| `line` | Dividers and card edges only | `#D6D1CA` | `#3D3A36` | 1.5 / 1.4 (decoration) |
+| `accent` | Anything you can tap: buttons, links, the picked tab | `#0B57D0` | `#8AB4F8` | 6.4 / 7.6 on surface |
+| `accentInk` | Words on a filled blue button | `#FFFFFF` | `#0A2558` | 6.4 / 7.0 on accent |
+| `accentSoft` | A picked choice's background, avatar circles | `#E4ECFA` | `#1F2D45` | accent on it 5.4 / 6.6 |
+| `fill` | Gray (secondary) buttons, a waiting button | `#ECE8E3` | `#33302D` | accent 5.2 / 6.2, muted 5.7 / 6.3 |
+| `safe`, `safeSoft` | "Only these people can see it" and other good news | `#1C6E31` on `#E3F3E7` | `#7DD394` on `#173322` | 5.5 / 7.6 |
+| `danger`, `onDanger` | Delete and other cannot-undo actions only | `#B3261E`, white | `#F2B8B5`, `#601410` | 6.5 / 9.4 on surface |
+| `photo` | The placeholder while a photo loads | `#E8E4DE` | `#2E2B28` | |
+| `scrim` | Behind a dialog | black 40% | black 60% | |
+
+**Rules:** one blue means "tap here", so never use `accent` for decoration. Green and red mean status only. Never put `muted` text on `fill` for anything important. A new color needs a row here and a contrast test in `designSystem.test.tsx`.
+
+## Familiar patterns (P-1..P-12)
+
+Chase, Nov 1 2026: "There are very standardized aspects of the design and design system we need to mimic. The more familiar the easier." The patterns below are the ones every photo-sharing app shares (Facebook, Instagram, Google Photos, Apple Photos, FamilyAlbum, Tinybeans). Copy them unless a Hearth override (DS-1..13) says otherwise. Research and sources: the "How photo apps are laid out" doc (Nov 1) and `docs/design/a11y-sweep-2026-11-01.md`.
+
+| # | Pattern people already know | Hearth today | Gap |
+|---|---|---|---|
+| P-1 | A bottom tab bar of 2 to 5 tabs, an icon over a word, the picked one in the accent color | Matches (DS-5) | |
+| P-2 | The app opens on the newest posts from your people, newest first | Matches: Photos | |
+| P-3 | A post card: round avatar, name and time on the left, "⋯" at top right, the photo full width, a reaction row, then comments | Matches, with "⋯ More" as a word (DS-3) | |
+| P-4 | Tap a photo to open it full screen on black; Close at the top; swipe for the next one | Opens full screen with Close and Back / Next buttons (DS-4) | The background is the light screen color, not black (A11Y-4) |
+| P-5 | Pull down to refresh | Matches | |
+| P-6 | Comments open as a sheet over the post, with the box at the bottom | Matches | |
+| P-7 | A "+" or Share tab: pick photos from the phone's own picker, add words, choose who sees it, Post | Matches, with "Who can see this" before Post | |
+| P-8 | Filters as a row of chips or words just under the title (Instagram's All / Friends / Latest) | Messages, By date and See events buttons | No "who" filter yet (the Who row idea, ANCHORS ideas log) |
+| P-9 | Browse by month or by date (Google Photos, FamilyAlbum, Tinybeans) | By date | |
+| P-10 | Your account and settings live in the last tab | Me for posters, Help for viewers (DS-7) | |
+| P-11 | Double-tap a photo to like it | Not built | Familiar, but gesture-only; allowed only as a second way with the Love button kept (DS-4). Ideas log |
+| P-12 | Long-press for more options | Not used; "⋯ More" is a visible button | Keep it that way: hidden gestures are where older relatives get lost |
+
+**Skip on purpose:** a search tab or AI "Ask" box, video-first or suggested posts, stories rings, a hamburger menu, more than 5 tabs, and swipe-only navigation. Each one either needs typing on an old phone, adds anxiety (A1), or hides the way back.
+
