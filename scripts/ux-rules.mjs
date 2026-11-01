@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // ux-rules: checks a page against the studio design rules that code can check, so a broken screen
-// fails a test instead of depending on someone reading a screenshot right. Layer 1 of the rules (G1-G12)
+// fails a test instead of depending on someone reading a screenshot right. Layer 1 of the rules (G1-G14)
 // is in plugins/studio/agents/ux-reviewer.md; this checks G1-G5, G7-G9 and G11 at phone (390x844),
 // laptop (1280x800) and reflow (320x640, G8 only) width. It also counts the visual system behind the page
 // (V2 type sizes and families, V5 corner radii, V9 a card inside a card): an engineer-built page passes

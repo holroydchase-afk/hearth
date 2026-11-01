@@ -9,7 +9,7 @@ CHECK=0; [[ ${1:-} == --check ]] && { CHECK=1; shift; }
 if (( ! CHECK )); then SRC="${1:?usage: sync-agents.sh <studio-agents clone> [repo] | --check [repo]}/plugins/studio/agents"; shift; fi
 REPO=$(cd "${1:-$(dirname "$0")/..}" && pwd)
 NOTES=$REPO/docs/eng/AGENT-NOTES.md
-AGENTS=${STUDIO_AGENTS:-staff-pm qa-tdd engineer privacy-security positioning ux-reviewer architect}
+AGENTS=${STUDIO_AGENTS:-staff-pm qa-tdd engineer privacy-security positioning ux-reviewer architect story-keeper}
 MARK="## Hearth notes"
 
 section() {  # body of "## $1" in the notes file, without its heading, trimmed of blank edges

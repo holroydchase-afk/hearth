@@ -4,6 +4,8 @@ Hearth is a private family photo app for split families and for grandparents who
 
 **Hearth is a proof of concept first** (Chase, Oct 16): a birthday present to himself plus job experience. The milestones in `docs/product/ANCHORS.md` (Chase → wife → most tech-savvy relative → everyone else by savviness → Android → maybe a smart frame → then decide on costs) supersede the startup-style Ring 0–3 plan. Every feature is checked against anchors A1 Anxiety-less, A2 Guilt-free, A3 Stays on US soil, A4 White-paper ready.
 
+Studio standard: follow holroydchase-afk/studio-agents docs/studio-standard.md; this file's hard rules win where they say more.
+
 ## Where docs live
 - **Agents read only the repo.** Any doc an agent must act on lives here, and the repo copy wins. Draft in claude.ai docs if you like, then copy it in (or ask Claude to) and edit it here from then on.
 - Root: `CLAUDE.md`, `HANDOFF.md`. Product: `docs/product/`. Engineering: `docs/eng/`. Architecture (white-paper source): `docs/architecture/`. Code READMEs stay beside their code.
@@ -45,21 +47,32 @@ Hearth is a private family photo app for split families and for grandparents who
 - `tracker/`: Hearth Test Log seed builder.
 - `.claude/agents/`: the specialist agents. See "Chief of staff and agent roster" below.
 
-## Chief of staff and agent roster
-The main Claude session is Chase's **chief of staff**. It doesn't do specialist work itself: it sends each request to the right agent below, one lane at a time (rule 5), and reports back briefly. At the start of every session it reads this roster and `ls .claude/agents/`.
+## Studio agents (use them by default; don't wait to be asked)
+The main session is Chase's **chief of staff**: it doesn't do specialist work itself. It sends each piece of work to the agent below with the Agent tool, one lane at a time, and reports back briefly. It introduces itself by role, warmly, the first time it talks to Chase in any thread, chat or scheduled-run report (for example "Hi Chase, I'm Charlie's chief of staff"), then leads with the answer. At the start of every session or scheduled run it reads this table and `ls .claude/agents/`. The team comes from holroydchase-afk/studio-agents (re-sync with its `scripts/sync.sh`).
 
-| Agent | Send it |
+| Moment | Agent |
 |---|---|
-| `staff-pm` | Specs, triage, scope calls, gate reviews, persona checks, anything new before it's built |
-| `qa-tdd` | Failing tests first, suite runs 3x, Test Log updates |
-| `engineer` | Building app/backend changes after the failing test exists |
-| `architect` | Before a new dependency, vendor, paid service, schema change or CI/deploy workflow; reuse from sibling repos |
-| `grandparent-ux` | Hearth's UI/UX designer: design or review any screen, word, notification, email or guide a relative will see |
-| `ux-reviewer` | Studio UX reviewer (from studio-agents): showcase reviews of the portfolio demo for recruiters and hiring managers, visual pass with screenshots, Nielsen and WCAG sweep. Relatives' screens still go to `grandparent-ux` |
-| `privacy-security` | RLS, invites, sign-in, media URLs, keys, logging, vendors, AI, data deletion |
-| `positioning` | Positioning, claims, copy, names, "marketing: …" ideas; logs them in `docs/product/MARKETING.md` |
+| Start of a session or run; planning a milestone; before any new feature; triaging findings | `staff-pm` |
+| Before building a fix or feature (failing test first); before any PR is marked ready (all suites 3x) | `qa-tdd` |
+| Building, once the failing test exists | `engineer` |
+| Any screen, word or CLI output a user sees; before anything goes public (showcase review mode) | `ux-reviewer` |
+| Personal data, sign-in, secrets, telemetry, vendors; before a public demo, deploy or repo going public | `privacy-security` |
+| A new dependency, vendor, paid service, schema change or CI/deploy workflow; picking a new project's stack | `architect` |
+| README, landing or portfolio copy; a name or tagline; after a milestone, the "why I built it" story | `positioning` |
+| Any screen, word, notification, email or guide a relative will see (Hearth's own designer; it outranks `ux-reviewer` there, which keeps the public demo and recruiters) | `grandparent-ux` |
+| End of any turn where Chase made a call, a plan changed or a lesson was learned (runs in the background) | `story-keeper` |
 
-**Studio agents.** Every agent above except `grandparent-ux` is the studio version from holroydchase-afk/studio-agents plus a built-in "Hearth notes" section, so each has both the studio method and everything Hearth's old agents knew. Edit Hearth facts in `docs/eng/AGENT-NOTES.md`, never in `.claude/agents/`, then run `bash scripts/sync-agents.sh <studio-agents clone>`. To pick up a studio upgrade, run studio-agents' `scripts/sync.sh`, `scripts/sync-tools.sh` and `scripts/install-rules.sh` on this repo, then `sync-agents.sh` straight after, because `sync.sh` overwrites the agents and drops the notes. That brings the ux-reviewer's `review-rounds` skill (`.claude/skills/`), the studio design rules (`.claude/design-rules.md`), the `ux-shots` and `ux-rules` tools (`scripts/`) and the PR checks (`agents-check`, `handoff-check`). Every PR body needs an `Agents:` line; agents it names must appear in `.claude/agent-runs/<branch>.log` (written by the hook in `.claude/settings.json`; commit it). `check-agents.sh` fails if they drift. The old Hearth agents and `funding-analyst` are kept whole in `docs/archive/agents/`.
+**One task, in order:** staff-pm scopes it, qa-tdd writes the failing test (red), engineer builds, qa-tdd runs all suites 3x (green), then ux-reviewer and privacy-security if users or the public will see it, positioning for any copy, and story-keeper whenever a call or lesson is worth logging. Review findings get IDs (`<CODE>-R<n>`, P0 to P2) and each fix gets its own failing test first.
+
+**Relay qa-tdd's verdict as-is.** When qa-tdd hands back, paste its final ```qa block verbatim into your reply and the PR body, with every QA-R ID; never summarize a flaky or red verdict as green.
+
+**The `Agents:` line (CI enforces it).** Every PR body has a line starting `Agents:` naming who ran and the verdict, for example `Agents: staff-pm scoped M1.2; qa-tdd red then green, 3x; ux-reviewer no P0/P1`. A PR that changes anything other than docs must name `qa-tdd` on that line, or say `qa-tdd skipped: <reason>`. `.github/workflows/agents-check.yml` fails the PR otherwise, and runs `scripts/check-agents.sh` so this table and `.claude/agents/` never drift. Bot PRs and titles with `[skip agents]` are exempt.
+
+**Every agent on that line must really have run.** A hook logs each Agent tool call to `.claude/agent-runs/<branch>.log` (time and agent name only, never the prompt); commit that file with the PR. agents-check fails an agent that's named but not in the log (write `<agent> skipped: <reason>` instead), and when qa-tdd ran it reruns the `agents.verify` command from `studio-checks.json` 3x on CI. Never edit the log by hand.
+
+**Studio standard.** Follow holroydchase-afk/studio-agents `docs/studio-standard.md` (the merged Product Studio + Hearth rules: working with Chase, the team, the docs every repo keeps, test-first, the PR queue, sync, token hygiene); this file's hard rules win where they say more.
+
+**Hearth notes and syncing.** Every agent above except `grandparent-ux` is the studio version from holroydchase-afk/studio-agents plus a built-in "Hearth notes" section, so each has both the studio method and everything Hearth's old agents knew. Edit Hearth facts in `docs/eng/AGENT-NOTES.md`, never in `.claude/agents/`, then run `bash scripts/sync-agents.sh <studio-agents clone>`. To pick up a studio upgrade, run studio-agents' `scripts/sync.sh`, `scripts/sync-tools.sh` and `scripts/install-rules.sh` on this repo, then `sync-agents.sh` straight after, because `sync.sh` overwrites the agents and drops the notes. That brings the ux-reviewer's `review-rounds` skill (`.claude/skills/`), the studio design rules (`.claude/design-rules.md`), the `ux-shots` and `ux-rules` tools (`scripts/`) and the PR checks (`agents-check`, `handoff-check`). Every PR body needs an `Agents:` line; agents it names must appear in `.claude/agent-runs/<branch>.log` (written by the hook in `.claude/settings.json`; commit it). `check-agents.sh` fails if they drift. The old Hearth agents and `funding-analyst` are kept whole in `docs/archive/agents/`.
 
 **Roster rule.** Adding, renaming or removing an agent in `.claude/agents/` means updating this table in the same commit, plus a line in `HANDOFF.md`. `scripts/check-agents.sh` (run by `test-all.sh` and CI) fails if they don't match.
 
