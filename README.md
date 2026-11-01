@@ -54,6 +54,8 @@ bash test-all.sh                        # everything
 
 **Try the demo, no accounts:** `cd app && npm run build:demo-site` builds the public demo (a made-up family with sample pictures, kept in the browser, no backend) into `app/dist-demo-site/`, for chaseholroyd.com/demo/hearth/. To click through it locally: `npm run export:web:demo && node scripts/serve-dist.js dist-demo 8090`, then open http://127.0.0.1:8090. On a laptop it shows the app at phone width beside a short guide; "Grandma's view" shows that each photo reaches only the people it was shared with.
 
+**Run your own copy** on your own Supabase and Backblaze accounts: [docs/eng/SELF-HOST.md](docs/eng/SELF-HOST.md).
+
 ## Status
 
 Milestone 1 (the founder using it end to end on his own phone) is in testing. Next is milestone 2, his spouse. Then come relatives, in order of how comfortable they are with tech. Beta target: about 12 grandparents in West Virginia. License: AGPL-3.0 ([LICENSE](LICENSE)). The repo is public since Oct 29, 2026.
