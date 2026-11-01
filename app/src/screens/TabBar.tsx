@@ -8,7 +8,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Role } from '../api/HearthApi';
-import { MIN_TARGET, fontFamily, typeScale, useTheme } from '../ui/theme';
+import { FONT, MIN_TARGET, typeScale, useTheme } from '../ui/theme';
 
 export type TabName = 'photos' | 'share' | 'groups' | 'help' | 'me';
 export interface TabDef { name: TabName; label: string }
@@ -26,7 +26,7 @@ export const TAB_ICONS: Record<TabName, { sf: string; md: string }> = {
 export const NATIVE_TAB_OPTIONS = {
   minimizeBehavior: 'never', // DS-5: iOS 26 can shrink the bar on scroll; the way back stays visible
   labelVisibilityMode: 'labeled', // DS-5: Android shows every label, not only the selected one
-  labelStyle: { fontSize: 17 }, // DS-2: platform tab labels are 10–12 pt
+  labelStyle: { fontSize: 17, fontFamily: FONT.medium }, // DS-2: platform tab labels are 10–12 pt; DS-12 font
 } as const;
 
 const ALL: Record<TabName, TabDef> = {
@@ -66,7 +66,7 @@ export function HearthTabBar({ role, current, onNavigate }: { role: Role; curren
                 tintColor={color}
               />
             </View>
-            <Text style={{ fontSize: t.base, fontFamily, fontWeight: on ? '600' : '500', color }}>{tab.label}</Text>
+            <Text style={{ fontSize: t.base, fontFamily: on ? FONT.semibold : FONT.medium, color }}>{tab.label}</Text>
           </Pressable>
         );
       })}

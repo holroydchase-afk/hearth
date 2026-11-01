@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 // Session, family space, prefs and the long-lived stores (feed, upload queue, media cache).
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
-import { AppState, Platform } from 'react-native';
+import { AppState, Appearance, Platform } from 'react-native';
 import type { HearthApi, Session, Space } from '../api/HearthApi';
 import { FeedStore, clearFeedCache, type FeedState } from '../feed/store';
 import { MediaCache } from '../media/cache';
@@ -11,7 +11,7 @@ import { clearArrivals, recordArrival } from '../notify/latency';
 import { listenForArrivals, registerForPush } from '../notify/push';
 import type { KV } from '../platform/kv';
 import type { PickedAsset } from '../share/bulk';
-import { BigTextContext } from '../ui/theme';
+import { BigTextContext, LookContext, nativeScheme } from '../ui/theme';
 import { UploadQueue, type Job, type Prepared, type QueueItem } from '../upload/queue';
 import { defaultPrefs, loadPrefs, savePrefs, serverPrefs, type NotifyChoice, type Prefs } from './prefs';
 
@@ -169,6 +169,12 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
   // Unmount (sign-out, tests): no timers or retries may outlive the provider.
   useEffect(() => () => { live.current.queue?.stop(); unlisten.current?.(); }, []);
 
+  // DS-10: the phone's own parts (tab bar, keyboard, alerts) match the light or dark screen picked on Help or Me.
+  useEffect(() => {
+    if (Platform.OS === 'web' || typeof Appearance.setColorScheme !== 'function') return;
+    try { Appearance.setColorScheme(nativeScheme(s.prefs.look)); } catch { /* older phones: Hearth's own colors still switch */ }
+  }, [s.prefs.look]);
+
   // Back in front: retry waiting uploads and fetch new photos (BETA-SHARE-4).
   useEffect(() => {
     const sub = AppState.addEventListener('change', (st) => {
@@ -242,7 +248,9 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
 
   return (
     <Ctx.Provider value={value}>
-      <BigTextContext.Provider value={s.prefs.bigText}>{children}</BigTextContext.Provider>
+      <LookContext.Provider value={s.prefs.look}>
+        <BigTextContext.Provider value={s.prefs.bigText}>{children}</BigTextContext.Provider>
+      </LookContext.Provider>
     </Ctx.Provider>
   );
 }

@@ -1,12 +1,19 @@
 # Handoff
 
+## Nov 1: light or dark screen, warmer colors, Atkinson Hyperlegible (TRACKER R29, branch claude/project-thread-dul1po, PR)
+- **Chase's ask:** "We need a dark and light mode", then "review and fix the color scheme across the board, these are rough" (iPhone screenshots of the demo in dark).
+- **Built, test-first:** DS-10 "Light or dark screen" (Same as my phone, Light screen, Dark screen) after Bigger text on Help and Me, saved with the prefs; the native tab bar, keyboard and status bar follow it. DS-11 one warm palette on every phone (no pure black, no system gray), body text 7:1, waiting buttons solid gray instead of see-through blue, reply box and demo bar on the card color. DS-12 Atkinson Hyperlegible Next (Chase's pick from three on his phone) in Regular, Medium and SemiBold only, one bundled file per weight. DEC-47, persona check `decisions/2026-11-01-light-dark-colors.md`, DESIGN-SYSTEM updated.
+- **Tests:** app Jest, typecheck, 3 runs. Web demo screenshotted light and dark at phone width (`docs/design/versions/v3-warm-atkinson/`); not yet on a phone. The font research came from web search summaries: brailleinstitute.org and fonts.google.com are not on this environment's allowed hosts, so their pages weren't read directly.
+- **Portfolio / public presence:** the public demo picks up the new colors, font and the choice on Me once this merges (Pages rebuilds from main). The case study now says 47 decisions.
+- **Next exact step:** Chase says "merge", then opens Expo Go to check the font and dark screen on his iPhone (needs an Expo preview republish after merge).
+
 ## Oct 31, night shift: the owner's photo helpers switch (TRACKER R17, branch claude/project-thread-kzt7by-n1031, draft PR)
 - **Where things stood:** the release plan (M1.1) is finished and every PR through #84 is merged; 0020 and 0021 are deployed. So tonight took the next unblocked P2 row that needs nothing from Chase.
 - **Built, test-first (HELP-R6, DEC-46, persona check all Green):** the family's owner gets a "Photo helpers" card on Me with two switches, "Set aside repeats" and "Set aside screenshots and blurry photos", for the whole family. Nobody else sees it. A failed save says so and leaves the switch as it was. The switch shows what `my_features` says, so Hearth's global kill switch still wins. Words from grandparent-ux (7/10 first draft; its replacement lines are what was built).
 - **App only, no migration or deploy:** the owner could already write `space_features` under RLS (0013). `setFamilyFeature` updates, then inserts if there was no row (a PostgREST upsert also sets the key columns, which authenticated can't update).
 - **Tests:** contract HELP-R6 (fake and the real PostgREST harness: off, viewer refused 42501, back on), `helperSwitch.test.tsx` ×5. Docs: API.md, architecture 05 (Last checked), SPEC-PHOTO-HELPERS HELP-R6, TRACKER R17.
 - **Decisions to review:** DEC-46.
-- **Next exact step:** merged on Chase's "Merge all" (Nov 1; renumbered DEC-45 to DEC-46 because #86 took DEC-45). Republish the Expo preview and look at Me as the owner.
+- **Next exact step:** merged on Chase's "Merge all" (Nov 1; renumbered DEC-47 to DEC-46 because #86 took DEC-45). Republish the Expo preview and look at Me as the owner.
 
 ## Oct 31: studio demo bar (intake #82, TRACKER R28, DEC-45; branch claude/project-thread-v54okb, PR)
 - **Why:** Product Studio intake #82 (Chase, Oct 31: one demo banner standard, pm-tools `docs/DEMO-BANNER.md`). Picked up by the new "Intake check" scheduled task (4x a day, owned by thread "Set up intake check routine").

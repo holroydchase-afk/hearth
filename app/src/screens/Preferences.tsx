@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { useApp } from '../state/AppContext';
 import { HELPER_FEATURES } from '../share/helpers';
 import type { NotifyChoice } from '../state/prefs';
+import type { ScreenLook } from '../ui/theme';
 import { Button, Card, Choice, Confirm, Notice, Txt } from '../ui/kit';
 
 export function BiggerText() {
@@ -19,6 +20,25 @@ export function BiggerText() {
         checked={prefs.bigText}
         onPress={() => setPrefs({ bigText: !prefs.bigText })}
       />
+    </Card>
+  );
+}
+
+const LOOKS: { id: ScreenLook; title: string; detail: string }[] = [
+  { id: 'system', title: 'Same as my phone (Recommended)', detail: 'Light in the day, dark at night if your phone does that.' },
+  { id: 'light', title: 'Light screen', detail: 'Dark words on a white screen.' },
+  { id: 'dark', title: 'Dark screen', detail: 'Light words on a dark screen. Easier on the eyes at night.' },
+];
+
+/** DS-10: light or dark screen. Saved on this phone only. */
+export function LightOrDark() {
+  const { prefs, setPrefs } = useApp();
+  return (
+    <Card>
+      <Txt variant="title" role="header">Light or dark screen</Txt>
+      {LOOKS.map((l) => (
+        <Choice key={l.id} kind="radio" label={l.title} title={l.title} detail={l.detail} checked={prefs.look === l.id} onPress={() => setPrefs({ look: l.id })} />
+      ))}
     </Card>
   );
 }

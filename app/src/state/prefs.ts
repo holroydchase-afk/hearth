@@ -4,9 +4,11 @@
 import type { Role } from '../api/HearthApi';
 import type { NotificationPrefs } from '../api/types';
 import type { KV } from '../platform/kv';
+import { SCREEN_LOOKS, type ScreenLook } from '../ui/theme';
 
 export type NotifyChoice = 'push' | 'evening' | 'sunday';
-export interface Prefs { bigText: boolean; notify: NotifyChoice }
+/** look (DS-10): light or dark screen; 'system' follows the phone. */
+export interface Prefs { bigText: boolean; notify: NotifyChoice; look: ScreenLook }
 
 /** What the server needs for each Help choice (AE-2, set_notification_prefs). */
 export function serverPrefs(choice: NotifyChoice): NotificationPrefs {
@@ -18,7 +20,7 @@ export function serverPrefs(choice: NotifyChoice): NotificationPrefs {
 const key = (u: string) => `hearth.prefs.v1.${u}`;
 
 export function defaultPrefs(role: Role): Prefs {
-  return { bigText: role === 'viewer', notify: 'push' };
+  return { bigText: role === 'viewer', notify: 'push', look: 'system' };
 }
 
 export async function loadPrefs(kv: KV, userId: string, role: Role): Promise<Prefs> {
@@ -30,6 +32,7 @@ export async function loadPrefs(kv: KV, userId: string, role: Role): Promise<Pre
     return {
       bigText: typeof p.bigText === 'boolean' ? p.bigText : d.bigText,
       notify: p.notify === 'evening' || p.notify === 'sunday' || p.notify === 'push' ? p.notify : d.notify,
+      look: SCREEN_LOOKS.includes(p.look as ScreenLook) ? (p.look as ScreenLook) : d.look,
     };
   } catch {
     return d;

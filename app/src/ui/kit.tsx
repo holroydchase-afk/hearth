@@ -10,7 +10,7 @@ import {
   type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MIN_TARGET, fontFamily, useTheme } from './theme';
+import { FONT, MIN_TARGET, fontFamily, useTheme } from './theme';
 
 /** A system symbol: SF Symbol name on iPhone, Material Symbol name on Android and the web. */
 export interface Icon { sf: string; md: string }
@@ -30,13 +30,13 @@ export function Txt({ variant = 'body', style, children, role, testID, numberOfL
   variant?: TxtVariant; style?: StyleProp<TextStyle>; children: ReactNode; role?: 'header' | 'alert' | 'text'; testID?: string; numberOfLines?: number;
 }) {
   const { c, t } = useTheme();
-  // HIG text styles: Body, Headline (semibold), Title 2, Title 1 (bold); Material: body/title/headline.
+  // DS-12 weights: body and muted Regular; strong (names), title and display SemiBold.
   const v: Record<TxtVariant, TextStyle> = {
     body: { fontFamily, fontSize: t.base, lineHeight: t.line, color: c.ink },
-    strong: { fontFamily, fontSize: t.base, lineHeight: t.line, color: c.ink, fontWeight: '600' },
+    strong: { fontFamily: FONT.semibold, fontSize: t.base, lineHeight: t.line, color: c.ink },
     muted: { fontFamily, fontSize: t.base, lineHeight: t.line, color: c.muted },
-    title: { fontFamily, fontSize: t.title, lineHeight: Math.round(t.title * 1.25), color: c.ink, fontWeight: '700' },
-    display: { fontFamily, fontSize: t.display, lineHeight: Math.round(t.display * 1.2), color: c.ink, fontWeight: '700' },
+    title: { fontFamily: FONT.semibold, fontSize: t.title, lineHeight: Math.round(t.title * 1.25), color: c.ink },
+    display: { fontFamily: FONT.semibold, fontSize: t.display, lineHeight: Math.round(t.display * 1.2), color: c.ink },
   };
   return (
     <Text selectable={selectable} accessibilityRole={role === 'text' ? undefined : role} testID={testID} numberOfLines={numberOfLines} style={[v[variant], style]}>
@@ -68,8 +68,10 @@ export function Button({ label, text, onPress, variant = 'primary', disabled, so
   const { c, t, os } = useTheme();
   const material = os === 'android';
   // iPhone: filled, gray (tinted fill) and plain buttons. Android: filled, outlined and text buttons.
-  const bg = { primary: c.accent, secondary: material ? 'transparent' : c.fill, danger: c.danger, quiet: 'transparent' }[variant];
-  const fg = { primary: c.accentInk, secondary: c.accent, danger: c.onDanger, quiet: c.accent }[variant];
+  // DS-11: a waiting button is solid gray with readable words, never a see-through blue.
+  const waiting = !!disabled || !!softDisabled;
+  const bg = waiting && variant !== 'quiet' ? c.fill : { primary: c.accent, secondary: material ? 'transparent' : c.fill, danger: c.danger, quiet: 'transparent' }[variant];
+  const fg = waiting ? c.muted : { primary: c.accentInk, secondary: c.accent, danger: c.onDanger, quiet: c.accent }[variant];
   const border = variant === 'secondary' && material ? c.muted : bg;
   return (
     <Pressable
@@ -83,7 +85,7 @@ export function Button({ label, text, onPress, variant = 'primary', disabled, so
       android_ripple={{ color: c.line }}
       style={({ pressed }) => [
         styles.btn,
-        { backgroundColor: bg, borderColor: border, opacity: disabled || softDisabled ? 0.5 : pressed && !material ? 0.7 : 1 },
+        { backgroundColor: bg, borderColor: border, opacity: !waiting && pressed && !material ? 0.7 : 1 },
         selected ? { borderColor: c.accent, borderWidth: 2, backgroundColor: c.accentSoft } : null,
         style,
       ]}
@@ -91,7 +93,7 @@ export function Button({ label, text, onPress, variant = 'primary', disabled, so
       {busy ? <ActivityIndicator color={fg} /> : null}
       {icon && !busy ? <SystemIcon icon={icon} color={selected ? c.accent : fg} /> : null}
       {typeof (text ?? label) === 'string' ? (
-        <Text style={{ color: selected ? c.ink : fg, fontFamily, fontWeight: material ? '500' : '600', fontSize: t.base, textAlign: 'center' }}>{text ?? label}</Text>
+        <Text style={{ color: selected ? c.ink : fg, fontFamily: material ? FONT.medium : FONT.semibold, fontSize: t.base, textAlign: 'center' }}>{text ?? label}</Text>
       ) : (
         text
       )}
@@ -121,7 +123,7 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
       {kind === 'switch' ? null : (
         <View style={[styles.mark, { borderRadius: round ? 999 : 4, borderColor: checked ? c.accent : c.muted, backgroundColor: checked && kind === 'checkbox' ? c.accent : 'transparent' }]}>
           {checked && kind === 'radio' ? <View style={[styles.dot, { backgroundColor: c.accent }]} /> : null}
-          {checked && kind === 'checkbox' ? <Text style={{ color: c.accentInk, fontSize: t.base, fontFamily, fontWeight: '700' }}>✓</Text> : null}
+          {checked && kind === 'checkbox' ? <Text style={{ color: c.accentInk, fontSize: t.base, fontFamily: FONT.semibold }}>✓</Text> : null}
         </View>
       )}
       <View style={{ flex: 1 }}>
@@ -130,7 +132,7 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
       </View>
       {kind === 'switch' ? (
         <View style={styles.switchBox} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-          <Text style={{ color: c.ink, fontSize: t.base, fontFamily, fontWeight: '600' }}>{checked ? 'On' : 'Off'}</Text>
+          <Text style={{ color: c.ink, fontSize: t.base, fontFamily: FONT.semibold }}>{checked ? 'On' : 'Off'}</Text>
           <Switch value={checked} trackColor={{ true: c.accent, false: c.line }} />
         </View>
       ) : null}

@@ -8,6 +8,7 @@ Each version has a folder of screenshots taken with the same demo data and the s
 |---|---|---|
 | [v1-original](v1-original/) | `31530f9` (Oct 19, 2026) | Hearth's own look: Young Serif headings, Figtree text, amber buttons, emoji tab icons, custom tab bar |
 | [v2-native](v2-native/) | this PR | Native first (`docs/product/DESIGN-SYSTEM.md`): the phone's own font, Apple's look on iPhone and Material 3 on Android, plus Hearth's overrides |
+| [v3-warm-atkinson](v3-warm-atkinson/) | branch `claude/project-thread-dul1po` (Nov 1, 2026) | One warm palette in light and dark (DS-11), Atkinson Hyperlegible Next (DS-12), "Light or dark screen" on Help and Me (DS-10). `demo-light.png` / `demo-dark.png` are the public demo (Photos, Photos scrolled, Share, Groups, Me) |
 
 ## Adding a version
 

@@ -277,7 +277,7 @@ const ReplyBox = forwardRef<TextInputInstance, { post: FeedPost; mine: boolean }
   // iPhone: a rounded field like a grouped-list cell. Android: Material's outlined field (as kit Field).
   const box = os === 'android'
     ? { borderWidth: 1, borderColor: c.muted, borderRadius: 4 }
-    : { borderWidth: 1, borderColor: c.line, backgroundColor: c.bg, borderRadius: 20 };
+    : { borderWidth: 1, borderColor: c.line, backgroundColor: c.surface, borderRadius: 20 };
   return (
     <View style={{ gap: 6 }}>
       <View testID={`reply-${post.post_id}`} style={styles.replyRow}>

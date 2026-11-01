@@ -6,7 +6,7 @@ import { useApp } from '../state/AppContext';
 import { Button, Card, Screen, Txt } from '../ui/kit';
 import { AppGate } from './AppGate';
 import { ProblemDetailsCard } from './ProblemDetails';
-import { BiggerText, DeleteAccount, HowToTell, Privacy, SignOut } from './Preferences';
+import { BiggerText, DeleteAccount, LightOrDark, HowToTell, Privacy, SignOut } from './Preferences';
 
 export function HelpScreen() {
   const app = useApp();
@@ -25,6 +25,7 @@ export function HelpScreen() {
         )}
       </Card>
       <BiggerText />
+      <LightOrDark />
       <HowToTell />
       <Privacy who={who} />
       <Card>
