@@ -4,8 +4,20 @@
 - **Why:** Product Studio intake #82 (Chase, Oct 31: one demo banner standard, pm-tools `docs/DEMO-BANNER.md`). Picked up by the new "Intake check" scheduled task (4x a day, owned by thread "Set up intake check routine").
 - **Done, test-first:** `app/src/demo/DemoBar.tsx` is the slim Demo bar (← Portfolio, Demo badge, Details) with a push-down drawer: standard copy, See it as Grandma Jo, Reset demo that asks first and says "Sample data restored." once, and the way back. `DemoTip.tsx` adds one tip line on the phone's Photos. The old chip bar is gone. Tests: DEMO-BAR in `demoBar.test.tsx` and `demoTip.test.tsx`, browser cases in `e2e-web/demo.spec.js`; the demo, site and showcase specs open Details first.
 - **Review:** `docs/reviews/2026-10-31-demo-bar.md` with before/after screenshots (390/1280, light/dark). ux-reviewer: 5/10 before, 7/10 after its first pass; its two P1s and two P2s are fixed.
-- **Portfolio / public presence:** the hosted demo still has the old chip bar until this merges and Product Studio re-copies a fresh build (`portfolio/hearth-demo-site-2026-10-31-demobar.tgz` in the project files, built from this branch); then Product Studio re-shoots `assets/home/hearth-*.webp`.
+- **Portfolio / public presence:** the demo is self-hosted at https://chaseholroyd.com/Hearth/ (PR #87) and rebuilds on merge, so no re-copy is needed; Product Studio re-shoots `assets/home/hearth-*.webp` after.
 - **Next exact step:** Chase says "merge" for this PR.
+
+## Oct 31: the demo goes on GitHub Pages at chaseholroyd.com/Hearth/ (TRACKER R26, issue #83 step 2)
+- **Privacy scan re-run on the rewritten history (all branches):** 0 real-family names, gitleaks clean, only made-up test emails and one public office phone number.
+- **Built, test-first (PAGES-1):** the static-site e2e takes `SITE_BASE`. Under `/Hearth` it failed on the old `/demo/hearth` build (red) and passes 8/8 on a `/Hearth` build (3 runs). The default `/demo/hearth` still passes 8/8.
+- **`demo-site.yml`** now builds with base `/Hearth` on every push to main that touches the app (or by hand) and deploys to Pages (`upload-pages-artifact@v5`, `deploy-pages@v4`, versions from GitHub's releases pages via web search).
+- **Next exact step:** Chase sets Settings → Pages → Source: GitHub Actions and merges. Then check https://chaseholroyd.com/Hearth/ and reply on #83 with the URL. **Portfolio / public presence:** Product Studio then points the portfolio at that URL and drops its demo/hearth/ copy.
+
+## Oct 31: old commits cleaned of real-family details (TRACKER R26)
+- **Chase's call:** rewrite history in place. Chase ran the prepared git-filter-repo script from a Codespace (the cloud session can't force-push main). All branches are rewritten: main is now `5e5c338`, and its files are byte-identical to before (same tree). A fresh mirror shows 0 real names across all 64 branches and every commit message.
+- **Every clone or branch from before Oct 31 15:35Z is stale.** Re-clone or `git reset --hard origin/<branch>` before pushing, and never push old-history commits: that brings the names back.
+- **Left:** GitHub Support purge of the cached old PR pages (Chase, one form). After that, Pages for the demo (R26).
+- **Portfolio / public presence:** the repo is public with clean history once the purge is done.
 
 ## Oct 31: open PRs merged, 0020 and 0021 deployed, AGPL headers (branch claude/project-thread-rmj7at, PR)
 - **Chase's ask:** "fix all issues, determine the correct order including merge 73, deploy 0020", then "also do the AGPL work".
