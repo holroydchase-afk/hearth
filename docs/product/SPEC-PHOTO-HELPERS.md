@@ -15,7 +15,7 @@ A parent's bulk pick of 48 photos often carries three near-identical shots, a fe
 - **HELP-R3 Words, not icons.** Each helper adds at most one line plus one button to the BatchReview screen (BETA-BULK-3). The button is a verb with a word label, at 17 pt and 48 pt. No gesture.
 - **HELP-R4 Off-switch.** Each helper sits behind a feature flag (`photo_helpers_duplicates`, `photo_helpers_screens_blur`), default on for posters, never shown to viewers (DEC-18 control model).
 - **HELP-R5 Single picks are left alone.** With fewer than 4 photos picked, no helper runs: a person who picked one photo meant that photo.
-- **HELP-R6 The owner's switch (Oct 31, TRACKER R17).** The family's owner sees a "Photo helpers" card on Me with two switches, "Set aside repeats" (duplicates flag) and "Set aside screenshots and blurry photos" (screens and blur flag). A switch writes the family's `space_features` row; it shows what `my_features` says, so Hearth's global kill switch still wins. Nobody else sees the card, and a failed save says so and leaves the switch as it was. Words by grandparent-ux; persona check `decisions/2026-10-31-photo-helpers-switch.md` (DEC-45).
+- **HELP-R6 The owner's switch (Oct 31, TRACKER R17).** The family's owner sees a "Photo helpers" card on Me with two switches, "Set aside repeats" (duplicates flag) and "Set aside screenshots and blurry photos" (screens and blur flag). A switch writes the family's `space_features` row; it shows what `my_features` says, so Hearth's global kill switch still wins. Nobody else sees the card, and a failed save says so and leaves the switch as it was. Words by grandparent-ux; persona check `decisions/2026-10-31-photo-helpers-switch.md` (DEC-46).
 
 ## AI-2 duplicates
 

@@ -2,11 +2,30 @@
 
 ## Oct 31, night shift: the owner's photo helpers switch (TRACKER R17, branch claude/project-thread-kzt7by-n1031, draft PR)
 - **Where things stood:** the release plan (M1.1) is finished and every PR through #84 is merged; 0020 and 0021 are deployed. So tonight took the next unblocked P2 row that needs nothing from Chase.
-- **Built, test-first (HELP-R6, DEC-45, persona check all Green):** the family's owner gets a "Photo helpers" card on Me with two switches, "Set aside repeats" and "Set aside screenshots and blurry photos", for the whole family. Nobody else sees it. A failed save says so and leaves the switch as it was. The switch shows what `my_features` says, so Hearth's global kill switch still wins. Words from grandparent-ux (7/10 first draft; its replacement lines are what was built).
+- **Built, test-first (HELP-R6, DEC-46, persona check all Green):** the family's owner gets a "Photo helpers" card on Me with two switches, "Set aside repeats" and "Set aside screenshots and blurry photos", for the whole family. Nobody else sees it. A failed save says so and leaves the switch as it was. The switch shows what `my_features` says, so Hearth's global kill switch still wins. Words from grandparent-ux (7/10 first draft; its replacement lines are what was built).
 - **App only, no migration or deploy:** the owner could already write `space_features` under RLS (0013). `setFamilyFeature` updates, then inserts if there was no row (a PostgREST upsert also sets the key columns, which authenticated can't update).
 - **Tests:** contract HELP-R6 (fake and the real PostgREST harness: off, viewer refused 42501, back on), `helperSwitch.test.tsx` ×5. Docs: API.md, architecture 05 (Last checked), SPEC-PHOTO-HELPERS HELP-R6, TRACKER R17.
-- **Decisions to review:** DEC-45.
-- **Next exact step:** Chase says "merge" for this PR, then republish the Expo preview and look at Me as the owner.
+- **Decisions to review:** DEC-46.
+- **Next exact step:** merged on Chase's "Merge all" (Nov 1; renumbered DEC-45 to DEC-46 because #86 took DEC-45). Republish the Expo preview and look at Me as the owner.
+
+## Oct 31: studio demo bar (intake #82, TRACKER R28, DEC-45; branch claude/project-thread-v54okb, PR)
+- **Why:** Product Studio intake #82 (Chase, Oct 31: one demo banner standard, pm-tools `docs/DEMO-BANNER.md`). Picked up by the new "Intake check" scheduled task (4x a day, owned by thread "Set up intake check routine").
+- **Done, test-first:** `app/src/demo/DemoBar.tsx` is the slim Demo bar (← Portfolio, Demo badge, Details) with a push-down drawer: standard copy, See it as Grandma Jo, Reset demo that asks first and says "Sample data restored." once, and the way back. `DemoTip.tsx` adds one tip line on the phone's Photos. The old chip bar is gone. Tests: DEMO-BAR in `demoBar.test.tsx` and `demoTip.test.tsx`, browser cases in `e2e-web/demo.spec.js`; the demo, site and showcase specs open Details first.
+- **Review:** `docs/reviews/2026-10-31-demo-bar.md` with before/after screenshots (390/1280, light/dark). ux-reviewer: 5/10 before, 7/10 after its first pass; its two P1s and two P2s are fixed.
+- **Portfolio / public presence:** the demo is self-hosted at https://chaseholroyd.com/Hearth/ (PR #87) and rebuilds on merge, so no re-copy is needed; Product Studio re-shoots `assets/home/hearth-*.webp` after.
+- **Next exact step:** Chase says "merge" for this PR.
+
+## Oct 31: the demo goes on GitHub Pages at chaseholroyd.com/Hearth/ (TRACKER R26, issue #83 step 2)
+- **Privacy scan re-run on the rewritten history (all branches):** 0 real-family names, gitleaks clean, only made-up test emails and one public office phone number.
+- **Built, test-first (PAGES-1):** the static-site e2e takes `SITE_BASE`. Under `/Hearth` it failed on the old `/demo/hearth` build (red) and passes 8/8 on a `/Hearth` build (3 runs). The default `/demo/hearth` still passes 8/8.
+- **`demo-site.yml`** now builds with base `/Hearth` on every push to main that touches the app (or by hand) and deploys to Pages (`upload-pages-artifact@v5`, `deploy-pages@v4`, versions from GitHub's releases pages via web search).
+- **Next exact step:** Chase sets Settings → Pages → Source: GitHub Actions and merges. Then check https://chaseholroyd.com/Hearth/ and reply on #83 with the URL. **Portfolio / public presence:** Product Studio then points the portfolio at that URL and drops its demo/hearth/ copy.
+
+## Oct 31: old commits cleaned of real-family details (TRACKER R26)
+- **Chase's call:** rewrite history in place. Chase ran the prepared git-filter-repo script from a Codespace (the cloud session can't force-push main). All branches are rewritten: main is now `5e5c338`, and its files are byte-identical to before (same tree). A fresh mirror shows 0 real names across all 64 branches and every commit message.
+- **Every clone or branch from before Oct 31 15:35Z is stale.** Re-clone or `git reset --hard origin/<branch>` before pushing, and never push old-history commits: that brings the names back.
+- **Left:** GitHub Support purge of the cached old PR pages (Chase, one form). After that, Pages for the demo (R26).
+- **Portfolio / public presence:** the repo is public with clean history once the purge is done.
 
 ## Oct 31: open PRs merged, 0020 and 0021 deployed, AGPL headers (branch claude/project-thread-rmj7at, PR)
 - **Chase's ask:** "fix all issues, determine the correct order including merge 73, deploy 0020", then "also do the AGPL work".
@@ -343,6 +362,7 @@
 7. **Video is off for the beta.** iOS location metadata can't be stripped without a transcoder.
 
 ## Chase's to-dos (blocking)
+- **Intake #83 (stock photos in the demo), Oct 31:** this cloud environment can't reach any stock photo site (Unsplash, Pexels, Openverse and Wikimedia all refused). Add `images.unsplash.com`, `unsplash.com`, `images.pexels.com`, `api.pexels.com`, `api.openverse.org` and `upload.wikimedia.org` under Allowed domains (Project settings, Cloud environment, gear), then the next Intake check does it. Labeled needs-chase.
 - Confirm Apple Developer enrollment.
 - Create the accounts:
   - Supabase: a staging and a prod project, both East US

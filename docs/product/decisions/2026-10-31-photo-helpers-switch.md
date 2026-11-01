@@ -1,5 +1,5 @@
 # Decision: the owner's "Photo helpers" switches on Me (HELP-R6)
-Date: Oct 31, 2026 · Status: night shift, built in a draft PR, under "Decisions to review" (DEC-45) · Touches HELP-R4, DEC-18, TRACKER R17
+Date: Oct 31, 2026 · Status: night shift, built in a draft PR, under "Decisions to review" (DEC-46) · Touches HELP-R4, DEC-18, TRACKER R17
 
 **What changes.** The family's owner gets a "Photo helpers" card on Me with two switches for the whole family: "Set aside repeats" (the same photo twice, look-alikes, photos sent in the last 30 days) and "Set aside screenshots and blurry photos". Before this, turning one off was a database row. Nobody else sees the card. The line above the switches says they apply only to 4 or more photos, every set-aside photo has Put back, and nothing is deleted from the phone. grandparent-ux scored the first words 7/10. Its replacement lines are what was built (code read only, not yet seen on a phone).
 
