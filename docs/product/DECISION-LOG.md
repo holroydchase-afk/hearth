@@ -324,5 +324,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** one license string everywhere is clearer for tech readers and tools; -or-later is the FSF's recommended form; Chase still owns all the code, so dual licensing stays possible (DEC-7).
 - **Source:** `docs/product/decisions/2026-10-31-license-or-later.md`
 
+### DEC-45 · Light or dark screen, one warm palette, Atkinson Hyperlegible (DS-10..12)
+- **When / status:** Nov 1 · Asked for by Chase ("We need a dark and light mode", "fix the color scheme across the board")
+- **Chose:** a "Light or dark screen" choice (Same as my phone by default) on Help and Me, and one warm palette on every phone with 7:1 body text, solid gray waiting buttons, and the card color for the reply box and demo bar. Font: Atkinson Hyperlegible Next in Regular, Medium and SemiBold only (Chase picked it from three on his phone). Persona check `decisions/2026-11-01-light-dark-colors.md`.
+- **Over:** following the phone only (no way to pick); each phone's own system colors (cold grays, pure black, see-through disabled buttons); Apple's rounded font or the phone's own font.
+- **Because:** Chase found the old colors rough on his own iPhone; one warm palette reads as Hearth, not as a settings screen, and older eyes get more contrast. Atkinson was made for low-vision readers, and dropping Bold answers his "too bold".
+- **Source:** `docs/product/decisions/2026-11-01-light-dark-colors.md`
+
 ---
-Last updated: Oct 31, 2026 (DEC-44)
+Last updated: Nov 1, 2026 (DEC-45)

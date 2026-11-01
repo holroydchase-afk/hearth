@@ -7,7 +7,7 @@ import { Card, Screen, Txt } from '../ui/kit';
 import { AppGate } from './AppGate';
 import { NoticeTiming } from './NoticeTiming';
 import { ProblemDetailsCard } from './ProblemDetails';
-import { BiggerText, DeleteAccount, HowToTell, Privacy, ReplyAudience, SignOut } from './Preferences';
+import { BiggerText, DeleteAccount, LightOrDark, HowToTell, Privacy, ReplyAudience, SignOut } from './Preferences';
 
 export function MeScreen() {
   const app = useApp();
@@ -39,6 +39,7 @@ function MeReady() {
         <Txt variant="muted">You can share photos and choose who sees them.</Txt>
       </Card>
       <BiggerText />
+      <LightOrDark />
       <HowToTell />
       <ReplyAudience />
       <Privacy who={app.helper} />

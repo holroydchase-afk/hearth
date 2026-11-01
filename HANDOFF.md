@@ -1,5 +1,12 @@
 # Handoff
 
+## Nov 1: light or dark screen, warmer colors, Atkinson Hyperlegible (TRACKER R28, branch claude/project-thread-dul1po, PR)
+- **Chase's ask:** "We need a dark and light mode", then "review and fix the color scheme across the board, these are rough" (iPhone screenshots of the demo in dark).
+- **Built, test-first:** DS-10 "Light or dark screen" (Same as my phone, Light screen, Dark screen) after Bigger text on Help and Me, saved with the prefs; the native tab bar, keyboard and status bar follow it. DS-11 one warm palette on every phone (no pure black, no system gray), body text 7:1, waiting buttons solid gray instead of see-through blue, reply box and demo bar on the card color. DS-12 Atkinson Hyperlegible Next (Chase's pick from three on his phone) in Regular, Medium and SemiBold only, one bundled file per weight. DEC-45, persona check `decisions/2026-11-01-light-dark-colors.md`, DESIGN-SYSTEM updated.
+- **Tests:** app Jest, typecheck, 3 runs. Web demo screenshotted light and dark at phone width (`docs/design/versions/v3-warm-atkinson/`); not yet on a phone. The font research came from web search summaries: brailleinstitute.org and fonts.google.com are not on this environment's allowed hosts, so their pages weren't read directly.
+- **Portfolio / public presence:** the public demo picks up the new colors and the choice on Me once this merges (Pages rebuilds from main).
+- **Next exact step:** Chase says "merge", then opens Expo Go to check the font and dark screen on his iPhone (needs an Expo preview republish after merge).
+
 ## Oct 31: the demo goes on GitHub Pages at chaseholroyd.com/Hearth/ (TRACKER R26, issue #83 step 2)
 - **Privacy scan re-run on the rewritten history (all branches):** 0 real-family names, gitleaks clean, only made-up test emails and one public office phone number.
 - **Built, test-first (PAGES-1):** the static-site e2e takes `SITE_BASE`. Under `/Hearth` it failed on the old `/demo/hearth` build (red) and passes 8/8 on a `/Hearth` build (3 runs). The default `/demo/hearth` still passes 8/8.

@@ -26,7 +26,7 @@ export function DemoBar({ be, reload, startOver, open }: {
     reload();
   };
   return (
-    <View style={[styles.bar, { backgroundColor: c.accentSoft, borderBottomColor: c.line }]} testID="demo-bar" accessibilityLabel="About this demo">
+    <View style={[styles.bar, { backgroundColor: c.surface, borderBottomColor: c.line }]} testID="demo-bar" accessibilityLabel="About this demo">
       <Txt>
         {viewer === 'parent'
           ? "Made-up family. You're Kai, a parent."

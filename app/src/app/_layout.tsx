@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 import { Stack, router } from 'expo-router';
+import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import React, { useMemo } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -12,6 +13,7 @@ import { NavContext, type Nav } from '../state/nav';
 import { createRuntime } from '../state/runtime';
 import { ErrorBoundary } from '../ui/ErrorBoundary';
 import { Screen, Txt } from '../ui/kit';
+import { FONT_FILES, statusBarStyle, useTheme } from '../ui/theme';
 
 const runtime = createRuntime();
 
@@ -26,8 +28,16 @@ const nav: Nav = {
   goJoin: (code) => router.push({ pathname: '/join/[code]', params: { code } }),
 };
 
+/** DS-10: clock and battery readable on the picked light or dark screen. */
+function ThemedStatusBar() {
+  return <StatusBar style={statusBarStyle(useTheme().dark)} />;
+}
+
 export default function RootLayout() {
   useNotificationTaps(useMemo(() => (postId: string) => nav.openViewer(postId, 0), []));
+  // DS-12: wait for Atkinson Hyperlegible (bundled, no network). If it ever fails, go on with the phone's font.
+  const [fontsReady, fontError] = useFonts(FONT_FILES);
+  if (!fontsReady && !fontError) return null;
   if ('error' in runtime) {
     return <SafeAreaProvider><Screen><Txt variant="title">{runtime.error}</Txt></Screen></SafeAreaProvider>;
   }
@@ -36,7 +46,7 @@ export default function RootLayout() {
       <ErrorBoundary onReport={(r) => runtime.api.reportClientError(r)}>
         <AppProvider deps={runtime}>
           <NavContext.Provider value={nav}>
-            <StatusBar style="auto" />
+            <ThemedStatusBar />
             <DemoChrome>
               <Stack screenOptions={{ headerShown: false }} />
             </DemoChrome>
