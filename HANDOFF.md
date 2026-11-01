@@ -1,5 +1,12 @@
 # Handoff
 
+## Oct 31: studio demo bar (intake #82, TRACKER R28, DEC-45; branch claude/project-thread-v54okb, PR)
+- **Why:** Product Studio intake #82 (Chase, Oct 31: one demo banner standard, pm-tools `docs/DEMO-BANNER.md`). Picked up by the new "Intake check" scheduled task (4x a day, owned by thread "Set up intake check routine").
+- **Done, test-first:** `app/src/demo/DemoBar.tsx` is the slim Demo bar (← Portfolio, Demo badge, Details) with a push-down drawer: standard copy, See it as Grandma Jo, Reset demo that asks first and says "Sample data restored." once, and the way back. `DemoTip.tsx` adds one tip line on the phone's Photos. The old chip bar is gone. Tests: DEMO-BAR in `demoBar.test.tsx` and `demoTip.test.tsx`, browser cases in `e2e-web/demo.spec.js`; the demo, site and showcase specs open Details first.
+- **Review:** `docs/reviews/2026-10-31-demo-bar.md` with before/after screenshots (390/1280, light/dark). ux-reviewer: 5/10 before, 7/10 after its first pass; its two P1s and two P2s are fixed.
+- **Portfolio / public presence:** the demo is self-hosted at https://chaseholroyd.com/Hearth/ (PR #87) and rebuilds on merge, so no re-copy is needed; Product Studio re-shoots `assets/home/hearth-*.webp` after.
+- **Next exact step:** Chase says "merge" for this PR.
+
 ## Oct 31: the demo goes on GitHub Pages at chaseholroyd.com/Hearth/ (TRACKER R26, issue #83 step 2)
 - **Privacy scan re-run on the rewritten history (all branches):** 0 real-family names, gitleaks clean, only made-up test emails and one public office phone number.
 - **Built, test-first (PAGES-1):** the static-site e2e takes `SITE_BASE`. Under `/Hearth` it failed on the old `/demo/hearth` build (red) and passes 8/8 on a `/Hearth` build (3 runs). The default `/demo/hearth` still passes 8/8.
@@ -347,6 +354,7 @@
 7. **Video is off for the beta.** iOS location metadata can't be stripped without a transcoder.
 
 ## Chase's to-dos (blocking)
+- **Intake #83 (stock photos in the demo), Oct 31:** this cloud environment can't reach any stock photo site (Unsplash, Pexels, Openverse and Wikimedia all refused). Add `images.unsplash.com`, `unsplash.com`, `images.pexels.com`, `api.pexels.com`, `api.openverse.org` and `upload.wikimedia.org` under Allowed domains (Project settings, Cloud environment, gear), then the next Intake check does it. Labeled needs-chase.
 - Confirm Apple Developer enrollment.
 - Create the accounts:
   - Supabase: a staging and a prod project, both East US
