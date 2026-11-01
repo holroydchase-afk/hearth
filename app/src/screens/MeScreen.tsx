@@ -7,7 +7,7 @@ import { Card, Screen, Txt } from '../ui/kit';
 import { AppGate } from './AppGate';
 import { NoticeTiming } from './NoticeTiming';
 import { ProblemDetailsCard } from './ProblemDetails';
-import { BiggerText, DeleteAccount, LightOrDark, HowToTell, Privacy, ReplyAudience, SignOut } from './Preferences';
+import { BiggerText, DeleteAccount, HowToTell, LightOrDark, PhotoHelpers, Privacy, ReplyAudience, SignOut } from './Preferences';
 
 export function MeScreen() {
   const app = useApp();
@@ -42,6 +42,7 @@ function MeReady() {
       <LightOrDark />
       <HowToTell />
       <ReplyAudience />
+      <PhotoHelpers />
       <Privacy who={app.helper} />
       {/* DEMO-8: the public demo has no test tools and no way out of the sample family but Start over. */}
       {DEMO_MODE ? null : (

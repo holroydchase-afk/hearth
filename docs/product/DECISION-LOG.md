@@ -324,7 +324,21 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** one license string everywhere is clearer for tech readers and tools; -or-later is the FSF's recommended form; Chase still owns all the code, so dual licensing stays possible (DEC-7).
 - **Source:** `docs/product/decisions/2026-10-31-license-or-later.md`
 
-### DEC-45 · Light or dark screen, one warm palette, Atkinson Hyperlegible (DS-10..12)
+### DEC-45 · The demo uses the studio demo bar; Grandma's view moves into its drawer (DEMO-BAR)
+- **When / status:** Oct 31 · Chase's call for every studio demo ("one standard", pm-tools DEMO-BANNER.md), filed to Hearth as intake #82; the Hearth-specific placement is Claude's default
+- **Chose:** the slim Demo bar with a push-down Details drawer, drawn in Hearth's own kit at Hearth's 17 pt and 48 px floors; the "See it as Grandma Jo" switch sits first in the drawer, with one tip line on the phone's Photos pointing to it.
+- **Over:** keeping the three-chip bar (ux-reviewer 5/10, its own look per demo) and keeping the Grandma chip on the collapsed bar (breaks the standard's one-row layout at 390 px).
+- **Because:** the same bar on every demo reads as one studio; the drawer keeps the app in view; the tip keeps Hearth's key feature findable on a phone. Demo build only, so relatives never see it and no persona check applies.
+- **Source:** intake #82, `docs/reviews/2026-10-31-demo-bar.md`
+
+### DEC-46 · The family's owner turns the photo helpers off and on from Me (HELP-R6)
+- **When / status:** Oct 31 · Night shift, under "Decisions to review" (Chase to confirm)
+- **Chose:** a "Photo helpers" card on Me, owner only, with two family-wide switches in grandparent-ux's words. No migration: the owner already had write access to `space_features` (0013). Persona check `decisions/2026-10-31-photo-helpers-switch.md`.
+- **Over:** leaving it as a database row (Chase can't change it from his phone), and a per-person switch (more to explain; the spec's control model is family-wide, DEC-18).
+- **Because:** the helpers set photos aside, so the person who set the family up must be able to stop that in one tap (A1, A2).
+- **Source:** `docs/product/decisions/2026-10-31-photo-helpers-switch.md`
+
+### DEC-47 · Light or dark screen, one warm palette, Atkinson Hyperlegible (DS-10..12)
 - **When / status:** Nov 1 · Asked for by Chase ("We need a dark and light mode", "fix the color scheme across the board")
 - **Chose:** a "Light or dark screen" choice (Same as my phone by default) on Help and Me, and one warm palette on every phone with 7:1 body text, solid gray waiting buttons, and the card color for the reply box and demo bar. Font: Atkinson Hyperlegible Next in Regular, Medium and SemiBold only (Chase picked it from three on his phone). Persona check `decisions/2026-11-01-light-dark-colors.md`.
 - **Over:** following the phone only (no way to pick); each phone's own system colors (cold grays, pure black, see-through disabled buttons); Apple's rounded font or the phone's own font.
@@ -332,4 +346,4 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Source:** `docs/product/decisions/2026-11-01-light-dark-colors.md`
 
 ---
-Last updated: Nov 1, 2026 (DEC-45)
+Last updated: Nov 1, 2026 (DEC-47)
