@@ -42,6 +42,8 @@ tests/integration/                     PostgREST harness (start.sh/stop.sh) + De
 
 ## Deploy for about $0
 
+> **Current path:** [`docs/eng/SELF-HOST.md`](../docs/eng/SELF-HOST.md) (one command: `scripts/deploy.sh`). The steps below are the original Oct 2026 manual setup, kept for the free-tier notes.
+
 1. **Backblaze:** create the account and **pick US East at signup**, since the region is permanent. Create a **private** bucket `hearth-media`, then an application key scoped to that bucket with read/write. Note the S3 endpoint (e.g. `https://s3.us-east-005.backblazeb2.com`) and region (`us-east-005`). Add a CORS rule on the bucket that allows `GET, PUT, HEAD` from your web viewer origin. Native apps don't need it.
 2. **Supabase:** create a project in **East US (N. Virginia)**. Then:
    ```bash

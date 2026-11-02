@@ -34,6 +34,19 @@ blockers: []
 - **Portfolio / public presence:** the public demo picks up the new colors, font and the choice on Me once this merges (Pages rebuilds from main). The case study now says 47 decisions.
 - **Next exact step:** Chase says "merge", then opens Expo Go to check the font and dark screen on his iPhone (needs an Expo preview republish after merge).
 
+## Nov 1, night shift: self-host guide (Developer edition step 3, branch claude/project-thread-kzt7by-n1101, draft PR)
+- **Where things stood:** the release plan is finished and #85 merged. Video part 2 belongs to its own thread, so tonight took the next item that needs nothing from Chase: the self-host guide (TRACKER "Developer edition", step 3). The repo is public under AGPL, so a guide is what a developer reader looks for first.
+- **Done (docs only):** `docs/eng/SELF-HOST.md`. It covers:
+  - trying it with no accounts;
+  - the accounts to make, and the region choices;
+  - every setting that points at the author's project today (`SUPABASE_PROJECT_REF`, `app/.env.local`, `JOIN_LINK_BASE`, the `invite_link_base` database row from 0014, the Expo ids in `app.json`);
+  - the function secrets, the one-command `deploy.sh`, the read-only `smoke-check.sh`, the app, `family-setup.sh`;
+  - known gaps.
+
+  The root README links it. `backend/README.md`'s old manual deploy section now points to it.
+- **Checked:** `deploy.sh --dry-run` and `family-setup.sh --print-sql` with a made-up project ref and no token. The local demo command serves (HTTP 200).
+- **Next exact step:** Chase says "merge". Follow-ups are listed in TRACKER (Developer edition, step 3): make the author's defaults settable, `--owner-email`, a create-family screen, the B2 purge worker.
+
 ## Oct 31, night shift: the owner's photo helpers switch (TRACKER R17, branch claude/project-thread-kzt7by-n1031, draft PR)
 - **Where things stood:** the release plan (M1.1) is finished and every PR through #84 is merged; 0020 and 0021 are deployed. So tonight took the next unblocked P2 row that needs nothing from Chase.
 - **Built, test-first (HELP-R6, DEC-46, persona check all Green):** the family's owner gets a "Photo helpers" card on Me with two switches, "Set aside repeats" and "Set aside screenshots and blurry photos", for the whole family. Nobody else sees it. A failed save says so and leaves the switch as it was. The switch shows what `my_features` says, so Hearth's global kill switch still wins. Words from grandparent-ux (7/10 first draft; its replacement lines are what was built).

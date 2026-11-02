@@ -147,7 +147,7 @@ What stops milestone 1 from being testable today. Each line names its sequence s
 - **Developer edition** (Chase, Oct 19; post-milestone 1, decided by D10). The bet: a developer parent clones Hearth, deploys their own copy with one command, and grows it with Claude. The repo (CLAUDE.md, agents, TDD, `docs/architecture/`) is already most of the kit. Goal: an impressive dev-community contribution, built by product and dev folks for product and dev folks.
   1. Scan the full git history for secrets (and anything family-identifying) before anything goes public.
   2. Add the AGPL-3.0 LICENSE file (D10), plus the license field in `app/package.json`.
-  3. Self-host guide around `backend/scripts/deploy.sh`: your own Supabase project, your own B2 bucket, your own keys.
+  3. Self-host guide around `backend/scripts/deploy.sh`: your own Supabase project, your own B2 bucket, your own keys. ☑ Nov 1 night shift: `docs/eng/SELF-HOST.md` (draft PR), linked from the README. Follow-ups it names: the project ref, invite link and Expo ids are the author's defaults and have to be changed by hand; the flag `--chase-email` should become `--owner-email`; there's no create-family screen; the B2 purge worker isn't written.
   4. "Fix this with Claude": a bug report or change request opens a Claude Code session on *their* repo. Claude reads code and error reports, never photos, captions or names (rule 2); privacy-security reviews the data flow.
   5. Make the repo public, only after D3 says the name is final (a public repo bakes the name into every fork and link).
   - **Not doing yet:** a paid hosted plan (milestone 7 decides costs), a contributor agreement until outside PRs exist, forums or a Discord, a plugin system, an outside security review (milestone 7).
