@@ -10,7 +10,7 @@ import {
   type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FONT, MIN_TARGET, fontFamily, useTheme } from './theme';
+import { FONT, MIN_TARGET, RADIUS, dialogRadius, fontFamily, useTheme } from './theme';
 
 /** A system symbol: SF Symbol name on iPhone, Material Symbol name on Android and the web. */
 export interface Icon { sf: string; md: string }
@@ -39,7 +39,16 @@ export function Txt({ variant = 'body', style, children, role, testID, numberOfL
     display: { fontFamily: FONT.semibold, fontSize: t.display, lineHeight: Math.round(t.display * 1.2), color: c.ink },
   };
   return (
-    <Text selectable={selectable} accessibilityRole={role === 'text' ? undefined : role} testID={testID} numberOfLines={numberOfLines} style={[v[variant], style]}>
+    <Text
+      selectable={selectable}
+      accessibilityRole={role === 'text' ? undefined : role}
+      // A11Y-1: one level-1 heading per screen (the display title); every other heading is level 2, so a screen
+      // reader's heading list reads like an outline instead of fourteen equal titles.
+      {...(role === 'header' ? { 'aria-level': variant === 'display' ? 1 : 2 } : {})}
+      testID={testID}
+      numberOfLines={numberOfLines}
+      style={[v[variant], style]}
+    >
       {children}
     </Text>
   );
@@ -121,7 +130,7 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
       ]}
     >
       {kind === 'switch' ? null : (
-        <View style={[styles.mark, { borderRadius: round ? 999 : 4, borderColor: checked ? c.accent : c.muted, backgroundColor: checked && kind === 'checkbox' ? c.accent : 'transparent' }]}>
+        <View style={[styles.mark, { borderRadius: round ? RADIUS.pill : RADIUS.small, borderColor: checked ? c.accent : c.muted, backgroundColor: checked && kind === 'checkbox' ? c.accent : 'transparent' }]}>
           {checked && kind === 'radio' ? <View style={[styles.dot, { backgroundColor: c.accent }]} /> : null}
           {checked && kind === 'checkbox' ? <Text style={{ color: c.accentInk, fontSize: t.base, fontFamily: FONT.semibold }}>✓</Text> : null}
         </View>
@@ -133,7 +142,9 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
       {kind === 'switch' ? (
         <View style={styles.switchBox} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           <Text style={{ color: c.ink, fontSize: t.base, fontFamily: FONT.semibold }}>{checked ? 'On' : 'Off'}</Text>
-          <Switch value={checked} trackColor={{ true: c.accent, false: c.line }} />
+          {/* A11Y-2: the web's default On thumb is teal; keep it in Hearth's colors (phones ignore activeThumbColor).
+              A11Y-3: the Off track is muted, not line, so the switch shows at 3:1 (WCAG 1.4.11). */}
+          <Switch value={checked} trackColor={{ true: c.accent, false: c.muted }} {...({ activeThumbColor: c.surface } as object)} />
         </View>
       ) : null}
     </Pressable>
@@ -146,8 +157,8 @@ export function Field(props: TextInputProps & { label: string }) {
   // iPhone: a rounded field like a grouped-list cell, with an edge so it shows on any background.
   // Android: Material's outlined text field.
   const box: TextStyle = os === 'android'
-    ? { borderWidth: 1, borderColor: c.muted, backgroundColor: 'transparent', borderRadius: 4 }
-    : { borderWidth: 1, borderColor: c.line, backgroundColor: c.surface, borderRadius: 10 };
+    ? { borderWidth: 1, borderColor: c.muted, backgroundColor: 'transparent', borderRadius: RADIUS.small }
+    : { borderWidth: 1, borderColor: c.line, backgroundColor: c.surface, borderRadius: RADIUS.medium };
   return (
     <View style={{ gap: 6 }}>
       <Txt variant="strong">{label}</Txt>
@@ -167,7 +178,7 @@ export function Field(props: TextInputProps & { label: string }) {
 export function Card({ children, style, testID }: { children: ReactNode; style?: StyleProp<ViewStyle>; testID?: string }) {
   const { c, os } = useTheme();
   // iPhone: an inset grouped section. Android: Material's outlined card.
-  const look = os === 'android' ? { borderWidth: 1, borderColor: c.line, borderRadius: 12 } : { borderWidth: 0, borderRadius: 10 };
+  const look = os === 'android' ? { borderWidth: 1, borderColor: c.line, borderRadius: RADIUS.medium } : { borderWidth: 0, borderRadius: RADIUS.medium };
   return <View testID={testID} style={[styles.card, { backgroundColor: c.surface }, look, style]}>{children}</View>;
 }
 
@@ -215,7 +226,7 @@ export function Confirm({ visible, title, body, yes, no, onYes, onNo }: {
   return (
     <Modal transparent visible animationType="fade" onRequestClose={onNo}>
       <View style={[styles.scrim, { backgroundColor: c.scrim }]}>
-        <View accessibilityViewIsModal style={[styles.sheet, { backgroundColor: c.surface, borderRadius: os === 'android' ? 28 : 14 }]}>
+        <View accessibilityViewIsModal style={[styles.sheet, { backgroundColor: c.surface, borderRadius: dialogRadius(os) }]}>
           <Txt variant="title" role="header">{title}</Txt>
           {body ? <Txt>{body}</Txt> : null}
           <Button label={yes} variant="danger" onPress={onYes} />
@@ -227,15 +238,15 @@ export function Confirm({ visible, title, body, yes, no, onYes, onNo }: {
 }
 
 const styles = StyleSheet.create({
-  btn: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, borderRadius: 999, borderWidth: 1, paddingHorizontal: 18, paddingVertical: 10, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 },
-  choice: { minHeight: MIN_TARGET + 8, minWidth: MIN_TARGET, borderWidth: 2, borderRadius: 12, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  btn: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, borderRadius: RADIUS.pill, borderWidth: 1, paddingHorizontal: 18, paddingVertical: 10, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 },
+  choice: { minHeight: MIN_TARGET + 8, minWidth: MIN_TARGET, borderWidth: 2, borderRadius: RADIUS.medium, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 },
   mark: { width: 28, height: 28, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
-  dot: { width: 14, height: 14, borderRadius: 999 },
+  dot: { width: 14, height: 14, borderRadius: RADIUS.pill },
   switchBox: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   card: { padding: 14, gap: 12 },
   screen: { padding: 16, gap: 16, paddingBottom: 32 },
   loading: { alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 },
-  notice: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, borderWidth: 1, padding: 12 },
+  notice: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: RADIUS.medium, borderWidth: 1, padding: 12 },
   scrim: { flex: 1, justifyContent: 'center', padding: 16 },
   sheet: { padding: 20, gap: 14 },
 });

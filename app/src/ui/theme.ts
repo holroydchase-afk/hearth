@@ -67,6 +67,19 @@ export const fontFamily = FONT.regular;
 
 export const MIN_TARGET = 48;
 
+// DS-13 (Nov 1, 2026): one spacing scale and four corner sizes, so screens stop picking numbers by hand
+// (the sweep found 13 different gaps and 9 corner sizes). New code uses these; older screens move over
+// as they're touched (TRACKER R30).
+/** Gaps and padding, on a 4 pt grid. Related things sit closer (sm) than unrelated ones (lg, xl). */
+export const SPACE = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 } as const;
+/** Corners: small (checkbox, quiet field), medium (cards, choices, notices, fields), large (event card,
+ *  reply box), pill (buttons, chips, avatars). */
+export const RADIUS = { small: 4, medium: 12, large: 20, pill: 999 } as const;
+/** The one exception: dialogs keep each phone's own corner (HIG alert 14 pt, Material 3 dialog 28 dp). */
+export function dialogRadius(os: OS): number {
+  return os === 'android' ? 28 : 14;
+}
+
 /** HIG text styles at the default size (Body 17, Title 2 22, Title 1 28); Material's ramp raised to match (DS-2). */
 export function typeScale(bigText: boolean) {
   const base = bigText ? 21 : 17;

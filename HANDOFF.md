@@ -1,5 +1,13 @@
 # Handoff
 
+## Nov 1: UX pass: accessibility sweep, design tokens, palette and familiar patterns (TRACKER R30, branch claude/project-thread-iazy1z, PR)
+- **Chase's ask:** copy the standard photo-app patterns ("the more familiar the easier"), an accessibility sweep, and build out the design system and palette. Colors and font stay as PR #88 set them.
+- **Sweep:** `docs/design/a11y-sweep-2026-11-01.md`. Hearth passes text size, names, 48 pt targets, reflow and AA contrast in light and dark. Fixed test-first: A11Y-1 one level-1 heading per screen (Me had 14), A11Y-2 web switch thumb no longer teal, A11Y-3 switch Off track at 3:1. DS-13 `SPACE` and `RADIUS` tokens; the kit uses only them.
+- **Docs:** DESIGN-SYSTEM gains DS-13, a palette table (what each color is for, measured contrast) and familiar patterns P-1..P-12. Ideas log: header photo, Who row, black full-screen viewer, double-tap to Love.
+- **Not checked:** VoiceOver, TalkBack and 200% text on a real phone.
+- **Portfolio / public presence:** the public demo picks up the heading and switch fixes once this merges.
+- **Next exact step:** Chase says "merge"; then grandparent-ux takes A11Y-4..8 and the ideas need a staff-pm scope call.
+
 ## Nov 1: light or dark screen, warmer colors, Atkinson Hyperlegible (TRACKER R29, branch claude/project-thread-dul1po, PR)
 - **Chase's ask:** "We need a dark and light mode", then "review and fix the color scheme across the board, these are rough" (iPhone screenshots of the demo in dark).
 - **Built, test-first:** DS-10 "Light or dark screen" (Same as my phone, Light screen, Dark screen) after Bigger text on Help and Me, saved with the prefs; the native tab bar, keyboard and status bar follow it. DS-11 one warm palette on every phone (no pure black, no system gray), body text 7:1, waiting buttons solid gray instead of see-through blue, reply box and demo bar on the card color. DS-12 Atkinson Hyperlegible Next (Chase's pick from three on his phone) in Regular, Medium and SemiBold only, one bundled file per weight. DEC-47, persona check `decisions/2026-11-01-light-dark-colors.md`, DESIGN-SYSTEM updated.
