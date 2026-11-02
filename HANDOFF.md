@@ -3,21 +3,25 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: studio standard adopted (intake #91); UX pass R30 in PR #90
-next: Chase merges the open PRs (#90, then this one); then the photo-host and merge-gate calls below
+now: merge rule DEC-48 (non-live PRs merge on green); UX pass R30 in PR #90
+next: Chase merges #90 (live); then the photo-host call below
 waiting_on_chase:
   - Allowed domains for stock photos (intake #83)
-  - Merge gate: confirm in his own words that threads may merge their own non-live PRs on green (intake #91)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 2: merge rule (DEC-48; branch claude/project-thread-v54okb, PR)
+- **Why:** Chase answered the merge-gate card "Yes, studio rule" (Nov 2), and said "Merge 92" (merged).
+- **Done:** `docs/eng/MERGING.md` and the CLAUDE.md line now say threads merge their own non-live PRs (docs, tests, CI, agent files, scripts) on green, oldest first; anything touching `app/**`, `packages/**`, the Pages workflow or `backend/**` still waits for Chase, and merging is never deploying. DEC-48 logged. Intake #91 closed by #92.
+- **Next exact step:** none; this PR is non-live, so it merges itself on green.
 
 ## Nov 1: studio standard adopted (intake #91; branch claude/project-thread-v54okb, PR)
 - **Why:** Chase, Nov 1: standardize every project on the merged Product Studio + Hearth rules (studio-agents `docs/studio-standard.md`), filed to Hearth as intake #91 and picked up by the Intake check.
 - **Done:** CLAUDE.md opens with the "Studio standard" line, and its agent section is the current studio template (moments table, one-task order, qa-tdd relay, `Agents:` line) with `grandparent-ux` kept and the new `story-keeper` row. Re-ran `sync.sh`, `sync-tools.sh`, `install-rules.sh` and `sync-agents.sh` (story-keeper now gets the "Every agent" Hearth notes). Took the template's `handoff-check.yml` (status-header step), `log-agent-run.sh` (logs from cloud sessions, which start above the repo) and `check-agents.sh` (both table formats; Hearth's AGENT-NOTES check kept). Kept Hearth's own `check-logs.mjs` (stricter: it also bans "title"), `studio-checks.json` and `settings.json` (Expo plugin). This file now has the status header.
 - **Section 3 docs:** all present under Hearth's names: TRACKER = PLAN, DECISION-LOG = DECISIONS, `docs/eng/LESSONS.md`, `docs/product/ACCOUNTS.md`, `docs/product/MARKETING.md`, `docs/architecture/`. Hearth's `docs/product/STORY.md` is the product story, not the Atlas Story mirror; no `docs/STORY.md` yet.
 - **Not changed, needs Chase:** the intake also asks to replace "merge only on Chase's word" (CLAUDE.md, `docs/eng/MERGING.md`) with "threads merge their own PRs on green; live product and live demo wait for Chase". That loosens a rule Chase set in this repo, and the only source here is another project's write-up, so it waits for Chase's own words. In Hearth almost every app PR changes the live demo (Pages rebuilds on `app/**`), so it would still wait for him either way.
-- **Next exact step:** Chase says "merge" for this PR, and answers the merge-gate question.
+- **Next exact step:** done: merged Nov 2 on Chase's "Merge 92"; the merge gate became DEC-48.
 
 ## Nov 1: UX pass: accessibility sweep, design tokens, palette and familiar patterns (TRACKER R30, branch claude/project-thread-iazy1z, PR)
 - **Chase's ask:** copy the standard photo-app patterns ("the more familiar the easier"), an accessibility sweep, and build out the design system and palette. Colors and font stay as PR #88 set them.
@@ -396,7 +400,6 @@ blockers: []
 7. **Video is off for the beta.** iOS location metadata can't be stripped without a transcoder.
 
 ## Chase's to-dos (blocking)
-- **Merge gate (intake #91), Nov 1:** confirm in your own words whether Hearth threads may merge their own PRs on green when they don't touch the live app or demo (the studio standard's section 5). Until then, Hearth keeps "merge only on Chase's word".
 - **Intake #83 (stock photos in the demo), Oct 31:** this cloud environment can't reach any stock photo site (Unsplash, Pexels, Openverse and Wikimedia all refused). Add `images.unsplash.com`, `unsplash.com`, `images.pexels.com`, `api.pexels.com`, `api.openverse.org` and `upload.wikimedia.org` under Allowed domains (Project settings, Cloud environment, gear), then the next Intake check does it. Labeled needs-chase.
 - Confirm Apple Developer enrollment.
 - Create the accounts:
