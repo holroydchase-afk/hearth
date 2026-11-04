@@ -507,7 +507,18 @@ describe.each(factories)('%s contract (API.md)', (_name, factory, caps) => {
       await poster.publishPost(id);
       return id;
     }
-    const tlIds = async (api: HearthApi) => (await api.getTimeline({ space: h.spaceId, limit: 50 })).map((p) => p.post_id);
+    // Every page, not just the first: on the real API earlier tests' posts pile up in the same family and push
+    // these dated (older) posts past the first 50.
+    const tlIds = async (api: HearthApi) => {
+      const ids: string[] = [];
+      for (let before: { at: string; id: string } | null = null; ;) {
+        const page = await api.getTimeline({ space: h.spaceId, limit: 50, beforeAt: before?.at, beforeId: before?.id });
+        ids.push(...page.map((p) => p.post_id));
+        if (page.length < 50) return ids;
+        const last = page[page.length - 1]!;
+        before = { at: last.sort_at, id: last.post_id };
+      }
+    };
 
     it('BETA-TIME-2 orders by date taken (shared date when none), newest first; rows carry taken_at and sort_at', async () => {
       const old = await datedPost('2024-07-04T14:00:00.000Z');
