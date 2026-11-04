@@ -1,3 +1,5 @@
+> **Historical.** A one-time request to the portfolio site, kept as sent. Since then the repo went public and the demo moved to [chaseholroyd.com/hearth](https://chaseholroyd.com/hearth/); see the [README](../../README.md) for the current state.
+
 INTAKE for Product Studio (from Hearth, Oct 28, 2026): three reusable lessons from release M1.1
 
 Repos: studio-agents (templates and agent notes) and pm-tools (STACK.md, LESSONS). Owner: Product Studio. Hearth doesn't edit those repos; this is the hand-off.
