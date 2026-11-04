@@ -21,6 +21,9 @@ jobs:
         working-directory: app
     env:
       BASE: /hearth
+      # ANALYTICS-1: Umami page views on the demo site only; empty (off) until Chase sets both repo variables.
+      UMAMI_SCRIPT_URL: ${{ vars.UMAMI_SCRIPT_URL }}
+      UMAMI_WEBSITE_ID: ${{ vars.UMAMI_WEBSITE_ID }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
