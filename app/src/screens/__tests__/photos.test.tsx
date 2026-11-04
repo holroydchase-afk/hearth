@@ -62,7 +62,7 @@ describe('Photos screen', () => {
     fireEvent.press(heart);
     await waitFor(() => expect(screen.getByRole('button', { name: 'Love it' }).props.accessibilityState.selected).toBe(true));
     await waitFor(() => expect(be.state.hearts).toHaveLength(1));
-    expect(screen.getByText('❤️ 1')).toBeTruthy();
+    expect(screen.getByLabelText('1 love')).toBeTruthy();
     fireEvent.press(screen.getByRole('button', { name: 'Love it' }));
     await waitFor(() => expect(screen.getByRole('button', { name: 'Love it' }).props.accessibilityState.selected).toBe(false));
     await waitFor(() => expect(be.state.hearts).toHaveLength(0));
@@ -120,7 +120,7 @@ describe('Photos screen', () => {
     await be.clientFor(FIXTURE.users.chase.id).toggleHeart(postId);
     await be.clientFor(FIXTURE.users.earl.id).toggleHeart(postId); // AUD-8: Jo can't see a relative's heart
     await act(async () => { await probe.app!.feed!.refresh(); });
-    expect(await screen.findByText('❤️ 1')).toBeTruthy();
+    expect(await screen.findByLabelText('1 love')).toBeTruthy();
     expect(getByLabelText('Write something back to Chase').props.value).toBe('She looks just like');
   });
 

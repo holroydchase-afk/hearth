@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { REACTIONS, type FeedPost, type Reaction } from '../api/HearthApi';
 import type { CommentView } from '../feed/store';
 import { useApp, useFeed } from '../state/AppContext';
-import { Button, Card, Confirm, Field, Notice, Txt } from '../ui/kit';
+import { Button, Card, Confirm, Field, Notice, SystemIcon, Txt, type Icon } from '../ui/kit';
 import { andList, initialOf, people, shortDate } from '../ui/format';
 import { MIN_TARGET, SPACE, fontFamily, useTheme } from '../ui/theme';
 import { PhotoCollage } from './PhotoCollage';
@@ -18,6 +18,14 @@ import { PhotoCollage } from './PhotoCollage';
  *  Prototype: prototype/moments.html. No "Seen by" count (DEC-21, RV-U1): it counts who didn't look (A2). */
 const LABEL: Record<Reaction, string> = { '❤️': 'Love it', '😂': 'Haha', '👍': 'Like it' };
 const WORD: Record<Reaction, string> = { '❤️': 'love', '😂': 'haha', '👍': 'like' };
+// REACT-10 (Chase, Nov 4): flat system icons in the tab bar's style, not the colorful emoji. The stored
+// reaction stays the emoji (0017); only the picture on screen changes.
+const ICON: Record<Reaction, Icon> = {
+  '❤️': { sf: 'heart', md: 'favorite' },
+  '😂': { sf: 'face.smiling', md: 'sentiment_very_satisfied' },
+  '👍': { sf: 'hand.thumbsup', md: 'thumb_up' },
+};
+const COMMENT_ICON: Icon = { sf: 'bubble.left', md: 'chat_bubble' };
 
 export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   const { feed, session } = useApp();
@@ -76,23 +84,32 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
       <PhotoCollage postId={post.post_id} media={ready} />
       {kinds.length ? (
         <View testID={`reactions-${post.post_id}`} accessible accessibilityLabel={kinds.map(([e, k]) => `${k} ${WORD[e]}`).join(', ')} style={styles.summary}>
-          <Txt variant="muted">{kinds.map(([e, k]) => `${e} ${k}`).join('   ')}</Txt>
+          <View style={styles.counts}>
+            {kinds.map(([e, k]) => (
+              <View key={e} style={styles.count}>
+                <SystemIcon icon={ICON[e]} color={c.muted} size={18} />
+                <Txt variant="muted">{String(k)}</Txt>
+              </View>
+            ))}
+          </View>
         </View>
       ) : null}
-      {/* REACT-7 (Chase, Oct 25): icons only, no words under them (his call over DS-3); each keeps its spoken label. */}
+      {/* REACT-7 (Chase, Oct 25): icons only, no words under them (his call over DS-3); each keeps its spoken label.
+          REACT-10 (Nov 4): flat icons, not emoji. */}
       <View testID={`actions-${post.post_id}`} style={[styles.actions, { borderColor: c.line }]}>
         {REACTIONS.map((e) => (
           <Button
             key={e}
             label={LABEL[e]}
-            text={<Text style={styles.emoji}>{e}</Text>}
+            icon={ICON[e]}
+            text={<></>}
             selected={mineNow === e}
             variant="quiet"
             style={{ flex: 1 }}
             onPress={() => void feed?.react(post.post_id, e)}
           />
         ))}
-        <Button label="Write a comment" text={<Text style={styles.emoji}>💬</Text>} variant="quiet" style={{ flex: 1 }} onPress={() => box.current?.focus()} />
+        <Button label="Write a comment" icon={COMMENT_ICON} text={<></>} variant="quiet" style={{ flex: 1 }} onPress={() => box.current?.focus()} />
       </View>
       <View style={[styles.newest, { borderColor: c.line }]}>
         {newest ? <CommentList post={post} list={[newest]} /> : null}
@@ -333,7 +350,8 @@ const styles = StyleSheet.create({
   caption: { paddingHorizontal: SPACE.lg, paddingBottom: SPACE.md },
   fold: { alignSelf: 'flex-start', paddingHorizontal: 0 },
   summary: { paddingHorizontal: SPACE.lg, paddingTop: SPACE.md },
-  emoji: { fontSize: 24, lineHeight: 30, textAlign: 'center' },
+  counts: { flexDirection: 'row', gap: SPACE.lg },
+  count: { flexDirection: 'row', alignItems: 'center', gap: SPACE.xs },
   actions: { flexDirection: 'row', gap: SPACE.sm, marginHorizontal: SPACE.sm, marginTop: SPACE.sm, paddingVertical: SPACE.xs, borderTopWidth: StyleSheet.hairlineWidth },
   newest: { borderTopWidth: StyleSheet.hairlineWidth, paddingHorizontal: SPACE.lg, paddingTop: SPACE.md, paddingBottom: SPACE.lg, gap: SPACE.sm },
   seeAll: { alignSelf: 'flex-start', paddingHorizontal: 0 },
