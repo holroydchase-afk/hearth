@@ -1,7 +1,7 @@
 // DEMO-5 (RR-5): the hosted demo works under /demo/hearth/ on a static host (GitHub Pages rules):
 // the first page, a cold load of each tab's address, the pictures, and no failed requests.
 const { test, expect } = require('../../e2e/node_modules/@playwright/test');
-// PAGES-1: the same checks run under GitHub Pages' path (SITE_BASE=/Hearth) as under the portfolio's /demo/hearth.
+// PAGES-1: the same checks run under GitHub Pages' path (SITE_BASE=/hearth) as under the portfolio's /demo/hearth.
 const BASE = process.env.SITE_BASE || '/demo/hearth';
 const baseRe = BASE.replace(/[/]/g, '\\/');
 
