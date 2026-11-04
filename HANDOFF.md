@@ -3,13 +3,19 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: demo moves to chaseholroyd.com/hearth/ after the repo rename (intake #95 ask 3)
-next: intake #94 (repo cleanup, test totals), then #95; #83 uses Chase's own photos
+now: intake #95 part 1 (roadmap labels, portable tokens, Umami off by default); #94 done (PR #97)
+next: #95 look cleanup (keep Atkinson) with before/after shots; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 4: design tokens, roadmap labels and demo-site analytics (intake #95 part 1, TRACKER R32; branch claude/project-thread-v54okb, PR)
+- **Why:** Product Studio intake #95 (Chase, Nov 4): Hearth gets the full "shipped" treatment for PM hiring managers.
+- **Done:** README "Not built yet (roadmap)": the family vault, a privacy guardian, a memory engine and the photo frame, each plainly not built. `docs/design/tokens.json` is generated from `app/src/ui/theme.ts` (DS-TOKENS test fails on drift); DESIGN-SYSTEM.md points to it. `app/scripts/add-site-analytics.sh` adds Umami to the demo *site* only, run by `build-demo.sh`; off unless repo variables `UMAMI_SCRIPT_URL` and `UMAMI_WEBSITE_ID` are both set; the id must be a UUID and the address https (ANALYTICS-1, 10 checks); nothing in `app/src` mentions Umami (ANALYTICS-2). MARKETING claim narrowed to "the app has no trackers"; architecture 01 notes the demo-site exception.
+- **Not verified live:** Umami's docs were unreachable from this environment (rule 8), so no script address is baked in; Chase copies both values from Umami's "Tracking code" page.
+- **Next exact step:** Chase, when ready: make an Umami Cloud site for chaseholroyd.com, then add the two values under repo Settings → Secrets and variables → Actions → Variables. Then #95's look cleanup.
 
 ## Nov 4: public-repo cleanup and real test totals (intake #94, TRACKER R31; branch claude/project-thread-v54okb, PR)
 - **Why:** Product Studio intake #94 (Chase, Nov 4): Hearth stays public, so the repo must read well to an interviewer and match the site.

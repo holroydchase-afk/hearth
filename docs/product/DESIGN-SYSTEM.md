@@ -2,6 +2,10 @@
 
 Owner: grandparent-ux (Hearth's UI/UX designer). Written Oct 19, 2026, from Chase's ask: "can't we go 100% apple UI/UX. guidelines, guardrails, components, fonts, etc. and maybe the same for android ... that should make it intuitive out of the gate without us guessing. AND you would have tons of constraints". Decision and persona check: `docs/product/decisions/2026-10-19-native-design-system.md`.
 
+## Portable tokens (DS-TOKENS, Nov 4)
+
+The type scale, spacing, corners, tap target, font and both palettes are also in [`docs/design/tokens.json`](../design/tokens.json), generated from `app/src/ui/theme.ts` (a test fails if they drift). Other studio products reuse it and swap the colors. Font: Atkinson Hyperlegible Next only (Chase, Nov 1, reaffirmed Nov 4).
+
 ## The rule
 
 1. **On iPhone, follow Apple's Human Interface Guidelines (HIG)**: https://developer.apple.com/design/human-interface-guidelines

@@ -12,4 +12,6 @@ for route in photos share groups me help sign-in viewer; do
   mkdir -p "$OUT/$route"
   cp "$OUT/index.html" "$OUT/$route/index.html"
 done
+# ANALYTICS-1: page views on the demo site only, off unless the two Umami values are set.
+bash scripts/add-site-analytics.sh "$OUT"
 echo "Built $OUT for $BASE/ (copy its contents to that folder of the site)"

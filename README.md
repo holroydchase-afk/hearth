@@ -53,6 +53,18 @@ Families with divorces, remarriages and step-relatives don't fit one group chat.
 - [Why Hearth exists](docs/product/STORY.md) · [Decision log](docs/product/DECISION-LOG.md) · [Persona check](docs/product/PERSONA-CHECK.md)
 - [Architecture for privacy-minded readers](docs/architecture/) · [Threat model](docs/architecture/04-threat-model.md)
 
+## Not built yet (roadmap)
+
+These are plans, not features. Nothing on this page or in the demo should be read as saying they exist today:
+- **The family vault:** end-to-end encryption where only family phones hold the keys ([plan](docs/product/PLAN-FAMILY-VAULT.md)). Today photos are encrypted on the phone, but Hearth's server holds the keys ([encryption and keys](docs/architecture/03-encryption-and-keys.md)).
+- **A privacy guardian:** on-device photo checks, such as faces, that warn before a photo is shared. Not built ([AI features](docs/product/AI-FEATURES.md)).
+- **A family memory engine** for finding old photos. Not built; search isn't built yet either.
+- **A home-screen photo frame** ([spec](docs/product/SPEC-PHOTO-FRAME.md)).
+
+## What the demo website collects
+
+The app has no analytics, ads or trackers. The public demo *website* (chaseholroyd.com/hearth) may count page views with [Umami](https://umami.is): no cookies and no personal data, page views on the demo site only. It is off until a site id is set (`UMAMI_SCRIPT_URL` and `UMAMI_WEBSITE_ID` repo variables, ANALYTICS-1).
+
 ## Run it
 
 ```

@@ -8,7 +8,7 @@ Hearth is a private photo app for families. Every post has an explicit audience 
 |---|---|
 | A post you can't see doesn't exist for you | Access is enforced in Postgres row-level security (RLS) and in the one function that hands out media URLs. Not-allowed and not-found return the same answer |
 | Photos are never readable by a storage vendor | Media is encrypted on the phone before upload; the bucket holds only ciphertext |
-| Minimal metadata | Location and camera data are stripped on the phone; no analytics, ad or crash SDKs; notices carry no photo, caption or comment text |
+| Minimal metadata | Location and camera data are stripped on the phone; no analytics, ad or crash SDKs in the app (the public demo website alone may count page views with Umami, ANALYTICS-1); notices carry no photo, caption or comment text |
 | Data stored in the US | Database and media live in US regions (see residency gaps below) |
 | No AI on family media | No component sends media or metadata to any model or analytics service |
 
@@ -45,4 +45,4 @@ Hearth is a private photo app for families. Every post has an explicit audience 
 **Gap:** "stored in the US" is true; "never leaves the US" is not yet. Supabase logs and telemetry are stored outside the US, its support staff are global, and its contracting entity is in Singapore (`docs/eng/research.md` §4). Push notices transit Apple and Google networks. Closing this means self-hosted auth and Postgres on US infrastructure, a post-proof-of-concept item (anchor A3).
 
 ---
-Last checked against code: 2026-10-19, a522a3a (messenger, migration 0015) and 716bc36 (problem details log)
+Last checked against code: 2026-11-04 (demo-site analytics note, intake #95); earlier 2026-10-19, a522a3a and 716bc36
