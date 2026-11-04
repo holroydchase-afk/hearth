@@ -1,7 +1,7 @@
 // DEMO-5 (RR-5): the demo as it will be hosted, under /demo/hearth/ on a static host with no fallback.
 // Build first: bash scripts/build-demo.sh
 const { defineConfig } = require('../../e2e/node_modules/@playwright/test');
-const BASE = process.env.SITE_BASE || '/demo/hearth'; // PAGES-1: SITE_BASE=/Hearth for GitHub Pages
+const BASE = process.env.SITE_BASE || '/demo/hearth'; // PAGES-1: SITE_BASE=/hearth for GitHub Pages
 module.exports = defineConfig({
   testDir: '.',
   testMatch: /site\.spec\.js/,

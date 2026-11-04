@@ -1,6 +1,6 @@
 name: demo-site
 # Builds the no-login demo (made-up family, no backend) with scripts/build-demo.sh and publishes it on
-# GitHub Pages at chaseholroyd.com/Hearth/ (TRACKER R26). Runs on every push to main that touches the app,
+# GitHub Pages at chaseholroyd.com/hearth/ (TRACKER R26). Runs on every push to main that touches the app,
 # or by hand. Needs Settings > Pages > Source: GitHub Actions.
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
       run:
         working-directory: app
     env:
-      BASE: /Hearth
+      BASE: /hearth
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
