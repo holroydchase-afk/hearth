@@ -1,0 +1,5 @@
+ok   - TOTALS-1: the script exists
+ok   - TOTALS-1: database checks are summed across every RESULT line
+ok   - TOTALS-1: app tests come from Jest's own JSON
+ok   - TOTALS-1: the README says how to get the totals
+TEST-TOTALS RESULT: 4 passed, 0 failed

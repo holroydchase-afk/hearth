@@ -1,0 +1,11 @@
+ok   - ANALYTICS-1: the script exists
+ok   - ANALYTICS-1: off by default: no script tag and the run passes
+ok   - ANALYTICS-1: off is said out loud
+ok   - ANALYTICS-1: on: every page gets one deferred tag in the head
+ok   - ANALYTICS-1: running twice adds no second tag
+ok   - ANALYTICS-1: a website id that isn't a UUID fails the build and touches nothing
+ok   - ANALYTICS-1: a script address that isn't https fails the build
+ok   - ANALYTICS-1: build-demo.sh runs it on the site build
+ok   - ANALYTICS-1: the Pages workflow passes the two repo variables
+ok   - ANALYTICS-2: nothing in the app's own code mentions Umami
+SITE ANALYTICS RESULT: 10 passed, 0 failed
