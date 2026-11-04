@@ -6,7 +6,7 @@ import path from 'path';
 
 const root = path.join(__dirname, '..', '..', '..');
 const read = (p: string) => fs.readFileSync(path.join(root, p), 'utf8');
-const DEMO = 'https://chaseholroyd.com/demo/hearth/';
+const DEMO = 'https://chaseholroyd.com/hearth/'; // GitHub Pages, repo renamed to lowercase hearth (Nov 4)
 
 describe('portfolio claims', () => {
   it('RD-1 the case study never claims more decisions than the log has, and is no more than 10 behind', () => {
@@ -20,5 +20,6 @@ describe('portfolio claims', () => {
   it('RD-2 the README and case study link the published no-login demo', () => {
     expect(read('README.md')).toContain(DEMO);
     expect(read('docs/portfolio/CASE-STUDY.md')).toContain(DEMO);
+    for (const f of ['README.md', 'docs/portfolio/CASE-STUDY.md']) expect(read(f)).not.toMatch(/chaseholroyd\.com\/(demo\/hearth|Hearth)\//);
   });
 });

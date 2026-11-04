@@ -11,10 +11,17 @@ waiting_on_chase:
 blockers: []
 -->
 
+## Nov 4: public-repo cleanup and real test totals (intake #94, TRACKER R31; branch claude/project-thread-v54okb, PR)
+- **Why:** Product Studio intake #94 (Chase, Nov 4): Hearth stays public, so the repo must read well to an interviewer and match the site.
+- **Done:** `scripts/test-totals.sh` prints both totals from the suites' own output (TOTALS-1 test, run by test-all): **734 app tests (94 files, 1 skipped), 1,029 database checks**. README: "Start here" table, demo link chaseholroyd.com/hearth, SDK 58, real totals, the nine agents, the "no outside security review yet" line. CASE-STUDY: same counts, roster and link. The five old `docs/portfolio/INTAKE-*` files carry a "Historical" note. Claim check: AES-256-GCM (`03-encryption-and-keys.md`), MLS RFC 9420 (`06-messenger.md`), row-level security (`01-system-overview.md`) and D10 (`04-threat-model.md`) all match the site.
+- **Flagged, not changed:** `prototype/` and `e2e/` (the throwaway HTML prototype, still under test-all); `docs/product/REMAINING.md` (Oct 16 critical path, mostly superseded by TRACKER); the hosted join link `*.expo.app/join/` in `app/src/api/links.ts` is the app's real invite host, not a private link.
+- **Next exact step:** reply on #94 with the totals once merged; Product Studio fixes the site's Hearth page.
+
 ## Nov 4: demo path follows the repo rename (branch claude/project-thread-v54okb, PR)
 - **Why:** Chase renamed the repo to lowercase `hearth` (Nov 4), so Pages now serves chaseholroyd.com/hearth/ and the old /Hearth/ build's asset paths broke the demo.
 - **Done:** `demo-site.yml` builds with `BASE: /hearth`; the PAGES-1 site checks use `SITE_BASE=/hearth`. `e2e:site` under /hearth passed 3x locally (8/8). Old /Hearth/ links in past entries below stay as history.
-- **Next exact step:** after merge the Pages workflow rebuilds; check https://chaseholroyd.com/hearth/ loads with no errors. Product Studio points the portfolio at /hearth/.
+- **Portfolio / public presence:** live and browser-checked at https://chaseholroyd.com/hearth/ (no errors); /Hearth/ is now 404. Portfolio intake filed: holroydchase-afk/holroydchase-afk.github.io#51 (links to /hearth/, repo link, real totals).
+- **Next exact step:** Product Studio works #51.
 
 ## Nov 2: merge rule (DEC-48; branch claude/project-thread-v54okb, PR)
 - **Why:** Chase answered the merge-gate card "Yes, studio rule" (Nov 2), and said "Merge 92" (merged).

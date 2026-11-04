@@ -12,7 +12,16 @@ Built by Chase Holroyd, a product manager, as a working proof of concept: one pe
 
 <sub>Screens from the demo: a made-up family and drawn sample pictures.</sub>
 
-**Try it, no sign-in:** [chaseholroyd.com/demo/hearth](https://chaseholroyd.com/demo/hearth/). It's a made-up family kept only in your browser. On a phone it's the app itself; on a laptop a short guide sits beside it. Tap "Grandma's view" to see that each photo reaches only the people it was shared with.
+**Try it, no sign-in:** [chaseholroyd.com/hearth](https://chaseholroyd.com/hearth/). It's a made-up family kept only in your browser. On a phone it's the app itself; on a laptop a short guide sits beside it. Open **Details** in the Demo bar and pick **See it as Grandma Jo** to see that each photo reaches only the people it was shared with.
+
+## Start here
+
+| To see | Read |
+|---|---|
+| How it works and what it protects | [Architecture](docs/architecture/) (system overview, data flow, encryption and keys, threat model) |
+| Why each call was made | [Decision log](docs/product/DECISION-LOG.md): every decision, what it beat, and why |
+| How it's tested | [Testing](docs/eng/TESTING.md), plus `bash scripts/test-totals.sh` for the real totals |
+| What's built and what's next | [Tracker](docs/product/TRACKER.md) and [Beta spec](docs/product/BETA-SPEC.md) |
 
 ## The problem
 
@@ -29,12 +38,12 @@ Families with divorces, remarriages and step-relatives don't fit one group chat.
 
 | | |
 |---|---|
-| App | Expo SDK 57 (React Native, TypeScript strict), iPhone, Android and web from one codebase |
+| App | Expo SDK 58 (React Native, TypeScript strict), iPhone, Android and web from one codebase |
 | Backend | Supabase (Postgres with row-level security, Edge Functions), US East; Backblaze B2 for encrypted photos |
-| Tests | 600+ app tests (Jest), 800+ database checks (SQL), web end-to-end tests (Playwright), contract tests that run the same suite against a fake and the real backend |
+| Tests | 734 app tests (Jest, 94 files), 1,029 database checks (SQL), web end-to-end tests (Playwright), contract tests that run the same suite against a fake and the real backend. Counted Nov 4, 2026 with `bash scripts/test-totals.sh` |
 | Process | Every change starts with a failing test that names its requirement. Every product decision gets a persona check, one Green or Red per relative type, and CI fails without it. Decisions are logged with what they beat |
 
-**An AI team with lanes.** The repo holds eight specialist agents: a staff PM, a QA engineer, an app engineer, a UI/UX designer who speaks for the grandparents, a UX reviewer for anything shown publicly, a privacy and security lead, a marketing partner and a funding analyst. The main Claude session works as chief of staff and routes each request to one lane. Chase sets the goals, makes the calls and owns the merge button.
+**An AI team with lanes.** The repo holds nine specialist agents in `.claude/agents/`: a staff PM, a QA engineer, an app engineer, an architect, a designer who speaks for the grandparents, a UX reviewer for anything shown publicly, a privacy and security lead, a positioning partner and a story keeper that logs each decision. The main Claude session works as chief of staff and routes each request to one lane. Chase sets the goals, makes the calls and owns the merge button.
 
 **Measured, not guessed.** `docs/eng/PERFORMANCE.md` holds speed budgets with tests that fail when one is missed. For example, JavaScript encryption measured about 370 ms per photo on a phone-like runtime, which led to parallel uploads and a switch to native or browser crypto wherever the runtime has it.
 
@@ -50,10 +59,11 @@ Families with divorces, remarriages and step-relatives don't fit one group chat.
 cd app && npm ci && npm test            # app tests
 cd backend && bash tests/run.sh         # database tests (local Postgres 16)
 bash test-all.sh                        # everything
+bash scripts/test-totals.sh             # app test and database check totals
 ```
 
-**Try the demo, no accounts:** `cd app && npm run build:demo-site` builds the public demo (a made-up family with sample pictures, kept in the browser, no backend) into `app/dist-demo-site/`, for chaseholroyd.com/demo/hearth/. To click through it locally: `npm run export:web:demo && node scripts/serve-dist.js dist-demo 8090`, then open http://127.0.0.1:8090. On a laptop it shows the app at phone width beside a short guide; "Grandma's view" shows that each photo reaches only the people it was shared with.
+**Try the demo, no accounts:** `cd app && npm run build:demo-site` builds the public demo (a made-up family with sample pictures, kept in the browser, no backend) into `app/dist-demo-site/`; GitHub Pages publishes it at chaseholroyd.com/hearth/ on every app change to `main`. To click through it locally: `npm run export:web:demo && node scripts/serve-dist.js dist-demo 8090`, then open http://127.0.0.1:8090. On a laptop it shows the app at phone width beside a short guide; the Demo bar's Details drawer switches to Grandma Jo's view.
 
 ## Status
 
-Milestone 1 (the founder using it end to end on his own phone) is in testing. Next is milestone 2, his spouse. Then come relatives, in order of how comfortable they are with tech. Beta target: about 12 grandparents in West Virginia. License: AGPL-3.0 ([LICENSE](LICENSE)). The repo is public since Oct 29, 2026.
+Milestone 1 (the founder using it end to end on his own phone) is in testing. Next is milestone 2, his spouse. Then come relatives, in order of how comfortable they are with tech. Beta target: about 12 grandparents in West Virginia. License: AGPL-3.0 ([LICENSE](LICENSE)). The repo is public. No outside security review has been done yet ([threat model](docs/architecture/04-threat-model.md)).

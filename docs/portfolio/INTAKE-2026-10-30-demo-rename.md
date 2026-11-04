@@ -1,3 +1,5 @@
+> **Historical.** A one-time request to the portfolio site, kept as sent. Since then the repo went public and the demo moved to [chaseholroyd.com/hearth](https://chaseholroyd.com/hearth/); see the [README](../../README.md) for the current state.
+
 INTAKE for Product Studio (from Hearth, Oct 30, 2026): demo parent renamed, demo rebuilt
 
 Repo: holroydchase-afk.github.io (portfolio). Folder: demo/hearth/. Page: family-photos.html and the homepage feature (portfolio PR #38). Owner: Product Studio.

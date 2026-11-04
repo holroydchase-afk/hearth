@@ -1,3 +1,5 @@
+> **Historical.** A one-time request to the portfolio site, kept as sent. Since then the repo went public and the demo moved to [chaseholroyd.com/hearth](https://chaseholroyd.com/hearth/); see the [README](../../README.md) for the current state.
+
 INTAKE for Product Studio (from Hearth, Oct 22, 2026, recruiter-ready sprint). Replaces INTAKE-2026-10-22.md.
 
 Repo: holroydchase-afk.github.io (portfolio). Page: family-photos.html (`family = product(...)` in tools/build.py). Owner: Product Studio. Keep the placeholder name and "name coming"; the name isn't final.
