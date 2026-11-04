@@ -8,7 +8,7 @@ import type { CommentView } from '../feed/store';
 import { useApp, useFeed } from '../state/AppContext';
 import { Button, Card, Confirm, Field, Notice, Txt } from '../ui/kit';
 import { andList, initialOf, people, shortDate } from '../ui/format';
-import { MIN_TARGET, fontFamily, useTheme } from '../ui/theme';
+import { MIN_TARGET, SPACE, fontFamily, useTheme } from '../ui/theme';
 import { PhotoCollage } from './PhotoCollage';
 
 /** MOMENT-1..8 (UAT 9): one upload as one compact card, like a standard photo feed. Who and when, the caption,
@@ -46,19 +46,21 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   const many = ready.length > 1;
   const these = many ? `these ${ready.length} photos` : 'this photo';
   // MOMENT-1: the sender sees which groups it went to, by name.
-  const to = mine && post.audience?.length ? `to ${andList(post.audience.map((a) => a.name))}` : null;
+  // LOOK-1: on its own line under the date, so a long group name doesn't wrap the date with it.
+  const to = mine && post.audience?.length ? `Sent to ${andList(post.audience.map((a) => a.name))}` : null;
   // CAP-6: "Edited" after the date once the sender changed the words.
-  const when = [shortDate(post.published_at), post.words_edited_at ? 'Edited' : null, to].filter(Boolean).join(' · ');
+  const when = [shortDate(post.published_at), post.words_edited_at ? 'Edited' : null].filter(Boolean).join(' · ');
 
   return (
     <Card testID={`post-${post.post_id}`} style={{ padding: 0, gap: 0, overflow: 'hidden' }}>
-      <View style={styles.head}>
+      <View testID={`card-head-${post.post_id}`} style={styles.head}>
         <View style={[styles.avatar, { backgroundColor: c.accentSoft }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           <Txt variant="strong" style={{ color: c.accent }}>{initialOf(post.author_name)}</Txt>
         </View>
         <View style={{ flex: 1, minWidth: 0 }}>
           <Txt variant="strong">{post.author_name}</Txt>
           <Txt variant="muted" testID={`when-${post.post_id}`}>{when}</Txt>
+          {to ? <Txt variant="muted" testID={`to-${post.post_id}`}>{to}</Txt> : null}
         </View>
         <Button
           label={`More for ${many ? 'these photos' : 'this photo'}`}
@@ -324,16 +326,16 @@ function Caption({ text }: { text: string }) {
 }
 
 const styles = StyleSheet.create({
-  head: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10, paddingLeft: 14, paddingRight: 4 },
+  head: { flexDirection: 'row', alignItems: 'flex-start', gap: SPACE.md, paddingTop: SPACE.md, paddingBottom: SPACE.sm, paddingLeft: SPACE.lg, paddingRight: SPACE.xs },
   avatar: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
-  more: { paddingHorizontal: 10 },
-  title: { paddingHorizontal: 14, paddingBottom: 4 },
-  caption: { paddingHorizontal: 14, paddingBottom: 12 },
+  more: { paddingHorizontal: SPACE.md },
+  title: { paddingHorizontal: SPACE.lg, paddingBottom: SPACE.xs },
+  caption: { paddingHorizontal: SPACE.lg, paddingBottom: SPACE.md },
   fold: { alignSelf: 'flex-start', paddingHorizontal: 0 },
-  summary: { paddingHorizontal: 14, paddingTop: 10 },
+  summary: { paddingHorizontal: SPACE.lg, paddingTop: SPACE.md },
   emoji: { fontSize: 24, lineHeight: 30, textAlign: 'center' },
-  actions: { flexDirection: 'row', gap: 8, marginHorizontal: 8, marginTop: 6, paddingVertical: 4, borderTopWidth: StyleSheet.hairlineWidth },
-  newest: { borderTopWidth: StyleSheet.hairlineWidth, paddingHorizontal: 14, paddingTop: 10, paddingBottom: 14, gap: 8 },
+  actions: { flexDirection: 'row', gap: SPACE.sm, marginHorizontal: SPACE.sm, marginTop: SPACE.sm, paddingVertical: SPACE.xs, borderTopWidth: StyleSheet.hairlineWidth },
+  newest: { borderTopWidth: StyleSheet.hairlineWidth, paddingHorizontal: SPACE.lg, paddingTop: SPACE.md, paddingBottom: SPACE.lg, gap: SPACE.sm },
   seeAll: { alignSelf: 'flex-start', paddingHorizontal: 0 },
   replyRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
   sheetHead: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingTop: 12 },

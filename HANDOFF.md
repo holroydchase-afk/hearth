@@ -3,13 +3,18 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: intake #95 part 1 (roadmap labels, portable tokens, Umami off by default); #94 done (PR #97)
-next: #95 look cleanup (keep Atkinson) with before/after shots; #83 uses Chase's own photos
+now: intake #95 part 2, post card cleanup (LOOK-1..3), waiting for Chase's look at the before/after
+next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 4: post card cleanup (intake #95 part 2, LOOK-1..3; branch claude/project-thread-v54okb, PR)
+- **Why:** #95 says the look reads dated; Chase kept Atkinson (Nov 4 card), so the fix is spacing and layout.
+- **Done:** the post card's date and "Sent to <group>" are two lines instead of one wrapped run (LOOK-1); the initial lines up with the name (LOOK-2); every inset on the card is on the 4 pt SPACE scale, 16 pt sides (LOOK-3). Before/after: `docs/reviews/2026-11-04-look/`.
+- **Next exact step:** Chase looks at the before/after and says merge (it changes the app and the live demo).
 
 ## Nov 4: design tokens, roadmap labels and demo-site analytics (intake #95 part 1, TRACKER R32; branch claude/project-thread-v54okb, PR)
 - **Why:** Product Studio intake #95 (Chase, Nov 4): Hearth gets the full "shipped" treatment for PM hiring managers.
