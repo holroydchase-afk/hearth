@@ -23,8 +23,9 @@ describe('Photos screen', () => {
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     expect(await screen.findByText('Shared with Dad side')).toBeTruthy();
     expect(screen.queryByText('Shared with Mom side')).toBeNull();
+    expect(await screen.findByText('You, Alex, Chase and Grandpa Earl can see this')).toBeTruthy(); // WHO-6: names on the card
     fireEvent.press(screen.getByRole('button', { name: 'More for this photo' })); // MOMENT-6: who can see it is under More
-    expect(await screen.findByText('Shared with you')).toBeTruthy();
+    expect(await screen.findByText('Who can see this')).toBeTruthy();
     expect(screen.getByRole('header', { name: 'Photos of Mia and Leo' })).toBeTruthy();
     expect(screen.queryByText(/Seen by/)).toBeNull();
   });

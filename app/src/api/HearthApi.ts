@@ -8,7 +8,7 @@ import type {
   NotificationPrefs,
   PushPlatform,
   AddCommentArgs, Circle, CommentRow, CreateInviteArgs, CreatePostArgs, FeedArgs, FeedPost,
-  FinalizeResult, HeartState, InvitePreview, Reaction, ReactionState, ReactionSummary, Session, Space, UploadGrant, UploadItemSpec, ViewGrant,
+  FinalizeResult, HeartState, InvitePreview, Reaction, ReactionState, ReactionSummary, PostViewers, Session, Space, UploadGrant, UploadItemSpec, ViewGrant,
   TimelineArgs, TimelinePost, TimelineYear,
   ChatMember, ChatRow, ChatRowKind, ChatSummary, ClaimedKeyPackage,
 } from './types';
@@ -81,6 +81,8 @@ export interface HearthApi {
   setReaction(post: string, emoji: Reaction): Promise<ReactionState>;
   /** REACT-2: my reaction and per-kind counts; posts I can't see are left out. */
   reactionSummary(posts: string[]): Promise<ReactionSummary[]>;
+  /** WHO-1..3 (0022): who can see each post, by name (never a group's name); posts I can't see are left out. */
+  postViewers(posts: string[]): Promise<PostViewers[]>;
   addComment(args: AddCommentArgs): Promise<{ comment_id: string; created_at: string }>;
   getComments(post: string, limit?: number): Promise<CommentRow[]>;
   markSeen(post: string): Promise<void>;

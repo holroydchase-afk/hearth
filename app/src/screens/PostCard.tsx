@@ -56,6 +56,8 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   // MOMENT-1: the sender sees which groups it went to, by name.
   // LOOK-1: on its own line under the date, so a long group name doesn't wrap the date with it.
   const to = mine && post.audience?.length ? `Sent to ${andList(post.audience.map((a) => a.name))}` : null;
+  // WHO-6 (Chase, Nov 4): everyone else sees who can see it, by name, never the group's name.
+  const who = !mine && post.viewers?.length ? whoCanSee(post.viewers, session?.userId, 3) : null;
   // CAP-6: "Edited" after the date once the sender changed the words.
   const when = [shortDate(post.published_at), post.words_edited_at ? 'Edited' : null].filter(Boolean).join(' · ');
 
@@ -69,6 +71,7 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
           <Txt variant="strong">{post.author_name}</Txt>
           <Txt variant="muted" testID={`when-${post.post_id}`}>{when}</Txt>
           {to ? <Txt variant="muted" testID={`to-${post.post_id}`}>{to}</Txt> : null}
+          {who ? <Txt variant="muted" testID={`who-${post.post_id}`}>{who}</Txt> : null}
         </View>
         <Button
           label={`More for ${many ? 'these photos' : 'this photo'}`}
@@ -157,16 +160,27 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   );
 });
 
+/** WHO-6/9: "You, Alex, Chase and 2 others can see this". You first, then names in order; past `most` names
+ *  the rest are counted, so a big family stays one line. */
+export function whoCanSee(viewers: { user_id: string; name: string }[], me: string | undefined, most = Infinity): string {
+  const names = [...(viewers.some((v) => v.user_id === me) ? ['You'] : []), ...viewers.filter((v) => v.user_id !== me).map((v) => v.name)];
+  const rest = names.length - most;
+  const list = rest > 1 ? `${names.slice(0, most).join(', ')} and ${rest} others` : andList(names);
+  return `${list} can see this`;
+}
+
 /** MOMENT-6: "More" says who can see it (BETA-AUD-1) and holds, for the sender only, Change the words (CAP-6)
  *  and Delete (BETA-AUD-5). */
 function MoreMenu({ visible, post, mine, these, onDelete, onChangeWords, onClose }: {
   visible: boolean; post: FeedPost; mine: boolean; these: string; onDelete: () => void; onChangeWords: () => void; onClose: () => void;
 }) {
   const { c, os } = useTheme();
+  const { session } = useApp();
   if (!visible) return null;
+  // WHO-7: everyone but the sender gets every name here; the group's name stays with the sender (parents).
   const audience = post.audience
     ? `Shared with ${post.audience.map((a) => `${a.name} · ${people(a.member_count)}`).join(', ')}`
-    : 'Shared with you';
+    : post.viewers?.length ? whoCanSee(post.viewers, session?.userId) : 'Shared with you';
   return (
     <Modal transparent visible animationType="slide" onRequestClose={onClose}>
       <View style={[styles.scrim, { backgroundColor: c.scrim }]}>

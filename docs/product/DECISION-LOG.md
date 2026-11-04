@@ -352,5 +352,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** Chase's time goes to calls only he can make; process PRs can't hurt a relative or the public demo. Process rule, no user sees it, so no persona check.
 - **Source:** intake #91, studio-agents `docs/studio-standard.md`
 
+### DEC-49 · Every post names who can see it; only parents see group names (WHO-1..9)
+- **When / status:** Nov 4 · Asked for by Chase ("I don't really want anyone to know they are in a group… do not have the title of the group visible to anyone but the parents/admins, because gparents dads side is offputting")
+- **Chose:** a muted line on every card, for everyone but the sender, naming the people who can see it ("You, Alex, Chase and 2 others can see this"), and the full list under More. The sender keeps "Sent to" with the group's name. Server: `post_viewers` (migration 0022), built on `sees_post`. Persona check `decisions/2026-11-04-who-can-see-by-name.md`.
+- **Over:** "Shared with you" only (a grandparent couldn't tell who else sees her photos or her replies' audience); showing the group's name to everyone ("Grandparents – Dad's side" reads as a label on the person); a banner or pop-up (one more thing to dismiss, A1).
+- **Because:** knowing who else is looking is what makes sharing feel safe (A1), and names are how a family thinks about it; group names are the parents' filing system, not something relatives need.
+- **Source:** `docs/product/decisions/2026-11-04-who-can-see-by-name.md`
+
 ---
-Last updated: Nov 2, 2026 (DEC-48)
+Last updated: Nov 4, 2026 (DEC-49)

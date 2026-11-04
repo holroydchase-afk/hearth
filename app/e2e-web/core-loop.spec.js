@@ -69,8 +69,9 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await page.getByLabel('6-number code').fill('123456');
   await page.getByRole('button', { name: 'Continue' }).click();
   await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
+  await expect(page.getByText(/^You, .+ can see this$/)).toBeVisible(); // WHO-6: names, never the group
   await page.getByRole('button', { name: 'More for this photo' }).click();
-  await expect(page.getByText('Shared with you')).toBeVisible();
+  await expect(page.getByText('Who can see this')).toBeVisible();
   await page.getByRole('button', { name: 'Close this menu' }).click();
   await expect(page.getByRole('tab')).toHaveText([/Photos/, /Help/]); // no Share tab for viewers
   await signOut(page, 'Help');

@@ -19,7 +19,7 @@ import type {
   NotificationPrefs,
   PushPlatform,
   AddCommentArgs, Circle, CommentRow, CreateInviteArgs, CreatePostArgs, FeedArgs, FeedPost, FinalizeResult,
-  HeartState, InvitePreview, Reaction, ReactionCounts, ReactionState, ReactionSummary, MediaKind, MediaStatus, Role, Session, Space, UploadGrant, UploadItemSpec, ViewGrant,
+  HeartState, InvitePreview, Reaction, ReactionCounts, ReactionState, ReactionSummary, PostViewers, MediaKind, MediaStatus, Role, Session, Space, UploadGrant, UploadItemSpec, ViewGrant,
   TimelineArgs, TimelinePost, TimelineYear,
   ChatKind, ChatMember, ChatRow, ChatRowKind, ChatSummary, ClaimedKeyPackage,
 } from '../types';
@@ -608,6 +608,22 @@ export class FakeBackend {
     return out;
   }
 
+  /** post_viewers (0022, WHO-1..3): the members who can see each post, by name; posts I can't see are left out. */
+  postViewers(user: string | null, posts: string[]): PostViewers[] {
+    const me = this.requireUser(user);
+    const out: PostViewers[] = [];
+    for (const id of posts.slice(0, 100)) {
+      const p = this.state.posts[id];
+      if (!this.canView(me, p)) continue;
+      const viewers = this.state.members
+        .filter((m) => m.space === p.space && this.canView(m.user, p))
+        .map((m) => ({ user_id: m.user, name: this.state.users[m.user]?.name ?? '?' }))
+        .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : a.user_id < b.user_id ? -1 : 1));
+      out.push({ post_id: id, viewers });
+    }
+    return out;
+  }
+
   private reactionsOf(me: string, p: PostRow): { my_reaction: Reaction | null; counts: ReactionCounts } {
     const counts: ReactionCounts = {};
     let mine: Reaction | null = null;
@@ -1014,6 +1030,7 @@ export class FakeApi implements HearthApi {
   toggleHeart = (p: string) => this.run(() => this.be.toggleHeart(this.userId, p));
   setReaction = (p: string, emoji: Reaction) => this.run(() => this.be.setReaction(this.userId, p, emoji));
   reactionSummary = (posts: string[]) => this.run(() => this.be.reactionSummary(this.userId, posts));
+  postViewers = (posts: string[]) => this.run(() => this.be.postViewers(this.userId, posts));
   addComment = (a: AddCommentArgs) => this.run(() => this.be.addComment(this.userId, a));
   getComments = (p: string, limit?: number) => this.run(() => this.be.getComments(this.userId, p, limit));
   markSeen = (p: string) => this.run(() => this.be.markSeen(this.userId, p));

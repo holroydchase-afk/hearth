@@ -185,9 +185,10 @@ describe('MOMENT: one compact card per upload', () => {
   it('MOMENT-6 a viewer\'s More has no Delete, and Close shuts it', async () => {
     const { be, id } = await one();
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    await screen.findByTestId(`who-${id}`);
     fireEvent.press(within(await screen.findByTestId(`post-${id}`)).getByRole('button', { name: 'More for this photo' }));
     const menu = await screen.findByTestId(`more-${id}`);
-    expect(within(menu).getByText('Shared with you')).toBeTruthy();
+    expect(within(menu).getByText(/^You, .+ can see this$/)).toBeTruthy(); // WHO-7: names, not a group
     expect(within(menu).queryByRole('button', { name: /Delete/ })).toBeNull();
     fireEvent.press(within(menu).getByRole('button', { name: 'Close this menu' }));
     await waitFor(() => expect(screen.queryByTestId(`more-${id}`)).toBeNull());

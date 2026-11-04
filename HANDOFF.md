@@ -3,13 +3,18 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: intake #95 part 2, post card cleanup (LOOK-1..3), waiting for Chase's look at the before/after
+now: who can see a post, by name (WHO-1..9, migration 0022) and the post card cleanup (LOOK-1..3), both waiting for Chase's merge; 0022 needs a deploy
 next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 4: every post names who can see it (WHO-1..9, DEC-49; migration 0022; branch claude/project-thread-v54okb, PR #99)
+- **Why:** Chase, Nov 4: relatives shouldn't know they're in a group ("gparents dads side is offputting"), but should see who's in it with them.
+- **Done:** `post_viewers` (0022) returns the people `sees_post` lets see each post, names and ids only (backend/tests/viewers_test.sql, WHO-1..5). Everyone but the sender gets "You, Alex, Chase and 2 others can see this" under the date and the full list under More (who.test.tsx, WHO-6..9); the sender keeps "Sent to <group>". API.md, architecture 05, DEC-49 and a persona check updated.
+- **Next exact step:** Chase says merge and deploy; deploy 0022 (`backend/scripts/deploy.sh`) before or with the app, since an app on an older server just leaves the line off.
 
 ## Nov 4: post card cleanup (intake #95 part 2, LOOK-1..3; branch claude/project-thread-v54okb, PR)
 - **Why:** #95 says the look reads dated; Chase kept Atkinson (Nov 4 card), so the fix is spacing and layout.

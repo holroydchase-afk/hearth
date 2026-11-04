@@ -97,6 +97,19 @@ export interface FeedPost {
   title?: string | null;
   /** 0021 (CAP-6): when the sender last changed the words; null if never. Older servers omit it. */
   words_edited_at?: string | null;
+  /** WHO-6 (0022): the people who can see it, filled in by post_viewers after the page loads; absent on an older server. */
+  viewers?: PostViewer[];
+}
+
+/** WHO-1 (0022): someone who can see a post, by name. Never a group's name. */
+export interface PostViewer {
+  user_id: string;
+  name: string;
+}
+
+export interface PostViewers {
+  post_id: string;
+  viewers: PostViewer[];
 }
 
 export interface FeedArgs {
