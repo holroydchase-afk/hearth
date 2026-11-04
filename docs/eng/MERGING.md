@@ -1,15 +1,21 @@
 # Merging pull requests
 
-How a Hearth PR gets from branch to `main`. Chase is the only human reviewer, so Claude merges only when Chase asks in the project ("merge it", "get those merged").
+How a Hearth PR gets from branch to `main`. Chase is the only human reviewer.
+
+## Who says merge (DEC-48, Chase, Nov 2)
+- **Non-live PRs merge on green.** The thread that owns a PR merges it itself once the checks below pass, without asking. Non-live means it touches only docs, tests, CI checks, agent files and scripts.
+- **Live PRs wait for Chase's word** ("merge it", "get those merged"). Live means anything under `app/**` or `packages/**` (the app, and the public demo that Pages rebuilds from it), `.github/workflows/demo-site.yml`, `backend/**`, or anything that deploys or builds for a phone. One live file makes the whole PR live.
+- Merging is never deploying: deploys and Expo republishes still need Chase's own words.
 
 ## Before merging
-1. **Chase said to merge.** A green PR still waits for his word. Claude never merges on its own call.
+1. **Allowed to merge.** Non-live and green, or Chase said to merge.
 2. **CI is green on the latest commit**: Agent roster, Backend (SQL + Deno), App (Jest + typecheck).
 3. **No merge conflict** (`mergeable_state` is `clean`). If it conflicts, merge `main` into the branch (no rebase or force-push), resolve, rerun the checks, then wait for green.
-4. **Not a draft.** A draft is marked ready only when Chase asks to merge it and the thread that owns it says it is done pushing.
+4. **Not a draft.** A draft is marked ready only when the thread that owns it says it is done pushing.
 5. **Its owner is done.** A PR driven by another project thread is merged by that thread, or after it confirms.
 
 ## Order
+- Oldest first, unless a newer PR is one the older builds on.
 - Merge PRs that others build on first. When a PR says it already contains another PR (e.g. "this branch also merges #3"), merge the contained one first.
 - After each merge, re-check the next PR for conflicts and CI against the new `main` before merging it.
 

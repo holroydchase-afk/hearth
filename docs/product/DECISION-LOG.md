@@ -345,5 +345,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** Chase found the old colors rough on his own iPhone; one warm palette reads as Hearth, not as a settings screen, and older eyes get more contrast. Atkinson was made for low-vision readers, and dropping Bold answers his "too bold".
 - **Source:** `docs/product/decisions/2026-11-01-light-dark-colors.md`
 
+### DEC-48 · Threads merge their own non-live PRs on green
+- **When / status:** Nov 2 · Chase's call on a decision card ("Yes, studio rule"), from intake #91
+- **Chose:** docs, tests, CI and agent-file PRs merge on green without asking, by the thread that owns them, oldest first, with merge commits. Anything touching the app, the live demo (`app/**`, `packages/**`, the Pages workflow) or the backend still waits for Chase. See `docs/eng/MERGING.md`.
+- **Over:** every merge on Chase's word (green PRs piled up waiting on him) and merging everything on green (the live demo and app would change without him seeing it).
+- **Because:** Chase's time goes to calls only he can make; process PRs can't hurt a relative or the public demo. Process rule, no user sees it, so no persona check.
+- **Source:** intake #91, studio-agents `docs/studio-standard.md`
+
 ---
-Last updated: Nov 1, 2026 (DEC-47)
+Last updated: Nov 2, 2026 (DEC-48)
