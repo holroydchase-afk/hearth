@@ -20,7 +20,8 @@ blockers: []
 ## Nov 4: demo path follows the repo rename (branch claude/project-thread-v54okb, PR)
 - **Why:** Chase renamed the repo to lowercase `hearth` (Nov 4), so Pages now serves chaseholroyd.com/hearth/ and the old /Hearth/ build's asset paths broke the demo.
 - **Done:** `demo-site.yml` builds with `BASE: /hearth`; the PAGES-1 site checks use `SITE_BASE=/hearth`. `e2e:site` under /hearth passed 3x locally (8/8). Old /Hearth/ links in past entries below stay as history.
-- **Next exact step:** after merge the Pages workflow rebuilds; check https://chaseholroyd.com/hearth/ loads with no errors. Product Studio points the portfolio at /hearth/.
+- **Portfolio / public presence:** live and browser-checked at https://chaseholroyd.com/hearth/ (no errors); /Hearth/ is now 404. Portfolio intake filed: holroydchase-afk/holroydchase-afk.github.io#51 (links to /hearth/, repo link, real totals).
+- **Next exact step:** Product Studio works #51.
 
 ## Nov 2: merge rule (DEC-48; branch claude/project-thread-v54okb, PR)
 - **Why:** Chase answered the merge-gate card "Yes, studio rule" (Nov 2), and said "Merge 92" (merged).
