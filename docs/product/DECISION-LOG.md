@@ -373,5 +373,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** a cheer fits birthdays and firsts; a closed list keeps the reply rules and HARD-12 simple.
 - **Source:** `docs/product/decisions/2026-11-05-hooray-reaction.md`
 
+### DEC-52 · Compact Photos toolbar, Hearth's tab bar on iPhone, quieter reaction and who-can-see (LIVE-1..4)
+- **When / status:** Nov 5 · Chase in a live review on his iPhone ("Messages should be a single icon so should filters"; "Yes" to toning down the picked ❤️ and labeling the circles)
+- **Chose:** icon buttons with a word under each, in a toolbar above the title; Hearth's own tab bar on iPhone because the glass bar overlapped 17 pt words; a soft fill for my reaction; "Can see" before the circles.
+- **Over:** icon-only buttons; shrinking tab words to iOS's 10 pt; the half-width pills.
+- **Because:** the actions are everyday ones and the pills pushed photos down; DS-2 and DS-3 keep every word readable.
+- **Source:** `docs/product/decisions/2026-11-05-live-review-header-tabs.md`
+
 ---
-Last updated: Nov 5, 2026 (DEC-51)
+Last updated: Nov 5, 2026 (DEC-52)

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// The phone's own tab bar on iPhone and Android (DESIGN-SYSTEM.md), Hearth's bar on the web.
+// The phone's own tab bar on Android (DESIGN-SYSTEM.md), Hearth's bar on iPhone (LIVE-1) and the web.
 import { Redirect, Tabs } from 'expo-router';
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import React from 'react';
 import { Platform } from 'react-native';
 import { AppGate } from '../../screens/AppGate';
-import { HearthTabBar, NATIVE_TAB_OPTIONS, TAB_ICONS, tabsFor, type TabName } from '../../screens/TabBar';
+import { HearthTabBar, NATIVE_TAB_OPTIONS, TAB_ICONS, tabsFor, usesNativeTabs, type TabName } from '../../screens/TabBar';
 import { useApp } from '../../state/AppContext';
 import { useTheme } from '../../ui/theme';
 
@@ -21,7 +21,7 @@ export default function TabsLayout() {
   const tabs = tabsFor(role);
   const allowed = new Set(tabs.map((t) => t.name));
 
-  if (Platform.OS !== 'web') {
+  if (usesNativeTabs(Platform.OS)) {
     return (
       <NativeTabs
         minimizeBehavior={NATIVE_TAB_OPTIONS.minimizeBehavior}

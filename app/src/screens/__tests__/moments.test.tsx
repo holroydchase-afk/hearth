@@ -122,6 +122,18 @@ describe('MOMENT: one compact card per upload', () => {
     expect(within(card).queryByTestId(`reactions-${id}`)).toBeNull();
   });
 
+  it('LIVE-3 my reaction shows as a soft fill, not a heavy outlined pill (Chase, Nov 5)', async () => {
+    const { be, id } = await one();
+    await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    const card = await screen.findByTestId(`post-${id}`);
+    const row = within(card).getByTestId(`actions-${id}`);
+    fireEvent.press(within(row).getByRole('button', { name: 'Love it' }));
+    await waitFor(() => expect(within(row).getByRole('button', { name: 'Love it' }).props.accessibilityState.selected).toBe(true));
+    const s = StyleSheet.flatten(within(row).getByRole('button', { name: 'Love it' }).props.style);
+    expect(s.borderWidth ?? 0).toBe(0);
+    expect(s.backgroundColor).not.toBe('transparent');
+  });
+
   it('REACT-9 the card counts each kind from everyone, most first, and reads it out in words', async () => {
     const { be, id } = await one();
     await be.clientFor(FIXTURE.users.alex.id).setReaction(id, '😂');

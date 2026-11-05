@@ -55,7 +55,8 @@ The web viewer (for GG and anyone without the app) follows the iPhone column wit
 - **Fonts (DS-12, Nov 1 2026):** `@expo-google-fonts/atkinson-hyperlegible-next` (0.4.1, version from the npm registry), imported one weight file at a time so only Regular, Medium and SemiBold ship (48 KB each). `FONT` in `theme.ts` names them; the root layout loads them with `useFonts` and falls back to the phone's font if loading ever fails. Weight comes from the file (`fontFamily`), never from `fontWeight`. Until Oct 31 Hearth used the phone's own font.
 - **Colors (DS-11, Nov 1 2026; COLOR-1, Nov 5):** `paletteFor(os, dark, color)` takes `prefs.color` (`ember`, `sage`, `plum`) through `ColorContext`; the values are in `theme.ts` and `docs/design/tokens.json` (`colorChoices`), and the table below is the Nov 1 blue, kept for history. Before Nov 5, `paletteFor(os, dark)` in `theme.ts` returns one Hearth palette on every phone and the web. Light: warm off-white `#F7F5F2`, white cards, ink `#1C1B19`, blue `#0B57D0`. Dark: warm charcoal `#151413`, cards `#232120`, ink `#F4F1EC`, soft blue `#8AB4F8` with navy words on buttons. Until Oct 31 it was Apple's system colors on iPhone and a Material 3 scheme on Android.
 - **Light or dark (DS-10):** `prefs.look` (`system`, `light`, `dark`) feeds `LookContext`; `useTheme()` resolves it with `isDark()`. On phones `Appearance.setColorScheme` makes the native tab bar, keyboard and alerts match; the status bar follows `statusBarStyle()`.
-- **Tab bar:** the phone's own tab bar (expo-router `NativeTabs`) on iPhone and Android, with SF Symbols and Material Symbols, 17 pt labels, `minimizeBehavior: never` and Android labels always shown (DS-2, DS-5). The web keeps Hearth's own bar in the same style, because the web version of `NativeTabs` puts the tabs at the top of the screen.
+- **Tab bar:** the phone's own tab bar (expo-router `NativeTabs`) on Android, with Material Symbols, 17 pt labels and labels always shown (DS-2, DS-5). iPhone and the web use Hearth's own bar in the same style (SF Symbols on iPhone): on Chase's iPhone the glass tab bar drew 17 pt words over the icons (LIVE-1, Nov 5), and the web version of `NativeTabs` puts the tabs at the top of the screen.
+- **Toolbar (LIVE-2):** everyday actions at the top of a screen (Messages, By date, Events on Photos) are `IconButton`s: a 28 pt symbol over a 17 pt word, 60 pt targets, right-aligned above the big title.
 - **Buttons:** iPhone filled, gray and plain buttons; Android filled, outlined and text buttons with the ripple. Icons come from `expo-symbols` and always sit beside words (DS-3).
 - **Switches:** the phone's own switch, with the word On or Off beside it.
 - **Fields and cards:** iPhone grouped-list style; Android outlined field and outlined card.
@@ -64,7 +65,7 @@ The web viewer (for GG and anyone without the app) follows the iPhone column wit
 - **Tokens (DS-13) and the Nov 1 sweep:** `SPACE`, `RADIUS` and `dialogRadius()` in `theme.ts`; `app/src/ui/__tests__/a11ySweep.test.tsx` checks the tokens, that `kit.tsx` has no hand-picked corners, heading levels (A11Y-1) and the switch colors (A11Y-2, A11Y-3).
 - **Old look:** saved in `docs/design/versions/` (screenshots of every main screen, before and after).
 
-**Confirm on a phone (milestone 1 UAT):** the native tab bar with 17 pt labels on an iPhone (Liquid Glass) and on Android, and whether gray buttons stand out enough on the light gray background.
+**Confirm on a phone (milestone 1 UAT):** Hearth's tab bar on an iPhone (LIVE-1) and the native one with 17 pt labels on Android, and whether gray buttons stand out enough on the light gray background.
 
 ## Palette (DS-11): what each color is for
 

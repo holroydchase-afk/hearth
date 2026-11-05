@@ -945,11 +945,22 @@
    "kind": "bug",
    "layer": "app",
    "severity": "Low",
-   "status": "open",
+   "status": "fixed",
    "title": "HARD-16: on a server before 0017, Haha or Like takes away an existing heart (the hosted server has 0017)",
    "tests": [],
    "found": "2026-10-28",
    "fixed": null
+  },
+  {
+   "id": "B14",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "LIVE-1: on iPhone the glass tab bar drew the 17 pt tab words over the icons (Chase's live review, Nov 5)",
+   "tests": [],
+   "found": "2026-11-05",
+   "fixed": "2026-11-05"
   }
  ]
 }

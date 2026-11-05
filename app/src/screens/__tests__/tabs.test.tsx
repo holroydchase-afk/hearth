@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import React from 'react';
-import { HearthTabBar, tabsFor } from '../TabBar';
+import { HearthTabBar, tabsFor, usesNativeTabs } from '../TabBar';
 import { expectGrandparentSafe } from '../../test/renderApp';
 
 describe('tabs', () => {
@@ -29,5 +29,11 @@ describe('tabs', () => {
     expect(go).toHaveBeenCalledWith('share');
     expect(screen.getByRole('tab', { name: 'Photos' }).props.accessibilityState).toMatchObject({ selected: true });
     expectGrandparentSafe();
+  });
+
+  it('LIVE-1 iPhone uses Hearth\'s own bar: the glass tab bar drew 17 pt words over the icons (Chase, Nov 5)', () => {
+    expect(usesNativeTabs('ios')).toBe(false);
+    expect(usesNativeTabs('web')).toBe(false);
+    expect(usesNativeTabs('android')).toBe(true);
   });
 });

@@ -3,13 +3,18 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: #99-#101 merged; 0022 and 0023 deployed and the Expo preview republished Nov 5 (colors, who-can-see circles, phone emoji, Hooray)
+now: live review fixes PR (DEC-52, LIVE-1..4) waits for Chase's merge; #99-#101 merged, 0022/0023 deployed Nov 5
 next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 5: live review fixes (DEC-52, TRACKER R36; branch claude/project-thread-o1veol, PR)
+- **Why:** Chase reviewed the preview on his iPhone: tab words overlapped the icons; "Messages should be a single icon so should filters"; "Yes" to toning down the picked ❤️ and labeling the circles.
+- **Done:** iPhone uses Hearth's own tab bar (tabs.test.tsx LIVE-1, Test Log B14); Messages, By date and Events are `IconButton`s in a toolbar above the title (photosHeader.test.tsx LIVE-2); my reaction is a soft fill (moments.test.tsx LIVE-3); "Can see" before the circles (who.test.tsx LIVE-4). Shot: /mnt/project-files/hearth-look/2026-11-05-live-review-fixes.png (web build).
+- **Next exact step:** Chase merges; republish the Expo preview; Chase checks the tab bar on his iPhone.
 
 ## Nov 5: 🎉 Hooray reaction (DEC-51, TRACKER R35; branch claude/project-thread-pfr7l7, PR)
 - **Why:** Chase, Nov 5: add 🎉 alongside ❤️ 😂 👍.

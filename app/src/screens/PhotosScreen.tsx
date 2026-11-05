@@ -7,7 +7,7 @@ import { PhotosDemoTip } from '../demo/DemoTip';
 import { useApp, useFeed } from '../state/AppContext';
 import { eventList, photosRows, type PhotosRow } from '../feed/events';
 import { earlierGroups, isFromEarlier, monthSpan, startOfNextMonth, type EarlierGroup } from '../feed/timeline';
-import { Button, Card, Loading, Notice, Txt } from '../ui/kit';
+import { Button, Card, IconButton, Loading, Notice, Txt } from '../ui/kit';
 import { andList } from '../ui/format';
 import { useTheme } from '../ui/theme';
 import { AppGate } from './AppGate';
@@ -29,9 +29,8 @@ function EarlierCard({ g, onOpen }: { g: EarlierGroup; onOpen: () => void }) {
   );
 }
 
-// R11/UI-26: header buttons in one row, two across. 150 pt fits the longest words at 17 pt; Bigger text (21 pt) wraps to one a row.
-const ROW = { flexDirection: 'row', flexWrap: 'wrap', gap: 12 } as const;
-const HALF = { flexGrow: 1, flexBasis: 150 } as const;
+// LIVE-2: the toolbar sits at the top right; with Bigger text it wraps instead of squeezing.
+const TOOLBAR = { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 4 } as const;
 
 export function PhotosScreen() {
   const app = useApp();
@@ -78,20 +77,21 @@ export function PhotosScreen() {
 
   const header = (
     <View style={{ gap: 12 }}>
+      {/* LIVE-2 (Chase, Nov 5): Messages, By date and Events are everyday actions, so they sit as compact icon
+          buttons (a word under each) in a toolbar above the big title, like the phone's own large-title screens.
+          UI-26 still holds: no "Check for new photos" button; photos refresh on their own and on pull-down. */}
+      <View testID="photos-toolbar" style={TOOLBAR}>
+        <IconButton label="Messages" text="Messages" icon={{ sf: 'bubble.left.and.bubble.right', md: 'chat' }} onPress={() => setMessages(true)} />
+        {state.loaded && state.posts.length ? (
+          <IconButton label="Show photos by the date they were taken" text="By date" icon={{ sf: 'arrow.up.arrow.down', md: 'sort' }} onPress={() => setTimeline({ startAt: null })} />
+        ) : null}
+        {hasEvents ? (
+          <IconButton label="See events" text="Events" icon={{ sf: 'calendar', md: 'event' }} onPress={() => setEvents({ eventId: null, fromList: true })} />
+        ) : null}
+      </View>
       <Txt variant="display" role="header">{`Photos of ${app.space.name}`}</Txt>
       {senders ? <Txt variant="muted">{`Sent by ${senders}`}</Txt> : null}
       <PhotosDemoTip width={width} />
-      {/* UI-26 (Chase, Oct 26): one row. Photos refresh on their own (open, back in front) and on pull-down,
-          so there's no "Check for new photos" button; By date uses the system sort icon. Wraps with Bigger text. */}
-      <View testID="photos-actions" style={ROW}>
-        <Button label="Messages" icon={{ sf: 'bubble.left.and.bubble.right', md: 'chat' }} variant="secondary" style={HALF} onPress={() => setMessages(true)} />
-        {state.loaded && state.posts.length ? (
-          <Button label="Show photos by the date they were taken" text="By date" icon={{ sf: 'arrow.up.arrow.down', md: 'sort' }} variant="secondary" style={HALF} onPress={() => setTimeline({ startAt: null })} />
-        ) : null}
-        {hasEvents ? (
-          <Button label="See events" variant="secondary" style={HALF} onPress={() => setEvents({ eventId: null, fromList: true })} />
-        ) : null}
-      </View>
       {app.space.can_post ? <YourName /> : null}
       <QueueStatus />
       {state.notice ? <Notice text={state.notice} onClose={() => feed.clearNotice()} /> : null}

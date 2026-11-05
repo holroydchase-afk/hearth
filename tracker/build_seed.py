@@ -232,6 +232,7 @@ tickets = [
  ("T11", "test fix", "app", "Low", "fixed", "HARD-15: Fake and Supabase disagree on reacting to your own unpublished post (the contract doesn't cover it)", []),
  ("B13", "bug", B, "High", "fixed", "HARD-17: Postgres JIT-compiled feed_rows once a family had a few dozen posts: 1.5-2 s per Photos or By date page instead of 20-50 ms. Migration 0018 turns JIT off for it", []),
  ("B12", "bug", "app", "Low", "fixed", "HARD-16: on a server before 0017, Haha or Like takes away an existing heart (the hosted server has 0017)", []),
+ ("B14", "bug", "app", "Medium", "fixed", "LIVE-1: on iPhone the glass tab bar drew the 17 pt tab words over the icons (Chase's live review, Nov 5)", []),
 ]
 # When each ticket was found and fixed, where it isn't Oct 15.
 DATES = {"S9": ("2026-10-15", "2026-10-16"), "S10": ("2026-10-15", "2026-10-16"), "S12": ("2026-10-15", "2026-10-16"),
@@ -240,7 +241,7 @@ DATES = {"S9": ("2026-10-15", "2026-10-16"), "S10": ("2026-10-15", "2026-10-16")
          "AE-5": ("2026-10-16", "2026-10-16"), "AE-6": ("2026-10-16", None), "AE-7": ("2026-10-16", "2026-10-16"),
          "AE-8": ("2026-10-16", "2026-10-16"), "V1": ("2026-10-16", None), "REPLY-1": ("2026-10-16", None),
          **{t: ("2026-10-18", "2026-10-18") for t in ("PRIV-1", "PRIV-2", "QA-3", "QA-2", "BULK-1F", "T6", "T7")},
-         "S17": ("2026-10-19", "2026-10-19"), "S14": ("2026-10-15", "2026-10-29"), "B11": ("2026-10-28", "2026-10-29"), "T11": ("2026-10-28", "2026-10-29"), "B12": ("2026-10-28", None), **{t: ("2026-10-28", "2026-10-28") for t in ("S21", "S22", "B13")}, **{t: ("2026-10-19", None) for t in ("S18", "S19", "S20")}, **{t: ("2026-10-19", "2026-10-21") for t in ("T8", "T9", "T10")}}
+         "S17": ("2026-10-19", "2026-10-19"), "S14": ("2026-10-15", "2026-10-29"), "B11": ("2026-10-28", "2026-10-29"), "T11": ("2026-10-28", "2026-10-29"), "B12": ("2026-10-28", None), "B14": ("2026-11-05", "2026-11-05"), **{t: ("2026-10-28", "2026-10-28") for t in ("S21", "S22", "B13")}, **{t: ("2026-10-19", None) for t in ("S18", "S19", "S20")}, **{t: ("2026-10-19", "2026-10-21") for t in ("T8", "T9", "T10")}}
 # link backend tickets to SQL tests
 for c in sql_cases:
     for t in c["tickets"]:

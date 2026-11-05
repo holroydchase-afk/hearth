@@ -22,25 +22,32 @@ async function withEvent() {
 describe('R11 RV-U3 Photos header', () => {
   it('UI-26 one header row: Messages and By date (sort icon) side by side, no "Check for new photos" button', async () => {
     await renderApp(<PhotosScreen />, { be: await withEvent(), user: 'jo' });
-    const row = await screen.findByTestId('photos-actions');
-    await within(row).findByRole('button', { name: 'See events' });
-    expect(within(row).getByRole('button', { name: 'Messages' })).toBeTruthy();
-    expect(within(row).getByRole('button', { name: 'Show photos by the date they were taken' })).toBeTruthy();
-    expect(within(row).getByText('By date')).toBeTruthy();
-    expect(StyleSheet.flatten(row.props.style)).toMatchObject({ flexDirection: 'row', flexWrap: 'wrap' });
+    const title = await screen.findByTestId('photos-toolbar');
+    expect(within(title).getByRole('button', { name: 'See events' })).toBeTruthy();
+    expect(within(title).getByRole('button', { name: 'Messages' })).toBeTruthy();
+    expect(within(title).getByRole('button', { name: 'Show photos by the date they were taken' })).toBeTruthy();
+    expect(within(title).getByText('By date')).toBeTruthy();
+    expect(StyleSheet.flatten(title.props.style)).toMatchObject({ flexDirection: 'row', justifyContent: 'flex-end' });
     // Photos refresh on their own (open, back in front) and with pull-to-refresh; no button for it.
     expect(screen.queryByRole('button', { name: 'Check for new photos' })).toBeNull();
     expect(screen.queryByTestId('photos-actions-feed')).toBeNull();
   });
 
-  it('R11 RV-U3 each half-width button keeps a 48 pt target and room for its words (min 150 pt, grows to fill)', async () => {
+  it('LIVE-2 Messages and By date are compact icon buttons in a toolbar above the big title, a word under each icon (Chase, Nov 5)', async () => {
     await renderApp(<PhotosScreen />, { be: await withEvent(), user: 'jo' });
-    const row = await screen.findByTestId('photos-actions');
-    await within(row).findByRole('button', { name: 'See events' });
-    for (const b of within(row).getAllByRole('button')) {
-      expect(StyleSheet.flatten(b.props.style)).toMatchObject({ flexGrow: 1, flexBasis: 150 });
-      expect(StyleSheet.flatten(b.props.style).minHeight).toBeGreaterThanOrEqual(48);
+    const row = await screen.findByTestId('photos-toolbar');
+    expect(within(row).queryByRole('header')).toBeNull(); // the big title sits under the toolbar, like the phone's own large titles
+    expect(screen.getByRole('header', { name: /Photos of/ })).toBeTruthy();
+    for (const name of ['Messages', 'Show photos by the date they were taken']) {
+      const b = within(row).getByRole('button', { name });
+      const s = StyleSheet.flatten(b.props.style);
+      expect(s).toMatchObject({ flexDirection: 'column', alignItems: 'center' }); // icon over word
+      expect(s.flexBasis).toBeUndefined(); // no longer a half-width pill
+      expect(s.minHeight).toBeGreaterThanOrEqual(48);
+      expect(s.minWidth).toBeGreaterThanOrEqual(48);
     }
+    expect(within(row).getByText('Messages')).toBeTruthy();
+    expect(within(row).getByText('By date')).toBeTruthy();
     expectGrandparentSafe();
   });
 });

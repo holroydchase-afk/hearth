@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Tabs: the phone's own tab bar on iPhone and Android (see app/(tabs)/_layout.tsx), this bar on the web.
+// Tabs: the phone's own tab bar on Android (see app/(tabs)/_layout.tsx), this bar on iPhone and the web.
 // Every tab has a system symbol and a word (HIG Tab bars; DS-3), 17 pt labels (DS-2), labels that never
 // hide (DS-5) and 48 pt+ targets (DS-1). Viewers: Photos + Help only.
 import { SymbolView } from 'expo-symbols';
@@ -21,6 +21,12 @@ export const TAB_ICONS: Record<TabName, { sf: string; md: string }> = {
   help: { sf: 'questionmark.circle', md: 'help' },
   me: { sf: 'person.crop.circle', md: 'account_circle' },
 };
+
+/** LIVE-1 (Chase, Nov 5): the iPhone's glass tab bar has no room for 17 pt words (DS-2) and drew them over
+ *  the icons, so iPhone uses this bar too. Android's bar keeps its own. */
+export function usesNativeTabs(os: string): boolean {
+  return os === 'android';
+}
 
 /** Options for the native tab bar (expo-router NativeTabs). */
 export const NATIVE_TAB_OPTIONS = {

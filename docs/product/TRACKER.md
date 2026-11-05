@@ -53,6 +53,7 @@ The freeze is lifted (DEC-28). Ranked by staff-pm from `docs/product/reviews/202
 | R33 | Every post names who can see it; only parents see group names (Chase Nov 4, DEC-49, WHO-1..9). Done: PR #99 merged and 0022 deployed Nov 5. | P1 | S | ✓ Nov 5 |
 | R34 | Three colors, faces for who can see it, the phone's own emoji (Chase Nov 5, DEC-50). Done: PR #100 merged, 0022 deployed Nov 5. | P1 | S | ✓ Nov 5 |
 | R35 | 🎉 Hooray as a fourth reaction (Chase Nov 5, DEC-51, REACT-12): migration 0023 and the app button. Done: PR #101 merged, 0023 deployed, Expo preview republished Nov 5. | P2 | S | ✓ Nov 5 |
+| R36 | Live review fixes (Chase Nov 5 on his iPhone, DEC-52): tab words overlapped the icons (LIVE-1, Test Log B14), Messages and By date as compact icon buttons (LIVE-2), softer picked reaction (LIVE-3), "Can see" before the circles (LIVE-4). | P1 | S | ◐ Nov 5: PR open, waits for Chase's merge; then republish the Expo preview and check the tab bar on his iPhone |
 | R14 | npm audit: recheck the Expo CLI build-tool findings after the next Expo patch (RV-X4) | P2 | S | ☑ Oct 21: still 62 from 5 advisories on expo 57.0.30 (newest SDK 57 patch). One ships: decode-uri-component in expo-router (a crafted link could freeze the app; no data exposed). No forced override; recheck at the SDK 58 move (Oct 26: moved to SDK 58; recheck in the next PR) |
 
 ## Sequence to milestone 1
