@@ -42,9 +42,9 @@ describe('DS native design system', () => {
     expect(big.title).toBeGreaterThan(big.base);
   });
 
-  it('DS-11: one warm Hearth palette on every phone, light and dark (no cold system gray, no pure black)', () => {
-    expect(paletteFor('ios', false)).toMatchObject({ bg: '#F7F5F2', surface: '#FFFFFF', ink: '#1C1B19', accent: '#0B57D0', accentInk: '#FFFFFF' });
-    expect(paletteFor('ios', true)).toMatchObject({ bg: '#151413', surface: '#232120', ink: '#F4F1EC', accent: '#8AB4F8', accentInk: '#0A2558' });
+  it('DS-11: warm Hearth colors on every phone, light and dark (no cold system gray, no pure black; Ember by default, COLOR-1)', () => {
+    expect(paletteFor('ios', false)).toMatchObject({ bg: '#FAF6F1', surface: '#FFFFFF', ink: '#1F1A17', accent: '#A4421F', accentInk: '#FFFFFF' });
+    expect(paletteFor('ios', true)).toMatchObject({ bg: '#171311', surface: '#241E1B', ink: '#F6EFE9', accent: '#F4A47F', accentInk: '#4A1606' });
     expect(paletteFor('android', false)).toEqual(paletteFor('ios', false));
     expect(paletteFor('android', true)).toEqual(paletteFor('ios', true));
     expect(paletteFor('web', false)).toEqual(paletteFor('ios', false));

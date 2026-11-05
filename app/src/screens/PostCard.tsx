@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 import React, { forwardRef, memo, useEffect, useRef, useState } from 'react';
-import { Modal, ScrollView, StyleSheet, Text, TextInput, type TextInputInstance, View } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, type TextInputInstance, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { REACTIONS, type FeedPost, type Reaction } from '../api/HearthApi';
 import type { CommentView } from '../feed/store';
 import { useApp, useFeed } from '../state/AppContext';
-import { Button, Card, Confirm, Field, Notice, SystemIcon, Txt, type Icon } from '../ui/kit';
+import { Button, Card, Confirm, Field, Notice, Txt } from '../ui/kit';
 import { andList, initialOf, people, shortDate } from '../ui/format';
-import { MIN_TARGET, SPACE, fontFamily, useTheme } from '../ui/theme';
+import { FONT, MIN_TARGET, RADIUS, SPACE, fontFamily, useTheme } from '../ui/theme';
 import { PhotoCollage } from './PhotoCollage';
 
 /** MOMENT-1..8 (UAT 9): one upload as one compact card, like a standard photo feed. Who and when, the caption,
@@ -18,14 +18,8 @@ import { PhotoCollage } from './PhotoCollage';
  *  Prototype: prototype/moments.html. No "Seen by" count (DEC-21, RV-U1): it counts who didn't look (A2). */
 const LABEL: Record<Reaction, string> = { '❤️': 'Love it', '😂': 'Haha', '👍': 'Like it' };
 const WORD: Record<Reaction, string> = { '❤️': 'love', '😂': 'haha', '👍': 'like' };
-// REACT-10 (Chase, Nov 4): flat system icons in the tab bar's style, not the colorful emoji. The stored
-// reaction stays the emoji (0017); only the picture on screen changes.
-const ICON: Record<Reaction, Icon> = {
-  '❤️': { sf: 'heart', md: 'favorite' },
-  '😂': { sf: 'face.smiling', md: 'sentiment_very_satisfied' },
-  '👍': { sf: 'hand.thumbsup', md: 'thumb_up' },
-};
-const COMMENT_ICON: Icon = { sf: 'bubble.left', md: 'chat_bubble' };
+// REACT-11 (Chase, Nov 5: "the standard, not 3D emojis, not line icons"): the phone's own emoji, the same
+// ones on its keyboard. This replaces REACT-10's flat line icons.
 
 export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   const { feed, session } = useApp();
@@ -56,8 +50,9 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   // MOMENT-1: the sender sees which groups it went to, by name.
   // LOOK-1: on its own line under the date, so a long group name doesn't wrap the date with it.
   const to = mine && post.audience?.length ? `Sent to ${andList(post.audience.map((a) => a.name))}` : null;
-  // WHO-6 (Chase, Nov 4): everyone else sees who can see it, by name, never the group's name.
-  const who = !mine && post.viewers?.length ? whoCanSee(post.viewers, session?.userId, 3) : null;
+  // WHO-6/10 (Chase, Nov 4-5): small initial circles say who can see it, by name, never the group's name.
+  const viewers = post.viewers?.length ? post.viewers : null;
+  const [whoOpen, setWhoOpen] = useState(false);
   // CAP-6: "Edited" after the date once the sender changed the words.
   const when = [shortDate(post.published_at), post.words_edited_at ? 'Edited' : null].filter(Boolean).join(' · ');
 
@@ -71,7 +66,6 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
           <Txt variant="strong">{post.author_name}</Txt>
           <Txt variant="muted" testID={`when-${post.post_id}`}>{when}</Txt>
           {to ? <Txt variant="muted" testID={`to-${post.post_id}`}>{to}</Txt> : null}
-          {who ? <Txt variant="muted" testID={`who-${post.post_id}`}>{who}</Txt> : null}
         </View>
         <Button
           label={`More for ${many ? 'these photos' : 'this photo'}`}
@@ -85,34 +79,37 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
       {post.title ? <Txt variant="title" role="header" testID={`post-title-${post.post_id}`} style={styles.title}>{post.title}</Txt> : null}
       {post.caption ? <Caption text={post.caption} /> : null}
       <PhotoCollage postId={post.post_id} media={ready} />
-      {kinds.length ? (
-        <View testID={`reactions-${post.post_id}`} accessible accessibilityLabel={kinds.map(([e, k]) => `${k} ${WORD[e]}`).join(', ')} style={styles.summary}>
-          <View style={styles.counts}>
-            {kinds.map(([e, k]) => (
-              <View key={e} style={styles.count}>
-                <SystemIcon icon={ICON[e]} color={c.muted} size={18} />
-                <Txt variant="muted">{String(k)}</Txt>
-              </View>
-            ))}
-          </View>
+      {/* REACT-11 and WHO-10: under the photo, emoji chips on the left and who can see it on the right,
+          like the "liked by" row of a photo app. */}
+      {kinds.length || viewers ? (
+        <View style={styles.summary}>
+          {kinds.length ? (
+            <View testID={`reactions-${post.post_id}`} accessible accessibilityLabel={kinds.map(([e, k]) => `${k} ${WORD[e]}`).join(', ')} style={styles.counts}>
+              {kinds.map(([e, k]) => (
+                <View key={e} testID={`chip-${e}-${post.post_id}`} style={[styles.chip, { backgroundColor: c.fill }]}>
+                  <Txt>{`${e} ${k}`}</Txt>
+                </View>
+              ))}
+            </View>
+          ) : <View />}
+          {viewers ? <Faces post={post} viewers={viewers} me={session?.userId} onPress={() => setWhoOpen(true)} /> : null}
         </View>
       ) : null}
       {/* REACT-7 (Chase, Oct 25): icons only, no words under them (his call over DS-3); each keeps its spoken label.
-          REACT-10 (Nov 4): flat icons, not emoji. */}
+          REACT-11 (Nov 5): the phone's own emoji. */}
       <View testID={`actions-${post.post_id}`} style={[styles.actions, { borderColor: c.line }]}>
         {REACTIONS.map((e) => (
           <Button
             key={e}
             label={LABEL[e]}
-            icon={ICON[e]}
-            text={<></>}
+            text={<Text style={styles.emoji}>{e}</Text>}
             selected={mineNow === e}
             variant="quiet"
             style={{ flex: 1 }}
             onPress={() => void feed?.react(post.post_id, e)}
           />
         ))}
-        <Button label="Write a comment" icon={COMMENT_ICON} text={<></>} variant="quiet" style={{ flex: 1 }} onPress={() => box.current?.focus()} />
+        <Button label="Write a comment" text={<Text style={styles.emoji}>💬</Text>} variant="quiet" style={{ flex: 1 }} onPress={() => box.current?.focus()} />
       </View>
       <View style={[styles.newest, { borderColor: c.line }]}>
         {newest ? <CommentList post={post} list={[newest]} /> : null}
@@ -146,6 +143,7 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
         onChangeWords={() => setSheet('words')}
         onClose={() => setSheet(null)}
       />
+      {whoOpen && viewers ? <WhoSheet post={post} viewers={viewers} me={session?.userId} onClose={() => setWhoOpen(false)} /> : null}
       {sheet === 'words' ? <WordsSheet post={post} onClose={() => setSheet(null)} /> : null}
       <Confirm
         visible={sheet === 'delete'}
@@ -167,6 +165,61 @@ export function whoCanSee(viewers: { user_id: string; name: string }[], me: stri
   const rest = names.length - most;
   const list = rest > 1 ? `${names.slice(0, most).join(', ')} and ${rest} others` : andList(names);
   return `${list} can see this`;
+}
+
+type Viewer = { user_id: string; name: string };
+
+/** WHO-10: You first, then everyone else in order. */
+function ordered(viewers: Viewer[], me: string | undefined): { id: string; name: string }[] {
+  const you = viewers.filter((v) => v.user_id === me).map((v) => ({ id: v.user_id, name: 'You' }));
+  return [...you, ...viewers.filter((v) => v.user_id !== me).map((v) => ({ id: v.user_id, name: v.name }))];
+}
+
+/** WHO-10 (Chase, Nov 5: "a contact circle component or chips... a discreet icon somewhere"): up to three small
+ *  overlapping initials and "+n", beside More. One 48 pt button that reads every name out; a tap shows them all. */
+function Faces({ post, viewers, me, onPress }: { post: FeedPost; viewers: Viewer[]; me: string | undefined; onPress: () => void }) {
+  const { c } = useTheme();
+  const list = ordered(viewers, me);
+  const shown = list.slice(0, 3);
+  const rest = list.length - shown.length;
+  return (
+    <Pressable testID={`who-${post.post_id}`} accessibilityRole="button" accessibilityLabel={whoCanSee(viewers, me, 3)}
+      accessibilityHint="Shows everyone who can see this" onPress={onPress} hitSlop={4} style={styles.faces}>
+      {shown.map((p, i) => (
+        <View key={p.id} testID={`face-${p.id}`}
+          style={[styles.face, { backgroundColor: c.accentSoft, borderColor: c.surface, marginLeft: i ? -SPACE.sm : 0 }]}>
+          <Text style={[styles.faceText, { color: c.accent }]}>{initialOf(p.name === 'You' ? viewers.find((v) => v.user_id === me)?.name ?? 'You' : p.name)}</Text>
+        </View>
+      ))}
+      {rest > 0 ? <Text style={[styles.faceMore, { color: c.muted }]}>{`+${rest}`}</Text> : null}
+    </Pressable>
+  );
+}
+
+/** WHO-10: everyone who can see it, one chip each (initial and name). Never the group's name. */
+function WhoSheet({ post, viewers, me, onClose }: { post: FeedPost; viewers: Viewer[]; me: string | undefined; onClose: () => void }) {
+  const { c, os } = useTheme();
+  return (
+    <Modal transparent visible animationType="slide" onRequestClose={onClose}>
+      <View style={[styles.scrim, { backgroundColor: c.scrim }]}>
+        <SafeAreaView edges={['bottom']} testID={`who-sheet-${post.post_id}`} accessibilityViewIsModal
+          style={[styles.menu, { backgroundColor: c.surface, borderTopLeftRadius: os === 'android' ? 28 : 14, borderTopRightRadius: os === 'android' ? 28 : 14 }]}>
+          <Txt variant="title" role="header">Who can see this</Txt>
+          <View style={styles.people}>
+            {ordered(viewers, me).map((p) => (
+              <View key={p.id} testID={`person-${p.id}`} style={[styles.person, { backgroundColor: c.fill }]}>
+                <View style={[styles.face, { backgroundColor: c.accentSoft, borderColor: c.fill }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+                  <Text style={[styles.faceText, { color: c.accent }]}>{initialOf(p.name === 'You' ? viewers.find((v) => v.user_id === me)?.name ?? 'You' : p.name)}</Text>
+                </View>
+                <Txt testID="person-name">{p.name}</Txt>
+              </View>
+            ))}
+          </View>
+          <Button label="Close who can see this" text="Close" variant="secondary" onPress={onClose} />
+        </SafeAreaView>
+      </View>
+    </Modal>
+  );
 }
 
 /** MOMENT-6: "More" says who can see it (BETA-AUD-1) and holds, for the sender only, Change the words (CAP-6)
@@ -363,9 +416,16 @@ const styles = StyleSheet.create({
   title: { paddingHorizontal: SPACE.lg, paddingBottom: SPACE.xs },
   caption: { paddingHorizontal: SPACE.lg, paddingBottom: SPACE.md },
   fold: { alignSelf: 'flex-start', paddingHorizontal: 0 },
-  summary: { paddingHorizontal: SPACE.lg, paddingTop: SPACE.md },
-  counts: { flexDirection: 'row', gap: SPACE.lg },
-  count: { flexDirection: 'row', alignItems: 'center', gap: SPACE.xs },
+  summary: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: SPACE.sm, paddingHorizontal: SPACE.lg, paddingTop: SPACE.sm },
+  counts: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.sm, flexShrink: 1 },
+  chip: { borderRadius: RADIUS.pill, paddingHorizontal: SPACE.md, paddingVertical: SPACE.xs },
+  faces: { flexDirection: 'row', alignItems: 'center', minHeight: MIN_TARGET, minWidth: MIN_TARGET, paddingHorizontal: SPACE.xs },
+  face: { width: 36, height: 36, borderRadius: RADIUS.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+  faceText: { fontFamily: FONT.semibold, fontSize: 17, lineHeight: 20 },
+  emoji: { fontSize: 24, lineHeight: 30, textAlign: 'center' },
+  faceMore: { fontFamily, fontSize: 17, marginLeft: SPACE.xs },
+  people: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.sm },
+  person: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, borderRadius: RADIUS.pill, paddingLeft: SPACE.xs, paddingRight: SPACE.md, minHeight: MIN_TARGET },
   actions: { flexDirection: 'row', gap: SPACE.sm, marginHorizontal: SPACE.sm, marginTop: SPACE.sm, paddingVertical: SPACE.xs, borderTopWidth: StyleSheet.hairlineWidth },
   newest: { borderTopWidth: StyleSheet.hairlineWidth, paddingHorizontal: SPACE.lg, paddingTop: SPACE.md, paddingBottom: SPACE.lg, gap: SPACE.sm },
   seeAll: { alignSelf: 'flex-start', paddingHorizontal: 0 },

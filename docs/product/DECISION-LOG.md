@@ -359,5 +359,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** knowing who else is looking is what makes sharing feel safe (A1), and names are how a family thinks about it; group names are the parents' filing system, not something relatives need.
 - **Source:** `docs/product/decisions/2026-11-04-who-can-see-by-name.md`
 
+### DEC-50 · Three colors to pick from, faces for who can see it, the phone's own emoji (COLOR-1..4, WHO-10, REACT-11)
+- **When / status:** Nov 5 · Asked for by Chase ("I'd like all three color options"; "a contact circle component or chips... a discreet icon"; "the standard not 3d emojis not line icons")
+- **Chose:** Ember (default), Sage and Plum, light and dark, under "Colors" on Help or Me; small initial circles under the photo that open a sheet of name chips; the phone's own emoji with chat-style count chips.
+- **Over:** one fixed palette; the names sentence under every date; REACT-10's line icons.
+- **Because:** Chase didn't like the blue and liked all three; the circles keep DEC-49's names but quieter; a grandparent's keyboard emoji are the ones she already knows.
+- **Source:** `docs/product/decisions/2026-11-05-colors-faces-emoji.md`
+
 ---
-Last updated: Nov 4, 2026 (DEC-49)
+Last updated: Nov 5, 2026 (DEC-50)

@@ -23,7 +23,7 @@ describe('WHO: who can see this post, by name', () => {
   it('WHO-6 a grandparent sees the people who can see it on the card, herself as "You", and no group name', async () => {
     const { id, el } = await dadSidePost('jo');
     const who = await within(el).findByTestId(`who-${id}`);
-    expect(who.props.children).toBe('You, Alex, Chase and Grandpa Earl can see this');
+    expect(who.props.accessibilityLabel).toBe('You, Alex, Chase and Grandpa Earl can see this');
     expect(screen.queryByText(/Grandparents|Dad's side/)).toBeNull();
     expect(screen.queryByText(/Nana Ruth/)).toBeNull(); // not in the group, so not named
   });
@@ -41,12 +41,13 @@ describe('WHO: who can see this post, by name', () => {
   it('WHO-8 the sender still sees the group by name; another parent sees the people', async () => {
     const sender = await dadSidePost('chase');
     expect(within(sender.el).getByTestId(`to-${sender.id}`).props.children).toBe("Sent to Grandparents – Dad's side");
-    expect(within(sender.el).queryByTestId(`who-${sender.id}`)).toBeNull();
+    // WHO-10: the sender gets the same little circles too
+    expect((await within(sender.el).findByTestId(`who-${sender.id}`)).props.accessibilityLabel).toBe('You, Alex, Grandma Jo and Grandpa Earl can see this');
   });
 
   it('WHO-8 ...and a parent who did not send it sees the names', async () => {
     const { id, el } = await dadSidePost('alex');
-    expect((await within(el).findByTestId(`who-${id}`)).props.children).toBe('You, Chase, Grandma Jo and Grandpa Earl can see this');
+    expect((await within(el).findByTestId(`who-${id}`)).props.accessibilityLabel).toBe('You, Chase, Grandma Jo and Grandpa Earl can see this');
   });
 
   it('WHO-9 a long list names three and counts the rest', async () => {
@@ -54,7 +55,7 @@ describe('WHO: who can see this post, by name', () => {
     const { id } = await seedPost(be, { caption: 'Everyone', circles: [FIXTURE.circles.everyone.id] });
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     const who = await screen.findByTestId(`who-${id}`);
-    expect(who.props.children).toBe('You, Alex, Chase and 2 others can see this');
+    expect(who.props.accessibilityLabel).toBe('You, Alex, Chase and 2 others can see this');
   });
 
   it('WHO-9 an older server without post_viewers keeps the card as it was', async () => {
@@ -66,5 +67,26 @@ describe('WHO: who can see this post, by name', () => {
     await screen.findByText('At the lake');
     await waitFor(() => expect(screen.queryByTestId(`who-${id}`)).toBeNull());
     expect(screenWords()).not.toMatch(/can see this/);
+  });
+
+  it('WHO-10 (Chase, Nov 5: "contact circles or chips... a discreet icon") the card shows small initial circles, not a sentence', async () => {
+    const { id, el } = await dadSidePost('jo');
+    const who = await within(el).findByTestId(`who-${id}`);
+    expect(who.props.accessibilityRole).toBe('button');
+    expect(within(who).queryByText(/can see this/)).toBeNull();
+    expect(within(who).getAllByTestId(/^face-/)).toHaveLength(3);
+    expect(within(who).getByText('+1')).toBeTruthy();
+  });
+
+  it('WHO-10 tapping the circles opens a sheet with one chip per person; Close shuts it', async () => {
+    const { id, el } = await dadSidePost('jo');
+    fireEvent.press(await within(el).findByTestId(`who-${id}`));
+    const sheet = await screen.findByTestId(`who-sheet-${id}`);
+    expect(within(sheet).getByText('Who can see this')).toBeTruthy();
+    expect(within(sheet).getAllByTestId(/^person-(?!name)/).map((p) => within(p).getByTestId('person-name').props.children))
+      .toEqual(['You', 'Alex', 'Chase', 'Grandpa Earl']);
+    expect(within(sheet).queryByText(/Grandparents|Dad's side/)).toBeNull();
+    fireEvent.press(within(sheet).getByRole('button', { name: 'Close who can see this' }));
+    await waitFor(() => expect(screen.queryByTestId(`who-sheet-${id}`)).toBeNull());
   });
 });

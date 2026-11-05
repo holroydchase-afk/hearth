@@ -3,13 +3,18 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: who can see a post, by name (WHO-1..9, migration 0022) and the post card cleanup (LOOK-1..3), both waiting for Chase's merge; 0022 needs a deploy
+now: PR #99 holds who can see a post (WHO-1..10, migration 0022), the card cleanup (LOOK-1..3), Ember/Sage/Plum colors (COLOR-1..4) and the phone's own emoji (REACT-11), all waiting for Chase's merge; 0022 needs a deploy
 next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 5: three colors, faces for who can see it, the phone's own emoji (DEC-50, TRACKER R34; branch claude/project-thread-pfr7l7 on top of PR #99)
+- **Why:** Chase, Nov 5: "I'd like all three color options", "a contact circle component or chips... a discreet icon", "the standard not 3d emojis not line icons".
+- **Done:** Ember (default), Sage and Plum, light and dark, under Colors on Help and Me (colors.test.tsx, COLOR-1..4; tokens.json `colorChoices`). The names sentence became up to three initial circles under the photo that open a sheet of name chips (who.test.tsx, WHO-10). Reactions are the phone's own emoji again, with chat-style count chips (moments.test.tsx, REACT-11). Shots: docs/reviews/2026-11-05-look/.
+- **Next exact step:** Chase merges; then 0022 deploy. Open question: add 🎉 as a reaction (needs a migration on 0017/0018's list).
 
 ## Nov 4: every post names who can see it (WHO-1..9, DEC-49; migration 0022; branch claude/project-thread-v54okb, PR #99)
 - **Why:** Chase, Nov 4: relatives shouldn't know they're in a group ("gparents dads side is offputting"), but should see who's in it with them.

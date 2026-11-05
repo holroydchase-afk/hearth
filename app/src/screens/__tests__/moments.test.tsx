@@ -74,19 +74,21 @@ describe('MOMENT: one compact card per upload', () => {
     expect(flat(row.props.style).flexDirection).toBe('row');
     const names = within(row).getAllByRole('button').map((b) => b.props.accessibilityLabel);
     expect(names).toEqual(['Love it', 'Haha', 'Like it', 'Write a comment']);
-    // no words under the icons (REACT-7), and REACT-10 (Chase, Nov 4): flat system icons, not the colorful emoji
-    const shown = within(row).UNSAFE_queryAllByType(Text).map((t) => String(t.props.children)).join('');
-    expect(shown).toBe('');
-    expect(within(row).UNSAFE_queryAllByType(SystemIcon)).toHaveLength(4);
+    // no words under the icons (REACT-7), and REACT-11 (Chase, Nov 5: "the standard, not 3D emojis, not line
+    // icons"): the phone's own emoji, the same ones on its keyboard
+    const shown = within(row).UNSAFE_queryAllByType(Text).map((t) => String(t.props.children)).join(' ');
+    expect(shown).toBe('❤️ 😂 👍 💬');
+    expect(within(row).UNSAFE_queryAllByType(SystemIcon)).toHaveLength(0);
   });
 
-  it('REACT-10 (Chase, Nov 4: "3D" icons) the reaction count under the photo uses the same flat icons, no emoji', async () => {
+  it('REACT-11 the count under the photo is one emoji chip per kind, like a chat app', async () => {
     const { be, id } = await one();
     await be.clientFor(FIXTURE.users.jo.id).setReaction(id, '❤️');
     await renderApp(<PhotosScreen />, { be, user: 'chase' });
     const card = await screen.findByTestId(`post-${id}`);
-    const words = within(card).UNSAFE_queryAllByType(Text).map((t) => String(t.props.children)).join(' ');
-    expect(words).not.toMatch(/❤️|😂|👍|💬/);
+    const chip = await within(card).findByTestId(`chip-❤️-${id}`);
+    expect(within(chip).getByText('❤️ 1')).toBeTruthy();
+    expect(within(card).UNSAFE_queryAllByType(SystemIcon).filter((i) => /heart|thumb|smil/.test(JSON.stringify(i.props.icon)))).toHaveLength(0);
   });
 
   it('REACT-8 tapping Haha picks it, Love switches to Love, tapping Love again takes it back', async () => {
@@ -98,12 +100,12 @@ describe('MOMENT: one compact card per upload', () => {
     fireEvent.press(btn('Haha'));
     await waitFor(() => expect(be.state.hearts).toEqual([{ post: id, user: FIXTURE.users.jo.id, emoji: '😂' }]));
     expect(btn('Haha').props.accessibilityState.selected).toBe(true);
-    expect(await within(card).findByLabelText('1 haha')).toBeTruthy();
+    expect(await within(card).findByText('😂 1')).toBeTruthy();
     fireEvent.press(btn('Love it'));
     await waitFor(() => expect(be.state.hearts).toEqual([{ post: id, user: FIXTURE.users.jo.id, emoji: '❤️' }]));
     expect(btn('Love it').props.accessibilityState.selected).toBe(true);
     expect(btn('Haha').props.accessibilityState.selected).toBe(false);
-    expect(await within(card).findByLabelText('1 love')).toBeTruthy();
+    expect(await within(card).findByText('❤️ 1')).toBeTruthy();
     fireEvent.press(btn('Love it'));
     await waitFor(() => expect(be.state.hearts).toHaveLength(0));
     expect(btn('Love it').props.accessibilityState.selected).toBe(false);
@@ -118,8 +120,8 @@ describe('MOMENT: one compact card per upload', () => {
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     const card = await screen.findByTestId(`post-${id}`);
     const line = await within(card).findByTestId(`reactions-${id}`);
-    // REACT-10: shown as flat icons with numbers, most first; read out in words
-    expect(within(line).UNSAFE_queryAllByType(Text).map((t) => String(t.props.children))).toEqual(['2', '1']);
+    // REACT-11: one emoji chip per kind, most first; read out in words
+    expect(within(line).UNSAFE_queryAllByType(Text).map((t) => String(t.props.children))).toEqual(['😂 2', '❤️ 1']);
     expect(line.props.accessibilityLabel).toBe('2 haha, 1 love');
     expect(within(card).getByRole('button', { name: 'Love it' }).props.accessibilityState.selected).toBe(true);
   });
