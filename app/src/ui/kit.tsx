@@ -110,6 +110,25 @@ export function Button({ label, text, onPress, variant = 'primary', disabled, so
   );
 }
 
+/** LIVE-2 (Chase, Nov 5): a compact toolbar button for common actions, the icon over a short word, like a
+ *  tab. Never icon-only (DS-3); the word stays 17 pt (DS-2) and the target 48 pt (DS-1). */
+export function IconButton({ label, text, icon, onPress, testID }: { label: string; text: string; icon: Icon; onPress: () => void; testID?: string }) {
+  const { c, t } = useTheme();
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      onPress={onPress}
+      testID={testID}
+      android_ripple={{ color: c.line, borderless: true }}
+      style={({ pressed }) => [styles.iconBtn, { opacity: pressed ? 0.7 : 1 }]}
+    >
+      <SystemIcon icon={icon} color={c.accent} size={28} />
+      <Text style={{ color: c.accent, fontFamily: FONT.medium, fontSize: t.base }}>{text}</Text>
+    </Pressable>
+  );
+}
+
 /** A whole-card checkbox / radio / switch: the full row is the 48 pt+ target. Switches are the phone's own
  *  switch with the word On or Off beside it (DS-3); checkboxes and radios take each platform's shape. */
 export function Choice({ label, title, detail, checked, onPress, kind }: {
@@ -238,6 +257,7 @@ export function Confirm({ visible, title, body, yes, no, onYes, onNo }: {
 }
 
 const styles = StyleSheet.create({
+  iconBtn: { flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: MIN_TARGET + 12, minWidth: MIN_TARGET + 12, paddingHorizontal: 6, gap: 2 },
   btn: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, borderRadius: RADIUS.pill, borderWidth: 1, paddingHorizontal: 18, paddingVertical: 10, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 },
   choice: { minHeight: MIN_TARGET + 8, minWidth: MIN_TARGET, borderWidth: 2, borderRadius: RADIUS.medium, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 },
   mark: { width: 28, height: 28, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },

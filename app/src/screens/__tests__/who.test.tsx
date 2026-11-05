@@ -89,4 +89,10 @@ describe('WHO: who can see this post, by name', () => {
     fireEvent.press(within(sheet).getByRole('button', { name: 'Close who can see this' }));
     await waitFor(() => expect(screen.queryByTestId(`who-sheet-${id}`)).toBeNull());
   });
+
+  it('LIVE-4 the little circles carry a word, "Can see", so a lone initial isn\'t a mystery (Chase, Nov 5)', async () => {
+    const { id, el } = await dadSidePost('jo');
+    const who = await within(el).findByTestId(`who-${id}`);
+    expect(within(who).getByText('Can see')).toBeTruthy();
+  });
 });

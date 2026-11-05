@@ -105,7 +105,8 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
             text={<Text style={styles.emoji}>{e}</Text>}
             selected={mineNow === e}
             variant="quiet"
-            style={{ flex: 1 }}
+            // LIVE-3 (Chase, Nov 5): mine is a soft fill, without the heavy outline other picked buttons get.
+            style={mineNow === e ? [{ flex: 1 }, styles.mine] : { flex: 1 }}
             onPress={() => void feed?.react(post.post_id, e)}
           />
         ))}
@@ -185,6 +186,8 @@ function Faces({ post, viewers, me, onPress }: { post: FeedPost; viewers: Viewer
   return (
     <Pressable testID={`who-${post.post_id}`} accessibilityRole="button" accessibilityLabel={whoCanSee(viewers, me, 3)}
       accessibilityHint="Shows everyone who can see this" onPress={onPress} hitSlop={4} style={styles.faces}>
+      {/* LIVE-4 (Chase, Nov 5): a word with the circles, so a lone initial isn't a mystery. */}
+      <Text style={[styles.faceWord, { color: c.muted }]}>Can see</Text>
       {shown.map((p, i) => (
         <View key={p.id} testID={`face-${p.id}`}
           style={[styles.face, { backgroundColor: c.accentSoft, borderColor: c.surface, marginLeft: i ? -SPACE.sm : 0 }]}>
@@ -419,6 +422,8 @@ const styles = StyleSheet.create({
   summary: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: SPACE.sm, paddingHorizontal: SPACE.lg, paddingTop: SPACE.sm },
   counts: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.sm, flexShrink: 1 },
   chip: { borderRadius: RADIUS.pill, paddingHorizontal: SPACE.md, paddingVertical: SPACE.xs },
+  mine: { borderWidth: 0 },
+  faceWord: { fontFamily, fontSize: 17, marginRight: SPACE.xs },
   faces: { flexDirection: 'row', alignItems: 'center', minHeight: MIN_TARGET, minWidth: MIN_TARGET, paddingHorizontal: SPACE.xs },
   face: { width: 36, height: 36, borderRadius: RADIUS.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   faceText: { fontFamily: FONT.semibold, fontSize: 17, lineHeight: 20 },
