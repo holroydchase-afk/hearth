@@ -366,5 +366,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** Chase didn't like the blue and liked all three; the circles keep DEC-49's names but quieter; a grandparent's keyboard emoji are the ones she already knows.
 - **Source:** `docs/product/decisions/2026-11-05-colors-faces-emoji.md`
 
+### DEC-51 · Add 🎉 Hooray as a fourth reaction (REACT-12)
+- **When / status:** Nov 5 · Chase: "add" (🎉 alongside ❤️ 😂 👍, not replacing one)
+- **Chose:** a fourth button and count chip, migration 0023 widening the server's list.
+- **Over:** replacing ❤️; an open emoji picker.
+- **Because:** a cheer fits birthdays and firsts; a closed list keeps the reply rules and HARD-12 simple.
+- **Source:** `docs/product/decisions/2026-11-05-hooray-reaction.md`
+
 ---
-Last updated: Nov 5, 2026 (DEC-50)
+Last updated: Nov 5, 2026 (DEC-51)

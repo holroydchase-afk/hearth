@@ -42,6 +42,12 @@ select tests.ok_sql(format($$select f.heart_count = 2 and f.i_hearted from publi
 select tests.throws_code(format($$select public.set_reaction(%L, '🔥')$$, :p1), 'REACT-3 any other emoji is refused', '22023');
 select tests.throws_code(format($$select public.set_reaction(%L, null)$$, :p1), 'REACT-3 an empty reaction is refused', '22023');
 
+-- ---------- REACT-12 (Chase, Nov 5: add 🎉) a fourth kind, Hooray (migration 0023) ----------
+select tests.ok_sql(format($$select (s).my_reaction = '🎉' and (s).counts = '{"🎉": 1, "👍": 1}'::jsonb
+                               from (select public.set_reaction(%L, '🎉') s) x$$, :p1),
+                    'REACT-12 Alex switches his heart to Hooray, and it is counted');
+select tests.lives(format($$select public.set_reaction(%L, '❤️')$$, :p1), 'setup: Alex switches back to Love');
+
 -- ---------- REACT-4 a post you can't see is "not found" ----------
 :as_jo
 select tests.throws_code(format($$select public.set_reaction(%L, '❤️')$$, :p1), 'REACT-4 Jo can''t react to a post she can''t see', 'P0002');
@@ -81,7 +87,7 @@ select tests.throws_any(format($$insert into public.reactions (post_id, user_id,
 :as_admin
 select tests.throws_any(format($$insert into public.reactions (post_id, user_id, emoji) values (%L, 'a0000000-0000-0000-0000-00000000000a', 'ugly')$$,
                         '55555555-0000-0000-0000-0000000000a2'),
-                        'HARD-12 even the database refuses a reaction that isn''t ❤️ 😂 or 👍', array['23514']);
+                        'HARD-12 even the database refuses a reaction that isn''t ❤️ 😂 👍 or 🎉', array['23514']);
 
 -- ---------- report ----------
 \o

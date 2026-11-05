@@ -54,7 +54,7 @@ A comment or heart is read only by people who can see the post, and among them b
 | Shared on this group's posts (`on_group_posts`) | Every member of the group, only on posts sent to that group. Default for new events |
 | Always shared (`always`) | Every member of the group, on any post both can see. What households did before 0013 |
 
-Reactions (hearts, and since 0017 ❤️ 😂 👍) change only through `set_reaction` and `toggle_heart`: since 0018 an app user can't insert or update the `reactions` table directly, and the table itself refuses any other emoji, so the three-emoji list and the "replies off" switch can't be skipped (HARD-12).
+Reactions (hearts, since 0017 ❤️ 😂 👍, and since 0023 🎉) change only through `set_reaction` and `toggle_heart`: since 0018 an app user can't insert or update the `reactions` table directly, and the table itself refuses any other emoji, so the emoji list and the "replies off" switch can't be skipped (HARD-12).
 
 The settings decide who reads replies, never who sees a post. Everyone's setting can't be changed; the owner's family-wide switch is the only way to open it. One function, `private.group_reply_ok`, holds the group rule, and every reader of replies uses it: `private.reply_ok` (behind RLS on comments and hearts, `get_comments`, `can_see_reply` and `reply_readers`), `reply_scope`, and the feed and timeline counts (`private.feed_rows`).
 
@@ -100,4 +100,4 @@ RLS limits what each family member's app can read. It does not limit Hearth's se
 - **Planned:** event dates (`starts_on`, `ends_on`) exist in the schema but the app doesn't use them yet.
 
 ---
-Last checked against code: 2026-11-04, migration 0022 (post_viewers names who can see a post, from sees_post); earlier 2026-10-31, HELP-R6 (the owner's photo helpers switch writes `space_features` under RLS; no migration); earlier 2026-10-29, migration 0021 (words change only through edit_post_words); earlier 2026-10-28, migration 0018 (reactions only through RPCs); earlier 2026-10-22, 10001df (plus migrations 0013, 0015, 0016)
+Last checked against code: 2026-11-05, migration 0023 (🎉 joins the reaction list in set_reaction and the table check); earlier 2026-11-04, migration 0022 (post_viewers names who can see a post, from sees_post); earlier 2026-10-31, HELP-R6 (the owner's photo helpers switch writes `space_features` under RLS; no migration); earlier 2026-10-29, migration 0021 (words change only through edit_post_words); earlier 2026-10-28, migration 0018 (reactions only through RPCs); earlier 2026-10-22, 10001df (plus migrations 0013, 0015, 0016)

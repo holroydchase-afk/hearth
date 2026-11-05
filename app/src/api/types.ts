@@ -160,7 +160,7 @@ export interface HeartState {
 }
 
 /** REACT-1 (0017): the three reactions, in the order the card shows them. */
-export const REACTIONS = ['❤️', '😂', '👍'] as const;
+export const REACTIONS = ['❤️', '😂', '👍', '🎉'] as const; // REACT-12: 🎉 Hooray (0023)
 export type Reaction = (typeof REACTIONS)[number];
 export type ReactionCounts = Partial<Record<Reaction, number>>;
 
