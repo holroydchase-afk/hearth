@@ -52,7 +52,7 @@ The freeze is lifted (DEC-28). Ranked by staff-pm from `docs/product/reviews/202
 | R32 | Hearth design system, roadmap-only claims and demo-site analytics (intake #95, Chase Nov 4: first product to "shipped"). Done: demo at /hearth (#96); README "Not built yet" list (vault, privacy guardian, memory engine, photo frame); `docs/design/tokens.json` from theme.ts (DS-TOKENS); Umami on the demo site only, off until Chase sets two repo variables (ANALYTICS-1/2). Left: the look cleanup, keeping Atkinson (Chase, Nov 4 card): spacing, type scale and tokens on every screen, with before/after shots. | P1 | M | ◐ Nov 4: first PR open |
 | R33 | Every post names who can see it; only parents see group names (Chase Nov 4, DEC-49, WHO-1..9). Done: PR #99 merged and 0022 deployed Nov 5. | P1 | S | ✓ Nov 5 |
 | R34 | Three colors, faces for who can see it, the phone's own emoji (Chase Nov 5, DEC-50). Done: PR #100 merged, 0022 deployed Nov 5. | P1 | S | ✓ Nov 5 |
-| R35 | 🎉 Hooray as a fourth reaction (Chase Nov 5, DEC-51, REACT-12): migration 0023 and the app button. Left: Chase's merge and the 0023 deploy. | P2 | S | ◐ Nov 5: PR open |
+| R35 | 🎉 Hooray as a fourth reaction (Chase Nov 5, DEC-51, REACT-12): migration 0023 and the app button. Done: PR #101 merged, 0023 deployed, Expo preview republished Nov 5. | P2 | S | ✓ Nov 5 |
 | R14 | npm audit: recheck the Expo CLI build-tool findings after the next Expo patch (RV-X4) | P2 | S | ☑ Oct 21: still 62 from 5 advisories on expo 57.0.30 (newest SDK 57 patch). One ships: decode-uri-component in expo-router (a crafted link could freeze the app; no data exposed). No forced override; recheck at the SDK 58 move (Oct 26: moved to SDK 58; recheck in the next PR) |
 
 ## Sequence to milestone 1

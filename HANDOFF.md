@@ -3,7 +3,7 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: 🎉 Hooray reaction (REACT-12, migration 0023) waits for Chase's merge and a 0023 deploy; #99/#100 merged and 0022 deployed Nov 5
+now: #99-#101 merged; 0022 and 0023 deployed and the Expo preview republished Nov 5 (colors, who-can-see circles, phone emoji, Hooray)
 next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
@@ -14,7 +14,7 @@ blockers: []
 ## Nov 5: 🎉 Hooray reaction (DEC-51, TRACKER R35; branch claude/project-thread-pfr7l7, PR)
 - **Why:** Chase, Nov 5: add 🎉 alongside ❤️ 😂 👍.
 - **Done:** migration 0023 widens `set_reaction` and the table check (reactions_test.sql REACT-12); the app has a fourth reaction button, "Hooray" (moments.test.tsx, contract test). PRs #99 and #100 merged, 0022 deployed (smoke 9/9).
-- **Next exact step:** Chase merges; then deploy 0023 with `backend/scripts/deploy.sh`, then republish the Expo preview if Chase says publish.
+- **Status:** merged (PR #101), 0023 deployed (smoke 9/9) and the Expo preview republished Nov 5 (update group accc030f).
 
 ## Nov 5: three colors, faces for who can see it, the phone's own emoji (DEC-50, TRACKER R34; branch claude/project-thread-pfr7l7 on top of PR #99)
 - **Why:** Chase, Nov 5: "I'd like all three color options", "a contact circle component or chips... a discreet icon", "the standard not 3d emojis not line icons".
