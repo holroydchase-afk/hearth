@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 // Feed cache: keyset pagination over get_feed, a per-user cached first page for instant opens,
 // and optimistic hearts, comments and deletes. Framework-free; React reads it through useFeed().
-import type { CommentRow, FeedPost, HearthApi, Reaction, ReactionCounts } from '../api/HearthApi';
+import type { CommentRow, FeedPost, HearthApi, PostViewer, Reaction, ReactionCounts } from '../api/HearthApi';
 import { uuid as realUuid } from '../crypto/random';
 import { messageFor } from '../errors/messages';
 import type { KV } from '../platform/kv';
@@ -135,6 +135,25 @@ export class FeedStore {
    *  (no reaction_summary) or a failed call leaves the hearts-only view. */
   private async addReactions(rows: FeedPost[]): Promise<FeedPost[]> {
     if (!rows.length) return rows;
+    const viewers = this.addViewers(rows);
+    const out = await this.addReactionsOnly(rows);
+    const who = await viewers;
+    return out.map((r) => (who.has(r.post_id) ? { ...r, viewers: who.get(r.post_id) } : r));
+  }
+
+  /** WHO-6 (0022): who can see each post, by name, laid onto posts already showing. An older server
+   *  (no post_viewers) or a failed call leaves the card without the line. */
+  private async addViewers(rows: FeedPost[]): Promise<Map<string, PostViewer[]>> {
+    try {
+      const who = new Map((await this.o.api.postViewers(rows.map((r) => r.post_id))).map((v) => [v.post_id, v.viewers]));
+      for (const [id, viewers] of who) if (this.find(id)) this.patchPost(id, { viewers });
+      return who;
+    } catch {
+      return new Map();
+    }
+  }
+
+  private async addReactionsOnly(rows: FeedPost[]): Promise<FeedPost[]> {
     // HARD-14: a summary read before a tap is older than that tap's answer, so it never overwrites it.
     const taps = new Map(rows.map((r) => [r.post_id, this.heartSeq.get(r.post_id) ?? 0]));
     try {

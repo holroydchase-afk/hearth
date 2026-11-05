@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { useApp } from '../state/AppContext';
 import { HELPER_FEATURES } from '../share/helpers';
 import type { NotifyChoice } from '../state/prefs';
-import type { ScreenLook } from '../ui/theme';
+import type { ColorName, ScreenLook } from '../ui/theme';
 import { Button, Card, Choice, Confirm, Notice, Txt } from '../ui/kit';
 
 export function BiggerText() {
@@ -38,6 +38,25 @@ export function LightOrDark() {
       <Txt variant="title" role="header">Light or dark screen</Txt>
       {LOOKS.map((l) => (
         <Choice key={l.id} kind="radio" label={l.title} title={l.title} detail={l.detail} checked={prefs.look === l.id} onPress={() => setPrefs({ look: l.id })} />
+      ))}
+    </Card>
+  );
+}
+
+const COLORS: { id: ColorName; title: string; detail: string }[] = [
+  { id: 'ember', title: 'Ember', detail: 'Warm red-brown, like a fire. Hearth starts here.' },
+  { id: 'sage', title: 'Sage', detail: 'Calm green, like leaves.' },
+  { id: 'plum', title: 'Plum', detail: 'Soft purple.' },
+];
+
+/** COLOR-4: Ember, Sage or Plum for buttons and highlights. Saved on this phone only. */
+export function ColorChoice() {
+  const { prefs, setPrefs } = useApp();
+  return (
+    <Card>
+      <Txt variant="title" role="header">Colors</Txt>
+      {COLORS.map((k) => (
+        <Choice key={k.id} kind="radio" label={k.title} title={k.title} detail={k.detail} checked={prefs.color === k.id} onPress={() => setPrefs({ color: k.id })} />
       ))}
     </Card>
   );

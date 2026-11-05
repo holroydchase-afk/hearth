@@ -40,6 +40,10 @@ The same function is behind RLS on posts, photos (`media_items`), comments and h
 
 One permission check, `public.can(space, capability)`, decides `post`, `send_to_everyone`, `make_events`, `invite`, `set_up_family`, `family_settings` and (0013) `use_video`. Only parents send to Everyone, make events or invite; only the owner changes family settings. Relatives post only when the family allows it (`viewers_can_post`, off by default) and only to containers they are in. `can_send_to(circle)` applies this in `create_post`, `publish_post` and the RLS policy on `post_audiences`, so the API and a direct table insert give the same answer.
 
+## Who can see a post, shown by name (Built, migration 0022)
+
+Every card tells everyone who can see it which people can see it, by name ("You, Alex, Chase and 2 others can see this"), through `public.post_viewers`. The list is computed from the same rule as the post itself: the members of the family for whom `private.sees_post` is true, so it can't name someone who can't see the post or leave out someone who can. It carries a name and an id only. A group's name stays with the parents (the author's `audience` column), because a relative never needs to know a group exists. A post the caller can't see is left out, like any other read.
+
 ## Who reads a reply (Built, migration 0013)
 
 A comment or heart is read only by people who can see the post, and among them by the parents, the post's author, the writer, everyone if the owner turned that on, or people a **group's comment setting** lets read it. Each group has one setting (`circles.comment_mode`), chosen by a parent with `set_comment_mode`:
@@ -96,4 +100,4 @@ RLS limits what each family member's app can read. It does not limit Hearth's se
 - **Planned:** event dates (`starts_on`, `ends_on`) exist in the schema but the app doesn't use them yet.
 
 ---
-Last checked against code: 2026-10-31, HELP-R6 (the owner's photo helpers switch writes `space_features` under RLS; no migration); earlier 2026-10-29, migration 0021 (words change only through edit_post_words); earlier 2026-10-28, migration 0018 (reactions only through RPCs); earlier 2026-10-22, 10001df (plus migrations 0013, 0015, 0016)
+Last checked against code: 2026-11-04, migration 0022 (post_viewers names who can see a post, from sees_post); earlier 2026-10-31, HELP-R6 (the owner's photo helpers switch writes `space_features` under RLS; no migration); earlier 2026-10-29, migration 0021 (words change only through edit_post_words); earlier 2026-10-28, migration 0018 (reactions only through RPCs); earlier 2026-10-22, 10001df (plus migrations 0013, 0015, 0016)

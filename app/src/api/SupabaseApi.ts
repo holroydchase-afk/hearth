@@ -12,7 +12,7 @@ import type {
   NotificationPrefs,
   PushPlatform,
   AddCommentArgs, Circle, CommentRow, CreateInviteArgs, CreatePostArgs, FeedArgs, FeedPost, FinalizeResult,
-  HeartState, InvitePreview, Reaction, ReactionState, ReactionSummary, Session, Space, UploadGrant, UploadItemSpec, ViewGrant,
+  HeartState, InvitePreview, Reaction, ReactionState, ReactionSummary, PostViewers, Session, Space, UploadGrant, UploadItemSpec, ViewGrant,
   TimelineArgs, TimelinePost, TimelineYear,
   ChatMember, ChatRow, ChatRowKind, ChatSummary, ClaimedKeyPackage,
 } from './types';
@@ -148,6 +148,8 @@ export class SupabaseApi implements HearthApi {
   };
   reactionSummary = (posts: string[]) =>
     this.rpc<ReactionSummary[] | null>('reaction_summary', { p_posts: posts }).then((d) => d ?? []);
+  postViewers = (posts: string[]) =>
+    this.rpc<PostViewers[] | null>('post_viewers', { p_posts: posts }).then((d) => d ?? []);
   addComment = (a: AddCommentArgs) =>
     this.rpc<unknown>('add_comment', { p_client_id: a.clientId, p_post: a.post, p_body: a.body }).then((d) => one<{ comment_id: string; created_at: string }>(d));
   getComments = (p: string, limit = 50) => this.rpc<CommentRow[]>('get_comments', { p_post: p, p_limit: limit }).then((d) => d ?? []);

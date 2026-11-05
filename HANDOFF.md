@@ -3,13 +3,28 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: intake #95 part 1 (roadmap labels, portable tokens, Umami off by default); #94 done (PR #97)
-next: #95 look cleanup (keep Atkinson) with before/after shots; #83 uses Chase's own photos
+now: PR #99 holds who can see a post (WHO-1..10, migration 0022), the card cleanup (LOOK-1..3), Ember/Sage/Plum colors (COLOR-1..4) and the phone's own emoji (REACT-11), all waiting for Chase's merge; 0022 needs a deploy
+next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 5: three colors, faces for who can see it, the phone's own emoji (DEC-50, TRACKER R34; branch claude/project-thread-pfr7l7 on top of PR #99)
+- **Why:** Chase, Nov 5: "I'd like all three color options", "a contact circle component or chips... a discreet icon", "the standard not 3d emojis not line icons".
+- **Done:** Ember (default), Sage and Plum, light and dark, under Colors on Help and Me (colors.test.tsx, COLOR-1..4; tokens.json `colorChoices`). The names sentence became up to three initial circles under the photo that open a sheet of name chips (who.test.tsx, WHO-10). Reactions are the phone's own emoji again, with chat-style count chips (moments.test.tsx, REACT-11). Shots: docs/reviews/2026-11-05-look/.
+- **Next exact step:** Chase merges; then 0022 deploy. Open question: add 🎉 as a reaction (needs a migration on 0017/0018's list).
+
+## Nov 4: every post names who can see it (WHO-1..9, DEC-49; migration 0022; branch claude/project-thread-v54okb, PR #99)
+- **Why:** Chase, Nov 4: relatives shouldn't know they're in a group ("gparents dads side is offputting"), but should see who's in it with them.
+- **Done:** `post_viewers` (0022) returns the people `sees_post` lets see each post, names and ids only (backend/tests/viewers_test.sql, WHO-1..5). Everyone but the sender gets "You, Alex, Chase and 2 others can see this" under the date and the full list under More (who.test.tsx, WHO-6..9); the sender keeps "Sent to <group>". API.md, architecture 05, DEC-49 and a persona check updated.
+- **Next exact step:** Chase says merge and deploy; deploy 0022 (`backend/scripts/deploy.sh`) before or with the app, since an app on an older server just leaves the line off.
+
+## Nov 4: post card cleanup (intake #95 part 2, LOOK-1..3; branch claude/project-thread-v54okb, PR)
+- **Why:** #95 says the look reads dated; Chase kept Atkinson (Nov 4 card), so the fix is spacing and layout.
+- **Done:** the post card's date and "Sent to <group>" are two lines instead of one wrapped run (LOOK-1); the initial lines up with the name (LOOK-2); every inset on the card is on the 4 pt SPACE scale, 16 pt sides (LOOK-3). Before/after: `docs/reviews/2026-11-04-look/`.
+- **Next exact step:** Chase looks at the before/after and says merge (it changes the app and the live demo).
 
 ## Nov 4: design tokens, roadmap labels and demo-site analytics (intake #95 part 1, TRACKER R32; branch claude/project-thread-v54okb, PR)
 - **Why:** Product Studio intake #95 (Chase, Nov 4): Hearth gets the full "shipped" treatment for PM hiring managers.

@@ -11,6 +11,7 @@ import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { seedPost } from '../../test/seed';
 import { expectGrandparentSafe, renderApp } from '../../test/renderApp';
 import { MediaImage } from '../MediaImage';
+import { SystemIcon } from '../../ui/kit';
 import { PhotosScreen } from '../PhotosScreen';
 import { collageShape } from '../PhotoCollage';
 
@@ -73,9 +74,21 @@ describe('MOMENT: one compact card per upload', () => {
     expect(flat(row.props.style).flexDirection).toBe('row');
     const names = within(row).getAllByRole('button').map((b) => b.props.accessibilityLabel);
     expect(names).toEqual(['Love it', 'Haha', 'Like it', 'Write a comment']);
-    // no words under the icons: only the four emoji show
+    // no words under the icons (REACT-7), and REACT-11 (Chase, Nov 5: "the standard, not 3D emojis, not line
+    // icons"): the phone's own emoji, the same ones on its keyboard
     const shown = within(row).UNSAFE_queryAllByType(Text).map((t) => String(t.props.children)).join(' ');
     expect(shown).toBe('❤️ 😂 👍 💬');
+    expect(within(row).UNSAFE_queryAllByType(SystemIcon)).toHaveLength(0);
+  });
+
+  it('REACT-11 the count under the photo is one emoji chip per kind, like a chat app', async () => {
+    const { be, id } = await one();
+    await be.clientFor(FIXTURE.users.jo.id).setReaction(id, '❤️');
+    await renderApp(<PhotosScreen />, { be, user: 'chase' });
+    const card = await screen.findByTestId(`post-${id}`);
+    const chip = await within(card).findByTestId(`chip-❤️-${id}`);
+    expect(within(chip).getByText('❤️ 1')).toBeTruthy();
+    expect(within(card).UNSAFE_queryAllByType(SystemIcon).filter((i) => /heart|thumb|smil/.test(JSON.stringify(i.props.icon)))).toHaveLength(0);
   });
 
   it('REACT-8 tapping Haha picks it, Love switches to Love, tapping Love again takes it back', async () => {
@@ -107,7 +120,8 @@ describe('MOMENT: one compact card per upload', () => {
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     const card = await screen.findByTestId(`post-${id}`);
     const line = await within(card).findByTestId(`reactions-${id}`);
-    expect(await within(line).findByText('😂 2   ❤️ 1')).toBeTruthy();
+    // REACT-11: one emoji chip per kind, most first; read out in words
+    expect(within(line).UNSAFE_queryAllByType(Text).map((t) => String(t.props.children))).toEqual(['😂 2', '❤️ 1']);
     expect(line.props.accessibilityLabel).toBe('2 haha, 1 love');
     expect(within(card).getByRole('button', { name: 'Love it' }).props.accessibilityState.selected).toBe(true);
   });
@@ -173,9 +187,10 @@ describe('MOMENT: one compact card per upload', () => {
   it('MOMENT-6 a viewer\'s More has no Delete, and Close shuts it', async () => {
     const { be, id } = await one();
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    await screen.findByTestId(`who-${id}`);
     fireEvent.press(within(await screen.findByTestId(`post-${id}`)).getByRole('button', { name: 'More for this photo' }));
     const menu = await screen.findByTestId(`more-${id}`);
-    expect(within(menu).getByText('Shared with you')).toBeTruthy();
+    expect(within(menu).getByText(/^You, .+ can see this$/)).toBeTruthy(); // WHO-7: names, not a group
     expect(within(menu).queryByRole('button', { name: /Delete/ })).toBeNull();
     fireEvent.press(within(menu).getByRole('button', { name: 'Close this menu' }));
     await waitFor(() => expect(screen.queryByTestId(`more-${id}`)).toBeNull());

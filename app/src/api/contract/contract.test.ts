@@ -178,6 +178,24 @@ describe.each(factories)('%s contract (API.md)', (_name, factory, caps) => {
     });
   });
 
+  describe('WHO-1..3 who can see a post, by name (0022)', () => {
+    it('WHO-1 everyone who can see it gets the same names and ids, and nothing else', async () => {
+      const id = await publishedPost();
+      const me = (await viewerIn.myProfile()).user_id;
+      const rows = await viewerIn.postViewers([id]);
+      expect(rows.map((r) => r.post_id)).toEqual([id]);
+      const ids = rows[0]!.viewers.map((v) => v.user_id);
+      expect(ids).toContain(me);
+      expect(ids).not.toContain((await viewerOut.myProfile()).user_id);
+      for (const v of rows[0]!.viewers) expect(Object.keys(v).sort()).toEqual(['name', 'user_id']);
+      expect(await poster.postViewers([id])).toEqual(rows);
+    });
+    it('WHO-3 a post you can\'t see is left out', async () => {
+      const id = await publishedPost();
+      expect(await viewerOut.postViewers([id])).toEqual([]);
+    });
+  });
+
   describe('BETA-REPLY-2 comments', () => {
     it('trimmed body must be 1–500 characters (23514)', async () => {
       const id = await publishedPost();
@@ -489,7 +507,18 @@ describe.each(factories)('%s contract (API.md)', (_name, factory, caps) => {
       await poster.publishPost(id);
       return id;
     }
-    const tlIds = async (api: HearthApi) => (await api.getTimeline({ space: h.spaceId, limit: 50 })).map((p) => p.post_id);
+    // Every page, not just the first: on the real API earlier tests' posts pile up in the same family and push
+    // these dated (older) posts past the first 50.
+    const tlIds = async (api: HearthApi) => {
+      const ids: string[] = [];
+      for (let before: { at: string; id: string } | null = null; ;) {
+        const page = await api.getTimeline({ space: h.spaceId, limit: 50, beforeAt: before?.at, beforeId: before?.id });
+        ids.push(...page.map((p) => p.post_id));
+        if (page.length < 50) return ids;
+        const last = page[page.length - 1]!;
+        before = { at: last.sort_at, id: last.post_id };
+      }
+    };
 
     it('BETA-TIME-2 orders by date taken (shared date when none), newest first; rows carry taken_at and sort_at', async () => {
       const old = await datedPost('2024-07-04T14:00:00.000Z');

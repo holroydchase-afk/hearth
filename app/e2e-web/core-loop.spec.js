@@ -69,8 +69,9 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await page.getByLabel('6-number code').fill('123456');
   await page.getByRole('button', { name: 'Continue' }).click();
   await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^You, .+ can see this$/ })).toBeVisible(); // WHO-6/10: names, never the group
   await page.getByRole('button', { name: 'More for this photo' }).click();
-  await expect(page.getByText('Shared with you')).toBeVisible();
+  await expect(page.getByText('Who can see this')).toBeVisible();
   await page.getByRole('button', { name: 'Close this menu' }).click();
   await expect(page.getByRole('tab')).toHaveText([/Photos/, /Help/]); // no Share tab for viewers
   await signOut(page, 'Help');
@@ -84,7 +85,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   // 4. Grandma Jo hearts it and writes back.
   await signIn(page, 'jo@example.com');
   await page.getByRole('button', { name: 'Love it' }).click();
-  await expect(page.getByText('❤️ 1')).toBeVisible();
+  await expect(page.getByText('❤️ 1')).toBeVisible(); // REACT-11: the phone's own emoji
   await page.getByLabel('Write something back to Chase').fill('Look at those cheeks!');
   await page.getByRole('button', { name: 'Send' }).click();
   await expect(page.getByText(/^Sent\. .+ will read it\.$/)).toBeVisible(); // BETA-REPLY-6/11: names the readers (AUD-8 default: the parents)
@@ -97,7 +98,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
 
   // 5. Chase sees the heart and the comment (no "Seen by" count), then deletes it.
   await signIn(page, 'chase@example.com');
-  await expect(page.getByText('❤️ 1')).toBeVisible();
+  await expect(page.getByText('❤️ 1')).toBeVisible(); // REACT-11: the phone's own emoji
   await expect(page.getByText(/Look at those cheeks!/)).toBeVisible();
   await expect(page.getByText(/Seen by/)).toHaveCount(0); // RV-U1 (DEC-21): no "Seen by" count
   await page.getByRole('button', { name: 'More for this photo' }).click();

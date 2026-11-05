@@ -12,6 +12,7 @@
 #   tests/reactions_test.sql  REACT-1..6: Love, Haha, Like (migration 0017); HARD-12: only through the RPCs (0018)
 #   tests/captions_test.sql   CAP-1..3, 5..8, 10, 11, HARD-18: post titles (0019), changing the words (0021)
 #   tests/video_cap_test.sql  S14-1..7: the free video cap counts per person, not per space (migration 0020)
+#   tests/viewers_test.sql    WHO-1..5: who can see a post, by name, for everyone who can see it (migration 0022)
 #   ../packages/messenger/relay/test.sql  RELAY-1..9: the shared messenger library's relay template
 #   tests/aud16/  BETA-AUD-16: snapshot on 0001-0010, apply 0011+, diff (0011 must change nobody's access)
 #   tests/grp1/   GRP-1/GRP-2: snapshot on 0001-0012, apply 0013+, diff (0013 must change nobody's access)
@@ -22,7 +23,7 @@ DB=${DB:-hearth_test}
 STATUS=0
 for suite in tests/rls_test.sql tests/api_test.sql tests/notify_test.sql tests/setup_test.sql tests/reply_test.sql tests/timeline_test.sql \
              tests/groups_test.sql tests/timeline_future_test.sql tests/privacy_audit_test.sql tests/groups_v2_test.sql tests/chat_test.sql \
-             tests/photo_helpers_test.sql tests/reactions_test.sql tests/captions_test.sql tests/video_cap_test.sql; do
+             tests/photo_helpers_test.sql tests/reactions_test.sql tests/captions_test.sql tests/video_cap_test.sql tests/viewers_test.sql; do
   dropdb --if-exists "$DB"
   createdb "$DB"
   files=(-f tests/supabase_stub.sql)

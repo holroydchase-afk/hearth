@@ -11,7 +11,7 @@ import { clearArrivals, recordArrival } from '../notify/latency';
 import { listenForArrivals, registerForPush } from '../notify/push';
 import type { KV } from '../platform/kv';
 import type { PickedAsset } from '../share/bulk';
-import { BigTextContext, LookContext, nativeScheme } from '../ui/theme';
+import { BigTextContext, ColorContext, LookContext, nativeScheme } from '../ui/theme';
 import { UploadQueue, type Job, type Prepared, type QueueItem } from '../upload/queue';
 import { defaultPrefs, loadPrefs, savePrefs, serverPrefs, type NotifyChoice, type Prefs } from './prefs';
 
@@ -249,7 +249,9 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
   return (
     <Ctx.Provider value={value}>
       <LookContext.Provider value={s.prefs.look}>
-        <BigTextContext.Provider value={s.prefs.bigText}>{children}</BigTextContext.Provider>
+        <ColorContext.Provider value={s.prefs.color}>
+          <BigTextContext.Provider value={s.prefs.bigText}>{children}</BigTextContext.Provider>
+        </ColorContext.Provider>
       </LookContext.Provider>
     </Ctx.Provider>
   );
