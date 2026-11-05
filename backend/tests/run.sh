@@ -9,7 +9,7 @@
 #   tests/groups_v2_test.sql  GRP-2..14, FLAG-1..4, EVT-1: plain groups, comment settings, feature flags (SPEC-GROUPS v2, migration 0013)
 #   tests/chat_test.sql       MSG-1..8: messenger relay, MLS bytes only (SPEC-MESSENGER, migration 0015)
 #   tests/photo_helpers_test.sql  HELP-R4: photo helper off-switches, on by default for posters (SPEC-PHOTO-HELPERS, migration 0016)
-#   tests/reactions_test.sql  REACT-1..6: Love, Haha, Like (migration 0017); HARD-12: only through the RPCs (0018)
+#   tests/reactions_test.sql  REACT-1..6: Love, Haha, Like (migration 0017); HARD-12: only through the RPCs (0018); REACT-12: Hooray (0023)
 #   tests/captions_test.sql   CAP-1..3, 5..8, 10, 11, HARD-18: post titles (0019), changing the words (0021)
 #   tests/video_cap_test.sql  S14-1..7: the free video cap counts per person, not per space (migration 0020)
 #   tests/viewers_test.sql    WHO-1..5: who can see a post, by name, for everyone who can see it (migration 0022)

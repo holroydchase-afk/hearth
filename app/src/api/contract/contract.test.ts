@@ -157,6 +157,9 @@ describe.each(factories)('%s contract (API.md)', (_name, factory, caps) => {
     it('REACT-1 one reaction each: the same one takes it back, another switches', async () => {
       const id = await publishedPost();
       expect(await viewerIn.setReaction(id, '😂')).toEqual({ my_reaction: '😂', heart_count: 1, counts: { '😂': 1 } });
+      // REACT-12 (0023): Hooray is a fourth kind
+      expect(await viewerIn.setReaction(id, '🎉')).toEqual({ my_reaction: '🎉', heart_count: 1, counts: { '🎉': 1 } });
+      expect(await viewerIn.setReaction(id, '😂')).toEqual({ my_reaction: '😂', heart_count: 1, counts: { '😂': 1 } });
       expect(await viewerIn.setReaction(id, '👍')).toEqual({ my_reaction: '👍', heart_count: 1, counts: { '👍': 1 } });
       expect(await poster.setReaction(id, '❤️')).toEqual({ my_reaction: '❤️', heart_count: 2, counts: { '👍': 1, '❤️': 1 } });
       expect(await viewerIn.reactionSummary([id])).toEqual([{ post_id: id, my_reaction: '👍', counts: { '👍': 1, '❤️': 1 } }]);

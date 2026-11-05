@@ -73,12 +73,22 @@ describe('MOMENT: one compact card per upload', () => {
     const row = within(card).getByTestId(`actions-${id}`);
     expect(flat(row.props.style).flexDirection).toBe('row');
     const names = within(row).getAllByRole('button').map((b) => b.props.accessibilityLabel);
-    expect(names).toEqual(['Love it', 'Haha', 'Like it', 'Write a comment']);
+    expect(names).toEqual(['Love it', 'Haha', 'Like it', 'Hooray', 'Write a comment']); // REACT-12 (Chase, Nov 5): 🎉 added
     // no words under the icons (REACT-7), and REACT-11 (Chase, Nov 5: "the standard, not 3D emojis, not line
     // icons"): the phone's own emoji, the same ones on its keyboard
     const shown = within(row).UNSAFE_queryAllByType(Text).map((t) => String(t.props.children)).join(' ');
-    expect(shown).toBe('❤️ 😂 👍 💬');
+    expect(shown).toBe('❤️ 😂 👍 🎉 💬');
     expect(within(row).UNSAFE_queryAllByType(SystemIcon)).toHaveLength(0);
+  });
+
+  it('REACT-12 Hooray works like the others and is counted', async () => {
+    const { be, id } = await one();
+    await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    const card = await screen.findByTestId(`post-${id}`);
+    fireEvent.press(within(card).getByRole('button', { name: 'Hooray' }));
+    await waitFor(() => expect(be.state.hearts).toEqual([{ post: id, user: FIXTURE.users.jo.id, emoji: '🎉' }]));
+    expect(await within(card).findByText('🎉 1')).toBeTruthy();
+    expect(within(card).getByTestId(`reactions-${id}`).props.accessibilityLabel).toBe('1 hooray');
   });
 
   it('REACT-11 the count under the photo is one emoji chip per kind, like a chat app', async () => {
