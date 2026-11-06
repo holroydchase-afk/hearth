@@ -7,7 +7,7 @@ What changes (sweep doc https://claude.ai/artifact/3N1G5jF4ezeQ2Gtf2jFwZU):
 - **HIG-3, HIG-11:** tab and toolbar words and icons grow with Larger Text up to 1.5x; tabs show the large pop-up label.
 - **HIG-4, HIG-5:** the launch screen is Ember's background in light and dark; iPad turns every way.
 - **HIG-7..10, HIG-12:** Increase Contrast colors, Reduce Motion, VoiceOver says who sent a photo and when, bottom sheets with a grabber and swipe down, light haptics.
-- **Not done:** HIG-6 words under the emoji (it undoes REACT-7, Chase's Oct 25 call; asked on a card), owner account deletion (needs Chase's call on the family's photos), Share stays a tab.
+- **Not done:** HIG-6 words under the emoji (Chase kept emoji only on the Nov 6 card; REACT-7 stands), owner account deletion (needs Chase's call on the family's photos), Share stays a tab.
 - Over: leaving the app as it was until the App Store build.
 
 | Persona | Green/Red | Why |
