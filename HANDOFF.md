@@ -3,7 +3,7 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: demo first-minute fixes (FIRSTMIN-1..3, R39) PR open for Chase's merge; working the readiness doc's 3s toward 5s
+now: demo first-minute fixes (FIRSTMIN-1..3, R40) PR open for Chase's merge; working the readiness doc's 3s toward 5s
 next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
@@ -11,7 +11,7 @@ waiting_on_chase:
 blockers: []
 -->
 
-## Nov 6: demo first minute, raising 3s toward 5s (FIRSTMIN-1..3, TRACKER R39; branch claude/project-thread-eaq4hr, PR)
+## Nov 6: demo first minute, raising 3s toward 5s (FIRSTMIN-1..3, TRACKER R40; branch claude/project-thread-eaq4hr, PR)
 - **Why:** Chase, Nov 6: bring the readiness doc's level-3 features to 5 before new dev (doc https://claude.ai/artifact/EBrvRki1RMkdHtApKSX48e, fix #5).
 - **Done:** `initialOf` gives two letters for two-word names (GJ, GE), one rule for the faces, Who sheet and post header; the phone-width demo shows 3 numbered steps; face letters cap at 1.3x (GUX-R1). Shots: `docs/reviews/2026-11-06-firstmin/`. Pretend sign-in cut (staff-pm).
 - **Checked on hosted (read only):** `HEARTH_KEYS_PENDING` is already gone; the outbox has 0 rows because only one person (Chase) has signed in, so TRACKER step 7's email check needs account B, which is step 9.
