@@ -10,7 +10,7 @@
     ]
   },
   "agents": {
-    "verify": "bash scripts/check-agents.sh && bash scripts/tests/sync_agents_test.sh && bash scripts/tests/check_logs_test.sh && bash scripts/tests/check_persona_checks_test.sh",
+    "verify": "bash scripts/check-agents.sh && bash scripts/tests/sync_agents_test.sh && bash scripts/tests/check_logs_test.sh && bash scripts/tests/check_persona_checks_test.sh && bash scripts/tests/agent_runs_test.sh",
     "runs": 3
   }
 }

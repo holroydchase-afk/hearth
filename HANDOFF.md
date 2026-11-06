@@ -3,13 +3,20 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: live review fixes PR (DEC-52, LIVE-1..4) waits for Chase's merge; #99-#101 merged, 0022/0023 deployed Nov 5
+now: studio agents run in cloud threads via scripts/agent-prompt.sh (AGENTRUN-1..6, PR open, non-live); #103 merged Nov 5
 next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 6: studio agents really run in cloud threads (AGENTRUN-1..6, TRACKER R38; branch claude/project-thread-7zjm6h, PR)
+- **Why:** Chase's recruiter-readiness review (Nov 6, doc https://claude.ai/artifact/EBrvRki1RMkdHtApKSX48e) found PRs #99-#103 all say "qa-tdd skipped: the studio agent types can't be loaded", which contradicts the README's nine-agent claim. Chase: "Start 2".
+- **Cause:** in cloud project threads the Agent tool offers only built-in types (`subagent_type: qa-tdd` → "not found", even from ~/.claude/agents), and repo hooks never fire (CLAUDE_PROJECT_DIR empty), so nothing logged runs.
+- **Done:** `bash scripts/agent-prompt.sh <agent> "<task>"` builds a general-purpose prompt from the agent file; the subagent logs itself with `bash scripts/log-agent-run.sh --as <agent>` (`<agent> via-general-purpose`), which `check-agent-runs.sh` accepts. Test `scripts/tests/agent_runs_test.sh` (20 checks) in test-all and agents.verify. This PR used it: qa-tdd red, engineer, qa-tdd 3x green.
+- **Open:** QA-R1 (test runs with stdin closed), QA-R2 (`--as` is honest by convention; only qa-tdd has a CI backstop). The same change belongs in studio-agents (Product Studio) so `sync.sh` doesn't overwrite it.
+- **Next exact step:** merges itself on green (non-live, DEC-48).
 
 ## Nov 6: memes and GIFs in comments chosen (DEC-53, TRACKER R37; branch claude/project-thread-qvd39c)
 - **Why:** Chase, Nov 5: "support memes and gifs in the comments... slack meets instagram". Plan doc https://claude.ai/artifact/N3wzTESDf3LXhhRYnBdgUi; he picked "Picture reply + GIF shelf" on Nov 6.
