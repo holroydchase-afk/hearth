@@ -3,13 +3,20 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: studio agents run in cloud threads via scripts/agent-prompt.sh (AGENTRUN-1..6, PR open, non-live); #103 merged Nov 5
+now: demo first-minute fixes (FIRSTMIN-1..3, R39) PR open for Chase's merge; working the readiness doc's 3s toward 5s
 next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 6: demo first minute, raising 3s toward 5s (FIRSTMIN-1..3, TRACKER R39; branch claude/project-thread-eaq4hr, PR)
+- **Why:** Chase, Nov 6: bring the readiness doc's level-3 features to 5 before new dev (doc https://claude.ai/artifact/EBrvRki1RMkdHtApKSX48e, fix #5).
+- **Done:** `initialOf` gives two letters for two-word names (GJ, GE), one rule for the faces, Who sheet and post header; the phone-width demo shows 3 numbered steps; face letters cap at 1.3x (GUX-R1). Shots: `docs/reviews/2026-11-06-firstmin/`. Pretend sign-in cut (staff-pm).
+- **Checked on hosted (read only):** `HEARTH_KEYS_PENDING` is already gone; the outbox has 0 rows because only one person (Chase) has signed in, so TRACKER step 7's email check needs account B, which is step 9.
+- **Waiting on Chase:** merge this PR; sign in account B on the web build to start the 2-day demo; the "Start a family" card (recommended: keep invite-only until milestone 7).
+- **Next exact step:** Chase merges; the demo rebuilds on merge.
 
 ## Nov 6: studio agents really run in cloud threads (AGENTRUN-1..6, TRACKER R38; branch claude/project-thread-7zjm6h, PR)
 - **Why:** Chase's recruiter-readiness review (Nov 6, doc https://claude.ai/artifact/EBrvRki1RMkdHtApKSX48e) found PRs #99-#103 all say "qa-tdd skipped: the studio agent types can't be loaded", which contradicts the README's nine-agent claim. Chase: "Start 2".

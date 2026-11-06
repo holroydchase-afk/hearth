@@ -52,4 +52,14 @@ describe('FIRSTMIN-2 two grandparents get different faces', () => {
     // The avatar is hidden from screen readers (the name beside it is read), so look past that.
     expect(within(head).getByText(/^[A-Z?]{1,2}$/, { includeHiddenElements: true }).props.children).toBe('DC');
   });
+
+  it('GUX-R1 face letters cap their growth at 1.3x so GJ stays inside the 36 pt circle at 200% text', async () => {
+    const { id, el } = await joAndEarlPost();
+    const who = await within(el).findByTestId(`who-${id}`);
+    const letters = within(within(who).getByTestId(`face-${jo.id}`)).getByText('GJ', { includeHiddenElements: true });
+    expect(letters.props.maxFontSizeMultiplier).toBe(1.3);
+    fireEvent.press(who);
+    const sheet = await screen.findByTestId(`who-sheet-${id}`);
+    expect(within(within(sheet).getByTestId(`person-${jo.id}`)).getByText('GJ', { includeHiddenElements: true }).props.maxFontSizeMultiplier).toBe(1.3);
+  });
 });

@@ -12,7 +12,7 @@ import { WIDE } from './DemoFrame';
 import { DEMO_MODE } from './flags';
 import { demoViewer } from './seed';
 
-export const DEMO_STEPS = ["This is a parent's Photos.", 'Tap Details at the top.', 'Tap See it as Grandma Jo.'] as const;
+export const DEMO_STEPS = ["You're seeing a parent's Photos.", 'Tap Details at the top.', 'Tap See it as Grandma Jo.'] as const;
 
 export function demoTip(width: number, viewer: 'parent' | 'grandma'): string[] | null {
   return width < WIDE && viewer === 'parent' ? [...DEMO_STEPS] : null;
