@@ -6,19 +6,21 @@
 import { SymbolView } from 'expo-symbols';
 import React, { type ReactNode } from 'react';
 import {
-  ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View,
-  type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
+  ActivityIndicator, Modal, PanResponder, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View,
+  useWindowDimensions, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FONT, MIN_TARGET, RADIUS, dialogRadius, fontFamily, useTheme } from './theme';
+import { FONT, LABEL_SCALE_CAP, MIN_TARGET, RADIUS, dialogRadius, fontFamily, iconSize, sheetShouldClose, useTheme } from './theme';
 
 /** A system symbol: SF Symbol name on iPhone, Material Symbol name on Android and the web. */
 export interface Icon { sf: string; md: string }
 
 export function SystemIcon({ icon, color, size = 22 }: { icon: Icon; color: string; size?: number }) {
+  // HIG-11: symbols grow with the phone's text size, like the words beside them (up to LABEL_SCALE_CAP).
+  const { fontScale } = useWindowDimensions();
   return (
     <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-      <SymbolView name={{ ios: icon.sf as never, android: icon.md as never, web: icon.md as never }} size={size} tintColor={color} />
+      <SymbolView name={{ ios: icon.sf as never, android: icon.md as never, web: icon.md as never }} size={iconSize(size, fontScale)} tintColor={color} />
     </View>
   );
 }
@@ -118,13 +120,16 @@ export function IconButton({ label, text, icon, onPress, testID }: { label: stri
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
+      accessibilityShowsLargeContentViewer
+      accessibilityLargeContentTitle={text}
       onPress={onPress}
       testID={testID}
       android_ripple={{ color: c.line, borderless: true }}
       style={({ pressed }) => [styles.iconBtn, { opacity: pressed ? 0.7 : 1 }]}
     >
       <SystemIcon icon={icon} color={c.accent} size={28} />
-      <Text style={{ color: c.accent, fontFamily: FONT.medium, fontSize: t.base }}>{text}</Text>
+      {/* HIG-3: a toolbar word stops growing at 1.5x so the row still fits at the largest text size. */}
+      <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.accent, fontFamily: FONT.medium, fontSize: t.base }}>{text}</Text>
     </Pressable>
   );
 }
@@ -256,7 +261,35 @@ export function Confirm({ visible, title, body, yes, no, onYes, onNo }: {
   );
 }
 
+/** HIG-10: a sheet from the bottom of the screen (More, Who can see this). Apple's sheets show a grabber and close
+ *  with a swipe down; the Close button inside stays (DS-4: never gesture-only). HIG-8: it fades in with Reduce
+ *  Motion on, instead of sliding. */
+export function BottomSheet({ testID, onClose, children }: { testID: string; onClose: () => void; children: ReactNode }) {
+  const { c, os, reduceMotion } = useTheme();
+  const close = React.useRef(onClose);
+  close.current = onClose;
+  const drag = React.useRef(PanResponder.create({
+    onMoveShouldSetPanResponder: (_e, g) => g.dy > 12 && Math.abs(g.dy) > Math.abs(g.dx) * 2,
+    onPanResponderRelease: (_e, g) => { if (sheetShouldClose(g.dy, g.vy)) close.current(); },
+  })).current;
+  const corner = os === 'android' ? 28 : 14;
+  return (
+    <Modal transparent visible animationType={reduceMotion ? 'fade' : 'slide'} onRequestClose={onClose}>
+      <View style={[styles.sheetScrim, { backgroundColor: c.scrim }]}>
+        <SafeAreaView edges={['bottom']} testID={testID} accessibilityViewIsModal {...drag.panHandlers}
+          style={[styles.menu, { backgroundColor: c.surface, borderTopLeftRadius: corner, borderTopRightRadius: corner }]}>
+          <View testID="sheet-grabber" style={[styles.grabber, { backgroundColor: c.muted }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" />
+          {children}
+        </SafeAreaView>
+      </View>
+    </Modal>
+  );
+}
+
 const styles = StyleSheet.create({
+  sheetScrim: { flex: 1, justifyContent: 'flex-end' },
+  menu: { padding: 20, paddingTop: 8, gap: 14 },
+  grabber: { alignSelf: 'center', width: 36, height: 5, borderRadius: RADIUS.pill, opacity: 0.5 },
   iconBtn: { flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: MIN_TARGET + 12, minWidth: MIN_TARGET + 12, paddingHorizontal: 6, gap: 2 },
   btn: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, borderRadius: RADIUS.pill, borderWidth: 1, paddingHorizontal: 18, paddingVertical: 10, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 },
   choice: { minHeight: MIN_TARGET + 8, minWidth: MIN_TARGET, borderWidth: 2, borderRadius: RADIUS.medium, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 },

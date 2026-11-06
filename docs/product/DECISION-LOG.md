@@ -387,5 +387,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** the fun of Slack and Instagram replies without sending searches or views to an outside service (A1, A3); it reuses the photo pipeline.
 - **Source:** `docs/product/decisions/2026-11-06-gifs-in-comments.md`
 
+### DEC-54 · Fix the Apple design guidelines gaps (HIG-1..12)
+- **When / status:** Nov 6 · Chase, after the sweep (doc https://claude.ai/artifact/3N1G5jF4ezeQ2Gtf2jFwZU): "handle all the p1s, handle 1,6,8,4,etc"
+- **Chose:** ask for notices after the first photo with a Hearth card; zoom; capped tab words; warm launch screen; iPad in every direction; Increase Contrast, Reduce Motion, VoiceOver sender, swipe-down sheets, bigger icons, haptics.
+- **Over:** waiting until the App Store build; words under the emoji (REACT-7 stands until Chase says otherwise).
+- **Because:** each was a gap against Apple's own rules that an older user or a reviewer would hit first; the cold notice prompt can't be undone from far away.
+- **Source:** `docs/product/decisions/2026-11-06-apple-guidelines-fixes.md`
+
 ---
-Last updated: Nov 6, 2026 (DEC-53)
+Last updated: Nov 6, 2026 (DEC-54)

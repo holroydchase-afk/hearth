@@ -53,10 +53,45 @@ const PALETTES: Record<ColorName, { light: Colors; dark: Colors }> = {
   },
 };
 
-/** Same colors on iPhone, Android and the web (DS-11); os stays so a phone can differ later. */
-export function paletteFor(_os: OS, dark: boolean, color: ColorName = 'ember'): Colors {
+/** Same colors on iPhone, Android and the web (DS-11); os stays so a phone can differ later.
+ *  high: the phone's Increase Contrast (iPhone) or High contrast text (Android) is on (HIG-7). */
+export function paletteFor(_os: OS, dark: boolean, color: ColorName = 'ember', high = false): Colors {
   const p = PALETTES[color] ?? PALETTES.ember;
-  return dark ? p.dark : p.light;
+  const base = dark ? p.dark : p.light;
+  return high ? highContrast(base) : base;
+}
+
+/** Mix two #RRGGBB colors: t = 0 is a, 1 is b. */
+export function mix(a: string, b: string, t: number): string {
+  const ch = (h: string, i: number) => parseInt(h.slice(i, i + 2), 16);
+  return `#${[1, 3, 5].map((i) => Math.round(ch(a, i) + (ch(b, i) - ch(a, i)) * t).toString(16).padStart(2, '0')).join('').toUpperCase()}`;
+}
+
+/** The least nudge of `from` toward `to` that reaches `ratio` against `against` (at least `min`). */
+function nudge(from: string, to: string, against: string, ratio: number, min = 0): string {
+  for (let t = min; t < 1; t += 0.05) {
+    const c = mix(from, to, t);
+    if (contrast(c, against) >= ratio) return c;
+  }
+  return to;
+}
+
+// HIG-7 (Nov 6 2026): Apple asks for a high-contrast version of every custom color. Same hues, pulled toward the
+// ink: secondary words reach 7:1 (body text's AAA), edges 4.5:1, and the tap color a clear step up.
+const highCache = new Map<Colors, Colors>();
+function highContrast(c: Colors): Colors {
+  const hit = highCache.get(c);
+  if (hit) return hit;
+  let accent = nudge(c.accent, c.ink, c.bg, 0, 0.3);
+  for (let t = 0.3; contrast(c.accentInk, accent) < 7 && t < 1; t += 0.05) accent = mix(c.accent, c.ink, t);
+  const out: Colors = {
+    ...c,
+    muted: nudge(c.muted, c.ink, c.bg, 7),
+    line: nudge(c.line, c.ink, c.surface, 4.5),
+    accent,
+  };
+  highCache.set(c, out);
+  return out;
 }
 
 // DS-12 (Chase, Nov 1 2026): Atkinson Hyperlegible Next, the Braille Institute's typeface for low-vision
@@ -85,6 +120,20 @@ export const FONT_FILES: Record<string, number> = {
 export const fontFamily = FONT.regular;
 
 export const MIN_TARGET = 48;
+
+/** HIG-3 (Nov 6 2026): tab and toolbar words grow with the phone's text size up to 1.5x, then stop, and the tab
+ *  shows Apple's large pop-up label instead (as the phone's own tab bars do). Body text has no cap. */
+export const LABEL_SCALE_CAP = 1.5;
+
+/** HIG-11: an icon grows with the phone's text size (never shrinks), up to the same cap as its word. */
+export function iconSize(base: number, fontScale: number): number {
+  return Math.round(base * Math.min(Math.max(fontScale, 1), LABEL_SCALE_CAP));
+}
+
+/** HIG-10: a bottom sheet closes on a drag down of 80 pt or a quick flick down. */
+export function sheetShouldClose(dy: number, vy: number): boolean {
+  return dy > 80 || (dy > 0 && vy > 0.8);
+}
 
 // DS-13 (Nov 1, 2026): one spacing scale and four corner sizes, so screens stop picking numbers by hand
 // (the sweep found 13 different gaps and 9 corner sizes). New code uses these; older screens move over
@@ -115,7 +164,15 @@ export function contrast(a: string, b: string): number {
   return (hi! + 0.05) / (lo! + 0.05);
 }
 
-export interface Theme { c: Colors; t: ReturnType<typeof typeScale>; bigText: boolean; dark: boolean; os: OS }
+export interface Theme {
+  c: Colors; t: ReturnType<typeof typeScale>; bigText: boolean; dark: boolean; os: OS;
+  /** HIG-7 / HIG-8: the phone's Increase Contrast and Reduce Motion. */
+  highContrast: boolean; reduceMotion: boolean;
+}
+
+/** HIG-7 / HIG-8: the phone's accessibility settings that change how Hearth draws (AppProvider keeps it current). */
+export interface PhoneA11y { highContrast: boolean; reduceMotion: boolean }
+export const PhoneA11yContext = createContext<PhoneA11y>({ highContrast: false, reduceMotion: false });
 
 export const BigTextContext = createContext(false);
 
@@ -143,7 +200,8 @@ export function useTheme(): Theme {
   const bigText = useContext(BigTextContext);
   const look = useContext(LookContext);
   const color = useContext(ColorContext);
+  const { highContrast, reduceMotion } = useContext(PhoneA11yContext);
   const dark = isDark(look, scheme);
   const os = Platform.OS as OS;
-  return { c: paletteFor(os, dark, color), t: typeScale(bigText), bigText, dark, os };
+  return { c: paletteFor(os, dark, color, highContrast), t: typeScale(bigText), bigText, dark, os, highContrast, reduceMotion };
 }

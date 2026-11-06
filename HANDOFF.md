@@ -3,13 +3,19 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: studio agents run in cloud threads via scripts/agent-prompt.sh (AGENTRUN-1..6, PR open, non-live); #103 merged Nov 5
+now: Apple design guidelines fixes HIG-1..12 (DEC-54, PR open, waits for Chase's merge); agents-in-cloud PR (AGENTRUN-1..6)
 next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 6: Apple design guidelines fixes (HIG-1..12, DEC-54, TRACKER R39; branch claude/project-thread-bellss, PR)
+- **Why:** Chase asked for a full sweep against Apple's Human Interface Guidelines (doc https://claude.ai/artifact/3N1G5jF4ezeQ2Gtf2jFwZU), then "handle all the p1s". HIG is readable here through Apple's JSON feed (`developer.apple.com/tutorials/data/design/human-interface-guidelines/<page>.json`).
+- **Done:** notices asked after the first photo with a Hearth card (HIG-1, DS-15); zoom (HIG-2, BETA-SEE-4); tab and toolbar words capped at 1.5x with Apple's large pop-up label (HIG-3); Ember launch screen light and dark (HIG-4); iPad in every direction (HIG-5); Increase Contrast, Reduce Motion, VoiceOver sender, swipe-down sheets, scaling icons, haptics (HIG-7..12, DS-14). New dependency `expo-haptics` (version from `npx expo install`). Tests `app/src/screens/__tests__/hig.test.tsx`.
+- **Open:** HIG-6 words under the emoji (card to Chase; it undoes REACT-7); owner account deletion; Android pinch; nothing tried on a phone yet.
+- **Next exact step:** Chase says "merge" on the PR, then republish the Expo preview and try the largest text size and the zoom on his iPhone.
 
 ## Nov 6: studio agents really run in cloud threads (AGENTRUN-1..6, TRACKER R38; branch claude/project-thread-7zjm6h, PR)
 - **Why:** Chase's recruiter-readiness review (Nov 6, doc https://claude.ai/artifact/EBrvRki1RMkdHtApKSX48e) found PRs #99-#103 all say "qa-tdd skipped: the studio agent types can't be loaded", which contradicts the README's nine-agent claim. Chase: "Start 2".
