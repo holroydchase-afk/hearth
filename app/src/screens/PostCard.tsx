@@ -60,7 +60,7 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
     <Card testID={`post-${post.post_id}`} style={{ padding: 0, gap: 0, overflow: 'hidden' }}>
       <View testID={`card-head-${post.post_id}`} style={styles.head}>
         <View style={[styles.avatar, { backgroundColor: c.accentSoft }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-          <Txt variant="strong" style={{ color: c.accent }}>{initialOf(post.author_name)}</Txt>
+          <Txt variant="strong" style={{ color: c.accent, letterSpacing: -0.5 }}>{initialOf(post.author_name)}</Txt>
         </View>
         <View style={{ flex: 1, minWidth: 0 }}>
           <Txt variant="strong">{post.author_name}</Txt>
@@ -426,7 +426,8 @@ const styles = StyleSheet.create({
   faceWord: { fontFamily, fontSize: 17, marginRight: SPACE.xs },
   faces: { flexDirection: 'row', alignItems: 'center', minHeight: MIN_TARGET, minWidth: MIN_TARGET, paddingHorizontal: SPACE.xs },
   face: { width: 36, height: 36, borderRadius: RADIUS.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
-  faceText: { fontFamily: FONT.semibold, fontSize: 17, lineHeight: 20 },
+  // FIRSTMIN-1: two letters ("GJ") fit the 32 pt inside the ring at 17 pt with slightly tighter tracking.
+  faceText: { fontFamily: FONT.semibold, fontSize: 17, lineHeight: 20, letterSpacing: -0.5 },
   emoji: { fontSize: 24, lineHeight: 30, textAlign: 'center' },
   faceMore: { fontFamily, fontSize: 17, marginLeft: SPACE.xs },
   people: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.sm },
