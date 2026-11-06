@@ -11,6 +11,11 @@ waiting_on_chase:
 blockers: []
 -->
 
+## Nov 6: memes and GIFs in comments chosen (DEC-53, TRACKER R37; branch claude/project-thread-qvd39c)
+- **Why:** Chase, Nov 5: "support memes and gifs in the comments... slack meets instagram". Plan doc https://claude.ai/artifact/N3wzTESDf3LXhhRYnBdgUi; he picked "Picture reply + GIF shelf" on Nov 6.
+- **Done:** decision logged with a persona check (`docs/product/decisions/2026-11-06-gifs-in-comments.md`), ideas log row, TRACKER R37. No code.
+- **Next exact step:** after the Nov 22 beta, staff-pm spec, then a failing test for GIF-3 (comment pictures signed only for reply readers).
+
 ## Nov 5: live review fixes (DEC-52, TRACKER R36; branch claude/project-thread-o1veol, PR)
 - **Why:** Chase reviewed the preview on his iPhone: tab words overlapped the icons; "Messages should be a single icon so should filters"; "Yes" to toning down the picked ❤️ and labeling the circles.
 - **Done:** iPhone uses Hearth's own tab bar (tabs.test.tsx LIVE-1, Test Log B14); Messages, By date and Events are `IconButton`s in a toolbar above the title (photosHeader.test.tsx LIVE-2); my reaction is a soft fill (moments.test.tsx LIVE-3); "Can see" before the circles (who.test.tsx LIVE-4). Shot: /mnt/project-files/hearth-look/2026-11-05-live-review-fixes.png (web build).

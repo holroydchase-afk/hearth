@@ -380,5 +380,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** the actions are everyday ones and the pills pushed photos down; DS-2 and DS-3 keep every word readable.
 - **Source:** `docs/product/decisions/2026-11-05-live-review-header-tabs.md`
 
+### DEC-53 · Picture replies and a GIF shelf in comments (GIF-1..4)
+- **When / status:** Nov 6 · Chase picked "Picture reply + GIF shelf" on the decision card (from his Nov 5 ask: "memes and gifs in the comments... slack meets instagram")
+- **Chose:** a picture or GIF from your own phone on any comment, plus a bundled shelf of reaction GIFs; pictures follow the reply rule. Built after the Nov 22 beta.
+- **Over:** GIPHY search now; parking it until after the beta.
+- **Because:** the fun of Slack and Instagram replies without sending searches or views to an outside service (A1, A3); it reuses the photo pipeline.
+- **Source:** `docs/product/decisions/2026-11-06-gifs-in-comments.md`
+
 ---
-Last updated: Nov 5, 2026 (DEC-52)
+Last updated: Nov 6, 2026 (DEC-53)
