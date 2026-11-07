@@ -138,3 +138,43 @@ describe('Start a family refusals (BETA-START-11, -13)', () => {
     expect(screenWords()).not.toMatch(/Smith Crew|family_full|HF001/);
   });
 });
+
+describe('Start a family words and the first invite (grandparent-ux GUX-R1, -R2, -R5)', () => {
+  it('GUX-R1 the ask step says a new family starts empty, in plain words', async () => {
+    await renderApp(<AppGate />, { be: backend(), user: 'newbie', waitReady: false });
+    fireEvent.press(await screen.findByRole('button', { name: "I'm a parent: start a family" }));
+    expect(await screen.findByText('Did someone send you a code?')).toBeTruthy();
+    expect(screen.getByText("If family invited you, use their code. A new family starts empty, with nobody's photos in it.")).toBeTruthy();
+    expect(screen.queryByText('If a relative invited you, use their code instead.')).toBeNull();
+    expectGrandparentSafe();
+  });
+
+  it('GUX-R2 Invite your first person: no past-photos question for a new family, and the invite shares all', async () => {
+    const be = backend();
+    await toWhoScreen('Our kids', be);
+    fireEvent.press(screen.getByRole('button', { name: 'Start the family' }));
+    expect(await screen.findByText('Invite your first person')).toBeTruthy();
+    expect(screen.queryByText('Should they see photos already shared?')).toBeNull();
+    expect(screen.queryByRole('radio', { name: 'Share all past photos' })).toBeNull();
+    expect(screen.queryByRole('radio', { name: 'Only new photos' })).toBeNull();
+    fireEvent.changeText(screen.getByLabelText('Their name, the way your family says it'), 'Grandma June');
+    fireEvent.press(screen.getByRole('button', { name: 'Make the invite' }));
+    expect(await screen.findByText('Invite ready')).toBeTruthy();
+    expect(screen.queryByText('Pick one above first.')).toBeNull();
+    const fam = (await kimsFamilies(be))[0]!;
+    const invites = Object.values(be.state.invites).filter((i) => i.space === fam.space_id);
+    expect(invites).toHaveLength(1);
+    expect(invites[0]).toMatchObject({ name: 'Grandma June', role: 'viewer', history: 'all' });
+  });
+
+  it('GUX-R5 an empty name says "Type a name first." under the field; typing a name clears it', async () => {
+    await toNameScreen();
+    expect(next().props.accessibilityState).toMatchObject({ disabled: true });
+    expect(screen.getByText('Type a name first.')).toBeTruthy();
+    fireEvent.changeText(nameBox(), '   ');
+    expect(screen.getByText('Type a name first.')).toBeTruthy();
+    fireEvent.changeText(nameBox(), 'Our kids');
+    expect(screen.queryByText('Type a name first.')).toBeNull();
+    expectGrandparentSafe();
+  });
+});

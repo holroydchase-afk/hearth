@@ -101,4 +101,14 @@ describe('Start a family words (0024, BETA-START)', () => {
     const m = messageFor(new ApiError('54000', 'rate limited'), { action: 'start' as never, inviter: 'Chase' });
     expect(m).toBe("You've started 3 families today. Try again tomorrow.");
   });
+
+  it('GUX-R3 FAMILY_FULL says what stopped, that shared photos are safe, and where to ask', () => {
+    expect(messageFor(new ApiError('FAMILY_FULL' as never), { inviter: 'Chase' })).toBe(
+      "Your family is full for now, so new photos can't be sent. Photos already shared are safe. Tap Help to ask for more room.",
+    );
+  });
+
+  it('GUX-R4 23514 while starting a family names only the family name (Just Everyone has no side names)', () => {
+    expect(messageFor(new ApiError('23514', 'name check'), { action: 'start' })).toBe('Check the family name, then try again.');
+  });
 });
