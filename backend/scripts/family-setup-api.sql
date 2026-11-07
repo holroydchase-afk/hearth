@@ -1,8 +1,9 @@
 -- Fresh family setup in the 0011 shape (SPEC-GROUPS section 2), run by scripts/family-setup.sh through the
 -- Supabase Management API: no psql, no database URL. Defines pg_temp.hearth_family_setup(); the runner calls
 -- it in the same request and prints the lines it returns.
--- Runs AS CHASE through the same RPCs and RLS the app uses: it looks up Chase's account, then switches to the
--- authenticated role with his user id for the rest of the call. Safe to re-run until anyone else joins; after
+-- Runs AS CHASE: it looks up Chase's account, makes the family itself (create_household/create_space, closed to
+-- app users since 0024), then switches to the authenticated role with his user id, so everything after goes
+-- through the same RPCs and RLS the app uses. Safe to re-run until anyone else joins; after
 -- that it refuses, because new links could change who sees what (use family-setup-v2.sql's dry run).
 create or replace function pg_temp.hearth_family_setup(
   p_chase_email text, p_space_name text, p_mom_email text, p_sister_name text)
@@ -19,8 +20,9 @@ begin
     raise exception 'Chase has no account yet: sign in once in the app, then run this again.';
   end if;
   perform set_config('request.jwt.claim.sub', v_chase::text, true);
-  perform set_config('role', 'authenticated', true);   -- from here on, everything goes through RLS as Chase
 
+  -- 0024 (START-10): create_household/create_space are closed to app users, so the family itself is made here,
+  -- as Chase (jwt sub) but before switching role. Never through start_family: that would put it under the cap.
   select s.id into v_space
   from public.spaces s join public.space_members sm on sm.space_id = s.id
   where sm.user_id = v_chase and sm.role = 'owner' and s.name = p_space_name and s.deleted_at is null
@@ -31,6 +33,8 @@ begin
     raise exception 'Someone else has joined "%" already, so this stops: new links could change who sees what. '
       'Use family-setup-v2.sql''s dry run instead, or make invites in the app.', p_space_name;
   end if;
+
+  perform set_config('role', 'authenticated', true);   -- from here on, everything goes through RLS as Chase
 
   -- containers (reused by kind and name if they exist)
   for r in select * from (values
