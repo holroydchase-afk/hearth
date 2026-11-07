@@ -6,6 +6,7 @@ import { ApiError } from '../../api/HearthApi';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { seedPost } from '../../test/seed';
 import { expectGrandparentSafe, renderApp } from '../../test/renderApp';
+import { AppGate } from '../AppGate';
 import { JoinScreen } from '../JoinScreen';
 import { SignInScreen } from '../SignInScreen';
 
@@ -152,5 +153,71 @@ describe('Sign in', () => {
     fireEvent.changeText(await screen.findByLabelText('6-number code'), '123456');
     fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
     expect(await screen.findByText('Too many tries. Wait 10 minutes.')).toBeTruthy();
+  });
+});
+
+// Start a family (DEC-55, SPEC-START-FAMILY 3.0): the signed-in, no-family screen. Aunt Kim (newbie) is in no family.
+describe('Start a family entry (BETA-START-2, -5, -8)', () => {
+  const START = "I'm a parent: start a family";
+  const open = (be: FakeBackend) => { be.state.featureFlags = { ...be.state.featureFlags, start_family_open: true }; return be; };
+  const labels = () => screen.getAllByRole('button').map((b) => b.props.accessibilityLabel as string);
+
+  it('BETA-START-2 the code entry comes first; "I\'m a parent: start a family" sits below it; tapping asks about a code before anything is made', async () => {
+    const be = open(FakeBackend.withFixture());
+    const spacesBefore = Object.keys(be.state.spaces).length;
+    const { nav } = await renderApp(<AppGate />, { be, user: 'newbie', waitReady: false });
+    expect(await screen.findByLabelText('Invite code')).toBeTruthy();
+    const start = await screen.findByRole('button', { name: START });
+    expect(start).toBeTruthy();
+    expect(labels().indexOf('Open the invite')).toBeGreaterThanOrEqual(0);
+    expect(labels().indexOf('Open the invite')).toBeLessThan(labels().indexOf(START));
+    expectGrandparentSafe();
+    fireEvent.press(start);
+    expect(await screen.findByText('Did someone send you a code?')).toBeTruthy();
+    expect(screen.getByText('If a relative invited you, use their code instead.')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Use a code' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Start a new family' })).toBeTruthy();
+    expectGrandparentSafe();
+    expect(Object.keys(be.state.spaces)).toHaveLength(spacesBefore); // nothing made yet
+    expect(nav.goPhotos).not.toHaveBeenCalled();
+  });
+
+  it('BETA-START-2 "Use a code" goes back to the code entry (a grandparent who lost her code)', async () => {
+    const be = open(FakeBackend.withFixture());
+    const { nav } = await renderApp(<AppGate />, { be, user: 'newbie', waitReady: false });
+    fireEvent.press(await screen.findByRole('button', { name: START }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Use a code' }));
+    fireEvent.changeText(await screen.findByLabelText('Invite code'), 'GRANDMAJ23');
+    fireEvent.press(screen.getByRole('button', { name: 'Open the invite' }));
+    expect(nav.goJoin).toHaveBeenCalledWith('GRANDMAJ23');
+    expect(Object.values(be.state.members).filter((m) => m.user === FIXTURE.users.newbie.id)).toEqual([]);
+  });
+
+  it('BETA-START-8 with the server switch off there is no start button, only the code entry', async () => {
+    const be = FakeBackend.withFixture(); // ships off
+    const api = be.clientFor(null, { trackAppSession: true });
+    const asked = jest.spyOn(api, 'canStartFamily');
+    await renderApp(<AppGate />, { be, user: 'newbie', waitReady: false, deps: { api } });
+    expect(await screen.findByLabelText('Invite code')).toBeTruthy();
+    await waitFor(() => expect(asked).toHaveBeenCalled());
+    await waitFor(() => expect(screen.queryByRole('button', { name: START })).toBeNull());
+    expect(screen.queryByText(/start a family/i)).toBeNull();
+  });
+
+  it('BETA-START-5 when can_start_family says no (already started one, or 3 today), the button is hidden', async () => {
+    const be = open(FakeBackend.withFixture());
+    const api = be.clientFor(null, { trackAppSession: true });
+    const asked = jest.spyOn(api, 'canStartFamily').mockResolvedValue(false);
+    await renderApp(<AppGate />, { be, user: 'newbie', waitReady: false, deps: { api } });
+    expect(await screen.findByLabelText('Invite code')).toBeTruthy();
+    await waitFor(() => expect(asked).toHaveBeenCalled());
+    expect(screen.queryByRole('button', { name: START })).toBeNull();
+  });
+
+  it('BETA-START-2 not on the signed-out landing: sign in first, then choose', async () => {
+    const be = open(FakeBackend.withFixture());
+    await renderApp(<AppGate />, { be, user: null, waitReady: false });
+    expect(await screen.findByRole('button', { name: 'I have an invite code' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: START })).toBeNull();
   });
 });

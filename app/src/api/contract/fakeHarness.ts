@@ -12,6 +12,7 @@ export async function fakeHarness(): Promise<ContractHarness> {
     viewerOut: FIXTURE.users.ruth.id,
     joiner: FIXTURE.users.newbie.id,
     ratelimit: FIXTURE.users.newbie2.id,
+    starter: FIXTURE.users.newbie2.id,
   };
   return {
     name: 'FakeApi',
@@ -19,6 +20,9 @@ export async function fakeHarness(): Promise<ContractHarness> {
     circleIn: FIXTURE.circles.dadSide.id,
     circleOut: FIXTURE.circles.momSide.id,
     joinerEmail: FIXTURE.users.newbie.email,
+    starterEmail: FIXTURE.users.newbie2.email,
+    // 0024: the switch lives in the global feature flags (private.feature_flags on the server); missing = off.
+    setStartFamilyOpen: async (open) => { be.state.featureFlags = { ...be.state.featureFlags, start_family_open: open }; },
     has: () => true,
     as: (u) => be.clientFor(ids[u]),
     anon: () => be.clientFor(null),

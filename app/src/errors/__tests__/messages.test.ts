@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-import { ApiError } from '../../api/HearthApi';
+import { ApiError, isRetryable } from '../../api/HearthApi';
 import { messageFor, toApiError } from '../messages';
 
 describe('plain-language error mapping (API.md error table)', () => {
@@ -81,5 +81,24 @@ describe('toApiError normalizes transport errors', () => {
   it('anything else is UNKNOWN', () => {
     expect(toApiError({ code: 'XX000', message: 'boom' }).code).toBe('UNKNOWN');
     expect(toApiError('weird').code).toBe('UNKNOWN');
+  });
+});
+
+describe('Start a family words (0024, BETA-START)', () => {
+  it('BETA-START-12 HF001 becomes FAMILY_FULL and is not retried (the upload queue stops on it)', () => {
+    const e = toApiError({ code: 'HF001', message: 'family_full' });
+    expect(e.code).toBe('FAMILY_FULL');
+    expect(isRetryable(e)).toBe(false);
+  });
+
+  it('BETA-START-12 FAMILY_FULL is calm and plain, with no names', () => {
+    const m = messageFor(new ApiError('FAMILY_FULL' as never), { inviter: 'Chase' });
+    expect(m).toMatch(/^Your family is full for now/);
+    expect(m).not.toMatch(/Chase|HF001|family_full|GB|500/);
+  });
+
+  it('BETA-START-11 too many starts: plain words, no names, not the 10-minute sign-in message', () => {
+    const m = messageFor(new ApiError('54000', 'rate limited'), { action: 'start' as never, inviter: 'Chase' });
+    expect(m).toBe("You've started 3 families today. Try again tomorrow.");
   });
 });

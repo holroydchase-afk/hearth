@@ -175,3 +175,24 @@ describe('SupabaseApi sign-media', () => {
     await expect(make(mockClient(), f as never).finalizeMedia(['m'])).rejects.toMatchObject({ code: 'NETWORK' });
   });
 });
+
+describe('Start a family (0024, BETA-START)', () => {
+  it('BETA-START-1 start_family and can_start_family use the API.md names and p_* args', async () => {
+    const c = mockClient({ data: 'S1', error: null });
+    expect(await make(c).startFamily({ clientId: 'C', name: 'Our kids', sides: ["Dad's side", "Mom's side"] })).toBe('S1');
+    expect(c.rpc).toHaveBeenCalledWith('start_family', { p_client_id: 'C', p_name: 'Our kids', p_sides: ["Dad's side", "Mom's side"] });
+    const d = mockClient({ data: true, error: null });
+    expect(await make(d).canStartFamily()).toBe(true);
+    expect(d.rpc).toHaveBeenCalledWith('can_start_family', {});
+  });
+
+  it('BETA-START-12 HF001 maps to FAMILY_FULL by error.code, never by HTTP status (PostgREST sends it as 400)', async () => {
+    const c = mockClient({ data: null, error: { code: 'HF001', message: 'family_full', status: 400 } });
+    await expect(make(c).toggleHeart('P')).rejects.toMatchObject({ code: 'FAMILY_FULL' });
+  });
+
+  it.each([['23505'], ['42501'], ['54000'], ['23514']] as const)('BETA-START-5/8/11 start_family keeps %s by error.code', async (pg) => {
+    const c = mockClient({ data: null, error: { code: pg, message: 'refused', status: 500 } });
+    await expect(make(c).startFamily({ clientId: 'C', name: 'Our kids', sides: [] })).rejects.toMatchObject({ code: pg });
+  });
+});
