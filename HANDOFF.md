@@ -3,7 +3,7 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: demo first-minute fixes (FIRSTMIN-1..3, R40) PR open for Chase's merge; working the readiness doc's 3s toward 5s
+now: Start a family (DEC-55, 0024) and demo first-minute fixes (FIRSTMIN, R40) in one PR for Chase's merge
 next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
@@ -11,16 +11,18 @@ waiting_on_chase:
 blockers: []
 -->
 
-## Nov 7: Start a family, app half (DEC-55, BETA-START; branch claude/project-thread-eaq4hr)
-- **Done (engineer):** `HearthApi.canStartFamily/startFamily` in SupabaseApi (RPCs `can_start_family`, `start_family`, p_* args; errors keep `error.code`) and FakeBackend (switch `start_family_open` off by default, one live family, 3 starts in 24 h, fixed refusal text, retires an empty started family on redeem; `get_comments` now raises P0002 like the server). `HF001` maps to `FAMILY_FULL` (not retried); words for 54000 with action `start` and FAMILY_FULL. UI: `StartFamily.tsx` (ask, Name your family + 18+ line, Who's in it, Invite your first person, Skip for now to Photos), entry button on AppGate's no-family screen only when `canStartFamily()` says yes. The invite card parts moved to `InviteCard.tsx`, shared with Groups.
-- **Open:** the real-stack contract tests for 0024 still skip (no starter user, no way to flip `private.feature_flags` over PostgREST, and the shared DB isn't reset per test). The first invite has no email field yet (the Groups card has none either); flag for staff-pm.
-- **Next exact step:** qa-tdd runs all suites 3x; then grandparent-ux on the words, ux-reviewer, privacy-security.
+## Nov 7: Start a family (DEC-55, BETA-START-1..13, migration 0024, TRACKER R41; branch claude/project-thread-eaq4hr, PR)
+- **Why:** Chase picked "Yes, build it now" on Nov 7: level 5 needs a family to start without Chase's script. Reverses the Oct 16 "Not now (M7)" call (DEC-3 superseded).
+- **Done:** spec `docs/product/SPEC-START-FAMILY.md` with privacy-security (PRIV-R1..8) and architect design; persona check `decisions/2026-11-07-start-a-family.md`. Migration 0024: `start_family`, `can_start_family`, switch `start_family_open` (ships OFF), 3 starts a day, photo/storage cap for app-started families (HF001), empty started family retired on redeem, `create_household`/`create_space` revoked from app users (setup scripts make the family as admin first). App: `StartFamily.tsx` (ask, name + 18+ line, who's in it, first invite, Skip for now), entry on the no-family screen only when the switch is on; words per grandparent-ux (GUX-R1..R5). Architecture 04 (gap 6, open starting) and 05, API.md, MARKETING row 28. Shots `docs/reviews/2026-11-07-start-family/`. Backend 1126/0, app 819/0, e2e green.
+- **Open:** real-stack contract cases for 0024 skip (QA-R1: need a starter user and a service-only switch flip); no Playwright walk of the flow (QA-R2); first invite has no email field.
+- **Before the switch goes on (blocks the deploy turning it on, not the merge):** an abuse contact in Help and a suspend-a-family runbook (PRIV-R7); the 18+ and legal review (PRIV-R5, M7); confirm Help reaches Chase (GUX-R3).
+- **Next exact step:** Chase says merge and deploy; deploy 0024 with the switch off; then the PRIV-R7 Help contact, then turn it on.
 
 ## Nov 6: demo first minute, raising 3s toward 5s (FIRSTMIN-1..3, TRACKER R40; branch claude/project-thread-eaq4hr, PR)
 - **Why:** Chase, Nov 6: bring the readiness doc's level-3 features to 5 before new dev (doc https://claude.ai/artifact/EBrvRki1RMkdHtApKSX48e, fix #5).
 - **Done:** `initialOf` gives two letters for two-word names (GJ, GE), one rule for the faces, Who sheet and post header; the phone-width demo shows 3 numbered steps; face letters cap at 1.3x (GUX-R1). Shots: `docs/reviews/2026-11-06-firstmin/`. Pretend sign-in cut (staff-pm).
 - **Checked on hosted (read only):** `HEARTH_KEYS_PENDING` is already gone; the outbox has 0 rows because only one person (Chase) has signed in, so TRACKER step 7's email check needs account B, which is step 9.
-- **Waiting on Chase:** merge this PR; sign in account B on the web build to start the 2-day demo; the "Start a family" card (recommended: keep invite-only until milestone 7).
+- **Waiting on Chase:** merge this PR; sign in account B on the web build to start the 2-day demo. (The Start a family card: Chase picked build it, Nov 7.)
 - **Next exact step:** Chase merges; the demo rebuilds on merge.
 
 ## Nov 6: studio agents really run in cloud threads (AGENTRUN-1..6, TRACKER R38; branch claude/project-thread-7zjm6h, PR)
