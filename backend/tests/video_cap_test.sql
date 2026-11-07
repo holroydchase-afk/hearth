@@ -25,8 +25,9 @@ $$;
 insert into private.feature_flags (feature, enabled) values ('video_posting', true) on conflict (feature) do update set enabled = true;
 insert into public.space_features (space_id, feature, enabled) values (:space_a, 'video_posting', true);
 
--- Alex makes a second free space in his own household (the S14 trick).
-:as_alex
+-- Alex makes a second free space in his own household (the S14 trick). Since 0024 (BETA-START-10) the app can't
+-- call create_space, so the server makes it on his behalf (jwt sub = Alex, admin role).
+select set_config('request.jwt.claim.sub', 'a0000000-0000-0000-0000-00000000000a', false);
 select tests.setv('space_x', format($$select public.create_space(%L, 'Extra space')$$, :house_a));
 :as_admin
 insert into public.space_features (space_id, feature, enabled) values (tests.v('space_x')::uuid, 'video_posting', true);
