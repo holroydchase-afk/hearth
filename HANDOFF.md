@@ -11,6 +11,11 @@ waiting_on_chase:
 blockers: []
 -->
 
+## Nov 7: Start a family, app half (DEC-55, BETA-START; branch claude/project-thread-eaq4hr)
+- **Done (engineer):** `HearthApi.canStartFamily/startFamily` in SupabaseApi (RPCs `can_start_family`, `start_family`, p_* args; errors keep `error.code`) and FakeBackend (switch `start_family_open` off by default, one live family, 3 starts in 24 h, fixed refusal text, retires an empty started family on redeem; `get_comments` now raises P0002 like the server). `HF001` maps to `FAMILY_FULL` (not retried); words for 54000 with action `start` and FAMILY_FULL. UI: `StartFamily.tsx` (ask, Name your family + 18+ line, Who's in it, Invite your first person, Skip for now to Photos), entry button on AppGate's no-family screen only when `canStartFamily()` says yes. The invite card parts moved to `InviteCard.tsx`, shared with Groups.
+- **Open:** the real-stack contract tests for 0024 still skip (no starter user, no way to flip `private.feature_flags` over PostgREST, and the shared DB isn't reset per test). The first invite has no email field yet (the Groups card has none either); flag for staff-pm.
+- **Next exact step:** qa-tdd runs all suites 3x; then grandparent-ux on the words, ux-reviewer, privacy-security.
+
 ## Nov 6: demo first minute, raising 3s toward 5s (FIRSTMIN-1..3, TRACKER R40; branch claude/project-thread-eaq4hr, PR)
 - **Why:** Chase, Nov 6: bring the readiness doc's level-3 features to 5 before new dev (doc https://claude.ai/artifact/EBrvRki1RMkdHtApKSX48e, fix #5).
 - **Done:** `initialOf` gives two letters for two-word names (GJ, GE), one rule for the faces, Who sheet and post header; the phone-width demo shows 3 numbered steps; face letters cap at 1.3x (GUX-R1). Shots: `docs/reviews/2026-11-06-firstmin/`. Pretend sign-in cut (staff-pm).

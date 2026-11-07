@@ -3,7 +3,7 @@
 // HearthApi over supabase-js (PostgREST RPCs) + the sign-media edge function.
 // Privacy: nothing here logs keys, URLs or captions.
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { ApiError, type ApiErrorCode, type HearthApi } from './HearthApi';
+import { ApiError, type ApiErrorCode, type HearthApi, type StartFamilyArgs } from './HearthApi';
 import type {
   ReplyAudience,
   CircleKind, CommentMode, Person, Role, ShareHistory,
@@ -202,6 +202,10 @@ export class SupabaseApi implements HearthApi {
     this.rpc<void>('place_person', { p_group: group, p_user: user, p_history: history });
   addPeopleFrom = (target: string, source: string, history: ShareHistory) =>
     this.rpc<void>('add_people_from', { p_target: target, p_source: source, p_history: history });
+  // Start a family (0024): errors keep their error.code (rule 7); start_family is never retried here.
+  canStartFamily = () => this.rpc<boolean>('can_start_family', {}).then((d) => d === true);
+  startFamily = (a: StartFamilyArgs) =>
+    this.rpc<string>('start_family', { p_client_id: a.clientId, p_name: a.name, p_sides: a.sides });
   myFeatures = (space: string) =>
     this.rpc<{ feature: string }[] | null>('my_features', { p_space: space }).then((d) => (d ?? []).map((r) => r.feature));
   /** Update first, insert if there was no row: authenticated may update only `enabled`, so a PostgREST upsert
