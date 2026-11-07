@@ -174,7 +174,7 @@ describe('Start a family entry (BETA-START-2, -5, -8)', () => {
     expectGrandparentSafe();
     fireEvent.press(start);
     expect(await screen.findByText('Did someone send you a code?')).toBeTruthy();
-    expect(screen.getByText('If a relative invited you, use their code instead.')).toBeTruthy();
+    expect(screen.getByText("If family invited you, use their code. A new family starts empty, with nobody's photos in it.")).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Use a code' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Start a new family' })).toBeTruthy();
     expectGrandparentSafe();

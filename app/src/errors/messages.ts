@@ -32,7 +32,7 @@ export function messageFor(e: unknown, ctx: MessageContext = {}): string {
   const who = ctx.inviter?.trim() || null;
   switch (err.code) {
     case '23514':
-      if (ctx.action === 'start') return 'Check the family name and the two side names, then try again.';
+      if (ctx.action === 'start') return 'Check the family name, then try again.';
       if (ctx.action === 'post') return 'Pick who should see it.';
       if (ctx.action === 'comment') return 'Write something first, then tap Send.';
       if (ctx.action === 'group') return 'Give the group a name first.';
@@ -49,7 +49,7 @@ export function messageFor(e: unknown, ctx: MessageContext = {}): string {
       if (ctx.action === 'start') return "You've started 3 families today. Try again tomorrow.";
       return 'Too many tries. Wait 10 minutes.';
     case 'FAMILY_FULL':
-      return 'Your family is full for now. Photos already shared are safe.';
+      return "Your family is full for now, so new photos can't be sent. Photos already shared are safe. Tap Help to ask for more room.";
     case 'BAD_OTP':
       return "That code didn't work. Check the newest email from Hearth and type the 6 numbers again.";
     case 'NETWORK':

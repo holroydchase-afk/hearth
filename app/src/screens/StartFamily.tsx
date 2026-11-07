@@ -9,7 +9,7 @@ import { messageFor } from '../errors/messages';
 import { useApp } from '../state/AppContext';
 import { useNav } from '../state/nav';
 import { Button, Card, Choice, Field, Notice, Screen, Txt } from '../ui/kit';
-import { InviteReady, inviteSmsUrl, PastPhotosChoice } from './InviteCard';
+import { InviteReady, inviteSmsUrl } from './InviteCard';
 
 const MAX_NAME = 60;
 type Step = 'ask' | 'name' | 'who' | 'invite';
@@ -38,7 +38,7 @@ export function StartFamily({ onUseCode }: { onUseCode: () => void }) {
       <Screen>
         <Card>
           <Txt variant="title" role="header">Did someone send you a code?</Txt>
-          <Txt>If a relative invited you, use their code instead.</Txt>
+          <Txt>If family invited you, use their code. A new family starts empty, with nobody's photos in it.</Txt>
           <Button label="Use a code" onPress={onUseCode} />
           <Button label="Start a new family" variant="secondary" onPress={() => setStep('name')} />
         </Card>
@@ -54,6 +54,7 @@ export function StartFamily({ onUseCode }: { onUseCode: () => void }) {
         <Card>
           <Txt variant="title" role="header">Name your family</Txt>
           <Field label="Family name" value={name} onChangeText={setName} placeholder='Like "Our kids"' autoCapitalize="words" />
+          {n.length === 0 ? <Txt variant="strong">Type a name first.</Txt> : null}
           {n.length > MAX_NAME ? <Txt variant="strong">{`Use ${MAX_NAME} letters or fewer.`}</Txt> : null}
           <Txt variant="muted">Only people you invite will see it.</Txt>
           <Txt>Hearth is for parents and guardians 18 or older.</Txt>
@@ -121,25 +122,23 @@ export function StartFamily({ onUseCode }: { onUseCode: () => void }) {
   return <FirstInvite space={space!} onDone={() => void finish()} />;
 }
 
-/** Screen 4: the invite card from Groups, for the new family's Everyone. Skip for now goes to Photos. */
+/** Screen 4: the invite card from Groups, for the new family's Everyone. Skip for now goes to Photos.
+ *  A new family has no photos yet, so there is no past-photos question and a relative's invite shares all (GUX-R2). */
 function FirstInvite({ space, onDone }: { space: string; onDone: () => void }) {
   const app = useApp();
   const [who, setWho] = useState('');
   const [role, setRole] = useState<Extract<Role, 'viewer' | 'adult'>>('viewer');
-  const [history, setHistory] = useState<ShareHistory | null>(null);
-  const [needHistory, setNeedHistory] = useState(false);
   const [invite, setInvite] = useState<{ link: string; code: string } | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [myName, setMyName] = useState<string | null>(null);
   useEffect(() => { app.deps.api.myProfile().then((p) => setMyName(p.display_name)).catch(() => {}); }, [app.deps.api]);
 
   const make = async () => {
-    if (role === 'viewer' && !history) { setNeedHistory(true); return; }
     try {
       const everyone = (await app.deps.api.myCircles(space)).find((c) => c.kind === 'everyone');
       if (!everyone) throw new Error('no Everyone');
       const r = await app.deps.api.createInvite({
-        space, role, ttlDays: 30, name: who.trim() || null, history: role === 'viewer' ? history : null, circleIds: [everyone.circle_id],
+        space, role, ttlDays: 30, name: who.trim() || null, history: role === 'viewer' ? ('all' as ShareHistory) : null, circleIds: [everyone.circle_id],
       });
       setInvite({ link: r.link, code: r.code });
     } catch (e) {
@@ -162,15 +161,7 @@ function FirstInvite({ space, onDone }: { space: string; onDone: () => void }) {
           <Txt variant="muted">They'll see this name on Hearth and won't have to type it.</Txt>
           <Choice kind="radio" label="A relative" title="A relative" detail="Sees the photos you send to Everyone." checked={role === 'viewer'} onPress={() => setRole('viewer')} />
           <Choice kind="radio" label="Another parent" title="Another parent" detail="Sends photos too, and can invite people." checked={role === 'adult'} onPress={() => setRole('adult')} />
-          {role === 'viewer' ? (
-            <PastPhotosChoice
-              history={history}
-              onPick={(h) => { setHistory(h); setNeedHistory(false); }}
-              allDetail="They'll see every photo sent to Everyone."
-              need={needHistory}
-            />
-          ) : null}
-          <Button label="Make the invite" onPress={() => void make()} softDisabled={role === 'viewer' && !history} />
+          <Button label="Make the invite" onPress={() => void make()} />
           <Button label="Skip for now" variant="secondary" onPress={onDone} />
         </Card>
       )}
