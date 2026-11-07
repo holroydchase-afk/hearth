@@ -28,7 +28,7 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Source:** `docs/product/ANCHORS.md` "Anchors"
 
 ### DEC-3 · Invite-only, no public sign-up or "start a family" in the app
-- **When / status:** Oct 16 · Built
+- **When / status:** Oct 16 · Built · "Start a family" part superseded Nov 7 by DEC-55 (joining stays invite-only)
 - **Chose:** you join only with an invite code; families are set up by script for now.
 - **Over:** an in-app "Start a family" screen (deferred to milestone 7).
 - **Because:** keeps Hearth exclusive to people the family trusts (A1), and there is only one family to set up during the proof of concept.
@@ -387,5 +387,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** the fun of Slack and Instagram replies without sending searches or views to an outside service (A1, A3); it reuses the photo pipeline.
 - **Source:** `docs/product/decisions/2026-11-06-gifs-in-comments.md`
 
+### DEC-55 · A "Start a family" screen before the beta; joining stays invite-only (BETA-START-1..9)
+- **When / status:** Nov 7 · Chase picked "Yes, build it now" on the decision card · Specced, not built
+- **Chose:** a signed-in parent with no family names one, keeps Everyone or adds two sides, and invites one person, through one `start_family` RPC; one family per account; a server switch can close it.
+- **Over:** DEC-3's Not now (milestone 7, only Chase starts a family by script); an allowlist only Chase could fill.
+- **Because:** level 5 of the recruiter-readiness bar needs someone other than Chase to start and use Hearth unaided. Sign-up and the create RPCs were already open; joining, the real guard, is unchanged.
+- **Source:** `docs/product/decisions/2026-11-07-start-a-family.md`, `docs/product/SPEC-START-FAMILY.md`
+
 ---
-Last updated: Nov 6, 2026 (DEC-53)
+Last updated: Nov 7, 2026 (DEC-55; DEC-54 is on the HIG PR #106)
