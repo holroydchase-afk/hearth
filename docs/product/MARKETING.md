@@ -25,7 +25,7 @@ Say only what's in **True today**. Update when the code or vendors change.
 
 | Claim | Status | Notes |
 |---|---|---|
-| Invite-only; nothing public | True today | |
+| Joining is invite-only; nothing public | True today | DEC-55 (Nov 7): anyone can start their own family, so "invite-only" alone overstates it |
 | No ads, no AI training, no trackers | True today, for the app | "Never build" in CORE-FEATURES.md; keep it in writing. The public demo *website* may count page views with Umami (no cookies, off until Chase sets it up, ANALYTICS-1); the app itself has none (ANALYTICS-2). Say "the app has no trackers", not "Hearth has no analytics anywhere" |
 | AI is off until your family turns it on. Then it runs only on your phones, and your photos never train anyone else's AI | True today (no AI has shipped) | DEC-31, Oct 19. Re-check when the first AI add-on ships. "No face scanning" is **retired**: don't use it, since face suggestions are planned (AI-1 phase 2) |
 | Location stripped on the phone | True today (photos) | Not video; video isn't in beta |
