@@ -24,6 +24,8 @@ So this screen opens no new server path. It changes the product promise (anyone 
 3. **Who's in it**: **Just Everyone** (default) or **Two sides** with two editable names ("Dad's side", "Mom's side"). No households, events or links.
 4. **Invite your first person**: the existing invite card from Groups, prefilled with Everyone, name and email, role Parent or Relative. **Skip for now** lands on Photos, whose empty state points to Groups to invite.
 
+*(privacy-security, Nov 7, PRIV-R5)* Screen 2 adds one line under the field: "Hearth is for parents and guardians 18 or older." (`grandparent-ux` owns the wording.)
+
 Words follow rule 3 (group, Photos, verb labels, 17 pt, 48 pt targets). `grandparent-ux` reviews the words; `ux-reviewer` reviews it for the public demo.
 
 ## 4. What the setup creates (0011/0013 shape)
@@ -45,7 +47,11 @@ Not created: households, events, the Test house, invites. The app's first invite
 | BETA-START-5 | auto | P0 | **Given** an account that already owns a family, **When** it calls `start_family` again or opens the no-family screen, **Then** the call is refused with a coded error and no start button is shown. |
 | BETA-START-6 | auto | P1 | **Given** a failure partway (bad side name), **When** `start_family` runs, **Then** nothing is left behind (no orphan household or space). |
 | BETA-START-7 | auto | P1 | **Given** an account whose only family is one it started with no other members and no posts, **When** it redeems an invite, **Then** it lands on the invited family and the empty one is retired. |
-| BETA-START-8 | auto | P0 | **Given** the server switch `start_family_open = false`, **When** anyone calls `start_family`, **Then** it is refused and the app hides the start button. |
+| BETA-START-8 | auto | P0 | **Given** the server switch `start_family_open = false`, **When** anyone calls `start_family`, **Then** it is refused and the app hides the start button. *(privacy-security, Nov 7, PRIV-R2:)* The switch is a row in `private.feature_flags` (no app grant), read inside `start_family`; the app asks a security-definer `can_start_family()` that returns only a boolean (false when the switch is off or the caller is already in a family). Turning it off never touches existing families. |
+| BETA-START-10 | auto | P0 | *(privacy-security, Nov 7, PRIV-R1)* **Given** 0024 is applied, **When** an `authenticated` account calls `create_household` or `create_space` directly, **Then** it gets permission denied (execute revoked from `public`, `anon`, `authenticated`), so the switch and the one-family rule can't be skipped with curl; `family-setup-api.sql` and `family-setup.sql` still pass (they call `start_family` or run the old functions before switching role). |
+| BETA-START-11 | auto | P1 | *(privacy-security, Nov 7, PRIV-R3)* **Given** one account, **When** it calls `start_family` more than 3 times in 24 hours (including after BETA-START-7 retires a family), **Then** it is refused with a coded error, using `private.rate_limit_events`. |
+| BETA-START-12 | auto | P1 | *(privacy-security, Nov 7, PRIV-R4)* **Given** a family started through `start_family` that Chase hasn't marked known, **When** its members upload more than 500 photos or 2 GB in total, **Then** `prepare_media_upload` refuses with a coded error and the app shows a calm "Your family is full for now" message; Chase's family is exempt. |
+| BETA-START-13 | auto | P1 | *(privacy-security, Nov 7, PRIV-R6)* **Given** any `start_family` refusal or failure, **When** it is raised or reported through `report_client_error`, **Then** the message and the logs contain no family name, side name, email or user id (test greps the raised message and the error row). |
 | BETA-START-9 | manual | P0 | **Given** a parent who has never seen Hearth (not Chase), the app installed and no help, **When** they sign in, start a family and invite one person, **Then** they finish in under 5 minutes and the invitee sees their first post (level 5 evidence; logged in the Test Log). |
 
 ## 6. Cut (not now)
@@ -60,5 +66,7 @@ Not created: households, events, the Test house, invites. The app's first invite
 - **architect**: migration 0024 (`start_family`, the switch, retiring an empty family in `redeem_invite`); whether `create_household`/`create_space` grants should be revoked from `authenticated` so `start_family` is the only path.
 - **privacy-security**: open starting means strangers can store data on Hearth's B2 and Supabase: abuse, cost and kids'-data exposure (no age gate, COPPA framing); the kill switch; the claims register change; `docs/architecture/` threat model section and "Last checked" (rule 6).
 - **positioning**: MARKETING claim "Invite-only; nothing public" becomes "Joining is invite-only; nothing public".
+
+Privacy review: privacy-security, Nov 7, 2026 (PRIV-R1..R8; edits marked). Deploy also needs: an abuse contact in Help, a service-role `suspend_family` runbook in `docs/eng/`, `docs/architecture/04` and `05` updated with "Last checked", and the MARKETING claim row changed (rule 6).
 
 Last checked: Nov 7, 2026 (staff-pm, against 0001, 0002, 0011, 0013, `SupabaseApi.ts`, `config.toml`).
