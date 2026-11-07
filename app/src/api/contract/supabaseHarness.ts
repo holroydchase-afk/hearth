@@ -21,11 +21,13 @@ export const supabaseEnvReady = (): boolean =>
   !!(process.env.HEARTH_API_URL && process.env.HEARTH_ANON_KEY && process.env.HEARTH_USERS_JSON);
 
 /** What this environment can exercise, known before the tests are defined (so skips are honest). */
-export function supabaseCaps(): { joiner: boolean; ratelimit: boolean; media: boolean } {
+export function supabaseCaps(): { joiner: boolean; ratelimit: boolean; media: boolean; starter: boolean } {
   const users = JSON.parse(process.env.HEARTH_USERS_JSON ?? '{}') as Record<string, unknown>;
   const cast: Record<string, string> = process.env.HEARTH_CAST ? JSON.parse(process.env.HEARTH_CAST) : (SEED_CAST as Record<string, string>);
   const has = (u: string) => !!users[u] || (!!cast[u] && !!users[cast[u]!]);
-  return { joiner: has('joiner') && !!process.env.HEARTH_JOINER_EMAIL, ratelimit: has('ratelimit'), media: process.env.HEARTH_MEDIA === '1' };
+  return { joiner: has('joiner') && !!process.env.HEARTH_JOINER_EMAIL, ratelimit: has('ratelimit'), media: process.env.HEARTH_MEDIA === '1',
+    // 0024 needs a starter user and a service-only flip of start_family_open; this harness has neither yet (QA-R1).
+    starter: false };
 }
 
 const SEED_CAST: Partial<Record<ContractUser, string>> = {

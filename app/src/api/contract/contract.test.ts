@@ -10,8 +10,8 @@ import { fakeHarness } from './fakeHarness';
 import type { ContractHarness, HarnessFactory } from './harness';
 import { supabaseCaps, supabaseEnvReady, supabaseHarness } from './supabaseHarness';
 
-interface Caps { joiner: boolean; ratelimit: boolean; media: boolean }
-const factories: [string, HarnessFactory, Caps][] = [['FakeApi', fakeHarness, { joiner: true, ratelimit: true, media: true }]];
+interface Caps { joiner: boolean; ratelimit: boolean; media: boolean; starter: boolean }
+const factories: [string, HarnessFactory, Caps][] = [['FakeApi', fakeHarness, { joiner: true, ratelimit: true, media: true, starter: true }]];
 if (supabaseEnvReady()) factories.push(['SupabaseApi', supabaseHarness, supabaseCaps()]);
 else describe('SupabaseApi contract', () => it.skip('skipped: HEARTH_API_URL / HEARTH_ANON_KEY / HEARTH_USERS_JSON not set', () => {}));
 
@@ -779,14 +779,8 @@ describe.each(factories)('%s contract (API.md)', (_name, factory, caps) => {
 
   // Start a family (0024, SPEC-START-FAMILY, DEC-55). Needs a signed-in user in no family and a way to flip the switch.
   describe('start_family / can_start_family (BETA-START, migration 0024)', () => {
-    const itStart = (title: string, fn: () => Promise<void>) =>
-      it(title, async () => {
-        if (!h.has('starter') || !h.setStartFamilyOpen) {
-          console.warn(`skipped on ${h.name}: no starter user or no way to flip start_family_open`);
-          return;
-        }
-        await fn();
-      });
+    // QA-R1 (Nov 7): a stack with no starter user or switch flip reports these as skipped, never as passed.
+    const itStart = caps.starter ? it : it.skip;
     const starter = () => h.as('starter');
     const spaceIds = async (api: HearthApi) => (await api.mySpaces()).map((s) => s.space_id);
 
