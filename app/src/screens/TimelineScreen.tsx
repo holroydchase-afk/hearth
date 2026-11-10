@@ -13,6 +13,7 @@ import { Button, Card, Loading, Notice, Txt } from '../ui/kit';
 import { photos, shortDate } from '../ui/format';
 import { MIN_TARGET, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
+import { VideoPoster } from './VideoPoster';
 import { PostCard } from './PostCard';
 
 const SHOW_INLINE = 4;
@@ -164,7 +165,9 @@ function TimelineCard({ post, onOpen }: { post: TimelinePost; onOpen: () => void
           key={m.media_id}
           style={{ width: '100%', aspectRatio: m.width && m.height ? Math.max(0.6, Math.min(1.8, m.width / m.height)) : 4 / 3, minHeight: MIN_TARGET }}
         >
-          <MediaImage postId={post.post_id} mediaId={m.media_id} style={{ flex: 1 }} />
+          {m.kind === 'video'
+            ? <VideoPoster postId={post.post_id} mediaId={m.media_id} style={{ flex: 1 }} />
+            : <MediaImage postId={post.post_id} mediaId={m.media_id} style={{ flex: 1 }} />}
         </View>
       ))}
       <View style={{ padding: 16, gap: 12 }}>

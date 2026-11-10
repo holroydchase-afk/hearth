@@ -15,6 +15,7 @@ import { prepareItem } from '../media/prepare';
 import { makePreviewBytes } from '../media/preview';
 import { readBytes } from '../platform/bytes';
 import { fileMediaStore, mediaKeyStore } from '../platform/mediaStore';
+import { videoFiles } from '../platform/videoFiles';
 import { saveToPhone } from '../platform/saveToPhone';
 import { secureSessionStorage } from '../platform/secureSession';
 import { asyncStorageKV } from '../platform/storage';
@@ -53,12 +54,13 @@ export function createRuntime(): AppDeps | { error: string } {
     kv: asyncStorageKV,
     prepare: prepareItem,
     pickPhotos: (opts: { videos: boolean }) => pickPhotos(10, opts),
-    pickBulk: () => pickBulk(),
+    pickBulk: (opts?: { videos: boolean }) => pickBulk(opts),
     previewBytes: makePreviewBytes(expoManipulator, readBytes),
     saveToPhone,
     openUrl: (u: string) => Linking.openURL(u),
     // A3: kept photo files on phones only; the web build keeps none.
     mediaDisk: fileMediaStore && mediaKeyStore ? { store: fileMediaStore, keys: mediaKeyStore } : null,
+    videoFiles,
   };
   if (FAKE_MODE) {
     const be = fakeBackend();

@@ -11,6 +11,7 @@ import { useNav } from '../state/nav';
 import { Txt } from '../ui/kit';
 import { MIN_TARGET, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
+import { VideoPoster } from './VideoPoster';
 
 type Media = FeedPost['media'][number];
 
@@ -34,6 +35,20 @@ export function PhotoCollage({ postId, media }: { postId: string; media: Media[]
 
   const tile = (i: number, style: object) => {
     const extra = more && i === big + small - 1 ? more : 0;
+    const m = media[i]!;
+    if (m.kind === 'video' && !extra) {
+      // VID-18: the poster with its own Play button; the rest of the tile still opens the post screen.
+      return (
+        <VideoPoster
+          key={m.media_id}
+          postId={postId}
+          mediaId={m.media_id}
+          onOpen={() => nav.openViewer(postId, i)}
+          openLabel={`Open video ${i + 1} of ${n} full screen`}
+          style={[styles.tile, { backgroundColor: c.photo }, style]}
+        />
+      );
+    }
     return (
       <Pressable
         key={media[i]!.media_id}
@@ -42,7 +57,7 @@ export function PhotoCollage({ postId, media }: { postId: string; media: Media[]
         onPress={() => nav.openViewer(postId, i)}
         style={[styles.tile, { backgroundColor: c.photo }, style]}
       >
-        <MediaImage postId={postId} mediaId={media[i]!.media_id} fit="cover" style={{ flex: 1 }} />
+        <MediaImage postId={postId} mediaId={m.media_id} fit="cover" full={m.kind !== 'video'} style={{ flex: 1 }} />
         {extra ? (
           <View style={styles.more} pointerEvents="none">
             <Txt variant="display" style={{ color: '#FFFFFF' }}>{`+${extra}`}</Txt>

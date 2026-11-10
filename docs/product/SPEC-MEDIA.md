@@ -140,7 +140,7 @@ Each phase adds to the last; none replaces stored data or a screen.
 
 **Left inside on purpose.** The picture and sound samples, byte for byte. A video encoded by software that writes text into the picture stream itself (x264's settings banner) keeps it; phone cameras and Apple's exporter don't write one. Size: the whole file is read into memory once and copied once (about 2 × 40 MB for 60 s at 720p).
 
-**Not built yet (TRACKER R27):** the poster frame (thumbnail), the player on Photos, words from grandparent-ux, the manual FLAG-7 check (a real iPhone and Android video, posted and downloaded, through exiftool), then turning `video_posting` on. Live Photo motion (L1) reuses this cleaner.
+**Not built yet (TRACKER R27):** (poster frame and player built Nov 10, section 4.1) words from grandparent-ux, the manual FLAG-7 check (a real iPhone and Android video, posted and downloaded, through exiftool), then turning `video_posting` on. Live Photo motion (L1) reuses this cleaner.
 
 | ID | Type | Given / When / Then |
 |---|---|---|

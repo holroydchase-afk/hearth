@@ -13,6 +13,7 @@ import { shortDate } from '../ui/format';
 import { useTheme } from '../ui/theme';
 import { AppGate } from './AppGate';
 import { MediaImage } from './MediaImage';
+import { VideoPoster } from './VideoPoster';
 
 export function ViewerScreen({ postId, index }: { postId: string; index: number }) {
   const app = useApp();
@@ -104,7 +105,9 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
             <Txt variant="strong">{`From ${entry.post.author_name} · ${shortDate(entry.post.published_at)}`}</Txt>
           </View>
           <View style={{ flex: 1 }} {...swipe.panHandlers}>
-            <MediaImage key={entry.media.media_id} postId={entry.post.post_id} mediaId={entry.media.media_id} fit="contain" style={{ flex: 1, backgroundColor: c.bg }} />
+            {entry.media.kind === 'video'
+              ? <VideoPoster key={entry.media.media_id} postId={entry.post.post_id} mediaId={entry.media.media_id} fit="contain" style={{ flex: 1, backgroundColor: c.bg }} />
+              : <MediaImage key={entry.media.media_id} postId={entry.post.post_id} mediaId={entry.media.media_id} fit="contain" style={{ flex: 1, backgroundColor: c.bg }} />}
           </View>
           <View style={styles.pad}>
             {entry.post.caption ? <Txt>{entry.post.caption}</Txt> : null}
@@ -113,7 +116,8 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
               {back !== null ? <Button label="Back to the previous photo" text="◀ Back" variant="secondary" style={{ flex: 1 }} onPress={() => go(back)} /> : <View style={{ flex: 1 }} />}
               {next !== null ? <Button label="Next photo" text="Next ▶" variant="secondary" style={{ flex: 1 }} onPress={() => go(next)} /> : <View style={{ flex: 1 }} />}
             </View>
-            <Button label="Save to my phone" busy={saving} onPress={() => void save()} />
+            {/* Saving a video to the phone isn't built yet (saveToPhone writes a JPEG); TRACKER R27. */}
+            {entry.media.kind !== 'video' ? <Button label="Save to my phone" busy={saving} onPress={() => void save()} /> : null}
           </View>
         </>
       )}

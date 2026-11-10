@@ -3,13 +3,20 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: studio agents run in cloud threads via scripts/agent-prompt.sh (AGENTRUN-1..6, PR open, non-live); #103 merged Nov 5
+now: video part 2 (poster + player, VID-14..21) built locally; GitHub hold on (no push/PR/CI until Chase lifts it)
 next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 10: video part 2, poster frame and player (VID-14..18, 20, 21; SPEC-MEDIA 4.1, TRACKER R27; local only under the GitHub hold, branch claude/project-thread-ontg2j)
+- **GitHub hold (Chase, Nov 10):** no push, PR, merge, deploy, CI or Actions until Chase says "lift GitHub hold". This work is local commits only.
+- **Done:** `prepareItem(item, deps?)` sends a video: cleaned MP4 as `display`, a JPEG poster as `thumb` (expo-video frame at 1 s, or 0 for clips under 1 s, re-encoded through the photo thumb steps; `src/media/expoPoster.ts`); no frame → the plain dark `app/assets/video-poster.jpg` (inlined in `videoPosterPlaceholder.ts`), still sends, nothing logged. `MediaCache.videoUri` decrypts into `<media_id>.mp4` (`platform/videoFiles.ts`; a blob: URL on web), deleted on Close, sign-out and start-up. `VideoPoster` ("Play" word button at the poster's bottom left, label "Play video"; the rest of the poster opens the post screen) on Photos, the post screen, Events and By date; `VideoPlayer` full screen in place: starts muted, Play/Pause, Sound on/off, Close, "This video won't play right now. Try again later." with Try again. Bulk pick sends videos when `video_posting` is on (`planBatch(..., { videos })`). No migration, no deploy; `video_posting` stays off in production.
+- **Also fixed:** the web picker gives video length in seconds, phones in ms (`pickedDurationMs`, engineer-written test `pickDuration.test.ts` for qa-tdd to review). Web e2e: the pinned Playwright browser isn't found here; run with a throwaway config setting `launchOptions.executablePath: '/opt/pw-browsers/chromium'`.
+- **Not built:** "Save to my phone" for a video (hidden on videos; `saveToPhone` writes a JPEG). Video ciphertext isn't kept on the phone (too big for the photo store), so a video replays only online.
+- **Next exact step:** qa-tdd runs all suites 3x; then grandparent-ux (E12) on the player words and "starts muted, tap Sound on" (flag for staff-pm: the simplest reading of "no autoplay with sound"); then VID-19 and FLAG-7/VID-22 on Chase's iPhone and an Android phone; then Chase's word turns `video_posting` on. Push only after "lift GitHub hold".
 
 ## Nov 6: studio agents really run in cloud threads (AGENTRUN-1..6, TRACKER R38; branch claude/project-thread-7zjm6h, PR)
 - **Why:** Chase's recruiter-readiness review (Nov 6, doc https://claude.ai/artifact/EBrvRki1RMkdHtApKSX48e) found PRs #99-#103 all say "qa-tdd skipped: the studio agent types can't be loaded", which contradicts the README's nine-agent claim. Chase: "Start 2".

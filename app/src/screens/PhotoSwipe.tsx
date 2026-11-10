@@ -14,6 +14,7 @@ import { useNav } from '../state/nav';
 import { Button, Txt } from '../ui/kit';
 import { MIN_TARGET, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
+import { VideoPoster } from './VideoPoster';
 
 type Media = FeedPost['media'][number];
 
@@ -111,7 +112,15 @@ export function PhotoSwipe(props: Props) {
         renderItem={({ item, index }) => (
           <View testID={`photo-page-${index}`} style={{ width, height, backgroundColor: c.photo }}>
             {/* Lazy: only the shown photo and its neighbours ask for signed URLs. */}
-            {Math.abs(index - pos) <= 1 ? (
+            {Math.abs(index - pos) <= 1 ? (item.kind === 'video' ? (
+              <VideoPoster
+                postId={items[index]!.postId}
+                mediaId={item.media_id}
+                onOpen={() => { setPos(index); nav.openViewer(items[index]!.postId, items[index]!.index); }}
+                openLabel={`Open video ${index + 1} of ${n} full screen`}
+                style={{ flex: 1 }}
+              />
+            ) : (
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={`Open photo ${index + 1} of ${n} full screen`}
@@ -120,7 +129,7 @@ export function PhotoSwipe(props: Props) {
               >
                 <MediaImage postId={items[index]!.postId} mediaId={item.media_id} fit="cover" style={{ flex: 1 }} />
               </Pressable>
-            ) : null}
+            )) : null}
           </View>
         )}
       />
