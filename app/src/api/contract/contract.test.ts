@@ -515,6 +515,77 @@ describe.each(factories)('%s contract (API.md)', (_name, factory, caps) => {
       expect(await code(poster.setReplyAudience(h.spaceId, 'parents'))).toBe('ok');
     });
   });
+  describe('search_posts (SEARCH-1..14, migration 0025)', () => {
+    async function wordsPost(caption: string, circles = [h.circleIn], takenAt: string | null = null, title?: string): Promise<string> {
+      const id = await poster.createPost({ clientId: uuid(), space: h.spaceId, caption, circleIds: circles, takenAt, title });
+      await h.attachReadyMedia(poster, id);
+      await poster.publishPost(id);
+      return id;
+    }
+    const tag = () => `zq${uuid().replace(/-/g, '').slice(0, 10)}`;
+    const ids = async (api: HearthApi, a: Omit<Parameters<HearthApi['searchPosts']>[0], 'space'>) =>
+      (await api.searchPosts({ space: h.spaceId, limit: 50, ...a })).map((p) => p.post_id);
+
+    it('SEARCH-1 finds a post by a word in its caption, any case, every word must match', async () => {
+      const t = tag();
+      const id = await wordsPost(`${t} first bike ride`);
+      expect(await ids(viewerIn, { words: `${t.toUpperCase()}  BIKE` })).toEqual([id]);
+      expect(await ids(viewerIn, { words: `${t} piano` })).toEqual([]);
+    });
+
+    it('SEARCH-2/10 a post you cannot see is never found', async () => {
+      const t = tag();
+      await wordsPost(`${t} bike`);
+      expect(await ids(viewerOut, { words: t })).toEqual([]);
+    });
+
+    it('SEARCH-3 found rows carry no audience for someone who did not send it; the sender keeps theirs', async () => {
+      const t = tag();
+      await wordsPost(`${t} park`);
+      const [row] = await viewerIn.searchPosts({ space: h.spaceId, words: t });
+      expect(row!.audience ?? null).toBeNull();
+      const [mine] = await poster.searchPosts({ space: h.spaceId, words: t });
+      expect(mine!.audience).toBeTruthy();
+    });
+
+    it('SEARCH-5 the title is searched too, and rows carry the title like the timeline', async () => {
+      const t = tag();
+      const id = await wordsPost('Cake and candles', [h.circleIn], null, `${t} birthday`);
+      const rows = await viewerIn.searchPosts({ space: h.spaceId, words: `${t} birthday` });
+      expect(rows.map((r) => r.post_id)).toEqual([id]);
+      expect(rows[0]!.title).toBe(`${t} birthday`);
+    });
+
+    it('SEARCH-7 a capture-date range, newest photo first, with words', async () => {
+      const t = tag();
+      const a = await wordsPost(`${t} a`, [h.circleIn], '2019-07-04T15:00:00.000Z');
+      const b = await wordsPost(`${t} b`, [h.circleIn], '2019-05-20T15:00:00.000Z');
+      await wordsPost(`${t} c`, [h.circleIn], '2018-12-25T15:00:00.000Z');
+      expect(await ids(viewerIn, { words: t, from: '2019-01-01T00:00:00.000Z', until: '2020-01-01T00:00:00.000Z' })).toEqual([a, b]);
+    });
+
+    it('SEARCH-8 typed % and _ are plain characters', async () => {
+      await wordsPost(`${tag()} plain`);
+      expect(await ids(viewerIn, { words: '%' })).toEqual([]);
+      expect(await ids(viewerIn, { words: '_' })).toEqual([]);
+    });
+
+    it('SEARCH-9 nothing to search for, over 100 characters or over 8 words is refused with 22023', async () => {
+      expect(await code(viewerIn.searchPosts({ space: h.spaceId, words: '   ' }))).toBe('22023');
+      expect(await code(viewerIn.searchPosts({ space: h.spaceId, words: 'x'.repeat(101) }))).toBe('22023');
+      expect(await code(viewerIn.searchPosts({ space: h.spaceId, words: 'a b c d e f g h i' }))).toBe('22023');
+    });
+
+    it('SEARCH-12 pages newest photo first on (sort_at, post_id)', async () => {
+      const t = tag();
+      const a = await wordsPost(`${t} a`, [h.circleIn], '2017-03-01T00:00:00.000Z');
+      const b = await wordsPost(`${t} b`, [h.circleIn], '2017-02-01T00:00:00.000Z');
+      const [p1] = await viewerIn.searchPosts({ space: h.spaceId, words: t, limit: 1 });
+      expect(p1!.post_id).toBe(a);
+      const p2 = await viewerIn.searchPosts({ space: h.spaceId, words: t, limit: 1, beforeAt: p1!.sort_at, beforeId: p1!.post_id });
+      expect(p2.map((r) => r.post_id)).toEqual([b]);
+    });
+  });
   describe('get_timeline / get_timeline_years (BETA-TIME-2..4, migration 0010)', () => {
     async function datedPost(takenAt: string | null, circles = [h.circleIn], caption = 'dated'): Promise<string> {
       const id = await poster.createPost({ clientId: uuid(), space: h.spaceId, caption, circleIds: circles, takenAt });

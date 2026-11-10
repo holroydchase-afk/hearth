@@ -154,7 +154,7 @@ describe('Photos screen', () => {
   it('BETA-SEE-3: tapping a photo opens it full screen', async () => {
     const be = await twoPosts();
     const { nav } = await renderApp(<PhotosScreen />, { be, user: 'jo' });
-    fireEvent.press(await screen.findByRole('button', { name: 'Open photo 1 of 1 full screen' }));
+    fireEvent.press(await screen.findByRole('button', { name: /^Open photo 1 of 1 full screen(,|$)/ }));
     expect(nav.openViewer).toHaveBeenCalledWith(expect.any(String), 0);
   });
 

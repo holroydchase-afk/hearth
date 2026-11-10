@@ -3,7 +3,7 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: Start a family (DEC-55, 0024) and demo first-minute fixes (FIRSTMIN, R40) in one PR for Chase's merge
+now: GitHub hold (Nov 10). Local only: Start a family (DEC-55, 0024), photo search (DEC-56, 0025) and text sign-in (DEC-57, 0026, off) wait in the push queue (/mnt/project-files/drafts/PUSH-QUEUE.md)
 next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
@@ -22,6 +22,20 @@ blockers: []
 - **Open:** supabase.com and twilio.com didn't load in the session; Verify's no-registration claim, pricing, template rules and `auth.users.phone` form are unverified.
 - **Next exact step:** a session with those sites allowed confirms the unverified facts; then Chase's one step (Twilio sign-up, $20).
 
+## Nov 10: photo search (DEC-56, SEARCH-1..14, SEARCH-UI-1..8, migration 0025, TRACKER R42; branch claude/project-thread-bsaqxe, local only)
+- **Why:** Chase's go-live list, item 9 "Search". Plain words only; AI search stays on the paid tier (DEC-37).
+- **Done:** `search_posts` (0025): every typed word must be in the title, caption or sender's name; From one person; a capture-date range; candidates from `private.visible_posts`, rows from `private.feed_rows`, so hidden posts never match and group titles never show to non-senders; STABLE, nothing stored. App: `searchPosts` (Supabase + Fake), `SearchScreen.tsx` opened by a Search button in the Photos toolbar. Spec `SPEC-SEARCH.md`, persona check, API.md, architecture 05.
+- **privacy-security:** no P0/P1. SEARCH-R1 (drafts, removed people, a parent who didn't send) fixed with SEARCH-15 tests; SEARCH-R2 wording softened, Supabase log settings to check (TRACKER R42); SEARCH-R3 accepted: Supabase's 8 s timeout for signed-in calls bounds a search at family scale (from Supabase's docs, not checked live).
+- **Open:** the real-stack contract (PostgREST harness) wasn't run; grandparent-ux words pass; no Playwright walk.
+- **Next exact step:** after "lift GitHub hold", push Start a family first, then this branch on top as its own PR (it sits on R41's commits).
+
+## Nov 6: Apple design guidelines fixes (HIG-1..12, DEC-54, TRACKER R39; branch claude/project-thread-bellss, PR)
+- **Why:** Chase asked for a full sweep against Apple's Human Interface Guidelines (doc https://claude.ai/artifact/3N1G5jF4ezeQ2Gtf2jFwZU), then "handle all the p1s". HIG is readable here through Apple's JSON feed (`developer.apple.com/tutorials/data/design/human-interface-guidelines/<page>.json`).
+- **Done:** notices asked after the first photo with a Hearth card (HIG-1, DS-15); zoom (HIG-2, BETA-SEE-4); tab and toolbar words capped at 1.5x with Apple's large pop-up label (HIG-3); Ember launch screen light and dark (HIG-4); iPad in every direction (HIG-5); Increase Contrast, Reduce Motion, VoiceOver sender, swipe-down sheets, scaling icons, haptics (HIG-7..12, DS-14). New dependency `expo-haptics` (version from `npx expo install`). Tests `app/src/screens/__tests__/hig.test.tsx`.
+- **Decided:** HIG-6 dropped; Chase kept emoji only (Nov 6 card, REACT-7).
+- **Nov 10 (GitHub hold, local only):** pinch on Android and the web (QA-R1, `pinchZoom()`), plus tests for swipe-down close (QA-R2), Allow sending the token (QA-R3) and a live Reduce Motion change (QA-R4). Saved as a git bundle and patches in `/mnt/project-files/drafts/hig-fixes-2026-11-10/`, not pushed.
+- **Open:** owner account deletion; nothing tried on a phone yet.
+- **Next exact step:** Chase says "merge" on the PR, then republish the Expo preview and try the largest text size and the zoom on his iPhone.
 ## Nov 7: Start a family (DEC-55, BETA-START-1..13, migration 0024, TRACKER R41; branch claude/project-thread-eaq4hr, PR)
 - **Why:** Chase picked "Yes, build it now" on Nov 7: level 5 needs a family to start without Chase's script. Reverses the Oct 16 "Not now (M7)" call (DEC-3 superseded).
 - **Done:** spec `docs/product/SPEC-START-FAMILY.md` with privacy-security (PRIV-R1..8) and architect design; persona check `decisions/2026-11-07-start-a-family.md`. Migration 0024: `start_family`, `can_start_family`, switch `start_family_open` (ships OFF), 3 starts a day, photo/storage cap for app-started families (HF001), empty started family retired on redeem, `create_household`/`create_space` revoked from app users (setup scripts make the family as admin first). App: `StartFamily.tsx` (ask, name + 18+ line, who's in it, first invite, Skip for now), entry on the no-family screen only when the switch is on; words per grandparent-ux (GUX-R1..R5). Architecture 04 (gap 6, open starting) and 05, API.md, MARKETING row 28. Shots `docs/reviews/2026-11-07-start-family/`. Backend 1126/0, app 819/0, e2e green.

@@ -14,12 +14,18 @@
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Hearth lets you pick photos to share with your family.",
         "NSPhotoLibraryAddUsageDescription": "Hearth saves family photos to your phone when you tap Save to my phone.",
-        "NSCameraUsageDescription": "Hearth can take a photo to share with your family."
+        "NSCameraUsageDescription": "Hearth can take a photo to share with your family.",
+        "UISupportedInterfaceOrientations~ipad": [
+          "UIInterfaceOrientationPortrait",
+          "UIInterfaceOrientationPortraitUpsideDown",
+          "UIInterfaceOrientationLandscapeLeft",
+          "UIInterfaceOrientationLandscapeRight"
+        ]
       }
     },
     "android": {
       "package": "family.hearth.app",
-      "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#F5F3F8" },
+      "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#FAF6F1" },
       "predictiveBackGestureEnabled": false,
       "intentFilters": [
         {
@@ -39,7 +45,7 @@
       ["expo-media-library", { "photosPermission": "Hearth saves family photos to your phone.", "savePhotosPermission": "Hearth saves family photos to your phone.", "isAccessMediaLocationEnabled": false }],
       "expo-notifications",
       "expo-status-bar",
-      ["expo-splash-screen", { "image": "./assets/splash-icon.png", "resizeMode": "contain", "backgroundColor": "#F5F3F8" }]
+      ["expo-splash-screen", { "image": "./assets/splash-icon.png", "resizeMode": "contain", "backgroundColor": "#FAF6F1", "dark": { "image": "./assets/splash-icon.png", "backgroundColor": "#171311" } }]
     ],
     "experiments": { "typedRoutes": false },
     "owner": "thefreighttrains-team",

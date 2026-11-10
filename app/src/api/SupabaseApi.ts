@@ -13,7 +13,7 @@ import type {
   PushPlatform,
   AddCommentArgs, Circle, CommentRow, CreateInviteArgs, CreatePostArgs, FeedArgs, FeedPost, FinalizeResult,
   HeartState, InvitePreview, Reaction, ReactionState, ReactionSummary, PostViewers, Session, Space, UploadGrant, UploadItemSpec, ViewGrant,
-  TimelineArgs, TimelinePost, TimelineYear,
+  TimelineArgs, TimelinePost, TimelineYear, SearchArgs,
   ChatMember, ChatRow, ChatRowKind, ChatSummary, ClaimedKeyPackage,
 } from './types';
 import { toApiError } from '../errors/messages';
@@ -143,6 +143,11 @@ export class SupabaseApi implements HearthApi {
     this.rpc<TimelinePost[]>('get_timeline', {
       p_space: a.space, p_before_at: a.beforeAt ?? null, p_before_id: a.beforeId ?? null,
       p_limit: Math.max(1, Math.min(50, a.limit ?? 20)),
+    }).then((d) => d ?? []);
+  searchPosts = (a: SearchArgs) =>
+    this.rpc<TimelinePost[]>('search_posts', {
+      p_space: a.space, p_query: a.words ?? null, p_author: a.author ?? null, p_from: a.from ?? null, p_until: a.until ?? null,
+      p_before_at: a.beforeAt ?? null, p_before_id: a.beforeId ?? null, p_limit: Math.max(1, Math.min(50, a.limit ?? 20)),
     }).then((d) => d ?? []);
   getTimelineYears = (space: string, tz?: string) =>
     this.rpc<TimelineYear[]>('get_timeline_years', { p_space: space, p_tz: tz ?? 'UTC' }).then((d) => d ?? []);

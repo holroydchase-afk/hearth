@@ -83,7 +83,7 @@ The test passes when 4 of 5 testers pass. Log each attempt on the Test Log with 
 - Web posting: the web viewer isn't in the beta.
 - Co-parent setup UI: no split household in Rings 0–3. The backend separation tests stay as BETA-AUD-4.
 - True background upload: retry on reopen (SHARE-4) covers the risk at much lower cost.
-- Albums, free-text search, child tags (E9): Hearth works as a feed for 12 people. The timeline's "Pick a year" (BETA-TIME-4) covers finding old photos; caption search is in the ANCHORS ideas log.
+- Albums, free-text search, child tags (E9): Hearth works as a feed for 12 people. The timeline's "Pick a year" (BETA-TIME-4) covers finding old photos; caption search is in the ANCHORS ideas log. Update Nov 10 (DEC-56): Chase put plain-word search on the go-live list; see `SPEC-SEARCH.md`.
 - Multiple spaces per user: one family space covers the beta.
 - Billing, paywall, and the video-cap messaging (E12): no money in the beta. The "willing to pay" question waits until after Thanksgiving.
 - SMS or text-link notices: needs a paid SMS provider and A2P registration. Push and email are enough. (Text message **sign-in codes** moved in, Nov 10, DEC-57: `docs/product/SPEC-SMS-SIGN-IN.md`, BETA-SMS-1..17, M4, behind a switch. Notices and invites by text stay out.)

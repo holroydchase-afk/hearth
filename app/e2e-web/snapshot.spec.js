@@ -63,7 +63,7 @@ for (const phone of PHONES) {
     await page.getByRole('button', { name: 'Continue' }).click();
     await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
     await shot('08-photos-grandparent');
-    await page.getByRole('button', { name: 'Open photo 1 of 1 full screen' }).click();
+    await page.getByRole('button', { name: /^Open photo 1 of 1 full screen/ }).click();
     await expect(page.getByRole('button', { name: 'Save to my phone' })).toBeVisible();
     await shot('09-full-screen');
     await page.getByRole('button', { name: 'Close' }).click();

@@ -21,7 +21,7 @@ import type {
   PushPlatform,
   AddCommentArgs, Circle, CommentRow, CreateInviteArgs, CreatePostArgs, FeedArgs, FeedPost, FinalizeResult,
   HeartState, InvitePreview, Reaction, ReactionCounts, ReactionState, ReactionSummary, PostViewers, MediaKind, MediaStatus, Role, Session, Space, UploadGrant, UploadItemSpec, ViewGrant,
-  TimelineArgs, TimelinePost, TimelineYear,
+  TimelineArgs, TimelinePost, TimelineYear, SearchArgs,
   ChatKind, ChatMember, ChatRow, ChatRowKind, ChatSummary, ClaimedKeyPackage,
 } from '../types';
 import { fromBase64, toBase64 } from '../../crypto/base64';
@@ -450,6 +450,31 @@ export class FakeBackend {
     const ms = (t: string) => new Date(t).getTime();
     const before = a.beforeAt ? ms(a.beforeAt) : null;
     return this.visiblePosts(me, a.space)
+      .sort((x, y) => ms(sortAt(y)) - ms(sortAt(x)) || (x.id < y.id ? 1 : -1))
+      .filter((p) => before === null || ms(sortAt(p)) < before || (ms(sortAt(p)) === before && !!a.beforeId && p.id < a.beforeId))
+      .slice(0, limit)
+      .map((p) => ({ ...this.feedRow(me, p), taken_at: p.taken_at ?? null, sort_at: sortAt(p) }));
+  }
+
+  /** search_posts (0025): every word, as a literal, in title + caption + sender's name; same order and keyset as getTimeline. */
+  searchPosts(user: string | null, a: SearchArgs): TimelinePost[] {
+    const me = this.requireUser(user);
+    const q = (a.words ?? '').trim().replace(/\s+/g, ' ');
+    if ([...q].length > 100) throw new ApiError('22023', 'search words are 100 characters at most');
+    const words = q ? q.toLowerCase().split(' ') : [];
+    if (words.length > 8) throw new ApiError('22023', 'search with 8 words at most');
+    if (!words.length && !a.author && !a.from && !a.until) throw new ApiError('22023', 'type a word, or pick a person or dates');
+    const limit = Math.max(1, Math.min(50, a.limit ?? 20));
+    const sortAt = (p: PostRow) => p.taken_at ?? p.published_at!;
+    const ms = (t: string) => new Date(t).getTime();
+    const before = a.beforeAt ? ms(a.beforeAt) : null;
+    const hay = (p: PostRow) => `${p.title ?? ''} ${p.caption ?? ''} ${this.state.users[p.author]?.name ?? ''}`.toLowerCase();
+    return this.visiblePosts(me, a.space)
+      .filter((p) => !p.deleted)
+      .filter((p) => !a.author || p.author === a.author)
+      .filter((p) => !a.from || ms(sortAt(p)) >= ms(a.from))
+      .filter((p) => !a.until || ms(sortAt(p)) < ms(a.until))
+      .filter((p) => words.every((w) => hay(p).includes(w)))
       .sort((x, y) => ms(sortAt(y)) - ms(sortAt(x)) || (x.id < y.id ? 1 : -1))
       .filter((p) => before === null || ms(sortAt(p)) < before || (ms(sortAt(p)) === before && !!a.beforeId && p.id < a.beforeId))
       .slice(0, limit)
@@ -1132,6 +1157,7 @@ export class FakeApi implements HearthApi {
   getFeed = (a: FeedArgs) => this.run(() => this.be.getFeed(this.userId, a));
   getTimeline = (a: TimelineArgs) => this.run(() => this.be.getTimeline(this.userId, a));
   getTimelineYears = (space: string, tz?: string) => this.run(() => this.be.getTimelineYears(this.userId, space, tz));
+  searchPosts = (a: SearchArgs) => this.run(() => this.be.searchPosts(this.userId, a));
   createPost = (a: CreatePostArgs) => this.run(() => this.be.createPost(this.userId, a));
   publishPost = (p: string) => this.run(() => this.be.publishPost(this.userId, p));
   deletePost = (p: string) => this.run(() => this.be.deletePost(this.userId, p));
