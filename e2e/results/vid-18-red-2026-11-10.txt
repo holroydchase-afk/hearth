@@ -1,0 +1,33 @@
+
+Running 1 test using 1 worker
+
+  ✘  1 e2e-web/video.spec.js:39:1 › VID-18 a video post shows its poster with a Play word button on Photos and the post screen; Play opens the player (18.9s)
+
+
+  1) e2e-web/video.spec.js:39:1 › VID-18 a video post shows its poster with a Play word button on Photos and the post screen; Play opens the player 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText('Leo on the slide', { exact: true })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByText('Leo on the slide', { exact: true })[22m
+
+
+      56 |   await page.getByRole('checkbox', { name: "Grandparents – Dad's side, 2 people" }).click();
+      57 |   await page.getByRole('button', { name: 'Post' }).click();
+    > 58 |   await expect(page.getByText('Leo on the slide', { exact: true })).toBeVisible();
+         |                                                                     ^
+      59 |
+      60 |   // Stored as a video with a poster thumb (no migration: display = MP4, thumb = JPEG).
+      61 |   const stored = await page.evaluate(() => {
+        at /home/user/Hearth/app/e2e-web/video.spec.js:58:69
+
+    Error Context: ../test-results/e2e-web-artifacts/video-VID-18-a-video-post--8b4df-creen-Play-opens-the-player/error-context.md
+
+  1 failed
+    e2e-web/video.spec.js:39:1 › VID-18 a video post shows its poster with a Play word button on Photos and the post screen; Play opens the player 
