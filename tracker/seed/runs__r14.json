@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-10T15:00:00-05:00",
+ "label": "grandparent-ux video findings GUX-R1..R4 and QA-R3: tests written first (red)",
+ "passed": 788,
+ "failed": 15,
+ "results": {},
+ "note": "Red on purpose; same counts on 3 jest runs (15 failed, 788 passed, 1 skipped). videoGux.test.tsx 12 of 13 red: GUX-R1 the Play button doesn't wrap the poster on the post screen or By date; GUX-R2 the player background is #000000, not the dark palette bg, for Ember, Sage and Plum in light mode; GUX-R3 the player autoplays (muted) before Play; GUX-R4 new can't-play words with the helper's name. video.test.tsx VID-20 (2) now expect the GUX-R4 words. pickDurationZero.test.ts red (B15). The 1 passing is a guard: the Photos tile keeps its own Play and opens the post. typecheck clean. Web e2e not rerun."
+}

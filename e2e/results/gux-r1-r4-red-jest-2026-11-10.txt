@@ -1,0 +1,3 @@
+FAIL src/media/__tests__/pickDurationZero.test.ts FAIL src/screens/__tests__/video.test.tsx (6.623 s) FAIL src/screens/__tests__/videoGux.test.tsx (11.265 s) Tests:       15 failed, 1 skipped, 788 passed, 804 total 
+FAIL src/media/__tests__/pickDurationZero.test.ts FAIL src/screens/__tests__/video.test.tsx (6.8 s) FAIL src/screens/__tests__/videoGux.test.tsx (11.245 s) Tests:       15 failed, 1 skipped, 788 passed, 804 total 
+FAIL src/media/__tests__/pickDurationZero.test.ts FAIL src/screens/__tests__/video.test.tsx (7.57 s) FAIL src/screens/__tests__/videoGux.test.tsx (12.062 s) Tests:       15 failed, 1 skipped, 788 passed, 804 total 

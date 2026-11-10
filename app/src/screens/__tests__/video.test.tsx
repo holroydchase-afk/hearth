@@ -25,7 +25,8 @@ type Player = { source: unknown; muted: boolean; play: jest.Mock; __emit(e: stri
 const players = (): Player[] => (jest.requireMock('expo-video') as { __players: Player[] }).__players;
 const lastPlayer = (): Player => players()[players().length - 1]!;
 
-const CANT_PLAY = "This video won't play right now. Try again later.";
+// GUX-R4 (grandparent-ux, Nov 10) replaced the draft words; Jo's helper is Chase (her inviter).
+const CANT_PLAY = `This video won't play right now. It may be the signal. Tap Try again, or call ${FIXTURE.users.chase.name}.`;
 const LOCAL = 'file:///cache/video/clip.mp4';
 
 // MediaCache.videoUri is new: give the prototype a stand-in that says so, then spy on it either way.
