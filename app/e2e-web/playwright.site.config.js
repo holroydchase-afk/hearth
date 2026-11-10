@@ -1,6 +1,7 @@
 // DEMO-5 (RR-5): the demo as it will be hosted, under /demo/hearth/ on a static host with no fallback.
 // Build first: bash scripts/build-demo.sh
 const { defineConfig } = require('../../e2e/node_modules/@playwright/test');
+const { launchOptions } = require('../../e2e/browser'); // T12: cloud sandbox browser fallback
 const BASE = process.env.SITE_BASE || '/demo/hearth'; // PAGES-1: SITE_BASE=/hearth for GitHub Pages
 module.exports = defineConfig({
   testDir: '.',
@@ -11,6 +12,6 @@ module.exports = defineConfig({
   workers: 1,
   reporter: [['list']],
   outputDir: '../test-results/e2e-site-artifacts',
-  use: { baseURL: 'http://127.0.0.1:8091', viewport: { width: 390, height: 844 }, hasTouch: true },
+  use: { launchOptions: launchOptions(), baseURL: 'http://127.0.0.1:8091', viewport: { width: 390, height: 844 }, hasTouch: true },
   webServer: { command: `node scripts/serve-static.js dist-demo-site 8091 ${BASE}`, cwd: '..', url: `http://127.0.0.1:8091${BASE}/`, reuseExistingServer: false },
 });
