@@ -978,11 +978,11 @@
    "kind": "bug",
    "layer": "app",
    "severity": "Medium",
-   "status": "open",
+   "status": "fixed",
    "title": "QA-R3: on the web the picker reports 0 s when it can't read a video's metadata; pickedDurationMs turns that into 0 ms, which passes the 60 s limit. Test: media/__tests__/pickDurationZero.test.ts",
    "tests": [],
    "found": "2026-11-10",
-   "fixed": null
+   "fixed": "2026-11-10"
   },
   {
    "id": "T13",

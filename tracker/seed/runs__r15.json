@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-10T18:00:00-05:00",
+ "label": "Video poster and player (VID-14..21) and grandparent-ux fixes (GUX-R1..R4, QA-R3): all suites 3x (green)",
+ "passed": 804,
+ "failed": 0,
+ "results": {},
+ "note": "Green on 3 runs each, after 3eed39e: app jest 804 passed (1 skipped), typecheck clean, web e2e 5 passed incl. video.spec.js VID-18 (11 screenshot-only skips; run with a local browser-path wrapper, T12), backend tests/run.sh 1038 passed 0 failed (local Postgres 16), check-agents OK. VID-18's 'no sound on open' check was updated to GUX-R3's reading (the poster's Play tap plays with sound; nothing plays before it). B15 fixed. VID-19 and VID-22 still need a phone; Deno not run here."
+}

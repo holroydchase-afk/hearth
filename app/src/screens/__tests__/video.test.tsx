@@ -47,10 +47,13 @@ async function videoFamily() {
   return { be, v };
 }
 
-function expectNoSoundOnOpen() {
+/** GUX-R3 (replaces the first "no sound on open" reading): the poster's Play tap is the one tap; it plays with sound. */
+async function expectPlaysWithSoundAfterTap() {
   const p = lastPlayer();
-  expect({ autoplayedWithSound: p.play.mock.calls.length > 0 && !p.muted }).toEqual({ autoplayedWithSound: false });
+  await waitFor(() => expect(p.play).toHaveBeenCalledTimes(1));
+  expect(p.muted).toBe(false);
 }
+const nothingPlaying = () => players().filter((x) => x.play.mock.calls.length > 0).length;
 
 describe('VID-18 poster and Play button', () => {
   it('VID-18 on Photos: the poster shows with a visible "Play" word button (Play video); tapping it opens the full-screen player', async () => {
@@ -60,10 +63,11 @@ describe('VID-18 poster and Play button', () => {
     const play = await screen.findByRole('button', { name: 'Play video' });
     expect(within(play).getByText('Play')).toBeTruthy(); // a word, not only an icon
     expectGrandparentSafe(); // 48 pt target, 17 pt text, labeled
+    expect(nothingPlaying()).toBe(0); // nothing plays before the tap
     fireEvent.press(play);
     expect(await screen.findByTestId('expo-video-view')).toBeTruthy();
     expect(JSON.stringify(lastPlayer().source)).toContain('.mp4');
-    expectNoSoundOnOpen();
+    await expectPlaysWithSoundAfterTap();
     expect(screen.getByRole('button', { name: 'Close the video' })).toBeTruthy();
     expectGrandparentSafe();
   });
