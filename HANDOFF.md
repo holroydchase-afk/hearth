@@ -3,13 +3,19 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: Start a family (DEC-55, 0024) and demo first-minute fixes (FIRSTMIN, R40) in one PR for Chase's merge
+now: GitHub hold (Nov 10). Local only: Start a family (DEC-55, 0024) and photo search (DEC-56, 0025) wait as bundles in the shared folder
 next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 10: photo search (DEC-56, SEARCH-1..14, SEARCH-UI-1..8, migration 0025, TRACKER R42; branch claude/project-thread-bsaqxe, local only)
+- **Why:** Chase's go-live list, item 9 "Search". Plain words only; AI search stays on the paid tier (DEC-37).
+- **Done:** `search_posts` (0025): every typed word must be in the title, caption or sender's name; From one person; a capture-date range; candidates from `private.visible_posts`, rows from `private.feed_rows`, so hidden posts never match and group titles never show to non-senders; STABLE, nothing stored. App: `searchPosts` (Supabase + Fake), `SearchScreen.tsx` opened by a Search button in the Photos toolbar. Spec `SPEC-SEARCH.md`, persona check, API.md, architecture 05.
+- **Open:** the real-stack contract (PostgREST harness) wasn't run; grandparent-ux words pass; no Playwright walk.
+- **Next exact step:** after "lift GitHub hold", push Start a family first, then this branch on top as its own PR (it sits on R41's commits).
 
 ## Nov 7: Start a family (DEC-55, BETA-START-1..13, migration 0024, TRACKER R41; branch claude/project-thread-eaq4hr, PR)
 - **Why:** Chase picked "Yes, build it now" on Nov 7: level 5 needs a family to start without Chase's script. Reverses the Oct 16 "Not now (M7)" call (DEC-3 superseded).

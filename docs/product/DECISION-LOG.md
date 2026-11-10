@@ -394,5 +394,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** level 5 of the recruiter-readiness bar needs someone other than Chase to start and use Hearth unaided. Sign-up and the create RPCs were already open; joining, the real guard, is unchanged.
 - **Source:** `docs/product/decisions/2026-11-07-start-a-family.md`, `docs/product/SPEC-START-FAMILY.md`
 
+### DEC-56 · Plain-word photo search before go-live (SEARCH-1..14)
+- **When / status:** Nov 10 · Chase listed "Search" as go-live item 9 · Built locally (migration 0025), not pushed (GitHub hold)
+- **Chose:** a Search screen that matches typed words against a post's title, caption and sender's name, plus "From" a person and "Taken in" a year, inside the timeline's own visibility rule. No AI, nothing typed is stored.
+- **Over:** the Oct 17 "no search box in the beta" call (Pick a year and From [person] only); AI or face search, which belongs on the paid tier (DEC-37) and would send media to a model.
+- **Because:** Chase wants it for go-live; captions are plaintext columns, so it is cheap and stays in Postgres in the US. Encrypting captions later would end it (TRACKER).
+- **Source:** `docs/product/decisions/2026-11-10-photo-search.md`, `docs/product/SPEC-SEARCH.md`
+
 ---
-Last updated: Nov 7, 2026 (DEC-55; DEC-54 is on the HIG PR #106)
+Last updated: Nov 10, 2026 (DEC-56)
