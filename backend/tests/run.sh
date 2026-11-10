@@ -70,6 +70,7 @@ bash tests/setup_api_test.sh || STATUS=1
 bash tests/sent_received_test.sh || STATUS=1
 # D1 read-only hosted smoke check (curl stubbed, SQL real and read-only)
 bash tests/smoke_check_test.sh || STATUS=1
+bash tests/auth_config_test.sh || STATUS=1  # PRIV-R1: phone numbers need a texted code
 # RELAY-1..9: the shared messenger library's relay template, with a toy membership rule (rolls back)
 dropdb --if-exists "$DB"; createdb "$DB"
 psql -d "$DB" -v ON_ERROR_STOP=1 -X -q -f ../packages/messenger/relay/test.sql >/dev/null || { echo "relay template: FAILED" >&2; STATUS=1; }

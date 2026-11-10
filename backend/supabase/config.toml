@@ -272,7 +272,9 @@ content_path = "./supabase/templates/confirmation.html"
 # Allow/disallow new user signups via SMS to your project.
 enable_signup = false
 # If enabled, users need to confirm their phone number before signing in.
-enable_confirmations = false
+# Hearth (PRIV-R1): must be true. False lets password sign-up make an account for any number with no code,
+# which beats the phone-bound invite. Set "Enable phone confirmations" on hosted too (tests/auth_config_test.sh).
+enable_confirmations = true
 # Template for sending OTP to users (BETA-SMS-7: code first for autofill, one GSM-7 segment, no curly quotes).
 # With Twilio Verify (SMS-PROVIDER.md) Twilio's own template sends the text; keep its words the same.
 template = "Hearth code: {{ .Code }}. Never read this code to anyone, even family. Hearth will never call you for it."
