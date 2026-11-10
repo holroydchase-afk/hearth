@@ -45,7 +45,7 @@ describe('SEARCH-UI photo search', () => {
     await openSearch();
     await search('july');
     expect(await screen.findByText('Sparklers at the lake')).toBeTruthy();
-    expect(screen.getByText('Found 1 post')).toBeTruthy();
+    expect(screen.getByText('Found 1 photo')).toBeTruthy();
     expect(screen.queryByText('Christmas morning')).toBeNull();
     expect(screen.queryByText('Pumpkins today')).toBeNull();
   });
@@ -81,7 +81,7 @@ describe('SEARCH-UI photo search', () => {
     expect(await screen.findByText('Christmas morning')).toBeTruthy();
     expect(screen.queryByText('Sparklers at the lake')).toBeNull();
     const words = screenWords();
-    expect(words).toContain('Found 1 post');
+    expect(words).toContain('Found 1 photo');
   });
 
   it('SEARCH-UI-7 a found post opens to love it or write back, with Back to the search', async () => {
@@ -90,6 +90,7 @@ describe('SEARCH-UI photo search', () => {
     await search('christmas');
     fireEvent.press(await screen.findByRole('button', { name: "Open Chase's post to love it or write back" }));
     expect(await screen.findByRole('button', { name: 'Back to the search' })).toBeTruthy();
+    expect(screen.getByText('Back to search')).toBeTruthy(); // GUX-R4: the words on screen match what's said over the phone
     fireEvent.press(screen.getByRole('button', { name: 'Back to the search' }));
     expect(await screen.findByRole('header', { name: 'Search photos' })).toBeTruthy();
   });
