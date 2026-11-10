@@ -11,6 +11,11 @@ waiting_on_chase:
 blockers: []
 -->
 
+## Nov 10: SMS provider pick (architect, SPEC-SMS-SIGN-IN §6, TRACKER R42; branch claude/project-thread-y94vb7, local only under the GitHub hold)
+- **Done:** pick Twilio Verify via Supabase `twilio_verify` (`docs/eng/SMS-PROVIDER.md`, spec §8); `config.toml` `[auth.sms.twilio_verify]` off with env() secrets, `max_frequency = "60s"`, local-only `test_otp` guidance; architecture 01/02/04 and ACCOUNTS row (not created yet).
+- **Open:** supabase.com and twilio.com didn't load in the session; Verify's no-registration claim, pricing, template rules and `auth.users.phone` form are unverified.
+- **Next exact step:** a session with those sites allowed confirms the unverified facts; then Chase's one step (Twilio sign-up, $20).
+
 ## Nov 7: Start a family (DEC-55, BETA-START-1..13, migration 0024, TRACKER R41; branch claude/project-thread-eaq4hr, PR)
 - **Why:** Chase picked "Yes, build it now" on Nov 7: level 5 needs a family to start without Chase's script. Reverses the Oct 16 "Not now (M7)" call (DEC-3 superseded).
 - **Done:** spec `docs/product/SPEC-START-FAMILY.md` with privacy-security (PRIV-R1..8) and architect design; persona check `decisions/2026-11-07-start-a-family.md`. Migration 0024: `start_family`, `can_start_family`, switch `start_family_open` (ships OFF), 3 starts a day, photo/storage cap for app-started families (HF001), empty started family retired on redeem, `create_household`/`create_space` revoked from app users (setup scripts make the family as admin first). App: `StartFamily.tsx` (ask, name + 18+ line, who's in it, first invite, Skip for now), entry on the no-family screen only when the switch is on; words per grandparent-ux (GUX-R1..R5). Architecture 04 (gap 6, open starting) and 05, API.md, MARKETING row 28. Shots `docs/reviews/2026-11-07-start-family/`. Backend 1126/0, app 819/0, e2e green.

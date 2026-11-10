@@ -12,6 +12,7 @@ Every outside account Hearth uses, which login it's under, and where the name "H
 | Supabase | Database, sign-in, functions | Chase's personal email | Project `jqvgjfbhzbvfdhtnvgzr` (project name in the dashboard), function and cron names `hearth-*` | Easy (display name only) |
 | Resend | Sign-in code emails (custom SMTP), notices | Chase's personal email (set up Oct 17) | Sender name "Hearth"; sender email is `onboarding@resend.dev` until a domain is verified | Easy now; tied to the domain later |
 | Backblaze B2 | Photo storage (US East, `s3.us-east-005.backblazeb2.com`) | Chase's personal email (set up Oct 18) | None: bucket `family-photos-testing-kq7m` (milestone 1 test data, private, encrypted) | Easy (make a new bucket) |
+| Twilio (Verify) | Text-message sign-in codes (DEC-56, `docs/eng/SMS-PROVIDER.md`) | **Not created yet** (planned: Chase's personal email; $20 prepaid, auto-recharge off) | Verify service friendly name "Hearth", which appears in the code text | Easy (rename the service) |
 | Apple Developer ($99) | iPhone builds with push, TestFlight | Not set up yet | App ID `family.hearth.app` | **Permanent once on TestFlight** |
 | Google Play ($25) | Android builds | Not set up yet | App ID `family.hearth.app` | **Permanent once uploaded** |
 | Domain | Invite links, email sender, app links | Not bought yet (planned `hearth.family`) | Invite links, `app/app.json` link setup, email sender | **Hard once relatives have links** |

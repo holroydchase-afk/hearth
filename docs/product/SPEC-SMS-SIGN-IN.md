@@ -73,3 +73,11 @@ App criteria run on the Fake backend (`FakeBackend` grows `sendTextCode` / `veri
 - `privacy-security`: the vendor, phone numbers as new personal data, `preview_invite.sign_in_with`, log scrubbing (BETA-SMS-15), SIM-swap note.
 - `grandparent-ux`: every word in §3 (sign-in, code screen, the text itself, Help line, guide step).
 - `architect`: §6. `positioning`: no "texts" claim in MARKETING until BETA-SMS-16 passes.
+
+## 8. Provider pick (architect, Nov 10)
+**Twilio Verify**, through Supabase Auth's built-in `twilio_verify` provider; full answers to §6, costs, guards and the secret names in [`docs/eng/SMS-PROVIDER.md`](../eng/SMS-PROVIDER.md).
+- **Why:** expected to need no A2P 10DLC or toll-free registration from Chase (Verify uses Twilio's own senders) and no code. **Unverified live** (twilio.com wouldn't load); confirm before relying on Nov 18. Fallback: Twilio + toll-free verification.
+- **Cost:** about $0.06 per sign-in code (unverified live), about $1 to $3 a month for ~12 people; $20 prepaid, auto-recharge off.
+- **Chase's one step:** sign up at https://www.twilio.com/try-twilio, upgrade with $20, paste the Account SID and Auth Token into the Claude environment. Claude does the rest.
+- **Spec impact:** with Verify, Twilio's template sends the text, not `config.toml`'s; the §3.5 "Never read this code" line needs a Twilio custom template (BETA-SMS-7). `auth.users.phone` form (with or without `+`) is still to be confirmed on the local stack (BETA-SMS-8).
+- `config.toml`: `[auth.sms.twilio_verify]` (off, secrets via `env()`), `max_frequency = "60s"`, local-only `test_otp` guidance.
