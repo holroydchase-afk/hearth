@@ -111,4 +111,12 @@ describe('Start a family words (0024, BETA-START)', () => {
   it('GUX-R4 23514 while starting a family names only the family name (Just Everyone has no side names)', () => {
     expect(messageFor(new ApiError('23514', 'name check'), { action: 'start' })).toBe('Check the family name, then try again.');
   });
+
+  // GUX-R1/R2 (search words pass, Nov 10): search errors never talk about invites or promise a retry that won't happen.
+  it('GUX-R1 too many search words (22023) says so, not "this invite is too old"', () => {
+    expect(messageFor(new ApiError('22023'), { action: 'search' })).toBe("That's a lot of words. Try one or two, like birthday.");
+  });
+  it('GUX-R2 no internet during a search says to tap Search again', () => {
+    expect(messageFor(new ApiError('NETWORK'), { action: 'search' })).toBe('No internet right now. Check your Wi-Fi, then tap Search again.');
+  });
 });
