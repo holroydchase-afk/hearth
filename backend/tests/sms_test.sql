@@ -123,7 +123,7 @@ select tests.ok_sql($$select public.invite_preview(tests.v('pv_link'))->>'sign_i
                     'BETA-SMS-9 invite_preview: a link invite says sign_in_with = either');
 select tests.ok_sql($$select not tests.has_phone(public.invite_preview(tests.v('pv_phone'))::text)
                          and position('0177' in public.invite_preview(tests.v('pv_phone'))::text) = 0
-                         and position('phone"' in public.invite_preview(tests.v('pv_phone'))::text) = 0$$,
+                         and not exists (select 1 from json_object_keys(public.invite_preview(tests.v('pv_phone'))) k where k like '%phone%')$$,
                     'BETA-SMS-9 invite_preview never returns the target phone (no number, no target_phone key)');
 select tests.ok_sql($$select position('kim@' in public.invite_preview(tests.v('pv_email'))::text) = 0
                          and position('target' in public.invite_preview(tests.v('pv_email'))::text) = 0$$,

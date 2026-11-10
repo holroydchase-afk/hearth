@@ -273,8 +273,9 @@ content_path = "./supabase/templates/confirmation.html"
 enable_signup = false
 # If enabled, users need to confirm their phone number before signing in.
 enable_confirmations = false
-# Template for sending OTP to users
-template = "Your code is {{ .Code }}"
+# Template for sending OTP to users (BETA-SMS-7: code first for autofill, one GSM-7 segment, no curly quotes).
+# With Twilio Verify (SMS-PROVIDER.md) Twilio's own template sends the text; keep its words the same.
+template = "Hearth code: {{ .Code }}. Never read this code to anyone, even family. Hearth will never call you for it."
 # Controls the minimum amount of time that must pass before sending another sms otp.
 # Hearth: 60s, matching the app's "Send a new code" wait (SPEC-SMS-SIGN-IN §3.4) and
 # limiting SMS pumping. Set the same on hosted when texts go on.
