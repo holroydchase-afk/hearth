@@ -15,6 +15,15 @@ on by default for viewers, 48 pt targets, 17 pt+ text, "Love it", "Save to my ph
 | `npm run eas -- <command>` | EAS CLI (`whoami`, `build`, `update`) with the environment's `EXPO_ACCESS_TOKEN` passed as `EXPO_TOKEN`. Tested by `scripts/tests/eas_test.sh` (EXPO-1). Needs `api.expo.dev` on the network allowlist. |
 | `npx expo start` | Dev server (needs the env below, or `EXPO_PUBLIC_HEARTH_FAKE=1`). |
 
+## Native modules added by decision
+
+Rule: only modules listed in Expo's `bundledNativeModules.json` for our SDK (so they run in Expo Go), pinned with `npx expo install` (tilde on the bundled version), checked on the vendor's live page with the date.
+
+| Module | Pin | Why | Checked |
+|---|---|---|---|
+| `expo-image-manipulator` | `~58.0.15` | Re-encode photos and posters to JPEG with no metadata (MEDIA-*). | SDK 58 bundle |
+| `expo-video` | `~58.0.12` | Video poster frame (`generateThumbnailsAsync`, re-encoded by expo-image-manipulator) and the player (R27 part 2, SPEC-MEDIA 4.1, VID-14..22). Replaces legacy `expo-av` video; no `expo-video-thumbnails`. No server or schema change. | Nov 10 2026: bundled ~58.0.12, npm latest 58.0.13 |
+
 ## Architecture
 
 - `src/api/HearthApi.ts` – interface mirroring docs/eng/API.md (+ email-OTP auth + presigned byte transfer).
