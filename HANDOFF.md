@@ -15,7 +15,8 @@ blockers: []
 - **Why:** Chase asked for a full sweep against Apple's Human Interface Guidelines (doc https://claude.ai/artifact/3N1G5jF4ezeQ2Gtf2jFwZU), then "handle all the p1s". HIG is readable here through Apple's JSON feed (`developer.apple.com/tutorials/data/design/human-interface-guidelines/<page>.json`).
 - **Done:** notices asked after the first photo with a Hearth card (HIG-1, DS-15); zoom (HIG-2, BETA-SEE-4); tab and toolbar words capped at 1.5x with Apple's large pop-up label (HIG-3); Ember launch screen light and dark (HIG-4); iPad in every direction (HIG-5); Increase Contrast, Reduce Motion, VoiceOver sender, swipe-down sheets, scaling icons, haptics (HIG-7..12, DS-14). New dependency `expo-haptics` (version from `npx expo install`). Tests `app/src/screens/__tests__/hig.test.tsx`.
 - **Decided:** HIG-6 dropped; Chase kept emoji only (Nov 6 card, REACT-7).
-- **Open:** owner account deletion; Android pinch; nothing tried on a phone yet.
+- **Nov 10 (GitHub hold, local only):** pinch on Android and the web (QA-R1, `pinchZoom()`), plus tests for swipe-down close (QA-R2), Allow sending the token (QA-R3) and a live Reduce Motion change (QA-R4). Saved as a git bundle and patches in `/mnt/project-files/drafts/hig-fixes-2026-11-10/`, not pushed.
+- **Open:** owner account deletion; nothing tried on a phone yet.
 - **Next exact step:** Chase says "merge" on the PR, then republish the Expo preview and try the largest text size and the zoom on his iPhone.
 
 ## Nov 6: studio agents really run in cloud threads (AGENTRUN-1..6, TRACKER R38; branch claude/project-thread-7zjm6h, PR)

@@ -4,14 +4,15 @@
 // doc "Hearth vs Apple's design guidelines". Each test names its HIG ID.
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react-native';
 import React from 'react';
-import { AccessibilityInfo, Modal, Text } from 'react-native';
+import { AccessibilityInfo, Modal, Platform, Text } from 'react-native';
 import appJson from '../../../app.json';
 import { FakeBackend } from '../../api/fake/FakeBackend';
 import { pushStatus, registerForPush } from '../../notify/push';
 import { haptic } from '../../platform/haptics';
 import { seedPost } from '../../test/seed';
 import { renderApp } from '../../test/renderApp';
-import { contrast, iconSize, LABEL_SCALE_CAP, paletteFor, COLOR_NAMES, sheetShouldClose } from '../../ui/theme';
+import { sheetPan } from '../../ui/kit';
+import { contrast, iconSize, LABEL_SCALE_CAP, paletteFor, COLOR_NAMES, pinchZoom, sheetShouldClose } from '../../ui/theme';
 import { HearthTabBar } from '../TabBar';
 import { PhotosScreen } from '../PhotosScreen';
 import { ViewerScreen } from '../ViewerScreen';
@@ -269,5 +270,67 @@ describe('HIG-12 haptics', () => {
     fireEvent.press(await screen.findByRole('button', { name: 'Save to my phone' }));
     await screen.findByText('Saved to your phone.');
     expect(haptic).toHaveBeenCalledWith('success');
+  });
+});
+
+// QA-R1..R4 (qa-tdd, Nov 6): gaps the first round's tests left open.
+describe('QA-R1 HIG-2 pinch works on Android and the web too', () => {
+  it('QA-R1 spreading two fingers zooms in, pinching them together zooms out, a small move changes nothing', () => {
+    expect(pinchZoom(1.4, false)).toBe(true);
+    expect(pinchZoom(0.7, true)).toBe(false);
+    expect(pinchZoom(1.1, false)).toBe(false);
+    expect(pinchZoom(0.9, true)).toBe(true);
+  });
+
+  it('QA-R1 the viewer listens for two fingers off iPhone', async () => {
+    jest.replaceProperty(Platform, 'OS', 'android');
+    const be = FakeBackend.withFixture();
+    const p = await seedPost(be, { caption: 'At the lake' });
+    await renderApp(<ViewerScreen postId={p.id} index={0} />, { be, user: 'jo' });
+    const area = await screen.findByTestId('viewer-gestures');
+    const twoFingers = { nativeEvent: { touches: [{ pageX: 0, pageY: 0 }, { pageX: 100, pageY: 0 }] }, touchHistory: { touchBank: [] } };
+    expect(area.props.onMoveShouldSetResponderCapture(twoFingers)).toBe(true);
+  });
+});
+
+describe('QA-R2 HIG-10 dragging a sheet down closes it', () => {
+  it('QA-R2 a release 100 pt down calls close; a nudge does not', () => {
+    const close = jest.fn();
+    const cfg = sheetPan(() => close());
+    cfg.onPanResponderRelease!({} as never, { dy: 20, vy: 0.1 } as never);
+    expect(close).not.toHaveBeenCalled();
+    cfg.onPanResponderRelease!({} as never, { dy: 100, vy: 0.1 } as never);
+    expect(close).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('QA-R3 HIG-1 a yes on the phone sends the token to the server', () => {
+  it('QA-R3 Turn on notices then Allow registers the push token', async () => {
+    const be = FakeBackend.withFixture();
+    await seedPost(be, { caption: 'At the lake' });
+    const { api } = await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    const sent = jest.spyOn(api, 'registerPushToken');
+    push.register.mockResolvedValueOnce('ExponentPushToken[qa-r3]');
+    fireEvent.press(within(await screen.findByTestId('push-ask')).getByRole('button', { name: 'Turn on notices' }));
+    await waitFor(() => expect(sent).toHaveBeenCalledWith('ExponentPushToken[qa-r3]', expect.any(String)));
+  });
+});
+
+describe('QA-R4 HIG-8 turning Reduce Motion on while the app is open', () => {
+  it('QA-R4 the next sheet fades', async () => {
+    const handlers: Record<string, (on: boolean) => void> = {};
+    jest.spyOn(AccessibilityInfo, 'addEventListener').mockImplementation(((name: string, fn: (on: boolean) => void) => {
+      handlers[name] = fn;
+      return { remove: () => {} };
+    }) as never);
+    const be = FakeBackend.withFixture();
+    await seedPost(be, { caption: 'At the lake' });
+    await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    await screen.findByText('At the lake');
+    expect(handlers.reduceMotionChanged).toBeDefined();
+    await act(async () => { handlers.reduceMotionChanged!(true); });
+    fireEvent.press(screen.getByRole('button', { name: 'More for this photo' }));
+    await screen.findByText('Who can see this');
+    expect(screen.UNSAFE_getAllByType(Modal).map((m) => m.props.animationType)).toEqual(['fade']);
   });
 });

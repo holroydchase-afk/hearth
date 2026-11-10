@@ -6,7 +6,7 @@
 import { SymbolView } from 'expo-symbols';
 import React, { type ReactNode } from 'react';
 import {
-  ActivityIndicator, Modal, PanResponder, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View,
+  ActivityIndicator, Modal, PanResponder, Pressable, type PanResponderCallbacks, ScrollView, StyleSheet, Switch, Text, TextInput, View,
   useWindowDimensions, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -261,6 +261,14 @@ export function Confirm({ visible, title, body, yes, no, onYes, onNo }: {
   );
 }
 
+/** HIG-10 / QA-R2: what a bottom sheet does with a drag: a clear downward drag, released far or fast enough, closes. */
+export function sheetPan(close: () => void): PanResponderCallbacks {
+  return {
+    onMoveShouldSetPanResponder: (_e, g) => g.dy > 12 && Math.abs(g.dy) > Math.abs(g.dx) * 2,
+    onPanResponderRelease: (_e, g) => { if (sheetShouldClose(g.dy, g.vy)) close(); },
+  };
+}
+
 /** HIG-10: a sheet from the bottom of the screen (More, Who can see this). Apple's sheets show a grabber and close
  *  with a swipe down; the Close button inside stays (DS-4: never gesture-only). HIG-8: it fades in with Reduce
  *  Motion on, instead of sliding. */
@@ -268,10 +276,7 @@ export function BottomSheet({ testID, onClose, children }: { testID: string; onC
   const { c, os, reduceMotion } = useTheme();
   const close = React.useRef(onClose);
   close.current = onClose;
-  const drag = React.useRef(PanResponder.create({
-    onMoveShouldSetPanResponder: (_e, g) => g.dy > 12 && Math.abs(g.dy) > Math.abs(g.dx) * 2,
-    onPanResponderRelease: (_e, g) => { if (sheetShouldClose(g.dy, g.vy)) close.current(); },
-  })).current;
+  const drag = React.useRef(PanResponder.create(sheetPan(() => close.current()))).current;
   const corner = os === 'android' ? 28 : 14;
   return (
     <Modal transparent visible animationType={reduceMotion ? 'fade' : 'slide'} onRequestClose={onClose}>

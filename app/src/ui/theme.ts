@@ -130,6 +130,14 @@ export function iconSize(base: number, fontScale: number): number {
   return Math.round(base * Math.min(Math.max(fontScale, 1), LABEL_SCALE_CAP));
 }
 
+/** QA-R1 (HIG-2 off iPhone): after a two-finger pinch, spread 25% or more to zoom in, squeeze 20% or more to
+ *  zoom out; anything smaller keeps the zoom as it was. ratio = finger distance at the end / at the start. */
+export function pinchZoom(ratio: number, zoomed: boolean): boolean {
+  if (ratio >= 1.25) return true;
+  if (ratio <= 0.8) return false;
+  return zoomed;
+}
+
 /** HIG-10: a bottom sheet closes on a drag down of 80 pt or a quick flick down. */
 export function sheetShouldClose(dy: number, vy: number): boolean {
   return dy > 80 || (dy > 0 && vy > 0.8);
