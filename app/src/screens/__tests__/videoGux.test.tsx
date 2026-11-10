@@ -139,22 +139,30 @@ describe('GUX-R2 the player is always dark, on the palette\'s own background, an
   });
 });
 
-describe('GUX-R3 sound words, and nothing plays before Play', () => {
-  it('GUX-R3 opening the player plays nothing; Play starts it WITH sound; the sound button says "Turn sound off" / "Turn sound on"', async () => {
+describe('GUX-R3 one tap plays with sound; nothing plays before it', () => {
+  it('GUX-R3 nothing plays before the poster\'s Play; that one tap starts it WITH sound; the sound button says "Turn sound off" / "Turn sound on"', async () => {
     const { be, v } = await family();
     await renderApp(<ViewerScreen postId={v.id} index={0} />, { be, user: 'jo' });
-    fireEvent.press(await screen.findByRole('button', { name: 'Play video' }));
+    const play = await screen.findByRole('button', { name: 'Play video' });
+    expect(players().filter((x) => x.play.mock.calls.length > 0)).toHaveLength(0); // nothing before the tap
+    fireEvent.press(play);
     await screen.findByTestId('expo-video-view');
     const p = lastPlayer();
-    expect(p.play).not.toHaveBeenCalled(); // no autoplay, muted or not
-    fireEvent.press(screen.getByRole('button', { name: 'Play the video' }));
-    expect(p.play).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(p.play).toHaveBeenCalledTimes(1)); // one tap, not two
     expect(p.muted).toBe(false);
     fireEvent.press(await screen.findByRole('button', { name: 'Turn sound off' }));
     expect(p.muted).toBe(true);
     fireEvent.press(await screen.findByRole('button', { name: 'Turn sound on' }));
     expect(p.muted).toBe(false);
     expect(screen.queryByRole('button', { name: /Turn the sound/ })).toBeNull();
+  });
+
+  it('GUX-R3 nothing on Photos autoplays', async () => {
+    const { be } = await family();
+    await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    await screen.findByRole('button', { name: 'Play video' });
+    expect(players().filter((x) => x.play.mock.calls.length > 0)).toHaveLength(0);
+    expect(screen.queryByTestId('expo-video-view')).toBeNull();
   });
 });
 
