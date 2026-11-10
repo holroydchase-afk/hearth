@@ -208,7 +208,7 @@ export class SupabaseApi implements HearthApi {
       throw e.code === '22023' && typeof d === 'string' && d.trim() ? new ApiError('22023', e.message, d.trim()) : e;
     }
     const r = one<InvitePreview>(res.data);
-    // BETA-SMS-9: a server before 0025 says nothing; ask a number first, like a link invite.
+    // BETA-SMS-9: a server before 0026 says nothing; ask a number first, like a link invite.
     const how = r.sign_in_with === 'phone' || r.sign_in_with === 'email' ? r.sign_in_with : 'either';
     return { inviter_name: r.inviter_name, space_name: r.space_name, sign_in_with: how };
   };

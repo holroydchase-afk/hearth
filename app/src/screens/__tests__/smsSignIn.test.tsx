@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// BETA-SMS-2..6, -9..12, -14 (SPEC-SMS-SIGN-IN, DEC-56): text message sign-in with the build flag on, on the Fake.
+// BETA-SMS-2..6, -9..12, -14 (SPEC-SMS-SIGN-IN, DEC-57): text message sign-in with the build flag on, on the Fake.
 // Written first: red until the screens and the Fake's sendTextCode / verifyTextCode exist.
 // The flag is set before the app modules load (a build flag may be read once, at import), so they are required below.
 /* eslint-disable @typescript-eslint/no-require-imports */

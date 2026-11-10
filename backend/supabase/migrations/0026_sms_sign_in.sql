@@ -1,4 +1,4 @@
--- 0025: text message sign-in, the database side (SPEC-SMS-SIGN-IN, DEC-56, TRACKER R42).
+-- 0026: text message sign-in, the database side (SPEC-SMS-SIGN-IN, DEC-57, TRACKER R43).
 -- BETA-SMS-8: phone invites hold a US number as E.164 (+1XXXXXXXXXX); redeem matches auth.users.phone in either
 --   form Supabase Auth stores it ('13045550100' or '+13045550100'). A non-US number is refused (23514), never echoed.
 -- BETA-SMS-9: invite_preview says how to sign in (sign_in_with = phone | email | either); it never returns the target.

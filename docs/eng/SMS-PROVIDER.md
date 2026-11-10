@@ -1,6 +1,6 @@
 # SMS provider pick (answers SPEC-SMS-SIGN-IN §6)
 
-Owner: architect. Nov 10, 2026. DEC-56, TRACKER R42. Status: **pick made; vendor facts partly unverified** (see "What was checked").
+Owner: architect. Nov 10, 2026. DEC-57, TRACKER R43. Status: **pick made; vendor facts partly unverified** (see "What was checked").
 
 ## The pick: Twilio Verify, through Supabase Auth's built-in `twilio_verify` provider
 

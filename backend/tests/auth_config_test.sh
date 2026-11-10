@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# PRIV-R1 (privacy-security review of text sign-in, SPEC-SMS-SIGN-IN, DEC-56): config.toml's [auth.sms] must not
+# PRIV-R1 (privacy-security review of text sign-in, SPEC-SMS-SIGN-IN, DEC-57): config.toml's [auth.sms] must not
 # auto-confirm phone numbers. With enable_confirmations = false, Supabase Auth's password sign-up
 # (POST /auth/v1/signup {phone, password}) makes an account for ANY unregistered number with no code sent, which
 # defeats the phone-bound invite (BETA-SMS-8: "only this number can open the invite") and lets someone squat a

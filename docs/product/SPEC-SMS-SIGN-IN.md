@@ -1,6 +1,6 @@
 # Spec: Text message (SMS) sign-in codes
 
-Owner: staff-pm. Nov 10, 2026. Status: **decided** (Chase, Nov 10, go-live list item 8: build it now; DEC-56, closes TRACKER D11). **Built Nov 10 behind the flag, off** (migration 0025; BETA-SMS-1..15 green; QA-R3: the RPC is `invite_preview`, not `preview_invite`). Milestone: M4 (the grandparents). Persona check: `docs/product/decisions/2026-11-10-sms-sign-in.md`. TRACKER: R42.
+Owner: staff-pm. Nov 10, 2026. Status: **decided** (Chase, Nov 10, go-live list item 8: build it now; DEC-57, closes TRACKER D11). **Built Nov 10 behind the flag, off** (migration 0026; BETA-SMS-1..15 green; QA-R3: the RPC is `invite_preview`, not `preview_invite`). Milestone: M4 (the grandparents). Persona check: `docs/product/decisions/2026-11-10-sms-sign-in.md`. TRACKER: R43.
 
 Source, Chase, Oct 18 (ANCHORS ideas log): "I want texts to be the primary and default way folks receive their OTP." Email stays a fallback.
 

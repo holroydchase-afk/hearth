@@ -11,13 +11,13 @@ waiting_on_chase:
 blockers: []
 -->
 
-## Nov 10: text message sign-in built, off (BETA-SMS-1..15, DEC-56, migration 0025, TRACKER R42; branch claude/project-thread-y94vb7, local only under the GitHub hold)
-- **Done:** migration 0025 (E.164 phone invites via an `invites` trigger, redeem matches `auth.users.phone` with or without `+`, `invite_preview.sign_in_with`, no email batch without an email, `[phone]` in error reports, QA-R1: a phone is never a placeholder name). `config.toml` `[auth.sms]` template in Hearth's words. App: `sendTextCode`/`verifyTextCode`, `api/phone.ts` (E.164, last 4, scrub, flag), `SignInFlow` + `TextCodeFlow`, join screen by `sign_in_with`, invite card's "Their mobile number", no-family "Signed in with email before?", Help/Preferences push-only for phone accounts. check-logs flags phone names. API.md, architecture 02/05 footers.
+## Nov 10: text message sign-in built, off (BETA-SMS-1..15, DEC-57, migration 0026, TRACKER R43; branch claude/project-thread-y94vb7, local only under the GitHub hold)
+- **Done:** migration 0026 (E.164 phone invites via an `invites` trigger, redeem matches `auth.users.phone` with or without `+`, `invite_preview.sign_in_with`, no email batch without an email, `[phone]` in error reports, QA-R1: a phone is never a placeholder name). `config.toml` `[auth.sms]` template in Hearth's words. App: `sendTextCode`/`verifyTextCode`, `api/phone.ts` (E.164, last 4, scrub, flag), `SignInFlow` + `TextCodeFlow`, join screen by `sign_in_with`, invite card's "Their mobile number", no-family "Signed in with email before?", Help/Preferences push-only for phone accounts. check-logs flags phone names. API.md, architecture 02/05 footers.
 - **Tests changed (plainly wrong or asked for):** api_test and contract exact-keys now include `sign_in_with` (QA-R3); sms_test's `position('phone"' …)` check contradicted `sign_in_with = 'phone'`, now checks no key names a phone.
 - **Open:** grandparent-ux on the words (QA-R2 "newest text"; the invite card's "Use email instead" makes today's link invite, which has no email field: staff-pm call); privacy-security review; StartFamily's first invite stays link-only; Twilio facts unverified live. e2e:web needed a local browser-version workaround (Playwright 1194 vs installed 1243).
 - **Next exact step:** qa-tdd runs all suites 3x; then grandparent-ux and privacy-security.
 
-## Nov 10: SMS provider pick (architect, SPEC-SMS-SIGN-IN §6, TRACKER R42; branch claude/project-thread-y94vb7, local only under the GitHub hold)
+## Nov 10: SMS provider pick (architect, SPEC-SMS-SIGN-IN §6, TRACKER R43; branch claude/project-thread-y94vb7, local only under the GitHub hold)
 - **Done:** pick Twilio Verify via Supabase `twilio_verify` (`docs/eng/SMS-PROVIDER.md`, spec §8); `config.toml` `[auth.sms.twilio_verify]` off with env() secrets, `max_frequency = "60s"`, local-only `test_otp` guidance; architecture 01/02/04 and ACCOUNTS row (not created yet).
 - **Open:** supabase.com and twilio.com didn't load in the session; Verify's no-registration claim, pricing, template rules and `auth.users.phone` form are unverified.
 - **Next exact step:** a session with those sites allowed confirms the unverified facts; then Chase's one step (Twilio sign-up, $20).

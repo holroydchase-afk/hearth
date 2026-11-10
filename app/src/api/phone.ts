@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 // Text message sign-in (SPEC-SMS-SIGN-IN 3.3, BETA-SMS-3/-15): US numbers only, kept as E.164 (+1XXXXXXXXXX).
-// Same rule as private.us_e164 (migration 0025). A phone number is personal data: never log one.
+// Same rule as private.us_e164 (migration 0026). A phone number is personal data: never log one.
 import type { Session } from './types';
 
 /** "(304) 555-0100", "304.555.0100", "1 304 555 0100", "+1 304 555 0100"… → "+13045550100"; anything else → null. */

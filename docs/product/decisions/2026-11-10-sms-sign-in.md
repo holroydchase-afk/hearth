@@ -1,5 +1,5 @@
 # Decision: text message codes are the default sign-in, behind a switch, for M4
-Date: Nov 10, 2026 · Status: Chase's (go-live list item 8, Nov 10: build it now; Oct 18: "I want texts to be the primary and default way folks receive their OTP.") · DEC-56 · Spec: `docs/product/SPEC-SMS-SIGN-IN.md` (BETA-SMS-1..17)
+Date: Nov 10, 2026 · Status: Chase's (go-live list item 8, Nov 10: build it now; Oct 18: "I want texts to be the primary and default way folks receive their OTP.") · DEC-57 · Spec: `docs/product/SPEC-SMS-SIGN-IN.md` (BETA-SMS-1..17)
 
 Closes TRACKER D11. Ships off (email only, as today) until Chase has an SMS provider and US carrier registration.
 

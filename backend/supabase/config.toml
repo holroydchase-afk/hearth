@@ -284,7 +284,7 @@ template = "Hearth code: {{ .Code }}. Never read this code to anyone, even famil
 max_frequency = "60s"
 
 # Use pre-defined map of phone number to OTP for testing.
-# Hearth (DEC-56, docs/eng/SMS-PROVIDER.md): LOCAL `supabase start` and CI only.
+# Hearth (DEC-57, docs/eng/SMS-PROVIDER.md): LOCAL `supabase start` and CI only.
 # deploy.sh never pushes this file to hosted; hosted auth config goes through the
 # Management API and must NEVER carry test_otp (it would be a fixed-code backdoor).
 # Use only fictional 555-01xx numbers. Uncomment when BETA-SMS-8 / the contract
@@ -310,7 +310,7 @@ max_frequency = "60s"
 # uri = "pg-functions://<database>/<schema>/<hook_name>"
 
 # Configure one of the supported SMS providers: `twilio`, `twilio_verify`, `messagebird`, `textlocal`, `vonage`.
-# Hearth pick (architect, Nov 10, DEC-56): Twilio Verify. See docs/eng/SMS-PROVIDER.md.
+# Hearth pick (architect, Nov 10, DEC-57): Twilio Verify. See docs/eng/SMS-PROVIDER.md.
 # Off until carrier delivery is checked (BETA-SMS-16). message_service_sid holds the
 # Verify *Service* SID (VA...), not a Messaging Service. All three come from env,
 # never from git; values live in the Claude environment / Supabase dashboard only.

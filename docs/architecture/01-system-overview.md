@@ -34,7 +34,7 @@ Hearth is a private photo app for families. Every post has an explicit audience 
 | Supabase | Database, auth, functions | Everything Hearth's server can (see below); auth logs with email and IP | Photo bytes (they live in B2 as ciphertext) |
 | Backblaze B2 | Media storage | Ciphertext, object sizes, upload and download times, requester IPs | Photo contents, captions, names |
 | Resend | Email delivery | Recipient email, sender display name, counts, a link | Photos, captions, comment text |
-| Twilio (Verify) | **Planned, off** (DEC-56, `docs/eng/SMS-PROVIDER.md`): text-message sign-in codes, US numbers only | Phone number, the code (Verify makes and checks it), delivery and verification logs, the requester's carrier | Photos, captions, names, email, groups |
+| Twilio (Verify) | **Planned, off** (DEC-57, `docs/eng/SMS-PROVIDER.md`): text-message sign-in codes, US numbers only | Phone number, the code (Verify makes and checks it), delivery and verification logs, the requester's carrier | Photos, captions, names, email, groups |
 | Expo, Apple, Google | Push delivery (milestone 2) | Device push token, sender display name, counts, a post id | Photos, captions, comment text |
 
 **What Hearth's own server can read today (Built):** names, email addresses, group membership, captions, comment text, timestamps, and, through `MEDIA_KEK`, every photo's key. Photos are encrypted at rest, but Hearth holds the keys. See [03-encryption-and-keys.md](03-encryption-and-keys.md).

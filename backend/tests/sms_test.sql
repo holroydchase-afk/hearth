@@ -1,4 +1,4 @@
--- BETA-SMS-8, -9, -13, -15 (SPEC-SMS-SIGN-IN, DEC-56): text message sign-in, the database side.
+-- BETA-SMS-8, -9, -13, -15 (SPEC-SMS-SIGN-IN, DEC-57): text message sign-in, the database side.
 -- Phone invites match the number in the form Supabase Auth stores it (with or without the '+'), invite_preview says how
 -- to sign in and never names the target, phone-only accounts get push and never an email batch, and no phone number is
 -- kept in an error report or a raised message. Written FIRST: red until the SMS migration lands.

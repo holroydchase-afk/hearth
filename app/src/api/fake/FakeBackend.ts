@@ -739,7 +739,7 @@ export class FakeBackend {
     if (!this.inviteUsable(inv)) this.fail(key);
     // UX-G7: refused like redeem, naming the inviter
     if (!this.invitePlaces(inv)) throw new ApiError('22023', 'invalid invite', this.state.users[inv.created_by]?.name);
-    // BETA-SMS-9 (0025): how to sign in, never the target
+    // BETA-SMS-9 (0026): how to sign in, never the target
     const how = inv.target_phone || inv.channel === 'sms' ? 'phone' : inv.target_email || inv.channel === 'email' ? 'email' : 'either';
     return { inviter_name: this.state.users[inv.created_by]?.name ?? '', space_name: this.state.spaces[inv.space]!.name, sign_in_with: how };
   }
@@ -781,7 +781,7 @@ export class FakeBackend {
     if (a.name != null && this.state.members.some((m) => m.space === a.space && this.state.users[m.user]?.name.toLowerCase() === a.name!.trim().toLowerCase())) {
       throw new ApiError('23514', 'someone in this family already has that name'); // no impersonation, like the SQL
     }
-    // BETA-SMS-8 (0025): a phone target is stored as E.164; a non-US number is refused, never echoed
+    // BETA-SMS-8 (0026): a phone target is stored as E.164; a non-US number is refused, never echoed
     const phone = a.targetPhone == null ? null : usE164(a.targetPhone);
     if (a.targetPhone != null && !phone) throw new ApiError('23514', 'please use a US mobile number');
     const bytes = randomBytes(10);
@@ -1034,7 +1034,7 @@ export class FakeBackend {
     return u;
   }
 
-  /** BETA-SMS: a text sign-in's account, by its E.164 number. Like 0025's trigger: no email, never the number as a name. */
+  /** BETA-SMS: a text sign-in's account, by its E.164 number. Like 0026's trigger: no email, never the number as a name. */
   userByPhone(phone: string): UserRow {
     let u = Object.values(this.state.users).find((x) => x.phone === phone);
     if (!u) {
