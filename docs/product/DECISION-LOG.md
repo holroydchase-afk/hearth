@@ -394,5 +394,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** level 5 of the recruiter-readiness bar needs someone other than Chase to start and use Hearth unaided. Sign-up and the create RPCs were already open; joining, the real guard, is unchanged.
 - **Source:** `docs/product/decisions/2026-11-07-start-a-family.md`, `docs/product/SPEC-START-FAMILY.md`
 
+### DEC-56 · Text message codes are the default sign-in, behind a switch, for M4 (BETA-SMS-1..17)
+- **When / status:** Nov 10 · Chase put SMS sign-in on his go-live list (item 8) and asked for it to be built now; first asked Oct 18 ("I want texts to be the primary and default way folks receive their OTP.") · Specced, not built; ships off until a provider and US carrier registration exist
+- **Chose:** mobile number first with "Use email instead"; US numbers only; the same 6-number code screen; phone and email stay separate accounts in this pass; phone-only accounts get push, not email notices; an app flag keeps today's email-only screens until Chase has a provider. Stop date: carrier registration not approved by Nov 18 means the beta runs on email.
+- **Over:** D11's "keep email for milestones 1 and 2" (now superseded for M4); email as the only sign-in; linking phone and email on one account (deferred).
+- **Because:** a WV grandparent finds a text faster than an email in a junk folder (A1, G2); the switch means no relative ever sees a half-working text sign-in.
+- **Source:** `docs/product/decisions/2026-11-10-sms-sign-in.md`, `docs/product/SPEC-SMS-SIGN-IN.md`; the provider pick is the architect's (spec §6)
+
 ---
-Last updated: Nov 7, 2026 (DEC-55; DEC-54 is on the HIG PR #106)
+Last updated: Nov 10, 2026 (DEC-56; DEC-54 is on the HIG PR #106)

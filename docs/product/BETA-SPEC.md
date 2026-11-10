@@ -86,7 +86,7 @@ The test passes when 4 of 5 testers pass. Log each attempt on the Test Log with 
 - Albums, free-text search, child tags (E9): Hearth works as a feed for 12 people. The timeline's "Pick a year" (BETA-TIME-4) covers finding old photos; caption search is in the ANCHORS ideas log.
 - Multiple spaces per user: one family space covers the beta.
 - Billing, paywall, and the video-cap messaging (E12): no money in the beta. The "willing to pay" question waits until after Thanksgiving.
-- SMS or text-link notices: needs Twilio (paid) and A2P registration. Push and email are enough.
+- SMS or text-link notices: needs a paid SMS provider and A2P registration. Push and email are enough. (Text message **sign-in codes** moved in, Nov 10, DEC-56: `docs/product/SPEC-SMS-SIGN-IN.md`, BETA-SMS-1..17, M4, behind a switch. Notices and invites by text stay out.)
 - Smart frames (E16) and other languages (E15): no tester has asked.
 - Editing photos or captions: delete and repost is fine for the beta.
 - One-to-one DMs: families already have texting. (Group and event chat moved in on Chase's call, Oct 19: `SPEC-MESSENGER.md`.)
