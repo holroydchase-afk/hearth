@@ -20,9 +20,11 @@ export function andList(names: string[]): string {
   return `${u.slice(0, -1).join(', ')} and ${u[u.length - 1]}`;
 }
 
-/** UI-27: the avatar letter. Skips a leading "The" ("The Holroyds" → "H"); "?" when there's no name. */
+/** UI-27 / FIRSTMIN-1: the avatar initials. The first letters of the first two words, after skipping a
+ *  leading "The" ("The Holroyds" → "H", "Grandma Jo" → "GJ"); one word stays one letter; "?" when there's no name. */
 export function initialOf(name: string): string {
-  const words = name.trim().split(/\s+/).filter(Boolean);
-  const word = words.length > 1 && words[0]?.toLowerCase() === 'the' ? words[1] : words[0];
-  return word ? word.slice(0, 1).toUpperCase() : '?';
+  const all = name.trim().split(/\s+/).filter(Boolean);
+  const words = all.length > 1 && all[0]?.toLowerCase() === 'the' ? all.slice(1) : all;
+  const letters = words.slice(0, 2).map((w) => w.slice(0, 1).toUpperCase()).join('');
+  return letters || '?';
 }

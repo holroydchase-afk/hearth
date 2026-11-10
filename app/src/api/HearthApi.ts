@@ -15,6 +15,9 @@ import type {
 
 export * from './types';
 
+/** start_family's arguments: the name (1 to 60 after trim) and no sides or exactly two. */
+export interface StartFamilyArgs { clientId: string; name: string; sides: [] | [string, string] }
+
 /**
  * Error codes: the PostgREST codes from API.md, plus a few app-side codes for things
  * that are not database errors (network down, wrong sign-in code, sign-media HTTP statuses).
@@ -33,6 +36,7 @@ export type ApiErrorCode =
   | 'META_MAKERNOTE' | 'META_XMP' | 'META_ICC' | 'META_FACES' | 'META_OTHER'
   | 'VIDEO_CAP' // sign-media 402
   | 'VIDEO_TOO_LONG' // pipeline: > 60 s
+  | 'FAMILY_FULL' // HF001 (0024, BETA-START-12): a family started in the app reached 500 photos or 2 GB
   | 'AUTH' // not signed in / session expired
   | 'NETWORK' // no connection, timeout, 5xx
   | 'UNKNOWN';
@@ -137,6 +141,13 @@ export interface HearthApi {
   /** space_features (HELP-R6): the family's owner turns a feature on or off for the family (RLS: family_settings,
    *  owner only, 42501). Hearth's global switch still wins, so re-read myFeatures after. */
   setFamilyFeature(space: string, feature: string, enabled: boolean): Promise<void>;
+
+  // --- Start a family (0024, SPEC-START-FAMILY, DEC-55) ---
+  /** can_start_family: signed in, the server switch on, in no live family, under 3 starts in 24 hours. Boolean only. */
+  canStartFamily(): Promise<boolean>;
+  /** start_family: the caller becomes Owner of a new family with Everyone, plus two Private groups for Two sides.
+   *  Idempotent on clientId. Switch off 42501; already in a family 23505; 3 starts in 24 h 54000; bad name or sides 23514. */
+  startFamily(a: StartFamilyArgs): Promise<string>;
 
   // --- messenger relay (SPEC-MESSENGER, 0015): opaque base64 MLS bytes ---
   chatList(space: string): Promise<ChatSummary[]>;

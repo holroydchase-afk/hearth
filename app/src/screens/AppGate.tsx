@@ -1,17 +1,29 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useApp } from '../state/AppContext';
 import { useNav } from '../state/nav';
 import { Button, Card, Loading, Screen, Txt } from '../ui/kit';
 import { InviteCodeEntry } from './InviteCodeEntry';
+import { StartFamily } from './StartFamily';
 
 /** Shown instead of a screen when the app isn't ready for it. Returns null when it is. */
 export function AppGate() {
   const app = useApp();
   const nav = useNav();
   const [typing, setTyping] = useState(false);
+  // Start a family (DEC-55): offered only when the server says this account may (switch on, in no family, under 3 today).
+  const [canStart, setCanStart] = useState(false);
+  const [starting, setStarting] = useState(false);
+  const noSpace = app.status === 'noSpace';
+  const api = app.deps.api;
+  useEffect(() => {
+    if (!noSpace) return;
+    let live = true;
+    api.canStartFamily().then((ok) => { if (live) setCanStart(ok === true); }).catch(() => { if (live) setCanStart(false); });
+    return () => { live = false; };
+  }, [noSpace, api]);
   if (app.status === 'ready') return null;
   if (app.status === 'loading') {
     return (
@@ -37,6 +49,7 @@ export function AppGate() {
       </Screen>
     );
   }
+  if (starting && canStart) return <StartFamily onUseCode={() => setStarting(false)} />;
   return (
     <Screen>
       <Card>
@@ -44,6 +57,7 @@ export function AppGate() {
         <Txt>You're signed in, but you're not part of a family on Hearth yet. Type the invite code from your family's text or email.</Txt>
         <InviteCodeEntry />
         <Txt variant="muted">No code? Ask the person who invited you to send a new one.</Txt>
+        {canStart ? <Button label="I'm a parent: start a family" variant="secondary" onPress={() => setStarting(true)} /> : null}
         <Button label="Sign out of Hearth" variant="secondary" onPress={() => void app.signOut()} />
       </Card>
     </Screen>

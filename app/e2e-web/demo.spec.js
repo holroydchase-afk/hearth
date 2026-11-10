@@ -110,7 +110,8 @@ for (const width of [390, 1280]) {
     expect((await bar.boundingBox()).height).toBeLessThanOrEqual(48);
     // The middle note only where it fits whole at 17 pt (DS-2).
     await expect(page.getByText(/^Sample data/)).toHaveCount(0); // 390 px phone and the 430 px laptop column: no room at 17 pt
-    await expect(page.getByText('Tip: tap Details, then See it as Grandma Jo.')).toHaveCount(width < 900 ? 1 : 0);
+    // FIRSTMIN-3: three numbered steps on a phone.
+    await expect(page.getByText('3. Tap See it as Grandma Jo.', { exact: true })).toHaveCount(width < 900 ? 1 : 0);
     const heading = page.getByRole('heading', { name: 'Photos of Mia and Leo' });
     const before = (await heading.boundingBox()).y;
     await toggle.click();

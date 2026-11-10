@@ -42,7 +42,8 @@ What Hearth defends, against whom, and where the defense stops today. Written to
 3. Hard purge not scheduled on the hosted project; B2 deletion, auth-user removal and export worker not written (02 "Deletion").
 4. Residency: Supabase logs outside the US; push via Apple and Google (01 "Residency").
 5. No outside security review yet; open-sourcing is undecided (D10).
-6. Messenger: no key verification (a compromised server could add a hidden phone to a chat), and chat metadata is visible to the server ([06-messenger.md](06-messenger.md)).
+6. Open starting (migration 0024, DEC-55): any signed-in account can start one family of its own with `start_family`. Joining another family still needs an invite. The switch `start_family_open` ships off; with it on, strangers can store photos on Hearth's bucket. Defenses: one family per account, 3 starts a day, a photo and storage cap on app-started families (`HF001`), and the direct `create_household`/`create_space` calls revoked from app users. Not yet: an abuse contact in Help and a suspend-a-family runbook (PRIV-R7), and an age and legal review (PRIV-R5, milestone 7).
+7. Messenger: no key verification (a compromised server could add a hidden phone to a chat), and chat metadata is visible to the server ([06-messenger.md](06-messenger.md)).
 
 ---
-Last checked against code: 2026-10-29, video cleaner (media/cleanVideo.ts); earlier 2026-10-28, post titles (migration 0019); earlier 2026-10-21, A3 kept photo files (former-member row); earlier 2026-10-19, a522a3a (plus migrations 0014, 0015 messenger) and 624fc39 (MEDIA-1/2/3 on-phone cleaner, ONB-3/4 invite links)
+Last checked against code: 2026-11-07, migration 0024 (start_family, open starting gap 6); earlier 2026-10-29, video cleaner (media/cleanVideo.ts); earlier 2026-10-28, post titles (migration 0019); earlier 2026-10-21, A3 kept photo files (former-member row); earlier 2026-10-19, a522a3a (plus migrations 0014, 0015 messenger) and 624fc39 (MEDIA-1/2/3 on-phone cleaner, ONB-3/4 invite links)

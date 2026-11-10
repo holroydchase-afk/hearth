@@ -10,8 +10,8 @@ import { fakeHarness } from './fakeHarness';
 import type { ContractHarness, HarnessFactory } from './harness';
 import { supabaseCaps, supabaseEnvReady, supabaseHarness } from './supabaseHarness';
 
-interface Caps { joiner: boolean; ratelimit: boolean; media: boolean }
-const factories: [string, HarnessFactory, Caps][] = [['FakeApi', fakeHarness, { joiner: true, ratelimit: true, media: true }]];
+interface Caps { joiner: boolean; ratelimit: boolean; media: boolean; starter: boolean }
+const factories: [string, HarnessFactory, Caps][] = [['FakeApi', fakeHarness, { joiner: true, ratelimit: true, media: true, starter: true }]];
 if (supabaseEnvReady()) factories.push(['SupabaseApi', supabaseHarness, supabaseCaps()]);
 else describe('SupabaseApi contract', () => it.skip('skipped: HEARTH_API_URL / HEARTH_ANON_KEY / HEARTH_USERS_JSON not set', () => {}));
 
@@ -774,6 +774,117 @@ describe.each(factories)('%s contract (API.md)', (_name, factory, caps) => {
         await poster.setFamilyFeature(h.spaceId, f, true);
       }
       expect(await poster.myFeatures(h.spaceId)).toContain(f);
+    });
+  });
+
+  // Start a family (0024, SPEC-START-FAMILY, DEC-55). Needs a signed-in user in no family and a way to flip the switch.
+  describe('start_family / can_start_family (BETA-START, migration 0024)', () => {
+    // QA-R1 (Nov 7): a stack with no starter user or switch flip reports these as skipped, never as passed.
+    const itStart = caps.starter ? it : it.skip;
+    const starter = () => h.as('starter');
+    const spaceIds = async (api: HearthApi) => (await api.mySpaces()).map((s) => s.space_id);
+
+    itStart('BETA-START-8 switch off: can_start_family is false and start_family is refused (42501); my_features never lists it', async () => {
+      await h.setStartFamilyOpen!(false);
+      expect(await starter().canStartFamily()).toBe(false);
+      expect(await code(starter().startFamily({ clientId: uuid(), name: 'Our kids', sides: [] }))).toBe('42501');
+      expect(await spaceIds(starter())).toEqual([]);
+      expect(await poster.myFeatures(h.spaceId)).not.toContain('start_family_open');
+    });
+
+    itStart('BETA-START-1 a signed-in account with no family starts one: Owner, in Everyone, nobody else sees it', async () => {
+      await h.setStartFamilyOpen!(true);
+      const me = starter();
+      expect(await me.canStartFamily()).toBe(true);
+      const id = await me.startFamily({ clientId: uuid(), name: '  Our kids  ', sides: [] });
+      expect(typeof id).toBe('string');
+      const mine = (await me.mySpaces()).find((s) => s.space_id === id);
+      expect(mine).toMatchObject({ space_id: id, name: 'Our kids', role: 'owner', can_post: true });
+      const circles = await me.myCircles(id);
+      expect(circles).toHaveLength(1);
+      expect(circles[0]).toMatchObject({ kind: 'everyone', member_count: 1 });
+      // the other direction: nobody outside it can see any of it
+      for (const other of [poster, viewerIn, viewerOut]) {
+        expect(await spaceIds(other)).not.toContain(id);
+        expect(await other.myCircles(id)).toEqual([]);
+      }
+    });
+
+    itStart('BETA-START-1 idempotent on p_client_id: a retry returns the first family, never a second', async () => {
+      await h.setStartFamilyOpen!(true);
+      const clientId = uuid();
+      const a = await starter().startFamily({ clientId, name: 'Our kids', sides: [] });
+      expect(await starter().startFamily({ clientId, name: 'Our kids', sides: [] })).toBe(a);
+      expect(await spaceIds(starter())).toEqual([a]);
+    });
+
+    itStart('BETA-START-5 one family per account: a second start is 23505 and can_start_family turns false; a parent already in a family gets the same', async () => {
+      await h.setStartFamilyOpen!(true);
+      const first = await starter().startFamily({ clientId: uuid(), name: 'Our kids', sides: [] });
+      expect(await starter().canStartFamily()).toBe(false);
+      expect(await code(starter().startFamily({ clientId: uuid(), name: 'Second try', sides: [] }))).toBe('23505');
+      expect(await spaceIds(starter())).toEqual([first]);
+      expect(await poster.canStartFamily()).toBe(false);
+      expect(await code(poster.startFamily({ clientId: uuid(), name: 'Another', sides: [] }))).toBe('23505');
+      expect(await viewerIn.canStartFamily()).toBe(false);
+    });
+
+    itStart('BETA-START-6 a blank or over-60 name, or sides that are not 0 or 2 distinct names, is 23514 and leaves nothing', async () => {
+      await h.setStartFamilyOpen!(true);
+      const me = starter();
+      for (const bad of [
+        { name: '   ', sides: [] },
+        { name: 'x'.repeat(61), sides: [] },
+        { name: 'Our kids', sides: ["Dad's side"] },
+        { name: 'Our kids', sides: ["Dad's side", "Mom's side", 'Third'] },
+        { name: 'Our kids', sides: ["Dad's side", "Dad's side"] },
+        { name: 'Our kids', sides: ["Dad's side", '  '] },
+      ]) {
+        expect({ bad, code: await code(me.startFamily({ clientId: uuid(), ...bad } as never)) }).toEqual({ bad, code: '23514' });
+      }
+      expect(await spaceIds(me)).toEqual([]);
+      expect(await me.canStartFamily()).toBe(true); // a refusal counts no start
+      expect(await code(me.startFamily({ clientId: uuid(), name: 'x'.repeat(60), sides: [] }))).toBe('ok');
+    });
+
+    itStart('BETA-START-4 Two sides: two groups with Private comments and nobody in them; Everyone is still there', async () => {
+      await h.setStartFamilyOpen!(true);
+      const me = starter();
+      const id = await me.startFamily({ clientId: uuid(), name: 'Our kids', sides: ["Dad's side", "Mom's side"] });
+      const circles = await me.myCircles(id);
+      expect(circles.filter((c) => c.kind === 'everyone')).toHaveLength(1);
+      const groups = circles.filter((c) => c.kind === 'group').sort((a, b) => a.name.localeCompare(b.name));
+      expect(groups.map((g) => g.name)).toEqual(["Dad's side", "Mom's side"]);
+      for (const g of groups) expect(g).toMatchObject({ comment_mode: 'private', member_count: 0 });
+    });
+
+    itStart('BETA-START-3 the owner invites one email to Everyone; that person sees the post, someone with no invite never does', async () => {
+      if (!caps.joiner || !h.joinerEmail) return;
+      await h.setStartFamilyOpen!(true);
+      const owner = starter();
+      const id = await owner.startFamily({ clientId: uuid(), name: 'Our kids', sides: [] });
+      const everyone = (await owner.myCircles(id)).find((c) => c.kind === 'everyone')!;
+      const { code: c } = await owner.createInvite({ space: id, role: 'viewer', circleIds: [everyone.circle_id], history: 'all', channel: 'email', targetEmail: h.joinerEmail });
+      const joiner = h.as('joiner');
+      expect(await joiner.redeemInvite(c)).toBe(id);
+      const post = await owner.createPost({ clientId: uuid(), space: id, caption: 'First one', circleIds: [everyone.circle_id] });
+      await h.attachReadyMedia(owner, post);
+      await owner.publishPost(post);
+      expect((await joiner.getFeed({ space: id })).map((p) => p.post_id)).toEqual([post]);
+      const outside = await viewerOut.getFeed({ space: id }).then((r) => r.map((p) => p.post_id), (e: unknown) => (e instanceof ApiError ? e.code : String(e)));
+      expect([[], 'P0002']).toContainEqual(outside); // a family you're not in: empty or not found, never its posts
+      expect(await code(viewerOut.getComments(post))).toBe('P0002');
+    });
+
+    itStart('BETA-START-7 an empty family I started is retired when I redeem an invite to another family', async () => {
+      if (!h.starterEmail) return;
+      await h.setStartFamilyOpen!(true);
+      const me = starter();
+      const empty = await me.startFamily({ clientId: uuid(), name: 'Our kids', sides: [] });
+      const { code: c } = await poster.createInvite({ space: h.spaceId, role: 'viewer', circleIds: [h.circleIn], history: 'all', channel: 'email', targetEmail: h.starterEmail });
+      expect(await me.redeemInvite(c)).toBe(h.spaceId);
+      expect(await spaceIds(me)).toEqual([h.spaceId]);
+      expect(await spaceIds(me)).not.toContain(empty);
     });
   });
 });

@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 import type { HearthApi } from '../HearthApi';
 
-export type ContractUser = 'poster' | 'viewerIn' | 'viewerOut' | 'joiner' | 'ratelimit';
+export type ContractUser = 'poster' | 'viewerIn' | 'viewerOut' | 'joiner' | 'ratelimit' | 'starter';
 
 /**
  * Anything that can hand out HearthApi clients for the standard cast:
@@ -11,6 +11,7 @@ export type ContractUser = 'poster' | 'viewerIn' | 'viewerOut' | 'joiner' | 'rat
  *  - viewerOut: viewer in `circleOut` only (same space, never in circleIn)
  *  - joiner:    signed-in user who is not yet a member (for invite redemption)
  *  - ratelimit: throwaway user for the S10 rate-limit test (gets locked out for 10 minutes)
+ *  - starter:   signed-in user in no family, for Start a family (0024; ends up owning one)
  */
 export interface ContractHarness {
   name: string;
@@ -18,6 +19,10 @@ export interface ContractHarness {
   circleIn: string;
   circleOut: string;
   joinerEmail?: string;
+  /** Start a family (0024): the starter's email, so a parent can invite them (BETA-START-7). */
+  starterEmail?: string;
+  /** Start a family (0024): flip the server switch `start_family_open` (service role on a real stack). Absent = can't. */
+  setStartFamilyOpen?(open: boolean): Promise<void>;
   has(user: ContractUser): boolean;
   as(user: ContractUser): HearthApi;
   anon(): HearthApi;

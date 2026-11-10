@@ -72,6 +72,10 @@ A feature such as video posting is on for someone only when three switches are a
 
 **Event names.** A feed or timeline row carries the event a post was sent to (`event_id`, `event_name`) only for that event's members and the parents; anyone who sees the post through another group gets nulls and never learns the event exists.
 
+## Who can start a family (Built, migration 0024)
+
+A signed-in account that is in no family can start one through `start_family`. It becomes the owner and the only member of Everyone (plus two sides if it picks them), so nobody else sees anything until it invites someone. It can't start a second family. `start_family` reads the global switch `start_family_open` inside the function, and the app only gets a yes or no from `can_start_family()`. The direct `create_household` and `create_space` calls are revoked from app users, so a raw API call can't skip these rules; Chase's setup scripts create families as an admin before acting as the app user. Starts are limited to 3 a day per account, and families started in the app (`private.started_families`) have a photo and storage cap (`HF001`). An empty family its owner started is retired when the owner redeems an invite. Refusals never name a family, a person or an email.
+
 ## Who sees a name (Built)
 
 A relative's profile (display name) is visible to the people they share a family space with as a parent, to people in a live group with them (`public.can_see_profile`; a deleted group, or a deleted family space, no longer counts, migration 0012, S13), and to whoever can read one of their replies. Only a family space's parents can unlink a child from that space; a co-parent who is a viewer there can't (migration 0012, S11).
@@ -100,4 +104,4 @@ RLS limits what each family member's app can read. It does not limit Hearth's se
 - **Planned:** event dates (`starts_on`, `ends_on`) exist in the schema but the app doesn't use them yet.
 
 ---
-Last checked against code: 2026-11-05, migration 0023 (🎉 joins the reaction list in set_reaction and the table check); earlier 2026-11-04, migration 0022 (post_viewers names who can see a post, from sees_post); earlier 2026-10-31, HELP-R6 (the owner's photo helpers switch writes `space_features` under RLS; no migration); earlier 2026-10-29, migration 0021 (words change only through edit_post_words); earlier 2026-10-28, migration 0018 (reactions only through RPCs); earlier 2026-10-22, 10001df (plus migrations 0013, 0015, 0016)
+Last checked against code: 2026-11-07, migration 0024 (start_family, revoked create_household/create_space); earlier 2026-11-05, migration 0023 (🎉 joins the reaction list in set_reaction and the table check); earlier 2026-11-04, migration 0022 (post_viewers names who can see a post, from sees_post); earlier 2026-10-31, HELP-R6 (the owner's photo helpers switch writes `space_features` under RLS; no migration); earlier 2026-10-29, migration 0021 (words change only through edit_post_words); earlier 2026-10-28, migration 0018 (reactions only through RPCs); earlier 2026-10-22, 10001df (plus migrations 0013, 0015, 0016)
