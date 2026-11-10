@@ -267,6 +267,18 @@ describe.each(factories)('%s contract (API.md)', (_name, factory, caps) => {
       expect(await code(h.anon().invitePreview('NOPE-NOPE-1'))).toBe('22023');
     });
 
+    it('BETA-SMS-9 preview says how to sign in (phone, email or either) and never names the target', async () => {
+      const base = { space: h.spaceId, role: 'viewer' as const, circleIds: [h.circleIn], history: 'all' as const };
+      const phone = await poster.createInvite({ ...base, channel: 'sms', targetPhone: '+13045550100' });
+      const email = await poster.createInvite({ ...base, channel: 'email', targetEmail: 'kim@example.com' });
+      const link = await poster.createInvite(base);
+      const how = async (c: string) => ((await h.anon().invitePreview(c)) as { sign_in_with?: string }).sign_in_with;
+      expect(await how(phone.code)).toBe('phone');
+      expect(await how(email.code)).toBe('email');
+      expect(await how(link.code)).toBe('either');
+      expect(JSON.stringify(await h.anon().invitePreview(phone.code))).not.toMatch(/3045550100|0100|kim@/);
+    });
+
     it('ONB-3/ONB-4 the link is the web build\'s /join/ address, and its last segment previews signed out', async () => {
       const { link } = await poster.createInvite({ space: h.spaceId, role: 'viewer', circleIds: [h.circleIn], history: 'all' });
       expect(link.startsWith(JOIN_LINK_BASE)).toBe(true);

@@ -233,6 +233,7 @@ tickets = [
  ("B13", "bug", B, "High", "fixed", "HARD-17: Postgres JIT-compiled feed_rows once a family had a few dozen posts: 1.5-2 s per Photos or By date page instead of 20-50 ms. Migration 0018 turns JIT off for it", []),
  ("B12", "bug", "app", "Low", "fixed", "HARD-16: on a server before 0017, Haha or Like takes away an existing heart (the hosted server has 0017)", []),
  ("B14", "bug", "app", "Medium", "fixed", "LIVE-1: on iPhone the glass tab bar drew the 17 pt tab words over the icons (Chase's live review, Nov 5)", []),
+ ("B15", "bug", B, "Medium", "open", "QA-R1 (BETA-SMS): a phone-only account's placeholder name falls back to its phone number (tg_handle_new_user, 0007: coalesce(email, phone)), so the family would see the number as a name and in notices. Test: backend/tests/sms_test.sql", []),
 ]
 # When each ticket was found and fixed, where it isn't Oct 15.
 DATES = {"S9": ("2026-10-15", "2026-10-16"), "S10": ("2026-10-15", "2026-10-16"), "S12": ("2026-10-15", "2026-10-16"),
@@ -301,6 +302,15 @@ run("r11", suite="backend", at="2026-10-18T03:30:00-04:00", label="Overnight pri
 run("r12", suite="app", at="2026-10-18T03:00:00-04:00", label="BETA-BULK-1 fallback: creation time for undated photos (red, then green)",
     passed=351, failed=0, results={},
     note="pickCreationTime.test.ts was red 3 of 8 before the change (no creation time read). After: Jest 351 passed, 1 skipped, the same on 3 runs; typecheck clean.")
+run("r13", suite="backend", at="2026-11-10T06:00:00-05:00", label="Text message sign-in: SQL tests written first (red, no SMS migration yet)",
+    passed=15, failed=20, results={},
+    note="backend/tests/sms_test.sql (BETA-SMS-8, -9, -13, -15, QA-R1): 20 red for the right reasons (no E.164 normalizing or US-only refusal in create_invite, no sign_in_with, 13045550100 does not match +13045550100, email batches for phone-only accounts, phone numbers kept in client_errors, phone number as placeholder name). Every other suite green. e2e/results/sms-red-backend.txt")
+run("r14", suite="app", at="2026-11-10T06:00:00-05:00", label="Text message sign-in: app tests written first (red, no text flow yet)",
+    passed=826, failed=48, results={},
+    note="BETA-SMS-1..6, -9..12, -14, -15 on the Fake, SupabaseApi phone OTP wiring and the contract preview: 48 red (no phone field, no sendTextCode/verifyTextCode, no sign_in_with, no [phone] scrub). BETA-SMS-1 guard and the other-direction checks green. Typecheck clean. e2e/results/sms-red-app.txt")
+run("r15", suite="edge", at="2026-11-10T06:00:00-05:00", label="Text message sign-in: Deno and log-check tests written first (red)",
+    passed=32, failed=1, results={},
+    note="BETA-SMS-7 [auth.sms] template red (still 'Your code is'); BETA-SMS-13 notify null-address skip already green. Log check: BETA-SMS-15 phone fixture red (check-logs.mjs doesn't flag phone). e2e/results/sms-red-deno.txt, sms-red-logs.txt")
 print("proto", len(proto_cases), "red", sum(v == "fail" for v in red_map.values()), "| sql", len(sql_cases), "| edge", len(edge_cases),
       "| tickets", len(tickets), "| sec-linked", {t[0]: len(t[6]) for t in tickets if t[0].startswith("S")})
 print("areas", sorted({c['area'] for c in sql_cases}))

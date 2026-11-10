@@ -1,0 +1,15 @@
+ok      PRIV-2 flags a bad log call (key)
+ok      PRIV-2 flags a bad log call (url)
+ok      PRIV-2 flags a bad log call (caption)
+ok      PRIV-2 flags a bad log call (title)
+ok      PRIV-2 flags a bad log call (message)
+ok      PRIV-2 flags a bad log call (object)
+ok      PRIV-2 flags a bad log call (stringify)
+ok      PRIV-2 flags a bad log call (multiline)
+ok      PRIV-2 flags a bad log call (template)
+ok      PRIV-2 flags a bad log call (stack)
+NOT OK  BETA-SMS-15 flags a log call that names a phone number  [rc=0: PRIV-2 log check OK]
+ok      PRIV-2 passes safe log calls (fixed words, e.name, URL-cut message)
+ok      PRIV-2 app/src and the edge functions log no keys, URLs, captions or raw errors
+
+LOG CHECK RESULT: 12 passed, 1 failed

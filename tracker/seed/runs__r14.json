@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-10T06:00:00-05:00",
+ "label": "Text message sign-in: app tests written first (red, no text flow yet)",
+ "passed": 826,
+ "failed": 48,
+ "results": {},
+ "note": "BETA-SMS-1..6, -9..12, -14, -15 on the Fake, SupabaseApi phone OTP wiring and the contract preview: 48 red (no phone field, no sendTextCode/verifyTextCode, no sign_in_with, no [phone] scrub). BETA-SMS-1 guard and the other-direction checks green. Typecheck clean. e2e/results/sms-red-app.txt"
+}
