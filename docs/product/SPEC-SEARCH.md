@@ -21,7 +21,7 @@ Chase, Nov 10: go-live list item 9, "Search." Status: built locally (migration 0
 | SEARCH-12 | Newest photo first, paged like `get_timeline` | SQL, contract |
 | SEARCH-13 | `search_posts` is STABLE: it can't store what anyone typed | SQL |
 | SEARCH-14 | Signed-out callers can't use it | SQL |
-| SEARCH-UI-1..8 | Labeled Search button on Photos; a "Words to look for" field and a Search button; "From" and "Taken in" as worded buttons; "Found N posts"; a plain "Nothing found" line with what to try; a found post opens to love it or write back; Back to Photos and the phone's Back | `app/src/screens/__tests__/search.test.tsx` |
+| SEARCH-UI-1..8 | Labeled Search button on Photos; a "Words to look for" field and a Search button; "From" and "Taken in" as worded buttons; "Found N photos"; a plain "Nothing found" line with what to try; a found post opens to love it or write back; Back to Photos and the phone's Back | `app/src/screens/__tests__/search.test.tsx` |
 
 ## Words (grandparent-ux to confirm)
 - Toolbar: **Search** (icon plus the word). Screen title: **Search photos**.

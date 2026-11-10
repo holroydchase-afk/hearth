@@ -80,7 +80,7 @@ export function SearchScreen({ onClose }: { onClose: () => void }) {
       });
       setResults({ query: q, posts: more && results ? [...results.posts, ...page] : page, hasMore: page.length === PAGE });
     } catch (e) {
-      setNotice(messageFor(e, { inviter: app.helper ?? null }));
+      setNotice(messageFor(e, { inviter: app.helper ?? null, action: 'search' }));
     } finally {
       setBusy(false);
     }
@@ -97,7 +97,7 @@ export function SearchScreen({ onClose }: { onClose: () => void }) {
         <FlatList
           data={post ? [post] : []}
           keyExtractor={(p) => p.post_id}
-          ListHeaderComponent={<Button label="Back to the search" text="Back" variant="secondary" onPress={() => setOpenId(null)} />}
+          ListHeaderComponent={<Button label="Back to the search" text="Back to search" variant="secondary" onPress={() => setOpenId(null)} />}
           renderItem={({ item }) => <PostCard post={item} />}
           contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 }}
           keyboardShouldPersistTaps="handled"
@@ -109,12 +109,12 @@ export function SearchScreen({ onClose }: { onClose: () => void }) {
 
   const n = results?.posts.length ?? 0;
   const found = results && n
-    ? `Found ${n} post${n === 1 ? '' : 's'}${results.hasMore ? ' so far' : ''}`
+    ? `Found ${n} photo${n === 1 ? '' : 's'}${results.hasMore ? ' so far' : ''}`
     : null;
   const nothing = results && !n
     ? (results.query.words.trim()
       ? `Nothing found for "${results.query.words.trim()}". Try one word, or pick a person or a year.`
-      : 'Nothing found. Try another person or year.')
+      : 'Nothing found. Tap Anyone or Any year to see more.')
     : null;
 
   const header = (
