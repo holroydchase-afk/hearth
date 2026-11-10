@@ -6,7 +6,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { REACTIONS, type FeedPost, type Reaction } from '../api/HearthApi';
 import type { CommentView } from '../feed/store';
 import { useApp, useFeed } from '../state/AppContext';
-import { Button, Card, Confirm, Field, Notice, Txt } from '../ui/kit';
+import { BottomSheet, Button, Card, Confirm, Field, Notice, Txt } from '../ui/kit';
+import { haptic } from '../platform/haptics';
 import { andList, initialOf, people, shortDate } from '../ui/format';
 import { FONT, MIN_TARGET, RADIUS, SPACE, fontFamily, useTheme } from '../ui/theme';
 import { PhotoCollage } from './PhotoCollage';
@@ -24,7 +25,7 @@ const WORD: Record<Reaction, string> = { '❤️': 'love', '😂': 'haha', '👍
 export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   const { feed, session } = useApp();
   const state = useFeed();
-  const { c } = useTheme();
+  const { c, reduceMotion } = useTheme();
   const ready = post.media.filter((m) => m.status === 'ready');
   const mine = post.author_id === session?.userId;
   const [sheet, setSheet] = useState<'comments' | 'more' | 'delete' | 'words' | null>(null);
@@ -78,7 +79,7 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
       </View>
       {post.title ? <Txt variant="title" role="header" testID={`post-title-${post.post_id}`} style={styles.title}>{post.title}</Txt> : null}
       {post.caption ? <Caption text={post.caption} /> : null}
-      <PhotoCollage postId={post.post_id} media={ready} />
+      <PhotoCollage postId={post.post_id} media={ready} from={`${post.author_name}, ${shortDate(post.published_at)}`} />
       {/* REACT-11 and WHO-10: under the photo, emoji chips on the left and who can see it on the right,
           like the "liked by" row of a photo app. */}
       {kinds.length || viewers ? (
@@ -107,7 +108,7 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
             variant="quiet"
             // LIVE-3 (Chase, Nov 5): mine is a soft fill, without the heavy outline other picked buttons get.
             style={mineNow === e ? [{ flex: 1 }, styles.mine] : { flex: 1 }}
-            onPress={() => void feed?.react(post.post_id, e)}
+            onPress={() => { haptic('tap'); void feed?.react(post.post_id, e); }}
           />
         ))}
         <Button label="Write a comment" text={<Text style={styles.emoji}>💬</Text>} variant="quiet" style={{ flex: 1 }} onPress={() => box.current?.focus()} />
@@ -122,7 +123,7 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
 
       {/* Mounted only while open: a hidden Modal stays in the web page and its Close button with it. */}
       {sheet === 'comments' ? (
-        <Modal visible animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setSheet(null)}>
+        <Modal visible animationType={reduceMotion ? 'fade' : 'slide'} presentationStyle="pageSheet" onRequestClose={() => setSheet(null)}>
           <SafeAreaView testID={`comments-${post.post_id}`} style={{ flex: 1, backgroundColor: c.bg }}>
             <View style={styles.sheetHead}>
               <Txt variant="title" role="header" style={{ flex: 1 }}>Comments</Txt>
@@ -204,12 +205,9 @@ function Faces({ post, viewers, me, onPress }: { post: FeedPost; viewers: Viewer
 
 /** WHO-10: everyone who can see it, one chip each (initial and name). Never the group's name. */
 function WhoSheet({ post, viewers, me, onClose }: { post: FeedPost; viewers: Viewer[]; me: string | undefined; onClose: () => void }) {
-  const { c, os } = useTheme();
+  const { c } = useTheme();
   return (
-    <Modal transparent visible animationType="slide" onRequestClose={onClose}>
-      <View style={[styles.scrim, { backgroundColor: c.scrim }]}>
-        <SafeAreaView edges={['bottom']} testID={`who-sheet-${post.post_id}`} accessibilityViewIsModal
-          style={[styles.menu, { backgroundColor: c.surface, borderTopLeftRadius: os === 'android' ? 28 : 14, borderTopRightRadius: os === 'android' ? 28 : 14 }]}>
+    <BottomSheet testID={`who-sheet-${post.post_id}`} onClose={onClose}>
           <Txt variant="title" role="header">Who can see this</Txt>
           <View style={styles.people}>
             {ordered(viewers, me).map((p) => (
@@ -222,9 +220,7 @@ function WhoSheet({ post, viewers, me, onClose }: { post: FeedPost; viewers: Vie
             ))}
           </View>
           <Button label="Close who can see this" text="Close" variant="secondary" onPress={onClose} />
-        </SafeAreaView>
-      </View>
-    </Modal>
+    </BottomSheet>
   );
 }
 
@@ -233,7 +229,7 @@ function WhoSheet({ post, viewers, me, onClose }: { post: FeedPost; viewers: Vie
 function MoreMenu({ visible, post, mine, these, onDelete, onChangeWords, onClose }: {
   visible: boolean; post: FeedPost; mine: boolean; these: string; onDelete: () => void; onChangeWords: () => void; onClose: () => void;
 }) {
-  const { c, os } = useTheme();
+  const { c } = useTheme();
   const { session } = useApp();
   if (!visible) return null;
   // WHO-7: everyone but the sender gets every name here; the group's name stays with the sender (parents).
@@ -241,10 +237,7 @@ function MoreMenu({ visible, post, mine, these, onDelete, onChangeWords, onClose
     ? `Shared with ${post.audience.map((a) => `${a.name} · ${people(a.member_count)}`).join(', ')}`
     : post.viewers?.length ? whoCanSee(post.viewers, session?.userId) : 'Shared with you';
   return (
-    <Modal transparent visible animationType="slide" onRequestClose={onClose}>
-      <View style={[styles.scrim, { backgroundColor: c.scrim }]}>
-        <SafeAreaView edges={['bottom']} testID={`more-${post.post_id}`} accessibilityViewIsModal
-          style={[styles.menu, { backgroundColor: c.surface, borderTopLeftRadius: os === 'android' ? 28 : 14, borderTopRightRadius: os === 'android' ? 28 : 14 }]}>
+    <BottomSheet testID={`more-${post.post_id}`} onClose={onClose}>
           <Txt variant="title" role="header">Who can see this</Txt>
           <Txt style={{ color: post.audience ? c.ink : c.safe }}>{audience}</Txt>
           {mine ? (
@@ -254,9 +247,7 @@ function MoreMenu({ visible, post, mine, these, onDelete, onChangeWords, onClose
             </>
           ) : null}
           <Button label="Close this menu" text="Close" variant="secondary" onPress={onClose} />
-        </SafeAreaView>
-      </View>
-    </Modal>
+    </BottomSheet>
   );
 }
 
@@ -264,7 +255,7 @@ function MoreMenu({ visible, post, mine, these, onDelete, onChangeWords, onClose
  *  No notice goes out (CAP-8); a refusal shows its reason in plain words and keeps the old words (CAP-7). */
 function WordsSheet({ post, onClose }: { post: FeedPost; onClose: () => void }) {
   const { feed } = useApp();
-  const { c } = useTheme();
+  const { c, reduceMotion } = useTheme();
   const [title, setTitle] = useState(post.title ?? '');
   const [caption, setCaption] = useState(post.caption ?? '');
   const [busy, setBusy] = useState(false);
@@ -279,7 +270,7 @@ function WordsSheet({ post, onClose }: { post: FeedPost; onClose: () => void }) 
     else onClose();
   };
   return (
-    <Modal visible animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
+    <Modal visible animationType={reduceMotion ? 'fade' : 'slide'} presentationStyle="pageSheet" onRequestClose={onClose}>
       <SafeAreaView testID={`words-${post.post_id}`} style={{ flex: 1, backgroundColor: c.bg }}>
         <ScrollView contentContainerStyle={{ padding: 16, gap: 16 }} keyboardShouldPersistTaps="handled">
           <Txt variant="title" role="header">Change the words</Txt>
@@ -440,6 +431,4 @@ const styles = StyleSheet.create({
   seeAll: { alignSelf: 'flex-start', paddingHorizontal: 0 },
   replyRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
   sheetHead: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingTop: 12 },
-  scrim: { flex: 1, justifyContent: 'flex-end' },
-  menu: { padding: 20, gap: 14 },
 });

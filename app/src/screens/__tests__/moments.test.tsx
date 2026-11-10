@@ -48,9 +48,9 @@ describe('MOMENT: one compact card per upload', () => {
     const card = await screen.findByTestId(`post-${id}`);
     expect(within(card).UNSAFE_queryAllByType(MediaImage)).toHaveLength(4);
     expect(within(card).getByText('+5')).toBeTruthy();
-    fireEvent.press(within(card).getByRole('button', { name: 'Open photo 2 of 9 full screen' }));
+    fireEvent.press(within(card).getByRole('button', { name: /^Open photo 2 of 9 full screen(,|$)/ }));
     expect(nav.openViewer).toHaveBeenCalledWith(id, 1);
-    fireEvent.press(within(card).getByRole('button', { name: 'Open photo 4 of 9 full screen, and 5 more' }));
+    fireEvent.press(within(card).getByRole('button', { name: /^Open photo 4 of 9 full screen, and 5 more(,|$)/ }));
     expect(nav.openViewer).toHaveBeenCalledWith(id, 3);
     // no in-card swiping and no "1 of 9" buttons: the viewer has Back and Next
     expect(within(card).queryByRole('button', { name: 'Next photo' })).toBeNull();
@@ -62,7 +62,7 @@ describe('MOMENT: one compact card per upload', () => {
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     const card = await screen.findByTestId(`post-${id}`);
     for (const img of within(card).UNSAFE_queryAllByType(MediaImage)) expect(img.props.fit ?? 'cover').toBe('cover');
-    const tile = within(card).getByRole('button', { name: 'Open photo 1 of 1 full screen' });
+    const tile = within(card).getByRole('button', { name: /^Open photo 1 of 1 full screen(,|$)/ });
     expect(flat(tile.props.style).aspectRatio).toBe(0.8);
   });
 

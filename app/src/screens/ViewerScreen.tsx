@@ -3,14 +3,15 @@
 // Full-screen viewer (BETA-SEE-3/-5): Back / Next buttons AND swipe, labeled Close,
 // "From Chase · Sun, Oct 11", caption under the photo, "Save to my phone".
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { PanResponder, StyleSheet, View } from 'react-native';
+import { PanResponder, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { haptic } from '../platform/haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { messageFor } from '../errors/messages';
 import { useApp, useFeed } from '../state/AppContext';
 import { useNav } from '../state/nav';
 import { Button, Loading, Notice, Txt } from '../ui/kit';
 import { shortDate } from '../ui/format';
-import { useTheme } from '../ui/theme';
+import { pinchZoom, useTheme } from '../ui/theme';
 import { AppGate } from './AppGate';
 import { MediaImage } from './MediaImage';
 
@@ -41,6 +42,18 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
     }
   }, [app.feed, state.loaded, start]);
 
+  // HIG-2 / BETA-SEE-4: zoom by pinch (iPhone), double tap, or the Zoom button (DS-4). Each photo starts unzoomed.
+  const [zoom, setZoom] = useState(false);
+  const [box, setBox] = useState({ w: 0, h: 0 });
+  const lastTap = useRef(0);
+  const tapPhoto = () => {
+    const now = Date.now();
+    if (now - lastTap.current < 350) {
+      lastTap.current = 0;
+      setZoom((z) => !z);
+    } else lastTap.current = now;
+  };
+
   const entry = cur !== null ? entries[cur] : undefined;
   const next = cur !== null && cur < entries.length - 1 ? cur + 1 : null;
   const back = cur !== null && cur > 0 ? cur - 1 : null;
@@ -56,6 +69,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
     if (!e) return;
     setAt({ postId: e.post.post_id, i: e.i });
     setMsg(null);
+    setZoom(false);
   };
   const swipe = useRef(PanResponder.create({
     onMoveShouldSetPanResponder: (_e, g) => Math.abs(g.dx) > 24 && Math.abs(g.dx) > Math.abs(g.dy) * 2,
@@ -63,6 +77,31 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
       if (g.dx < -60) swipeTo.current('next');
       else if (g.dx > 60) swipeTo.current('back');
     },
+  })).current;
+  // QA-R1: iPhone pinches with its scroll view; Android and the web watch two fingers here and step the zoom.
+  const pinch = useRef<{ start: number; last: number } | null>(null);
+  const zoomed = useRef(zoom);
+  zoomed.current = zoom;
+  const spread = (touches: readonly { pageX: number; pageY: number }[]) =>
+    Math.hypot(touches[0]!.pageX - touches[1]!.pageX, touches[0]!.pageY - touches[1]!.pageY);
+  const pinchHandlers = useRef(PanResponder.create({
+    onMoveShouldSetPanResponderCapture: (e) => e.nativeEvent.touches.length === 2,
+    onPanResponderGrant: (e) => {
+      const t = e.nativeEvent.touches;
+      if (t.length === 2) pinch.current = { start: spread(t), last: spread(t) };
+    },
+    onPanResponderMove: (e) => {
+      const t = e.nativeEvent.touches;
+      if (t.length !== 2) return;
+      if (!pinch.current) pinch.current = { start: spread(t), last: spread(t) };
+      else pinch.current.last = spread(t);
+    },
+    onPanResponderRelease: () => {
+      const p = pinch.current;
+      pinch.current = null;
+      if (p && p.start > 0) setZoom(pinchZoom(p.last / p.start, zoomed.current));
+    },
+    onPanResponderTerminate: () => { pinch.current = null; },
   })).current;
   const swipeTo = useRef<(d: 'next' | 'back') => void>(() => {});
   swipeTo.current = (d) => go(d === 'next' ? next : back);
@@ -76,6 +115,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
     try {
       const { bytes } = await app.media.bytes(entry.post.post_id, entry.media.media_id);
       const r = await app.deps.saveToPhone(bytes, `hearth-${entry.media.media_id.slice(0, 8)}`);
+      if (r === 'saved') haptic('success');
       setMsg(r === 'saved'
         ? { text: 'Saved to your phone.', good: true }
         : { text: 'Your phone said no. Tap "Allow" when your phone asks, then try again.', good: false });
@@ -91,6 +131,14 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
       <View style={styles.top}>
         <Button label="Close" icon={{ sf: 'xmark', md: 'close' }} variant="secondary" onPress={nav.close} />
         {entry ? <Txt variant="muted">{`Photo ${cur! + 1} of ${entries.length}`}</Txt> : null}
+        {entry ? (
+          <Button
+            label={zoom ? 'Zoom out' : 'Zoom in'}
+            icon={zoom ? { sf: 'minus.magnifyingglass', md: 'zoom_out' } : { sf: 'plus.magnifyingglass', md: 'zoom_in' }}
+            variant="secondary"
+            onPress={() => setZoom((z) => !z)}
+          />
+        ) : null}
       </View>
       {!entry ? (
         state.loaded && state.status === 'idle' && (asked.current || pos === -1) ? (
@@ -103,8 +151,27 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
           <View style={styles.pad}>
             <Txt variant="strong">{`From ${entry.post.author_name} · ${shortDate(entry.post.published_at)}`}</Txt>
           </View>
-          <View style={{ flex: 1 }} {...swipe.panHandlers}>
-            <MediaImage key={entry.media.media_id} postId={entry.post.post_id} mediaId={entry.media.media_id} fit="contain" style={{ flex: 1, backgroundColor: c.bg }} />
+          {/* Zoomed: twice the size, moved around in both directions; swiping to the next photo waits until unzoomed.
+              iPhone: the outer scroll view also pinches, up to 4x. */}
+          <View style={{ flex: 1 }} onLayout={(ev) => setBox({ w: ev.nativeEvent.layout.width, h: ev.nativeEvent.layout.height })}
+            {...(zoom ? {} : swipe.panHandlers)}>
+            <View testID="viewer-gestures" style={{ flex: 1 }} {...(Platform.OS === 'ios' ? {} : pinchHandlers.panHandlers)}>
+            <ScrollView key={entry.media.media_id} testID="viewer-pinch" style={{ flex: 1 }} maximumZoomScale={4} minimumZoomScale={1}
+              bouncesZoom centerContent scrollEnabled={zoom} showsVerticalScrollIndicator={false}
+              contentContainerStyle={zoom && box.h ? { height: box.h * 2 } : { flexGrow: 1 }}
+              contentOffset={zoom ? { x: 0, y: box.h / 2 } : undefined}>
+              <ScrollView horizontal scrollEnabled={zoom} showsHorizontalScrollIndicator={false}
+                contentContainerStyle={zoom && box.w ? { width: box.w * 2 } : { flexGrow: 1 }}
+                contentOffset={zoom ? { x: box.w / 2, y: 0 } : undefined}>
+                <Pressable testID="viewer-photo" accessible={false} onPress={tapPhoto}
+                  style={zoom && box.w ? { width: box.w * 2, height: box.h * 2 } : { width: box.w || '100%', height: box.h || '100%' }}>
+                  <View testID={zoom ? 'viewer-zoomed' : undefined} style={{ flex: 1 }}>
+                    <MediaImage postId={entry.post.post_id} mediaId={entry.media.media_id} fit="contain" style={{ flex: 1, backgroundColor: c.bg }} />
+                  </View>
+                </Pressable>
+              </ScrollView>
+            </ScrollView>
+            </View>
           </View>
           <View style={styles.pad}>
             {entry.post.caption ? <Txt>{entry.post.caption}</Txt> : null}
@@ -122,7 +189,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
 }
 
 const styles = StyleSheet.create({
-  top: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 8, gap: 12 },
+  top: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 8, gap: 12 },
   pad: { paddingHorizontal: 16, paddingVertical: 8, gap: 10 },
   row: { flexDirection: 'row', gap: 12 },
 });

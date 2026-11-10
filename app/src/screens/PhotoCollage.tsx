@@ -26,7 +26,8 @@ export function collageShape(n: number): { big: number; small: number; more: num
 export const singleAspect = (m: Pick<Media, 'width' | 'height'> | undefined) =>
   m?.width && m?.height ? Math.max(0.8, Math.min(1.91, m.width / m.height)) : 4 / 3;
 
-export function PhotoCollage({ postId, media }: { postId: string; media: Media[] }) {
+/** from: who sent it and the day ("Chase, Nov 3"), read out after each photo's place (HIG-9). */
+export function PhotoCollage({ postId, media, from }: { postId: string; media: Media[]; from?: string }) {
   const nav = useNav();
   const { c } = useTheme();
   const n = media.length;
@@ -38,7 +39,7 @@ export function PhotoCollage({ postId, media }: { postId: string; media: Media[]
       <Pressable
         key={media[i]!.media_id}
         accessibilityRole="button"
-        accessibilityLabel={`Open photo ${i + 1} of ${n} full screen${extra ? `, and ${extra} more` : ''}`}
+        accessibilityLabel={`Open photo ${i + 1} of ${n} full screen${extra ? `, and ${extra} more` : ''}${from ? `, from ${from}` : ''}`}
         onPress={() => nav.openViewer(postId, i)}
         style={[styles.tile, { backgroundColor: c.photo }, style]}
       >

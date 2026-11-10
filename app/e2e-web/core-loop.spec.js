@@ -90,7 +90,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await page.getByRole('button', { name: 'Send' }).click();
   await expect(page.getByText(/^Sent\. .+ will read it\.$/)).toBeVisible(); // BETA-REPLY-6/11: names the readers (AUD-8 default: the parents)
   // Full screen and back (BETA-SEE-3).
-  await page.getByRole('button', { name: 'Open photo 1 of 1 full screen' }).click();
+  await page.getByRole('button', { name: /^Open photo 1 of 1 full screen/ }).click();
   await expect(page.getByText(/^From Chase · /)).toBeVisible();
   await expect(page.getByRole('button', { name: 'Save to my phone' })).toBeVisible();
   await page.getByRole('button', { name: 'Close' }).click();

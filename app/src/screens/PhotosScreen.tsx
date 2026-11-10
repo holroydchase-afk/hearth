@@ -101,6 +101,7 @@ export function PhotosScreen() {
       <PhotosDemoTip width={width} />
       {app.space.can_post ? <YourName /> : null}
       <QueueStatus />
+      {app.pushAsk && state.posts.length ? <PushAsk /> : null}
       {state.notice ? <Notice text={state.notice} onClose={() => feed.clearNotice()} /> : null}
       {earlier.map((g) => (
         <EarlierCard key={g.authorId} g={g} onOpen={() => setTimeline({ startAt: startOfNextMonth(g.openAt) })} />
@@ -139,5 +140,20 @@ export function PhotosScreen() {
         removeClippedSubviews={false}
       />
     </SafeAreaView>
+  );
+}
+
+/** HIG-1 (Apple: ask when it's needed and say why first): after the first photo shows, one card explains notices
+ *  before the phone's own "Allow notifications?" A no on the phone can only be undone in its Settings, so it is
+ *  never asked cold at launch. Not now hides the card for good; How should we tell you (Help or Me) stays. */
+function PushAsk() {
+  const app = useApp();
+  return (
+    <Card testID="push-ask">
+      <Txt variant="title" role="header">Get a notice when the family shares photos?</Txt>
+      <Txt>Your phone will ask next. Tap Allow to get a notice for new photos.</Txt>
+      <Button label="Turn on notices" icon={{ sf: 'bell', md: 'notifications' }} onPress={() => void app.askPush()} />
+      <Button label="Not now, maybe later" text="Not now" variant="quiet" onPress={app.skipPushAsk} />
+    </Card>
   );
 }
