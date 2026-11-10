@@ -295,7 +295,14 @@ export function GroupsScreen() {
                 <>
                   <Field label="Their mobile number" value={invitePhone} onChangeText={setInvitePhone} keyboardType="phone-pad" autoComplete="off" placeholder="304-555-0100" maxLength={20} />
                   <Txt variant="muted">Only this number can open the invite.</Txt>
-                  <Button label="Use email instead" variant="secondary" onPress={() => { setByText(false); setInvitePhone(''); }} />
+                  <Button label="They'll use email" variant="secondary" onPress={() => { setByText(false); setInvitePhone(''); }} />
+                </>
+              ) : null}
+              {/* GUX-R2: skipping the number makes a link invite; say who can open it, and offer the number back. */}
+              {textsOn() && !byText ? (
+                <>
+                  <Txt variant="muted">They'll sign in with their email. Anyone you send the invite to can open it.</Txt>
+                  <Button label="Add their mobile number" variant="secondary" onPress={() => setByText(true)} />
                 </>
               ) : null}
               {/* GRP-18: Everyone first and ticked; any other groups can be ticked too */}

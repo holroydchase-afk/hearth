@@ -99,7 +99,7 @@ export function JoinScreen({ code }: { code: string }) {
           <Txt variant="title">{`Photos from ${who ?? 'your family'}`}</Txt>
           <Txt>{textsOn() ? "We'll send you a 6-number code." : "Type your email. We'll send you a 6-number code."}</Txt>
           {/* BETA-SMS-9: ask the way the invite was made (texts on); texts off, today's email flow */}
-          <SignInFlow inviter={who} start={preview?.sign_in_with ?? 'either'} onSignedIn={(email) => redeem(who, email)} />
+          <SignInFlow inviter={who} start={preview?.sign_in_with ?? 'either'} only onSignedIn={(email) => redeem(who, email)} />
         </Card>
       ) : null}
       {step === 'bad' && triedEmail ? (

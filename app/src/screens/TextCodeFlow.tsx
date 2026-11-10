@@ -14,8 +14,9 @@ export const BAD_NUMBER = 'Please type a US mobile number, like 304-555-0100.';
 
 export function TextCodeFlow({ onSignedIn, onUseEmail, inviter }: {
   onSignedIn: () => Promise<void>;
-  /** Switch to email; `note` says why (texts not working, BETA-SMS-6). */
-  onUseEmail: (note?: string) => void;
+  /** Switch to email; `note` says why (texts not working, BETA-SMS-6). Absent: a phone invite that only a number
+   *  can open (GUX-R1), so no "Use email instead" and texts-off says who to ask. */
+  onUseEmail?: (note?: string) => void;
   inviter?: string | null;
 }) {
   const { deps } = useApp();
@@ -47,7 +48,11 @@ export function TextCodeFlow({ onSignedIn, onUseEmail, inviter }: {
       setNow(Date.now());
       setWaitUntil(Date.now() + 60_000);
     } catch (e) {
-      if (isApiError(e) && e.code === 'SMS_OFF') { onUseEmail(messageFor(e)); return; }
+      if (isApiError(e) && e.code === 'SMS_OFF') {
+        if (onUseEmail) { onUseEmail(messageFor(e)); return; }
+        setMsg(`Texts aren't working right now. Ask ${inviter ?? 'the person who invited you'} to send you a new invite by email.`);
+        return;
+      }
       setMsg(isApiError(e) && e.code === '23514' ? BAD_NUMBER : messageFor(e, { inviter, via: 'text' }));
     } finally {
       setBusy(false);
@@ -78,7 +83,7 @@ export function TextCodeFlow({ onSignedIn, onUseEmail, inviter }: {
         {msg ? <Notice text={msg} /> : null}
         <Button label="Send me a code" busy={busy} disabled={!/\d/.test(typed) || mustWait} onPress={() => void send(typedE164)} />
         {mustWait ? <Txt variant="muted">{`You can ask for a new code in ${waitLeft} seconds.`}</Txt> : null}
-        <Button label="Use email instead" variant="secondary" onPress={() => onUseEmail()} />
+        {onUseEmail ? <Button label="Use email instead" variant="secondary" onPress={() => onUseEmail()} /> : null}
       </>
     );
   }

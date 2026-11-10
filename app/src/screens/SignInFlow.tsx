@@ -9,16 +9,21 @@ import { Notice } from '../ui/kit';
 import { EmailCodeFlow } from './EmailCodeFlow';
 import { TextCodeFlow } from './TextCodeFlow';
 
-export function SignInFlow({ onSignedIn, inviter, start = 'either' }: {
+export function SignInFlow({ onSignedIn, inviter, start = 'either', only = false }: {
   /** The email it signed in with, or null for a text sign-in. */
   onSignedIn: (email: string | null) => Promise<void>;
   inviter?: string | null;
   /** 'email' opens on the email field; 'phone' and 'either' on the number. */
   start?: SignInWith;
+  /** GUX-R1: an invite bound to a number (or an email) can only open that way, so offer no switch. */
+  only?: boolean;
 }) {
   const [mode, setMode] = useState<'phone' | 'email'>(start === 'email' ? 'email' : 'phone');
   const [note, setNote] = useState<string | null>(null);
   if (!textsOn()) return <EmailCodeFlow inviter={inviter} onSignedIn={onSignedIn} />;
+  const locked = only && start !== 'either';
+  if (locked && start === 'email') return <EmailCodeFlow inviter={inviter} onSignedIn={onSignedIn} />;
+  if (locked) return <TextCodeFlow inviter={inviter} onSignedIn={() => onSignedIn(null)} />;
   if (mode === 'phone') {
     return <TextCodeFlow inviter={inviter} onSignedIn={() => onSignedIn(null)} onUseEmail={(why) => { setNote(why ?? null); setMode('email'); }} />;
   }

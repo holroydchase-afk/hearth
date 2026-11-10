@@ -238,10 +238,10 @@ describe('BETA-SMS-10 the invite card asks for their mobile number first', () =>
     await waitFor(() => expect(spy).toHaveBeenCalledWith(expect.objectContaining({ channel: 'sms', targetPhone: '+13045550100' })));
   });
 
-  it('BETA-SMS-10 "Use email instead" makes today\'s invite, with no phone', async () => {
+  it('BETA-SMS-10 "They\'ll use email" makes today\'s invite, with no phone (GUX-R2 words)', async () => {
     const { spy } = await openCard();
     await screen.findByLabelText('Their mobile number');
-    fireEvent.press(screen.getByRole('button', { name: 'Use email instead' }));
+    fireEvent.press(screen.getByRole('button', { name: "They'll use email" }));
     expect(screen.queryByLabelText('Their mobile number')).toBeNull();
     fireEvent.press(screen.getByRole('button', { name: 'Make the invite' }));
     await waitFor(() => expect(spy).toHaveBeenCalled());
