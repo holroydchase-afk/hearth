@@ -9,7 +9,7 @@ import type {
   PushPlatform,
   AddCommentArgs, Circle, CommentRow, CreateInviteArgs, CreatePostArgs, FeedArgs, FeedPost,
   FinalizeResult, HeartState, InvitePreview, Reaction, ReactionState, ReactionSummary, PostViewers, Session, Space, UploadGrant, UploadItemSpec, ViewGrant,
-  TimelineArgs, TimelinePost, TimelineYear,
+  TimelineArgs, TimelinePost, TimelineYear, SearchArgs,
   ChatMember, ChatRow, ChatRowKind, ChatSummary, ClaimedKeyPackage,
 } from './types';
 
@@ -74,6 +74,8 @@ export interface HearthApi {
   getTimeline(args: TimelineArgs): Promise<TimelinePost[]>;
   /** BETA-TIME-4 "Jump to year". timeZone = the phone's IANA zone. */
   getTimelineYears(space: string, timeZone?: string): Promise<TimelineYear[]>;
+  /** SEARCH-1..14 (0025): find posts you can see by words, sender and capture dates. Never AI. 22023 if nothing to search for. */
+  searchPosts(args: SearchArgs): Promise<TimelinePost[]>;
   createPost(args: CreatePostArgs): Promise<string>;
   publishPost(post: string): Promise<void>;
   deletePost(post: string): Promise<void>;
