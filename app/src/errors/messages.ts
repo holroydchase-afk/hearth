@@ -8,7 +8,9 @@ export interface MessageContext {
   /** Name of the person who invited this user ("Chase"). */
   inviter?: string | null;
   /** What the person was doing, to pick the right 23514 message. */
-  action?: 'post' | 'comment' | 'join' | 'invite' | 'group' | 'edit' | 'other';
+  action?: 'post' | 'comment' | 'join' | 'invite' | 'group' | 'edit' | 'start' | 'other';
+  /** BETA-SMS-5: how the sign-in code came, so a wrong code points to the right place. Default email. */
+  via?: 'email' | 'text';
 }
 
 const KNOWN: ApiErrorCode[] = ['23514', '23505', '42501', 'P0002', '22023', '54000'];
@@ -18,6 +20,8 @@ export function toApiError(e: unknown): ApiError {
   const msg = typeof e === 'object' && e && 'message' in e ? String((e as { message: unknown }).message) : '';
   const code = typeof e === 'object' && e && 'code' in e ? String((e as { code: unknown }).code ?? '') : '';
   if (KNOWN.includes(code as ApiErrorCode)) return new ApiError(code as ApiErrorCode, msg);
+  // 0024 (BETA-START-12): by error.code, never HTTP status (PostgREST sends HF001 as 400). Not retried.
+  if (code === 'HF001') return new ApiError('FAMILY_FULL', msg);
   if (code === 'PGRST301' || code === 'PGRST302' || /jwt/i.test(msg)) return new ApiError('AUTH', msg);
   if (e instanceof TypeError || /network request failed|failed to fetch|load failed|networkerror|timed? ?out|aborted/i.test(msg)) {
     return new ApiError('NETWORK', msg);
@@ -30,6 +34,7 @@ export function messageFor(e: unknown, ctx: MessageContext = {}): string {
   const who = ctx.inviter?.trim() || null;
   switch (err.code) {
     case '23514':
+      if (ctx.action === 'start') return 'Check the family name, then try again.';
       if (ctx.action === 'post') return 'Pick who should see it.';
       if (ctx.action === 'comment') return 'Write something first, then tap Send.';
       if (ctx.action === 'group') return 'Give the group a name first.';
@@ -43,9 +48,14 @@ export function messageFor(e: unknown, ctx: MessageContext = {}): string {
     case '22023':
       return `This invite is too old or already used. Ask ${who ?? 'the person who invited you'} for a new one.`;
     case '54000':
+      if (ctx.action === 'start') return "You've started 3 families today. Try again tomorrow.";
       return 'Too many tries. Wait 10 minutes.';
+    case 'FAMILY_FULL':
+      return "Your family is full for now, so new photos can't be sent. Photos already shared are safe. Tap Help to ask for more room.";
     case 'BAD_OTP':
-      return "That code didn't work. Check the newest email from Hearth and type the 6 numbers again.";
+      return `That code didn't work. Check the newest ${ctx.via === 'text' ? 'text' : 'email'} from Hearth and type the 6 numbers again.`;
+    case 'SMS_OFF':
+      return "Texts aren't working right now. Use your email instead.";
     case 'NETWORK':
       return "No internet right now. We'll keep trying.";
     case 'EXIF':

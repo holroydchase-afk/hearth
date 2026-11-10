@@ -2,6 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 // Blocks shared by Help (viewers) and Me (posters): Bigger text, notice choice, privacy, sign out.
 import React, { useState } from 'react';
+import { isPhoneOnly } from '../api/phone';
 import { useApp } from '../state/AppContext';
 import { HELPER_FEATURES } from '../share/helpers';
 import type { NotifyChoice } from '../state/prefs';
@@ -69,12 +70,15 @@ const CHOICES: { id: NotifyChoice; title: string; saved: string }[] = [
 ];
 
 export function HowToTell() {
-  const { prefs, saveNotify } = useApp();
+  const { prefs, saveNotify, session } = useApp();
   const [saved, setSaved] = useState<{ text: string; good: boolean } | null>(null);
+  // BETA-SMS-14: a phone-only account has no email address, so no email choices (the server never emails it).
+  const phoneOnly = isPhoneOnly(session);
   return (
     <Card>
       <Txt variant="title" role="header">How should we tell you about new photos?</Txt>
-      {CHOICES.map((c) => (
+      {phoneOnly ? <Txt>You sign in with a text, so Hearth tells you about new photos on this phone, not by email.</Txt> : null}
+      {CHOICES.filter((c) => !phoneOnly || c.id === 'push').map((c) => (
         <Choice
           key={c.id}
           kind="radio"

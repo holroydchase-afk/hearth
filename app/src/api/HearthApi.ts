@@ -9,11 +9,14 @@ import type {
   PushPlatform,
   AddCommentArgs, Circle, CommentRow, CreateInviteArgs, CreatePostArgs, FeedArgs, FeedPost,
   FinalizeResult, HeartState, InvitePreview, Reaction, ReactionState, ReactionSummary, PostViewers, Session, Space, UploadGrant, UploadItemSpec, ViewGrant,
-  TimelineArgs, TimelinePost, TimelineYear,
+  TimelineArgs, TimelinePost, TimelineYear, SearchArgs,
   ChatMember, ChatRow, ChatRowKind, ChatSummary, ClaimedKeyPackage,
 } from './types';
 
 export * from './types';
+
+/** start_family's arguments: the name (1 to 60 after trim) and no sides or exactly two. */
+export interface StartFamilyArgs { clientId: string; name: string; sides: [] | [string, string] }
 
 /**
  * Error codes: the PostgREST codes from API.md, plus a few app-side codes for things
@@ -27,12 +30,14 @@ export type ApiErrorCode =
   | '23505' // already taken (MSG-5: another phone changed the chat's keys first)
   | '54000' // rate limited
   | 'BAD_OTP' // wrong or old 6-digit sign-in code
+  | 'SMS_OFF' // BETA-SMS-6: the server can't send texts now (switched off or the provider failed); offer email
   | 'EXIF' // sign-media 422: metadata not stripped; or the phone couldn't read the photo it made
   // MEDIA-3: the on-phone verifier found a field group the media policy strips (SPEC-MEDIA 1.1)
   | 'META_LOCATION' | 'META_DATETIME' | 'META_CAMERA' | 'META_ORIENTATION' | 'META_SOFTWARE'
   | 'META_MAKERNOTE' | 'META_XMP' | 'META_ICC' | 'META_FACES' | 'META_OTHER'
   | 'VIDEO_CAP' // sign-media 402
   | 'VIDEO_TOO_LONG' // pipeline: > 60 s
+  | 'FAMILY_FULL' // HF001 (0024, BETA-START-12): a family started in the app reached 500 photos or 2 GB
   | 'AUTH' // not signed in / session expired
   | 'NETWORK' // no connection, timeout, 5xx
   | 'UNKNOWN';
@@ -56,10 +61,14 @@ export const isRetryable = (e: unknown): boolean =>
  * helpers (Supabase Auth email OTP) and the byte transfer helpers (presigned URLs).
  */
 export interface HearthApi {
-  // --- auth (Supabase Auth, email 6-digit code; no passwords, no magic links) ---
+  // --- auth (Supabase Auth, email or text 6-digit code; no passwords, no magic links) ---
   getSession(): Promise<Session | null>;
   sendCode(email: string): Promise<void>;
   verifyCode(email: string, code: string): Promise<Session>;
+  /** BETA-SMS (SPEC-SMS-SIGN-IN): a 6-number code by text to a US number in E.164 (+1XXXXXXXXXX). Server can't send: SMS_OFF. */
+  sendTextCode(phone: string): Promise<void>;
+  /** Same codes as verifyCode (BAD_OTP, 54000, NETWORK). A phone account's session has email ''. */
+  verifyTextCode(phone: string, code: string): Promise<Session>;
   signOut(): Promise<void>;
 
   // --- RPCs ---
@@ -70,6 +79,8 @@ export interface HearthApi {
   getTimeline(args: TimelineArgs): Promise<TimelinePost[]>;
   /** BETA-TIME-4 "Jump to year". timeZone = the phone's IANA zone. */
   getTimelineYears(space: string, timeZone?: string): Promise<TimelineYear[]>;
+  /** SEARCH-1..14 (0025): find posts you can see by words, sender and capture dates. Never AI. 22023 if nothing to search for. */
+  searchPosts(args: SearchArgs): Promise<TimelinePost[]>;
   createPost(args: CreatePostArgs): Promise<string>;
   publishPost(post: string): Promise<void>;
   deletePost(post: string): Promise<void>;
@@ -137,6 +148,13 @@ export interface HearthApi {
   /** space_features (HELP-R6): the family's owner turns a feature on or off for the family (RLS: family_settings,
    *  owner only, 42501). Hearth's global switch still wins, so re-read myFeatures after. */
   setFamilyFeature(space: string, feature: string, enabled: boolean): Promise<void>;
+
+  // --- Start a family (0024, SPEC-START-FAMILY, DEC-55) ---
+  /** can_start_family: signed in, the server switch on, in no live family, under 3 starts in 24 hours. Boolean only. */
+  canStartFamily(): Promise<boolean>;
+  /** start_family: the caller becomes Owner of a new family with Everyone, plus two Private groups for Two sides.
+   *  Idempotent on clientId. Switch off 42501; already in a family 23505; 3 starts in 24 h 54000; bad name or sides 23514. */
+  startFamily(a: StartFamilyArgs): Promise<string>;
 
   // --- messenger relay (SPEC-MESSENGER, 0015): opaque base64 MLS bytes ---
   chatList(space: string): Promise<ChatSummary[]>;

@@ -13,14 +13,29 @@ function projectId(): string | null {
   return extra?.eas?.projectId ?? null;
 }
 
-/** Returns an Expo push token, or null when push is not configured or not allowed. */
-export async function registerForPush(): Promise<string | null> {
+export type PushStatus = 'granted' | 'undetermined' | 'denied' | 'off';
+
+/** HIG-1: what the phone says about notices, without asking. 'off': push isn't set up here (web, no project). */
+export async function pushStatus(): Promise<PushStatus> {
+  if (!projectId() || Platform.OS === 'web') return 'off';
+  try {
+    const p = await Notifications.getPermissionsAsync();
+    if (p.granted) return 'granted';
+    return p.canAskAgain === false || p.status === 'denied' ? 'denied' : 'undetermined';
+  } catch {
+    return 'off';
+  }
+}
+
+/** Returns an Expo push token, or null when push is not configured or not allowed.
+ *  HIG-1: the phone's "Allow notifications?" shows only with ask: true (the Photos card's button), never at launch. */
+export async function registerForPush({ ask = false }: { ask?: boolean } = {}): Promise<string | null> {
   const id = projectId();
   if (!id || Platform.OS === 'web') return null;
   try {
     const current = await Notifications.getPermissionsAsync();
     let granted = current.granted;
-    if (!granted) granted = (await Notifications.requestPermissionsAsync()).granted;
+    if (!granted && ask) granted = (await Notifications.requestPermissionsAsync()).granted;
     if (!granted) return null;
     const token = await Notifications.getExpoPushTokenAsync({ projectId: id });
     return token.data;

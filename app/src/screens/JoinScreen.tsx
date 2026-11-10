@@ -3,11 +3,12 @@
 // Invite link → "Chase invited you" → email → code → Photos (BETA-JOIN-1/-3, UX-REVIEW #16/#17).
 import React, { useEffect, useRef, useState } from 'react';
 import { isApiError, type InvitePreview } from '../api/HearthApi';
+import { textsOn } from '../api/phone';
 import { messageFor } from '../errors/messages';
 import { useApp } from '../state/AppContext';
 import { useNav } from '../state/nav';
 import { Button, Card, Loading, Screen, Txt } from '../ui/kit';
-import { EmailCodeFlow } from './EmailCodeFlow';
+import { SignInFlow } from './SignInFlow';
 
 type Step = 'checking' | 'preview' | 'signin' | 'joining' | 'bad';
 
@@ -96,8 +97,9 @@ export function JoinScreen({ code }: { code: string }) {
       {step === 'signin' ? (
         <Card>
           <Txt variant="title">{`Photos from ${who ?? 'your family'}`}</Txt>
-          <Txt>Type your email. We'll send you a 6-number code.</Txt>
-          <EmailCodeFlow inviter={who} onSignedIn={(email) => redeem(who, email)} />
+          <Txt>{textsOn() ? "We'll send you a 6-number code." : "Type your email. We'll send you a 6-number code."}</Txt>
+          {/* BETA-SMS-9: ask the way the invite was made (texts on); texts off, today's email flow */}
+          <SignInFlow inviter={who} start={preview?.sign_in_with ?? 'either'} only onSignedIn={(email) => redeem(who, email)} />
         </Card>
       ) : null}
       {step === 'bad' && triedEmail ? (
@@ -112,7 +114,7 @@ export function JoinScreen({ code }: { code: string }) {
           <Txt variant="title">{msg}</Txt>
           {retry ? <Button label="Try again" onPress={retry} /> : <Txt>That's okay, it happens.</Txt>}
           {/* UX-G9: signed in, she still needs a way on (Photos; with no family yet it offers the code entry). */}
-          {retry ? null : app.session ? <Button label="Go to Photos" onPress={nav.goPhotos} /> : <Button label="I already have Hearth. Sign in." text="Sign in" variant="secondary" onPress={nav.goSignIn} />}
+          {retry ? null : app.session ? <Button label="Go to Photos" onPress={nav.goPhotos} /> : <Button label="I already have Hearth. Sign in." text="Sign in" variant="secondary" onPress={() => nav.goSignIn()} />}
         </Card>
       ) : null}
     </Screen>

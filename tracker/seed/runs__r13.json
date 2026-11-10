@@ -1,9 +1,9 @@
 {
- "suite": "app",
- "at": "2026-11-10T12:00:00-05:00",
- "label": "Video poster and player (SPEC-MEDIA 4.1, VID-14..18, 20, 21): tests written first (red)",
- "passed": 769,
- "failed": 18,
+ "suite": "backend",
+ "at": "2026-11-10T06:00:00-05:00",
+ "label": "Text message sign-in: SQL tests written first (red, no SMS migration yet)",
+ "passed": 15,
+ "failed": 20,
  "results": {},
- "note": "Red on purpose; same counts on 3 jest runs (18 failed, 769 passed, 1 skipped). New: media/__tests__/videoPoster.test.ts 11 of 13 red (prepareItem still throws EXIF for video; no app/assets/video-poster.jpg; no MediaCache.videoUri), share/__tests__/bulkVideo.test.ts 1 of 2 red (planBatch has no videos option), screens/__tests__/video.test.tsx 6 of 8 red (no Play video button, bulk still says videos were left out). The 5 passing are guards for behaviour that must not change (60 s limit, unreadable file is EXIF, video_posting off keeps BETA-BULK-5's line, Nana Ruth sees no video post). Web e2e video.spec.js red: the posted video shows Didn't send (prepare throws EXIF); run with a local browser-path wrapper (T12). typecheck clean. VID-19 and VID-22 are manual (phone)."
+ "note": "backend/tests/sms_test.sql (BETA-SMS-8, -9, -13, -15, QA-R1): 20 red for the right reasons (no E.164 normalizing or US-only refusal in create_invite, no sign_in_with, 13045550100 does not match +13045550100, email batches for phone-only accounts, phone numbers kept in client_errors, phone number as placeholder name). Every other suite green. e2e/results/sms-red-backend.txt"
 }

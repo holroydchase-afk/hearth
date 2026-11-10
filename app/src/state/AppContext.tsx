@@ -2,16 +2,16 @@
 // Copyright (C) 2026 Chase Holroyd
 // Session, family space, prefs and the long-lived stores (feed, upload queue, media cache).
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
-import { AppState, Appearance, Platform } from 'react-native';
+import { AccessibilityInfo, AppState, Appearance, Platform } from 'react-native';
 import type { HearthApi, Session, Space } from '../api/HearthApi';
 import { FeedStore, clearFeedCache, type FeedState } from '../feed/store';
 import { MediaCache, type VideoFiles } from '../media/cache';
 import type { MediaStore } from '../media/diskCache';
 import { clearArrivals, recordArrival } from '../notify/latency';
-import { listenForArrivals, registerForPush } from '../notify/push';
+import { listenForArrivals, pushStatus, registerForPush } from '../notify/push';
 import type { KV } from '../platform/kv';
 import type { PickedAsset } from '../share/bulk';
-import { BigTextContext, ColorContext, LookContext, nativeScheme } from '../ui/theme';
+import { BigTextContext, ColorContext, LookContext, PhoneA11yContext, nativeScheme, type PhoneA11y } from '../ui/theme';
 import { UploadQueue, type Job, type Prepared, type QueueItem } from '../upload/queue';
 import { defaultPrefs, loadPrefs, savePrefs, serverPrefs, type NotifyChoice, type Prefs } from './prefs';
 
@@ -57,6 +57,12 @@ export interface AppValue {
   /** Re-read session + spaces (after sign-in or joining). */
   reload: () => Promise<void>;
   signOut: () => Promise<void>;
+  /** HIG-1: show the "Get a notice…" card: the phone hasn't been asked yet and nobody tapped Not now. */
+  pushAsk: boolean;
+  /** HIG-1: the card's one button: now the phone asks. */
+  askPush: () => Promise<void>;
+  /** HIG-1: Not now. Hidden for good on this phone; How should we tell you (Help or Me) still works. */
+  skipPushAsk: () => void;
 }
 
 const Ctx = createContext<AppValue | null>(null);
@@ -116,6 +122,24 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
   const unlisten = useRef<(() => void) | null>(null);
   live.current = s;
 
+  const [pushAsk, setPushAsk] = useState(false);
+  const register = useCallback(async (ask: boolean) => {
+    try {
+      const token = await registerForPush({ ask });
+      if (token) await deps.api.registerPushToken(token, Platform.OS === 'ios' ? 'ios' : Platform.OS === 'android' ? 'android' : 'web');
+    } catch { /* silent; the next launch retries */ }
+  }, [deps.api]);
+  const askPush = useCallback(async () => {
+    setPushAsk(false);
+    await register(true);
+  }, [register]);
+  const skipPushAsk = useCallback(() => {
+    setPushAsk(false);
+    const who = live.current.session?.userId;
+    if (who) void deps.kv.setItem(pushSkipKey(who), '1').catch(() => {});
+  }, [deps.kv]);
+  const a11y = usePhoneA11y();
+
   const load = useCallback(async () => {
     live.current.queue?.stop();
     const session = await deps.api.getSession().catch(() => null);
@@ -160,10 +184,12 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
     unlisten.current?.();
     unlisten.current = listenForArrivals((postId, at) => { void recordArrival(deps.kv, session.userId, postId, at); });
     // AE-2: tell the server where to send notices. Failures are silent; the next launch retries.
-    void registerForPush().then((token) => {
-      if (token) return deps.api.registerPushToken(token, Platform.OS === 'ios' ? 'ios' : Platform.OS === 'android' ? 'android' : 'web');
+    // HIG-1: only if the phone already said yes. Asking happens on the Photos card, after the first photo.
+    void register(false);
+    void Promise.all([pushStatus(), deps.kv.getItem(pushSkipKey(session.userId))]).then(([st, skipped]) => {
+      setPushAsk(st === 'undetermined' && !skipped);
     }).catch(() => {});
-  }, [deps]);
+  }, [deps, register]);
 
   useEffect(() => {
     void load();
@@ -247,15 +273,43 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
     setFamilyFeature,
     reload: load,
     signOut,
-  }), [s, deps, setPrefs, saveNotify, setFamilyFeature, load, signOut]);
+    pushAsk: pushAsk && s.status === 'ready',
+    askPush,
+    skipPushAsk,
+  }), [s, deps, setPrefs, saveNotify, setFamilyFeature, load, signOut, pushAsk, askPush, skipPushAsk]);
 
   return (
     <Ctx.Provider value={value}>
       <LookContext.Provider value={s.prefs.look}>
         <ColorContext.Provider value={s.prefs.color}>
-          <BigTextContext.Provider value={s.prefs.bigText}>{children}</BigTextContext.Provider>
+          <BigTextContext.Provider value={s.prefs.bigText}>
+            <PhoneA11yContext.Provider value={a11y}>{children}</PhoneA11yContext.Provider>
+          </BigTextContext.Provider>
         </ColorContext.Provider>
       </LookContext.Provider>
     </Ctx.Provider>
   );
+}
+
+const pushSkipKey = (userId: string) => `hearth.pushAsk.skipped.${userId}`;
+
+/** HIG-7 / HIG-8: follow the phone's Increase Contrast (iPhone: darker system colors; Android: high contrast
+ *  text) and Reduce Motion, live, so Hearth's own colors and sheets change with the phone. */
+function usePhoneA11y(): PhoneA11y {
+  const [v, setV] = useState<PhoneA11y>({ highContrast: false, reduceMotion: false });
+  useEffect(() => {
+    let alive = true;
+    const set = (p: Partial<PhoneA11y>) => { if (alive) setV((cur) => ({ ...cur, ...p })); };
+    const read = (f: (() => Promise<boolean>) | undefined) => (typeof f === 'function' ? f().catch(() => false) : Promise.resolve(false));
+    const ios = Platform.OS === 'ios';
+    void read(ios ? AccessibilityInfo.isDarkerSystemColorsEnabled?.bind(AccessibilityInfo) : AccessibilityInfo.isHighTextContrastEnabled?.bind(AccessibilityInfo))
+      .then((on) => set({ highContrast: !!on }));
+    void read(AccessibilityInfo.isReduceMotionEnabled?.bind(AccessibilityInfo)).then((on) => set({ reduceMotion: !!on }));
+    const subs = [
+      AccessibilityInfo.addEventListener?.(ios ? 'darkerSystemColorsChanged' : 'highTextContrastChanged', (on: boolean) => set({ highContrast: on })),
+      AccessibilityInfo.addEventListener?.('reduceMotionChanged', (on: boolean) => set({ reduceMotion: on })),
+    ];
+    return () => { alive = false; subs.forEach((x) => x?.remove()); };
+  }, []);
+  return v;
 }

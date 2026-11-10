@@ -5,8 +5,9 @@
 // p_client_id, author-only fields, the error codes, invite rules and the S10 rate limit.
 // It is NOT a security boundary; it exists so the app can be built and tested against the
 // contract before the real stack is reachable. The contract tests keep the two honest.
-import { ApiError, type HearthApi } from '../HearthApi';
+import { ApiError, type HearthApi, type StartFamilyArgs } from '../HearthApi';
 import { JOIN_LINK_BASE } from '../links';
+import { usE164 } from '../phone';
 import type {
   CircleKind,
   CommentMode,
@@ -20,7 +21,7 @@ import type {
   PushPlatform,
   AddCommentArgs, Circle, CommentRow, CreateInviteArgs, CreatePostArgs, FeedArgs, FeedPost, FinalizeResult,
   HeartState, InvitePreview, Reaction, ReactionCounts, ReactionState, ReactionSummary, PostViewers, MediaKind, MediaStatus, Role, Session, Space, UploadGrant, UploadItemSpec, ViewGrant,
-  TimelineArgs, TimelinePost, TimelineYear,
+  TimelineArgs, TimelinePost, TimelineYear, SearchArgs,
   ChatKind, ChatMember, ChatRow, ChatRowKind, ChatSummary, ClaimedKeyPackage,
 } from '../types';
 import { fromBase64, toBase64 } from '../../crypto/base64';
@@ -30,9 +31,11 @@ export const FAKE_OTP = '123456';
 const TTL_MS = 10 * 60 * 1000;
 const RATE_WINDOW_MS = 10 * 60 * 1000;
 const RATE_MAX_FAILURES = 10;
+const START_WINDOW_MS = 24 * 60 * 60 * 1000;
+const START_MAX = 3;
 const INVITE_ALPHABET = 'ABCDEFGHJKMNPQRSTVWXYZ23456789';
 
-interface UserRow { id: string; email: string; name: string; nameSet?: boolean } // nameSet undefined = set
+interface UserRow { id: string; email: string; name: string; nameSet?: boolean; phone?: string } // nameSet undefined = set; email '' = phone only
 interface MemberRow { space: string; user: string; role: Role; invited_by: string | null }
 interface CircleRow { id: string; space: string; name: string; created_by: string; deleted: boolean; kind?: CircleKind; comment_mode?: CommentMode }
 interface PostRow {
@@ -53,6 +56,8 @@ interface MediaRow {
 interface CommentRec { id: string; post: string; author: string; body: string; created_at: string; client_id: string }
 interface InviteRow {
   code: string; space: string; role: Role; circles: string[]; created_by: string; target_email: string | null;
+  /** BETA-SMS-8: E.164, only that number may redeem. */
+  target_phone?: string | null; channel?: 'link' | 'email' | 'sms';
   expires_at: string; max_uses: number; uses: number; revoked: boolean; name?: string | null; history?: ShareHistory | null;
   /** Server invites.household_means_everyone: only invites made before 0013 (PRIV-G2). */
   householdMeansEveryone?: boolean;
@@ -60,7 +65,8 @@ interface InviteRow {
 
 export interface FakeState {
   users: Record<string, UserRow>;
-  spaces: Record<string, { id: string; name: string; reply_audience?: ReplyAudience }>;
+  /** deleted: spaces.deleted_at is set (0024 retires an empty family this way; the purge removes it later). */
+  spaces: Record<string, { id: string; name: string; reply_audience?: ReplyAudience; deleted?: boolean }>;
   members: MemberRow[];
   circles: Record<string, CircleRow>;
   /** `at`: when they were added (ISO); fixture rows have none and count as always there. */
@@ -82,6 +88,10 @@ export interface FakeState {
   /** FLAG (0013): global switch per feature (Hearth only) and the family add-on, keyed `${space}:${feature}`. */
   featureFlags?: Record<string, boolean>;
   spaceFeatures?: Record<string, boolean>;
+  /** 0024 private.started_families: which families came from the app (only these are capped, BETA-START-12). */
+  startedFamilies?: { space: string; by: string; client_id: string; at: string }[];
+  /** 0024 private.rate_limit_events for action 'start_family': start times (ms) per user; retiring never resets them. */
+  startEvents?: Record<string, number[]>;
   /** 0015 messenger relay: opaque base64 MLS bytes only. */
   chat?: {
     devices: Record<string, string>;
@@ -393,7 +403,7 @@ export class FakeBackend {
   // ---------------- RPCs (caller = user id or null for anon) ----------------
   mySpaces(user: string | null): Space[] {
     const me = this.requireUser(user);
-    return this.state.members.filter((m) => m.user === me).map((m) => ({
+    return this.state.members.filter((m) => m.user === me && !this.state.spaces[m.space]?.deleted).map((m) => ({
       space_id: m.space,
       name: this.state.spaces[m.space]!.name,
       role: m.role,
@@ -440,6 +450,31 @@ export class FakeBackend {
     const ms = (t: string) => new Date(t).getTime();
     const before = a.beforeAt ? ms(a.beforeAt) : null;
     return this.visiblePosts(me, a.space)
+      .sort((x, y) => ms(sortAt(y)) - ms(sortAt(x)) || (x.id < y.id ? 1 : -1))
+      .filter((p) => before === null || ms(sortAt(p)) < before || (ms(sortAt(p)) === before && !!a.beforeId && p.id < a.beforeId))
+      .slice(0, limit)
+      .map((p) => ({ ...this.feedRow(me, p), taken_at: p.taken_at ?? null, sort_at: sortAt(p) }));
+  }
+
+  /** search_posts (0025): every word, as a literal, in title + caption + sender's name; same order and keyset as getTimeline. */
+  searchPosts(user: string | null, a: SearchArgs): TimelinePost[] {
+    const me = this.requireUser(user);
+    const q = (a.words ?? '').trim().replace(/\s+/g, ' ');
+    if ([...q].length > 100) throw new ApiError('22023', 'search words are 100 characters at most');
+    const words = q ? q.toLowerCase().split(' ') : [];
+    if (words.length > 8) throw new ApiError('22023', 'search with 8 words at most');
+    if (!words.length && !a.author && !a.from && !a.until) throw new ApiError('22023', 'type a word, or pick a person or dates');
+    const limit = Math.max(1, Math.min(50, a.limit ?? 20));
+    const sortAt = (p: PostRow) => p.taken_at ?? p.published_at!;
+    const ms = (t: string) => new Date(t).getTime();
+    const before = a.beforeAt ? ms(a.beforeAt) : null;
+    const hay = (p: PostRow) => `${p.title ?? ''} ${p.caption ?? ''} ${this.state.users[p.author]?.name ?? ''}`.toLowerCase();
+    return this.visiblePosts(me, a.space)
+      .filter((p) => !p.deleted)
+      .filter((p) => !a.author || p.author === a.author)
+      .filter((p) => !a.from || ms(sortAt(p)) >= ms(a.from))
+      .filter((p) => !a.until || ms(sortAt(p)) < ms(a.until))
+      .filter((p) => words.every((w) => hay(p).includes(w)))
       .sort((x, y) => ms(sortAt(y)) - ms(sortAt(x)) || (x.id < y.id ? 1 : -1))
       .filter((p) => before === null || ms(sortAt(p)) < before || (ms(sortAt(p)) === before && !!a.beforeId && p.id < a.beforeId))
       .slice(0, limit)
@@ -652,8 +687,7 @@ export class FakeBackend {
 
   getComments(user: string | null, post: string, limit = 50): CommentRow[] {
     const me = this.requireUser(user);
-    const p = this.state.posts[post];
-    if (!this.canView(me, p)) return [];
+    const p = this.visiblePost(me, post); // get_comments raises P0002 like the server (0011)
     return Object.values(this.state.comments).filter((c) => c.post === post && this.canSeeReply(me, p!, c.author))
       .sort((a, b) => (a.created_at < b.created_at ? -1 : 1)).slice(0, Math.min(limit, 200))
       .map((c) => ({ comment_id: c.id, author_id: c.author, author_name: this.state.users[c.author]?.name ?? '', body: c.body, created_at: c.created_at }));
@@ -730,7 +764,9 @@ export class FakeBackend {
     if (!this.inviteUsable(inv)) this.fail(key);
     // UX-G7: refused like redeem, naming the inviter
     if (!this.invitePlaces(inv)) throw new ApiError('22023', 'invalid invite', this.state.users[inv.created_by]?.name);
-    return { inviter_name: this.state.users[inv.created_by]?.name ?? '', space_name: this.state.spaces[inv.space]!.name };
+    // BETA-SMS-9 (0026): how to sign in, never the target
+    const how = inv.target_phone || inv.channel === 'sms' ? 'phone' : inv.target_email || inv.channel === 'email' ? 'email' : 'either';
+    return { inviter_name: this.state.users[inv.created_by]?.name ?? '', space_name: this.state.spaces[inv.space]!.name, sign_in_with: how };
   }
 
   redeemInvite(user: string | null, code: string): string {
@@ -741,8 +777,10 @@ export class FakeBackend {
     if (!this.inviteUsable(inv)) this.fail(key);
     const email = this.state.users[me]?.email.toLowerCase();
     if (inv.target_email && inv.target_email.toLowerCase() !== email) this.fail(key);
+    if (inv.target_phone && this.state.users[me]?.phone !== inv.target_phone) this.fail(key); // BETA-SMS-8
     if (this.member(inv.space, me)) this.fail(key);
     if (!this.invitePlaces(inv)) throw new ApiError('22023', 'invalid invite');
+    this.retireEmptyStarted(me, inv.space); // 0024 BETA-START-7
     inv.uses += 1;
     this.state.members.push({ space: inv.space, user: me, role: inv.role, invited_by: inv.created_by });
     const u = this.state.users[me];
@@ -768,6 +806,9 @@ export class FakeBackend {
     if (a.name != null && this.state.members.some((m) => m.space === a.space && this.state.users[m.user]?.name.toLowerCase() === a.name!.trim().toLowerCase())) {
       throw new ApiError('23514', 'someone in this family already has that name'); // no impersonation, like the SQL
     }
+    // BETA-SMS-8 (0026): a phone target is stored as E.164; a non-US number is refused, never echoed
+    const phone = a.targetPhone == null ? null : usE164(a.targetPhone);
+    if (a.targetPhone != null && !phone) throw new ApiError('23514', 'please use a US mobile number');
     const bytes = randomBytes(10);
     const code = Array.from(bytes, (b) => INVITE_ALPHABET[b % INVITE_ALPHABET.length]).join('');
     const days = Math.min(30, a.ttlDays ?? 30);
@@ -775,6 +816,7 @@ export class FakeBackend {
       code, space: a.space, role: a.role, circles: [...a.circleIds], created_by: me, target_email: a.targetEmail?.toLowerCase() ?? null,
       expires_at: new Date(Date.now() + days * 864e5).toISOString(), max_uses: a.maxUses ?? 1, uses: 0, revoked: false,
       name: a.name?.trim() || null, history: a.role === 'viewer' ? a.history ?? null : null, householdMeansEveryone: false,
+      target_phone: phone, channel: a.channel ?? 'link',
     };
     this.changed();
     return { code, link: JOIN_LINK_BASE + code };
@@ -789,6 +831,67 @@ export class FakeBackend {
     if (Object.values(this.state.circles).some((o) => o.id !== circle && o.space === c.space && !o.deleted && o.name === n)) throw new ApiError('23514', 'name taken');
     c.name = n;
     this.changed();
+  }
+
+  // ---------------- Start a family (0024, SPEC-START-FAMILY) ----------------
+  /** Families the user is in that are live (not retired). */
+  liveFamilies(user: string): string[] {
+    return this.state.members.filter((m) => m.user === user && !this.state.spaces[m.space]?.deleted).map((m) => m.space);
+  }
+  private recentStarts(user: string): number[] {
+    const now = Date.now();
+    const list = (this.state.startEvents?.[user] ?? []).filter((t) => now - t < START_WINDOW_MS);
+    (this.state.startEvents ??= {})[user] = list;
+    return list;
+  }
+
+  canStartFamily(user: string | null): boolean {
+    if (!user) return false;
+    return !!this.state.featureFlags?.start_family_open && this.liveFamilies(user).length === 0 && this.recentStarts(user).length < START_MAX;
+  }
+
+  /** public.start_family: every refusal is a fixed message, never a name, side, email or id (BETA-START-13). */
+  startFamily(user: string | null, clientId: string, name: string, sides: string[]): string {
+    if (!user) throw new ApiError('42501', 'not signed in');
+    const again = this.state.startedFamilies?.find((f) => f.by === user && f.client_id === clientId);
+    if (again) return again.space;
+    if (!this.state.featureFlags?.start_family_open) throw new ApiError('42501', 'starting a family is closed');
+    if (this.liveFamilies(user).length > 0) throw new ApiError('23505', 'already in a family');
+    if (this.recentStarts(user).length >= START_MAX) throw new ApiError('54000', 'too many starts');
+    const n = (name ?? '').trim();
+    if (n.length < 1 || n.length > 60) throw new ApiError('23514', 'family name must be 1 to 60 characters');
+    if (!Array.isArray(sides) || (sides.length !== 0 && sides.length !== 2)) throw new ApiError('23514', 'sides must be none or two');
+    const s = sides.map((x) => (x ?? '').trim());
+    // create_level's rules, checked up front so a refusal leaves nothing behind (BETA-START-6)
+    if (s.some((x) => x.length < 1 || x.length > 60) || (s.length === 2 && s[0] === s[1]) || s.includes('Everyone')) {
+      throw new ApiError('23514', 'side names must be two different names');
+    }
+    const space = uuid();
+    const at = this.now();
+    this.state.spaces[space] = { id: space, name: n };
+    this.state.members.push({ space, user, role: 'owner', invited_by: null });
+    const everyone = uuid();
+    this.state.circles[everyone] = { id: everyone, space, name: 'Everyone', created_by: user, deleted: false, kind: 'everyone', comment_mode: 'private' };
+    this.state.circleMembers.push({ circle: everyone, user, at });
+    for (const side of s) {
+      const id = uuid();
+      this.state.circles[id] = { id, space, name: side, created_by: user, deleted: false, kind: 'group', comment_mode: defaultMode('group') };
+    }
+    (this.state.startedFamilies ??= []).push({ space, by: user, client_id: clientId, at });
+    this.recentStarts(user).push(Date.now());
+    this.changed();
+    return space;
+  }
+
+  /** 0024 redeem_invite: an empty family the caller started (only member, no posts, drafts included) is retired. */
+  private retireEmptyStarted(user: string, invitedTo: string): void {
+    for (const f of this.state.startedFamilies ?? []) {
+      const sp = this.state.spaces[f.space];
+      if (f.by !== user || f.space === invitedTo || !sp || sp.deleted) continue;
+      const alone = this.state.members.filter((m) => m.space === f.space).every((m) => m.user === user);
+      const noPosts = !Object.values(this.state.posts).some((p) => p.space === f.space);
+      if (alone && noPosts && this.member(f.space, user)) sp.deleted = true;
+    }
   }
 
   // ---------------- groups v2 (0013) ----------------
@@ -955,6 +1058,18 @@ export class FakeBackend {
     }
     return u;
   }
+
+  /** BETA-SMS: a text sign-in's account, by its E.164 number. Like 0026's trigger: no email, never the number as a name. */
+  userByPhone(phone: string): UserRow {
+    let u = Object.values(this.state.users).find((x) => x.phone === phone);
+    if (!u) {
+      const id = uuid();
+      u = { id, email: '', phone, name: 'Member', nameSet: false };
+      this.state.users[id] = u;
+      this.changed();
+    }
+    return u;
+  }
 }
 
 /** Same rule as private.valid_name (migration 0007). */
@@ -1008,6 +1123,25 @@ export class FakeApi implements HearthApi {
       return { userId: u.id, email: u.email };
     });
   }
+  sendTextCode(phone: string): Promise<void> {
+    return this.run(() => {
+      if (usE164(phone) !== phone) throw new ApiError('23514', 'not a US number');
+    });
+  }
+  verifyTextCode(phone: string, code: string): Promise<Session> {
+    return this.run(() => {
+      if (code.trim() !== FAKE_OTP) throw new ApiError('BAD_OTP');
+      const e164 = usE164(phone);
+      if (!e164) throw new ApiError('BAD_OTP');
+      const u = this.be.userByPhone(e164);
+      this.userId = u.id;
+      if (this.opts.trackAppSession) {
+        this.be.state.appSession = u.id;
+        this.be.changed();
+      }
+      return { userId: u.id, email: '' };
+    });
+  }
   signOut(): Promise<void> {
     return this.run(() => {
       this.userId = null;
@@ -1023,6 +1157,7 @@ export class FakeApi implements HearthApi {
   getFeed = (a: FeedArgs) => this.run(() => this.be.getFeed(this.userId, a));
   getTimeline = (a: TimelineArgs) => this.run(() => this.be.getTimeline(this.userId, a));
   getTimelineYears = (space: string, tz?: string) => this.run(() => this.be.getTimelineYears(this.userId, space, tz));
+  searchPosts = (a: SearchArgs) => this.run(() => this.be.searchPosts(this.userId, a));
   createPost = (a: CreatePostArgs) => this.run(() => this.be.createPost(this.userId, a));
   publishPost = (p: string) => this.run(() => this.be.publishPost(this.userId, p));
   deletePost = (p: string) => this.run(() => this.be.deletePost(this.userId, p));
@@ -1061,6 +1196,8 @@ export class FakeApi implements HearthApi {
   addPeopleFrom = (t: string, f: string, h: ShareHistory) => this.run(() => this.be.addPeopleFrom(this.userId, t, f, h));
   familyPeople = (space: string) => this.run(() => this.be.familyPeople(this.userId, space));
   myFeatures = (space: string) => this.run(() => this.be.myFeatures(this.userId, space));
+  canStartFamily = () => this.run(() => this.be.canStartFamily(this.userId));
+  startFamily = (a: StartFamilyArgs) => this.run(() => this.be.startFamily(this.userId, a.clientId, a.name, a.sides));
   setFamilyFeature = (space: string, feature: string, enabled: boolean) =>
     this.run(() => this.be.setFamilyFeature(this.userId, space, feature, enabled));
   chatList = (space: string) => this.run(() => this.be.chatList(this.userId, space));

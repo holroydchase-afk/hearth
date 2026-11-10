@@ -83,10 +83,10 @@ The test passes when 4 of 5 testers pass. Log each attempt on the Test Log with 
 - Web posting: the web viewer isn't in the beta.
 - Co-parent setup UI: no split household in Rings 0–3. The backend separation tests stay as BETA-AUD-4.
 - True background upload: retry on reopen (SHARE-4) covers the risk at much lower cost.
-- Albums, free-text search, child tags (E9): Hearth works as a feed for 12 people. The timeline's "Pick a year" (BETA-TIME-4) covers finding old photos; caption search is in the ANCHORS ideas log.
+- Albums, free-text search, child tags (E9): Hearth works as a feed for 12 people. The timeline's "Pick a year" (BETA-TIME-4) covers finding old photos; caption search is in the ANCHORS ideas log. Update Nov 10 (DEC-56): Chase put plain-word search on the go-live list; see `SPEC-SEARCH.md`.
 - Multiple spaces per user: one family space covers the beta.
 - Billing, paywall, and the video-cap messaging (E12): no money in the beta. The "willing to pay" question waits until after Thanksgiving.
-- SMS or text-link notices: needs Twilio (paid) and A2P registration. Push and email are enough.
+- SMS or text-link notices: needs a paid SMS provider and A2P registration. Push and email are enough. (Text message **sign-in codes** moved in, Nov 10, DEC-57: `docs/product/SPEC-SMS-SIGN-IN.md`, BETA-SMS-1..17, M4, behind a switch. Notices and invites by text stay out.)
 - Smart frames (E16) and other languages (E15): no tester has asked.
 - Editing photos or captions: delete and repost is fine for the beta.
 - One-to-one DMs: families already have texting. (Group and event chat moved in on Chase's call, Oct 19: `SPEC-MESSENGER.md`.)
@@ -187,7 +187,7 @@ The test passes when 4 of 5 testers pass. Log each attempt on the Test Log with 
 - **Comments cross sides** (REPLY-2 flag, new REPLY-6): honest wording now; the comment model is Chase's call.
 - **Real names (NOTIFY-7, JOIN-1):** a new account's name defaults to the email prefix (`tg_handle_new_user`), so notices would read "From holroydchase on Hearth" and there is no way to set a name. Fix in the M1 build queue: the invite carries the name the poster types (viewers type nothing); posters set theirs once.
 - **Email links** point at `hearth.family/p/<id>`, which doesn't exist yet. Until the website does, emails say "Open Hearth to see it" with no link.
-- **Sign-in review (Oct 16, late), in build order:** (1) the hosted sign-in emails must show the 6-digit code (Supabase's default templates send a link, and `config.toml` sets no template), M1; (2) a pasted "123 456" must work (maxLength cuts it), M1; (3) typing an invite code, on the landing screen and on "Almost there", with the code shown on Chase's invite card (Expo Go can't open links), new **BETA-JOIN-8**, M1; (4) "check your junk folder" plus a 60 s wait before "Send a new code" (the built-in mailer allows 2 emails an hour), M1; (5) the wrong-email invite gets its own plain message with no address shown, needs privacy-security, M3; (6) "Did you mean yahoo.com?", M4. **"Start a family" stays Not now** (milestone 7): only Chase starts a family in the POC (`family-setup.sql`), and an open path breaks invite-only (A1).
+- **Sign-in review (Oct 16, late), in build order:** (1) the hosted sign-in emails must show the 6-digit code (Supabase's default templates send a link, and `config.toml` sets no template), M1; (2) a pasted "123 456" must work (maxLength cuts it), M1; (3) typing an invite code, on the landing screen and on "Almost there", with the code shown on Chase's invite card (Expo Go can't open links), new **BETA-JOIN-8**, M1; (4) "check your junk folder" plus a 60 s wait before "Send a new code" (the built-in mailer allows 2 emails an hour), M1; (5) the wrong-email invite gets its own plain message with no address shown, needs privacy-security, M3; (6) "Did you mean yahoo.com?", M4. ~~"Start a family" stays Not now (milestone 7)~~ **Moved in, Nov 7 (DEC-55):** a parent with no family can start one in the app before the beta; joining stays invite-only. Scope and criteria: `docs/product/SPEC-START-FAMILY.md` (BETA-START-1..9).
 - Already tracked, not new: no zoom (SEE-4, M4), no Delete my account (JOIN-7, M3), "Seen by" visible (A2 pending).
 
 ### Amendment, Oct 16 (staff-pm): NOTIFY-4 vs NOTIFY-1

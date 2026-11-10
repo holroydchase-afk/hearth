@@ -3,14 +3,17 @@
 // Groups (parents only): see groups and who is in them; make a group (GRP-15/16); each group's comment setting
 // (GRP-17); basic rename; invite someone to one or more groups (GRP-18). Relatives never see any of this.
 import React, { useCallback, useEffect, useState } from 'react';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import type { Circle, CommentMode, Person, ShareHistory } from '../api/HearthApi';
 import { messageFor } from '../errors/messages';
+import { textsOn, usE164 } from '../api/phone';
 import { useApp } from '../state/AppContext';
 import { Button, Card, Choice, Field, Loading, Notice, Screen, Txt } from '../ui/kit';
+import { BAD_NUMBER } from './TextCodeFlow';
 import { andList, people } from '../ui/format';
 import { useTheme } from '../ui/theme';
 import { AppGate } from './AppGate';
+import { InviteReady, inviteSmsUrl, PastPhotosChoice } from './InviteCard';
 
 /** SPEC-GROUPS v2 section 2, in the app's words (grandparent-ux owns the final wording). */
 const MODES: { mode: CommentMode; title: string; detail: string }[] = [
@@ -49,6 +52,9 @@ export function GroupsScreen() {
   const [notice, setNotice] = useState<string | null>(null);
   const [asking, setAsking] = useState<string | null>(null); // circle id whose invite form is open
   const [inviteName, setInviteName] = useState('');
+  // BETA-SMS-10: texts on, the invite asks for their mobile number first; only that number can open it.
+  const [invitePhone, setInvitePhone] = useState('');
+  const [byText, setByText] = useState(true);
   // BETA-AUD-19: "Share all past photos" or "Only new photos"; neither is picked until the parent picks one.
   const [history, setHistory] = useState<ShareHistory | null>(null);
   const [needHistory, setNeedHistory] = useState(false);
@@ -143,15 +149,19 @@ export function GroupsScreen() {
     }
   };
 
-  const closeForm = () => { setAsking(null); setInviteName(''); setHistory(null); setNeedHistory(false); setAlsoEveryone(true); setAlsoIn([]); };
+  const closeForm = () => { setAsking(null); setInviteName(''); setInvitePhone(''); setByText(true); setHistory(null); setNeedHistory(false); setAlsoEveryone(true); setAlsoIn([]); };
   const everyone = (circles ?? []).find((g) => g.kind === 'everyone');
 
   const makeInvite = async (id: string) => {
     if (!history) { setNeedHistory(true); return; }
+    const askPhone = textsOn() && byText && invitePhone.trim() !== '';
+    const phone = askPhone ? usE164(invitePhone) : null;
+    if (askPhone && !phone) { setNotice(BAD_NUMBER); return; }
     try {
       // JOIN-1: the name the family uses becomes theirs when they join, so they type nothing.
       const r = await app.deps.api.createInvite({
         space: app.space!.space_id, role: 'viewer', ttlDays: 30, name: inviteName.trim() || null, history,
+        ...(phone ? { channel: 'sms' as const, targetPhone: phone } : {}),
         circleIds: [
           id,
           ...groups.filter((o) => o.circle_id !== id && alsoIn.includes(o.circle_id)).map((o) => o.circle_id),
@@ -165,13 +175,7 @@ export function GroupsScreen() {
     }
   };
 
-  const text = (link: string, code: string) => {
-    // grandparent-ux: name the sender (an unsaved number or an email reads like a scam), and offer a call, not an app store trip.
-    const hi = myName ? `Hi, it's ${myName}.` : 'Hi, this is your family.';
-    const body = `${hi} I set up a private place for the kids' photos. Tap this to see them, no password: ${link}\n\nIf that doesn't open, call me and I'll help. Your code is ${code.slice(0, 5)} ${code.slice(5)}.`;
-    const sep = Platform.OS === 'ios' ? '&' : '?';
-    void app.deps.openUrl(`sms:${sep}body=${encodeURIComponent(body)}`);
-  };
+  const text = (link: string, code: string) => { void app.deps.openUrl(inviteSmsUrl(myName, link, code)); };
 
   // UX-G4: the server takes an invite only to a household, or (until 0012) a group with nothing under it.
   const invitable = (g: Circle) =>
@@ -281,19 +285,26 @@ export function GroupsScreen() {
             <Button label={`Rename ${g.name}`} text="Rename" variant="secondary" onPress={() => { setRenaming(g.circle_id); setName(g.name); }} />
           )}
           {invite?.circle === g.circle_id ? (
-            <Card>
-              <Txt variant="strong">Invite ready</Txt>
-              <Txt selectable>{invite.link}</Txt>
-              {/* BETA-JOIN-8: for reading out loud, or when the link opens in a browser */}
-              <Txt selectable>{`Or they can type this code in Hearth: ${invite.code.slice(0, 5)} ${invite.code.slice(5)}`}</Txt>
-              <Txt>Works for 30 days.</Txt>
-              <Button label="Text the invite" onPress={() => text(invite.link, invite.code)} />
-            </Card>
+            <InviteReady link={invite.link} code={invite.code} onText={() => text(invite.link, invite.code)} />
           ) : asking === g.circle_id ? (
             <>
               <Txt variant="title" role="header">{`Invite someone to ${g.name}`}</Txt>
               <Field label="Their name, the way your family says it" value={inviteName} onChangeText={setInviteName} placeholder='Like "Grandma June"' maxLength={40} />
               <Txt variant="muted">They'll see this name on Hearth and won't have to type it.</Txt>
+              {textsOn() && byText ? (
+                <>
+                  <Field label="Their mobile number" value={invitePhone} onChangeText={setInvitePhone} keyboardType="phone-pad" autoComplete="off" placeholder="304-555-0100" maxLength={20} />
+                  <Txt variant="muted">Only this number can open the invite.</Txt>
+                  <Button label="They'll use email" variant="secondary" onPress={() => { setByText(false); setInvitePhone(''); }} />
+                </>
+              ) : null}
+              {/* GUX-R2: skipping the number makes a link invite; say who can open it, and offer the number back. */}
+              {textsOn() && !byText ? (
+                <>
+                  <Txt variant="muted">They'll sign in with their email. Anyone you send the invite to can open it.</Txt>
+                  <Button label="Add their mobile number" variant="secondary" onPress={() => setByText(true)} />
+                </>
+              ) : null}
               {/* GRP-18: Everyone first and ticked; any other groups can be ticked too */}
               {everyone && everyone.circle_id !== g.circle_id ? (
                 <Choice
@@ -315,24 +326,12 @@ export function GroupsScreen() {
                   onPress={() => setAlsoIn((cur) => (cur.includes(o.circle_id) ? cur.filter((x) => x !== o.circle_id) : [...cur, o.circle_id]))}
                 />
               ))}
-              <Txt variant="title" role="header">Should they see photos already shared?</Txt>
-              <Choice
-                kind="radio"
-                label="Share all past photos"
-                title="Share all past photos"
-                detail={`They'll see every photo ${g.name} can already see.`}
-                checked={history === 'all'}
-                onPress={() => { setHistory('all'); setNeedHistory(false); }}
+              <PastPhotosChoice
+                history={history}
+                onPick={(h) => { setHistory(h); setNeedHistory(false); }}
+                allDetail={`They'll see every photo ${g.name} can already see.`}
+                need={needHistory}
               />
-              <Choice
-                kind="radio"
-                label="Only new photos"
-                title="Only new photos"
-                detail="They'll see photos shared from today on, including older photos you add later."
-                checked={history === 'new'}
-                onPress={() => { setHistory('new'); setNeedHistory(false); }}
-              />
-              {needHistory ? <Txt variant="strong">Pick one above first.</Txt> : null}
               <Button label="Make the invite" onPress={() => void makeInvite(g.circle_id)} softDisabled={!history} />
               <Button label="Cancel" variant="secondary" onPress={closeForm} />
             </>

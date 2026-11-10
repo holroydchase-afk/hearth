@@ -3,7 +3,7 @@
 // HearthApi over supabase-js (PostgREST RPCs) + the sign-media edge function.
 // Privacy: nothing here logs keys, URLs or captions.
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { ApiError, type ApiErrorCode, type HearthApi } from './HearthApi';
+import { ApiError, type ApiErrorCode, type HearthApi, type StartFamilyArgs } from './HearthApi';
 import type {
   ReplyAudience,
   CircleKind, CommentMode, Person, Role, ShareHistory,
@@ -13,7 +13,7 @@ import type {
   PushPlatform,
   AddCommentArgs, Circle, CommentRow, CreateInviteArgs, CreatePostArgs, FeedArgs, FeedPost, FinalizeResult,
   HeartState, InvitePreview, Reaction, ReactionState, ReactionSummary, PostViewers, Session, Space, UploadGrant, UploadItemSpec, ViewGrant,
-  TimelineArgs, TimelinePost, TimelineYear,
+  TimelineArgs, TimelinePost, TimelineYear, SearchArgs,
   ChatMember, ChatRow, ChatRowKind, ChatSummary, ClaimedKeyPackage,
 } from './types';
 import { toApiError } from '../errors/messages';
@@ -100,6 +100,33 @@ export class SupabaseApi implements HearthApi {
     }
     return { userId: data.session.user.id, email: data.session.user.email ?? email };
   }
+  // BETA-SMS: a code by text (Twilio Verify behind Supabase Auth, SMS-PROVIDER.md). Errors never carry the number.
+  async sendTextCode(phone: string): Promise<void> {
+    let error: { status?: number; code?: string; message?: string } | null;
+    try {
+      ({ error } = await this.o.client.auth.signInWithOtp({ phone, options: { shouldCreateUser: true } }));
+    } catch (e) {
+      throw new ApiError(toApiError(e).code === 'NETWORK' ? 'NETWORK' : 'UNKNOWN');
+    }
+    if (!error) return;
+    if (error.status === 429) throw new ApiError('54000');
+    if (/fetch|network/i.test(error.message ?? '')) throw new ApiError('NETWORK');
+    // Texts switched off, no provider, or the provider failing: the screen offers email (BETA-SMS-6).
+    if (/phone_provider_disabled|sms_provider|sms_send_failed|signup_disabled/.test(error.code ?? '') || (error.status ?? 0) >= 500) {
+      throw new ApiError('SMS_OFF');
+    }
+    throw new ApiError(error.status === 400 || error.status === 422 ? '23514' : 'UNKNOWN');
+  }
+  async verifyTextCode(phone: string, code: string): Promise<Session> {
+    const { data, error } = await this.o.client.auth.verifyOtp({ phone, token: code.trim(), type: 'sms' });
+    if (error || !data.session) {
+      const status = (error as { status?: number } | null)?.status;
+      if (status === 429) throw new ApiError('54000');
+      if (error && /fetch|network/i.test(error.message)) throw new ApiError('NETWORK');
+      throw new ApiError('BAD_OTP');
+    }
+    return { userId: data.session.user.id, email: data.session.user.email ?? '' };
+  }
   async signOut(): Promise<void> {
     await this.o.client.auth.signOut();
   }
@@ -116,6 +143,11 @@ export class SupabaseApi implements HearthApi {
     this.rpc<TimelinePost[]>('get_timeline', {
       p_space: a.space, p_before_at: a.beforeAt ?? null, p_before_id: a.beforeId ?? null,
       p_limit: Math.max(1, Math.min(50, a.limit ?? 20)),
+    }).then((d) => d ?? []);
+  searchPosts = (a: SearchArgs) =>
+    this.rpc<TimelinePost[]>('search_posts', {
+      p_space: a.space, p_query: a.words ?? null, p_author: a.author ?? null, p_from: a.from ?? null, p_until: a.until ?? null,
+      p_before_at: a.beforeAt ?? null, p_before_id: a.beforeId ?? null, p_limit: Math.max(1, Math.min(50, a.limit ?? 20)),
     }).then((d) => d ?? []);
   getTimelineYears = (space: string, tz?: string) =>
     this.rpc<TimelineYear[]>('get_timeline_years', { p_space: space, p_tz: tz ?? 'UTC' }).then((d) => d ?? []);
@@ -181,7 +213,9 @@ export class SupabaseApi implements HearthApi {
       throw e.code === '22023' && typeof d === 'string' && d.trim() ? new ApiError('22023', e.message, d.trim()) : e;
     }
     const r = one<InvitePreview>(res.data);
-    return { inviter_name: r.inviter_name, space_name: r.space_name };
+    // BETA-SMS-9: a server before 0026 says nothing; ask a number first, like a link invite.
+    const how = r.sign_in_with === 'phone' || r.sign_in_with === 'email' ? r.sign_in_with : 'either';
+    return { inviter_name: r.inviter_name, space_name: r.space_name, sign_in_with: how };
   };
   createInvite = async (a: CreateInviteArgs) => {
     const d = await this.rpc<unknown>('create_invite', {
@@ -202,6 +236,10 @@ export class SupabaseApi implements HearthApi {
     this.rpc<void>('place_person', { p_group: group, p_user: user, p_history: history });
   addPeopleFrom = (target: string, source: string, history: ShareHistory) =>
     this.rpc<void>('add_people_from', { p_target: target, p_source: source, p_history: history });
+  // Start a family (0024): errors keep their error.code (rule 7); start_family is never retried here.
+  canStartFamily = () => this.rpc<boolean>('can_start_family', {}).then((d) => d === true);
+  startFamily = (a: StartFamilyArgs) =>
+    this.rpc<string>('start_family', { p_client_id: a.clientId, p_name: a.name, p_sides: a.sides });
   myFeatures = (space: string) =>
     this.rpc<{ feature: string }[] | null>('my_features', { p_space: space }).then((d) => (d ?? []).map((r) => r.feature));
   /** Update first, insert if there was no row: authenticated may update only `enabled`, so a PostgREST upsert

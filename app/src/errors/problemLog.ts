@@ -7,6 +7,7 @@
 import * as Updates from 'expo-updates';
 import pkg from '../../package.json';
 import { isRetryable } from '../api/HearthApi';
+import { scrubPhone } from '../api/phone';
 import { toApiError } from './messages';
 import { osString } from './report';
 
@@ -57,6 +58,7 @@ export function safeMessage(raw: string, scrub: (string | null | undefined)[] = 
   m = m.replace(/\b[a-z][a-z0-9+.-]*:\/\/\S*/gi, '[url]');
   m = m.replace(/\b(?:file|content|ph|assets-library|data|blob):\S*/gi, '[url]');
   m = m.replace(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g, '[email]');
+  m = scrubPhone(m); // BETA-SMS-15
   m = m.replace(/\b(key|dek|token|secret|signature|sig|password|apikey|auth\w*|credential)\b\s*[:=]\s*\S+/gi, '$1=[hidden]');
   m = m.replace(/\beyJ[\w-]*\.[\w-]*\.?[\w-]*/g, '[token]');
   m = m.replace(/(?:~|\.{1,2})?\/[^\s]+/g, '[path]');

@@ -443,8 +443,8 @@ select tests.throws_code(format($q$select * from public.create_invite(%L, 'viewe
 -- invite_preview (anon-callable, leaks nothing else)
 -- ======================================================================
 :as_anon
-select tests.ok_sql($q$select public.invite_preview(tests.v('inv1')::jsonb->>'code')::jsonb = '{"inviter_name":"Alex","space_name":"Sam at Dad''s"}'::jsonb$q$,
-                    'invite_preview: anon sees exactly {inviter_name, space_name}');
+select tests.ok_sql($q$select public.invite_preview(tests.v('inv1')::jsonb->>'code')::jsonb = '{"inviter_name":"Alex","space_name":"Sam at Dad''s","sign_in_with":"email"}'::jsonb$q$,
+                    'invite_preview: anon sees exactly {inviter_name, space_name, sign_in_with} (BETA-SMS-9)');
 select tests.ok_sql($q$select public.invite_preview(substring(tests.v('inv1')::jsonb->>'link' from '([0-9a-f]+)$'))::jsonb->>'inviter_name' = 'Alex'$q$,
                     'invite_preview: the link token works too');
 select tests.throws_code($q$select public.invite_preview('NOPE234567')$q$, 'invite_preview: unknown code is 22023', '22023');

@@ -228,3 +228,14 @@ Deno.test("BETA-BULK-6: an ordinary post batch still says 'shared new photos'", 
   eq(buildPush(pushBatch({ ...({ is_batch: false, photo_count: 3 } as unknown as Partial<Batch>) }))[0]!.body,
      "Alex shared new photos. Tap to see them.", "not a bulk import");
 });
+
+// ---------- BETA-SMS-13: a phone-only account has no email address ----------
+Deno.test("BETA-SMS-13: an email batch with a null address is skipped; the run still sends the push and succeeds", async () => {
+  const calls = mockFetch({ batches: [pushBatch(), emailBatch({ email: null, recipient_id: "e0000000-0000-0000-0000-0000000000e6" })] });
+  const res = await run();
+  eq(res.status, 200, "the run does not fail");
+  eq(await res.json(), { push: 1, email: 0, failed: 0 }, "one push, no email, nothing failed");
+  const resend = calls.filter((c) => c.url.includes("resend"));
+  assert(resend.every((c) => !JSON.stringify(c.body).includes("null")), "no email is addressed to null");
+  eq(calls.filter((c) => c.url.includes("release")).length, 0, "nothing released for retry");
+});

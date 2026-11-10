@@ -24,7 +24,7 @@ const nav: Nav = {
     : { pathname: '/viewer/[postId]', params: { postId, i: String(i) } }),
   close: () => (router.canGoBack() ? router.back() : router.replace('/photos')),
   goPhotos: () => router.replace('/photos'),
-  goSignIn: () => router.replace('/sign-in'),
+  goSignIn: (opts) => router.replace(opts?.with === 'email' ? { pathname: '/sign-in', params: { with: 'email' } } : '/sign-in'),
   goJoin: (code) => router.push({ pathname: '/join/[code]', params: { code } }),
 };
 

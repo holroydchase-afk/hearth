@@ -3,7 +3,7 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: video part 2 (poster + player, VID-14..21) built and green 3x locally; GitHub hold on (no push/PR/CI until Chase lifts it)
+now: GitHub hold (Nov 10). Everything below waits in one push queue (/mnt/project-files/drafts/PUSH-QUEUE.md): Start a family + FIRSTMIN (#107), Apple fixes (#106), photo search (0025), text sign-in (0026, off), video player (off)
 next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
@@ -19,6 +19,44 @@ blockers: []
 - **Not built:** "Save to my phone" for a video (hidden on videos; `saveToPhone` writes a JPEG). Video ciphertext isn't kept on the phone (too big for the photo store), so a video replays only online.
 - **Verified (qa-tdd, 3x):** app jest 804/0, typecheck, web e2e 5/0 (local executablePath wrapper, T12), backend 1038/0, check-agents. privacy-security: no P0/P1; PRIV-R1 (clear decrypted videos at start-up even when signed out), R2 (posting copies in the cache, M7), R3 (iOS file protection, accepted) are P2. Drafts: /mnt/project-files/drafts/video-player-2026-11-10/ (bundle + patches + README).
 - **Next exact step:** after "lift GitHub hold", push this branch (one push) and open a PR (app/** waits for Chase's merge, DEC-48). Then VID-19 on an iPhone and an Android phone in Expo Go, FLAG-7/VID-22 exiftool check on Chase's iPhone, then Chase's word turns `video_posting` on. PRIV-R1 is a small follow-up.
+## Nov 10: text message sign-in built, off (BETA-SMS-1..15, DEC-57, migration 0026, TRACKER R43; branch claude/project-thread-y94vb7, local only under the GitHub hold)
+- **Done:** migration 0026 (E.164 phone invites via an `invites` trigger, redeem matches `auth.users.phone` with or without `+`, `invite_preview.sign_in_with`, no email batch without an email, `[phone]` in error reports, QA-R1: a phone is never a placeholder name). `config.toml` `[auth.sms]` template in Hearth's words. App: `sendTextCode`/`verifyTextCode`, `api/phone.ts` (E.164, last 4, scrub, flag), `SignInFlow` + `TextCodeFlow`, join screen by `sign_in_with`, invite card's "Their mobile number", no-family "Signed in with email before?", Help/Preferences push-only for phone accounts. check-logs flags phone names. API.md, architecture 02/05 footers.
+- **Tests changed (plainly wrong or asked for):** api_test and contract exact-keys now include `sign_in_with` (QA-R3); sms_test's `position('phone"' …)` check contradicted `sign_in_with = 'phone'`, now checks no key names a phone.
+- **Open:** grandparent-ux on the words (QA-R2 "newest text"; the invite card's "Use email instead" makes today's link invite, which has no email field: staff-pm call); privacy-security review; StartFamily's first invite stays link-only; Twilio facts unverified live. e2e:web needed a local browser-version workaround (Playwright 1194 vs installed 1243).
+- **Next exact step:** qa-tdd runs all suites 3x; then grandparent-ux and privacy-security.
+
+## Nov 10: SMS provider pick (architect, SPEC-SMS-SIGN-IN §6, TRACKER R43; branch claude/project-thread-y94vb7, local only under the GitHub hold)
+- **Done:** pick Twilio Verify via Supabase `twilio_verify` (`docs/eng/SMS-PROVIDER.md`, spec §8); `config.toml` `[auth.sms.twilio_verify]` off with env() secrets, `max_frequency = "60s"`, local-only `test_otp` guidance; architecture 01/02/04 and ACCOUNTS row (not created yet).
+- **Open:** supabase.com and twilio.com didn't load in the session; Verify's no-registration claim, pricing, template rules and `auth.users.phone` form are unverified.
+- **Next exact step:** a session with those sites allowed confirms the unverified facts; then Chase's one step (Twilio sign-up, $20).
+
+## Nov 10: photo search (DEC-56, SEARCH-1..14, SEARCH-UI-1..8, migration 0025, TRACKER R42; branch claude/project-thread-bsaqxe, local only)
+- **Why:** Chase's go-live list, item 9 "Search". Plain words only; AI search stays on the paid tier (DEC-37).
+- **Done:** `search_posts` (0025): every typed word must be in the title, caption or sender's name; From one person; a capture-date range; candidates from `private.visible_posts`, rows from `private.feed_rows`, so hidden posts never match and group titles never show to non-senders; STABLE, nothing stored. App: `searchPosts` (Supabase + Fake), `SearchScreen.tsx` opened by a Search button in the Photos toolbar. Spec `SPEC-SEARCH.md`, persona check, API.md, architecture 05.
+- **privacy-security:** no P0/P1. SEARCH-R1 (drafts, removed people, a parent who didn't send) fixed with SEARCH-15 tests; SEARCH-R2 wording softened, Supabase log settings to check (TRACKER R42); SEARCH-R3 accepted: Supabase's 8 s timeout for signed-in calls bounds a search at family scale (from Supabase's docs, not checked live).
+- **Open:** the real-stack contract (PostgREST harness) wasn't run; grandparent-ux words pass; no Playwright walk.
+- **Next exact step:** after "lift GitHub hold", push Start a family first, then this branch on top as its own PR (it sits on R41's commits).
+
+## Nov 6: Apple design guidelines fixes (HIG-1..12, DEC-54, TRACKER R39; branch claude/project-thread-bellss, PR)
+- **Why:** Chase asked for a full sweep against Apple's Human Interface Guidelines (doc https://claude.ai/artifact/3N1G5jF4ezeQ2Gtf2jFwZU), then "handle all the p1s". HIG is readable here through Apple's JSON feed (`developer.apple.com/tutorials/data/design/human-interface-guidelines/<page>.json`).
+- **Done:** notices asked after the first photo with a Hearth card (HIG-1, DS-15); zoom (HIG-2, BETA-SEE-4); tab and toolbar words capped at 1.5x with Apple's large pop-up label (HIG-3); Ember launch screen light and dark (HIG-4); iPad in every direction (HIG-5); Increase Contrast, Reduce Motion, VoiceOver sender, swipe-down sheets, scaling icons, haptics (HIG-7..12, DS-14). New dependency `expo-haptics` (version from `npx expo install`). Tests `app/src/screens/__tests__/hig.test.tsx`.
+- **Decided:** HIG-6 dropped; Chase kept emoji only (Nov 6 card, REACT-7).
+- **Nov 10 (GitHub hold, local only):** pinch on Android and the web (QA-R1, `pinchZoom()`), plus tests for swipe-down close (QA-R2), Allow sending the token (QA-R3) and a live Reduce Motion change (QA-R4). Saved as a git bundle and patches in `/mnt/project-files/drafts/hig-fixes-2026-11-10/`, not pushed.
+- **Open:** owner account deletion; nothing tried on a phone yet.
+- **Next exact step:** Chase says "merge" on the PR, then republish the Expo preview and try the largest text size and the zoom on his iPhone.
+## Nov 7: Start a family (DEC-55, BETA-START-1..13, migration 0024, TRACKER R41; branch claude/project-thread-eaq4hr, PR)
+- **Why:** Chase picked "Yes, build it now" on Nov 7: level 5 needs a family to start without Chase's script. Reverses the Oct 16 "Not now (M7)" call (DEC-3 superseded).
+- **Done:** spec `docs/product/SPEC-START-FAMILY.md` with privacy-security (PRIV-R1..8) and architect design; persona check `decisions/2026-11-07-start-a-family.md`. Migration 0024: `start_family`, `can_start_family`, switch `start_family_open` (ships OFF), 3 starts a day, photo/storage cap for app-started families (HF001), empty started family retired on redeem, `create_household`/`create_space` revoked from app users (setup scripts make the family as admin first). App: `StartFamily.tsx` (ask, name + 18+ line, who's in it, first invite, Skip for now), entry on the no-family screen only when the switch is on; words per grandparent-ux (GUX-R1..R5). Architecture 04 (gap 6, open starting) and 05, API.md, MARKETING row 28. Shots `docs/reviews/2026-11-07-start-family/`. Backend 1126/0, app 819/0, e2e green.
+- **Open:** real-stack contract cases for 0024 skip (QA-R1: need a starter user and a service-only switch flip); no Playwright walk of the flow (QA-R2); first invite has no email field.
+- **Before the switch goes on (blocks the deploy turning it on, not the merge):** an abuse contact in Help and a suspend-a-family runbook (PRIV-R7); the 18+ and legal review (PRIV-R5, M7); confirm Help reaches Chase (GUX-R3).
+- **Next exact step:** Chase says merge and deploy; deploy 0024 with the switch off; then the PRIV-R7 Help contact, then turn it on.
+
+## Nov 6: demo first minute, raising 3s toward 5s (FIRSTMIN-1..3, TRACKER R40; branch claude/project-thread-eaq4hr, PR)
+- **Why:** Chase, Nov 6: bring the readiness doc's level-3 features to 5 before new dev (doc https://claude.ai/artifact/EBrvRki1RMkdHtApKSX48e, fix #5).
+- **Done:** `initialOf` gives two letters for two-word names (GJ, GE), one rule for the faces, Who sheet and post header; the phone-width demo shows 3 numbered steps; face letters cap at 1.3x (GUX-R1). Shots: `docs/reviews/2026-11-06-firstmin/`. Pretend sign-in cut (staff-pm).
+- **Checked on hosted (read only):** `HEARTH_KEYS_PENDING` is already gone; the outbox has 0 rows because only one person (Chase) has signed in, so TRACKER step 7's email check needs account B, which is step 9.
+- **Waiting on Chase:** merge this PR; sign in account B on the web build to start the 2-day demo. (The Start a family card: Chase picked build it, Nov 7.)
+- **Next exact step:** Chase merges; the demo rebuilds on merge.
 
 ## Nov 6: studio agents really run in cloud threads (AGENTRUN-1..6, TRACKER R38; branch claude/project-thread-7zjm6h, PR)
 - **Why:** Chase's recruiter-readiness review (Nov 6, doc https://claude.ai/artifact/EBrvRki1RMkdHtApKSX48e) found PRs #99-#103 all say "qa-tdd skipped: the studio agent types can't be loaded", which contradicts the README's nine-agent claim. Chase: "Start 2".

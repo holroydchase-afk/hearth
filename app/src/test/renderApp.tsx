@@ -21,10 +21,11 @@ export function preparedFixture(): Prepared {
   };
 }
 
-export async function renderApp(ui: ReactElement, opts: { user?: FixtureUser | null; be?: FakeBackend; kv?: KV; deps?: Partial<AppDeps>; fixture?: FixtureOptions; waitReady?: boolean } = {}) {
+/** `userId`: sign in as an account made in the test (a phone account, BETA-SMS) instead of a fixture user. */
+export async function renderApp(ui: ReactElement, opts: { user?: FixtureUser | null; userId?: string; be?: FakeBackend; kv?: KV; deps?: Partial<AppDeps>; fixture?: FixtureOptions; waitReady?: boolean } = {}) {
   const be = opts.be ?? FakeBackend.withFixture(opts.fixture);
-  const user = opts.user === undefined ? 'jo' : opts.user;
-  be.state.appSession = user ? FIXTURE.users[user].id : null;
+  const user = opts.userId ?? (opts.user === undefined ? 'jo' : opts.user);
+  be.state.appSession = opts.userId ?? (user ? FIXTURE.users[user as FixtureUser].id : null);
   const api = be.clientFor(null, { trackAppSession: true });
   const kv = opts.kv ?? memoryKV();
   const nav: jest.Mocked<Nav> = { openViewer: jest.fn(), close: jest.fn(), goPhotos: jest.fn(), goSignIn: jest.fn(), goJoin: jest.fn() };

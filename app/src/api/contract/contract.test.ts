@@ -10,8 +10,8 @@ import { fakeHarness } from './fakeHarness';
 import type { ContractHarness, HarnessFactory } from './harness';
 import { supabaseCaps, supabaseEnvReady, supabaseHarness } from './supabaseHarness';
 
-interface Caps { joiner: boolean; ratelimit: boolean; media: boolean }
-const factories: [string, HarnessFactory, Caps][] = [['FakeApi', fakeHarness, { joiner: true, ratelimit: true, media: true }]];
+interface Caps { joiner: boolean; ratelimit: boolean; media: boolean; starter: boolean }
+const factories: [string, HarnessFactory, Caps][] = [['FakeApi', fakeHarness, { joiner: true, ratelimit: true, media: true, starter: true }]];
 if (supabaseEnvReady()) factories.push(['SupabaseApi', supabaseHarness, supabaseCaps()]);
 else describe('SupabaseApi contract', () => it.skip('skipped: HEARTH_API_URL / HEARTH_ANON_KEY / HEARTH_USERS_JSON not set', () => {}));
 
@@ -259,12 +259,24 @@ describe.each(factories)('%s contract (API.md)', (_name, factory, caps) => {
       expect(await code(viewerIn.createInvite({ space: h.spaceId, role: 'viewer', circleIds: [h.circleIn], history: 'all' }))).toBe('42501');
     });
 
-    it('preview works signed out and leaks only inviter and space name', async () => {
+    it('preview works signed out and leaks only inviter, space name and how to sign in (BETA-SMS-9)', async () => {
       const { code: c, link } = await poster.createInvite({ space: h.spaceId, role: 'viewer', circleIds: [h.circleIn], history: 'all' });
       expect(link).toMatch(/^https:\/\//); // may carry a separate link token rather than the code
       const prev = await h.anon().invitePreview(c);
-      expect(Object.keys(prev).sort()).toEqual(['inviter_name', 'space_name']);
+      expect(Object.keys(prev).sort()).toEqual(['inviter_name', 'sign_in_with', 'space_name']);
       expect(await code(h.anon().invitePreview('NOPE-NOPE-1'))).toBe('22023');
+    });
+
+    it('BETA-SMS-9 preview says how to sign in (phone, email or either) and never names the target', async () => {
+      const base = { space: h.spaceId, role: 'viewer' as const, circleIds: [h.circleIn], history: 'all' as const };
+      const phone = await poster.createInvite({ ...base, channel: 'sms', targetPhone: '+13045550100' });
+      const email = await poster.createInvite({ ...base, channel: 'email', targetEmail: 'kim@example.com' });
+      const link = await poster.createInvite(base);
+      const how = async (c: string) => ((await h.anon().invitePreview(c)) as { sign_in_with?: string }).sign_in_with;
+      expect(await how(phone.code)).toBe('phone');
+      expect(await how(email.code)).toBe('email');
+      expect(await how(link.code)).toBe('either');
+      expect(JSON.stringify(await h.anon().invitePreview(phone.code))).not.toMatch(/3045550100|0100|kim@/);
     });
 
     it('ONB-3/ONB-4 the link is the web build\'s /join/ address, and its last segment previews signed out', async () => {
@@ -501,6 +513,77 @@ describe.each(factories)('%s contract (API.md)', (_name, factory, caps) => {
       expect(await code(poster.setReplyAudience(h.spaceId, 'everyone'))).toBe('ok');
       expect((await poster.mySpaces()).find((s) => s.space_id === h.spaceId)?.reply_audience).toBe('everyone');
       expect(await code(poster.setReplyAudience(h.spaceId, 'parents'))).toBe('ok');
+    });
+  });
+  describe('search_posts (SEARCH-1..14, migration 0025)', () => {
+    async function wordsPost(caption: string, circles = [h.circleIn], takenAt: string | null = null, title?: string): Promise<string> {
+      const id = await poster.createPost({ clientId: uuid(), space: h.spaceId, caption, circleIds: circles, takenAt, title });
+      await h.attachReadyMedia(poster, id);
+      await poster.publishPost(id);
+      return id;
+    }
+    const tag = () => `zq${uuid().replace(/-/g, '').slice(0, 10)}`;
+    const ids = async (api: HearthApi, a: Omit<Parameters<HearthApi['searchPosts']>[0], 'space'>) =>
+      (await api.searchPosts({ space: h.spaceId, limit: 50, ...a })).map((p) => p.post_id);
+
+    it('SEARCH-1 finds a post by a word in its caption, any case, every word must match', async () => {
+      const t = tag();
+      const id = await wordsPost(`${t} first bike ride`);
+      expect(await ids(viewerIn, { words: `${t.toUpperCase()}  BIKE` })).toEqual([id]);
+      expect(await ids(viewerIn, { words: `${t} piano` })).toEqual([]);
+    });
+
+    it('SEARCH-2/10 a post you cannot see is never found', async () => {
+      const t = tag();
+      await wordsPost(`${t} bike`);
+      expect(await ids(viewerOut, { words: t })).toEqual([]);
+    });
+
+    it('SEARCH-3 found rows carry no audience for someone who did not send it; the sender keeps theirs', async () => {
+      const t = tag();
+      await wordsPost(`${t} park`);
+      const [row] = await viewerIn.searchPosts({ space: h.spaceId, words: t });
+      expect(row!.audience ?? null).toBeNull();
+      const [mine] = await poster.searchPosts({ space: h.spaceId, words: t });
+      expect(mine!.audience).toBeTruthy();
+    });
+
+    it('SEARCH-5 the title is searched too, and rows carry the title like the timeline', async () => {
+      const t = tag();
+      const id = await wordsPost('Cake and candles', [h.circleIn], null, `${t} birthday`);
+      const rows = await viewerIn.searchPosts({ space: h.spaceId, words: `${t} birthday` });
+      expect(rows.map((r) => r.post_id)).toEqual([id]);
+      expect(rows[0]!.title).toBe(`${t} birthday`);
+    });
+
+    it('SEARCH-7 a capture-date range, newest photo first, with words', async () => {
+      const t = tag();
+      const a = await wordsPost(`${t} a`, [h.circleIn], '2019-07-04T15:00:00.000Z');
+      const b = await wordsPost(`${t} b`, [h.circleIn], '2019-05-20T15:00:00.000Z');
+      await wordsPost(`${t} c`, [h.circleIn], '2018-12-25T15:00:00.000Z');
+      expect(await ids(viewerIn, { words: t, from: '2019-01-01T00:00:00.000Z', until: '2020-01-01T00:00:00.000Z' })).toEqual([a, b]);
+    });
+
+    it('SEARCH-8 typed % and _ are plain characters', async () => {
+      await wordsPost(`${tag()} plain`);
+      expect(await ids(viewerIn, { words: '%' })).toEqual([]);
+      expect(await ids(viewerIn, { words: '_' })).toEqual([]);
+    });
+
+    it('SEARCH-9 nothing to search for, over 100 characters or over 8 words is refused with 22023', async () => {
+      expect(await code(viewerIn.searchPosts({ space: h.spaceId, words: '   ' }))).toBe('22023');
+      expect(await code(viewerIn.searchPosts({ space: h.spaceId, words: 'x'.repeat(101) }))).toBe('22023');
+      expect(await code(viewerIn.searchPosts({ space: h.spaceId, words: 'a b c d e f g h i' }))).toBe('22023');
+    });
+
+    it('SEARCH-12 pages newest photo first on (sort_at, post_id)', async () => {
+      const t = tag();
+      const a = await wordsPost(`${t} a`, [h.circleIn], '2017-03-01T00:00:00.000Z');
+      const b = await wordsPost(`${t} b`, [h.circleIn], '2017-02-01T00:00:00.000Z');
+      const [p1] = await viewerIn.searchPosts({ space: h.spaceId, words: t, limit: 1 });
+      expect(p1!.post_id).toBe(a);
+      const p2 = await viewerIn.searchPosts({ space: h.spaceId, words: t, limit: 1, beforeAt: p1!.sort_at, beforeId: p1!.post_id });
+      expect(p2.map((r) => r.post_id)).toEqual([b]);
     });
   });
   describe('get_timeline / get_timeline_years (BETA-TIME-2..4, migration 0010)', () => {
@@ -774,6 +857,117 @@ describe.each(factories)('%s contract (API.md)', (_name, factory, caps) => {
         await poster.setFamilyFeature(h.spaceId, f, true);
       }
       expect(await poster.myFeatures(h.spaceId)).toContain(f);
+    });
+  });
+
+  // Start a family (0024, SPEC-START-FAMILY, DEC-55). Needs a signed-in user in no family and a way to flip the switch.
+  describe('start_family / can_start_family (BETA-START, migration 0024)', () => {
+    // QA-R1 (Nov 7): a stack with no starter user or switch flip reports these as skipped, never as passed.
+    const itStart = caps.starter ? it : it.skip;
+    const starter = () => h.as('starter');
+    const spaceIds = async (api: HearthApi) => (await api.mySpaces()).map((s) => s.space_id);
+
+    itStart('BETA-START-8 switch off: can_start_family is false and start_family is refused (42501); my_features never lists it', async () => {
+      await h.setStartFamilyOpen!(false);
+      expect(await starter().canStartFamily()).toBe(false);
+      expect(await code(starter().startFamily({ clientId: uuid(), name: 'Our kids', sides: [] }))).toBe('42501');
+      expect(await spaceIds(starter())).toEqual([]);
+      expect(await poster.myFeatures(h.spaceId)).not.toContain('start_family_open');
+    });
+
+    itStart('BETA-START-1 a signed-in account with no family starts one: Owner, in Everyone, nobody else sees it', async () => {
+      await h.setStartFamilyOpen!(true);
+      const me = starter();
+      expect(await me.canStartFamily()).toBe(true);
+      const id = await me.startFamily({ clientId: uuid(), name: '  Our kids  ', sides: [] });
+      expect(typeof id).toBe('string');
+      const mine = (await me.mySpaces()).find((s) => s.space_id === id);
+      expect(mine).toMatchObject({ space_id: id, name: 'Our kids', role: 'owner', can_post: true });
+      const circles = await me.myCircles(id);
+      expect(circles).toHaveLength(1);
+      expect(circles[0]).toMatchObject({ kind: 'everyone', member_count: 1 });
+      // the other direction: nobody outside it can see any of it
+      for (const other of [poster, viewerIn, viewerOut]) {
+        expect(await spaceIds(other)).not.toContain(id);
+        expect(await other.myCircles(id)).toEqual([]);
+      }
+    });
+
+    itStart('BETA-START-1 idempotent on p_client_id: a retry returns the first family, never a second', async () => {
+      await h.setStartFamilyOpen!(true);
+      const clientId = uuid();
+      const a = await starter().startFamily({ clientId, name: 'Our kids', sides: [] });
+      expect(await starter().startFamily({ clientId, name: 'Our kids', sides: [] })).toBe(a);
+      expect(await spaceIds(starter())).toEqual([a]);
+    });
+
+    itStart('BETA-START-5 one family per account: a second start is 23505 and can_start_family turns false; a parent already in a family gets the same', async () => {
+      await h.setStartFamilyOpen!(true);
+      const first = await starter().startFamily({ clientId: uuid(), name: 'Our kids', sides: [] });
+      expect(await starter().canStartFamily()).toBe(false);
+      expect(await code(starter().startFamily({ clientId: uuid(), name: 'Second try', sides: [] }))).toBe('23505');
+      expect(await spaceIds(starter())).toEqual([first]);
+      expect(await poster.canStartFamily()).toBe(false);
+      expect(await code(poster.startFamily({ clientId: uuid(), name: 'Another', sides: [] }))).toBe('23505');
+      expect(await viewerIn.canStartFamily()).toBe(false);
+    });
+
+    itStart('BETA-START-6 a blank or over-60 name, or sides that are not 0 or 2 distinct names, is 23514 and leaves nothing', async () => {
+      await h.setStartFamilyOpen!(true);
+      const me = starter();
+      for (const bad of [
+        { name: '   ', sides: [] },
+        { name: 'x'.repeat(61), sides: [] },
+        { name: 'Our kids', sides: ["Dad's side"] },
+        { name: 'Our kids', sides: ["Dad's side", "Mom's side", 'Third'] },
+        { name: 'Our kids', sides: ["Dad's side", "Dad's side"] },
+        { name: 'Our kids', sides: ["Dad's side", '  '] },
+      ]) {
+        expect({ bad, code: await code(me.startFamily({ clientId: uuid(), ...bad } as never)) }).toEqual({ bad, code: '23514' });
+      }
+      expect(await spaceIds(me)).toEqual([]);
+      expect(await me.canStartFamily()).toBe(true); // a refusal counts no start
+      expect(await code(me.startFamily({ clientId: uuid(), name: 'x'.repeat(60), sides: [] }))).toBe('ok');
+    });
+
+    itStart('BETA-START-4 Two sides: two groups with Private comments and nobody in them; Everyone is still there', async () => {
+      await h.setStartFamilyOpen!(true);
+      const me = starter();
+      const id = await me.startFamily({ clientId: uuid(), name: 'Our kids', sides: ["Dad's side", "Mom's side"] });
+      const circles = await me.myCircles(id);
+      expect(circles.filter((c) => c.kind === 'everyone')).toHaveLength(1);
+      const groups = circles.filter((c) => c.kind === 'group').sort((a, b) => a.name.localeCompare(b.name));
+      expect(groups.map((g) => g.name)).toEqual(["Dad's side", "Mom's side"]);
+      for (const g of groups) expect(g).toMatchObject({ comment_mode: 'private', member_count: 0 });
+    });
+
+    itStart('BETA-START-3 the owner invites one email to Everyone; that person sees the post, someone with no invite never does', async () => {
+      if (!caps.joiner || !h.joinerEmail) return;
+      await h.setStartFamilyOpen!(true);
+      const owner = starter();
+      const id = await owner.startFamily({ clientId: uuid(), name: 'Our kids', sides: [] });
+      const everyone = (await owner.myCircles(id)).find((c) => c.kind === 'everyone')!;
+      const { code: c } = await owner.createInvite({ space: id, role: 'viewer', circleIds: [everyone.circle_id], history: 'all', channel: 'email', targetEmail: h.joinerEmail });
+      const joiner = h.as('joiner');
+      expect(await joiner.redeemInvite(c)).toBe(id);
+      const post = await owner.createPost({ clientId: uuid(), space: id, caption: 'First one', circleIds: [everyone.circle_id] });
+      await h.attachReadyMedia(owner, post);
+      await owner.publishPost(post);
+      expect((await joiner.getFeed({ space: id })).map((p) => p.post_id)).toEqual([post]);
+      const outside = await viewerOut.getFeed({ space: id }).then((r) => r.map((p) => p.post_id), (e: unknown) => (e instanceof ApiError ? e.code : String(e)));
+      expect([[], 'P0002']).toContainEqual(outside); // a family you're not in: empty or not found, never its posts
+      expect(await code(viewerOut.getComments(post))).toBe('P0002');
+    });
+
+    itStart('BETA-START-7 an empty family I started is retired when I redeem an invite to another family', async () => {
+      if (!h.starterEmail) return;
+      await h.setStartFamilyOpen!(true);
+      const me = starter();
+      const empty = await me.startFamily({ clientId: uuid(), name: 'Our kids', sides: [] });
+      const { code: c } = await poster.createInvite({ space: h.spaceId, role: 'viewer', circleIds: [h.circleIn], history: 'all', channel: 'email', targetEmail: h.starterEmail });
+      expect(await me.redeemInvite(c)).toBe(h.spaceId);
+      expect(await spaceIds(me)).toEqual([h.spaceId]);
+      expect(await spaceIds(me)).not.toContain(empty);
     });
   });
 });

@@ -974,7 +974,7 @@
    "fixed": null
   },
   {
-   "id": "B15",
+   "id": "B16",
    "kind": "bug",
    "layer": "app",
    "severity": "Medium",
@@ -993,6 +993,17 @@
    "title": "Test Log honesty: run r11 (Oct 18) is rebuilt from today's SQL files, so every rebuild marks backend cases written after Oct 18 as passing in a run that never ran them (639 became 841 on Nov 10). Those two seed files were left as committed until it's fixed",
    "tests": [],
    "found": "2026-11-10",
+   "fixed": null
+  },
+  {
+   "id": "B15",
+   "kind": "bug",
+   "layer": "backend",
+   "severity": "Medium",
+   "status": "open",
+   "title": "QA-R1 (BETA-SMS): a phone-only account's placeholder name falls back to its phone number (tg_handle_new_user, 0007: coalesce(email, phone)), so the family would see the number as a name and in notices. Test: backend/tests/sms_test.sql",
+   "tests": [],
+   "found": "2026-10-15",
    "fixed": null
   }
  ]

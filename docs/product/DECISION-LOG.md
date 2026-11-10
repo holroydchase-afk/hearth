@@ -28,7 +28,7 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Source:** `docs/product/ANCHORS.md` "Anchors"
 
 ### DEC-3 · Invite-only, no public sign-up or "start a family" in the app
-- **When / status:** Oct 16 · Built
+- **When / status:** Oct 16 · Built · "Start a family" part superseded Nov 7 by DEC-55 (joining stays invite-only)
 - **Chose:** you join only with an invite code; families are set up by script for now.
 - **Over:** an in-app "Start a family" screen (deferred to milestone 7).
 - **Because:** keeps Hearth exclusive to people the family trusts (A1), and there is only one family to set up during the proof of concept.
@@ -387,5 +387,33 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** the fun of Slack and Instagram replies without sending searches or views to an outside service (A1, A3); it reuses the photo pipeline.
 - **Source:** `docs/product/decisions/2026-11-06-gifs-in-comments.md`
 
+### DEC-54 · Fix the Apple design guidelines gaps (HIG-1..12)
+- **When / status:** Nov 6 · Chase, after the sweep (doc https://claude.ai/artifact/3N1G5jF4ezeQ2Gtf2jFwZU): "handle all the p1s, handle 1,6,8,4,etc"
+- **Chose:** ask for notices after the first photo with a Hearth card; zoom; capped tab words; warm launch screen; iPad in every direction; Increase Contrast, Reduce Motion, VoiceOver sender, swipe-down sheets, bigger icons, haptics.
+- **Over:** waiting until the App Store build; words under the emoji (Chase picked "Keep emoji only" on the Nov 6 card; REACT-7 stands).
+- **Because:** each was a gap against Apple's own rules that an older user or a reviewer would hit first; the cold notice prompt can't be undone from far away.
+- **Source:** `docs/product/decisions/2026-11-06-apple-guidelines-fixes.md`
+
+### DEC-55 · A "Start a family" screen before the beta; joining stays invite-only (BETA-START-1..9)
+- **When / status:** Nov 7 · Chase picked "Yes, build it now" on the decision card · Specced, not built
+- **Chose:** a signed-in parent with no family names one, keeps Everyone or adds two sides, and invites one person, through one `start_family` RPC; one family per account; a server switch can close it.
+- **Over:** DEC-3's Not now (milestone 7, only Chase starts a family by script); an allowlist only Chase could fill.
+- **Because:** level 5 of the recruiter-readiness bar needs someone other than Chase to start and use Hearth unaided. Sign-up and the create RPCs were already open; joining, the real guard, is unchanged.
+- **Source:** `docs/product/decisions/2026-11-07-start-a-family.md`, `docs/product/SPEC-START-FAMILY.md`
+
+### DEC-56 · Plain-word photo search before go-live (SEARCH-1..14)
+- **When / status:** Nov 10 · Chase listed "Search" as go-live item 9 · Built locally (migration 0025), not pushed (GitHub hold)
+- **Chose:** a Search screen that matches typed words against a post's title, caption and sender's name, plus "From" a person and "Taken in" a year, inside the timeline's own visibility rule. No AI, nothing typed is stored.
+- **Over:** the Oct 17 "no search box in the beta" call (Pick a year and From [person] only); AI or face search, which belongs on the paid tier (DEC-37) and would send media to a model.
+- **Because:** Chase wants it for go-live; captions are plaintext columns, so it is cheap and stays in Postgres in the US. Encrypting captions later would end it (TRACKER).
+- **Source:** `docs/product/decisions/2026-11-10-photo-search.md`, `docs/product/SPEC-SEARCH.md`
+
+### DEC-57 · Text message codes are the default sign-in, behind a switch, for M4 (BETA-SMS-1..17)
+- **When / status:** Nov 10 · Chase put SMS sign-in on his go-live list (item 8) and asked for it to be built now; first asked Oct 18 ("I want texts to be the primary and default way folks receive their OTP.") · Specced, not built; ships off until a provider and US carrier registration exist
+- **Chose:** mobile number first with "Use email instead"; US numbers only; the same 6-number code screen; phone and email stay separate accounts in this pass; phone-only accounts get push, not email notices; an app flag keeps today's email-only screens until Chase has a provider. Stop date: carrier registration not approved by Nov 18 means the beta runs on email.
+- **Over:** D11's "keep email for milestones 1 and 2" (now superseded for M4); email as the only sign-in; linking phone and email on one account (deferred).
+- **Because:** a WV grandparent finds a text faster than an email in a junk folder (A1, G2); the switch means no relative ever sees a half-working text sign-in.
+- **Source:** `docs/product/decisions/2026-11-10-sms-sign-in.md`, `docs/product/SPEC-SMS-SIGN-IN.md`; the provider pick is the architect's (spec §6)
+
 ---
-Last updated: Nov 6, 2026 (DEC-53)
+Last updated: Nov 10, 2026 (DEC-57; DEC-54 is on the HIG PR #106)

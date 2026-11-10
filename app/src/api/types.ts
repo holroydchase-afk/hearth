@@ -141,6 +141,19 @@ export interface TimelineArgs {
   limit?: number;
 }
 
+/** search_posts (migration 0025, SEARCH-1..14): plain words in the title, caption or sender's name, a sender, and
+ * a capture-date range [from, until). At least one of them. Same rows, order and keyset as get_timeline. */
+export interface SearchArgs {
+  space: string;
+  words?: string | null;
+  author?: string | null;
+  from?: string | null;
+  until?: string | null;
+  beforeAt?: string | null;
+  beforeId?: string | null;
+  limit?: number;
+}
+
 /** A feed row plus when it was taken. sort_at = coalesce(taken_at, published_at). */
 export interface TimelinePost extends FeedPost {
   taken_at: string | null;
@@ -190,9 +203,14 @@ export interface CommentRow {
   created_at: string;
 }
 
+/** BETA-SMS-9 (0026): how the join screen asks: a number, an email, or a number first. */
+export type SignInWith = 'phone' | 'email' | 'either';
+
 export interface InvitePreview {
   inviter_name: string;
   space_name: string;
+  /** Never the target itself. */
+  sign_in_with: SignInWith;
 }
 
 export interface CreateInviteArgs {
@@ -212,6 +230,7 @@ export interface CreateInviteArgs {
 
 export interface Session {
   userId: string;
+  /** '' for a phone-only account (text sign-in, BETA-SMS). */
   email: string;
 }
 
