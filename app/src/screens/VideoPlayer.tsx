@@ -2,23 +2,31 @@
 // Copyright (C) 2026 Chase Holroyd
 // VID-18..20 (SPEC-MEDIA 4.1): a video, full screen, opened in place over whatever screen the grandparent was on.
 // The video is decrypted into a short-lived local file (MediaCache.videoUri) and deleted when this closes.
-// It starts playing with the sound off (never sound by surprise: VID-19), and every control is a word button:
-// Play / Pause, Sound on / Sound off, Close. If the file can't be fetched or decrypted, or the player fails, it
-// says so in plain words with Try again; never a blank or spinning screen. Words are drafts (grandparent-ux E12).
+// GUX-R3: nothing plays until the person taps Play on the poster; that one tap opens this and plays, with sound.
+// Every control is a word button: Play / Pause, "Turn sound off" / "Turn sound on", Close. GUX-R2: always on the
+// person's color in its dark version (never pure black, which glares), even when the phone is in light mode.
+// If the file can't be fetched or decrypted, or the player fails, it says so in plain words naming who to call
+// (GUX-R4) with Try again; never a blank or spinning screen.
 import { useVideoPlayer, VideoView } from 'expo-video';
 import React, { useEffect, useState } from 'react';
 import { Modal, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { cantPlayVideo } from '../errors/messages';
 import { useApp } from '../state/AppContext';
 import { Button, Txt } from '../ui/kit';
+import { LookContext, useTheme } from '../ui/theme';
 
-export const CANT_PLAY = "This video won't play right now. Try again later.";
+export function VideoPlayer(props: { postId: string; mediaId: string; onClose: () => void }) {
+  return (
+    <LookContext.Provider value="dark">
+      <DarkPlayer {...props} />
+    </LookContext.Provider>
+  );
+}
 
-const BLACK = '#000000';
-const WHITE = '#FFFFFF';
-
-export function VideoPlayer({ postId, mediaId, onClose }: { postId: string; mediaId: string; onClose: () => void }) {
-  const { media } = useApp();
+function DarkPlayer({ postId, mediaId, onClose }: { postId: string; mediaId: string; onClose: () => void }) {
+  const { media, helper } = useApp();
+  const { c } = useTheme();
   const [uri, setUri] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
@@ -42,20 +50,20 @@ export function VideoPlayer({ postId, mediaId, onClose }: { postId: string; medi
 
   return (
     <Modal visible animationType="fade" presentationStyle="fullScreen" onRequestClose={onClose} supportedOrientations={['portrait', 'landscape']}>
-      <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={styles.screen}>
+      <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={[styles.screen, { backgroundColor: c.bg }]}>
         <View style={styles.top}>
           <Button label="Close the video" text="Close" icon={{ sf: 'xmark', md: 'close' }} variant="secondary" onPress={onClose} />
         </View>
         {failed ? (
           <View style={styles.center}>
-            <Txt style={{ color: WHITE, textAlign: 'center' }} role="alert">{CANT_PLAY}</Txt>
+            <Txt style={{ textAlign: 'center' }} role="alert">{cantPlayVideo(helper)}</Txt>
             <Button label="Try again" onPress={tryAgain} />
           </View>
         ) : uri ? (
           <Playing key={`${attempt}:${uri}`} uri={uri} onError={() => setFailed(true)} />
         ) : (
           <View style={styles.center}>
-            <Txt style={{ color: WHITE }}>Getting the video ready…</Txt>
+            <Txt>Getting the video ready…</Txt>
           </View>
         )}
       </SafeAreaView>
@@ -65,10 +73,11 @@ export function VideoPlayer({ postId, mediaId, onClose }: { postId: string; medi
 
 function Playing({ uri, onError }: { uri: string; onError: () => void }) {
   const player = useVideoPlayer({ uri }, (p) => {
-    p.muted = true; // VID-19: never sound by surprise
+    // GUX-R3: the person tapped Play on the poster to get here, so it plays, with sound. Nothing autoplays before.
+    p.muted = false;
     p.play();
   });
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(false);
   const [isPlaying, setPlaying] = useState(player.playing);
 
   useEffect(() => {
@@ -94,15 +103,15 @@ function Playing({ uri, onError }: { uri: string; onError: () => void }) {
           ? <Button label="Pause the video" text="Pause" icon={{ sf: 'pause.fill', md: 'pause' }} style={{ flex: 1 }} onPress={() => player.pause()} />
           : <Button label="Play the video" text="Play" icon={{ sf: 'play.fill', md: 'play_arrow' }} style={{ flex: 1 }} onPress={() => player.play()} />}
         {muted
-          ? <Button label="Turn the sound on" text="Sound on" icon={{ sf: 'speaker.wave.2.fill', md: 'volume_up' }} variant="secondary" style={{ flex: 1 }} onPress={toggleSound} />
-          : <Button label="Turn the sound off" text="Sound off" icon={{ sf: 'speaker.slash.fill', md: 'volume_off' }} variant="secondary" style={{ flex: 1 }} onPress={toggleSound} />}
+          ? <Button label="Turn sound on" text="Sound on" icon={{ sf: 'speaker.wave.2.fill', md: 'volume_up' }} variant="secondary" style={{ flex: 1 }} onPress={toggleSound} />
+          : <Button label="Turn sound off" text="Sound off" icon={{ sf: 'speaker.slash.fill', md: 'volume_off' }} variant="secondary" style={{ flex: 1 }} onPress={toggleSound} />}
       </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: BLACK },
+  screen: { flex: 1 },
   top: { flexDirection: 'row', justifyContent: 'flex-start', paddingHorizontal: 16, paddingVertical: 8 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24 },
   controls: { flexDirection: 'row', gap: 12, paddingHorizontal: 16, paddingVertical: 12 },

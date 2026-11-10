@@ -8,9 +8,12 @@ import { captureInfo } from './captureDate';
 import type { QueueItem } from '../upload/queue';
 import { BULK_PICK_LIMIT, type PickedAsset } from '../share/bulk';
 
-/** The picker gives a video's length in ms on phones but in seconds on the web (expo-image-picker 58). */
+/**
+ * The picker gives a video's length in ms on phones but in seconds on the web (expo-image-picker 58). QA-R3: the
+ * web says 0 when it can't read the file's metadata; an unknown length is null, which checkVideo refuses.
+ */
 export const pickedDurationMs = (d: number | null | undefined, os: string = Platform.OS): number | null =>
-  d == null ? null : os === 'web' ? Math.round(d * 1000) : d;
+  d == null || !Number.isFinite(d) || d <= 0 ? null : os === 'web' ? Math.round(d * 1000) : d;
 
 export type PickResult = { items: QueueItem[] } | { denied: true };
 
