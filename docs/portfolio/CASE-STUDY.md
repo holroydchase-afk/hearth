@@ -22,7 +22,7 @@ Chase's family is "distributed": divorces, remarriages, step-grandparents, relat
 
 - **An agent team with lanes:** staff PM, QA, app engineer, architect, a designer for the grandparents, UX reviewer for public work, privacy and security, positioning, and a story keeper that logs decisions. The founder writes goals and makes calls. Agents work one lane at a time, test-first, and open pull requests. Docs and test changes merge once CI is green; anything a user or the public demo would see waits for the founder's word (DEC-48).
 - **Night shift:** before bed, one instruction schedules an unattended 2:15am run. On the first night it reviewed the app from the code, ranked 14 items, and shipped parallel uploads, a fix for the photo framing the founder had reported, and a cipher switch. It also checked the messenger's encryption against the RFC 9180 test vectors.
-- **Decision log:** 47 decisions, each with what it beat and why. That makes the story retellable and reviewable.
+- **Decision log:** 57 decisions, each with what it beat and why. That makes the story retellable and reviewable.
 
 ## Results so far
 
