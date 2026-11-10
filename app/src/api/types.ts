@@ -190,9 +190,14 @@ export interface CommentRow {
   created_at: string;
 }
 
+/** BETA-SMS-9 (0025): how the join screen asks: a number, an email, or a number first. */
+export type SignInWith = 'phone' | 'email' | 'either';
+
 export interface InvitePreview {
   inviter_name: string;
   space_name: string;
+  /** Never the target itself. */
+  sign_in_with: SignInWith;
 }
 
 export interface CreateInviteArgs {
@@ -212,6 +217,7 @@ export interface CreateInviteArgs {
 
 export interface Session {
   userId: string;
+  /** '' for a phone-only account (text sign-in, BETA-SMS). */
   email: string;
 }
 

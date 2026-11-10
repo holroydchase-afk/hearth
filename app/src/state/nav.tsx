@@ -7,7 +7,8 @@ export interface Nav {
   openViewer(postId: string, mediaIndex: number): void;
   close(): void;
   goPhotos(): void;
-  goSignIn(): void;
+  /** `with: 'email'` opens the email field instead of the number (BETA-SMS-12). */
+  goSignIn(opts?: { with?: 'email' }): void;
   /** Open an invite by its code (BETA-JOIN-8). */
   goJoin(code: string): void;
 }

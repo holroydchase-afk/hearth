@@ -5,6 +5,7 @@
 // email) never does. Same field rules as report_client_error in migration 0006.
 import { Platform } from 'react-native';
 import pkg from '../../package.json';
+import { hasPhone, scrubPhone } from '../api/phone';
 import type { ClientErrorReport } from '../api/types';
 
 const KIND = /^[A-Za-z][A-Za-z0-9_]{0,59}$/;
@@ -23,9 +24,9 @@ export function errorReport(e: unknown, screen: string): ClientErrorReport {
   const r: ClientErrorReport = {
     appVersion: pkg.version,
     os: osString(),
-    screen: SCREEN.test(screen) ? screen : 'unknown',
-    kind: KIND.test(name) ? name : 'Error',
+    screen: SCREEN.test(screen) ? scrubPhone(screen) : 'unknown', // BETA-SMS-15: never a phone number
+    kind: KIND.test(name) && !hasPhone(name) ? name : 'Error',
   };
-  if (typeof code === 'string' && CODE.test(code)) r.code = code;
+  if (typeof code === 'string' && CODE.test(code) && !hasPhone(code)) r.code = code;
   return r;
 }

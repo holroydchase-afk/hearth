@@ -259,11 +259,11 @@ describe.each(factories)('%s contract (API.md)', (_name, factory, caps) => {
       expect(await code(viewerIn.createInvite({ space: h.spaceId, role: 'viewer', circleIds: [h.circleIn], history: 'all' }))).toBe('42501');
     });
 
-    it('preview works signed out and leaks only inviter and space name', async () => {
+    it('preview works signed out and leaks only inviter, space name and how to sign in (BETA-SMS-9)', async () => {
       const { code: c, link } = await poster.createInvite({ space: h.spaceId, role: 'viewer', circleIds: [h.circleIn], history: 'all' });
       expect(link).toMatch(/^https:\/\//); // may carry a separate link token rather than the code
       const prev = await h.anon().invitePreview(c);
-      expect(Object.keys(prev).sort()).toEqual(['inviter_name', 'space_name']);
+      expect(Object.keys(prev).sort()).toEqual(['inviter_name', 'sign_in_with', 'space_name']);
       expect(await code(h.anon().invitePreview('NOPE-NOPE-1'))).toBe('22023');
     });
 

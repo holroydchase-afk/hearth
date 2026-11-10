@@ -2,6 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
+import { isPhoneOnly } from '../api/phone';
 import { useApp } from '../state/AppContext';
 import { useNav } from '../state/nav';
 import { Button, Card, Loading, Screen, Txt } from '../ui/kit';
@@ -44,7 +45,7 @@ export function AppGate() {
         </Card>
         <Card>
           <Txt variant="title">Been here before?</Txt>
-          <Button label="Sign in" variant="secondary" onPress={nav.goSignIn} />
+          <Button label="Sign in" variant="secondary" onPress={() => nav.goSignIn()} />
         </Card>
       </Screen>
     );
@@ -57,6 +58,13 @@ export function AppGate() {
         <Txt>You're signed in, but you're not part of a family on Hearth yet. Type the invite code from your family's text or email.</Txt>
         <InviteCodeEntry />
         <Txt variant="muted">No code? Ask the person who invited you to send a new one.</Txt>
+        {/* BETA-SMS-12: a relative who used to sign in by email isn't stranded in an empty text account. */}
+        {isPhoneOnly(app.session) ? (
+          <>
+            <Txt>Signed in with email before?</Txt>
+            <Button label="Use email instead" variant="secondary" onPress={() => { void app.signOut().then(() => nav.goSignIn({ with: 'email' })); }} />
+          </>
+        ) : null}
         {canStart ? <Button label="I'm a parent: start a family" variant="secondary" onPress={() => setStarting(true)} /> : null}
         <Button label="Sign out of Hearth" variant="secondary" onPress={() => void app.signOut()} />
       </Card>

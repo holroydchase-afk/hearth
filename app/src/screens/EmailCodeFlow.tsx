@@ -7,7 +7,12 @@ import { useApp } from '../state/AppContext';
 import { suggestEmail } from '../ui/emailSuggest';
 import { Button, Field, Notice, Txt } from '../ui/kit';
 
-export function EmailCodeFlow({ onSignedIn, inviter }: { onSignedIn: (email: string) => Promise<void>; inviter?: string | null }) {
+export function EmailCodeFlow({ onSignedIn, inviter, onUseText }: {
+  onSignedIn: (email: string) => Promise<void>;
+  inviter?: string | null;
+  /** BETA-SMS-2: texts on, a way back to the number. Absent (texts off): today's screen, unchanged. */
+  onUseText?: () => void;
+}) {
   const { deps } = useApp();
   const [step, setStep] = useState<'email' | 'code'>('email');
   const [email, setEmail] = useState('');
@@ -71,6 +76,7 @@ export function EmailCodeFlow({ onSignedIn, inviter }: { onSignedIn: (email: str
         {msg ? <Notice text={msg} /> : null}
         <Button label="Send me a code" busy={busy} disabled={!email.includes('@') || mustWait} onPress={() => void send()} />
         {mustWait ? <Txt variant="muted">{`You can ask for a new code in ${waitLeft} seconds.`}</Txt> : null}
+        {onUseText ? <Button label="Use a text instead" variant="secondary" onPress={onUseText} /> : null}
       </>
     );
   }
