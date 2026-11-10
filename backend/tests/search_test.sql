@@ -1,6 +1,6 @@
 -- SEARCH-1..14 (Chase, Nov 10, go-live list item 9): find posts by their words, who sent them and when.
 -- Non-AI only: plain words in the title, caption and sender's name; never media, faces, places or replies.
--- Migration 0025, search_posts. Written FIRST: red until 0025 lands.
+-- Migration 0025, search_posts. Written FIRST: red until 0025 lands. SEARCH-15 from the privacy-security review.
 -- Seed: space A (Alex's). a1 "Sam's first bike ride" went to "Grandparents – Dad's side" (Grandma and Grandpa
 -- Rivera); a2 "Report card" went to "Co-parent" (Blair); a3 "Soccer game!" went to Everyone (Grandma and Grandpa
 -- Rivera, Aunt Jo, Grandma Chen). Grandpa replied "Look at him go!" on a1.
@@ -144,6 +144,31 @@ select tests.ok_sql($$select not has_function_privilege('anon', 'public.search_p
                     'SEARCH-14 anon can''t call search_posts');
 select tests.ok_sql($$select has_function_privilege('authenticated', 'public.search_posts(uuid, text, uuid, timestamptz, timestamptz, timestamptz, uuid, integer)', 'execute')$$,
                     'SEARCH-14 signed-in people can');
+
+-- ---------- SEARCH-15 privacy-security review (SEARCH-R1): drafts, parents who didn't send, removed people ----------
+:as_admin
+insert into public.posts (id, space_id, author_id, caption) values
+  ('55555555-0000-0000-0000-0000000000d1', :sa, :alex, 'Zebra costume, not sent yet');
+insert into public.post_audiences (post_id, circle_id) values
+  ('55555555-0000-0000-0000-0000000000d1', '33333333-0000-0000-0000-0000000000a0');
+:as_alex
+select tests.ok_sql(format($$select not exists (select 1 from public.search_posts(%L, 'zebra'))$$, :sa),
+                    'SEARCH-15 a draft is never found, even by its sender');
+:as_admin
+update public.space_members set role = 'adult' where space_id = :sa and user_id = :blair;
+:as_blair
+select tests.ok_sql(format($$select count(*) = 1 and bool_and(audience is null and seen_count is null and reach_count is null)
+                               from public.search_posts(%L, 'bike') r$$, :sa),
+                    'SEARCH-15 a parent who didn''t send the post finds it but gets no group title or counts');
+:as_admin
+update public.space_members set role = 'viewer' where space_id = :sa and user_id = :blair;
+delete from public.circle_members where circle_id = '33333333-0000-0000-0000-0000000000a1'
+                                   and user_id = 'a0000000-0000-0000-0000-0000000000a1';
+:as_ma
+select tests.ok_sql(format($$select not exists (select 1 from public.search_posts(%L, 'bike'))$$, :sa),
+                    'SEARCH-15 removed from the group, Grandma stops finding its posts at once');
+select tests.ok_sql(format($$select exists (select 1 from public.search_posts(%L, 'soccer'))$$, :sa),
+                    'SEARCH-15 ...and still finds Everyone''s');
 
 -- ---------- report ----------
 \o

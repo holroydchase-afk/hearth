@@ -5,7 +5,9 @@
 -- Privacy: the candidates are private.visible_posts, the timeline's own "who sees what" rule, so a post you can't
 -- see is never found. Group names are never searched, and rows come from private.feed_rows, which hands the
 -- audience (group titles) to the sender only (GROUP PRIVACY, Nov 4). Replies are not searched: their own
--- reader rules (0009, 0013) stay with get_comments. STABLE: nothing anyone types is stored or logged.
+-- reader rules (0009, 0013) stay with get_comments. STABLE: Hearth stores nothing anyone types, and the app never logs
+-- it; the database host's own statement logs follow its settings (SEARCH-R2, TRACKER R42). Supabase's 8 s statement
+-- timeout for signed-in calls bounds a search (SEARCH-R3).
 -- Order and paging match get_timeline: newest photo first, keyset (p_before_at, p_before_id). Same columns too.
 
 create function public.search_posts(

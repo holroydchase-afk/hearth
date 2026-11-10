@@ -2,7 +2,7 @@
 
 Chase, Nov 10: go-live list item 9, "Search." Status: built locally (migration 0025 + Search screen), not pushed (GitHub hold). DEC-56.
 
-**What it is.** A "Search" button on Photos finds posts by the words people wrote, who sent them and the year they were taken. Plain words only: it never looks inside a photo, never uses AI, and nothing typed is kept. AI search (faces, objects, places) stays on the separate paid tier (DEC-37, `docs/product/AI-FEATURES.md`).
+**What it is.** A "Search" button on Photos finds posts by the words people wrote, who sent them and the year they were taken. Plain words only: it never looks inside a photo, never uses AI, and Hearth keeps nothing typed (the database host's slow-query log is TRACKER R42). AI search (faces, objects, places) stays on the separate paid tier (DEC-37, `docs/product/AI-FEATURES.md`).
 
 ## Acceptance criteria
 | ID | Criterion | Test |

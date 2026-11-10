@@ -14,6 +14,7 @@ blockers: []
 ## Nov 10: photo search (DEC-56, SEARCH-1..14, SEARCH-UI-1..8, migration 0025, TRACKER R42; branch claude/project-thread-bsaqxe, local only)
 - **Why:** Chase's go-live list, item 9 "Search". Plain words only; AI search stays on the paid tier (DEC-37).
 - **Done:** `search_posts` (0025): every typed word must be in the title, caption or sender's name; From one person; a capture-date range; candidates from `private.visible_posts`, rows from `private.feed_rows`, so hidden posts never match and group titles never show to non-senders; STABLE, nothing stored. App: `searchPosts` (Supabase + Fake), `SearchScreen.tsx` opened by a Search button in the Photos toolbar. Spec `SPEC-SEARCH.md`, persona check, API.md, architecture 05.
+- **privacy-security:** no P0/P1. SEARCH-R1 (drafts, removed people, a parent who didn't send) fixed with SEARCH-15 tests; SEARCH-R2 wording softened, Supabase log settings to check (TRACKER R42); SEARCH-R3 accepted: Supabase's 8 s timeout for signed-in calls bounds a search at family scale (from Supabase's docs, not checked live).
 - **Open:** the real-stack contract (PostgREST harness) wasn't run; grandparent-ux words pass; no Playwright walk.
 - **Next exact step:** after "lift GitHub hold", push Start a family first, then this branch on top as its own PR (it sits on R41's commits).
 
