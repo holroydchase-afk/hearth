@@ -14,13 +14,13 @@ export function newForYou<T extends { author_id: string; published_at: string }>
     .sort((a, b) => Date.parse(a.published_at) - Date.parse(b.published_at));
 }
 
-/** "Today", "Yesterday", a weekday within 6 days, else "Nov 4": calendar days in the phone's local time. */
+/** "today", "yesterday" (lowercase: they sit mid-sentence, GUX-R5), a weekday within 6 days, else "Nov 4": calendar days in the phone's local time. */
 export function newSinceDay(iso: string, now: Date = new Date()): string {
   const d = new Date(iso);
   const day = (x: Date) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
   const back = Math.round((day(now) - day(d)) / 864e5);
-  if (back <= 0) return 'Today';
-  if (back === 1) return 'Yesterday';
+  if (back <= 0) return 'today';
+  if (back === 1) return 'yesterday';
   if (back <= 6) return LONG_DAYS[d.getDay()]!;
   return `${MONTHS[d.getMonth()]} ${d.getDate()}`;
 }

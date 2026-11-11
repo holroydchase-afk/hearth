@@ -73,7 +73,7 @@ export function useApp(): AppValue {
   return v;
 }
 
-const EMPTY_FEED: FeedState = { posts: [], status: 'loading', loaded: false, hasMore: false, notice: null, comments: {}, drafts: {}, opened: {} };
+const EMPTY_FEED: FeedState = { posts: [], status: 'loading', loaded: false, hasMore: false, notice: null, comments: {}, drafts: {}, opened: {}, fetchedAt: null };
 
 export function useFeed(): FeedState {
   const { feed } = useApp();

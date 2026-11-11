@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, RefreshControl, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PhotosDemoTip } from '../demo/DemoTip';
@@ -50,20 +50,24 @@ export function PhotosScreen() {
   const [messages, setMessages] = useState(false);
   // SEARCH-UI-1: Search opens in place too; Back returns here.
   const [search, setSearch] = useState(false);
-  // OPEN-5: the last visit, read once when Photos loads and then set to now, so the card stays for this visit.
+  // OPEN-5 (GUX-R4, QA-R1): the last visit, read once when Photos loads. It is saved only once the first network load
+  // succeeds, as the time that load started, so a failed or offline open never hides photos she hasn't seen.
   const me = app.session?.userId ?? null;
   const kv = app.deps.kv;
   const [lastSeen, setLastSeen] = useState<{ user: string; at: string | null } | null>(null);
   useEffect(() => {
     if (!me) return;
     let live = true;
-    void loadLastSeen(kv, me).then((at) => {
-      if (!live) return;
-      setLastSeen({ user: me, at });
-      void saveLastSeen(kv, me, new Date().toISOString());
-    });
+    void loadLastSeen(kv, me).then((at) => { if (live) setLastSeen({ user: me, at }); });
     return () => { live = false; };
   }, [kv, me]);
+  const saved = useRef<string | null>(null);
+  const fetchedAt = state.fetchedAt;
+  useEffect(() => {
+    if (!me || lastSeen?.user !== me || !fetchedAt || saved.current === me) return;
+    saved.current = me;
+    void saveLastSeen(kv, me, fetchedAt);
+  }, [kv, me, lastSeen, fetchedAt]);
   // OPEN-7: the new posts one at a time; OPEN-9: the photo wall. Both open in place; Back returns here.
   const [walk, setWalk] = useState<string[] | null>(null);
   const [wall, setWall] = useState(false);
@@ -120,7 +124,7 @@ export function PhotosScreen() {
           <IconButton label="Search the photos" text="Search" icon={{ sf: 'magnifyingglass', md: 'search' }} onPress={() => setSearch(true)} />
         ) : null}
         {state.loaded && state.posts.length ? (
-          <IconButton label="See all photos as a wall" text="Wall" icon={{ sf: 'square.grid.3x3', md: 'grid_view' }} onPress={() => setWall(true)} />
+          <IconButton label="See all the photos, three to a row" text="All photos" icon={{ sf: 'square.grid.3x3', md: 'grid_view' }} onPress={() => setWall(true)} />
         ) : null}
         {hasEvents ? (
           <IconButton label="See events" text="Events" icon={{ sf: 'calendar', md: 'event' }} onPress={() => setEvents({ eventId: null, fromList: true })} />
