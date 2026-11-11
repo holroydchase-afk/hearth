@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 // OPEN-1/2/5/8 (docs/product/SPEC-OPENING.md): the pure helpers behind Photos' "New for you" card.
 // newForYou(posts, lastSeen, me): others' posts published after the last visit, oldest first; none on a first open.
-// newSinceDay(iso, now): "Today", "Yesterday", a weekday within 6 days, else "Nov 3" (calendar days, local time).
+// newSinceDay(iso, now): "today", "yesterday" (lowercase, GUX-R5: they sit mid-sentence), a weekday within 6 days, else "Nov 3" (calendar days, local time).
 import { newForYou, newSinceDay } from '../newForYou';
 
 const post = (id: string, published: string, author = 'u-chase', name = 'Chase') => ({
@@ -43,13 +43,13 @@ describe('OPEN-2 newSinceDay', () => {
   const now = new Date(2026, 10, 11, 9, 0); // Wed Nov 11 2026, 9 am
   const at = (m: number, d: number, h = 12, min = 0) => new Date(2026, m, d, h, min).toISOString();
 
-  it('OPEN-2 Today and Yesterday go by the calendar day, not 24 hours', () => {
-    expect(newSinceDay(at(10, 11, 7), now)).toBe('Today');
-    expect(newSinceDay(at(10, 10, 23, 59), new Date(2026, 10, 11, 0, 5))).toBe('Yesterday');
-    expect(newSinceDay(at(10, 10, 8), now)).toBe('Yesterday');
+  it('OPEN-2 GUX-R5 "today" and "yesterday" are lowercase and go by the calendar day, not 24 hours', () => {
+    expect(newSinceDay(at(10, 11, 7), now)).toBe('today');
+    expect(newSinceDay(at(10, 10, 23, 59), new Date(2026, 10, 11, 0, 5))).toBe('yesterday');
+    expect(newSinceDay(at(10, 10, 8), now)).toBe('yesterday');
   });
 
-  it('OPEN-2 a weekday name within 6 days, else the month and day', () => {
+  it('OPEN-2 GUX-R5 a weekday name within 6 days (capitalized), else the month and day', () => {
     expect(newSinceDay(at(10, 9), now)).toBe('Monday');
     expect(newSinceDay(at(10, 5), now)).toBe('Thursday'); // 6 days back
     expect(newSinceDay(at(10, 4), now)).toBe('Nov 4'); // 7 days back
