@@ -14,6 +14,8 @@ import { MediaImage } from './MediaImage';
 import { VideoPoster } from './VideoPoster';
 
 type Media = FeedPost['media'][number];
+/** OPEN-3: a tile may come from another post (the New for you card): its post, its place there and its sender. */
+export type CollageMedia = Media & { postId?: string; index?: number; from?: string };
 
 /** How many photos go in the big tile, how many small ones, and how many more hide behind "+N". */
 export function collageShape(n: number): { big: number; small: number; more: number } {
@@ -28,7 +30,7 @@ export const singleAspect = (m: Pick<Media, 'width' | 'height'> | undefined) =>
   m?.width && m?.height ? Math.max(0.8, Math.min(1.91, m.width / m.height)) : 4 / 3;
 
 /** from: who sent it and the day ("Chase, Nov 3"), read out after each photo's place (HIG-9). */
-export function PhotoCollage({ postId, media, from }: { postId: string; media: Media[]; from?: string }) {
+export function PhotoCollage({ postId, media, from }: { postId: string; media: CollageMedia[]; from?: string }) {
   const nav = useNav();
   const { c } = useTheme();
   const n = media.length;
@@ -37,14 +39,17 @@ export function PhotoCollage({ postId, media, from }: { postId: string; media: M
   const tile = (i: number, style: object) => {
     const extra = more && i === big + small - 1 ? more : 0;
     const m = media[i]!;
+    const pid = m.postId ?? postId;
+    const at = m.index ?? i;
+    const by = m.from ?? from;
     if (m.kind === 'video' && !extra) {
       // VID-18: the poster with its own Play button; the rest of the tile still opens the post screen.
       return (
         <VideoPoster
           key={m.media_id}
-          postId={postId}
+          postId={pid}
           mediaId={m.media_id}
-          onOpen={() => nav.openViewer(postId, i)}
+          onOpen={() => nav.openViewer(pid, at)}
           openLabel={`Open video ${i + 1} of ${n} full screen`}
           style={[styles.tile, { backgroundColor: c.photo }, style]}
         />
@@ -54,11 +59,11 @@ export function PhotoCollage({ postId, media, from }: { postId: string; media: M
       <Pressable
         key={media[i]!.media_id}
         accessibilityRole="button"
-        accessibilityLabel={`Open photo ${i + 1} of ${n} full screen${extra ? `, and ${extra} more` : ''}${from ? `, from ${from}` : ''}`}
-        onPress={() => nav.openViewer(postId, i)}
+        accessibilityLabel={`Open photo ${i + 1} of ${n} full screen${extra ? `, and ${extra} more` : ''}${by ? `, from ${by}` : ''}`}
+        onPress={() => nav.openViewer(pid, at)}
         style={[styles.tile, { backgroundColor: c.photo }, style]}
       >
-        <MediaImage postId={postId} mediaId={m.media_id} fit="cover" full={m.kind !== 'video'} style={{ flex: 1 }} />
+        <MediaImage postId={pid} mediaId={m.media_id} fit="cover" full={m.kind !== 'video'} style={{ flex: 1 }} />
         {extra ? (
           <View style={styles.more} pointerEvents="none">
             <Txt variant="display" style={{ color: '#FFFFFF' }}>{`+${extra}`}</Txt>

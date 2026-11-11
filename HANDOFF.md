@@ -11,6 +11,12 @@ waiting_on_chase:
 blockers: []
 -->
 
+## Nov 11: New for you opening screen built (OPEN-1..11, DEC-58, TRACKER R44; branch claude/project-thread-eh13m5, local only under the GitHub hold)
+- **Done:** `feed/newForYou.ts` (others' posts since the last visit, oldest first; "New since Today/Yesterday/Monday/Nov 4"), `state/lastSeen.ts` (`hearth.lastSeen.v1.<user>`, on this phone only, read once when Photos loads then set to now), `NewForYouCard` + `OneAtATime` (`screens/NewForYou.tsx`), `PhotoWall.tsx` (month headers, three columns, Show older photos), Photos toolbar "Wall". `PhotoCollage` tiles can now come from several posts. No server change.
+- **Test changed:** OPEN-10's `waitFor` uses `.length).toBe(21)` instead of `toHaveLength(21)`: a failed toHaveLength pretty-prints every tile's React fiber, which blocked waitFor past its timeout (74 s, red even with the right UI).
+- **Open:** Back is hidden on the first new post (no dead button), spec says Back and Next; staff-pm/grandparent-ux to confirm. Not pushed (GitHub hold); not tried on a phone.
+- **Next exact step:** qa-tdd runs all suites 3x; then grandparent-ux on the card, one-at-a-time and wall words.
+
 ## Nov 10: video part 2, poster frame and player (VID-14..18, 20, 21; SPEC-MEDIA 4.1, TRACKER R27; local only under the GitHub hold, branch claude/project-thread-ontg2j)
 - **GitHub hold (Chase, Nov 10):** no push, PR, merge, deploy, CI or Actions until Chase says "lift GitHub hold". This work is local commits only.
 - **Done:** `prepareItem(item, deps?)` sends a video: cleaned MP4 as `display`, a JPEG poster as `thumb` (expo-video frame at 1 s, or 0 for clips under 1 s, re-encoded through the photo thumb steps; `src/media/expoPoster.ts`); no frame → the plain dark `app/assets/video-poster.jpg` (inlined in `videoPosterPlaceholder.ts`), still sends, nothing logged. `MediaCache.videoUri` decrypts into `<media_id>.mp4` (`platform/videoFiles.ts`; a blob: URL on web), deleted on Close, sign-out and start-up. `VideoPoster` ("Play" word button at the poster's bottom left, label "Play video"; the rest of the poster opens the post screen) on Photos, the post screen, Events and By date; `VideoPlayer` full screen in place (see GUX-R1..R4 below for its final words and behaviour). Bulk pick sends videos when `video_posting` is on (`planBatch(..., { videos })`). No migration, no deploy; `video_posting` stays off in production.

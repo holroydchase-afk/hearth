@@ -317,7 +317,8 @@ describe('OPEN-9/10 photo wall', () => {
     const wall = await screen.findByTestId('photo-wall');
     expect(within(wall).getAllByTestId(/^wall-tile-/)).toHaveLength(20);
     fireEvent.press(within(wall).getByRole('button', { name: 'Show older photos' }));
-    await waitFor(() => expect(within(screen.getByTestId('photo-wall')).getAllByTestId(/^wall-tile-/)).toHaveLength(21));
+    // .length, not toHaveLength: a failed toHaveLength prints every tile's React fiber, which blocks waitFor past its timeout.
+    await waitFor(() => expect(within(screen.getByTestId('photo-wall')).getAllByTestId(/^wall-tile-/).length).toBe(21));
     fireEvent.press(screen.getByRole('button', { name: 'Back to Photos' }));
     expect(await screen.findByTestId('photos-toolbar')).toBeTruthy();
     expect(screen.queryByTestId('photo-wall')).toBeNull();
