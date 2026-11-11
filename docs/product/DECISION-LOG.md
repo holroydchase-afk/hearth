@@ -415,5 +415,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** a WV grandparent finds a text faster than an email in a junk folder (A1, G2); the switch means no relative ever sees a half-working text sign-in.
 - **Source:** `docs/product/decisions/2026-11-10-sms-sign-in.md`, `docs/product/SPEC-SMS-SIGN-IN.md`; the provider pick is the architect's (spec §6)
 
+### DEC-58 · Hearth opens on "New for you" (OPEN-1..11)
+- **When / status:** Nov 11 · Chase picked C from four sketches ("Go with C and all your recommendations")
+- **Chose:** a New for you card on Photos (a collage of what came in since your last visit, one "See the new photos" button) that walks the new posts one at a time; a Wall button for the photo wall; the posts list stays underneath.
+- **Over:** the photo wall as the front door (tiles hide who sent and who can see; small faces); one photo at a time as the front door (slow for parents); Photos as it was.
+- **Because:** the gallery feel on open without losing names, who can see, Hooray or comments; one button for the oldest relatives.
+- **Source:** `docs/product/decisions/2026-11-11-opening-screen.md`
+
 ---
-Last updated: Nov 10, 2026 (DEC-57; DEC-54 is on the HIG PR #106)
+Last updated: Nov 11, 2026 (DEC-58)
