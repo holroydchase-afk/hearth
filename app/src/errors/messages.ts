@@ -8,7 +8,7 @@ export interface MessageContext {
   /** Name of the person who invited this user ("Chase"). */
   inviter?: string | null;
   /** What the person was doing, to pick the right 23514 message. */
-  action?: 'post' | 'comment' | 'join' | 'invite' | 'group' | 'edit' | 'start' | 'other';
+  action?: 'post' | 'comment' | 'join' | 'invite' | 'group' | 'edit' | 'start' | 'search' | 'other';
 }
 
 const KNOWN: ApiErrorCode[] = ['23514', '23505', '42501', 'P0002', '22023', '54000'];
@@ -44,6 +44,8 @@ export function messageFor(e: unknown, ctx: MessageContext = {}): string {
     case 'P0002':
       return 'This was removed.';
     case '22023':
+      // GUX-R1: search sends 22023 for more than 8 words (SEARCH-9); never the invite words there.
+      if (ctx.action === 'search') return "That's a lot of words. Try one or two, like birthday.";
       return `This invite is too old or already used. Ask ${who ?? 'the person who invited you'} for a new one.`;
     case '54000':
       if (ctx.action === 'start') return "You've started 3 families today. Try again tomorrow.";
@@ -53,6 +55,8 @@ export function messageFor(e: unknown, ctx: MessageContext = {}): string {
     case 'BAD_OTP':
       return "That code didn't work. Check the newest email from Hearth and type the 6 numbers again.";
     case 'NETWORK':
+      // GUX-R2: a search isn't retried for them, so don't promise it.
+      if (ctx.action === 'search') return 'No internet right now. Check your Wi-Fi, then tap Search again.';
       return "No internet right now. We'll keep trying.";
     case 'EXIF':
     case 'META_LOCATION': case 'META_DATETIME': case 'META_CAMERA': case 'META_ORIENTATION': case 'META_SOFTWARE':

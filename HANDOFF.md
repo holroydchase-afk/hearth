@@ -3,13 +3,20 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: Start a family (DEC-55, 0024) and demo first-minute fixes (FIRSTMIN, R40) in one PR for Chase's merge
+now: GitHub hold (Nov 10). Local only: Start a family (DEC-55, 0024) and photo search (DEC-56, 0025) wait as bundles in the shared folder
 next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 10: photo search (DEC-56, SEARCH-1..14, SEARCH-UI-1..8, migration 0025, TRACKER R42; branch claude/project-thread-bsaqxe, local only)
+- **Why:** Chase's go-live list, item 9 "Search". Plain words only; AI search stays on the paid tier (DEC-37).
+- **Done:** `search_posts` (0025): every typed word must be in the title, caption or sender's name; From one person; a capture-date range; candidates from `private.visible_posts`, rows from `private.feed_rows`, so hidden posts never match and group titles never show to non-senders; STABLE, nothing stored. App: `searchPosts` (Supabase + Fake), `SearchScreen.tsx` opened by a Search button in the Photos toolbar. Spec `SPEC-SEARCH.md`, persona check, API.md, architecture 05.
+- **privacy-security:** no P0/P1. SEARCH-R1 (drafts, removed people, a parent who didn't send) fixed with SEARCH-15 tests; SEARCH-R2 wording softened, Supabase log settings to check (TRACKER R42); SEARCH-R3 accepted: Supabase's 8 s timeout for signed-in calls bounds a search at family scale (from Supabase's docs, not checked live).
+- **Open:** the real-stack contract (PostgREST harness) wasn't run; grandparent-ux words pass; no Playwright walk.
+- **Next exact step:** after "lift GitHub hold", push Start a family first, then this branch on top as its own PR (it sits on R41's commits).
 
 ## Nov 6: Apple design guidelines fixes (HIG-1..12, DEC-54, TRACKER R39; branch claude/project-thread-bellss, PR)
 - **Why:** Chase asked for a full sweep against Apple's Human Interface Guidelines (doc https://claude.ai/artifact/3N1G5jF4ezeQ2Gtf2jFwZU), then "handle all the p1s". HIG is readable here through Apple's JSON feed (`developer.apple.com/tutorials/data/design/human-interface-guidelines/<page>.json`).

@@ -148,7 +148,7 @@ export function TimelineScreen({ startAt, onClose }: { startAt: string | null; o
 }
 
 /** A post in the timeline: who sent it, when it was taken, its photos and caption. */
-function TimelineCard({ post, onOpen }: { post: TimelinePost; onOpen: () => void }) {
+export function TimelineCard({ post, onOpen }: { post: TimelinePost; onOpen: () => void }) {
   const [all, setAll] = useState(false);
   const ready = post.media.filter((m) => m.status === 'ready');
   const shown = all ? ready : ready.slice(0, SHOW_INLINE);

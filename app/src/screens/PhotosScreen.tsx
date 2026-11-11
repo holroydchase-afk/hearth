@@ -15,6 +15,7 @@ import { EventCard, EventsScreen, EventUpdate, type EventsView } from './EventsS
 import { MessagesScreen } from './MessagesScreen';
 import { PostCard } from './PostCard';
 import { QueueStatus } from './QueueStatus';
+import { SearchScreen } from './SearchScreen';
 import { TimelineScreen } from './TimelineScreen';
 import { YourName } from './YourName';
 
@@ -43,9 +44,12 @@ export function PhotosScreen() {
   const [events, setEvents] = useState<EventsView | null>(null);
   // SPEC-MESSENGER: Messages opens in place too; Back returns here.
   const [messages, setMessages] = useState(false);
+  // SEARCH-UI-1: Search opens in place too; Back returns here.
+  const [search, setSearch] = useState(false);
   if (app.status !== 'ready' || !app.space || !app.feed) return <AppGate />;
   const feed = app.feed;
   if (messages) return <MessagesScreen onClose={() => setMessages(false)} />;
+  if (search) return <SearchScreen onClose={() => setSearch(false)} />;
   if (timeline) return <TimelineScreen startAt={timeline.startAt} onClose={() => setTimeline(null)} />;
   if (events) {
     return (
@@ -77,13 +81,16 @@ export function PhotosScreen() {
 
   const header = (
     <View style={{ gap: 12 }}>
-      {/* LIVE-2 (Chase, Nov 5): Messages, By date and Events are everyday actions, so they sit as compact icon
+      {/* LIVE-2 (Chase, Nov 5): Messages, By date, Search and Events are everyday actions, so they sit as compact icon
           buttons (a word under each) in a toolbar above the big title, like the phone's own large-title screens.
           UI-26 still holds: no "Check for new photos" button; photos refresh on their own and on pull-down. */}
       <View testID="photos-toolbar" style={TOOLBAR}>
         <IconButton label="Messages" text="Messages" icon={{ sf: 'bubble.left.and.bubble.right', md: 'chat' }} onPress={() => setMessages(true)} />
         {state.loaded && state.posts.length ? (
           <IconButton label="Show photos by the date they were taken" text="By date" icon={{ sf: 'arrow.up.arrow.down', md: 'sort' }} onPress={() => setTimeline({ startAt: null })} />
+        ) : null}
+        {state.loaded && state.posts.length ? (
+          <IconButton label="Search the photos" text="Search" icon={{ sf: 'magnifyingglass', md: 'search' }} onPress={() => setSearch(true)} />
         ) : null}
         {hasEvents ? (
           <IconButton label="See events" text="Events" icon={{ sf: 'calendar', md: 'event' }} onPress={() => setEvents({ eventId: null, fromList: true })} />

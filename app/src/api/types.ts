@@ -141,6 +141,19 @@ export interface TimelineArgs {
   limit?: number;
 }
 
+/** search_posts (migration 0025, SEARCH-1..14): plain words in the title, caption or sender's name, a sender, and
+ * a capture-date range [from, until). At least one of them. Same rows, order and keyset as get_timeline. */
+export interface SearchArgs {
+  space: string;
+  words?: string | null;
+  author?: string | null;
+  from?: string | null;
+  until?: string | null;
+  beforeAt?: string | null;
+  beforeId?: string | null;
+  limit?: number;
+}
+
 /** A feed row plus when it was taken. sort_at = coalesce(taken_at, published_at). */
 export interface TimelinePost extends FeedPost {
   taken_at: string | null;
