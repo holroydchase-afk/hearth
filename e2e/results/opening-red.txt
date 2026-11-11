@@ -1,0 +1,40 @@
+FAIL src/state/__tests__/lastSeen.test.ts
+    Cannot find module '../lastSeen' from 'src/state/__tests__/lastSeen.test.ts'
+FAIL src/feed/__tests__/newForYou.test.ts
+    Cannot find module '../newForYou' from 'src/feed/__tests__/newForYou.test.ts'
+FAIL src/screens/__tests__/opening.test.tsx (25.393 s)
+  ● OPEN New for you card › OPEN-1 the card sits above the posts when someone else sent photos since the last visit
+    Unable to find an element with testID: new-for-you
+  ● OPEN New for you card › OPEN-1 my own new posts never count (Chase), but someone else's do (Alex to Chase)
+    Unable to find an element with testID: new-for-you
+  ● OPEN New for you card › OPEN-1 a post Jo can't see never makes a card for her; Nana Ruth, who can, gets one
+    Unable to find an element with testID: new-for-you
+  ● OPEN New for you card › OPEN-2 "New since Today, from Chase and Alex": the day and the senders in words, no numbers, badges or "unread"
+    Unable to find an element with testID: new-for-you
+  ● OPEN New for you card › OPEN-2 a last visit yesterday reads "New since Yesterday"
+    Unable to find an element with testID: new-for-you
+  ● OPEN New for you card › OPEN-3 the collage spans the new photos (one big and three, the last "+N") and each tile opens that photo full screen
+    Unable to find an element with testID: new-for-you
+  ● OPEN New for you card › OPEN-4 exactly one filled button on the card: "See the new photos" (DS-9)
+    Unable to find an element with testID: new-for-you
+  ● OPEN-5 last visit on this phone › OPEN-5 first ever open shows no card and keeps the visit time; the next open shows only what came after
+    Received: undefined
+  ● OPEN-5 last visit on this phone › OPEN-5 read once when Photos loads, then set to now: the card stays for this visit
+    Unable to find an element with testID: new-for-you
+  ● OPEN-7/8 one new post at a time › OPEN-7 shows the full post card, "1 of 2" in words, and Back, Next and Back to Photos buttons with words at 48 pt
+    Unable to find an element with role: button, name: See the new photos
+  ● OPEN-7/8 one new post at a time › OPEN-8 oldest first; Next and Back move one post; on the last, Next reads Done and returns to Photos
+    Unable to find an element with role: button, name: See the new photos
+  ● OPEN-7/8 one new post at a time › OPEN-7 "Back to Photos" returns from any post, no swipe needed (DS-4)
+    Unable to find an element with role: button, name: See the new photos
+  ● OPEN-9/10 photo wall › OPEN-9 Photos toolbar has Wall (icon with the word) when there are posts, and none when there are no posts
+    Unable to find an element with role: button, name: See all photos as a wall
+  ● OPEN-9/10 photo wall › OPEN-9 the wall: three columns under month headers, newest first
+    Unable to find an element with role: button, name: See all photos as a wall
+  ● OPEN-9/10 photo wall › OPEN-10 every tile is at least 48 pt, names the sender and day, and opens that photo full screen
+    Unable to find an element with role: button, name: See all photos as a wall
+  ● OPEN-9/10 photo wall › OPEN-10 the wall has "Back to Photos" and "Show older photos" (no gesture-only action)
+    Unable to find an element with role: button, name: See all photos as a wall
+  ● OPEN-11 words › OPEN-11 no "group" and no group names on the card, the one-at-a-time view or the wall; text 17 pt and up
+    Unable to find an element with testID: new-for-you
+Tests:       17 failed, 1 passed, 18 total
