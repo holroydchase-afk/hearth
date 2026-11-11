@@ -22,13 +22,12 @@ from auth.users where lower(email) = lower(:'chase_email') \gset
 \endif
 select set_config('hearth.space_name', :'space_name', false) \gset
 
-set role authenticated;
-
+-- 0024 (START-10): create_household/create_space are closed to app users, so the family itself is made first,
+-- as Chase (jwt sub) but before switching role. Never through start_family: that would put it under the cap.
 do $$
 declare
   v_space uuid;
   v_name text := current_setting('hearth.space_name');
-  g text;
 begin
   select s.id into v_space
   from public.spaces s join public.space_members m on m.space_id = s.id
@@ -37,6 +36,16 @@ begin
   if v_space is null then
     v_space := public.create_space(public.create_household(v_name), v_name);
   end if;
+  perform set_config('hearth.space_id', v_space::text, false);
+end $$;
+
+set role authenticated;
+
+do $$
+declare
+  v_space uuid := current_setting('hearth.space_id')::uuid;
+  g text;
+begin
   foreach g in array array['Test viewer', 'Chase''s mom''s side', 'Chase''s dad''s side',
                            'Mom''s mom''s side', 'Mom''s dad''s side'] loop
     insert into public.circles (space_id, name, created_by) values (v_space, g, auth.uid())

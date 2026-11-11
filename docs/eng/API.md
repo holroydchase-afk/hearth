@@ -15,7 +15,8 @@ Any change requires a contract-test update first; the contract tests live in `ap
   | `42501` | not allowed (viewer tried to post, …) | "You can't do that here" |
   | `P0002` | not found or not visible | "This was removed" |
   | `22023` | invalid invite or code (any reason) | "This invite is too old or already used. Ask {inviter} for a new one." |
-  | `54000` | rate limited | "Too many tries. Wait 10 minutes." |
+  | `54000` | rate limited | "Too many tries. Wait 10 minutes." (from `start_family`: "You've started 3 families today. Try again tomorrow.") |
+  | `HF001` | family full (0024, START-12): an app-started family not yet marked known holds 500 items or 2 GiB. PostgREST returns it as 400; branch on the code. App code `FAMILY_FULL`, not retryable, so the upload queue stops | "Your family is full for now" |
 - **Time:** timestamps are ISO 8601 UTC. IDs are UUIDs.
 - **Idempotency:** every create takes a client-generated UUID, `p_client_id`. Retrying with the same `p_client_id` returns the original row and creates no duplicate. The app's upload queue relies on this.
 
@@ -116,6 +117,17 @@ Failing tests written first (Oct 18): `backend/tests/groups_v2_test.sql`, `backe
 **App (EVT-2..4, Oct 18).** `FeedPost.event_id` / `event_name` (optional; null or missing = no event the caller is in). Photos shows an event's first loaded post as an event card and its later posts as one update line (`EVENT_LATER_POSTS_IN_PHOTOS` in `app/src/feed/events.ts`, false until Chase decides EVT-3); the Events list and each event's posts are built from the loaded feed pages, so no new RPC. The contract test "EVT-1 feed and timeline rows carry the event id and name..." holds the FakeBackend to the server rule.
 
 **Timeline and future capture dates (Oct 17).** `get_timeline`'s `sort_at` and `get_timeline_years` treat a `taken_at` later than `published_at` as `published_at` (`timeline_future_test.sql`). The phone ignores capture dates more than 1 day in the future (BETA-BULK-1).
+
+## Start a family (0024, SPEC-START-FAMILY; tests `backend/tests/start_family_test.sql`)
+Starting is open to a signed-in account with no family; joining stays invite-only. The server switch `start_family_open` (`private.feature_flags`, no app grant, never in `my_features`) ships off. Since 0024 `create_household` and `create_space` are server-only (`42501` for app users, START-10). Every refusal is a fixed message: no family name, side name, email or id (START-13).
+
+| RPC | Args | Returns | Notes |
+|---|---|---|---|
+| `start_family` | `p_client_id uuid, p_name text, p_sides text[] = '{}'` | `space_id` | Signed-in only. Idempotent on `(caller, p_client_id)`: the same request returns the first family. Then, in order: switch off `42501`; already in a live family `23505` (the app reloads `my_spaces`); 3 starts in 24 hours `54000`; name blank or over 60 after trim `23514`; sides not 0 or 2, a blank or over-60 side, or two sides with one name `23514`. Makes one household, the family (caller as Owner, in Everyone, with notification settings) and, for two sides, two `group` groups with Private comments and nobody in them. One transaction: a refusal leaves nothing and counts no start. |
+| `can_start_family` | — | boolean | Signed-in only. True when the switch is on, the caller is in no live family and has started fewer than 3 in 24 hours. The app shows "I'm a parent: start a family" only when true. |
+| `space_upload_quota` (0024 adds) | same | `+ family_full boolean` | True when an app-started family not yet marked known holds 500 items or 2 GiB; old families are never capped. The app says "Your family is full for now" before photos are picked. |
+| `prepare_media_upload` (0024 changes) | same | same | `HF001` `family_full` when an item would take an app-started family past 500 items or 2 GiB; nothing is created. A direct insert gets the same refusal. |
+| `redeem_invite` (0024 changes) | same | same | START-7. Joining another family retires an empty family the caller started (only member, no posts at all, drafts included). Its start still counts toward the 3 a day. |
 
 ## Messenger relay (0015, SPEC-MESSENGER; contract tests `app/src/api/contract/chat.contract.test.ts`)
 

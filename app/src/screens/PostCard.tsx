@@ -60,7 +60,7 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
     <Card testID={`post-${post.post_id}`} style={{ padding: 0, gap: 0, overflow: 'hidden' }}>
       <View testID={`card-head-${post.post_id}`} style={styles.head}>
         <View style={[styles.avatar, { backgroundColor: c.accentSoft }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-          <Txt variant="strong" style={{ color: c.accent }}>{initialOf(post.author_name)}</Txt>
+          <Txt variant="strong" style={{ color: c.accent, letterSpacing: -0.5 }}>{initialOf(post.author_name)}</Txt>
         </View>
         <View style={{ flex: 1, minWidth: 0 }}>
           <Txt variant="strong">{post.author_name}</Txt>
@@ -176,6 +176,9 @@ function ordered(viewers: Viewer[], me: string | undefined): { id: string; name:
   return [...you, ...viewers.filter((v) => v.user_id !== me).map((v) => ({ id: v.user_id, name: v.name }))];
 }
 
+/** GUX-R1: two letters in a fixed 36 pt circle; past 1.3x they would clip. The name beside a chip carries full size. */
+const FACE_MAX_SCALE = 1.3;
+
 /** WHO-10 (Chase, Nov 5: "a contact circle component or chips... a discreet icon somewhere"): up to three small
  *  overlapping initials and "+n", beside More. One 48 pt button that reads every name out; a tap shows them all. */
 function Faces({ post, viewers, me, onPress }: { post: FeedPost; viewers: Viewer[]; me: string | undefined; onPress: () => void }) {
@@ -191,7 +194,7 @@ function Faces({ post, viewers, me, onPress }: { post: FeedPost; viewers: Viewer
       {shown.map((p, i) => (
         <View key={p.id} testID={`face-${p.id}`}
           style={[styles.face, { backgroundColor: c.accentSoft, borderColor: c.surface, marginLeft: i ? -SPACE.sm : 0 }]}>
-          <Text style={[styles.faceText, { color: c.accent }]}>{initialOf(p.name === 'You' ? viewers.find((v) => v.user_id === me)?.name ?? 'You' : p.name)}</Text>
+          <Text maxFontSizeMultiplier={FACE_MAX_SCALE} style={[styles.faceText, { color: c.accent }]}>{initialOf(p.name === 'You' ? viewers.find((v) => v.user_id === me)?.name ?? 'You' : p.name)}</Text>
         </View>
       ))}
       {rest > 0 ? <Text style={[styles.faceMore, { color: c.muted }]}>{`+${rest}`}</Text> : null}
@@ -212,7 +215,7 @@ function WhoSheet({ post, viewers, me, onClose }: { post: FeedPost; viewers: Vie
             {ordered(viewers, me).map((p) => (
               <View key={p.id} testID={`person-${p.id}`} style={[styles.person, { backgroundColor: c.fill }]}>
                 <View style={[styles.face, { backgroundColor: c.accentSoft, borderColor: c.fill }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-                  <Text style={[styles.faceText, { color: c.accent }]}>{initialOf(p.name === 'You' ? viewers.find((v) => v.user_id === me)?.name ?? 'You' : p.name)}</Text>
+                  <Text maxFontSizeMultiplier={FACE_MAX_SCALE} style={[styles.faceText, { color: c.accent }]}>{initialOf(p.name === 'You' ? viewers.find((v) => v.user_id === me)?.name ?? 'You' : p.name)}</Text>
                 </View>
                 <Txt testID="person-name">{p.name}</Txt>
               </View>
@@ -426,7 +429,8 @@ const styles = StyleSheet.create({
   faceWord: { fontFamily, fontSize: 17, marginRight: SPACE.xs },
   faces: { flexDirection: 'row', alignItems: 'center', minHeight: MIN_TARGET, minWidth: MIN_TARGET, paddingHorizontal: SPACE.xs },
   face: { width: 36, height: 36, borderRadius: RADIUS.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
-  faceText: { fontFamily: FONT.semibold, fontSize: 17, lineHeight: 20 },
+  // FIRSTMIN-1: two letters ("GJ") fit the 32 pt inside the ring at 17 pt with slightly tighter tracking.
+  faceText: { fontFamily: FONT.semibold, fontSize: 17, lineHeight: 20, letterSpacing: -0.5 },
   emoji: { fontSize: 24, lineHeight: 30, textAlign: 'center' },
   faceMore: { fontFamily, fontSize: 17, marginLeft: SPACE.xs },
   people: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.sm },
