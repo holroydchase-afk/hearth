@@ -77,6 +77,26 @@ describe('BETA-SEE-2 cached first page', () => {
     await s.hydrate();
     expect(s.getState().posts).toHaveLength(0);
   });
+
+  it('OPEN-5 QA-R1 fetchedAt: the cache never sets it; a failed refresh leaves it null; a good refresh sets its start time', async () => {
+    const be = FakeBackend.withFixture();
+    await seed(be, 3);
+    const kv = memoryKV();
+    await make(be.clientFor(jo.id), kv).refresh();
+    const offline = be.clientFor(jo.id);
+    jest.spyOn(offline, 'getFeed').mockRejectedValueOnce(new TypeError('Network request failed'));
+    const s = make(offline, kv);
+    await s.hydrate();
+    expect(s.getState().posts).toHaveLength(3);
+    expect(s.getState().fetchedAt).toBeNull();
+    await s.refresh();
+    expect(s.getState().fetchedAt).toBeNull();
+    const before = new Date().toISOString();
+    await s.refresh();
+    const at = s.getState().fetchedAt;
+    expect(at).not.toBeNull();
+    expect(at! >= before && at! <= new Date().toISOString()).toBe(true);
+  });
 });
 
 // REACT-1 (0017): toggleHeart is Love through set_reaction, so these watch setReaction.

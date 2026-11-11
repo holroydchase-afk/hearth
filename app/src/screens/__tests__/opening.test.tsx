@@ -466,6 +466,21 @@ describe('OPEN-9/10 photo wall', () => {
     expect(await screen.findByTestId('photos-toolbar')).toBeTruthy();
     expect(screen.queryByTestId('photo-wall')).toBeNull();
   });
+
+  it('OPEN-10 T14 exactly one page (20 posts): Show older photos finds nothing more, then goes away with no error', async () => {
+    const be = FakeBackend.withFixture();
+    for (let i = 0; i < 20; i++) await seedPost(be, { caption: `Day ${i}` }); // exactly a page
+    await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    fireEvent.press(await screen.findByRole('button', WALL));
+    const wall = await screen.findByTestId('photo-wall');
+    expect(within(wall).getAllByTestId(/^wall-tile-/).length).toBe(20);
+    const older = within(wall).queryByRole('button', { name: 'Show older photos' });
+    if (older) fireEvent.press(older); // a full page can't know it was the last; one tap must settle it
+    // A boolean, not toBeNull on the element: a failed match prints the whole fiber and stalls waitFor past its timeout.
+    await waitFor(() => expect(within(screen.getByTestId('photo-wall')).queryAllByRole('button', { name: 'Show older photos' }).length).toBe(0));
+    expect(within(screen.getByTestId('photo-wall')).getAllByTestId(/^wall-tile-/).length).toBe(20);
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
 });
 
 describe('OPEN-11 words', () => {
