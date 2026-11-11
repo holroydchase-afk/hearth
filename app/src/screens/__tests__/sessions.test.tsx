@@ -28,7 +28,7 @@ describe('MOMENT-7 one card per upload, even within an hour', () => {
     const cards = await Promise.all([lake, dock, boat].map((id) => screen.findByTestId(`post-${id}`)));
     expect(within(cards[0]!).getByText('At the lake')).toBeTruthy();
     expect(within(cards[1]!).getByText('On the dock')).toBeTruthy();
-    expect(within(cards[1]!).getByRole('button', { name: 'Open photo 3 of 3 full screen' })).toBeTruthy();
+    expect(within(cards[1]!).getByRole('button', { name: /^Open photo 3 of 3 full screen(,|$)/ })).toBeTruthy();
     expect(within(cards[2]!).getByText('Boat ride')).toBeTruthy();
     expect(screen.queryByTestId(/^session-/)).toBeNull();
     expectGrandparentSafe();

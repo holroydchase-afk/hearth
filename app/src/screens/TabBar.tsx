@@ -5,10 +5,10 @@
 // hide (DS-5) and 48 pt+ targets (DS-1). Viewers: Photos + Help only.
 import { SymbolView } from 'expo-symbols';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Role } from '../api/HearthApi';
-import { FONT, MIN_TARGET, typeScale, useTheme } from '../ui/theme';
+import { FONT, LABEL_SCALE_CAP, MIN_TARGET, iconSize, typeScale, useTheme } from '../ui/theme';
 
 export type TabName = 'photos' | 'share' | 'groups' | 'help' | 'me';
 export interface TabDef { name: TabName; label: string }
@@ -51,6 +51,7 @@ export function HearthTabBar({ role, current, onNavigate }: { role: Role; curren
   const { c, bigText } = useTheme();
   const t = typeScale(bigText);
   const insets = useSafeAreaInsets();
+  const { fontScale } = useWindowDimensions();
   return (
     <View accessibilityRole="tablist" style={[styles.bar, { backgroundColor: c.surface, borderTopColor: c.line, paddingBottom: Math.max(insets.bottom, 6) }]}>
       {tabsFor(role).map((tab) => {
@@ -62,17 +63,20 @@ export function HearthTabBar({ role, current, onNavigate }: { role: Role; curren
             accessibilityRole="tab"
             accessibilityLabel={tab.label}
             accessibilityState={{ selected: on }}
+            // HIG-3: at the largest text sizes a long press shows the tab's name big, as Apple's own tab bars do.
+            accessibilityShowsLargeContentViewer
+            accessibilityLargeContentTitle={tab.label}
             onPress={() => onNavigate(tab.name)}
             style={({ pressed }) => [styles.tab, { opacity: pressed ? 0.7 : 1 }]}
           >
             <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
               <SymbolView
                 name={{ ios: TAB_ICONS[tab.name].sf as never, android: TAB_ICONS[tab.name].md as never, web: TAB_ICONS[tab.name].md as never }}
-                size={28}
+                size={iconSize(28, fontScale)}
                 tintColor={color}
               />
             </View>
-            <Text style={{ fontSize: t.base, fontFamily: on ? FONT.semibold : FONT.medium, color }}>{tab.label}</Text>
+            <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ fontSize: t.base, fontFamily: on ? FONT.semibold : FONT.medium, color }}>{tab.label}</Text>
           </Pressable>
         );
       })}

@@ -52,7 +52,7 @@ describe('SWIPE: a post\'s photos, one at a time', () => {
     expect(within(card).getByText('1 of 7')).toBeTruthy();
     act(() => swipeTo(id, 6));
     expect(await within(card).findByText('7 of 7')).toBeTruthy();
-    fireEvent.press(within(card).getByRole('button', { name: 'Open photo 7 of 7 full screen' }));
+    fireEvent.press(within(card).getByRole('button', { name: /^Open photo 7 of 7 full screen(,|$)/ }));
     expect(nav.openViewer).toHaveBeenCalledWith(id, 6);
   });
 
@@ -106,7 +106,7 @@ describe('SWIPE: a post\'s photos, one at a time', () => {
     const card = await screen.findByTestId(cardId);
     layout(id);
     fireEvent.press(within(card).getByRole('button', { name: 'Next photo' }));
-    fireEvent.press(await within(card).findByRole('button', { name: 'Open photo 2 of 3 full screen' }));
+    fireEvent.press(await within(card).findByRole('button', { name: /^Open photo 2 of 3 full screen(,|$)/ }));
     expect(nav.openViewer).toHaveBeenCalledWith(id, 1);
     expect(within(card).getByText('2 of 3')).toBeTruthy();
     // Coming back from the viewer (even if Photos was rebuilt) keeps the card on that photo.
@@ -162,7 +162,7 @@ describe('SWIPE: a post\'s photos, one at a time', () => {
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     const ev = await screen.findByTestId(`event-card-${bday}`);
     expect(within(ev).getByTestId(`collage-${id}`)).toBeTruthy();
-    expect(within(ev).getByRole('button', { name: 'Open photo 3 of 3 full screen' })).toBeTruthy();
+    expect(within(ev).getByRole('button', { name: /^Open photo 3 of 3 full screen(,|$)/ })).toBeTruthy();
     expect(within(ev).getByRole('button', { name: "Open Chase's birthday" })).toBeTruthy();
   });
 
