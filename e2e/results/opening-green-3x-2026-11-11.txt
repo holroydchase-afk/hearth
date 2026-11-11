@@ -1,0 +1,20 @@
+OPEN-1..11 after 93c167d, Nov 11. All suites 3x (local sandbox; GitHub CI not run: GitHub hold).
+app jest run1: Tests:       1 skipped, 991 passed, 992 total
+app jest run2: Tests:       1 skipped, 991 passed, 992 total
+app jest run3: Tests:       1 skipped, 991 passed, 992 total
+typecheck run1: rc=0 (clean)
+typecheck run2: rc=0 (clean)
+typecheck run3: rc=0 (clean)
+backend run1 (tests/run.sh, Postgres 16): 1199 passed, 0 failed
+backend run2 (tests/run.sh, Postgres 16): 1199 passed, 0 failed
+backend run3 (tests/run.sh, Postgres 16): 1199 passed, 0 failed
+deno run1 (deno 2.9.6 from npm): ok | 33 passed | 0 failed (401ms)
+deno run2 (deno 2.9.6 from npm): ok | 33 passed | 0 failed (386ms)
+deno run3 (deno 2.9.6 from npm): ok | 33 passed | 0 failed (394ms)
+web e2e run1:  11 skipped; 5 passed (33.7s);
+web e2e run2:  11 skipped; 5 passed (33.4s);
+web e2e run3:  11 skipped; 5 passed (33.4s);
+agents.verify run1: rc=0; SYNC AGENTS RESULT: 16 passed, 0 failed;LOG CHECK RESULT: 13 passed, 0 failed;PERSONA CHECK RESULT: 14 passed, 0 failed;AGENT RUNS RESULT: 20 passed, 0 failed;
+agents.verify run2: rc=0; SYNC AGENTS RESULT: 16 passed, 0 failed;LOG CHECK RESULT: 13 passed, 0 failed;PERSONA CHECK RESULT: 14 passed, 0 failed;AGENT RUNS RESULT: 20 passed, 0 failed;
+agents.verify run3: rc=0; SYNC AGENTS RESULT: 16 passed, 0 failed;LOG CHECK RESULT: 13 passed, 0 failed;PERSONA CHECK RESULT: 14 passed, 0 failed;AGENT RUNS RESULT: 20 passed, 0 failed;
+opening.test.tsx per test (run 4, --json): all 18 passed incl. OPEN-1 Ruth/Jo privacy pair, OPEN-1 Alex to Chase, OPEN-10 21-post paging.
