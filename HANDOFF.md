@@ -3,13 +3,19 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: GitHub hold (Nov 10). Everything below waits in one push queue (/mnt/project-files/drafts/PUSH-QUEUE.md): Start a family + FIRSTMIN (#107), Apple fixes (#106), photo search (0025), text sign-in (0026, off), video player (off)
-next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
+now: push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
+next: R45 step 2 New for you shows in the demo, step 3 guide steps and link preview; then Chase checks the demo in iPhone Safari and records the video
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 13: the public demo is checked before and after it goes live (TRACKER R45 step 1, DEMO-LIVE-1..4; branch claude/project-thread-s1r7xd, PR)
+- **Why:** Chase, Nov 13: "a stable, quality version demo on the site". Plan: https://claude.ai/artifact/KfZxVmpdEa8qRAh5BfMPne. Live audit that day: 8/8 site checks on chaseholroyd.com/hearth/, desktop and phone (light and dark) walk with 0 errors; gaps G1 (New for you never shows in the demo), G3 (no link preview), G4 (guide steps out of date) are steps 2 and 3.
+- **Done, test-first:** `e2e/site-target.js` (DEMO-LIVE-1, jest `siteTarget.test.ts`): `SITE_URL=https://…` points the site checks at the live demo with no local server. `site.spec.js` adds DEMO-LIVE-2 (Search "lake" finds 1 photo), DEMO-LIVE-3 (All photos wall), DEMO-LIVE-4 (`version.txt` names the commit; `build-demo.sh` writes it from `GITHUB_SHA`, else `local`). DEMO-5's failed-request check only counts the demo's own files (ARCH-R3). `demo-site.yml`: the checks run on the build before upload; a `live-check` job waits until the live `version.txt` is this commit (ARCH-R1), runs once with `--max-failures=1` (ARCH-R2), and also runs daily at 11:17 UTC (ARCH-R4).
+- **If live-check is red:** the live demo needs a look; re-run demo-site by hand (Run workflow) on the last good commit.
+- **Portfolio / public presence:** no visible change to the demo in this step.
 
 ## Nov 11: New for you opening screen built (OPEN-1..11, DEC-58, TRACKER R44; branch claude/project-thread-eh13m5, local only under the GitHub hold)
 - **Done:** `feed/newForYou.ts` (others' posts since the last visit, oldest first; "New since Today/Yesterday/Monday/Nov 4"), `state/lastSeen.ts` (`hearth.lastSeen.v1.<user>`, on this phone only, read once when Photos loads then set to now), `NewForYouCard` + `OneAtATime` (`screens/NewForYou.tsx`), `PhotoWall.tsx` (month headers, three columns, Show older photos), Photos toolbar "Wall" (now "All photos", below). `PhotoCollage` tiles can now come from several posts. No server change.
