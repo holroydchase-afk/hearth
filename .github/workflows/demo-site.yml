@@ -2,11 +2,16 @@ name: demo-site
 # Builds the no-login demo (made-up family, no backend) with scripts/build-demo.sh and publishes it on
 # GitHub Pages at chaseholroyd.com/hearth/ (TRACKER R26). Runs on every push to main that touches the app,
 # or by hand. Needs Settings > Pages > Source: GitHub Actions.
+# DEMO-LIVE: the site checks (app/e2e-web/site.spec.js) run on the build before it is published, and again
+# on chaseholroyd.com/hearth/ after, so a broken demo never goes live quietly.
 on:
   push:
     branches: [main]
     paths: ['app/**', 'packages/**', '.github/workflows/demo-site.yml']
   workflow_dispatch:
+  schedule:
+    # ARCH-R4: once a day, only the live check runs (catches a lapsed domain or certificate). 11:17 UTC.
+    - cron: '17 11 * * *'
 permissions:
   contents: read
 concurrency:
@@ -14,6 +19,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     defaults:
@@ -30,7 +36,9 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: app/package-lock.json
+          cache-dependency-path: |
+            app/package-lock.json
+            e2e/package-lock.json
       - run: npm ci
       - run: bash scripts/build-demo.sh "$BASE"
       - name: The demo never points at a real backend
@@ -38,11 +46,18 @@ jobs:
           if grep -rlE '[a-z]{20}\.supabase\.co|sb_(secret|publishable)_[A-Za-z0-9_-]{10,}|eyJ[A-Za-z0-9_-]{10,}\.eyJ' dist-demo-site; then
             echo "::error::The demo build contains a Supabase address or key"; exit 1
           fi
+      - name: Check the build before it goes live (DEMO-5, DEMO-LIVE)
+        working-directory: e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          SITE_BASE="$BASE" npx playwright test -c ../app/e2e-web/playwright.site.config.js --trace off
       - uses: actions/upload-pages-artifact@v5
         with:
           path: app/dist-demo-site
   deploy:
     needs: build
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-24.04
     permissions:
       pages: write
@@ -53,3 +68,40 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+  live-check:
+    # DEMO-LIVE: the same checks on the live address. After a deploy it first waits (up to 10 minutes) until
+    # version.txt names this commit, so it checks the new copy, not a cached old one (ARCH-R1); then one try.
+    # A red run here means the live demo needs a look: re-run demo-site by hand on the last good commit.
+    needs: deploy
+    if: always() && (needs.deploy.result == 'success' || github.event_name == 'schedule')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: e2e
+    env:
+      SITE_URL: https://chaseholroyd.com
+      SITE_BASE: /hearth
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+      - name: Wait for the new copy to be live
+        if: github.event_name != 'schedule'
+        run: |
+          for i in $(seq 1 20); do
+            live=$(curl -fsS "$SITE_URL$SITE_BASE/version.txt?t=$i" || true)
+            [ "$live" = "$GITHUB_SHA" ] && { echo "Live copy is $GITHUB_SHA"; exit 0; }
+            echo "Live copy is '${live:-none}', waiting for $GITHUB_SHA"; sleep 30
+          done
+          echo "::error::After 10 minutes the live demo still isn't commit $GITHUB_SHA"
+          exit 1
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Check the live demo
+        run: |
+          npx playwright test -c ../app/e2e-web/playwright.site.config.js --trace off --max-failures=1 \
+            || { echo "::error::The live demo at $SITE_URL$SITE_BASE/ failed its checks"; exit 1; }

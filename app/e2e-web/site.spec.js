@@ -17,9 +17,11 @@ const resetDemo = async (page) => {
 };
 
 for (const tab of ['', 'photos', 'share', 'groups', 'me']) {
-  test(`DEMO-5 a cold load of ${BASE}/${tab} works with no server fallback`, async ({ page }) => {
+  test(`DEMO-5 a cold load of ${BASE}/${tab} works with no server fallback`, async ({ page, baseURL }) => {
     const failed = [];
-    page.on('response', (r) => { if (r.status() >= 400) failed.push(`${r.status()} ${r.url()}`); });
+    // ARCH-R3: only the demo's own files count; an outside script (Umami, when it's on) can't fail this.
+    const own = (u) => u.startsWith(`${baseURL}${BASE}/`);
+    page.on('response', (r) => { if (r.status() >= 400 && own(r.url())) failed.push(`${r.status()} ${r.url()}`); });
     page.on('pageerror', (e) => failed.push(String(e)));
     await page.goto(`${BASE}/${tab}`);
     await expect(page.getByRole('button', { name: 'Demo details' })).toBeVisible();
@@ -57,4 +59,30 @@ test('RR-15 reloading an open full-screen photo on the static host keeps the pho
   const status = (await page.reload()).status();
   expect(status).toBe(200);
   await expect(page.getByRole('button', { name: 'Save to my phone' })).toBeVisible();
+});
+
+// DEMO-LIVE-2/3: the two newest things a visitor tries also work on the static host (and, with SITE_URL, live).
+test('DEMO-LIVE-2 Search for "lake" finds the one lake photo', async ({ page }) => {
+  await page.goto(`${BASE}/`);
+  await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: /Search/ }).first().click();
+  const box = page.getByRole('textbox').first();
+  await box.fill('lake');
+  await box.press('Enter');
+  await expect(page.getByText('Found 1 photo', { exact: true })).toBeVisible();
+});
+
+test('DEMO-LIVE-3 All photos opens the wall with month headings', async ({ page }) => {
+  await page.goto(`${BASE}/`);
+  await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: /All photos|three to a row/ }).first().click();
+  await expect(page.getByText(/^(January|February|March|April|May|June|July|August|September|October|November|December) \d{4}$/).first()).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Back to Photos' }).first()).toBeVisible();
+});
+
+// DEMO-LIVE-4 (ARCH-R1): the build says which commit it is, so the live check waits for the new copy.
+test('DEMO-LIVE-4 the build serves version.txt naming its commit', async ({ request }) => {
+  const r = await request.get(`${BASE}/version.txt`);
+  expect(r.status()).toBe(200);
+  expect((await r.text()).trim()).toMatch(/^([0-9a-f]{40}|local)$/);
 });
