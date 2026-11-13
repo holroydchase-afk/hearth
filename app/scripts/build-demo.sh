@@ -16,6 +16,8 @@ done
 sha=${GITHUB_SHA:-local}
 [[ "$sha" =~ ^([0-9a-f]{40}|local)$ ]] || sha=local
 echo "$sha" > "$OUT/version.txt"
+# DEMO-META-1: a title, description and preview picture for shared links.
+bash scripts/add-site-meta.sh "$OUT" "$BASE"
 # ANALYTICS-1: page views on the demo site only, off unless the two Umami values are set.
 bash scripts/add-site-analytics.sh "$OUT"
 echo "Built $OUT for $BASE/ (copy its contents to that folder of the site)"

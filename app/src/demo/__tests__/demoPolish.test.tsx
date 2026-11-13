@@ -17,7 +17,7 @@ describe('UI-2 laptop frame', () => {
     const col = StyleSheet.flatten(screen.getByTestId('demo-app-column').props.style);
     expect(col.maxHeight).toBeLessThanOrEqual(880);
     expect(col.boxShadow ?? col.shadowOpacity).toBeTruthy();
-    for (const p of [/Private by name/, /Data stays in the US/, /No ads, no AI training/]) expect(screen.getByText(p)).toBeTruthy();
+    for (const p of [/Private by name/, /^Stored in the US$/, /No ads, no AI training/]) expect(screen.getByText(p)).toBeTruthy();
     fireEvent.press(screen.getByRole('link', { name: 'Read the case study on chaseholroyd.com' }));
     expect(open).toHaveBeenCalledWith(PORTFOLIO_URL);
     expect(screen.getByText(/stays in this browser/)).toBeTruthy();

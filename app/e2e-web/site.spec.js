@@ -86,3 +86,24 @@ test('DEMO-LIVE-4 the build serves version.txt naming its commit', async ({ requ
   expect(r.status()).toBe(200);
   expect((await r.text()).trim()).toMatch(/^([0-9a-f]{40}|local)$/);
 });
+
+// DEMO-NEW-5 (R45 step 2): a first-time visitor lands on the New for you card and can walk the new photos.
+test('DEMO-NEW-5 a first visit opens on New for you, and Next walks the new photos', async ({ page }) => {
+  await page.goto(`${BASE}/`);
+  const see = page.getByRole('button', { name: /See the new photos/ });
+  await expect(see).toBeVisible();
+  await see.click();
+  await expect(page.getByText('New photos: 1 of 2', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: /^Next/ }).first().click();
+  await expect(page.getByText('New photos: 2 of 2', { exact: true })).toBeVisible();
+});
+
+// DEMO-META-2: a shared link has a preview: the tags are on the page and the picture is served.
+test('DEMO-META-2 the page carries link-preview tags and serves the preview picture', async ({ page, request }) => {
+  await page.goto(`${BASE}/`);
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og-hearth\.png$/);
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /private family photo app/);
+  const r = await request.get(`${BASE}/og-hearth.png`);
+  expect(r.status()).toBe(200);
+  expect(r.headers()['content-type']).toMatch(/image\/png/);
+});
