@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-11T05:00:00-05:00",
+ "label": "New for you grandparent-ux fixes (GUX-R1..R8) and QA-R1, QA-R3: tests written first (red), logged from the saved output",
+ "passed": 979,
+ "failed": 17,
+ "results": {},
+ "note": "Red on purpose at 2f08ef5 (full jest: 17 failed, 979 passed, 1 skipped; opening.test.tsx and newForYou.test.ts): lowercase today/yesterday, Sent today/since lines, New photos: 1 of N, Next/Previous/Done, All photos, last visit saved only after a good first load, no collage before a ready photo, Ruth's card holds the Mom's side post. e2e/results/open-gux-red-2026-11-11.txt"
+}

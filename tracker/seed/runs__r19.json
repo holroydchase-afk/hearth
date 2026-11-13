@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-11T04:18:00-05:00",
+ "label": "New for you opening screen (OPEN-1..11): tests written first (red), logged Nov 11 from the saved output",
+ "passed": 1,
+ "failed": 17,
+ "results": {},
+ "note": "Red on purpose at ec2eb72 (opening.test.tsx 17 of 18 red: no new-for-you card, no See the new photos, no wall; newForYou.test.ts and lastSeen.test.ts can't find their modules). Logged after the fact from e2e/results/opening-red.txt."
+}

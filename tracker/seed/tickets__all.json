@@ -996,6 +996,39 @@
    "fixed": null
   },
   {
+   "id": "B17",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "QA-R1 (OPEN-5): Photos saves the last visit as now as soon as it loads, even when the feed never loads (no network). Photos that came before that offline open never get a New for you card. Spec gap: OPEN-5 doesn't say; needs staff-pm's call, then a failing test. Fixed in bb09bdd (GUX-R4: saved only after the first good load, as its start time). Tests: screens/__tests__/opening.test.tsx OPEN-5 QA-R1 (2), feed/__tests__/store.test.ts OPEN-5 QA-R1 fetchedAt",
+   "tests": [],
+   "found": "2026-11-11",
+   "fixed": "2026-11-11"
+  },
+  {
+   "id": "B18",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R2 (OPEN-1/7/8): New for you only looks at the posts already loaded (the first page of 20). With more than 20 new posts since the last visit, the card's senders and the one-at-a-time view leave out the oldest new ones and don't start at the oldest. No test yet",
+   "tests": [],
+   "found": "2026-11-11",
+   "fixed": null
+  },
+  {
+   "id": "T14",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "QA-R3 (OPEN-1): Ruth's half of the privacy pair only checks a card exists, not that it holds the Mom's side post; and no OPEN-10 case for exactly 20 posts (no Show older photos). Fixed: Ruth's card now opens on the Mom's side post (2f08ef5); OPEN-10 T14 exactly one page added to screens/__tests__/opening.test.tsx",
+   "tests": [],
+   "found": "2026-11-11",
+   "fixed": "2026-11-11"
+  },
+  {
    "id": "B15",
    "kind": "bug",
    "layer": "backend",

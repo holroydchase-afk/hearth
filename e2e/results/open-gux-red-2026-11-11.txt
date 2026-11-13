@@ -1,0 +1,43 @@
+OPEN GUX-R1..R8 / QA-R1 / QA-R3 red run, 2026-11-11, head 4472362 + new tests (jest, app/)
+Full app jest: Test Suites 2 failed, 117 passed; Tests 17 failed, 1 skipped, 979 passed
+
+2:  ● OPEN-2 newSinceDay › OPEN-2 GUX-R5 "today" and "yesterday" are lowercase and go by the calendar day, not 24 hours
+6:    Expected: "today"
+7:    Received: "Today"
+45:  ● OPEN New for you card › OPEN-1 my own new posts never count (Chase), but someone else's do (Alex to Chase)
+47:    Unable to find an element with text: /by Alex$/
+632:  ● OPEN New for you card › OPEN-2 GUX-R5 "Sent today by Chase and Alex" under the New for you heading; no numbers, badges or "unread"
+634:    Unable to find an element with text: Sent today by Chase and Alex
+1450:  ● OPEN New for you card › OPEN-2 GUX-R5 a last visit yesterday reads "Sent since yesterday by Chase"
+1452:    Unable to find an element with text: Sent since yesterday by Chase
+1813:  ● OPEN New for you card › OPEN-2 GUX-R5 within 6 days a weekday ("Sent since Tuesday by …"), further back the month and day ("Sent since Nov 3 by …")
+1815:    Unable to find an element with text: Sent since Sunday by Chase
+2176:  ● OPEN New for you card › OPEN-12 GUX-R6 no ready photo in the new posts yet: no collage, but the line and "See the new photos" stay
+2178:    Unable to find an element with text: Sent today by Chase
+2735:  ● OPEN-5 last visit on this phone › OPEN-5 first ever open shows no card and keeps the visit time; the next open shows only what came after
+2737:    Unable to find an element with text: /by Chase$/
+3320:  ● OPEN-5 last visit on this phone › OPEN-5 GUX-R4 QA-R1 a failed or offline first load saves nothing; once the network is back the card still shows
+3324:    Received: "2026-11-11T04:58:24.554Z"
+3338:  ● OPEN-5 last visit on this phone › OPEN-5 QA-R1 saved only after the first load succeeds, as the time that load started (not when it finished)
+3342:    Expected: "2026-11-11T03:58:24.610Z"
+3343:    Received: "2026-11-11T04:58:24.616Z"
+3357:  ● OPEN-7/8 one new post at a time › OPEN-7 GUX-R7 the full post card, the heading "New photos: 1 of 2", and Next and Back to Photos with words at 48 pt
+3359:    Unable to find an element with role: header, name: New photos: 1 of 2
+3647:  ● OPEN-7/8 one new post at a time › OPEN-7 GUX-R1 GUX-R2 the filled full-width Next stays first in its own row every step; from step 2 a full-width "Previous" under it; never a bare "Back"
+3651:    - Expected  - 1
+3652:    + Received  + 1
+3655:    +   "Back",
+3657:    -   "Previous new photo",
+3672:  ● OPEN-7/8 one new post at a time › OPEN-8 GUX-R8 oldest first; Next and Previous move one post; on the last, "Done" (spoken "Done, back to Photos") returns to Photos
+3674:    Unable to find an element with role: header, name: New photos: 2 of 2
+3978:  ● OPEN-9/10 photo wall › OPEN-9 GUX-R3 Photos toolbar has "All photos" (icon with the words; spoken "See all the photos, three to a row") when there are posts, none without
+3980:    Unable to find an element with role: button, name: See all the photos, three to a row
+4533:  ● OPEN-9/10 photo wall › OPEN-9 the wall: three columns under month headers, newest first
+4535:    Unable to find an element with role: button, name: See all the photos, three to a row
+5088:  ● OPEN-9/10 photo wall › OPEN-10 every tile is at least 48 pt, names the sender and day, and opens that photo full screen
+5090:    Unable to find an element with role: button, name: See all the photos, three to a row
+5643:  ● OPEN-9/10 photo wall › OPEN-10 the wall has "Back to Photos" and "Show older photos" (no gesture-only action)
+5645:    Unable to find an element with role: button, name: See all the photos, three to a row
+7982:  ● OPEN-11 words › OPEN-11 no "group" and no group names on the card, the one-at-a-time view or the wall; text 17 pt and up
+7984:    Unable to find an element with role: button, name: See all the photos, three to a row
+Tests:       17 failed, 11 passed, 28 total

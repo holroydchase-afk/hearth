@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-11T12:00:00-05:00",
+ "label": "New for you opening screen (OPEN-1..11): all suites 3x (green)",
+ "passed": 991,
+ "failed": 0,
+ "results": {},
+ "note": "Green on 3 runs each, after 93c167d: app jest 991 passed (1 skipped), typecheck clean, backend tests/run.sh 1199 passed 0 failed (local Postgres 16), Deno 33 passed (deno 2.9.6 from npm), web e2e 5 passed (11 screenshot-only skips; ran with plain npm run e2e:web), agents.verify OK. The OPEN-1 Jo/Ruth privacy pair, Alex to Chase and the OPEN-10 21-post paging all ran and passed. Open: B17, B18, T14. GitHub CI not run (GitHub hold). e2e/results/opening-green-3x-2026-11-11.txt"
+}

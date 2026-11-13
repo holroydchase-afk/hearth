@@ -27,8 +27,10 @@ export function SystemIcon({ icon, color, size = 22 }: { icon: Icon; color: stri
 
 type TxtVariant = 'body' | 'strong' | 'muted' | 'title' | 'display';
 
-export function Txt({ variant = 'body', style, children, role, testID, numberOfLines, selectable }: {
+export function Txt({ variant = 'body', style, children, role, testID, numberOfLines, selectable, label }: {
   selectable?: boolean;
+  /** What a screen reader says, when it must be the words exactly (a heading built from parts). Defaults to the text. */
+  label?: string;
   variant?: TxtVariant; style?: StyleProp<TextStyle>; children: ReactNode; role?: 'header' | 'alert' | 'text'; testID?: string; numberOfLines?: number;
 }) {
   const { c, t } = useTheme();
@@ -47,6 +49,7 @@ export function Txt({ variant = 'body', style, children, role, testID, numberOfL
       // A11Y-1: one level-1 heading per screen (the display title); every other heading is level 2, so a screen
       // reader's heading list reads like an outline instead of fourteen equal titles.
       {...(role === 'header' ? { 'aria-level': variant === 'display' ? 1 : 2 } : {})}
+      accessibilityLabel={label}
       testID={testID}
       numberOfLines={numberOfLines}
       style={[v[variant], style]}

@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, RefreshControl, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PhotosDemoTip } from '../demo/DemoTip';
 import { useApp, useFeed } from '../state/AppContext';
+import { loadLastSeen, saveLastSeen } from '../state/lastSeen';
 import { eventList, photosRows, type PhotosRow } from '../feed/events';
+import { newForYou } from '../feed/newForYou';
 import { earlierGroups, isFromEarlier, monthSpan, startOfNextMonth, type EarlierGroup } from '../feed/timeline';
 import { Button, Card, IconButton, Loading, Notice, Txt } from '../ui/kit';
 import { andList } from '../ui/format';
@@ -13,6 +15,8 @@ import { useTheme } from '../ui/theme';
 import { AppGate } from './AppGate';
 import { EventCard, EventsScreen, EventUpdate, type EventsView } from './EventsScreen';
 import { MessagesScreen } from './MessagesScreen';
+import { NewForYouCard, OneAtATime } from './NewForYou';
+import { PhotoWall } from './PhotoWall';
 import { PostCard } from './PostCard';
 import { QueueStatus } from './QueueStatus';
 import { SearchScreen } from './SearchScreen';
@@ -46,10 +50,35 @@ export function PhotosScreen() {
   const [messages, setMessages] = useState(false);
   // SEARCH-UI-1: Search opens in place too; Back returns here.
   const [search, setSearch] = useState(false);
+  // OPEN-5 (GUX-R4, QA-R1): the last visit, read once when Photos loads. It is saved only once the first network load
+  // succeeds, as the time that load started, so a failed or offline open never hides photos she hasn't seen.
+  const me = app.session?.userId ?? null;
+  const kv = app.deps.kv;
+  const [lastSeen, setLastSeen] = useState<{ user: string; at: string | null } | null>(null);
+  useEffect(() => {
+    if (!me) return;
+    let live = true;
+    void loadLastSeen(kv, me).then((at) => { if (live) setLastSeen({ user: me, at }); });
+    return () => { live = false; };
+  }, [kv, me]);
+  const saved = useRef<string | null>(null);
+  const fetchedAt = state.fetchedAt;
+  useEffect(() => {
+    if (!me || lastSeen?.user !== me || !fetchedAt || saved.current === me) return;
+    saved.current = me;
+    void saveLastSeen(kv, me, fetchedAt);
+  }, [kv, me, lastSeen, fetchedAt]);
+  // OPEN-7: the new posts one at a time; OPEN-9: the photo wall. Both open in place; Back returns here.
+  const [walk, setWalk] = useState<string[] | null>(null);
+  const [wall, setWall] = useState(false);
+  const closeWalk = useCallback(() => setWalk(null), []);
+  const closeWall = useCallback(() => setWall(false), []);
   if (app.status !== 'ready' || !app.space || !app.feed) return <AppGate />;
   const feed = app.feed;
   if (messages) return <MessagesScreen onClose={() => setMessages(false)} />;
   if (search) return <SearchScreen onClose={() => setSearch(false)} />;
+  if (walk) return <OneAtATime postIds={walk} onClose={closeWalk} />;
+  if (wall) return <PhotoWall onClose={closeWall} />;
   if (timeline) return <TimelineScreen startAt={timeline.startAt} onClose={() => setTimeline(null)} />;
   if (events) {
     return (
@@ -64,6 +93,8 @@ export function PhotosScreen() {
       />
     );
   }
+  // OPEN-1: others' posts since the last visit on this phone; none on a first open (OPEN-5) or for my own posts.
+  const fresh = me && lastSeen?.user === me ? newForYou(state.posts, lastSeen.at, me) : [];
   const senders = andList(state.posts.map((p) => p.author_name));
   // BETA-TIME-1: old photos added today don't take over the top; they go in a card.
   const earlier = earlierGroups(state.posts);
@@ -92,12 +123,18 @@ export function PhotosScreen() {
         {state.loaded && state.posts.length ? (
           <IconButton label="Search the photos" text="Search" icon={{ sf: 'magnifyingglass', md: 'search' }} onPress={() => setSearch(true)} />
         ) : null}
+        {state.loaded && state.posts.length ? (
+          <IconButton label="See all the photos, three to a row" text="All photos" icon={{ sf: 'square.grid.3x3', md: 'grid_view' }} onPress={() => setWall(true)} />
+        ) : null}
         {hasEvents ? (
           <IconButton label="See events" text="Events" icon={{ sf: 'calendar', md: 'event' }} onPress={() => setEvents({ eventId: null, fromList: true })} />
         ) : null}
       </View>
       <Txt variant="display" role="header">{`Photos of ${app.space.name}`}</Txt>
       {senders ? <Txt variant="muted">{`Sent by ${senders}`}</Txt> : null}
+      {fresh.length && lastSeen?.at ? (
+        <NewForYouCard posts={fresh} since={lastSeen.at} onSee={() => setWalk(fresh.map((p) => p.post_id))} />
+      ) : null}
       <PhotosDemoTip width={width} />
       {app.space.can_post ? <YourName /> : null}
       <QueueStatus />

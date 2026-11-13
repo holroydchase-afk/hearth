@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-11T06:30:00-05:00",
+ "label": "New for you grandparent-ux fixes (GUX-R1..R8) and QA-R1, QA-R3: all suites 3x (green)",
+ "passed": 998,
+ "failed": 0,
+ "results": {},
+ "note": "Green on 3 runs each, after bb09bdd plus two guard tests: app jest 998 passed (1 skipped), typecheck clean, backend tests/run.sh 1199 passed 0 failed (local Postgres 16), Deno 33 passed (deno 2.9.6 from npm), web e2e 5 passed (11 screenshot-only skips), agents.verify OK. New guards: OPEN-10 T14 exactly one page (Show older photos finds nothing, then goes away) and OPEN-5 QA-R1 fetchedAt (the cache never sets it, a failed refresh leaves it null); both checked by a temporary product mutation that turned them red, then reverted. Closed: B17, T14. Open: B18. GitHub CI not run (GitHub hold). e2e/results/open-gux-green-3x-2026-11-11.txt"
+}

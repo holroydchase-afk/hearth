@@ -1,0 +1,19 @@
+OPEN GUX-R1..R8 / QA-R1 / QA-R3 after bb09bdd (+ T14 and fetchedAt guard tests), Nov 11. All suites 3x (local sandbox; GitHub CI not run: GitHub hold).
+app jest run1: Tests:       1 skipped, 998 passed, 999 total rc=0
+app jest run2: Tests:       1 skipped, 998 passed, 999 total rc=0
+app jest run3: Tests:       1 skipped, 998 passed, 999 total rc=0
+typecheck run1: rc=0
+typecheck run2: rc=0
+typecheck run3: rc=0
+backend run1 (tests/run.sh, Postgres 16): 1199 passed, 0 failed rc=0
+backend run2 (tests/run.sh, Postgres 16): 1199 passed, 0 failed rc=0
+backend run3 (tests/run.sh, Postgres 16): 1199 passed, 0 failed rc=0
+deno run1 (deno 2.9.6 from npm): ok | 33 passed | 0 failed (375ms) rc=0
+deno run2 (deno 2.9.6 from npm): ok | 33 passed | 0 failed (336ms) rc=0
+deno run3 (deno 2.9.6 from npm): ok | 33 passed | 0 failed (374ms) rc=0
+web e2e run1:  11 skipped 5 passed (33.4s)  rc=0
+web e2e run2:  11 skipped 5 passed (33.0s)  rc=0
+web e2e run3:  11 skipped 5 passed (33.5s)  rc=0
+agents.verify run1: rc=0; SYNC AGENTS RESULT: 16 passed, 0 failed;LOG CHECK RESULT: 13 passed, 0 failed;PERSONA CHECK RESULT: 14 passed, 0 failed;AGENT RUNS RESULT: 20 passed, 0 failed;
+agents.verify run2: rc=0; SYNC AGENTS RESULT: 16 passed, 0 failed;LOG CHECK RESULT: 13 passed, 0 failed;PERSONA CHECK RESULT: 14 passed, 0 failed;AGENT RUNS RESULT: 20 passed, 0 failed;
+agents.verify run3: rc=0; SYNC AGENTS RESULT: 16 passed, 0 failed;LOG CHECK RESULT: 13 passed, 0 failed;PERSONA CHECK RESULT: 14 passed, 0 failed;AGENT RUNS RESULT: 20 passed, 0 failed;
