@@ -11,7 +11,7 @@ waiting_on_chase:
 blockers: []
 -->
 
-## Nov 13: the demo opens on New for you, with a link preview (TRACKER R45 step 2; branch claude/project-thread-s1r7xd, PR after #112)
+## Nov 13: the demo opens on New for you, with a link preview (TRACKER R45 step 2; branch claude/project-thread-s1r7xd, PR)
 - **Done, test-first:** `seedDemo(be, load, kv)` writes a last visit 3 days ago for Kai and Grandma Jo (kept if one is saved; Start over clears it) and two new posts from Alex (Apple picking, First snow), so a first visit lands on the New for you card (DEMO-NEW-1..5). New drawings `apples` and `balloons` (`make-demo-pictures.py [name ...]`); no drawing repeats (DEMO-NEW-3). Laptop Try this: See the new photos, See it as Grandma Jo, Search for lake (DEMO-NEW-6). `scripts/add-site-meta.sh` adds a description, Open Graph and Twitter tags and `og-hearth.png` (made by `scripts/make-og-picture.py`) to the site build only (DEMO-META-1/2, `site_meta_test.sh` in test-all). Proof pill now "Stored in the US", the claims register's words (POS-R1). Photos toolbar: when its buttons don't fit one row (bigger text), two to a row instead of one left alone (TOOLBAR-1, UX-R1).
 - **Reviews:** positioning (POS-R1 fixed; POS-R2 P2 "groups you pick" left). ux-reviewer showcase 8/10, UX-R1 P1 fixed; P2s left: UX-R2 (phone tip steps style), UX-R3 (reply placeholder cut off), UX-R4 ("Sent since Tuesday by Alex" wording, grandparent-ux's call), UX-R5 (the preview says Hearth without "working name").
 - **Portfolio / public presence:** the live demo changes when this merges: New for you first, new Try this steps, link previews on LinkedIn and texts.
