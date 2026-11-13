@@ -36,6 +36,9 @@ function EarlierCard({ g, onOpen }: { g: EarlierGroup; onOpen: () => void }) {
 
 // LIVE-2: the toolbar sits at the top right; with Bigger text it wraps instead of squeezing.
 const TOOLBAR = { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 4 } as const;
+// TOOLBAR-1 (UX-R1): when the buttons don't fit in one row, two to a row, so none sits alone on the second line.
+const TOOLBAR_HALF = { ...TOOLBAR, columnGap: 0 } as const;
+const HALF = { width: '50%', alignItems: 'center' } as const;
 
 export function PhotosScreen() {
   const app = useApp();
@@ -69,6 +72,8 @@ export function PhotosScreen() {
     void saveLastSeen(kv, me, fetchedAt);
   }, [kv, me, lastSeen, fetchedAt]);
   // OPEN-7: the new posts one at a time; OPEN-9: the photo wall. Both open in place; Back returns here.
+  const [barWidth, setBarWidth] = useState(0);
+  const [buttonWidths, setButtonWidths] = useState<Record<string, number>>({});
   const [walk, setWalk] = useState<string[] | null>(null);
   const [wall, setWall] = useState(false);
   const closeWalk = useCallback(() => setWalk(null), []);
@@ -110,24 +115,34 @@ export function PhotosScreen() {
         : item.type === 'update' ? <EventUpdate eventId={item.eventId} eventName={item.eventName} photoCount={item.photoCount} onOpen={() => openEvent(item.eventId)} />
           : null;
 
+  // TOOLBAR-1: measured at their own width (never while halved), then halved only if they don't fit in one row.
+  const shown = ['Messages', ...(state.loaded && state.posts.length ? ['By date', 'Search', 'All photos'] : []), ...(hasEvents ? ['Events'] : [])];
+  const measured = shown.every((k) => buttonWidths[k]);
+  const half = barWidth > 0 && measured && shown.reduce((t, k) => t + buttonWidths[k]!, 0) + (shown.length - 1) * TOOLBAR.gap > barWidth;
+  const slot = (key: string, child: React.ReactNode) => (
+    <View key={key} testID="photos-toolbar-item" style={half ? HALF : undefined}
+      onLayout={half ? undefined : (e) => { const w = e.nativeEvent.layout.width; setButtonWidths((m) => (m[key] === w ? m : { ...m, [key]: w })); }}>
+      {child}
+    </View>
+  );
   const header = (
     <View style={{ gap: 12 }}>
       {/* LIVE-2 (Chase, Nov 5): Messages, By date, Search and Events are everyday actions, so they sit as compact icon
           buttons (a word under each) in a toolbar above the big title, like the phone's own large-title screens.
           UI-26 still holds: no "Check for new photos" button; photos refresh on their own and on pull-down. */}
-      <View testID="photos-toolbar" style={TOOLBAR}>
-        <IconButton label="Messages" text="Messages" icon={{ sf: 'bubble.left.and.bubble.right', md: 'chat' }} onPress={() => setMessages(true)} />
+      <View testID="photos-toolbar" style={half ? TOOLBAR_HALF : TOOLBAR} onLayout={(e) => setBarWidth(e.nativeEvent.layout.width)}>
+        {slot('Messages', <IconButton label="Messages" text="Messages" icon={{ sf: 'bubble.left.and.bubble.right', md: 'chat' }} onPress={() => setMessages(true)} />)}
         {state.loaded && state.posts.length ? (
-          <IconButton label="Show photos by the date they were taken" text="By date" icon={{ sf: 'arrow.up.arrow.down', md: 'sort' }} onPress={() => setTimeline({ startAt: null })} />
+          slot('By date', <IconButton label="Show photos by the date they were taken" text="By date" icon={{ sf: 'arrow.up.arrow.down', md: 'sort' }} onPress={() => setTimeline({ startAt: null })} />)
         ) : null}
         {state.loaded && state.posts.length ? (
-          <IconButton label="Search the photos" text="Search" icon={{ sf: 'magnifyingglass', md: 'search' }} onPress={() => setSearch(true)} />
+          slot('Search', <IconButton label="Search the photos" text="Search" icon={{ sf: 'magnifyingglass', md: 'search' }} onPress={() => setSearch(true)} />)
         ) : null}
         {state.loaded && state.posts.length ? (
-          <IconButton label="See all the photos, three to a row" text="All photos" icon={{ sf: 'square.grid.3x3', md: 'grid_view' }} onPress={() => setWall(true)} />
+          slot('All photos', <IconButton label="See all the photos, three to a row" text="All photos" icon={{ sf: 'square.grid.3x3', md: 'grid_view' }} onPress={() => setWall(true)} />)
         ) : null}
         {hasEvents ? (
-          <IconButton label="See events" text="Events" icon={{ sf: 'calendar', md: 'event' }} onPress={() => setEvents({ eventId: null, fromList: true })} />
+          slot('Events', <IconButton label="See events" text="Events" icon={{ sf: 'calendar', md: 'event' }} onPress={() => setEvents({ eventId: null, fromList: true })} />)
         ) : null}
       </View>
       <Txt variant="display" role="header">{`Photos of ${app.space.name}`}</Txt>

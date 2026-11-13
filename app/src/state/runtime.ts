@@ -42,7 +42,7 @@ function fakeBackend(): FakeBackend {
   // DEMO-1/2: the demo opens on a sample family already signed in; the web smoke test starts empty.
   const be = FakeBackend.withFixture({ joIsMember: DEMO_MODE }, persist);
   if (DEMO_MODE) {
-    be.ready = seedDemo(be, loadDemoPicture).catch(() => undefined).then(() => { seeding = false; be.changed(); });
+    be.ready = seedDemo(be, loadDemoPicture, asyncStorageKV).catch(() => undefined).then(() => { seeding = false; be.changed(); });
   } else {
     be.changed();
   }

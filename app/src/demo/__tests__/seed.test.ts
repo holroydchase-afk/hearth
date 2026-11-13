@@ -5,6 +5,11 @@
 // sign-in, and can switch to Grandma Jo's view to see that she gets only what was shared with her.
 import { decryptMediaAsync } from '../../crypto/media';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
+import * as fs from 'fs';
+import * as path from 'path';
+import { memoryKV } from '../../platform/kv';
+import { loadLastSeen } from '../../state/lastSeen';
+import { newForYou } from '../../feed/newForYou';
 import { DEMO_NAMES, DEMO_POSTS, demoKeysToClear, seedDemo, setDemoViewer, type DemoPicture } from '../seed';
 
 const F = FIXTURE;
@@ -98,5 +103,52 @@ describe('DEMO-1..3, DEMO-10 sample-data demo', () => {
     expect(titled.length).toBeGreaterThanOrEqual(2);
     expect(titled.length).toBeLessThan(feed.length);
     for (const p of titled) expect([...p.title!].length).toBeLessThanOrEqual(80);
+  });
+});
+
+// DEMO-NEW-1..4 (TRACKER R45 step 2, plan gap G1/G5): a first-time visitor sees the New for you card (DEC-58).
+describe('DEMO-NEW New for you in the demo', () => {
+  it('DEMO-NEW-1 seeding sets a last visit 3 days ago for Kai and Grandma Jo, on this browser only', async () => {
+    const be = FakeBackend.withFixture({ joIsMember: true });
+    const kv = memoryKV();
+    const before = Date.now();
+    await seedDemo(be, picture, kv);
+    for (const u of [F.users.chase.id, F.users.jo.id]) {
+      const at = Date.parse((await loadLastSeen(kv, u))!);
+      expect(before - at).toBeGreaterThanOrEqual(3 * DAY - 60e3);
+      expect(before - at).toBeLessThanOrEqual(3 * DAY + 60e3);
+    }
+  });
+
+  it('DEMO-NEW-1 a visit already saved in this browser is kept', async () => {
+    const be = FakeBackend.withFixture({ joIsMember: true });
+    const kv = memoryKV({ [`hearth.lastSeen.v1.${F.users.chase.id}`]: '2026-01-02T03:04:05.000Z' });
+    await seedDemo(be, picture, kv);
+    expect(await loadLastSeen(kv, F.users.chase.id)).toBe('2026-01-02T03:04:05.000Z');
+  });
+
+  it('DEMO-NEW-2 Kai has 2+ new photos from Alex, and Grandma Jo has new ones too', async () => {
+    const be = FakeBackend.withFixture({ joIsMember: true });
+    const kv = memoryKV();
+    await seedDemo(be, picture, kv);
+    const kai = F.users.chase.id, jo = F.users.jo.id;
+    const kaiNew = newForYou(be.getFeed(kai, { space: F.space.id, limit: 50 }), await loadLastSeen(kv, kai), kai);
+    expect(kaiNew.length).toBeGreaterThanOrEqual(2);
+    expect(kaiNew.every((p) => p.author_id === F.users.alex.id)).toBe(true);
+    const joNew = newForYou(be.getFeed(jo, { space: F.space.id, limit: 50 }), await loadLastSeen(kv, jo), jo);
+    expect(joNew.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('DEMO-NEW-3 no drawing is used by two posts (the wall shows each picture once)', () => {
+    const all = DEMO_POSTS.flatMap((p) => p.pictures);
+    expect(new Set(all).size).toBe(all.length);
+  });
+
+  it('DEMO-NEW-4 every drawing a post uses ships in public/demo-pictures', () => {
+    const dir = path.join(__dirname, '../../../public/demo-pictures');
+    for (const name of DEMO_POSTS.flatMap((p) => p.pictures)) {
+      expect(fs.existsSync(path.join(dir, `${name}.jpg`))).toBe(true);
+      expect(fs.existsSync(path.join(dir, `${name}-thumb.jpg`))).toBe(true);
+    }
   });
 });

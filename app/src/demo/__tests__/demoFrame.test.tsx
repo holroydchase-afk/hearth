@@ -24,4 +24,11 @@ describe('DEMO-6 laptop frame', () => {
     expect(screen.queryByTestId('demo-app-column')).toBeNull();
     expect(screen.getByText('the app')).toBeTruthy();
   });
+
+  it('DEMO-NEW-6 Try this walks the newest features in order: New for you, Grandma Jo, Search', () => {
+    render(<DemoFrame width={1280}><Text>the app</Text></DemoFrame>);
+    expect(screen.getByText(/^1\. .*See the new photos/)).toBeTruthy();
+    expect(screen.getByText(/^2\. .*See it as Grandma Jo/)).toBeTruthy();
+    expect(screen.getByText(/^3\. .*Search.*lake/)).toBeTruthy();
+  });
 });

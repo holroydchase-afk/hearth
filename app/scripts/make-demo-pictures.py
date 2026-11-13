@@ -1,5 +1,5 @@
 """Draws the demo's sample pictures (DEMO-3): flat illustrations, no people, no real places.
-Run: python3 scripts/make-demo-pictures.py  -> public/demo-pictures/<name>.jpg and <name>-thumb.jpg
+Run: python3 scripts/make-demo-pictures.py [name ...]  -> public/demo-pictures/<name>.jpg and <name>-thumb.jpg
 Needs Pillow. The pictures are checked in; rerun only to change them."""
 import math, os, random
 from PIL import Image, ImageDraw, ImageFilter
@@ -143,9 +143,46 @@ def bus():
         d.ellipse([x - 60, 580, x + 60, 700], fill=(40, 40, 40)); d.ellipse([x - 25, 615, x + 25, 665], fill=(160, 160, 160))
     return im
 
-SCENES = {'pumpkins': pumpkins, 'beach': beach, 'cake': cake, 'snow': snow, 'kite': kite, 'sunflowers': sunflowers, 'lake': lake, 'bus': bus}
+def apples():
+    im = Image.new('RGB', (W, H)); d = ImageDraw.Draw(im)
+    sky(d, (150, 200, 240), (235, 240, 225))
+    hill(d, 560, 25, 1.2, 0.8, (120, 175, 90))
+    for cx, cy, s in [(300, 420, 1.0), (850, 400, 1.1)]:
+        d.rectangle([cx - 22 * s, cy + 60 * s, cx + 22 * s, cy + 260 * s], fill=(110, 75, 50))
+        d.ellipse([cx - 200 * s, cy - 170 * s, cx + 200 * s, cy + 130 * s], fill=(60, 130, 70))
+        rnd = random.Random(int(cx))
+        for _ in range(16):
+            x = cx + rnd.randint(-160, 160) * s; y = cy + rnd.randint(-120, 90) * s
+            d.ellipse([x - 16 * s, y - 16 * s, x + 16 * s, y + 16 * s], fill=(210, 50, 50))
+    d.rectangle([0, 760, W, H], fill=(100, 150, 75))
+    d.polygon([(500, 700), (700, 700), (680, 820), (520, 820)], fill=(170, 120, 70))
+    for k in range(7):
+        x = 520 + k * 26
+        d.ellipse([x - 18, 662, x + 18, 698], fill=(215, 55, 55))
+    d.arc([520, 600, 680, 760], 180, 360, fill=(140, 95, 55), width=10)
+    return im
+
+def balloons():
+    im = Image.new('RGB', (W, H)); d = ImageDraw.Draw(im)
+    sky(d, (255, 240, 225), (250, 220, 235))
+    for i in range(14):
+        x = i * 90 - 10; c = [(240, 90, 110), (90, 170, 230), (250, 200, 70), (120, 200, 140)][i % 4]
+        d.polygon([(x, 0), (x + 90, 0), (x + 45, 60)], fill=c)
+    for x, y, c in [(330, 330, (240, 90, 110)), (480, 260, (90, 170, 230)), (620, 320, (250, 200, 70)),
+                    (760, 250, (160, 120, 220)), (890, 340, (120, 200, 140))]:
+        d.line([(x, y + 110), (600, 820)], fill=(150, 130, 150), width=3)
+        d.ellipse([x - 75, y - 95, x + 75, y + 110], fill=c)
+        d.ellipse([x - 40, y - 60, x - 15, y - 20], fill=(255, 255, 255))
+        d.polygon([(x - 10, y + 108), (x + 10, y + 108), (x, y + 125)], fill=c)
+    d.rectangle([0, 820, W, H], fill=(170, 120, 90))
+    return im
+
+SCENES = {'pumpkins': pumpkins, 'beach': beach, 'cake': cake, 'snow': snow, 'kite': kite, 'sunflowers': sunflowers, 'lake': lake, 'bus': bus, 'apples': apples, 'balloons': balloons}
 os.makedirs(OUT, exist_ok=True)
+import sys
 for name, f in SCENES.items():
+    if sys.argv[1:] and name not in sys.argv[1:]:
+        continue
     im = f().filter(ImageFilter.SMOOTH)
     im.save(os.path.join(OUT, f'{name}.jpg'), quality=80, optimize=True, progressive=True)
     t = im.copy(); t.thumbnail((400, 400)); t.save(os.path.join(OUT, f'{name}-thumb.jpg'), quality=75, optimize=True)

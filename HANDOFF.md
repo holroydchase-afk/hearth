@@ -4,12 +4,17 @@ stage: building
 goal: hearth-beta
 milestone: HRT-M1
 now: push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
-next: R45 step 2 New for you shows in the demo, step 3 guide steps and link preview; then Chase checks the demo in iPhone Safari and records the video
+next: R45 step 2 PR (New for you in the demo, Try this steps, link preview, toolbar two to a row); then Chase checks the demo in iPhone Safari and records the video
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 13: the demo opens on New for you, with a link preview (TRACKER R45 step 2; branch claude/project-thread-s1r7xd, PR after #112)
+- **Done, test-first:** `seedDemo(be, load, kv)` writes a last visit 3 days ago for Kai and Grandma Jo (kept if one is saved; Start over clears it) and two new posts from Alex (Apple picking, First snow), so a first visit lands on the New for you card (DEMO-NEW-1..5). New drawings `apples` and `balloons` (`make-demo-pictures.py [name ...]`); no drawing repeats (DEMO-NEW-3). Laptop Try this: See the new photos, See it as Grandma Jo, Search for lake (DEMO-NEW-6). `scripts/add-site-meta.sh` adds a description, Open Graph and Twitter tags and `og-hearth.png` (made by `scripts/make-og-picture.py`) to the site build only (DEMO-META-1/2, `site_meta_test.sh` in test-all). Proof pill now "Stored in the US", the claims register's words (POS-R1). Photos toolbar: when its buttons don't fit one row (bigger text), two to a row instead of one left alone (TOOLBAR-1, UX-R1).
+- **Reviews:** positioning (POS-R1 fixed; POS-R2 P2 "groups you pick" left). ux-reviewer showcase 8/10, UX-R1 P1 fixed; P2s left: UX-R2 (phone tip steps style), UX-R3 (reply placeholder cut off), UX-R4 ("Sent since Tuesday by Alex" wording, grandparent-ux's call), UX-R5 (the preview says Hearth without "working name").
+- **Portfolio / public presence:** the live demo changes when this merges: New for you first, new Try this steps, link previews on LinkedIn and texts.
 
 ## Nov 13: the public demo is checked before and after it goes live (TRACKER R45 step 1, DEMO-LIVE-1..4; branch claude/project-thread-s1r7xd, PR)
 - **Why:** Chase, Nov 13: "a stable, quality version demo on the site". Plan: https://claude.ai/artifact/KfZxVmpdEa8qRAh5BfMPne. Live audit that day: 8/8 site checks on chaseholroyd.com/hearth/, desktop and phone (light and dark) walk with 0 errors; gaps G1 (New for you never shows in the demo), G3 (no link preview), G4 (guide steps out of date) are steps 2 and 3.
