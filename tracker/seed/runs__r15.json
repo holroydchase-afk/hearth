@@ -1,0 +1,9 @@
+{
+ "suite": "edge",
+ "at": "2026-11-10T06:00:00-05:00",
+ "label": "Text message sign-in: Deno and log-check tests written first (red)",
+ "passed": 32,
+ "failed": 1,
+ "results": {},
+ "note": "BETA-SMS-7 [auth.sms] template red (still 'Your code is'); BETA-SMS-13 notify null-address skip already green. Log check: BETA-SMS-15 phone fixture red (check-logs.mjs doesn't flag phone). e2e/results/sms-red-deno.txt, sms-red-logs.txt"
+}

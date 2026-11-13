@@ -272,15 +272,25 @@ content_path = "./supabase/templates/confirmation.html"
 # Allow/disallow new user signups via SMS to your project.
 enable_signup = false
 # If enabled, users need to confirm their phone number before signing in.
-enable_confirmations = false
-# Template for sending OTP to users
-template = "Your code is {{ .Code }}"
+# Hearth (PRIV-R1): must be true. False lets password sign-up make an account for any number with no code,
+# which beats the phone-bound invite. Set "Enable phone confirmations" on hosted too (tests/auth_config_test.sh).
+enable_confirmations = true
+# Template for sending OTP to users (BETA-SMS-7: code first for autofill, one GSM-7 segment, no curly quotes).
+# With Twilio Verify (SMS-PROVIDER.md) Twilio's own template sends the text; keep its words the same.
+template = "Hearth code: {{ .Code }}. Never read this code to anyone, even family. Hearth will never call you for it."
 # Controls the minimum amount of time that must pass before sending another sms otp.
-max_frequency = "5s"
+# Hearth: 60s, matching the app's "Send a new code" wait (SPEC-SMS-SIGN-IN §3.4) and
+# limiting SMS pumping. Set the same on hosted when texts go on.
+max_frequency = "60s"
 
 # Use pre-defined map of phone number to OTP for testing.
+# Hearth (DEC-57, docs/eng/SMS-PROVIDER.md): LOCAL `supabase start` and CI only.
+# deploy.sh never pushes this file to hosted; hosted auth config goes through the
+# Management API and must NEVER carry test_otp (it would be a fixed-code backdoor).
+# Use only fictional 555-01xx numbers. Uncomment when BETA-SMS-8 / the contract
+# suite need a phone sign-in on the local stack; no real text is ever sent for these.
 # [auth.sms.test_otp]
-# 4152127777 = "123456"
+# 13045550100 = "123456"
 
 # Configure logged in session timeouts.
 # [auth.sessions]
@@ -300,12 +310,15 @@ max_frequency = "5s"
 # uri = "pg-functions://<database>/<schema>/<hook_name>"
 
 # Configure one of the supported SMS providers: `twilio`, `twilio_verify`, `messagebird`, `textlocal`, `vonage`.
-[auth.sms.twilio]
+# Hearth pick (architect, Nov 10, DEC-57): Twilio Verify. See docs/eng/SMS-PROVIDER.md.
+# Off until carrier delivery is checked (BETA-SMS-16). message_service_sid holds the
+# Verify *Service* SID (VA...), not a Messaging Service. All three come from env,
+# never from git; values live in the Claude environment / Supabase dashboard only.
+[auth.sms.twilio_verify]
 enabled = false
-account_sid = ""
-message_service_sid = ""
-# DO NOT commit your Twilio auth token to git. Use environment variable substitution instead:
-auth_token = "env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)"
+account_sid = "env(SUPABASE_AUTH_SMS_TWILIO_VERIFY_ACCOUNT_SID)"
+message_service_sid = "env(SUPABASE_AUTH_SMS_TWILIO_VERIFY_SERVICE_SID)"
+auth_token = "env(SUPABASE_AUTH_SMS_TWILIO_VERIFY_AUTH_TOKEN)"
 
 # Multi-factor-authentication is available to Supabase Pro plan.
 [auth.mfa]

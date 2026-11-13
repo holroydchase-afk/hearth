@@ -10,6 +10,9 @@ for f in key url caption title message object stringify multiline template stack
   out=$(node scripts/check-logs.mjs "$F/bad/$f.ts"); rc=$?
   [ $rc -ne 0 ] && echo "$out" | grep -q "bad/$f.ts:" && ok "PRIV-2 flags a bad log call ($f)" || bad "PRIV-2 flags a bad log call ($f)  [rc=$rc: $out]"
 done
+# BETA-SMS-15: a phone number is personal data like an email; a log call naming one is flagged.
+out=$(node scripts/check-logs.mjs "$F/bad/phone.ts"); rc=$?
+[ $rc -ne 0 ] && echo "$out" | grep -q "bad/phone.ts:" && ok "BETA-SMS-15 flags a log call that names a phone number" || bad "BETA-SMS-15 flags a log call that names a phone number  [rc=$rc: $out]"
 out=$(node scripts/check-logs.mjs "$F/good"); rc=$?
 [ $rc -eq 0 ] && ok "PRIV-2 passes safe log calls (fixed words, e.name, URL-cut message)" || bad "PRIV-2 passes safe log calls  [$out]"
 out=$(node scripts/check-logs.mjs); rc=$?

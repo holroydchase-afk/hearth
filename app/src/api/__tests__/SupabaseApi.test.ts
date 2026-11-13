@@ -196,3 +196,53 @@ describe('Start a family (0024, BETA-START)', () => {
     await expect(make(c).startFamily({ clientId: 'C', name: 'Our kids', sides: [] })).rejects.toMatchObject({ code: pg });
   });
 });
+
+// BETA-SMS (SPEC-SMS-SIGN-IN, SMS-PROVIDER.md): Supabase Auth phone OTP, Twilio Verify behind it. Written first.
+type TextApi = { sendTextCode(phone: string): Promise<void>; verifyTextCode(phone: string, code: string): Promise<unknown> };
+const textApi = (c: ReturnType<typeof mockClient>) => make(c) as unknown as TextApi;
+
+describe('SupabaseApi auth: 6-number text code (BETA-SMS)', () => {
+  it('BETA-SMS-3 sendTextCode asks Supabase for a phone OTP to the E.164 number, creating the account if new', async () => {
+    const c = mockClient();
+    await textApi(c).sendTextCode('+13045550100');
+    expect(c.auth.signInWithOtp).toHaveBeenCalledWith(expect.objectContaining({ phone: '+13045550100', options: expect.objectContaining({ shouldCreateUser: true }) }));
+    expect(JSON.stringify(c.auth.signInWithOtp.mock.calls)).not.toMatch(/email/);
+  });
+
+  it('BETA-SMS-4 verifyTextCode verifies with type "sms" and returns the session', async () => {
+    const c = mockClient();
+    c.auth.verifyOtp.mockResolvedValueOnce({ data: { session: { access_token: 't', user: { id: 'u9', email: '', phone: '13045550100' } } }, error: null } as never);
+    const s = await textApi(c).verifyTextCode('+13045550100', ' 123456 ');
+    expect(c.auth.verifyOtp).toHaveBeenCalledWith({ phone: '+13045550100', token: '123456', type: 'sms' });
+    expect(s).toMatchObject({ userId: 'u9' });
+  });
+
+  it.each([
+    ['a wrong or old code', { status: 403, code: 'otp_expired', message: 'Token has expired or is invalid' }, 'BAD_OTP'],
+    ['too many tries', { status: 429, code: 'over_sms_send_rate_limit', message: 'rate limit' }, '54000'],
+    ['no signal', { status: 0, message: 'Failed to fetch' }, 'NETWORK'],
+  ] as const)('BETA-SMS-5 verifyTextCode maps %s to the same code as email (%s)', async (_what, error, want) => {
+    const c = mockClient();
+    c.auth.verifyOtp.mockResolvedValue({ data: { session: null }, error } as never);
+    await expect(textApi(c).verifyTextCode('+13045550100', '000000')).rejects.toMatchObject({ code: want });
+    await expect(make(c).verifyCode('a@b.c', '000000')).rejects.toMatchObject({ code: want });
+  });
+
+  it('BETA-SMS-5 too many sends (429) is 54000, like email', async () => {
+    const c = mockClient();
+    c.auth.signInWithOtp.mockResolvedValue({ error: { status: 429, code: 'over_sms_send_rate_limit', message: 'rate limit' } } as never);
+    await expect(textApi(c).sendTextCode('+13045550100')).rejects.toMatchObject({ code: '54000' });
+  });
+
+  it.each([
+    ['texts switched off (phone_provider_disabled)', { status: 400, code: 'phone_provider_disabled', message: 'Phone signups are disabled' }],
+    ['the provider failing (sms_send_failed)', { status: 500, code: 'sms_send_failed', message: 'Error sending sms to +13045550100' }],
+  ] as const)('BETA-SMS-6 %s becomes SMS_OFF, so the screen offers email', async (_what, error) => {
+    const c = mockClient();
+    c.auth.signInWithOtp.mockResolvedValue({ error } as never);
+    const e = await textApi(c).sendTextCode('+13045550100').catch((x: unknown) => x);
+    expect(e).toBeInstanceOf(ApiError);
+    expect(e).toMatchObject({ code: 'SMS_OFF' });
+    expect(String((e as Error).message)).not.toMatch(/3045550100/); // BETA-SMS-15: the number never rides along
+  });
+});

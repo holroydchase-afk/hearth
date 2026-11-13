@@ -9,6 +9,8 @@ export interface MessageContext {
   inviter?: string | null;
   /** What the person was doing, to pick the right 23514 message. */
   action?: 'post' | 'comment' | 'join' | 'invite' | 'group' | 'edit' | 'start' | 'search' | 'other';
+  /** BETA-SMS-5: how the sign-in code came, so a wrong code points to the right place. Default email. */
+  via?: 'email' | 'text';
 }
 
 const KNOWN: ApiErrorCode[] = ['23514', '23505', '42501', 'P0002', '22023', '54000'];
@@ -53,7 +55,9 @@ export function messageFor(e: unknown, ctx: MessageContext = {}): string {
     case 'FAMILY_FULL':
       return "Your family is full for now, so new photos can't be sent. Photos already shared are safe. Tap Help to ask for more room.";
     case 'BAD_OTP':
-      return "That code didn't work. Check the newest email from Hearth and type the 6 numbers again.";
+      return `That code didn't work. Check the newest ${ctx.via === 'text' ? 'text' : 'email'} from Hearth and type the 6 numbers again.`;
+    case 'SMS_OFF':
+      return "Texts aren't working right now. Use your email instead.";
     case 'NETWORK':
       // GUX-R2: a search isn't retried for them, so don't promise it.
       if (ctx.action === 'search') return 'No internet right now. Check your Wi-Fi, then tap Search again.';

@@ -1,0 +1,9 @@
+{
+ "suite": "backend",
+ "at": "2026-11-10T06:00:00-05:00",
+ "label": "Text message sign-in: SQL tests written first (red, no SMS migration yet)",
+ "passed": 15,
+ "failed": 20,
+ "results": {},
+ "note": "backend/tests/sms_test.sql (BETA-SMS-8, -9, -13, -15, QA-R1): 20 red for the right reasons (no E.164 normalizing or US-only refusal in create_invite, no sign_in_with, 13045550100 does not match +13045550100, email batches for phone-only accounts, phone numbers kept in client_errors, phone number as placeholder name). Every other suite green. e2e/results/sms-red-backend.txt"
+}

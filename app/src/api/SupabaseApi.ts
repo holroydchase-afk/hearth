@@ -100,6 +100,33 @@ export class SupabaseApi implements HearthApi {
     }
     return { userId: data.session.user.id, email: data.session.user.email ?? email };
   }
+  // BETA-SMS: a code by text (Twilio Verify behind Supabase Auth, SMS-PROVIDER.md). Errors never carry the number.
+  async sendTextCode(phone: string): Promise<void> {
+    let error: { status?: number; code?: string; message?: string } | null;
+    try {
+      ({ error } = await this.o.client.auth.signInWithOtp({ phone, options: { shouldCreateUser: true } }));
+    } catch (e) {
+      throw new ApiError(toApiError(e).code === 'NETWORK' ? 'NETWORK' : 'UNKNOWN');
+    }
+    if (!error) return;
+    if (error.status === 429) throw new ApiError('54000');
+    if (/fetch|network/i.test(error.message ?? '')) throw new ApiError('NETWORK');
+    // Texts switched off, no provider, or the provider failing: the screen offers email (BETA-SMS-6).
+    if (/phone_provider_disabled|sms_provider|sms_send_failed|signup_disabled/.test(error.code ?? '') || (error.status ?? 0) >= 500) {
+      throw new ApiError('SMS_OFF');
+    }
+    throw new ApiError(error.status === 400 || error.status === 422 ? '23514' : 'UNKNOWN');
+  }
+  async verifyTextCode(phone: string, code: string): Promise<Session> {
+    const { data, error } = await this.o.client.auth.verifyOtp({ phone, token: code.trim(), type: 'sms' });
+    if (error || !data.session) {
+      const status = (error as { status?: number } | null)?.status;
+      if (status === 429) throw new ApiError('54000');
+      if (error && /fetch|network/i.test(error.message)) throw new ApiError('NETWORK');
+      throw new ApiError('BAD_OTP');
+    }
+    return { userId: data.session.user.id, email: data.session.user.email ?? '' };
+  }
   async signOut(): Promise<void> {
     await this.o.client.auth.signOut();
   }
@@ -186,7 +213,9 @@ export class SupabaseApi implements HearthApi {
       throw e.code === '22023' && typeof d === 'string' && d.trim() ? new ApiError('22023', e.message, d.trim()) : e;
     }
     const r = one<InvitePreview>(res.data);
-    return { inviter_name: r.inviter_name, space_name: r.space_name };
+    // BETA-SMS-9: a server before 0026 says nothing; ask a number first, like a link invite.
+    const how = r.sign_in_with === 'phone' || r.sign_in_with === 'email' ? r.sign_in_with : 'either';
+    return { inviter_name: r.inviter_name, space_name: r.space_name, sign_in_with: how };
   };
   createInvite = async (a: CreateInviteArgs) => {
     const d = await this.rpc<unknown>('create_invite', {

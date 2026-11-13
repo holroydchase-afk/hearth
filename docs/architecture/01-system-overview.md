@@ -34,6 +34,7 @@ Hearth is a private photo app for families. Every post has an explicit audience 
 | Supabase | Database, auth, functions | Everything Hearth's server can (see below); auth logs with email and IP | Photo bytes (they live in B2 as ciphertext) |
 | Backblaze B2 | Media storage | Ciphertext, object sizes, upload and download times, requester IPs | Photo contents, captions, names |
 | Resend | Email delivery | Recipient email, sender display name, counts, a link | Photos, captions, comment text |
+| Twilio (Verify) | **Planned, off** (DEC-57, `docs/eng/SMS-PROVIDER.md`): text-message sign-in codes, US numbers only | Phone number, the code (Verify makes and checks it), delivery and verification logs, the requester's carrier | Photos, captions, names, email, groups |
 | Expo, Apple, Google | Push delivery (milestone 2) | Device push token, sender display name, counts, a post id | Photos, captions, comment text |
 
 **What Hearth's own server can read today (Built):** names, email addresses, group membership, captions, comment text, timestamps, and, through `MEDIA_KEK`, every photo's key. Photos are encrypted at rest, but Hearth holds the keys. See [03-encryption-and-keys.md](03-encryption-and-keys.md).
@@ -42,7 +43,7 @@ Hearth is a private photo app for families. Every post has an explicit audience 
 
 **Built:** the database runs in Supabase East US; media in Backblaze US East.
 
-**Gap:** "stored in the US" is true; "never leaves the US" is not yet. Supabase logs and telemetry are stored outside the US, its support staff are global, and its contracting entity is in Singapore (`docs/eng/research.md` §4). Push notices transit Apple and Google networks. Closing this means self-hosted auth and Postgres on US infrastructure, a post-proof-of-concept item (anchor A3).
+**Gap:** "stored in the US" is true; "never leaves the US" is not yet. Supabase logs and telemetry are stored outside the US, its support staff are global, and its contracting entity is in Singapore (`docs/eng/research.md` §4). Push notices transit Apple and Google networks. Text-message codes (planned, off) would add Twilio, a US company whose log location and retention are not yet recorded (`docs/eng/SMS-PROVIDER.md`). Closing this means self-hosted auth and Postgres on US infrastructure, a post-proof-of-concept item (anchor A3).
 
 ---
-Last checked against code: 2026-11-04 (demo-site analytics note, intake #95); earlier 2026-10-19, a522a3a and 716bc36
+Last checked against code: 2026-11-10, Twilio Verify vendor row (backend/supabase/config.toml `[auth.sms.twilio_verify]`, off); earlier 2026-11-04 (demo-site analytics note, intake #95); earlier 2026-10-19, a522a3a and 716bc36

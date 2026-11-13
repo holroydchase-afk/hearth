@@ -7,6 +7,7 @@
 // contract before the real stack is reachable. The contract tests keep the two honest.
 import { ApiError, type HearthApi, type StartFamilyArgs } from '../HearthApi';
 import { JOIN_LINK_BASE } from '../links';
+import { usE164 } from '../phone';
 import type {
   CircleKind,
   CommentMode,
@@ -34,7 +35,7 @@ const START_WINDOW_MS = 24 * 60 * 60 * 1000;
 const START_MAX = 3;
 const INVITE_ALPHABET = 'ABCDEFGHJKMNPQRSTVWXYZ23456789';
 
-interface UserRow { id: string; email: string; name: string; nameSet?: boolean } // nameSet undefined = set
+interface UserRow { id: string; email: string; name: string; nameSet?: boolean; phone?: string } // nameSet undefined = set; email '' = phone only
 interface MemberRow { space: string; user: string; role: Role; invited_by: string | null }
 interface CircleRow { id: string; space: string; name: string; created_by: string; deleted: boolean; kind?: CircleKind; comment_mode?: CommentMode }
 interface PostRow {
@@ -55,6 +56,8 @@ interface MediaRow {
 interface CommentRec { id: string; post: string; author: string; body: string; created_at: string; client_id: string }
 interface InviteRow {
   code: string; space: string; role: Role; circles: string[]; created_by: string; target_email: string | null;
+  /** BETA-SMS-8: E.164, only that number may redeem. */
+  target_phone?: string | null; channel?: 'link' | 'email' | 'sms';
   expires_at: string; max_uses: number; uses: number; revoked: boolean; name?: string | null; history?: ShareHistory | null;
   /** Server invites.household_means_everyone: only invites made before 0013 (PRIV-G2). */
   householdMeansEveryone?: boolean;
@@ -761,7 +764,9 @@ export class FakeBackend {
     if (!this.inviteUsable(inv)) this.fail(key);
     // UX-G7: refused like redeem, naming the inviter
     if (!this.invitePlaces(inv)) throw new ApiError('22023', 'invalid invite', this.state.users[inv.created_by]?.name);
-    return { inviter_name: this.state.users[inv.created_by]?.name ?? '', space_name: this.state.spaces[inv.space]!.name };
+    // BETA-SMS-9 (0026): how to sign in, never the target
+    const how = inv.target_phone || inv.channel === 'sms' ? 'phone' : inv.target_email || inv.channel === 'email' ? 'email' : 'either';
+    return { inviter_name: this.state.users[inv.created_by]?.name ?? '', space_name: this.state.spaces[inv.space]!.name, sign_in_with: how };
   }
 
   redeemInvite(user: string | null, code: string): string {
@@ -772,6 +777,7 @@ export class FakeBackend {
     if (!this.inviteUsable(inv)) this.fail(key);
     const email = this.state.users[me]?.email.toLowerCase();
     if (inv.target_email && inv.target_email.toLowerCase() !== email) this.fail(key);
+    if (inv.target_phone && this.state.users[me]?.phone !== inv.target_phone) this.fail(key); // BETA-SMS-8
     if (this.member(inv.space, me)) this.fail(key);
     if (!this.invitePlaces(inv)) throw new ApiError('22023', 'invalid invite');
     this.retireEmptyStarted(me, inv.space); // 0024 BETA-START-7
@@ -800,6 +806,9 @@ export class FakeBackend {
     if (a.name != null && this.state.members.some((m) => m.space === a.space && this.state.users[m.user]?.name.toLowerCase() === a.name!.trim().toLowerCase())) {
       throw new ApiError('23514', 'someone in this family already has that name'); // no impersonation, like the SQL
     }
+    // BETA-SMS-8 (0026): a phone target is stored as E.164; a non-US number is refused, never echoed
+    const phone = a.targetPhone == null ? null : usE164(a.targetPhone);
+    if (a.targetPhone != null && !phone) throw new ApiError('23514', 'please use a US mobile number');
     const bytes = randomBytes(10);
     const code = Array.from(bytes, (b) => INVITE_ALPHABET[b % INVITE_ALPHABET.length]).join('');
     const days = Math.min(30, a.ttlDays ?? 30);
@@ -807,6 +816,7 @@ export class FakeBackend {
       code, space: a.space, role: a.role, circles: [...a.circleIds], created_by: me, target_email: a.targetEmail?.toLowerCase() ?? null,
       expires_at: new Date(Date.now() + days * 864e5).toISOString(), max_uses: a.maxUses ?? 1, uses: 0, revoked: false,
       name: a.name?.trim() || null, history: a.role === 'viewer' ? a.history ?? null : null, householdMeansEveryone: false,
+      target_phone: phone, channel: a.channel ?? 'link',
     };
     this.changed();
     return { code, link: JOIN_LINK_BASE + code };
@@ -1048,6 +1058,18 @@ export class FakeBackend {
     }
     return u;
   }
+
+  /** BETA-SMS: a text sign-in's account, by its E.164 number. Like 0026's trigger: no email, never the number as a name. */
+  userByPhone(phone: string): UserRow {
+    let u = Object.values(this.state.users).find((x) => x.phone === phone);
+    if (!u) {
+      const id = uuid();
+      u = { id, email: '', phone, name: 'Member', nameSet: false };
+      this.state.users[id] = u;
+      this.changed();
+    }
+    return u;
+  }
 }
 
 /** Same rule as private.valid_name (migration 0007). */
@@ -1099,6 +1121,25 @@ export class FakeApi implements HearthApi {
         this.be.changed();
       }
       return { userId: u.id, email: u.email };
+    });
+  }
+  sendTextCode(phone: string): Promise<void> {
+    return this.run(() => {
+      if (usE164(phone) !== phone) throw new ApiError('23514', 'not a US number');
+    });
+  }
+  verifyTextCode(phone: string, code: string): Promise<Session> {
+    return this.run(() => {
+      if (code.trim() !== FAKE_OTP) throw new ApiError('BAD_OTP');
+      const e164 = usE164(phone);
+      if (!e164) throw new ApiError('BAD_OTP');
+      const u = this.be.userByPhone(e164);
+      this.userId = u.id;
+      if (this.opts.trackAppSession) {
+        this.be.state.appSession = u.id;
+        this.be.changed();
+      }
+      return { userId: u.id, email: '' };
     });
   }
   signOut(): Promise<void> {

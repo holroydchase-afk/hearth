@@ -28,3 +28,21 @@ Deno.test("JOIN-2: config.toml uses both templates with a code in the subject", 
   }
   assert(/otp_length = 6/.test(cfg), "6-number codes");
 });
+
+// BETA-SMS-7 (SPEC-SMS-SIGN-IN 3.5): the sign-in text. Code first (so the phone's autofill finds it), the scam
+// warning, one segment (160 characters of the GSM-7 alphabet: no emoji, no curly quotes).
+// Only config.toml's [auth.sms] template can be checked here. With Twilio Verify (SMS-PROVIDER.md) Twilio's own
+// template sends the text; that one is checked by hand once known (BETA-SMS-7 provider half, see the QA report).
+const GSM7 = "@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞÆæßÉ !\"#¤%&'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà";
+Deno.test("BETA-SMS-7: the [auth.sms] template, with code 123456, is Hearth's words in one GSM-7 segment", () => {
+  const cfg = read("config.toml");
+  const block = cfg.split("[auth.sms]")[1]?.split("\n[")[0] ?? "";
+  const tpl = /^template = "(.*)"$/m.exec(block)?.[1];
+  assert(tpl !== undefined, "[auth.sms] has a template line");
+  const text = tpl.replace(/\{\{ \.Code \}\}/g, "123456");
+  assert(text.startsWith("Hearth code: 123456"), `starts "Hearth code: 123456" (got "${text}")`);
+  assert(text.includes("Never read this code to anyone"), "says never read the code to anyone");
+  assert(text.length <= 160, `at most 160 characters (got ${text.length})`);
+  const bad = [...text].filter((ch) => !GSM7.includes(ch));
+  assert(bad.length === 0, `all GSM-7 (not: ${bad.join(" ")})`);
+});

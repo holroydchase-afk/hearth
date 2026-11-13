@@ -30,6 +30,7 @@ export type ApiErrorCode =
   | '23505' // already taken (MSG-5: another phone changed the chat's keys first)
   | '54000' // rate limited
   | 'BAD_OTP' // wrong or old 6-digit sign-in code
+  | 'SMS_OFF' // BETA-SMS-6: the server can't send texts now (switched off or the provider failed); offer email
   | 'EXIF' // sign-media 422: metadata not stripped; or the phone couldn't read the photo it made
   // MEDIA-3: the on-phone verifier found a field group the media policy strips (SPEC-MEDIA 1.1)
   | 'META_LOCATION' | 'META_DATETIME' | 'META_CAMERA' | 'META_ORIENTATION' | 'META_SOFTWARE'
@@ -60,10 +61,14 @@ export const isRetryable = (e: unknown): boolean =>
  * helpers (Supabase Auth email OTP) and the byte transfer helpers (presigned URLs).
  */
 export interface HearthApi {
-  // --- auth (Supabase Auth, email 6-digit code; no passwords, no magic links) ---
+  // --- auth (Supabase Auth, email or text 6-digit code; no passwords, no magic links) ---
   getSession(): Promise<Session | null>;
   sendCode(email: string): Promise<void>;
   verifyCode(email: string, code: string): Promise<Session>;
+  /** BETA-SMS (SPEC-SMS-SIGN-IN): a 6-number code by text to a US number in E.164 (+1XXXXXXXXXX). Server can't send: SMS_OFF. */
+  sendTextCode(phone: string): Promise<void>;
+  /** Same codes as verifyCode (BAD_OTP, 54000, NETWORK). A phone account's session has email ''. */
+  verifyTextCode(phone: string, code: string): Promise<Session>;
   signOut(): Promise<void>;
 
   // --- RPCs ---
