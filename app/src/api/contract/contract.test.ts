@@ -578,8 +578,9 @@ describe.each(factories)('%s contract (API.md)', (_name, factory, caps) => {
 
     it('SEARCH-12 pages newest photo first on (sort_at, post_id)', async () => {
       const t = tag();
-      const a = await wordsPost(`${t} a`, [h.circleIn], '2017-03-01T00:00:00.000Z');
-      const b = await wordsPost(`${t} b`, [h.circleIn], '2017-02-01T00:00:00.000Z');
+      // T7: a year no other test uses (the real-API harness keeps one database; BETA-TIME-4 owns 2016/2017).
+      const a = await wordsPost(`${t} a`, [h.circleIn], '2013-03-01T00:00:00.000Z');
+      const b = await wordsPost(`${t} b`, [h.circleIn], '2013-02-01T00:00:00.000Z');
       const [p1] = await viewerIn.searchPosts({ space: h.spaceId, words: t, limit: 1 });
       expect(p1!.post_id).toBe(a);
       const p2 = await viewerIn.searchPosts({ space: h.spaceId, words: t, limit: 1, beforeAt: p1!.sort_at, beforeId: p1!.post_id });
