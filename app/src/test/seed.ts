@@ -33,3 +33,24 @@ export async function seedPost(be: FakeBackend, opts: { author?: string; caption
   await api.publishPost(id);
   return { id, plains };
 }
+
+/**
+ * VID-18/20: a published post holding one video, uploaded the way the app will: the cleaned MP4 as `display`
+ * and a JPEG poster as `thumb`, both encrypted.
+ */
+export async function seedVideoPost(be: FakeBackend, opts: { author?: string; caption?: string; circles?: string[]; video?: Uint8Array; mime?: string; durationMs?: number } = {}) {
+  const api = be.clientFor(opts.author ?? FIXTURE.users.chase.id);
+  const id = await api.createPost({ clientId: uuid(), space: FIXTURE.space.id, caption: opts.caption ?? 'Leo on the slide', title: null, circleIds: opts.circles ?? [FIXTURE.circles.dadSide.id], takenAt: null });
+  const video = opts.video ?? new Uint8Array(900).map((_, i) => (i * 7 + 3) & 0xff);
+  const poster = fakeJpegBytes(41, 300);
+  const g = await api.signUpload(id, [{
+    kind: 'video', mime_type: opts.mime ?? 'video/quicktime', width: 1280, height: 720, duration_ms: opts.durationMs ?? 12_000,
+    byte_size: encryptedSize(video.length), thumb_byte_size: encryptedSize(poster.length), exif_stripped: true,
+  }]);
+  const it = g.items[0]!;
+  await api.putObject(it.display_put_url, encryptMedia(video, it.dek), it.required_headers);
+  await api.putObject(it.thumb_put_url, encryptMedia(poster, it.dek), it.required_headers);
+  await api.finalizeMedia([it.media_id]);
+  await api.publishPost(id);
+  return { id, mediaId: it.media_id, video, poster };
+}

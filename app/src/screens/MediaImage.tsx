@@ -6,7 +6,7 @@ import { useApp } from '../state/AppContext';
 import { Txt } from '../ui/kit';
 import { useTheme } from '../ui/theme';
 
-/** Thumbnail first (a small blurry preview), then the full photo. Words while loading. */
+/** Thumbnail first (a small blurry preview), then the full photo. Words while loading. full={false}: the thumb only, sharp (a video's poster). */
 export function MediaImage({ postId, mediaId, style, fit = 'cover', full = true }: {
   postId: string; mediaId: string; style?: StyleProp<ViewStyle>; fit?: 'cover' | 'contain'; full?: boolean;
 }) {
@@ -31,7 +31,7 @@ export function MediaImage({ postId, mediaId, style, fit = 'cover', full = true 
   return (
     <View style={[styles.box, { backgroundColor: c.photo }, style]}>
       {uri ? (
-        <Image source={{ uri }} resizeMode={fit} blurRadius={display ? 0 : 6} style={StyleSheet.absoluteFill} accessibilityIgnoresInvertColors />
+        <Image source={{ uri }} resizeMode={fit} blurRadius={display || !full ? 0 : 6} style={StyleSheet.absoluteFill} accessibilityIgnoresInvertColors />
       ) : (
         <View style={styles.center}>
           {failed ? <Txt variant="muted">This photo can't be shown right now.</Txt> : <><ActivityIndicator color={c.accent} /><Txt variant="muted">Loading the photo…</Txt></>}

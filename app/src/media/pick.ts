@@ -1,11 +1,19 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 import * as ImagePicker from 'expo-image-picker';
+import { Platform } from 'react-native';
 // SDK 57 moved these functions to /legacy; the root import now throws on them at runtime.
 import * as MediaLibrary from 'expo-media-library/legacy';
 import { captureInfo } from './captureDate';
 import type { QueueItem } from '../upload/queue';
 import { BULK_PICK_LIMIT, type PickedAsset } from '../share/bulk';
+
+/**
+ * The picker gives a video's length in ms on phones but in seconds on the web (expo-image-picker 58). QA-R3: the
+ * web says 0 when it can't read the file's metadata; an unknown length is null, which checkVideo refuses.
+ */
+export const pickedDurationMs = (d: number | null | undefined, os: string = Platform.OS): number | null =>
+  d == null || !Number.isFinite(d) || d <= 0 ? null : os === 'web' ? Math.round(d * 1000) : d;
 
 export type PickResult = { items: QueueItem[] } | { denied: true };
 
@@ -28,7 +36,7 @@ export async function pickPhotos(limit = 10, opts: { videos: boolean } = { video
   });
   if (r.canceled) return { items: [] };
   return {
-    items: r.assets.slice(0, limit).map((a) => ({ uri: a.uri, kind: opts.videos && a.type === 'video' ? 'video' as const : 'photo' as const, width: a.width, height: a.height, durationMs: a.duration ?? null })),
+    items: r.assets.slice(0, limit).map((a) => ({ uri: a.uri, kind: opts.videos && a.type === 'video' ? 'video' as const : 'photo' as const, width: a.width, height: a.height, durationMs: pickedDurationMs(a.duration) })),
   };
 }
 
@@ -37,7 +45,7 @@ export async function pickPhotos(limit = 10, opts: { videos: boolean } = { video
  * so the capture date can be read on the phone. The EXIF stays in memory here and is dropped by
  * planBatch; only takenAt leaves. The pipeline re-encodes and refuses any output with EXIF.
  */
-export async function pickBulk(): Promise<{ assets: PickedAsset[] } | { denied: true }> {
+export async function pickBulk(opts: { videos: boolean } = { videos: false }): Promise<{ assets: PickedAsset[] } | { denied: true }> {
   const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
   if (!perm.granted && perm.accessPrivileges !== 'limited') return { denied: true };
   const r = await ImagePicker.launchImageLibraryAsync({
@@ -46,11 +54,13 @@ export async function pickBulk(): Promise<{ assets: PickedAsset[] } | { denied: 
     selectionLimit: BULK_PICK_LIMIT,
     exif: true,
     quality: 1,
+    // VID-21: with video_posting on, bulk videos are sent, so iPhone exports them at 720p H.264 like pickPhotos.
+    ...(opts.videos ? { videoExportPreset: ImagePicker.VideoExportPreset.H264_1280x720 } : {}),
   });
   if (r.canceled) return { assets: [] };
   const assets: PickedAsset[] = r.assets.map((a) => ({
     uri: a.uri, type: a.type ?? null, mimeType: a.mimeType ?? null, width: a.width, height: a.height,
-    duration: a.duration ?? null, exif: (a.exif as Record<string, unknown> | null | undefined) ?? null,
+    duration: pickedDurationMs(a.duration), exif: (a.exif as Record<string, unknown> | null | undefined) ?? null,
     assetId: a.assetId ?? null,
   }));
   await addLibraryInfo(assets, r.assets.map((a) => a.assetId ?? null));

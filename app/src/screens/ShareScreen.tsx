@@ -48,7 +48,7 @@ export function ShareScreen() {
   // HELP-R4: the server's off-switches (my_features); off until read, like every feature (FLAG-5).
   const switches = useMemo(() => helperSwitches(app.features), [app.features]);
   const helped = useMemo(() => (picked ? applyHelpers(picked, { on: switches, putBack, looks }) : null), [picked, switches, putBack, looks]);
-  const plan = useMemo(() => (helped ? planBatch(helped.kept) : null), [helped]);
+  const plan = useMemo(() => (helped ? planBatch(helped.kept, {}, { videos: app.features.includes('video_posting') }) : null), [helped, app.features]);
   const setPlan = (assets: PickedAsset[] | null) => { setPicked(assets); setPutBack(new Set()); setLooks(null); };
   // HELP-DUP-2/3, HELP-BLUR: read small previews after the review screen shows; Send never waits for them.
   const previewBytes = app.deps.previewBytes;
@@ -106,7 +106,7 @@ export function ShareScreen() {
   const pickMany = async () => {
     if (!app.deps.pickBulk) return;
     setNotice(null);
-    const r = await app.deps.pickBulk();
+    const r = await app.deps.pickBulk({ videos });
     if ('denied' in r) setNotice('Hearth needs your OK to see your photos. Tap "Allow" when your phone asks.');
     else if (r.assets.length) setPlan(r.assets);
   };

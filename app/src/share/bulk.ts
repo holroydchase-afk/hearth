@@ -2,7 +2,8 @@
 // Copyright (C) 2026 Chase Holroyd
 // BETA-BULK-2/3/5: plan a bulk pick into posts, on the phone.
 // Up to 100 photos per pick, grouped by the day taken (phone's time zone) into posts of at
-// most 10 (the BETA-SHARE-1 limit). Videos are skipped with a plain line. Only the date read
+// most 10 (the BETA-SHARE-1 limit). Videos are skipped with a plain line unless the server has video_posting on
+// (VID-21, SPEC-MEDIA 4.1), when they are planned like photos with their size and length. Only the date read
 // on the phone (takenAt) goes into a planned item; never EXIF, GPS or other metadata.
 import { captureInfo, type PhoneZone } from '../media/captureDate';
 import type { QueueItem } from '../upload/queue';
@@ -43,13 +44,18 @@ export interface BatchPlan {
   overLimit: number;
 }
 
-/** Day = the photo's own local day when its offset is known, else the day in the phone's zone. */
-export function planBatch(assets: PickedAsset[], o: PhoneZone = {}): BatchPlan {
+const isVideo = (a: PickedAsset) => a.type === 'video' || (!a.type && typeof a.mimeType === 'string' && a.mimeType.startsWith('video/'));
+
+/**
+ * Day = the photo's own local day when its offset is known, else the day in the phone's zone.
+ * `videos` is the server's video_posting switch (FLAG-5); off, videos are left out and counted (BETA-BULK-5).
+ */
+export function planBatch(assets: PickedAsset[], o: PhoneZone = {}, opts: { videos?: boolean } = {}): BatchPlan {
   let skippedVideos = 0;
   const photos: PickedAsset[] = [];
   for (const a of assets) {
     if (a.type === 'pairedVideo') continue; // a Live Photo's motion part: the still is what we send
-    if (a.type === 'video' || (!a.type && typeof a.mimeType === 'string' && a.mimeType.startsWith('video/'))) {
+    if (isVideo(a) && !opts.videos) {
       skippedVideos += 1;
       continue;
     }
@@ -62,9 +68,10 @@ export function planBatch(assets: PickedAsset[], o: PhoneZone = {}): BatchPlan {
   const byDay = new Map<string | null, QueueItem[]>();
   for (const a of kept) {
     const info = captureInfo(a, o);
-    const item: QueueItem = { uri: a.uri, kind: 'photo', takenAt: info?.takenAt ?? null };
+    const item: QueueItem = { uri: a.uri, kind: isVideo(a) ? 'video' : 'photo', takenAt: info?.takenAt ?? null };
     if (typeof a.width === 'number') item.width = a.width;
     if (typeof a.height === 'number') item.height = a.height;
+    if (item.kind === 'video') item.durationMs = a.duration ?? null;
     const key = info?.dayKey ?? null;
     const list = byDay.get(key) ?? [];
     list.push(item);

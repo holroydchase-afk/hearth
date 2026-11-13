@@ -4,6 +4,8 @@
 // memory, hand <Image> a data: URI. Decrypted bytes never touch disk except "Save to my phone".
 // A3 (DEC-29): with `disk`, the ciphertext is also kept on the phone and its key in the keychain-backed
 // store, so a photo seen before opens instantly and offline. prune() follows the feed; clearDisk() runs at sign-out.
+// VID-18: a video is decrypted into a short-lived file for the player (videoUri), never kept as ciphertext either
+// (too big for the photo store); releaseVideo() deletes it when the player closes.
 import { ApiError, type HearthApi, type ViewGrant, type ViewGrantItem } from '../api/HearthApi';
 import { toBase64 } from '../crypto/base64';
 import { decryptMediaAsync } from '../crypto/media';
@@ -22,20 +24,30 @@ export interface DiskOptions {
 }
 type KeyEntry = { dek: string; mime: string; at: number };
 
+/** Where a decrypted video is put for the player (platform/videoFiles.ts). Returns the uri to play. */
+export interface VideoFiles {
+  write(name: string, bytes: Uint8Array): Promise<string>;
+  remove?(name: string): Promise<void>;
+  clear?(): Promise<void>;
+}
+
 export class MediaCache {
   private grants = new Map<string, { at: Promise<ViewGrant>; expiresAt: number }>();
   private uris = new Map<string, Promise<string>>();
   private readonly now: () => number;
   private readonly max: number;
   private readonly disk: DiskOptions | null;
+  private readonly videoFiles: VideoFiles | null;
+  private videos = new Map<string, Promise<string>>();
   private keyMap: Promise<Record<string, KeyEntry>> | null = null;
   /** Disk writes run one after another; flush() waits for them. */
   private chain: Promise<void> = Promise.resolve();
 
-  constructor(private api: HearthApi, o: { now?: () => number; maxEntries?: number; disk?: DiskOptions | null } = {}) {
+  constructor(private api: HearthApi, o: { now?: () => number; maxEntries?: number; disk?: DiskOptions | null; videoFiles?: VideoFiles | null } = {}) {
     this.now = o.now ?? Date.now;
     this.max = o.maxEntries ?? 60;
     this.disk = o.disk ?? null;
+    this.videoFiles = o.videoFiles ?? null;
   }
 
   private get keysName(): string {
@@ -121,6 +133,7 @@ export class MediaCache {
 
   /** Sign-out: every kept file and key goes. */
   clearDisk(): Promise<void> {
+    this.clearVideos();
     const d = this.disk;
     if (!d) return Promise.resolve();
     this.queue(async () => {
@@ -177,6 +190,39 @@ export class MediaCache {
   /** Plaintext display bytes, for "Save to my phone". */
   bytes(postId: string, mediaId: string): Promise<{ bytes: Uint8Array; mime: string }> {
     return this.plain(postId, mediaId, 'display');
+  }
+
+  /**
+   * VID-18: a local uri the player can open: the video decrypted into `<media_id>.mp4` (the player wants .mp4,
+   * even for an iPhone .mov, which is the same format). Without videoFiles (tests), a data: URI.
+   */
+  videoUri(postId: string, mediaId: string): Promise<string> {
+    const hit = this.videos.get(mediaId);
+    if (hit) return hit;
+    const p = (async () => {
+      const it = await this.item(postId, mediaId);
+      const bytes = await decryptMediaAsync(await this.api.getObject(it.display_url), it.dek);
+      return this.videoFiles ? this.videoFiles.write(`${mediaId}.mp4`, bytes) : `data:video/mp4;base64,${toBase64(bytes)}`;
+    })();
+    this.videos.set(mediaId, p);
+    p.catch(() => this.videos.delete(mediaId));
+    return p;
+  }
+
+  /** The player closed: delete the decrypted file. */
+  releaseVideo(mediaId: string): void {
+    const p = this.videos.get(mediaId);
+    if (!p) return;
+    this.videos.delete(mediaId);
+    const files = this.videoFiles;
+    // After the write finishes, so a file still being written is deleted too.
+    p.then(() => files?.remove?.(`${mediaId}.mp4`)).catch(() => {});
+  }
+
+  /** Every decrypted video file goes (sign-out, start-up). */
+  clearVideos(): void {
+    this.videos.clear();
+    this.videoFiles?.clear?.().catch(() => {});
   }
 
   /** Warm the next photos (BETA-SEE-2 / app-engineer rule 4). */

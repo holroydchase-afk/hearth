@@ -3,7 +3,7 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: GitHub hold (Nov 10). Local only: Start a family (DEC-55, 0024), photo search (DEC-56, 0025) and text sign-in (DEC-57, 0026, off) wait in the push queue (/mnt/project-files/drafts/PUSH-QUEUE.md)
+now: GitHub hold (Nov 10). Everything below waits in one push queue (/mnt/project-files/drafts/PUSH-QUEUE.md): Start a family + FIRSTMIN (#107), Apple fixes (#106), photo search (0025), text sign-in (0026, off), video player (off)
 next: more screens onto the spacing scale if Chase likes it; #83 uses Chase's own photos
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
@@ -11,6 +11,14 @@ waiting_on_chase:
 blockers: []
 -->
 
+## Nov 10: video part 2, poster frame and player (VID-14..18, 20, 21; SPEC-MEDIA 4.1, TRACKER R27; local only under the GitHub hold, branch claude/project-thread-ontg2j)
+- **GitHub hold (Chase, Nov 10):** no push, PR, merge, deploy, CI or Actions until Chase says "lift GitHub hold". This work is local commits only.
+- **Done:** `prepareItem(item, deps?)` sends a video: cleaned MP4 as `display`, a JPEG poster as `thumb` (expo-video frame at 1 s, or 0 for clips under 1 s, re-encoded through the photo thumb steps; `src/media/expoPoster.ts`); no frame → the plain dark `app/assets/video-poster.jpg` (inlined in `videoPosterPlaceholder.ts`), still sends, nothing logged. `MediaCache.videoUri` decrypts into `<media_id>.mp4` (`platform/videoFiles.ts`; a blob: URL on web), deleted on Close, sign-out and start-up. `VideoPoster` ("Play" word button at the poster's bottom left, label "Play video"; the rest of the poster opens the post screen) on Photos, the post screen, Events and By date; `VideoPlayer` full screen in place (see GUX-R1..R4 below for its final words and behaviour). Bulk pick sends videos when `video_posting` is on (`planBatch(..., { videos })`). No migration, no deploy; `video_posting` stays off in production.
+- **Also fixed:** the web picker gives video length in seconds, phones in ms (`pickedDurationMs`, engineer-written test `pickDuration.test.ts` for qa-tdd to review). Web e2e: the pinned Playwright browser isn't found here; run with a throwaway config setting `launchOptions.executablePath: '/opt/pw-browsers/chromium'`.
+- **GUX-R1..R4 and QA-R3 built (Nov 10, later):** on the post screen and By date the whole poster is the Play video button; the player is on the color's dark palette; one Play tap plays with sound ("Turn sound off"/"Turn sound on"); can't-play words name who to call (`cantPlayVideo` in errors/messages.ts); a web picker length of 0 is unknown (null) and refused. qa-tdd then updated VID-18 to match GUX-R3.
+- **Not built:** "Save to my phone" for a video (hidden on videos; `saveToPhone` writes a JPEG). Video ciphertext isn't kept on the phone (too big for the photo store), so a video replays only online.
+- **Verified (qa-tdd, 3x):** app jest 804/0, typecheck, web e2e 5/0 (local executablePath wrapper, T12), backend 1038/0, check-agents. privacy-security: no P0/P1; PRIV-R1 (clear decrypted videos at start-up even when signed out), R2 (posting copies in the cache, M7), R3 (iOS file protection, accepted) are P2. Drafts: /mnt/project-files/drafts/video-player-2026-11-10/ (bundle + patches + README).
+- **Next exact step:** after "lift GitHub hold", push this branch (one push) and open a PR (app/** waits for Chase's merge, DEC-48). Then VID-19 on an iPhone and an Android phone in Expo Go, FLAG-7/VID-22 exiftool check on Chase's iPhone, then Chase's word turns `video_posting` on. PRIV-R1 is a small follow-up.
 ## Nov 10: text message sign-in built, off (BETA-SMS-1..15, DEC-57, migration 0026, TRACKER R43; branch claude/project-thread-y94vb7, local only under the GitHub hold)
 - **Done:** migration 0026 (E.164 phone invites via an `invites` trigger, redeem matches `auth.users.phone` with or without `+`, `invite_preview.sign_in_with`, no email batch without an email, `[phone]` in error reports, QA-R1: a phone is never a placeholder name). `config.toml` `[auth.sms]` template in Hearth's words. App: `sendTextCode`/`verifyTextCode`, `api/phone.ts` (E.164, last 4, scrub, flag), `SignInFlow` + `TextCodeFlow`, join screen by `sign_in_with`, invite card's "Their mobile number", no-family "Signed in with email before?", Help/Preferences push-only for phone accounts. check-logs flags phone names. API.md, architecture 02/05 footers.
 - **Tests changed (plainly wrong or asked for):** api_test and contract exact-keys now include `sign_in_with` (QA-R3); sms_test's `position('phone"' …)` check contradicted `sign_in_with = 'phone'`, now checks no key names a phone.

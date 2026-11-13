@@ -140,7 +140,7 @@ Each phase adds to the last; none replaces stored data or a screen.
 
 **Left inside on purpose.** The picture and sound samples, byte for byte. A video encoded by software that writes text into the picture stream itself (x264's settings banner) keeps it; phone cameras and Apple's exporter don't write one. Size: the whole file is read into memory once and copied once (about 2 × 40 MB for 60 s at 720p).
 
-**Not built yet (TRACKER R27):** the poster frame (thumbnail), the player on Photos, words from grandparent-ux, the manual FLAG-7 check (a real iPhone and Android video, posted and downloaded, through exiftool), then turning `video_posting` on. Live Photo motion (L1) reuses this cleaner.
+**Not built yet (TRACKER R27):** (poster frame and player built Nov 10, section 4.1) words from grandparent-ux, the manual FLAG-7 check (a real iPhone and Android video, posted and downloaded, through exiftool), then turning `video_posting` on. Live Photo motion (L1) reuses this cleaner.
 
 | ID | Type | Given / When / Then |
 |---|---|---|
@@ -150,4 +150,21 @@ Each phase adds to the last; none replaces stored data or a screen.
 | VID-8..10 | auto · **Built Oct 29** | Input unchanged and cleaning is idempotent; the mime type comes from the file's brand; two real ffmpeg-made files (`app/src/test/fixtures/`) come out clean and still decode (ffprobe and a full ffmpeg decode, by hand, Oct 29; how: `app/src/test/fixtures/README.md`). |
 | VID-12, 13 | auto · **Built Oct 29** | `processVideo` checks the 60 s limit before reading, cleans and verifies; the picker asks iPhone for 720p H.264 when videos are offered. |
 | FLAG-7 | manual | **Given** a video from Chase's iPhone (location on) and one from an Android phone, **When** posted and downloaded, **Then** exiftool shows no location, make, model or date. Needs the poster frame and player first. |
+
+### 4.1 Part 2: poster frame and player (scoped Nov 10, staff-pm)
+**Shape.** No migration. A video item stores the cleaned MP4 as `display` and a JPEG poster as `thumb`; sign-media already signs both. The poster comes from expo-video's thumbnail at about 1 s (or the first frame for shorter clips), re-encoded through expo-image-manipulator so it carries no EXIF, then through the same thumb size steps as a photo (target ~40 KB, max 48 KB). **Poster failure (staff-pm call):** send the video with a plain dark placeholder poster (a bundled JPEG, no words baked in) rather than refuse it; refusing a clean video costs a share for a cosmetic reason (A1). `video_posting` stays off in production; turning it on waits for FLAG-7 and Chase's word.
+
+| ID | Type | Given / When / Then |
+|---|---|---|
+| VID-14 | auto | **Given** a video pick and fake deps, **When** `prepareItem` runs, **Then** it returns the cleaned bytes as `display` (verifyVideoClean passes) and a poster JPEG as `thumb`, and no longer throws `EXIF` for kind `video`. |
+| VID-15 | auto | **Given** the poster, **When** checked, **Then** it is a JPEG with no APP1/EXIF, XMP or MakerNote (verifyClean), at most 48 KB, long edge at most the photo thumb edge. |
+| VID-16 | auto | **Given** a prepared video, **When** the upload spec is built, **Then** `kind: 'video'`, the mime from the file's brand, `duration_ms` set, `width`/`height` from the video (not the poster), `byte_size` and `thumb_byte_size` are the encrypted sizes, `exif_stripped: true`. |
+| VID-17 | auto | **Given** thumbnail generation throws or returns nothing, **When** prepared, **Then** the placeholder poster is used, the video still sends, and nothing about the file is logged. |
+| VID-18 | auto (web e2e) | **Given** a video post on Photos and on the post screen, **When** shown, **Then** the poster shows with a visible "Play" word button (17pt+, 48pt target, accessible label "Play video"); tapping it opens the full-screen player; no gesture-only path. |
+| VID-19 | manual (iPhone + Android) | **Given** the full-screen player (BETA-SEE-4 video half), **When** opened by the poster's one Play tap, **Then** it plays, with sound (GUX-R3: nothing plays before that tap, nothing autoplays on Photos), with visible Play/Pause and "Turn sound off"/"Turn sound on" word buttons, on the person's color in its dark version, never pure black (GUX-R2), and Close returns to where the grandparent was. Where the poster has nothing else to open (post screen, By date), the whole poster is the "Play video" button (GUX-R1). |
+| VID-20 | auto | **Given** a video whose file can't be fetched or decrypted, or the player errors, **When** shown, **Then** plain words ("This video won't play right now. It may be the signal. Tap Try again, or call <who>." with "or call <who>" left out for the family's owner; GUX-R4) and a Try again button; never a blank or spinning screen. |
+| VID-21 | auto | **Given** a bulk pick with 3 videos, **When** `video_posting` is on, **Then** the videos are prepared and sent and there is no left-out message; **When** it is off, **Then** BETA-BULK-5's "Hearth can't send videos yet, so 3 videos were left out." is unchanged. |
+| VID-22 | manual (Chase's iPhone) | FLAG-7 above, run after VID-14..21 are green; exiftool on the downloaded MP4 and poster. Then Chase's word turns `video_posting` on. |
+
+Words in VID-18..20 were reviewed by grandparent-ux on Nov 10 (GUX-R1..R4); E12 still owns any change before VID-19/22.
 

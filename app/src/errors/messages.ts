@@ -76,3 +76,9 @@ export function messageFor(e: unknown, ctx: MessageContext = {}): string {
       return `Something went wrong. Try again${who ? `, or call ${who}` : ''}.`;
   }
 }
+
+/** GUX-R4: a video that can't be fetched, opened or played. Names who to call, like messageFor's default. */
+export function cantPlayVideo(inviter?: string | null): string {
+  const who = inviter?.trim() || null;
+  return `This video won't play right now. It may be the signal. Tap Try again${who ? `, or call ${who}` : ''}.`;
+}

@@ -5,7 +5,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { AccessibilityInfo, AppState, Appearance, Platform } from 'react-native';
 import type { HearthApi, Session, Space } from '../api/HearthApi';
 import { FeedStore, clearFeedCache, type FeedState } from '../feed/store';
-import { MediaCache } from '../media/cache';
+import { MediaCache, type VideoFiles } from '../media/cache';
 import type { MediaStore } from '../media/diskCache';
 import { clearArrivals, recordArrival } from '../notify/latency';
 import { listenForArrivals, pushStatus, registerForPush } from '../notify/push';
@@ -24,13 +24,15 @@ export interface AppDeps {
   /** videos: offer videos too (only when the server says video_posting is on: FLAG-5). */
   pickPhotos: (opts: { videos: boolean }) => Promise<{ items: QueueItem[] } | { denied: true }>;
   /** BETA-BULK-1: up to 100 photos with EXIF, read on the phone only (media/pick.ts pickBulk). */
-  pickBulk?: () => Promise<{ assets: PickedAsset[] } | { denied: true }>;
+  pickBulk?: (opts?: { videos: boolean }) => Promise<{ assets: PickedAsset[] } | { denied: true }>;
   /** R15 photo helpers: a small JPEG preview of a picked photo, read on the phone only (media/preview.ts). */
   previewBytes?: (uri: string) => Promise<Uint8Array | null>;
   saveToPhone: (bytes: Uint8Array, name: string) => Promise<'saved' | 'denied'>;
   openUrl: (url: string) => Promise<unknown>;
   /** A3: where viewed photos are kept (ciphertext files + keychain-backed keys). Absent or null: nothing kept (web). */
   mediaDisk?: { store: MediaStore; keys: KV } | null;
+  /** VID-18: where a decrypted video goes for the player (platform/videoFiles.ts). Absent: a data: URI (tests). */
+  videoFiles?: VideoFiles | null;
 }
 
 export type AppStatus = 'loading' | 'signedOut' | 'noSpace' | 'ready';
@@ -157,7 +159,8 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
       return;
     }
     const prefs = await loadPrefs(deps.kv, session.userId, space.role);
-    const media = new MediaCache(deps.api, { disk: deps.mediaDisk ? { ...deps.mediaDisk, userId: session.userId } : null });
+    const media = new MediaCache(deps.api, { disk: deps.mediaDisk ? { ...deps.mediaDisk, userId: session.userId } : null, videoFiles: deps.videoFiles ?? null });
+    media.clearVideos(); // VID-18: any decrypted video a crash left behind
     // A3: kept photo files follow the feed: a deleted post or lost access drops its files and keys.
     const feed = new FeedStore({
       api: deps.api, kv: deps.kv, userId: session.userId, spaceId: space.space_id, inviter: space.inviter_name,

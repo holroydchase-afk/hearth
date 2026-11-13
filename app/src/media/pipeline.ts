@@ -93,15 +93,23 @@ export async function processPhoto(src: { uri: string }, deps: PipelineDeps): Pr
   const edge = c.long_edge === 'original' ? Math.max(img.width, img.height) : c.long_edge;
   const display = await encode(deps, policy, img, fitLongEdge(img.width, img.height, edge), c.quality);
 
-  // Thumbnail: step quality, then size, down until it's about 40 KB (measured after cleaning).
-  // R12 (RV-P5): skip steps the display JPEG already says are too big, so a busy photo isn't encoded 7 times.
+  // R12 (RV-P5): skip thumb steps the display JPEG already says are too big, so a busy photo isn't encoded 7 times.
+  const thumb = await encodeThumb(deps, policy, img, display.bytes.length / (display.width * display.height));
+  return { kind: 'photo', mime_type: 'image/jpeg', display, thumb };
+}
+
+/**
+ * Thumbnail: step quality, then size, down until it's about 40 KB (measured after cleaning). With `bytesPerPixel`
+ * (from the display JPEG), steps that surely miss are skipped; without it every step is tried in order.
+ */
+async function encodeThumb(deps: PipelineDeps, policy: MediaPolicy, img: LoadedImage, bytesPerPixel: number | null): Promise<Encoded> {
+  const c = policy.compression;
   const attempts: [number, number][] = [[THUMB_LONG_EDGE, 0.6], [THUMB_LONG_EDGE, 0.45], [400, 0.4], [320, 0.4], [256, 0.35], [200, 0.3]];
-  const bytesPerPixel = display.bytes.length / (display.width * display.height);
   const guess = ([edge, q]: [number, number]) => {
     const s = fitLongEdge(img.width, img.height, edge);
-    return bytesPerPixel * s.width * s.height * (q / c.quality) * THUMB_GUESS_MARGIN;
+    return bytesPerPixel! * s.width * s.height * (q / c.quality) * THUMB_GUESS_MARGIN;
   };
-  const first = attempts.findIndex((a) => guess(a) <= c.thumb_target_bytes);
+  const first = bytesPerPixel == null ? 0 : attempts.findIndex((a) => guess(a) <= c.thumb_target_bytes);
   let thumb: Encoded | null = null;
   for (const [edge, q] of attempts.slice(first < 0 ? attempts.length - 1 : first)) {
     thumb = await encode(deps, policy, img, fitLongEdge(img.width, img.height, edge), q);
@@ -111,7 +119,17 @@ export async function processPhoto(src: { uri: string }, deps: PipelineDeps): Pr
     // Last resort: tiny. Never ship a heavy thumbnail to a grandma on one bar of LTE.
     thumb = await encode(deps, policy, img, fitLongEdge(img.width, img.height, 160), 0.3);
   }
-  return { kind: 'photo', mime_type: 'image/jpeg', display, thumb };
+  return thumb;
+}
+
+/**
+ * VID-15: a video's poster frame (a local JPEG the frame grabber wrote) goes through the same thumb steps as a
+ * photo: decoded and re-encoded by the manipulator, cleaned and verified, about 40 KB, long edge at most 480.
+ */
+export async function processPoster(frameUri: string, deps: PipelineDeps): Promise<Encoded> {
+  const policy = deps.policy ?? MEDIA_POLICY;
+  const img = await deps.manipulator.load(frameUri);
+  return encodeThumb(deps, policy, img, null);
 }
 
 export function checkVideo(a: { durationMs: number | null | undefined }): void {

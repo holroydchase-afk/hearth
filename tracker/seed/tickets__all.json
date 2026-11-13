@@ -963,6 +963,39 @@
    "fixed": "2026-11-05"
   },
   {
+   "id": "T12",
+   "kind": "test fix",
+   "layer": "ops",
+   "severity": "Low",
+   "status": "open",
+   "title": "npm run e2e:web can't launch a browser in the cloud sandbox: e2e's Playwright 1.56.1 wants chromium_headless_shell-1194, /opt/pw-browsers has 1243. VID-18's red run used a local wrapper config pointing launchOptions.executablePath at 1243",
+   "tests": [],
+   "found": "2026-11-10",
+   "fixed": null
+  },
+  {
+   "id": "B16",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "QA-R3: on the web the picker reports 0 s when it can't read a video's metadata; pickedDurationMs turns that into 0 ms, which passes the 60 s limit. Test: media/__tests__/pickDurationZero.test.ts",
+   "tests": [],
+   "found": "2026-11-10",
+   "fixed": "2026-11-10"
+  },
+  {
+   "id": "T13",
+   "kind": "test fix",
+   "layer": "ops",
+   "severity": "Medium",
+   "status": "open",
+   "title": "Test Log honesty: run r11 (Oct 18) is rebuilt from today's SQL files, so every rebuild marks backend cases written after Oct 18 as passing in a run that never ran them (639 became 841 on Nov 10). Those two seed files were left as committed until it's fixed",
+   "tests": [],
+   "found": "2026-11-10",
+   "fixed": null
+  },
+  {
    "id": "B15",
    "kind": "bug",
    "layer": "backend",

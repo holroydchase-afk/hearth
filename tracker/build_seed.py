@@ -233,6 +233,9 @@ tickets = [
  ("B13", "bug", B, "High", "fixed", "HARD-17: Postgres JIT-compiled feed_rows once a family had a few dozen posts: 1.5-2 s per Photos or By date page instead of 20-50 ms. Migration 0018 turns JIT off for it", []),
  ("B12", "bug", "app", "Low", "fixed", "HARD-16: on a server before 0017, Haha or Like takes away an existing heart (the hosted server has 0017)", []),
  ("B14", "bug", "app", "Medium", "fixed", "LIVE-1: on iPhone the glass tab bar drew the 17 pt tab words over the icons (Chase's live review, Nov 5)", []),
+ ("T12", "test fix", "ops", "Low", "open", "npm run e2e:web can't launch a browser in the cloud sandbox: e2e's Playwright 1.56.1 wants chromium_headless_shell-1194, /opt/pw-browsers has 1243. VID-18's red run used a local wrapper config pointing launchOptions.executablePath at 1243", []),
+ ("B16", "bug", "app", "Medium", "fixed", "QA-R3: on the web the picker reports 0 s when it can't read a video's metadata; pickedDurationMs turns that into 0 ms, which passes the 60 s limit. Test: media/__tests__/pickDurationZero.test.ts", []),
+ ("T13", "test fix", "ops", "Medium", "open", "Test Log honesty: run r11 (Oct 18) is rebuilt from today's SQL files, so every rebuild marks backend cases written after Oct 18 as passing in a run that never ran them (639 became 841 on Nov 10). Those two seed files were left as committed until it's fixed", []),
  ("B15", "bug", B, "Medium", "open", "QA-R1 (BETA-SMS): a phone-only account's placeholder name falls back to its phone number (tg_handle_new_user, 0007: coalesce(email, phone)), so the family would see the number as a name and in notices. Test: backend/tests/sms_test.sql", []),
 ]
 # When each ticket was found and fixed, where it isn't Oct 15.
@@ -242,7 +245,7 @@ DATES = {"S9": ("2026-10-15", "2026-10-16"), "S10": ("2026-10-15", "2026-10-16")
          "AE-5": ("2026-10-16", "2026-10-16"), "AE-6": ("2026-10-16", None), "AE-7": ("2026-10-16", "2026-10-16"),
          "AE-8": ("2026-10-16", "2026-10-16"), "V1": ("2026-10-16", None), "REPLY-1": ("2026-10-16", None),
          **{t: ("2026-10-18", "2026-10-18") for t in ("PRIV-1", "PRIV-2", "QA-3", "QA-2", "BULK-1F", "T6", "T7")},
-         "S17": ("2026-10-19", "2026-10-19"), "S14": ("2026-10-15", "2026-10-29"), "B11": ("2026-10-28", "2026-10-29"), "T11": ("2026-10-28", "2026-10-29"), "B12": ("2026-10-28", None), "B14": ("2026-11-05", "2026-11-05"), **{t: ("2026-10-28", "2026-10-28") for t in ("S21", "S22", "B13")}, **{t: ("2026-10-19", None) for t in ("S18", "S19", "S20")}, **{t: ("2026-10-19", "2026-10-21") for t in ("T8", "T9", "T10")}}
+         "S17": ("2026-10-19", "2026-10-19"), "S14": ("2026-10-15", "2026-10-29"), "B11": ("2026-10-28", "2026-10-29"), "T11": ("2026-10-28", "2026-10-29"), "B12": ("2026-10-28", None), "B14": ("2026-11-05", "2026-11-05"), "T12": ("2026-11-10", None), "T13": ("2026-11-10", None), "B16": ("2026-11-10", "2026-11-10"), **{t: ("2026-10-28", "2026-10-28") for t in ("S21", "S22", "B13")}, **{t: ("2026-10-19", None) for t in ("S18", "S19", "S20")}, **{t: ("2026-10-19", "2026-10-21") for t in ("T8", "T9", "T10")}}
 # link backend tickets to SQL tests
 for c in sql_cases:
     for t in c["tickets"]:
@@ -314,3 +317,12 @@ run("r15", suite="edge", at="2026-11-10T06:00:00-05:00", label="Text message sig
 print("proto", len(proto_cases), "red", sum(v == "fail" for v in red_map.values()), "| sql", len(sql_cases), "| edge", len(edge_cases),
       "| tickets", len(tickets), "| sec-linked", {t[0]: len(t[6]) for t in tickets if t[0].startswith("S")})
 print("areas", sorted({c['area'] for c in sql_cases}))
+run("r16", suite="app", at="2026-11-10T12:00:00-05:00", label="Video poster and player (SPEC-MEDIA 4.1, VID-14..18, 20, 21): tests written first (red)",
+    passed=769, failed=18, results={},
+    note="Red on purpose; same counts on 3 jest runs (18 failed, 769 passed, 1 skipped). New: media/__tests__/videoPoster.test.ts 11 of 13 red (prepareItem still throws EXIF for video; no app/assets/video-poster.jpg; no MediaCache.videoUri), share/__tests__/bulkVideo.test.ts 1 of 2 red (planBatch has no videos option), screens/__tests__/video.test.tsx 6 of 8 red (no Play video button, bulk still says videos were left out). The 5 passing are guards for behaviour that must not change (60 s limit, unreadable file is EXIF, video_posting off keeps BETA-BULK-5's line, Nana Ruth sees no video post). Web e2e video.spec.js red: the posted video shows Didn't send (prepare throws EXIF); run with a local browser-path wrapper (T12). typecheck clean. VID-19 and VID-22 are manual (phone).")
+run("r17", suite="app", at="2026-11-10T15:00:00-05:00", label="grandparent-ux video findings GUX-R1..R4 and QA-R3: tests written first (red)",
+    passed=788, failed=15, results={},
+    note="Red on purpose; same counts on 3 jest runs (15 failed, 788 passed, 1 skipped). videoGux.test.tsx 12 of 13 red: GUX-R1 the Play button doesn't wrap the poster on the post screen or By date; GUX-R2 the player background is #000000, not the dark palette bg, for Ember, Sage and Plum in light mode; GUX-R3 the player autoplays (muted) before Play; GUX-R4 new can't-play words with the helper's name. video.test.tsx VID-20 (2) now expect the GUX-R4 words. pickDurationZero.test.ts red (B15). The 1 passing is a guard: the Photos tile keeps its own Play and opens the post. typecheck clean. Web e2e not rerun.")
+run("r18", suite="app", at="2026-11-10T18:00:00-05:00", label="Video poster and player (VID-14..21) and grandparent-ux fixes (GUX-R1..R4, QA-R3): all suites 3x (green)",
+    passed=804, failed=0, results={},
+    note="Green on 3 runs each, after 3eed39e: app jest 804 passed (1 skipped), typecheck clean, web e2e 5 passed incl. video.spec.js VID-18 (11 screenshot-only skips; run with a local browser-path wrapper, T12), backend tests/run.sh 1038 passed 0 failed (local Postgres 16), check-agents OK. VID-18's 'no sound on open' check was updated to GUX-R3's reading (the poster's Play tap plays with sound; nothing plays before it). B15 fixed. VID-19 and VID-22 still need a phone; Deno not run here.")

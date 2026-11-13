@@ -14,6 +14,7 @@ import { shortDate } from '../ui/format';
 import { pinchZoom, useTheme } from '../ui/theme';
 import { AppGate } from './AppGate';
 import { MediaImage } from './MediaImage';
+import { VideoPoster } from './VideoPoster';
 
 export function ViewerScreen({ postId, index }: { postId: string; index: number }) {
   const app = useApp();
@@ -166,7 +167,9 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
                 <Pressable testID="viewer-photo" accessible={false} onPress={tapPhoto}
                   style={zoom && box.w ? { width: box.w * 2, height: box.h * 2 } : { width: box.w || '100%', height: box.h || '100%' }}>
                   <View testID={zoom ? 'viewer-zoomed' : undefined} style={{ flex: 1 }}>
-                    <MediaImage postId={entry.post.post_id} mediaId={entry.media.media_id} fit="contain" style={{ flex: 1, backgroundColor: c.bg }} />
+                    {entry.media.kind === 'video'
+                      ? <VideoPoster key={entry.media.media_id} postId={entry.post.post_id} mediaId={entry.media.media_id} fit="contain" style={{ flex: 1, backgroundColor: c.bg }} />
+                      : <MediaImage postId={entry.post.post_id} mediaId={entry.media.media_id} fit="contain" style={{ flex: 1, backgroundColor: c.bg }} />}
                   </View>
                 </Pressable>
               </ScrollView>
@@ -180,7 +183,8 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
               {back !== null ? <Button label="Back to the previous photo" text="◀ Back" variant="secondary" style={{ flex: 1 }} onPress={() => go(back)} /> : <View style={{ flex: 1 }} />}
               {next !== null ? <Button label="Next photo" text="Next ▶" variant="secondary" style={{ flex: 1 }} onPress={() => go(next)} /> : <View style={{ flex: 1 }} />}
             </View>
-            <Button label="Save to my phone" busy={saving} onPress={() => void save()} />
+            {/* Saving a video to the phone isn't built yet (saveToPhone writes a JPEG); TRACKER R27. */}
+            {entry.media.kind !== 'video' ? <Button label="Save to my phone" busy={saving} onPress={() => void save()} /> : null}
           </View>
         </>
       )}
