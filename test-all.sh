@@ -19,6 +19,7 @@ suite "test-all helper" quiet e2e/results/test-all.txt bash scripts/tests/test_a
 suite "test totals" quiet e2e/results/test-totals.txt bash scripts/tests/test_totals_test.sh
 suite "EAS script" quiet e2e/results/app-eas.txt bash app/scripts/tests/eas_test.sh
 suite "site analytics" quiet e2e/results/site-analytics.txt bash app/scripts/tests/site_analytics_test.sh
+suite "site meta" quiet e2e/results/site-meta.txt bash app/scripts/tests/site_meta_test.sh
 suite "prototype e2e" bash -c 'cd e2e && npx playwright test'
 suite "deploy script" quiet e2e/results/backend-deploy.txt bash -c 'cd backend && bash tests/deploy/deploy_test.sh'
 if pg_isready -q 2>/dev/null; then

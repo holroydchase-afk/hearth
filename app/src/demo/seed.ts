@@ -5,6 +5,8 @@
 // and lets them switch to Grandma Jo's view. Everything stays in the browser; no real backend.
 import { FIXTURE, type FakeBackend } from '../api/fake/FakeBackend';
 import { encryptMediaAsync } from '../crypto/media';
+import type { KV } from '../platform/kv';
+import { loadLastSeen, saveLastSeen } from '../state/lastSeen';
 
 const F = FIXTURE;
 const DAY = 864e5;
@@ -25,6 +27,8 @@ export interface DemoPost {
   pictures: string[];
   to: 'everyone' | 'dadSide' | 'momSide';
   daysAgo: number;
+  /** DEMO-NEW-2: who sent it; Kai (the visitor) when left out. */
+  from?: 'alex';
   hearts: Who[];
   replies: { who: Who; body: string }[];
 }
@@ -40,17 +44,32 @@ export const DEMO_POSTS: DemoPost[] = [
   { caption: "Mia's sunflowers are taller than she is", pictures: ['sunflowers'], to: 'momSide', daysAgo: 12,
     hearts: ['ruth'], replies: [{ who: 'ruth', body: 'Your grandpa would love that garden.' }] },
   { caption: 'Canoe day at the lake', pictures: ['lake'], to: 'momSide', daysAgo: 9, hearts: ['ruth'], replies: [] },
-  { title: "Mia's 5th birthday", caption: 'Mia turned 5!', pictures: ['cake', 'sunflowers'], to: 'everyone', daysAgo: 6,
+  { title: "Mia's 5th birthday", caption: 'Mia turned 5!', pictures: ['cake', 'balloons'], to: 'everyone', daysAgo: 6,
     hearts: ['jo', 'ruth', 'earl', 'alex'], replies: [{ who: 'jo', body: 'Happy birthday, sweet girl!' }, { who: 'ruth', body: 'Five already!' }] },
   { caption: 'Pumpkin patch day', pictures: ['pumpkins'], to: 'dadSide', daysAgo: 2,
     hearts: ['jo'], replies: [{ who: 'jo', body: 'Save me one for a pie!' }] },
+  // DEMO-NEW-2: Alex's posts since the demo's last visit, so the New for you card has something to show.
+  { title: 'Apple picking', caption: 'Leo picked a whole basket by himself', pictures: ['apples'], to: 'everyone', daysAgo: 1.6, from: 'alex',
+    hearts: ['ruth'], replies: [{ who: 'ruth', body: 'Bring some by on Sunday!' }] },
+  { caption: 'First snow! Mia wants to build a snowman', pictures: ['snow'], to: 'everyone', daysAgo: 0.8, from: 'alex',
+    hearts: ['jo', 'earl'], replies: [] },
 ];
+
+/** DEMO-NEW-1: the demo's pretend last visit, so a first-time visitor sees New for you (DEC-58). */
+export const DEMO_LAST_VISIT_DAYS = 3;
 
 const userOf = (w: Who): string => F.users[w].id;
 const iso = (t: number) => new Date(t).toISOString();
 
 /** Seeds the demo family into a fixture backend (made with joIsMember: true). */
-export async function seedDemo(be: FakeBackend, load: (name: string) => Promise<DemoPicture>): Promise<void> {
+export async function seedDemo(be: FakeBackend, load: (name: string) => Promise<DemoPicture>, kv?: KV): Promise<void> {
+  // DEMO-NEW-1: a last visit 3 days ago for Kai and Grandma Jo, written first so Photos reads it; a saved one is kept.
+  if (kv) {
+    const last = new Date(Date.now() - DEMO_LAST_VISIT_DAYS * DAY).toISOString();
+    for (const u of [F.users.chase.id, F.users.jo.id]) {
+      if (!(await loadLastSeen(kv, u))) await saveLastSeen(kv, u, last);
+    }
+  }
   for (const [id, name] of Object.entries(DEMO_NAMES)) {
     be.state.users[id]!.name = name;
     be.state.users[id]!.email = `${name.toLowerCase()}@example.com`;
@@ -67,8 +86,9 @@ export async function seedDemo(be: FakeBackend, load: (name: string) => Promise<
     } catch {
       continue; // a picture that didn't load skips its post; the rest of the family still shows
     }
-    const post = be.createPost(parent, { clientId: `demo-${n}`, space: F.space.id, caption: p.caption, title: p.title ?? null, circleIds: [F.circles[p.to].id] });
-    const grant = be.signUpload(parent, post, pics.map((pic) => ({
+    const author = p.from ? F.users[p.from].id : parent;
+    const post = be.createPost(author, { clientId: `demo-${n}`, space: F.space.id, caption: p.caption, title: p.title ?? null, circleIds: [F.circles[p.to].id] });
+    const grant = be.signUpload(author, post, pics.map((pic) => ({
       kind: 'photo', mime_type: 'image/jpeg', width: pic.width, height: pic.height, byte_size: 0, thumb_byte_size: 0, exif_stripped: true,
     })));
     for (const [i, pic] of pics.entries()) {
@@ -81,8 +101,8 @@ export async function seedDemo(be: FakeBackend, load: (name: string) => Promise<
       be.putObject(g.display_put_url, display, g.required_headers);
       be.putObject(g.thumb_put_url, thumb, g.required_headers);
     }
-    be.finalizeMedia(parent, grant.items.map((g) => g.media_id));
-    be.publishPost(parent, post);
+    be.finalizeMedia(author, grant.items.map((g) => g.media_id));
+    be.publishPost(author, post);
     const row = be.state.posts[post]!;
     row.created_at = iso(at);
     row.published_at = iso(at);

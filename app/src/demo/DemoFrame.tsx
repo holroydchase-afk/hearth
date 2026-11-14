@@ -12,12 +12,13 @@ import { PORTFOLIO_URL } from './DemoBar';
 export const APP_COLUMN = 430;
 export const WIDE = 900;
 
+// DEMO-NEW-6: the newest features first (New for you, DEC-58; Search, DEC-56).
 const TRY = [
-  'Scroll Photos. Each card you sent says who it went to.',
+  'Tap See the new photos. You get what the family sent since your last visit, one post at a time.',
   'Open Details at the top and tap See it as Grandma Jo. She sees only what was shared with her side of the family.',
-  'Open Share, pick a photo from this computer, and choose who sees it.',
+  'Tap Search and type lake. It looks at the words people wrote, never inside the photos.',
 ];
-const PROOF = ['Private by name', 'Data stays in the US', 'No ads, no AI training'];
+const PROOF = ['Private by name', 'Stored in the US', 'No ads, no AI training'];
 
 export function DemoFrame({ width, children, open = () => {} }: { width: number; children: ReactNode; open?: (url: string) => void }) {
   const { c } = useTheme();
