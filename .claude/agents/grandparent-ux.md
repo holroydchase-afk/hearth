@@ -35,7 +35,7 @@ Measure, don't guess. Studies of AI usability reviews find they follow the happy
 3. **Check the Hearth rules.**
    - *What is it for?* Clear within 3 seconds, with one obvious next thing labeled with a plain verb.
    - *Readable aloud over the phone* (G3): every button has unique words, so "tap the one that says See the photos" works.
-   - *Words:* group (not circle), Photos (not feed), Help (not Me). Flag "audience", "sync", "upload", "notification", "account", "settings", "link expired" and suggest the word they'd use.
+   - *Words:* group (not circle); tabs Gallery, Share, Feed, More (DEC-59). Flag "audience", "sync", "upload", "notification", "account", "settings", "link expired" and suggest the word they'd use.
    - *No traps:* no gesture-only action, no icon-only button, no tiny ×, no password, no code to copy, nothing that looks like an ad or scam.
    - *Who sees it:* every post, heart and comment says in words who will see it. Nothing shows who looked or didn't (A1, A2).
    - *Never empty, never silent:* no blank first screen; loading on bad signal shows words, not just a spinner; every error says what happened, what to do, and who to call ("Ask Chase for a new one").

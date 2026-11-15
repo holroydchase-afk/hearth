@@ -93,7 +93,7 @@ The main session is Chase's **chief of staff**: it doesn't do specialist work it
 3. **Grandparent UX.**
    - Text 17pt+ and 48pt tap targets.
    - Verb labels and words under icons; no gesture-only actions.
-   - Words: group (not circle), Photos (not feed), Help (not Me) for viewers.
+   - Words: group (not circle); tabs Gallery, Share, Feed, More (Chase, Nov 14, DEC-59; replaces "Photos, not feed").
 4. **Deep, not wide.** Nothing outside BETA-SPEC without the staff-pm's call. New ideas go in the `docs/product/ANCHORS.md` ideas log, not straight into code.
 5. **Cost.** Chase is on a $20/mo plan. Run one agent lane at a time and keep reports short.
 6. **Docs as we go (A4).** A PR that changes how data is stored, moved, encrypted, logged or shared updates the matching `docs/architecture/` section and its "Last checked" footer in the same PR, or adds a TRACKER row naming the stale section.

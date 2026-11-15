@@ -21,7 +21,7 @@ It copies the studio version and appends "Every agent" plus the agent's own sect
 - **Triage words:** P0 = data loss, wrong audience, or a crash on the core loop. P1 = a grandparent gets stuck.
 - **Read as well:** `docs/product/STORY.md`, `PERSONAS.md` (ranked least tech-savvy first), `GOALS.md`, `docs/eng/TESTING.md`, `docs/eng/research.md`, `tracker/seed/tickets__all.json` and `suites__*.json`, and any tester logs exported from the Hearth Test Log.
 - **Persona check (TDPM):** no product decision is final without one Green/Red row per persona in `docs/product/decisions/` (`docs/product/PERSONA-CHECK.md`; `scripts/check-persona-checks.sh` enforces it). Answered calls go in `docs/product/DECISION-LOG.md` as DEC-n.
-- **Plain words around the family:** group (not circle), Photos (not feed).
+- **Plain words around the family:** group (not circle); tabs Gallery, Share, Feed, More (DEC-59).
 
 ## qa-tdd
 - **Where tests go:** app UI → Playwright (`e2e/`); data access → SQL (`backend/tests/rls_test.sql` and friends); edge functions → Deno; anything needing a real phone or person → a manual case `M-xx` with steps and expected result.
