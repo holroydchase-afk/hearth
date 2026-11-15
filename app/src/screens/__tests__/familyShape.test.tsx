@@ -11,6 +11,7 @@ import { seedPost } from '../../test/seed';
 import { expectGrandparentSafe, renderApp } from '../../test/renderApp';
 import { GroupsScreen } from '../GroupsScreen';
 import { PhotosScreen } from '../PhotosScreen';
+import { GalleryScreen } from '../../test/redesignScreens'; // RD-13: By date lives in Gallery's top bar
 import { ShareScreen } from '../ShareScreen';
 
 const DAD = "Grandparents – Dad's side";
@@ -177,7 +178,7 @@ describe('BETA-TIME-2 a timeline card opens the full post (hearts and replies)',
   it('BETA-TIME-2 tapping a timeline card opens that post with Love it and a reply box', async () => {
     const be = FakeBackend.withFixture();
     const { id } = await seedPost(be, { caption: 'Fourth of July', takenAt: '2024-07-04T16:00:00.000Z', photos: 1 });
-    await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: 'Show photos by the date they were taken' }));
     const card = await screen.findByTestId(`timeline-${id}`);
     fireEvent.press(within(card).getByRole('button', { name: /^Open (this|Chase's) post/ }));
@@ -193,7 +194,7 @@ describe('BETA-TIME-2 a timeline card opens the full post (hearts and replies)',
   it('BETA-TIME-2 a heart from the opened post sticks', async () => {
     const be = FakeBackend.withFixture();
     const { id } = await seedPost(be, { caption: 'Fourth of July', takenAt: '2024-07-04T16:00:00.000Z', photos: 1 });
-    await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: 'Show photos by the date they were taken' }));
     fireEvent.press(within(await screen.findByTestId(`timeline-${id}`)).getByRole('button', { name: /^Open (this|Chase's) post/ }));
     fireEvent.press(within(await screen.findByTestId(`post-${id}`)).getByRole('button', { name: 'Love it' }));

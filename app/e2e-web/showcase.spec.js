@@ -46,7 +46,7 @@ for (const size of SIZES) {
       await page.getByRole('button', { name: 'Send me a code' }).click();
       await page.getByLabel('6-number code').fill('123456');
       await page.getByRole('button', { name: 'Continue' }).click();
-      await expect(page.getByRole('heading', { name: 'Photos of Mia and Leo' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ } /* RD-11 */)).toBeVisible();
       await shot('photos-start');
       await page.getByRole('tab', { name: 'Share' }).click();
       await shot('share-empty');
@@ -60,9 +60,11 @@ for (const size of SIZES) {
       await page.getByRole('button', { name: 'Post' }).click();
       await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
       await shot('photos-poster');
-      await page.getByRole('tab', { name: 'Groups' }).click();
+      await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Groups is a row in More
+      await page.getByRole('button', { name: /^Groups(,|$)/ }).click();
       await shot('groups');
-      await page.getByRole('tab', { name: 'Me' }).click();
+      await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Me is a row in More
+      await page.getByRole('button', { name: /^Me(,|$)/ }).click();
       await shot('me');
       await page.getByRole('button', { name: 'Sign out of Hearth' }).click();
       await shot('sign-out-confirm');
@@ -81,7 +83,8 @@ for (const size of SIZES) {
       await expect(page.getByRole('button', { name: 'Save to my phone' })).toBeVisible();
       await shot('full-screen');
       await page.getByRole('button', { name: 'Close' }).click();
-      await page.getByRole('tab', { name: 'Help' }).click();
+      await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Help is a row in More
+      await page.getByRole('button', { name: /^Help(,|$)/ }).click();
       await shot('help');
       await page.goto('/join/EXPRDEXPRD');
       await shot('invite-expired');

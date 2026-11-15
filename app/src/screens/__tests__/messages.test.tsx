@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// MSG-1, MSG-9 (screen half): Messages opens in place from a labeled button at the top of Photos, like Events.
+// MSG-1, MSG-9 (screen half): Messages opens in place from its row in More (RD-15, was the top of Photos).
 // Grandma Jo (a relative) sees chats titled by their people (AUD-14), waits to be let in, then writes and reads.
 // No read receipts, typing dots or "seen" anywhere (A2).
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
@@ -8,7 +8,7 @@ import React from 'react';
 import { FakeBackend, FIXTURE } from '../../api/fake/FakeBackend';
 import { ChatClient, memoryStore } from '../../messenger/client';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
-import { PhotosScreen } from '../PhotosScreen';
+import { MoreScreen } from '../../test/redesignScreens'; // RD-15: Messages and Events are rows in More
 
 const G = FIXTURE.circles.dadSide.id;
 const slow = { timeout: 5000 };
@@ -19,7 +19,7 @@ describe('MSG Messages screen', () => {
     const chase = new ChatClient(be.clientFor(FIXTURE.users.chase.id), FIXTURE.users.chase.id, memoryStore());
     await chase.open(G);                       // Chase started the chat earlier
 
-    await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    await renderApp(<MoreScreen />, { be, user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: 'Messages' }));
     expect(await screen.findByRole('header', { name: 'Messages' })).toBeTruthy();
     // AUD-14: titled by its people, never the group's name
@@ -50,12 +50,12 @@ describe('MSG Messages screen', () => {
     expectGrandparentSafe();
 
     fireEvent.press(screen.getByRole('button', { name: 'Back to all messages' }));
-    fireEvent.press(await screen.findByRole('button', { name: 'Back to Photos' }));
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Messages' })).toBeTruthy());
+    fireEvent.press(await screen.findByRole('button', { name: 'Back to More' }));
+    await waitFor(() => expect(screen.getByRole('header', { name: 'More' })).toBeTruthy());
   });
 
   it('MSG-1: a parent sees the group\'s own name', async () => {
-    await renderApp(<PhotosScreen />, { user: 'chase', fixture: { joIsMember: true } });
+    await renderApp(<MoreScreen />, { user: 'chase', fixture: { joIsMember: true } });
     fireEvent.press(await screen.findByRole('button', { name: 'Messages' }));
     expect(await screen.findByRole('button', { name: "Open the chat Grandparents – Dad's side" })).toBeTruthy();
   });
@@ -64,7 +64,7 @@ describe('MSG Messages screen', () => {
   // "Grandparents – Dad's side, 4 people" in Messages sat beside "3 people" in Groups and Share with no reason given.
   it('RR-18 the Messages list says parents are in every chat, so its people count matches what the group shows', async () => {
     const be = FakeBackend.withFixture({ joIsMember: true });
-    await renderApp(<PhotosScreen />, { be, user: 'chase' });
+    await renderApp(<MoreScreen />, { be, user: 'chase' });
     fireEvent.press(await screen.findByRole('button', { name: 'Messages' }));
     expect(await screen.findByText(/Parents are in every chat\./)).toBeTruthy();
     expectGrandparentSafe();

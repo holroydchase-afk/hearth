@@ -8,9 +8,11 @@ test('MSG-4 the bundled app makes an MLS group and sends a sealed message', asyn
   await page.getByRole('button', { name: 'Send me a code' }).click();
   await page.getByLabel('6-number code').fill('123456');
   await page.getByRole('button', { name: 'Continue' }).click();
-  await expect(page.getByRole('heading', { name: 'Photos of Mia and Leo' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ } /* RD-11 */)).toBeVisible();
 
-  await page.getByRole('button', { name: 'Messages' }).click();
+  await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Messages is a row in More
+
+  await page.getByRole('button', { name: /^Messages(,|$)/ }).click();
   await expect(page.getByRole('heading', { name: 'Messages' })).toBeVisible();
   await page.getByRole('button', { name: "Open the chat Grandparents – Dad's side" }).click();
   await expect(page.getByText('No messages yet. Say hello!')).toBeVisible({ timeout: 15000 });

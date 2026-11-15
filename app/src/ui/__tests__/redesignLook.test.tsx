@@ -11,7 +11,7 @@ import pkg from '../../../package.json';
 import { FakeBackend } from '../../api/fake/FakeBackend';
 import { HelpScreen } from '../../screens/HelpScreen';
 import { MeScreen } from '../../screens/MeScreen';
-import { PhotosScreen } from '../../screens/PhotosScreen';
+import { GalleryScreen } from '../../test/redesignScreens';
 import { HearthTabBar, tabsFor } from '../../screens/TabBar';
 import { renderApp } from '../../test/renderApp';
 import { seedPost } from '../../test/seed';
@@ -134,7 +134,7 @@ describe('RD 1a the look: black and white with one accent', () => {
   it('RD-4 Search and By date are ink, not accent (words and icons)', async () => {
     const be = FakeBackend.withFixture();
     await seedPost(be, { caption: 'Sandcastle' });
-    await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, user: 'jo' }); // RD-13: they sit in Gallery's top bar
     const c = paletteFor(Platform.OS as 'ios', false);
     for (const [name, word] of [['Search the photos', 'Search'], ['Show photos by the date they were taken', 'By date']] as const) {
       const btn = await screen.findByRole('button', { name });

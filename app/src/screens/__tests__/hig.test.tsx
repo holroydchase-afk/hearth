@@ -13,7 +13,8 @@ import { seedPost } from '../../test/seed';
 import { renderApp } from '../../test/renderApp';
 import { sheetPan } from '../../ui/kit';
 import { contrast, iconSize, LABEL_SCALE_CAP, paletteFor, COLOR_NAMES, pinchZoom, sheetShouldClose } from '../../ui/theme';
-import { HearthTabBar } from '../TabBar';
+import { GalleryScreen } from '../../test/redesignScreens';
+import { HearthTabBar, type TabName } from '../TabBar';
 import { PhotosScreen } from '../PhotosScreen';
 import { ViewerScreen } from '../ViewerScreen';
 
@@ -118,21 +119,21 @@ describe('HIG-2 / BETA-SEE-4 photos zoom', () => {
 
 describe('HIG-3 / HIG-11 the biggest text sizes', () => {
   it('HIG-3 tab words stop growing at 1.5x and the tab shows the large pop-up label', async () => {
-    await renderApp(<HearthTabBar role="owner" current="photos" onNavigate={() => {}} />, { user: 'chase' });
-    const word = screen.getByText('Photos');
+    // RD-9: the first tab is Gallery now.
+    await renderApp(<HearthTabBar role="owner" current={'gallery' as string as TabName} onNavigate={() => {}} />, { user: 'chase' });
+    const word = screen.getByText('Gallery');
     expect(word.props.maxFontSizeMultiplier).toBe(LABEL_SCALE_CAP);
     expect(LABEL_SCALE_CAP).toBe(1.5);
-    const tab = screen.getByRole('tab', { name: 'Photos' });
+    const tab = screen.getByRole('tab', { name: 'Gallery' });
     expect(tab.props.accessibilityShowsLargeContentViewer).toBe(true);
-    expect(tab.props.accessibilityLargeContentTitle).toBe('Photos');
+    expect(tab.props.accessibilityLargeContentTitle).toBe('Gallery');
   });
 
-  it('HIG-3 toolbar words (IconButton) stop growing at 1.5x too', async () => {
+  it('HIG-3 RD-13 top bar words (IconButton) stop growing at 1.5x too', async () => {
     const be = FakeBackend.withFixture();
     await seedPost(be, { caption: 'At the lake' });
-    await renderApp(<PhotosScreen />, { be, user: 'chase' });
-    await screen.findByText('At the lake');
-    const word = screen.getByText('Messages');
+    await renderApp(<GalleryScreen />, { be, user: 'chase' });
+    const word = within(await screen.findByTestId('top-bar')).getByText('Search');
     expect(LABEL_SCALE_CAP).toBe(1.5);
     expect(word.props.maxFontSizeMultiplier).toBe(LABEL_SCALE_CAP);
   });

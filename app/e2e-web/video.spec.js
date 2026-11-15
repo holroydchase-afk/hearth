@@ -12,7 +12,7 @@ async function signIn(page, email) {
   await page.getByRole('button', { name: 'Send me a code' }).click();
   await page.getByLabel('6-number code').fill('123456');
   await page.getByRole('button', { name: 'Continue' }).click();
-  await expect(page.getByRole('heading', { name: 'Photos of Mia and Leo' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ } /* RD-11 */)).toBeVisible();
 }
 
 async function expectPlayButton(page) {
@@ -46,7 +46,7 @@ test('VID-18 a video post shows its poster with a Play word button on Photos and
     be.changed();
   }, await page.evaluate(() => Object.keys(globalThis.__hearthFake.state.spaces)[0]));
   await page.reload();
-  await expect(page.getByRole('heading', { name: 'Photos of Mia and Leo' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ } /* RD-11 */)).toBeVisible();
 
   await page.getByRole('tab', { name: 'Share' }).click();
   const chooser = page.waitForEvent('filechooser');

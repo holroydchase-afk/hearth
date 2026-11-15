@@ -42,7 +42,9 @@ test('portfolio screenshots from the demo', async ({ page }) => {
   await expect(page.getByText('First snow!', { exact: true })).toBeVisible();
   await shot('iphone-03-posted');
 
-  await page.getByRole('tab', { name: 'Groups' }).click();
+  await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Groups is a row in More
+
+  await page.getByRole('button', { name: /^Groups(,|$)/ }).click();
   await shot('iphone-04-groups');
 
   await hide.evaluate((el) => el.remove());
@@ -57,6 +59,7 @@ test('portfolio screenshots from the demo', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Save to my phone' })).toBeVisible();
   await shot('iphone-06-full-screen');
   await page.getByRole('button', { name: 'Close' }).click();
-  await page.getByRole('tab', { name: 'Help' }).click();
+  await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Help is a row in More
+  await page.getByRole('button', { name: /^Help(,|$)/ }).click();
   await shot('iphone-07-help');
 });

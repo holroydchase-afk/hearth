@@ -10,6 +10,7 @@ import { ApiError } from '../../api/HearthApi';
 import { seedPost } from '../../test/seed';
 import { renderApp } from '../../test/renderApp';
 import { PhotosScreen } from '../PhotosScreen';
+import { MoreScreen } from '../../test/redesignScreens'; // RD-15: Messages and Events are rows in More
 import { ShareScreen } from '../ShareScreen';
 
 const DAD = "Grandparents – Dad's side";
@@ -36,7 +37,7 @@ describe('WORDS grandparent-ux words pass', () => {
   });
 
   it('WORDS-3 the Messages privacy line reads as whole sentences: "Not even Hearth can read it"', async () => {
-    await renderApp(<PhotosScreen />, { be: FakeBackend.withFixture({ joIsMember: true }), user: 'jo' });
+    await renderApp(<MoreScreen />, { be: FakeBackend.withFixture({ joIsMember: true }), user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: 'Messages' }));
     expect(await screen.findByText(
       'Only the people in this chat can read it. Parents are in every chat. Not even Hearth can read it: messages are locked on your phone before they are sent.',

@@ -23,7 +23,7 @@ for (const phone of PHONES) {
       await page.getByRole('button', { name: 'Send me a code' }).click();
       await page.getByLabel('6-number code').fill('123456');
       await page.getByRole('button', { name: 'Continue' }).click();
-      await expect(page.getByRole('heading', { name: 'Photos of Mia and Leo' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ } /* RD-11 */)).toBeVisible();
     };
 
     await page.goto('/sign-in');
@@ -42,10 +42,12 @@ for (const phone of PHONES) {
     await page.getByRole('button', { name: 'Post' }).click();
     await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
     await shot('03-photos-poster');
-    await page.getByRole('tab', { name: 'Groups' }).click();
+    await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Groups is a row in More
+    await page.getByRole('button', { name: /^Groups(,|$)/ }).click();
     await page.waitForTimeout(500);
     await shot('04-groups');
-    await page.getByRole('tab', { name: 'Me' }).click();
+    await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Me is a row in More
+    await page.getByRole('button', { name: /^Me(,|$)/ }).click();
     await page.waitForTimeout(500);
     await shot('05-me');
     await page.getByRole('button', { name: 'Sign out of Hearth' }).click();
@@ -67,7 +69,8 @@ for (const phone of PHONES) {
     await expect(page.getByRole('button', { name: 'Save to my phone' })).toBeVisible();
     await shot('09-full-screen');
     await page.getByRole('button', { name: 'Close' }).click();
-    await page.getByRole('tab', { name: 'Help' }).click();
+    await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Help is a row in More
+    await page.getByRole('button', { name: /^Help(,|$)/ }).click();
     await page.waitForTimeout(500);
     await shot('10-help');
   });

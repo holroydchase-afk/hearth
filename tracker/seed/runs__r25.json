@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-15T22:30:00-05:00",
+ "label": "Redesign 1b, getting around (RD-9..17): tests written first (red)",
+ "passed": 978,
+ "failed": 109,
+ "results": {},
+ "note": "Red on purpose; same 109 failures on 3 full jest runs (978 passed, 1 skipped, 18 suites failed), typecheck clean. New: screens/__tests__/redesignNav.test.tsx (RD-9 tabs, RD-11 greeting, RD-12 fold + Reduce Motion, RD-13 top bar, RD-14 More dot and N new, RD-15 More rows/order/Back, RD-16 Jo vs Alex group names, RD-17 Feed), redesignStart.test.tsx (RD-10), test/redesignScreens.tsx (loads GalleryScreen, FeedScreen, MoreScreen, greeting at render time). Reasons: those modules don't exist yet; tabs still Photos/Share/Groups/Me; index redirects to /photos; the owner's Me still has Family color. Changed to the new rule: tabs, hig (HIG-3), photosHeader (LIVE-2/UI-26 now RD-13), toolbarWrap (TOOLBAR-1 retired), opening, search, timeline, captions, familyShape, events, eventTimeline, messages, uiPolish, wordsPass, redesignLook RD-4, familyColor (picker in More). Web demo e2e: RD-9/10/15 and RD-27 red, HARD-7 red on the greeting heading. Other e2e specs updated (More rows, greeting heading) but not run. e2e/results/rd-1b-red-jest-2026-11-15.txt, rd-1b-red-demo-2026-11-15.txt"
+}

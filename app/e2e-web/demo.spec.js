@@ -24,7 +24,7 @@ test.beforeEach(async ({ page }) => {
 
 test('DEMO-1/2/3 opens straight into the sample family: no sign-in, pictures, a demo bar', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Photos of Mia and Leo' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ } /* RD-11 */)).toBeVisible();
   await expect(page.getByRole('button', { name: 'Demo details' })).toBeVisible();
   await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
   await expect(page.getByLabel('Your email')).toHaveCount(0);
@@ -92,7 +92,7 @@ test('HARD-7 storage blocked (private window, strict cookie settings): the demo 
   const mine = [];
   page.on('pageerror', (e) => mine.push(String(e)));
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Photos of Mia and Leo' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ } /* RD-11 */)).toBeVisible();
   await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
   expect(mine).toEqual([]);
 });
@@ -112,7 +112,7 @@ for (const width of [390, 1280]) {
     await expect(page.getByText(/^Sample data/)).toHaveCount(0); // 390 px phone and the 430 px laptop column: no room at 17 pt
     // FIRSTMIN-3: three numbered steps on a phone.
     await expect(page.getByText('3. Tap See it as Grandma Jo.', { exact: true })).toHaveCount(width < 900 ? 1 : 0);
-    const heading = page.getByRole('heading', { name: 'Photos of Mia and Leo' });
+    const heading = page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ } /* RD-11 */);
     const before = (await heading.boundingBox()).y;
     await toggle.click();
     await expect(toggle).toHaveAttribute('aria-expanded', 'true');
@@ -159,30 +159,65 @@ test('DEMO-BAR Reset asks first: Keep changes nothing; Reset restores and says s
   await expect(page.getByRole('button', { name: 'Demo details' })).toHaveAttribute('aria-expanded', 'false');
 });
 
-// RD-27 (SPEC-REDESIGN phase 1a, DEC-59): Kai, the family's owner, can switch Family color and the demo
-// recolors; Grandma Jo's view stays Ember and has no picker. Phase 1a: the picker is on Me (1b moves it to More).
+// RD-27 (SPEC-REDESIGN, DEC-59): Kai, the family's owner, can switch Family color and the demo recolors;
+// Grandma Jo's view stays Ember and has no picker. 1b: the picker is More → Family color (RD-15).
 test('RD-27 Kai switches Family color to Forest and the demo recolors; Grandma Jo stays Ember with no picker', async ({ page }) => {
   const EMBER = 'rgb(178, 58, 30)';
   const FOREST = 'rgb(46, 125, 79)';
-  const pickedTabColor = (name) => page.getByRole('tab', { name, exact: true }).getByText(name, { exact: true })
+  const pickedTabColor = (name) => page.getByRole('tab', { name: new RegExp(`^${name}`) }).getByText(name, { exact: true })
     .evaluate((el) => getComputedStyle(el).color);
   await page.emulateMedia({ colorScheme: 'light' });
   await page.goto('/');
   await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
-  await page.getByRole('tab', { name: 'Me', exact: true }).click();
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: 'Family color' }).click();
   await expect(page.getByRole('heading', { name: 'Family color' })).toBeVisible();
   await expect(page.getByRole('radio', { name: 'Ember' })).toBeChecked();
-  expect(await pickedTabColor('Me')).toBe(EMBER);
+  expect(await pickedTabColor('More')).toBe(EMBER);
   await page.getByRole('radio', { name: 'Forest' }).click();
   await expect(page.getByRole('radio', { name: 'Forest' })).toBeChecked();
-  await expect.poll(() => pickedTabColor('Me')).toBe(FOREST);
+  await expect.poll(() => pickedTabColor('More')).toBe(FOREST);
   await details(page);
   await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
   await details(page);
   await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
-  await page.getByRole('tab', { name: 'Help', exact: true }).click();
-  await expect(page.getByRole('radio', { name: 'Light screen' })).toBeVisible();
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await expect(page.getByRole('heading', { name: 'More' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Family color' })).toHaveCount(0);
   await expect(page.getByRole('radio', { name: 'Forest' })).toHaveCount(0);
-  await expect(page.getByRole('heading', { name: 'Family color' })).toHaveCount(0);
-  expect(await pickedTabColor('Help')).toBe(EMBER);
+  expect(await pickedTabColor('More')).toBe(EMBER);
+});
+
+// RD-9 / RD-10 / RD-15 (SPEC-REDESIGN 1b) on the demo build at a 360 px phone: Kai's tabs are Gallery, Share,
+// Feed, More with Gallery picked on open; More is a full-screen menu in the spec's order; Grandma Jo's view has
+// Gallery, Feed, More and no Groups or Family color.
+test('RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma Jo gets three tabs', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 740 });
+  await page.goto('/');
+  await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
+  await expect(page.getByRole('tab')).toHaveText([/Gallery/, /Share/, /Feed/, /More/]);
+  await expect(page.getByRole('tab', { name: 'Gallery' })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible();
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await expect(page.getByRole('heading', { name: 'More' })).toBeVisible();
+  const rows = ['Messages', 'Groups', 'Events', 'Bigger text', 'Light or dark', 'Family color', 'Me', 'Help'];
+  const labels = async () => (await page.getByRole('button').evaluateAll((els) => els.map((e) => e.getAttribute('aria-label') ?? e.textContent ?? '')))
+    .map((l) => l.split(',')[0]).filter((l) => /^(Messages|Groups|Events|Bigger text|Light or dark|Family color|Me|Help)$/.test(l));
+  expect(await labels()).toEqual(rows);
+  for (const r of rows) {
+    const box = await page.getByRole('button', { name: new RegExp(`^${r}(,|$)`) }).boundingBox();
+    expect({ r, tall: box.height >= 48, wide: box.width >= 300 }).toEqual({ r, tall: true, wide: true }); // big full-width rows
+  }
+  await page.getByRole('button', { name: /^Groups/ }).click();
+  await page.getByRole('button', { name: 'Back to More' }).click();
+  await expect(page.getByRole('heading', { name: 'More' })).toBeVisible();
+
+  await details(page);
+  await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+  await details(page);
+  await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
+  await expect(page.getByRole('tab')).toHaveText([/Gallery/, /Feed/, /More/]);
+  await page.getByRole('tab', { name: /^More/ }).click();
+  expect(await labels()).toEqual(rows.filter((r) => r !== 'Groups' && r !== 'Family color'));
+  expect(errors).toEqual([]);
 });

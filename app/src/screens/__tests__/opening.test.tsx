@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 // OPEN-1..OPEN-12 (docs/product/SPEC-OPENING.md, DEC-58): the "New for you" card on Photos, one new post at a time,
-// and the photo wall. GUX-R1..R8 (grandparent-ux) and QA-R1/QA-R3 are folded in. Last visit is seeded through the KV store renderApp hands the app (`hearth.lastSeen.v1.<user>`).
+// and the photo wall. GUX-R1..R8 (grandparent-ux) and QA-R1/QA-R3 are folded in. RD-10/RD-13 (redesign 1b): this
+// opening content now sits on Gallery under the greeting, and the old Photos toolbar is Gallery's two-item top bar. Last visit is seeded through the KV store renderApp hands the app (`hearth.lastSeen.v1.<user>`).
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react-native';
 import React from 'react';
 import { Dimensions, StyleSheet, Text } from 'react-native';
@@ -10,7 +11,7 @@ import { memoryKV } from '../../platform/kv';
 import { seedPost } from '../../test/seed';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
 import { paletteFor } from '../../ui/theme';
-import { PhotosScreen } from '../PhotosScreen';
+import { GalleryScreen } from '../../test/redesignScreens';
 
 const { dadSide, momSide, everyone } = FIXTURE.circles;
 const { jo, chase, alex } = FIXTURE.users;
@@ -77,7 +78,7 @@ async function joWithNew(fresh: Array<{ caption: string; photos?: number; author
 describe('OPEN New for you card', () => {
   it('OPEN-1 the card sits above the posts when someone else sent photos since the last visit', async () => {
     const { be, kv, ids } = await joWithNew();
-    await renderApp(<PhotosScreen />, { be, kv, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     const card = await screen.findByTestId('new-for-you');
     expect(card).toBeTruthy();
     const o = order();
@@ -89,13 +90,13 @@ describe('OPEN New for you card', () => {
     const be = FakeBackend.withFixture();
     await seedPost(be, { caption: 'Mine', circles: [dadSide.id] });
     const kv = memoryKV({ [KEY(chase.id)]: ago(HOUR) });
-    const r = await renderApp(<PhotosScreen />, { be, kv, user: 'chase' });
+    const r = await renderApp(<GalleryScreen />, { be, kv, user: 'chase' });
     expect(await screen.findByText('Mine')).toBeTruthy();
     expect(screen.queryByTestId('new-for-you')).toBeNull();
     r.unmount();
 
     await seedPost(be, { author: alex.id, caption: 'From Alex', circles: [momSide.id] });
-    await renderApp(<PhotosScreen />, { be, kv: memoryKV({ [KEY(chase.id)]: ago(HOUR) }), user: 'chase' });
+    await renderApp(<GalleryScreen />, { be, kv: memoryKV({ [KEY(chase.id)]: ago(HOUR) }), user: 'chase' });
     expect(await screen.findByTestId('new-for-you')).toBeTruthy();
     expect(within(screen.getByTestId('new-for-you')).getByText(/by Alex$/)).toBeTruthy();
   });
@@ -105,12 +106,12 @@ describe('OPEN New for you card', () => {
     await seedPost(be, { caption: 'Seen before', circles: [everyone.id] });
     for (const id of Object.keys(be.state.posts)) backdate(be, id, ago(7 * 24 * HOUR));
     await seedPost(be, { caption: "Mom's side only", circles: [momSide.id] });
-    const r = await renderApp(<PhotosScreen />, { be, kv: memoryKV({ [KEY(jo.id)]: ago(HOUR) }), user: 'jo' });
+    const r = await renderApp(<GalleryScreen />, { be, kv: memoryKV({ [KEY(jo.id)]: ago(HOUR) }), user: 'jo' });
     expect(await screen.findByText('Seen before')).toBeTruthy();
     expect(screen.queryByTestId('new-for-you')).toBeNull();
     r.unmount();
 
-    await renderApp(<PhotosScreen />, { be, kv: memoryKV({ [KEY(FIXTURE.users.ruth.id)]: ago(HOUR) }), user: 'ruth' });
+    await renderApp(<GalleryScreen />, { be, kv: memoryKV({ [KEY(FIXTURE.users.ruth.id)]: ago(HOUR) }), user: 'ruth' });
     const card = await screen.findByTestId('new-for-you');
     // QA-R3: the card holds the Mom's side post itself, not just any card.
     fireEvent.press(within(card).getByRole('button', { name: 'See the new photos' }));
@@ -120,7 +121,7 @@ describe('OPEN New for you card', () => {
 
   it('OPEN-2 GUX-R5 "Sent today by Chase and Alex" under the New for you heading; no numbers, badges or "unread"', async () => {
     const { be, kv } = await joWithNew([{ caption: 'One' }, { caption: 'Two', author: alex.id, circles: [everyone.id] }]);
-    await renderApp(<PhotosScreen />, { be, kv, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     const card = await screen.findByTestId('new-for-you');
     expect(within(card).getByRole('header', { name: 'New for you' })).toBeTruthy();
     expect(within(card).getByText('Sent today by Chase and Alex')).toBeTruthy(); // oldest sender first
@@ -133,7 +134,7 @@ describe('OPEN New for you card', () => {
   it('OPEN-2 GUX-R5 a last visit yesterday reads "Sent since yesterday by Chase"', async () => {
     const be = FakeBackend.withFixture();
     await seedPost(be, { caption: 'Fresh' });
-    await renderApp(<PhotosScreen />, { be, kv: memoryKV({ [KEY(jo.id)]: daysBack(1).toISOString() }), user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, kv: memoryKV({ [KEY(jo.id)]: daysBack(1).toISOString() }), user: 'jo' });
     expect(within(await screen.findByTestId('new-for-you')).getByText('Sent since yesterday by Chase')).toBeTruthy();
   });
 
@@ -141,18 +142,18 @@ describe('OPEN New for you card', () => {
     const be = FakeBackend.withFixture();
     await seedPost(be, { caption: 'Fresh' });
     const three = daysBack(3);
-    const r = await renderApp(<PhotosScreen />, { be, kv: memoryKV({ [KEY(jo.id)]: three.toISOString() }), user: 'jo' });
+    const r = await renderApp(<GalleryScreen />, { be, kv: memoryKV({ [KEY(jo.id)]: three.toISOString() }), user: 'jo' });
     expect(within(await screen.findByTestId('new-for-you')).getByText(`Sent since ${LONG_DAYS[three.getDay()]} by Chase`)).toBeTruthy();
     r.unmount();
 
     const ten = daysBack(10);
-    await renderApp(<PhotosScreen />, { be, kv: memoryKV({ [KEY(jo.id)]: ten.toISOString() }), user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, kv: memoryKV({ [KEY(jo.id)]: ten.toISOString() }), user: 'jo' });
     expect(within(await screen.findByTestId('new-for-you')).getByText(`Sent since ${MONTHS[ten.getMonth()]} ${ten.getDate()} by Chase`)).toBeTruthy();
   });
 
   it('OPEN-3 the collage spans the new photos (one big and three, the last "+N") and each tile opens that photo full screen', async () => {
     const { be, kv, ids } = await joWithNew([{ caption: 'Three', photos: 3 }, { caption: 'Two more', photos: 2 }]);
-    const { nav } = await renderApp(<PhotosScreen />, { be, kv, user: 'jo' });
+    const { nav } = await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     const card = await screen.findByTestId('new-for-you');
     const tiles = within(card).getAllByRole('button', { name: /^Open photo \d of 5 full screen/ });
     expect(tiles).toHaveLength(4);
@@ -166,7 +167,7 @@ describe('OPEN New for you card', () => {
 
   it('OPEN-4 exactly one filled button on the card: "See the new photos" (DS-9)', async () => {
     const { be, kv } = await joWithNew();
-    await renderApp(<PhotosScreen />, { be, kv, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     const card = await screen.findByTestId('new-for-you');
     expect(within(card).getByRole('button', { name: 'See the new photos' })).toBeTruthy();
     const filled = (within(card).getAllByRole('button') as unknown as Node[]).filter(isFilled);
@@ -176,7 +177,7 @@ describe('OPEN New for you card', () => {
   it('OPEN-12 GUX-R6 no ready photo in the new posts yet: no collage, but the line and "See the new photos" stay', async () => {
     const { be, kv, ids } = await joWithNew([{ caption: 'Still on its way' }]);
     for (const m of mediaOf(be, ids[0]!)) be.state.media[m]!.status = 'pending';
-    await renderApp(<PhotosScreen />, { be, kv, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     const card = await screen.findByTestId('new-for-you');
     expect(within(card).queryByTestId(/^collage-/)).toBeNull();
     expect(within(card).queryAllByRole('button', { name: /^Open photo/ })).toHaveLength(0);
@@ -190,19 +191,19 @@ describe('OPEN-5 last visit on this phone', () => {
     const be = FakeBackend.withFixture();
     await seedPost(be, { caption: 'Before Jo ever opened it' });
     const kv = memoryKV();
-    const first = await renderApp(<PhotosScreen />, { be, kv, user: 'jo' });
+    const first = await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     expect(await screen.findByText('Before Jo ever opened it')).toBeTruthy();
     expect(screen.queryByTestId('new-for-you')).toBeNull();
     await waitFor(() => expect(kv.dump()[KEY(jo.id)]).toEqual(expect.stringMatching(/^\d{4}-\d\d-\d\dT/)));
     first.unmount();
 
     await seedPost(be, { caption: 'Sent after her first visit' });
-    const second = await renderApp(<PhotosScreen />, { be, kv, user: 'jo' });
+    const second = await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     const card = await screen.findByTestId('new-for-you');
     expect(within(card).getByText(/by Chase$/)).toBeTruthy();
     second.unmount();
 
-    await renderApp(<PhotosScreen />, { be, kv, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     expect(await screen.findByText('Sent after her first visit')).toBeTruthy();
     expect(screen.queryByTestId('new-for-you')).toBeNull(); // seen on the second visit
   });
@@ -210,7 +211,7 @@ describe('OPEN-5 last visit on this phone', () => {
   it('OPEN-5 read once when Photos loads, then set to now: the card stays for this visit', async () => {
     const { be, kv } = await joWithNew();
     const before = kv.dump()[KEY(jo.id)]!;
-    await renderApp(<PhotosScreen />, { be, kv, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     expect(await screen.findByTestId('new-for-you')).toBeTruthy();
     await waitFor(() => expect(kv.dump()[KEY(jo.id)]! > before).toBe(true));
     await act(async () => { await new Promise((r) => setTimeout(r, 0)); });
@@ -224,7 +225,7 @@ describe('OPEN-5 last visit on this phone', () => {
     const emptyKv = memoryKV();
     const offApi = fresh.clientFor(null, { trackAppSession: true });
     jest.spyOn(offApi, 'getFeed').mockRejectedValue(new TypeError('Network request failed'));
-    const a = await renderApp(<PhotosScreen />, { be: fresh, kv: emptyKv, user: 'jo', deps: { api: offApi } });
+    const a = await renderApp(<GalleryScreen />, { be: fresh, kv: emptyKv, user: 'jo', deps: { api: offApi } });
     await waitFor(() => expect(offApi.getFeed).toHaveBeenCalled());
     await act(async () => { await sleep(50); });
     expect(emptyKv.dump()[KEY(jo.id)]).toBeUndefined();
@@ -235,14 +236,14 @@ describe('OPEN-5 last visit on this phone', () => {
     const before = kv.dump()[KEY(jo.id)];
     const api = be.clientFor(null, { trackAppSession: true });
     jest.spyOn(api, 'getFeed').mockRejectedValue(new TypeError('Network request failed'));
-    const b = await renderApp(<PhotosScreen />, { be, kv, user: 'jo', deps: { api } });
+    const b = await renderApp(<GalleryScreen />, { be, kv, user: 'jo', deps: { api } });
     await waitFor(() => expect(api.getFeed).toHaveBeenCalled());
     await act(async () => { await sleep(50); });
     expect(kv.dump()[KEY(jo.id)]).toBe(before);
     b.unmount();
 
     // No network, then network: the card is still there for the photos she hasn't seen.
-    await renderApp(<PhotosScreen />, { be, kv, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     expect(within(await screen.findByTestId('new-for-you')).getByText('Sent today by Chase')).toBeTruthy();
   });
 
@@ -259,7 +260,7 @@ describe('OPEN-5 last visit on this phone', () => {
       return real(args);
     });
     const t0 = Date.now();
-    await renderApp(<PhotosScreen />, { be, kv, user: 'jo', deps: { api }, waitReady: false });
+    await renderApp(<GalleryScreen />, { be, kv, user: 'jo', deps: { api }, waitReady: false });
     await waitFor(() => expect(held).toBe(true));
     await act(async () => { await sleep(80); });
     expect(kv.dump()[KEY(jo.id)]).toBe(before); // still loading: nothing saved yet
@@ -278,18 +279,18 @@ describe('OPEN-6 nothing new', () => {
     const be = FakeBackend.withFixture();
     const p = await seedPost(be, { caption: 'Already seen' });
     backdate(be, p.id, ago(2 * HOUR));
-    await renderApp(<PhotosScreen />, { be, kv: memoryKV({ [KEY(jo.id)]: ago(HOUR) }), user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, kv: memoryKV({ [KEY(jo.id)]: ago(HOUR) }), user: 'jo' });
     expect(await screen.findByText('Already seen')).toBeTruthy();
     expect(screen.queryByTestId('new-for-you')).toBeNull();
     expect(screen.queryByRole('button', { name: 'See the new photos' })).toBeNull();
-    expect(screen.getByRole('header', { name: 'Photos of Mia and Leo' })).toBeTruthy();
+    expect(screen.getByRole('header', { name: /^Good (morning|afternoon|evening), Grandma Jo$/ })).toBeTruthy(); // RD-11
   });
 });
 
 describe('OPEN-7/8 one new post at a time', () => {
   async function openWalk(captions = ['First at the park', 'Then the cake']) {
     const { be, kv, ids } = await joWithNew(captions.map((caption) => ({ caption })));
-    const r = await renderApp(<PhotosScreen />, { be, kv, user: 'jo' });
+    const r = await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: 'See the new photos' }));
     const walk = await screen.findByTestId('new-one-at-a-time');
     return { ...r, ids, walk };
@@ -330,7 +331,7 @@ describe('OPEN-7/8 one new post at a time', () => {
     expect(within(walk).getByText('Next')).toBeTruthy();
     expect(isFilled(within(walk).getByRole('button', { name: NEXT }) as unknown as Node)).toBe(true);
     expect(within(walk).queryByRole('button', { name: PREV })).toBeNull(); // nothing before the first
-    expect(screen.queryByTestId('photos-toolbar')).toBeNull(); // in place of Photos, like Messages
+    expect(screen.queryByTestId('top-bar')).toBeNull(); // in place of Gallery, like Search
     expectGrandparentSafe();
   });
 
@@ -373,14 +374,14 @@ describe('OPEN-7/8 one new post at a time', () => {
     expect(await within(walkNow()).findByText('First at the park')).toBeTruthy();
     fireEvent.press(within(walkNow()).getByRole('button', { name: NEXT }));
     fireEvent.press(await screen.findByRole('button', { name: DONE }));
-    expect(await screen.findByTestId('photos-toolbar')).toBeTruthy();
+    expect(await screen.findByTestId('top-bar')).toBeTruthy();
     expect(screen.queryByTestId('new-one-at-a-time')).toBeNull();
   });
 
   it('OPEN-7 "Back to Photos" returns from any post, no swipe needed (DS-4)', async () => {
     await openWalk();
     fireEvent.press(screen.getByRole('button', { name: 'Back to Photos' }));
-    expect(await screen.findByTestId('photos-toolbar')).toBeTruthy();
+    expect(await screen.findByTestId('top-bar')).toBeTruthy();
     expect(screen.queryByTestId('new-one-at-a-time')).toBeNull();
   });
 });
@@ -400,25 +401,23 @@ describe('OPEN-9/10 photo wall', () => {
     return { be, old: old.id, recent: recent.id, back };
   }
 
-  it('OPEN-9 GUX-R3 Photos toolbar has "All photos" (icon with the words; spoken "See all the photos, three to a row") when there are posts, none without', async () => {
+  it('OPEN-9 GUX-R3 RD-13 Gallery has "All photos" (icon with the words; spoken "See all the photos, three to a row") when there are posts, none without; never in the top bar', async () => {
     const { be } = await wallFamily();
-    const r = await renderApp(<PhotosScreen />, { be, user: 'jo' });
-    const bar = await screen.findByTestId('photos-toolbar');
-    expect(await within(bar).findByRole('button', WALL)).toBeTruthy();
-    expect(within(bar).getByText('All photos')).toBeTruthy();
-    expect(within(bar).queryByText(/Wall/)).toBeNull(); // GUX-R3: no "Wall" anywhere a relative reads
-    const s = flat(within(bar).getByRole('button', WALL).props.style);
-    expect(s).toMatchObject({ flexDirection: 'column', alignItems: 'center' });
+    const r = await renderApp(<GalleryScreen />, { be, user: 'jo' });
+    const btn = await screen.findByRole('button', WALL);
+    expect(within(btn).getByText('All photos')).toBeTruthy();
+    expect(within(screen.getByTestId('top-bar')).queryByRole('button', WALL)).toBeNull(); // RD-13: only Search and By date up top
+    expect(screen.queryByText(/Wall/)).toBeNull(); // GUX-R3: no "Wall" anywhere a relative reads
     r.unmount();
 
-    await renderApp(<PhotosScreen />, { be: FakeBackend.withFixture(), user: 'jo' });
+    await renderApp(<GalleryScreen />, { be: FakeBackend.withFixture(), user: 'jo' });
     expect(await screen.findByText(/No photos yet/)).toBeTruthy();
     expect(screen.queryByRole('button', WALL)).toBeNull();
   });
 
   it('OPEN-9 the wall: three columns under month headers, newest first', async () => {
     const { be, old, recent, back } = await wallFamily();
-    await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, user: 'jo' });
     fireEvent.press(await screen.findByRole('button', WALL));
     const wall = await screen.findByTestId('photo-wall');
     const now = new Date();
@@ -438,7 +437,7 @@ describe('OPEN-9/10 photo wall', () => {
 
   it('OPEN-10 every tile is at least 48 pt, names the sender and day, and opens that photo full screen', async () => {
     const { be, old, back } = await wallFamily();
-    const { nav } = await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    const { nav } = await renderApp(<GalleryScreen />, { be, user: 'jo' });
     fireEvent.press(await screen.findByRole('button', WALL));
     const wall = await screen.findByTestId('photo-wall');
     for (const t of within(wall).getAllByTestId(/^wall-tile-/)) {
@@ -457,7 +456,7 @@ describe('OPEN-9/10 photo wall', () => {
   it('OPEN-10 the wall has "Back to Photos" and "Show older photos" (no gesture-only action)', async () => {
     const be = FakeBackend.withFixture();
     for (let i = 0; i < 21; i++) await seedPost(be, { caption: `Day ${i}` }); // one more than a page
-    await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, user: 'jo' });
     fireEvent.press(await screen.findByRole('button', WALL));
     const wall = await screen.findByTestId('photo-wall');
     expect(within(wall).getAllByTestId(/^wall-tile-/)).toHaveLength(20);
@@ -465,14 +464,14 @@ describe('OPEN-9/10 photo wall', () => {
     // .length, not toHaveLength: a failed toHaveLength prints every tile's React fiber, which blocks waitFor past its timeout.
     await waitFor(() => expect(within(screen.getByTestId('photo-wall')).getAllByTestId(/^wall-tile-/).length).toBe(21));
     fireEvent.press(screen.getByRole('button', { name: 'Back to Photos' }));
-    expect(await screen.findByTestId('photos-toolbar')).toBeTruthy();
+    expect(await screen.findByTestId('top-bar')).toBeTruthy();
     expect(screen.queryByTestId('photo-wall')).toBeNull();
   });
 
   it('OPEN-10 T14 exactly one page (20 posts): Show older photos finds nothing more, then goes away with no error', async () => {
     const be = FakeBackend.withFixture();
     for (let i = 0; i < 20; i++) await seedPost(be, { caption: `Day ${i}` }); // exactly a page
-    await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, user: 'jo' });
     fireEvent.press(await screen.findByRole('button', WALL));
     const wall = await screen.findByTestId('photo-wall');
     expect(within(wall).getAllByTestId(/^wall-tile-/).length).toBe(20);
@@ -488,7 +487,7 @@ describe('OPEN-9/10 photo wall', () => {
 describe('OPEN-11 words', () => {
   it('OPEN-11 no "group" and no group names on the card, the one-at-a-time view or the wall; text 17 pt and up', async () => {
     const { be, kv } = await joWithNew([{ caption: 'Park' }, { caption: 'Cake', circles: [everyone.id] }]);
-    await renderApp(<PhotosScreen />, { be, kv, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     const banned = new RegExp(`\\bgroups?\\b|${dadSide.name}|${momSide.name}`, 'i');
     expect(wordsIn(await screen.findByTestId('new-for-you'))).not.toMatch(banned);
     expectGrandparentSafe();

@@ -8,7 +8,7 @@ import React from 'react';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { seedPost } from '../../test/seed';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
-import { PhotosScreen } from '../PhotosScreen';
+import { GalleryScreen } from '../../test/redesignScreens'; // RD-13: Search and By date live in Gallery's top bar
 
 async function family() {
   const be = FakeBackend.withFixture();
@@ -32,8 +32,8 @@ async function search(words: string) {
 
 describe('SEARCH-UI photo search', () => {
   it('SEARCH-UI-1 Photos has a labeled Search button; it opens a grandparent-safe search screen', async () => {
-    await renderApp(<PhotosScreen />, { be: await family(), user: 'jo' });
-    const toolbar = await screen.findByTestId('photos-toolbar');
+    await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
+    const toolbar = await screen.findByTestId('top-bar');
     expect(within(toolbar).getByText('Search')).toBeTruthy();
     await openSearch();
     expect(screen.getByText('Search looks at the words people wrote and who sent them. It never looks inside your photos.')).toBeTruthy();
@@ -41,7 +41,7 @@ describe('SEARCH-UI photo search', () => {
   });
 
   it('SEARCH-UI-2 typed words find the matching post, title included, and nothing else', async () => {
-    await renderApp(<PhotosScreen />, { be: await family(), user: 'jo' });
+    await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
     await openSearch();
     await search('july');
     expect(await screen.findByText('Sparklers at the lake')).toBeTruthy();
@@ -51,7 +51,7 @@ describe('SEARCH-UI photo search', () => {
   });
 
   it('SEARCH-UI-3 a post in a group you are not in is never found', async () => {
-    await renderApp(<PhotosScreen />, { be: await family(), user: 'jo' });
+    await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
     await openSearch();
     await search('lake');
     expect(await screen.findByText('Sparklers at the lake')).toBeTruthy();
@@ -60,14 +60,14 @@ describe('SEARCH-UI photo search', () => {
   });
 
   it('SEARCH-UI-4 nothing found says so in plain words with what to try', async () => {
-    await renderApp(<PhotosScreen />, { be: await family(), user: 'jo' });
+    await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
     await openSearch();
     await search('piano');
     expect(await screen.findByText('Nothing found for "piano". Try one word, or pick a person or a year.')).toBeTruthy();
   });
 
   it('SEARCH-UI-5 "From" a person lists what they sent, with no words needed', async () => {
-    await renderApp(<PhotosScreen />, { be: await family(), user: 'jo' });
+    await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
     await openSearch();
     await act(async () => { fireEvent.press(await screen.findByRole('button', { name: 'Only photos from Alex' })); });
     expect(await screen.findByText('Pumpkins today')).toBeTruthy();
@@ -75,7 +75,7 @@ describe('SEARCH-UI photo search', () => {
   });
 
   it('SEARCH-UI-6 a year narrows it to photos taken that year', async () => {
-    await renderApp(<PhotosScreen />, { be: await family(), user: 'jo' });
+    await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
     await openSearch();
     await act(async () => { fireEvent.press(await screen.findByRole('button', { name: 'Only photos taken in 2023' })); });
     expect(await screen.findByText('Christmas morning')).toBeTruthy();
@@ -85,7 +85,7 @@ describe('SEARCH-UI photo search', () => {
   });
 
   it('SEARCH-UI-7 a found post opens to love it or write back, with Back to the search', async () => {
-    await renderApp(<PhotosScreen />, { be: await family(), user: 'jo' });
+    await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
     await openSearch();
     await search('christmas');
     fireEvent.press(await screen.findByRole('button', { name: "Open Chase's post to love it or write back" }));
@@ -102,13 +102,13 @@ describe('SEARCH-UI photo search', () => {
       return { remove: () => { handlers.splice(handlers.indexOf(h as () => boolean), 1); } };
     });
     const back = () => { let used = false; act(() => { used = [...handlers].reverse().some((h) => h()); }); return used; };
-    await renderApp(<PhotosScreen />, { be: await family(), user: 'jo' });
+    await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
     await openSearch();
     fireEvent.press(screen.getByRole('button', { name: 'Back to Photos' }));
-    expect(await screen.findByTestId('photos-toolbar')).toBeTruthy();
+    expect(await screen.findByTestId('top-bar')).toBeTruthy();
     await openSearch();
     expect(back()).toBe(true);
-    expect(await screen.findByTestId('photos-toolbar')).toBeTruthy();
+    expect(await screen.findByTestId('top-bar')).toBeTruthy();
     spy.mockRestore();
   });
 });

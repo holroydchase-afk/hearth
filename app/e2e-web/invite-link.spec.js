@@ -10,9 +10,11 @@ test('ONB-4 a link from "Make the invite" opens the "invited you" preview in the
   await page.getByRole('button', { name: 'Send me a code' }).click();
   await page.getByLabel('6-number code').fill('123456');
   await page.getByRole('button', { name: 'Continue' }).click();
-  await expect(page.getByRole('heading', { name: 'Photos of Mia and Leo' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ } /* RD-11 */)).toBeVisible();
 
-  await page.getByRole('tab', { name: 'Groups' }).click();
+  await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Groups is a row in More
+
+  await page.getByRole('button', { name: /^Groups(,|$)/ }).click();
   await page.getByRole('button', { name: "Invite someone to Grandparents – Dad's side" }).click();
   await page.getByRole('radio', { name: 'Share all past photos' }).click();
   await page.getByRole('button', { name: 'Make the invite' }).click();
@@ -24,7 +26,8 @@ test('ONB-4 a link from "Make the invite" opens the "invited you" preview in the
   expect(link).not.toContain('hearth.family');
 
   // Sign out (a signed-in person redeems straight away), then open the link's path as the relative would.
-  await page.getByRole('tab', { name: 'Me' }).click();
+  await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Me is a row in More
+  await page.getByRole('button', { name: /^Me(,|$)/ }).click();
   await page.getByRole('button', { name: 'Sign out of Hearth' }).click();
   await page.getByRole('button', { name: 'Yes, sign out' }).click();
   await expect(page.getByText('Welcome to Hearth')).toBeVisible();

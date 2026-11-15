@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// SPEC-GROUPS v2, EVT-2..4 (app-now): event card and update line in Photos, and the Events section
-// (a labeled button at the top of Photos, not a new tab). Written first (Oct 18): red until PhotosScreen catches up.
+// SPEC-GROUPS v2, EVT-2..4 (app-now): event card and update line in Photos, and the Events section.
+// RD-15 (redesign 1b): Events moved from the top of Photos to a row in More, shown to everyone; Back returns to More.
 import { fireEvent, screen, within } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 import React from 'react';
@@ -10,6 +10,7 @@ import { seedPost } from '../../test/seed';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
 import { PhotosScreen } from '../PhotosScreen';
 import { tabsFor } from '../TabBar';
+import { MoreScreen } from '../../test/redesignScreens';
 
 const BDAY = "Chase's birthday";
 
@@ -76,15 +77,23 @@ describe('EVT-3 later event posts in Photos', () => {
     expect(screen.getAllByTestId(/^post-/)).toHaveLength(4);
     expect(screen.queryByTestId(/^event-card-/)).toBeNull();
     expect(screenWords()).not.toContain('birthday');
-    expect(screen.queryByRole('button', { name: 'See events' })).toBeNull();
+  });
+
+  it('EVT-4 RD-15 Nana Ruth\'s More → Events lists no event she isn\'t in, and never its name', async () => {
+    const { be } = await family();
+    await renderApp(<MoreScreen />, { be, user: 'ruth' });
+    fireEvent.press(await screen.findByRole('button', { name: 'Events' }));
+    expect(await screen.findByRole('header', { name: 'Events' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /^Open / })).toBeNull();
+    expect(screenWords()).not.toContain('birthday');
   });
 });
 
-describe('EVT-4 Events section (a button at the top of Photos)', () => {
+describe('EVT-4 Events section (RD-15: a row in More)', () => {
   it('EVT-4 a member of two events sees both, newest first, each opening its posts', async () => {
     const { be } = await family({ beach: true });
-    await renderApp(<PhotosScreen />, { be, user: 'jo' });
-    fireEvent.press(await screen.findByRole('button', { name: 'See events' }));
+    await renderApp(<MoreScreen />, { be, user: 'jo' });
+    fireEvent.press(await screen.findByRole('button', { name: 'Events' }));
     expect(await screen.findByRole('header', { name: 'Events' })).toBeTruthy();
     const opens = screen.getAllByRole('button', { name: /^Open / }).map((b) => b.props.accessibilityLabel);
     expect(opens).toEqual(['Open Beach week', `Open ${BDAY}`]);
@@ -103,23 +112,24 @@ describe('EVT-4 Events section (a button at the top of Photos)', () => {
     expect(screen.getByText('Cake')).toBeTruthy();
     expect(screen.queryByText('Sandcastle')).toBeNull();
     fireEvent.press(screen.getByRole('button', { name: 'Back to events' }));
-    fireEvent.press(await screen.findByRole('button', { name: 'Back to Photos' }));
-    expect(await screen.findByRole('button', { name: 'See events' })).toBeTruthy();
+    fireEvent.press(await screen.findByRole('button', { name: 'Back to More' }));
+    expect(await screen.findByRole('header', { name: 'More' })).toBeTruthy();
   });
 
-  it('EVT-4 no events, no Events button; viewers\' tabs stay Photos and Help', async () => {
+  it('EVT-4 RD-15 no events: More → Events opens an empty list; no Events tab (viewers\' tabs are Gallery, Feed, More)', async () => {
     const be = FakeBackend.withFixture();
     await seedPost(be, { caption: 'Just a photo' });
-    await renderApp(<PhotosScreen />, { be, user: 'jo' });
-    expect(await screen.findByText('Just a photo')).toBeTruthy();
-    expect(screen.queryByRole('button', { name: 'See events' })).toBeNull();
-    expect(tabsFor('viewer').map((t) => t.label)).toEqual(['Photos', 'Help']);
+    await renderApp(<MoreScreen />, { be, user: 'jo' });
+    fireEvent.press(await screen.findByRole('button', { name: 'Events' }));
+    expect(await screen.findByRole('header', { name: 'Events' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /^Open / })).toBeNull();
+    expect(tabsFor('viewer').map((t) => t.label)).toEqual(['Gallery', 'Feed', 'More']);
   });
 
   it('EVT-4 parents see the events too', async () => {
     const { be } = await family();
-    await renderApp(<PhotosScreen />, { be, user: 'alex' });
-    fireEvent.press(await screen.findByRole('button', { name: 'See events' }));
+    await renderApp(<MoreScreen />, { be, user: 'alex' });
+    fireEvent.press(await screen.findByRole('button', { name: 'Events' }));
     expect(await screen.findByRole('button', { name: `Open ${BDAY}` })).toBeTruthy();
   });
 });

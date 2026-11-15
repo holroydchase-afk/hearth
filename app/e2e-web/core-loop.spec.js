@@ -11,11 +11,12 @@ async function signIn(page, email) {
   await page.getByRole('button', { name: 'Send me a code' }).click();
   await page.getByLabel('6-number code').fill('123456');
   await page.getByRole('button', { name: 'Continue' }).click();
-  await expect(page.getByRole('heading', { name: 'Photos of Mia and Leo' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ } /* RD-11 */)).toBeVisible();
 }
 
-async function signOut(page, tab) {
-  await page.getByRole('tab', { name: tab }).click();
+async function signOut(page, row) {
+  await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Me and Help are rows in More
+  await page.getByRole('button', { name: row }).click();
   await page.getByRole('button', { name: 'Sign out of Hearth' }).click();
   await page.getByRole('button', { name: 'Yes, sign out' }).click();
   await expect(page.getByText('Welcome to Hearth')).toBeVisible();
@@ -73,7 +74,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await page.getByRole('button', { name: 'More for this photo' }).click();
   await expect(page.getByText('Who can see this')).toBeVisible();
   await page.getByRole('button', { name: 'Close this menu' }).click();
-  await expect(page.getByRole('tab')).toHaveText([/Photos/, /Help/]); // no Share tab for viewers
+  await expect(page.getByRole('tab')).toHaveText([/Gallery/, /Feed/, /More/]); // RD-9: no Share tab for viewers
   await signOut(page, 'Help');
 
   // 3. Nana Ruth (Mom's side) does not see it.
