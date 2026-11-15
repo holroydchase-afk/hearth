@@ -95,7 +95,7 @@ export function BatchReview({ plan, circles, chosen, onToggle, onSend, onCancel,
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
               {helpers.setAside.map((a, i) => (
                 <View key={a.uri} style={{ width: 120, gap: 6 }}>
-                  <Image source={{ uri: a.uri }} style={{ width: 120, height: 120, borderRadius: 10 }} accessibilityIgnoresInvertColors />
+                  <Image source={{ uri: a.uri }} style={{ width: 120, height: 120, borderRadius: 12 }} accessibilityIgnoresInvertColors />
                   <Button label={`Put back photo ${i + 1}`} text="Put back" variant="secondary" onPress={() => helpers.onPutBack(a.uri)} />
                 </View>
               ))}
@@ -104,7 +104,7 @@ export function BatchReview({ plan, circles, chosen, onToggle, onSend, onCancel,
         </Card>
       ) : null}
       {nothing ? null : (
-        <Button label={`Send ${photos(plan.photoCount)}`} onPress={onSend} disabled={!named} busy={busy} />
+        <Button variant="secondary" label={`Send ${photos(plan.photoCount)}`} onPress={onSend} disabled={!named} busy={busy} />
       )}
       <Button label="Don't send these photos" text={nothing ? 'Go back' : "Don't send"} variant="secondary" onPress={onCancel} />
     </Screen>

@@ -10,7 +10,7 @@ import type { FeedPost } from '../api/HearthApi';
 import { eventCountWords, eventList, eventPosts, updateWords } from '../feed/events';
 import { eventContributors, eventTimeline, type EventPhoto, type EventTimelineRow } from '../feed/eventTimeline';
 import { Button, Card, Txt } from '../ui/kit';
-import { useTheme } from '../ui/theme';
+import { RADIUS, useTheme } from '../ui/theme';
 import { PhotoSwipe } from './PhotoSwipe';
 import { PostCard } from './PostCard';
 
@@ -18,10 +18,10 @@ import { PostCard } from './PostCard';
 export function EventCard({ eventId, eventName, post, onOpen }: { eventId: string; eventName: string; post: FeedPost; onOpen: () => void }) {
   const { c } = useTheme();
   return (
-    <View testID={`event-card-${eventId}`} style={{ gap: 12, padding: 12, borderRadius: 20, borderWidth: 3, borderColor: c.accent, backgroundColor: c.accentSoft }}>
+    <View testID={`event-card-${eventId}`} style={{ gap: 12, padding: 12, borderRadius: RADIUS.medium, borderWidth: 1, borderColor: c.line, backgroundColor: c.bg }}>
       <Txt variant="display" role="header">{eventName}</Txt>
       <PostCard post={post} />
-      <Button label={`Open ${eventName}`} onPress={onOpen} />
+      <Button variant="secondary" label={`Open ${eventName}`} onPress={onOpen} />
     </View>
   );
 }
@@ -70,7 +70,7 @@ export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, on
           <Card testID={`event-${item.eventId}`}>
             <Txt variant="title" role="header">{item.eventName}</Txt>
             <Txt variant="muted">{eventCountWords(item)}</Txt>
-            <Button label={`Open ${item.eventName}`} onPress={() => onOpen(item.eventId)} />
+            <Button variant="secondary" label={`Open ${item.eventName}`} onPress={() => onOpen(item.eventId)} />
           </Card>
         )}
         ListHeaderComponent={

@@ -174,14 +174,14 @@ export function ShareScreen() {
       {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
 
       <Card>
-        <Button
+        <Button variant="secondary"
           label={videos ? 'Pick photos or videos from your phone' : 'Pick photos from your phone'}
           text={videos ? (items.length ? 'Pick more photos or videos' : 'Pick photos or videos') : (items.length ? 'Pick more photos' : 'Pick photos')} onPress={() => void pick()} disabled={items.length >= MAX} />
         {items.length ? <Txt variant="strong">{`${photos(items.length)} picked`}</Txt> : null}
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
           {items.map((it, i) => (
             <View key={`${it.uri}-${i}`} style={{ width: 120, gap: 6 }}>
-              <Image source={{ uri: it.uri }} style={{ width: 120, height: 120, borderRadius: 10 }} accessibilityIgnoresInvertColors />
+              <Image source={{ uri: it.uri }} style={{ width: 120, height: 120, borderRadius: 12 }} accessibilityIgnoresInvertColors />
               <Button label={`Remove photo ${i + 1}`} text="Remove" variant="secondary" onPress={() => setItems((cur) => cur.filter((_, j) => j !== i))} />
             </View>
           ))}

@@ -37,10 +37,10 @@ describe('A11Y sweep', () => {
 });
 
 describe('DS-13 tokens', () => {
-  it('DS-13: one spacing scale on a 4 pt grid and four corner sizes (plus each phone\'s own dialog corner)', () => {
+  it('DS-13: one spacing scale on a 4 pt grid and three corner sizes since RD-8 (plus each phone\'s own dialog corner)', () => {
     const { SPACE, RADIUS, dialogRadius } = require('../theme');
     expect(Object.values(SPACE)).toEqual([4, 8, 12, 16, 24, 32]);
-    expect(Object.values(RADIUS)).toEqual([4, 12, 20, 999]);
+    expect(Object.values(RADIUS)).toEqual([4, 12, 999]); // RD-8 (DEC-59): the 20 pt large corner is gone
     expect(dialogRadius('ios')).toBe(14);
     expect(dialogRadius('android')).toBe(28);
   });

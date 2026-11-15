@@ -42,7 +42,7 @@ export function YourName() {
       <Txt>Your family sees this name on every photo and message you send.</Txt>
       <Field label="Your name" value={name} onChangeText={setName} placeholder='Like "Chase"' maxLength={40} />
       {msg ? <Txt>{msg}</Txt> : null}
-      <Button label="Save my name" onPress={() => void save()} disabled={!name.trim()} />
+      <Button variant="secondary" label="Save my name" onPress={() => void save()} disabled={!name.trim()} />
     </Card>
   );
 }

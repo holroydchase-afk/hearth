@@ -6,7 +6,7 @@ import { useApp } from '../state/AppContext';
 import { Button, Card, Screen, Txt } from '../ui/kit';
 import { AppGate } from './AppGate';
 import { ProblemDetailsCard } from './ProblemDetails';
-import { BiggerText, DeleteAccount, ColorChoice, LightOrDark, HowToTell, Privacy, SignOut } from './Preferences';
+import { BiggerText, DeleteAccount, LightOrDark, HowToTell, Privacy, SignOut } from './Preferences';
 
 export function HelpScreen() {
   const app = useApp();
@@ -19,14 +19,13 @@ export function HelpScreen() {
       <Card>
         <Txt variant="title">Need help?</Txt>
         {who && phone ? (
-          <Button label={`Call ${who}`} icon={{ sf: 'phone.fill', md: 'call' }} onPress={() => void app.deps.openUrl(`tel:${phone}`)} />
+          <Button variant="secondary" label={`Call ${who}`} icon={{ sf: 'phone', md: 'call' }} onPress={() => void app.deps.openUrl(`tel:${phone}`)} />
         ) : (
           <Txt>{`Ask ${who ?? 'the person who invited you'} for help.`}</Txt>
         )}
       </Card>
       <BiggerText />
       <LightOrDark />
-      <ColorChoice />
       <HowToTell />
       <Privacy who={who} />
       <Card>

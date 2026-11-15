@@ -7,7 +7,8 @@ import type { KV } from '../platform/kv';
 import { COLOR_NAMES, SCREEN_LOOKS, type ColorName, type ScreenLook } from '../ui/theme';
 
 export type NotifyChoice = 'push' | 'evening' | 'sunday';
-/** look (DS-10): light or dark screen; 'system' follows the phone. color (COLOR-3): Ember, Sage or Plum. */
+/** look (DS-10): light or dark screen; 'system' follows the phone. color (RD-25): the family color, Ember, Forest or
+ *  Plum, picked by the family's owner and saved on the owner's phone only (phase 1). */
 export interface Prefs { bigText: boolean; notify: NotifyChoice; look: ScreenLook; color: ColorName }
 
 /** What the server needs for each Help choice (AE-2, set_notification_prefs). */
@@ -23,6 +24,13 @@ export function defaultPrefs(role: Role): Prefs {
   return { bigText: role === 'viewer', notify: 'push', look: 'system', color: 'ember' };
 }
 
+/** RD-25: only the owner's saved pick counts; COLOR-1's old Sage is now Forest; anything else is Ember. */
+function familyColor(saved: unknown, role: Role): ColorName {
+  if (role !== 'owner') return 'ember';
+  const v = saved === 'sage' ? 'forest' : saved;
+  return COLOR_NAMES.includes(v as ColorName) ? (v as ColorName) : 'ember';
+}
+
 export async function loadPrefs(kv: KV, userId: string, role: Role): Promise<Prefs> {
   const d = defaultPrefs(role);
   try {
@@ -33,7 +41,7 @@ export async function loadPrefs(kv: KV, userId: string, role: Role): Promise<Pre
       bigText: typeof p.bigText === 'boolean' ? p.bigText : d.bigText,
       notify: p.notify === 'evening' || p.notify === 'sunday' || p.notify === 'push' ? p.notify : d.notify,
       look: SCREEN_LOOKS.includes(p.look as ScreenLook) ? (p.look as ScreenLook) : d.look,
-      color: COLOR_NAMES.includes(p.color as ColorName) ? (p.color as ColorName) : d.color,
+      color: familyColor(p.color, role),
     };
   } catch {
     return d;

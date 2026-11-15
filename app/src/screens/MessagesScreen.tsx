@@ -120,7 +120,7 @@ function ChatScreen({ chat, client, onClose }: { chat: ChatSummary; client: Chat
       {view?.status === 'ready' ? (
         <View style={{ gap: 12 }}>
           <Field label="Your message" value={draft} onChangeText={setDraft} multiline maxLength={4000} />
-          <Button label="Send" onPress={() => void send()} busy={busy} />
+          <Button variant="secondary" label="Send" onPress={() => void send()} busy={busy} />
         </View>
       ) : null}
     </Shell>
@@ -130,7 +130,7 @@ function ChatScreen({ chat, client, onClose }: { chat: ChatSummary; client: Chat
 function Line({ line }: { line: ChatLine }) {
   const { c } = useTheme();
   return (
-    <View style={{ alignSelf: line.mine ? 'flex-end' : 'flex-start', maxWidth: '90%', gap: 4, padding: 12, borderRadius: 16,
+    <View style={{ alignSelf: line.mine ? 'flex-end' : 'flex-start', maxWidth: '90%', gap: 4, padding: 12, borderRadius: 12,
       backgroundColor: line.mine ? c.accentSoft : c.surface, borderWidth: 1, borderColor: c.line }}>
       <Txt variant="strong">{line.mine ? 'You' : line.name}</Txt>
       <Txt selectable>{line.text}</Txt>

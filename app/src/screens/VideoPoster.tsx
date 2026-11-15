@@ -9,11 +9,11 @@
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { Button, SystemIcon } from '../ui/kit';
-import { FONT, MIN_TARGET, RADIUS, useTheme } from '../ui/theme';
+import { WEIGHT, MIN_TARGET, RADIUS, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
 import { VideoPlayer } from './VideoPlayer';
 
-const PLAY_ICON = { sf: 'play.fill', md: 'play_arrow' };
+const PLAY_ICON = { sf: 'play', md: 'play_arrow' };
 
 export function VideoPoster({ postId, mediaId, fit = 'cover', style, onOpen, openLabel }: {
   postId: string; mediaId: string; fit?: 'cover' | 'contain'; style?: StyleProp<ViewStyle>;
@@ -21,7 +21,7 @@ export function VideoPoster({ postId, mediaId, fit = 'cover', style, onOpen, ope
   onOpen?: () => void;
   openLabel?: string;
 }) {
-  const { c, t, os } = useTheme();
+  const { t } = useTheme();
   const [playing, setPlaying] = useState(false);
   const player = playing ? <VideoPlayer postId={postId} mediaId={mediaId} onClose={() => setPlaying(false)} /> : null;
 
@@ -31,9 +31,9 @@ export function VideoPoster({ postId, mediaId, fit = 'cover', style, onOpen, ope
         <Pressable accessibilityRole="button" accessibilityLabel="Play video" onPress={() => setPlaying(true)} style={[styles.box, style]}>
           <MediaImage postId={postId} mediaId={mediaId} fit={fit} full={false} style={StyleSheet.absoluteFill} />
           <View style={styles.middle} pointerEvents="none">
-            <View style={[styles.pill, { backgroundColor: c.accent }]}>
-              <SystemIcon icon={PLAY_ICON} color={c.accentInk} />
-              <Text style={{ color: c.accentInk, fontFamily: os === 'android' ? FONT.medium : FONT.semibold, fontSize: t.base }}>Play</Text>
+            <View style={[styles.pill, { backgroundColor: 'rgba(0,0,0,0.72)' }]}>
+              <SystemIcon icon={PLAY_ICON} color="#FFFFFF" />
+              <Text style={{ color: '#FFFFFF', fontWeight: WEIGHT.semibold, fontSize: t.base }}>Play</Text>
             </View>
           </View>
         </Pressable>
@@ -47,7 +47,7 @@ export function VideoPoster({ postId, mediaId, fit = 'cover', style, onOpen, ope
       <MediaImage postId={postId} mediaId={mediaId} fit={fit} full={false} style={StyleSheet.absoluteFill} />
       <Pressable accessibilityRole="button" accessibilityLabel={openLabel ?? 'Open the video full screen'} onPress={onOpen} style={[StyleSheet.absoluteFill, styles.target]} />
       <View style={styles.corner}>
-        <Button label="Play video" text="Play" icon={PLAY_ICON} onPress={() => setPlaying(true)} />
+        <Button variant="secondary" label="Play video" text="Play" icon={PLAY_ICON} onPress={() => setPlaying(true)} />
       </View>
       {player}
     </View>

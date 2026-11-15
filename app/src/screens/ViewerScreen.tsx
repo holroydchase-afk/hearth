@@ -184,7 +184,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
               {next !== null ? <Button label="Next photo" text="Next ▶" variant="secondary" style={{ flex: 1 }} onPress={() => go(next)} /> : <View style={{ flex: 1 }} />}
             </View>
             {/* Saving a video to the phone isn't built yet (saveToPhone writes a JPEG); TRACKER R27. */}
-            {entry.media.kind !== 'video' ? <Button label="Save to my phone" busy={saving} onPress={() => void save()} /> : null}
+            {entry.media.kind !== 'video' ? <Button variant="secondary" label="Save to my phone" busy={saving} onPress={() => void save()} /> : null}
           </View>
         </>
       )}

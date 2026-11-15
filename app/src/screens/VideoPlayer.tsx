@@ -57,7 +57,7 @@ function DarkPlayer({ postId, mediaId, onClose }: { postId: string; mediaId: str
         {failed ? (
           <View style={styles.center}>
             <Txt style={{ textAlign: 'center' }} role="alert">{cantPlayVideo(helper)}</Txt>
-            <Button label="Try again" onPress={tryAgain} />
+            <Button variant="secondary" label="Try again" onPress={tryAgain} />
           </View>
         ) : uri ? (
           <Playing key={`${attempt}:${uri}`} uri={uri} onError={() => setFailed(true)} />
@@ -100,11 +100,11 @@ function Playing({ uri, onError }: { uri: string; onError: () => void }) {
       </View>
       <View style={styles.controls}>
         {isPlaying
-          ? <Button label="Pause the video" text="Pause" icon={{ sf: 'pause.fill', md: 'pause' }} style={{ flex: 1 }} onPress={() => player.pause()} />
-          : <Button label="Play the video" text="Play" icon={{ sf: 'play.fill', md: 'play_arrow' }} style={{ flex: 1 }} onPress={() => player.play()} />}
+          ? <Button variant="secondary" label="Pause the video" text="Pause" icon={{ sf: 'pause', md: 'pause' }} style={{ flex: 1 }} onPress={() => player.pause()} />
+          : <Button variant="secondary" label="Play the video" text="Play" icon={{ sf: 'play', md: 'play_arrow' }} style={{ flex: 1 }} onPress={() => player.play()} />}
         {muted
-          ? <Button label="Turn sound on" text="Sound on" icon={{ sf: 'speaker.wave.2.fill', md: 'volume_up' }} variant="secondary" style={{ flex: 1 }} onPress={toggleSound} />
-          : <Button label="Turn sound off" text="Sound off" icon={{ sf: 'speaker.slash.fill', md: 'volume_off' }} variant="secondary" style={{ flex: 1 }} onPress={toggleSound} />}
+          ? <Button label="Turn sound on" text="Sound on" icon={{ sf: 'speaker.wave.2', md: 'volume_up' }} variant="secondary" style={{ flex: 1 }} onPress={toggleSound} />
+          : <Button label="Turn sound off" text="Sound off" icon={{ sf: 'speaker.slash', md: 'volume_off' }} variant="secondary" style={{ flex: 1 }} onPress={toggleSound} />}
       </View>
     </>
   );

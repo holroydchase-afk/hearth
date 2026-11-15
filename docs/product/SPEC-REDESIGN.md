@@ -32,7 +32,7 @@ Split into three PRs, in order, one at a time (small PRs, no bursts). Each is sh
 | RD-4 | The accent appears only on: the main tap word or chip on a screen (e.g. "4 new"), the picked tab, the new-message dot, links in text, and switches On. Search, By date and row titles are ink, not accent. | auto (lint of `c.accent` uses) + manual |
 | RD-5 | Every accent choice passes 4.5:1 against the screen in light and dark, and Increase Contrast still gives its high-contrast set. | auto |
 | RD-6 | Icons are outline SF Symbols on iPhone (regular weight) and Material Symbols Outlined on Android; the picked tab changes color, not fill. | auto |
-| RD-7 | No large filled button anywhere except: Delete and Leave confirms, sign-in and Start a family (first-run setup), and Post on Share. Everything else is a tappable row, a photo, a text button or a small tinted capsule, each still 48 pt tall to tap. The walk's Next and Previous become capsules (positions unchanged). | auto (kit audit) + manual |
+| RD-7 | No large filled button anywhere except: Delete and Leave confirms, sign-in and Start a family (first-run setup), and Post on Share. Everything else is a tappable row, a photo, a text button or a small tinted capsule, each still 48 pt tall to tap. The walk's Next and Previous become capsules (positions unchanged). The "Yes, sign out" confirm also stays filled: it is a deliberate confirm (signing back in needs a new code). | auto (kit audit) + manual |
 | RD-8 | Corners: 12 for rows and New for you photos, 14 dialogs (28 dp Android), square in the Gallery grid. No card inside a card. | auto |
 
 ### 1b. Getting around (tabs, header, greeting, More)

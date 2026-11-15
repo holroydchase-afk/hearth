@@ -25,7 +25,7 @@ export function NewForYouCard({ posts, since, onSee }: { posts: FeedPost[]; sinc
       <Txt variant="title" role="header">New for you</Txt>
       {tiles.length ? <PhotoCollage postId="new-for-you" media={tiles} /> : null}
       <Txt>{sentLine(since, posts.map((p) => p.author_name))}</Txt>
-      <Button label="See the new photos" onPress={onSee} />
+      <Button variant="tinted" label="See the new photos" onPress={onSee} />
     </Card>
   );
 }
@@ -62,9 +62,9 @@ export function OneAtATime({ postIds, onClose }: { postIds: string[]; onClose: (
         <Button label="Back to Photos" icon={{ sf: 'chevron.backward', md: 'arrow_back' }} variant="secondary" onPress={onClose} />
         <Txt variant="title" role="header" label={heading}>{heading}</Txt>
         <PostCard key={post.post_id} post={post} />
-        {/* GUX-R1/R2/R8: the filled Next (Done on the last) is always first and full width, so it never moves. */}
+        {/* GUX-R1/R2/R8: Next (Done on the last) is always first in its own row, so it never moves; RD-7 makes it a capsule. */}
         <View style={{ gap: SPACE.md }}>
-          <Button label={last ? 'Done, back to Photos' : 'Next'} text={last ? 'Done' : 'Next'} onPress={() => (last ? onClose() : setAt(step + 1))} />
+          <Button variant="tinted" label={last ? 'Done, back to Photos' : 'Next'} text={last ? 'Done' : 'Next'} onPress={() => (last ? onClose() : setAt(step + 1))} />
           {step > 0 ? <Button label="Previous new photo" text="Previous" variant="secondary" onPress={() => setAt(step - 1)} /> : null}
         </View>
       </ScrollView>

@@ -111,7 +111,8 @@ describe('RD 1a source scans', () => {
       const text = fs.readFileSync(f, 'utf8');
       for (const m of text.matchAll(/<Confirm\b[\s\S]*?yes=(?:"([^"]*)"|\{([^}]*)\})/g)) {
         const yes = m[1] ?? m[2]!;
-        if (!/\b(Delete|Leave)\b|take me off Hearth/i.test(yes)) offenders.push(`${rel(f)}:${lineOf(text, m.index!)} yes=${yes.slice(0, 60)}`);
+        // "Yes, sign out" is a deliberate confirm too (SPEC-REDESIGN RD-7): signing out means a new code to get back in.
+        if (!/\b(Delete|Leave)\b|take me off Hearth|^Yes, sign out$/i.test(yes)) offenders.push(`${rel(f)}:${lineOf(text, m.index!)} yes=${yes.slice(0, 60)}`);
       }
     }
     expect(offenders).toEqual([]);

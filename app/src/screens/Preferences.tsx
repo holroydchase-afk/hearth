@@ -6,8 +6,9 @@ import { isPhoneOnly } from '../api/phone';
 import { useApp } from '../state/AppContext';
 import { HELPER_FEATURES } from '../share/helpers';
 import type { NotifyChoice } from '../state/prefs';
-import type { ColorName, ScreenLook } from '../ui/theme';
-import { Button, Card, Choice, Confirm, Notice, Txt } from '../ui/kit';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { MIN_TARGET, paletteFor, useTheme, type ColorName, type ScreenLook } from '../ui/theme';
+import { Button, Card, Choice, Confirm, Notice, SystemIcon, Txt } from '../ui/kit';
 
 export function BiggerText() {
   const { prefs, setPrefs } = useApp();
@@ -44,24 +45,50 @@ export function LightOrDark() {
   );
 }
 
-const COLORS: { id: ColorName; title: string; detail: string }[] = [
-  { id: 'ember', title: 'Ember', detail: 'Warm red-brown, like a fire. Hearth starts here.' },
-  { id: 'sage', title: 'Sage', detail: 'Calm green, like leaves.' },
-  { id: 'plum', title: 'Plum', detail: 'Soft purple.' },
+const COLORS: { id: ColorName; title: string }[] = [
+  { id: 'ember', title: 'Ember' },
+  { id: 'forest', title: 'Forest' },
+  { id: 'plum', title: 'Plum' },
 ];
 
-/** COLOR-4: Ember, Sage or Plum for buttons and highlights. Saved on this phone only. */
-export function ColorChoice() {
-  const { prefs, setPrefs } = useApp();
+/** RD-24..RD-26: the family's owner picks the family color: Ember (default), Forest or Plum. Each row shows the
+ *  color itself, its name and a check on the picked one. Phase 1: saved on this phone only (prefs.color). */
+export function FamilyColor() {
+  const { prefs, setPrefs, space } = useApp();
+  const { c, dark } = useTheme();
+  if (!space || space.role !== 'owner') return null;
   return (
     <Card>
-      <Txt variant="title" role="header">Colors</Txt>
-      {COLORS.map((k) => (
-        <Choice key={k.id} kind="radio" label={k.title} title={k.title} detail={k.detail} checked={prefs.color === k.id} onPress={() => setPrefs({ color: k.id })} />
-      ))}
+      <Txt variant="title" role="header">Family color</Txt>
+      {COLORS.map((k) => {
+        const on = prefs.color === k.id;
+        const swatch = paletteFor('ios', dark, k.id).accent;
+        return (
+          <Pressable
+            key={k.id}
+            accessibilityRole="radio"
+            accessibilityLabel={k.title}
+            accessibilityState={{ checked: on }}
+            aria-checked={on} // the web build reads aria-checked, not accessibilityState
+            onPress={() => setPrefs({ color: k.id })}
+            style={({ pressed }) => [styles.row, { opacity: pressed ? 0.7 : 1 }]}
+          >
+            <View style={[styles.swatch, { backgroundColor: swatch }]} />
+            <Txt style={{ flex: 1 }}>{k.title}</Txt>
+            {on ? <SystemIcon icon={CHECK} color={c.ink} /> : null}
+          </Pressable>
+        );
+      })}
     </Card>
   );
 }
+
+const CHECK = { sf: 'checkmark', md: 'check' };
+
+const styles = StyleSheet.create({
+  row: { minHeight: MIN_TARGET + 4, minWidth: MIN_TARGET, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  swatch: { width: 28, height: 28, borderRadius: 14 },
+});
 
 const CHOICES: { id: NotifyChoice; title: string; saved: string }[] = [
   { id: 'push', title: 'A sound on your phone when there are new photos (Recommended)', saved: 'Saved. Your phone will make a sound when there are new photos.' },

@@ -233,11 +233,11 @@ export function GroupsScreen() {
             onPress={() => edit({ history: 'new', need: null })}
           />
           {draft.need === 'history' ? <Txt variant="strong">Pick one above first.</Txt> : null}
-          <Button label="Make the group" onPress={() => void makeGroup()} softDisabled={!draft.name.trim() || !draft.history} busy={draft.busy} />
+          <Button variant="secondary" label="Make the group" onPress={() => void makeGroup()} softDisabled={!draft.name.trim() || !draft.history} busy={draft.busy} />
           <Button label="Cancel" variant="secondary" onPress={() => setDraft(null)} />
         </Card>
       ) : (
-        <Button label="New group" onPress={() => { closeForm(); setDraft(NEW_GROUP); }} />
+        <Button variant="secondary" label="New group" onPress={() => { closeForm(); setDraft(NEW_GROUP); }} />
       )}
       {/* one main action per screen: while making a group, the list waits */}
       {(draft ? [] : circles ?? []).map((g) => (
@@ -269,7 +269,7 @@ export function GroupsScreen() {
                 <Card>
                   <Txt variant="strong">{alwaysWords(relativesIn(g), g.name)}</Txt>
                   <Txt>As now, the parents and whoever posted a photo read every comment on it.</Txt>
-                  <Button label="Turn on Always shared" onPress={() => void setMode(g, 'always')} />
+                  <Button variant="secondary" label="Turn on Always shared" onPress={() => void setMode(g, 'always')} />
                   <Button label="Cancel" variant="secondary" onPress={() => setConfirming(null)} />
                 </Card>
               ) : null}
@@ -278,7 +278,7 @@ export function GroupsScreen() {
           {renaming === g.circle_id ? (
             <>
               <Field label="New name for this group" value={name} onChangeText={setName} autoFocus maxLength={60} />
-              <Button label="Save name" onPress={() => void saveName(g.circle_id)} disabled={!name.trim()} />
+              <Button variant="secondary" label="Save name" onPress={() => void saveName(g.circle_id)} disabled={!name.trim()} />
               <Button label="Cancel" variant="secondary" onPress={() => setRenaming(null)} />
             </>
           ) : (
@@ -332,7 +332,7 @@ export function GroupsScreen() {
                 allDetail={`They'll see every photo ${g.name} can already see.`}
                 need={needHistory}
               />
-              <Button label="Make the invite" onPress={() => void makeInvite(g.circle_id)} softDisabled={!history} />
+              <Button variant="secondary" label="Make the invite" onPress={() => void makeInvite(g.circle_id)} softDisabled={!history} />
               <Button label="Cancel" variant="secondary" onPress={closeForm} />
             </>
           ) : invitable(g) ? (

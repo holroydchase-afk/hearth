@@ -43,7 +43,7 @@ export function QueueStatus() {
               <>
                 <Txt>{messageFor(new ApiError(j.errorCode ?? 'UNKNOWN'), { inviter: helper, action: 'post' })}</Txt>
                 <JobProblemDetails jobId={j.id} />
-                <Button label="Try sending again" text="Try again" onPress={() => queue.retry(j.id)} />
+                <Button variant="secondary" label="Try sending again" text="Try again" onPress={() => queue.retry(j.id)} />
                 <Button label="Remove this from the list" text="Remove" variant="secondary" onPress={() => queue.remove(j.id)} />
               </>
             ) : null}

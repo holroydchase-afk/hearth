@@ -1,12 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Native first (docs/product/DESIGN-SYSTEM.md): each phone's own type ramp and controls, Hearth's own font and colors,
-// plus Hearth's overrides (DS-1..DS-9). Nothing under 17 pt (DS-2). RN Text scales with the
-// phone's text size (Dynamic Type / Android font scale) because we never turn allowFontScaling off.
-// One file per weight, so the other 11 (Light, Bold, italics) never ship in the app.
-import { AtkinsonHyperlegibleNext_400Regular } from '@expo-google-fonts/atkinson-hyperlegible-next/400Regular';
-import { AtkinsonHyperlegibleNext_500Medium } from '@expo-google-fonts/atkinson-hyperlegible-next/500Medium';
-import { AtkinsonHyperlegibleNext_600SemiBold } from '@expo-google-fonts/atkinson-hyperlegible-next/600SemiBold';
+// Native first (docs/product/DESIGN-SYSTEM.md): each phone's own type ramp, font and controls, in black and white
+// with one family accent (RD-1..RD-8, DEC-59), plus Hearth's overrides (DS-1..DS-9). Nothing under 17 pt (DS-2).
+// RN Text scales with the phone's text size (Dynamic Type / Android font scale): we never turn allowFontScaling off.
 import { createContext, useContext } from 'react';
 import { Platform, useColorScheme } from 'react-native';
 
@@ -18,13 +14,13 @@ export interface Colors {
   safe: string; safeSoft: string; danger: string; onDanger: string; scrim: string; photo: string;
 }
 
-// DS-11 (Chase, Nov 1 2026): warm Hearth colors on every phone, replacing the cold system grays.
-// Off-white and charcoal tinted to match (never pure black, which glares next to bright photos at night).
-// COLOR-1 (Chase, Nov 5 2026: "I'd like all three color options"): Ember, Sage and Plum, each light and dark,
-// replacing the Nov 1 blue. Body text is 7:1 or better (WCAG AAA); everything else is 4.5:1 or better
-// (designSystem.test.tsx, colors.test.tsx). Shapes and fonts stay each phone's own.
-export type ColorName = 'ember' | 'sage' | 'plum';
-export const COLOR_NAMES: readonly ColorName[] = ['ember', 'sage', 'plum'];
+// RD-1 (DEC-59, Chase Nov 14 2026: "black and white and an accent"): a white screen with near-black words in light
+// mode, true black with near-white words in dark mode, and neutral grays in between (Apple's own system grays).
+// RD-3: one accent per palette, from one setting, the family color (RD-24): Ember (default), Forest or Plum.
+// Only the accent changes between them. Body text is 7:1 or better; the accent 4.5:1 on the screen, rows and
+// fills, light and dark (RD-5; redesignLook.test.tsx).
+export type ColorName = 'ember' | 'forest' | 'plum';
+export const COLOR_NAMES: readonly ColorName[] = ['ember', 'forest', 'plum'];
 export const ColorContext = createContext<ColorName>('ember');
 
 const status = {
@@ -32,31 +28,37 @@ const status = {
   dark: { safe: '#7DD394', safeSoft: '#173322', danger: '#F2B8B5', onDanger: '#601410', scrim: 'rgba(0,0,0,0.6)' },
 };
 
-const PALETTES: Record<ColorName, { light: Colors; dark: Colors }> = {
-  ember: {
-    light: { ...status.light, bg: '#FAF6F1', surface: '#FFFFFF', ink: '#1F1A17', muted: '#5E5650', line: '#DDD3C9',
-      accent: '#A4421F', accentInk: '#FFFFFF', accentSoft: '#F6E5DC', fill: '#EFE8E1', photo: '#EAE3DB' },
-    dark: { ...status.dark, bg: '#171311', surface: '#241E1B', ink: '#F6EFE9', muted: '#BDB2A9', line: '#40362F',
-      accent: '#F4A47F', accentInk: '#4A1606', accentSoft: '#3A231A', fill: '#352C27', photo: '#2F2723' },
-  },
-  sage: {
-    light: { ...status.light, bg: '#F5F7F3', surface: '#FFFFFF', ink: '#1A1D1A', muted: '#555B55', line: '#D2D8D0',
-      accent: '#2D6A4E', accentInk: '#FFFFFF', accentSoft: '#E0EDE5', fill: '#E8EDE6', photo: '#E3E8E1' },
-    dark: { ...status.dark, bg: '#121513', surface: '#1F2420', ink: '#EEF3EE', muted: '#B0B9B1', line: '#353D37',
-      accent: '#8FD1AE', accentInk: '#0B3220', accentSoft: '#1C3328', fill: '#2C332E', photo: '#29302B' },
-  },
-  plum: {
-    light: { ...status.light, bg: '#F8F6FA', surface: '#FFFFFF', ink: '#1C1A1F', muted: '#5A5560', line: '#D8D2DE',
-      accent: '#5A3EA6', accentInk: '#FFFFFF', accentSoft: '#ECE6F7', fill: '#EEEAF2', photo: '#E8E3EE' },
-    dark: { ...status.dark, bg: '#141317', surface: '#221F27', ink: '#F2EFF6', muted: '#B7B0C0', line: '#3B3642',
-      accent: '#C5B3F5', accentInk: '#2A1660', accentSoft: '#2D2541', fill: '#312C38', photo: '#2C2832' },
-  },
+const NEUTRAL = {
+  light: { ...status.light, bg: '#FFFFFF', surface: '#F7F7F9', ink: '#1C1C1E', muted: '#5F5F64', line: '#D1D1D6', fill: '#F2F2F7', photo: '#EFEFF4' },
+  dark: { ...status.dark, bg: '#000000', surface: '#1C1C1E', ink: '#F5F5F7', muted: '#AEAEB2', line: '#38383A', fill: '#2C2C2E', photo: '#1C1C1E' },
 };
 
-/** Same colors on iPhone, Android and the web (DS-11); os stays so a phone can differ later.
+/** The family color: the one accent, light and dark, and the words that sit on it. */
+const ACCENTS: Record<ColorName, { light: string; dark: string }> = {
+  ember: { light: '#B23A1E', dark: '#FF8A65' },
+  forest: { light: '#2E7D4F', dark: '#6FCF97' },
+  plum: { light: '#8E3A8F', dark: '#D9A0E0' },
+};
+
+function build(name: ColorName): { light: Colors; dark: Colors } {
+  const a = ACCENTS[name];
+  return {
+    light: { ...NEUTRAL.light, accent: a.light, accentInk: '#FFFFFF', accentSoft: mix(a.light, '#FFFFFF', 0.93) },
+    dark: { ...NEUTRAL.dark, accent: a.dark, accentInk: '#000000', accentSoft: mix(a.dark, '#000000', 0.82) },
+  };
+}
+
+let palettes: Record<ColorName, { light: Colors; dark: Colors }> | null = null;
+function allPalettes() {
+  palettes ??= { ember: build('ember'), forest: build('forest'), plum: build('plum') };
+  return palettes;
+}
+
+/** Same colors on iPhone, Android and the web (RD-1); os stays so a phone can differ later.
  *  high: the phone's Increase Contrast (iPhone) or High contrast text (Android) is on (HIG-7). */
 export function paletteFor(_os: OS, dark: boolean, color: ColorName = 'ember', high = false): Colors {
-  const p = PALETTES[color] ?? PALETTES.ember;
+  const all = allPalettes();
+  const p = all[color] ?? all.ember;
   const base = dark ? p.dark : p.light;
   return high ? highContrast(base) : base;
 }
@@ -94,30 +96,10 @@ function highContrast(c: Colors): Colors {
   return out;
 }
 
-// DS-12 (Chase, Nov 1 2026): Atkinson Hyperlegible Next, the Braille Institute's typeface for low-vision
-// readers (SIL OFL), on every phone and the web. Three weights only, each its own file, because a custom
-// font can't be made bolder with fontWeight on Android (and the web would fake it):
-//   regular  - everything you read: posts, comments, captions, dates, hints, typed words
-//   medium   - Android buttons (Material's label weight) and tab labels not picked
-//   semibold - names, titles, screen headings, buttons, the picked tab, On/Off
-// Never Light or ExtraLight (thin strokes fade on old screens), never Bold or ExtraBold (Chase: "too bold"),
-// never italics or all caps.
-
-export const FONT = {
-  regular: 'AtkinsonHyperlegibleNext_400Regular',
-  medium: 'AtkinsonHyperlegibleNext_500Medium',
-  semibold: 'AtkinsonHyperlegibleNext_600SemiBold',
-} as const;
-export type FontWeightName = keyof typeof FONT;
-
-/** For expo-font's useFonts in the root layout. */
-export const FONT_FILES: Record<string, number> = {
-  [FONT.regular]: AtkinsonHyperlegibleNext_400Regular,
-  [FONT.medium]: AtkinsonHyperlegibleNext_500Medium,
-  [FONT.semibold]: AtkinsonHyperlegibleNext_600SemiBold,
-};
-
-export const fontFamily = FONT.regular;
+// RD-2 (DEC-59): the phone's own font, SF Pro on iPhone, Roboto on Android, the system stack on the web, so no
+// fontFamily is ever set and nothing is loaded. Regular for reading; Semibold for names, titles, buttons and the
+// picked tab; Bold only in the large title. Never Light, Medium, italics or all caps.
+export const WEIGHT = { regular: '400', semibold: '600', bold: '700' } as const;
 
 export const MIN_TARGET = 48;
 
@@ -148,9 +130,9 @@ export function sheetShouldClose(dy: number, vy: number): boolean {
 // as they're touched (TRACKER R30).
 /** Gaps and padding, on a 4 pt grid. Related things sit closer (sm) than unrelated ones (lg, xl). */
 export const SPACE = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 } as const;
-/** Corners: small (checkbox, quiet field), medium (cards, choices, notices, fields), large (event card,
- *  reply box), pill (buttons, chips, avatars). */
-export const RADIUS = { small: 4, medium: 12, large: 20, pill: 999 } as const;
+/** Corners (RD-8): small (checkbox, quiet field), medium (rows, cards, choices, notices, fields, New for you
+ *  photos), pill (capsules, chips, avatars). The Gallery grid is square. */
+export const RADIUS = { small: 4, medium: 12, pill: 999 } as const;
 /** The one exception: dialogs keep each phone's own corner (HIG alert 14 pt, Material 3 dialog 28 dp). */
 export function dialogRadius(os: OS): number {
   return os === 'android' ? 28 : 14;

@@ -132,7 +132,7 @@ export function SearchScreen({ onClose }: { onClose: () => void }) {
         maxLength={100}
         onSubmitEditing={() => void run({ words, author, year })}
       />
-      <Button label="Search for these words" text="Search" busy={busy} onPress={() => void run({ words, author, year })} />
+      <Button variant="secondary" label="Search for these words" text="Search" busy={busy} onPress={() => void run({ words, author, year })} />
       {senders.length > 1 ? (
         <View style={{ gap: 8 }}>
           <Txt variant="title" role="header">From</Txt>

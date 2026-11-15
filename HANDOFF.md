@@ -4,12 +4,17 @@ stage: building
 goal: hearth-beta
 milestone: HRT-M1
 now: push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
-next: redesign R46 (DEC-59, SPEC-REDESIGN.md) phase 1a look: qa-tdd writes RD-1..8 red, then build; 1b and 1c follow as separate small PRs; stop date Nov 19
+next: redesign R46 phase 1a built (RD-1..8, RD-24..27); qa-tdd 3x and grandparent-ux next, then 1b (RD-9..17) and 1c; stop date Nov 19
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 15: redesign 1a built, the look (RD-1..8, RD-24..27; branch claude/project-thread-iyml94, local commit)
+- **Done, test-first (qa-tdd's red tests at 652a1d6):** `theme.ts` white/true-black neutral palette, one `accent` per family color (Ember, Forest, Plum; Sage gone), high-contrast set kept; phone's own font, `WEIGHT` Regular/Semibold, Bold only in the large title; Atkinson and `@expo-google-fonts/atkinson-hyperlegible-next` removed (package.json + lock, one line; `expo-font` kept for the app.json plugin); `RADIUS.large` gone; outline icons; filled buttons only per RD-7 (others `secondary`, the main tap word the new `tinted` capsule, the demo's "Read the case study" a text link); "Family color" picker on the owner's Me (`FamilyColor` in Preferences.tsx), saved in `prefs.color`, others Ember (`loadPrefs` by role, sage→forest); launch screen white/black; `docs/design/tokens.json` regenerated.
+- **Tests changed (stale against RD-7/RD-8, flagged for qa-tdd):** `a11ySweep` DS-13 corners now `[4, 12, 999]`; `opening.test.tsx` OPEN-4/OPEN-7 "filled" now means the accent-tinted capsule; `redesignLint` RD-7 confirm allowlist adds "Yes, sign out" (SPEC RD-7 line added).
+- **Next exact step:** qa-tdd runs all suites 3x; grandparent-ux on the new look (shots in the session scratchpad); then 1b. Not pushed.
 
 ## Nov 15: redesign specced (DEC-59, `SPEC-REDESIGN.md` RD-1..33, TRACKER R46; branch claude/project-thread-iyml94, docs only)
 - **Why:** Chase, Nov 14-15, picked look B ("black and white and an accent", "Go with the 4 new chip on the pic", "Make the color a variable that can be set in the admin", "Go Claude go"). Persona check `decisions/2026-11-15-redesign.md`: CU Red on the word "Feed", Chase override. DESIGN-SYSTEM DS-3, -7, -9, -11, -12, -13 rewritten.
