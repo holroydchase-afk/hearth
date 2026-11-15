@@ -1040,6 +1040,17 @@
    "fixed": null
   },
   {
+   "id": "B19",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "open",
+   "title": "QA-R1 (redesign 1b, RD-9/RD-10): the hosted demo's cold loads of /demo/hearth/groups and /demo/hearth/me show no app (no Demo details, no Hearth) because 1b removed those routes and only /photos redirects (to /gallery). e2e:site DEMO-5 is red for both, so the demo-site workflow's pre-upload check would stop the deploy, and old links people saved break. Fix: redirect /groups and /me (likely to /more), or retire them from DEMO-5's list on staff-pm's word. Test: app/e2e-web/site.spec.js DEMO-5",
+   "tests": [],
+   "found": "2026-11-15",
+   "fixed": null
+  },
+  {
    "id": "B15",
    "kind": "bug",
    "layer": "backend",
