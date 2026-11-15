@@ -46,7 +46,7 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   const state = useFeed();
   const { c } = useTheme();
   const { width } = useWindowDimensions();
-  // BETA-TIME-2: the timeline opens in place; "Back to Photos" returns here.
+  // BETA-TIME-2: the timeline opens in place; "Back to Gallery" returns here.
   const [timeline, setTimeline] = useState<{ startAt: string | null } | null>(null);
   // EVT-3/4: the Events list or one event, opened in place; Back returns here.
   const [events, setEvents] = useState<EventsView | null>(null);

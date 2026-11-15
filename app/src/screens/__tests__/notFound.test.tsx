@@ -7,11 +7,11 @@ import { expectGrandparentSafe, renderApp } from '../../test/renderApp';
 import { NotFoundScreen } from '../NotFoundScreen';
 
 describe('NF-1 page not found', () => {
-  it('NF-1 says what happened and leads back to Photos', async () => {
+  it('NF-1 says what happened and leads back to Gallery', async () => {
     const { nav } = await renderApp(<NotFoundScreen />, { user: 'chase' });
     expect(screen.getByRole('header', { name: "We couldn't find that page." })).toBeTruthy();
     expect(screen.queryByText(/Unmatched|Sitemap/)).toBeNull();
-    fireEvent.press(screen.getByRole('button', { name: 'Go to Photos' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Go to Gallery' }));
     expect(nav.goPhotos).toHaveBeenCalled();
     expectGrandparentSafe();
   });

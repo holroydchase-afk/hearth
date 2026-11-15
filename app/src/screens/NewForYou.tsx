@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 // OPEN-1..8 (docs/product/SPEC-OPENING.md, DEC-58): the New for you card at the top of Photos, and the new posts
-// one at a time (oldest first) with Next, Previous and "Back to Photos" (DS-4, no swipe needed). No counts or badges (A1, A2).
+// one at a time (oldest first) with Next, Previous and "Back to Gallery" (DS-4, no swipe needed). No counts or badges (A1, A2).
 // GUX-R1/R2/R5..R8 (OPEN-12): Next never moves, Previous sits under it, "Sent today by …", no collage without a ready photo.
 import React, { useEffect, useState } from 'react';
 import { BackHandler, ScrollView, View } from 'react-native';
@@ -59,12 +59,12 @@ export function OneAtATime({ postIds, onClose }: { postIds: string[]; onClose: (
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
       <ScrollView testID="new-one-at-a-time" contentContainerStyle={{ padding: SPACE.lg, gap: SPACE.lg, paddingBottom: SPACE.xxl }} keyboardShouldPersistTaps="handled">
-        <Button label="Back to Photos" icon={{ sf: 'chevron.backward', md: 'arrow_back' }} variant="secondary" onPress={onClose} />
+        <Button label="Back to Gallery" icon={{ sf: 'chevron.backward', md: 'arrow_back' }} variant="secondary" onPress={onClose} />
         <Txt variant="title" role="header" label={heading}>{heading}</Txt>
         <PostCard key={post.post_id} post={post} />
         {/* GUX-R1/R2/R8: Next (Done on the last) is always first in its own row, so it never moves; RD-7 makes it a capsule. */}
         <View style={{ gap: SPACE.md }}>
-          <Button variant="tinted" label={last ? 'Done, back to Photos' : 'Next'} text={last ? 'Done' : 'Next'} onPress={() => (last ? onClose() : setAt(step + 1))} />
+          <Button variant="tinted" label={last ? 'Done, back to Gallery' : 'Next'} text={last ? 'Done' : 'Next'} onPress={() => (last ? onClose() : setAt(step + 1))} />
           {step > 0 ? <Button label="Previous new photo" text="Previous" variant="secondary" onPress={() => setAt(step - 1)} /> : null}
         </View>
       </ScrollView>

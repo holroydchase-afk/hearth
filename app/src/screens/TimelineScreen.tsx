@@ -83,7 +83,7 @@ export function TimelineScreen({ startAt, onClose }: { startAt: string | null; o
   const header = (
     <View style={{ gap: 12 }}>
       <Txt variant="display" role="header">Photos by date</Txt>
-      <Button label="Back to Photos" variant="secondary" onPress={onClose} />
+      <Button label="Back to Gallery" variant="secondary" onPress={onClose} />
       {years ? null : <Button variant="secondary" label="Pick a year" onPress={showYears} />}
       {!years && state.startAt ? (
         <Button label="Show the newest photos first" text="Show the newest first" variant="secondary" onPress={() => void store.open(null)} />

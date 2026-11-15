@@ -153,7 +153,7 @@ function FirstInvite({ space, onDone }: { space: string; onDone: () => void }) {
       {invite ? (
         <>
           <InviteReady link={invite.link} code={invite.code} onText={() => void app.deps.openUrl(inviteSmsUrl(myName, invite.link, invite.code))} />
-          <Button label="Go to Photos" variant="secondary" onPress={onDone} />
+          <Button label="Go to Gallery" variant="secondary" onPress={onDone} />
         </>
       ) : (
         <Card>

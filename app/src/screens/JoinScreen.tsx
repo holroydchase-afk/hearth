@@ -114,7 +114,7 @@ export function JoinScreen({ code }: { code: string }) {
           <Txt variant="title">{msg}</Txt>
           {retry ? <Button label="Try again" onPress={retry} /> : <Txt>That's okay, it happens.</Txt>}
           {/* UX-G9: signed in, she still needs a way on (Photos; with no family yet it offers the code entry). */}
-          {retry ? null : app.session ? <Button label="Go to Photos" onPress={nav.goPhotos} /> : <Button label="I already have Hearth. Sign in." text="Sign in" variant="secondary" onPress={() => nav.goSignIn()} />}
+          {retry ? null : app.session ? <Button label="Go to Gallery" onPress={nav.goPhotos} /> : <Button label="I already have Hearth. Sign in." text="Sign in" variant="secondary" onPress={() => nav.goSignIn()} />}
         </Card>
       ) : null}
     </Screen>

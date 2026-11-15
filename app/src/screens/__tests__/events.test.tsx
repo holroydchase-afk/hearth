@@ -65,7 +65,7 @@ describe('EVT-3 later event posts in Photos', () => {
     expect(screen.getByText('Cake')).toBeTruthy();
     expect(screen.queryByText('Park day')).toBeNull();
     expectGrandparentSafe();
-    fireEvent.press(screen.getByRole('button', { name: 'Back to Photos' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Back to Gallery' }));
     expect(await screen.findByText('Candles')).toBeTruthy();
   });
 

@@ -44,7 +44,7 @@ export interface EventsView {
 }
 
 /** EVT-4: the events list, or one event's posts. */
-export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, onOpen, onClose, backTo = 'Photos' }: {
+export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, onOpen, onClose, backTo = 'Gallery' }: {
   posts: FeedPost[];
   view: EventsView;
   hasMore: boolean;
@@ -149,7 +149,7 @@ function EventTimeline({ posts, fromList, more, onOpen, onClose }: {
             <Txt variant="display" role="header">{name}</Txt>
             {fromList
               ? <Button label="Back to events" variant="secondary" onPress={() => onOpen(null)} />
-              : <Button label="Back to Photos" variant="secondary" onPress={onClose} />}
+              : <Button label="Back to Gallery" variant="secondary" onPress={onClose} />}
             {/* EVT-8: buttons, not gestures. */}
             {people.length > 1 ? (
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>

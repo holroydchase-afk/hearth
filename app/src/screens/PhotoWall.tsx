@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 // OPEN-9/10 (docs/product/SPEC-OPENING.md, DEC-58): every photo as a wall, three to a row under month headers,
 // newest first. Each tile opens the photo full screen and names its sender and day; "Show older photos" and
-// "Back to Photos" are buttons, so nothing needs a swipe.
+// "Back to Gallery" are buttons, so nothing needs a swipe.
 import React, { useEffect } from 'react';
 import { BackHandler, Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -70,7 +70,7 @@ export function PhotoWall({ onClose }: { onClose: () => void }) {
     <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
       {/* A ScrollView, not a FlatList: a page is 20 posts of thumbnails, and every month block shows at once. */}
       <ScrollView testID="photo-wall" contentContainerStyle={{ padding: SPACE.lg, gap: SPACE.lg, paddingBottom: SPACE.xxl }}>
-        <Button label="Back to Photos" icon={{ sf: 'chevron.backward', md: 'arrow_back' }} variant="secondary" onPress={onClose} />
+        <Button label="Back to Gallery" icon={{ sf: 'chevron.backward', md: 'arrow_back' }} variant="secondary" onPress={onClose} />
         <Txt variant="display" role="header">All photos</Txt>
         {wallMonths(state.posts).map(month)}
         {state.hasMore ? (

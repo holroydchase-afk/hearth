@@ -44,10 +44,22 @@ export function resetMore(): void {
   resets.forEach((f) => f());
 }
 
-export function MoreScreen() {
+/** B19: an old tab link (/groups, /me, /help) asks for a row; only a row this role has opens. */
+export function startRow(role: string | undefined, wanted: string | undefined): RowId | null {
+  if (!role || !wanted) return null;
+  return moreRowsFor(role).find((r) => r.id === wanted)?.id ?? null;
+}
+
+export function MoreScreen({ initialOpen }: { initialOpen?: string } = {}) {
   const app = useApp();
   const feedState = useFeed();
-  const [open, setOpen] = useState<RowId | null>(null);
+  const [open, setOpen] = useState<RowId | null>(() => startRow(app.space?.role, initialOpen));
+  // The space may load after the first paint (cold load): open the asked-for row once it does.
+  const role = app.space?.role;
+  useEffect(() => {
+    const row = startRow(role, initialOpen);
+    if (row) setOpen(row);
+  }, [role, initialOpen]);
   const [events, setEvents] = useState<EventsView>({ eventId: null, fromList: true });
   const news = useNewMessages();
   useEffect(() => {

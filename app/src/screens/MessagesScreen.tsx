@@ -20,7 +20,7 @@ const POLL_MS = 10_000;
 const PRIVACY = 'Only the people in this chat can read it. Parents are in every chat. Not even Hearth can read it: messages are locked on your phone before they are sent.';
 
 /** `backTo` names where Back goes ("More" from the More menu). */
-export function MessagesScreen({ onClose, backTo = 'Photos' }: { onClose: () => void; backTo?: string }) {
+export function MessagesScreen({ onClose, backTo = 'Gallery' }: { onClose: () => void; backTo?: string }) {
   const app = useApp();
   const userId = app.session?.userId ?? null;
   const client = useMemo(() => (userId ? new ChatClient(app.deps.api, userId) : null), [app.deps.api, userId]);

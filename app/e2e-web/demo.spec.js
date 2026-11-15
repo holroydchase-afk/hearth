@@ -93,7 +93,7 @@ test('DEMO-6 / NF-1 laptop shows the story panel beside the app; an unknown link
   await page.goto('/no-such-page');
   await expect(page.getByRole('heading', { name: "We couldn't find that page." })).toBeVisible();
   await expect(page.getByText('Unmatched Route')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Go to Photos' }).click();
+  await page.getByRole('button', { name: 'Go to Gallery' }).click();
   await galleryLoaded(page);
 });
 

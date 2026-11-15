@@ -312,11 +312,11 @@ describe('OPEN-7/8 one new post at a time', () => {
   const walkNow = () => screen.getByTestId('new-one-at-a-time');
   type Inst = ReturnType<typeof screen.getByTestId>;
   const isButton = (n: Inst) => typeof n.type === 'string' && n.props.accessibilityRole === 'button';
-  /** The step buttons in screen order: every button in the walk outside the post card, except "Back to Photos". */
+  /** The step buttons in screen order: every button in the walk outside the post card, except "Back to Gallery". */
   function stepButtons(postId: string): Inst[] {
     const card = within(walkNow()).getByTestId(`post-${postId}`);
     const inCard = new Set(card.findAll(isButton));
-    return walkNow().findAll(isButton).filter((b) => !inCard.has(b) && b.props.accessibilityLabel !== 'Back to Photos');
+    return walkNow().findAll(isButton).filter((b) => !inCard.has(b) && b.props.accessibilityLabel !== 'Back to Gallery');
   }
   /** GUX-R1: full width = no other button shares a row with it. */
   function rowMates(btn: Inst): number {
@@ -327,9 +327,9 @@ describe('OPEN-7/8 one new post at a time', () => {
   }
   const NEXT = 'Next';
   const PREV = 'Previous new photo';
-  const DONE = 'Done, back to Photos';
+  const DONE = 'Done, back to Gallery';
 
-  it('OPEN-7 GUX-R7 the full post card, the heading "New photos: 1 of 2", and Next and Back to Photos with words at 48 pt', async () => {
+  it('OPEN-7 GUX-R7 the full post card, the heading "New photos: 1 of 2", and Next and Back to Gallery with words at 48 pt', async () => {
     const { walk } = await openWalk();
     expect(within(walk).getByText('First at the park')).toBeTruthy();
     expect(within(walk).getByRole('header', { name: 'New photos: 1 of 2' })).toBeTruthy();
@@ -338,7 +338,7 @@ describe('OPEN-7/8 one new post at a time', () => {
     expect(within(walk).getByRole('button', { name: 'Love it' })).toBeTruthy(); // reactions
     expect(within(walk).getByLabelText('Write something back to Chase')).toBeTruthy(); // comments
     expect(within(walk).getByLabelText(/can see this/)).toBeTruthy(); // who can see
-    for (const name of [NEXT, 'Back to Photos']) {
+    for (const name of [NEXT, 'Back to Gallery']) {
       const b = within(walk).getByRole('button', { name });
       expect(Number(flat(b.props.style).minHeight)).toBeGreaterThanOrEqual(48);
     }
@@ -364,7 +364,7 @@ describe('OPEN-7/8 one new post at a time', () => {
       if (step > 0) expect(within(walkNow()).getByText('Previous')).toBeTruthy();
       expect(within(walkNow()).queryByText('Back')).toBeNull();
       expect(within(walkNow()).queryByRole('button', { name: 'Back' })).toBeNull();
-      expect(within(walkNow()).getByRole('button', { name: 'Back to Photos' })).toBeTruthy();
+      expect(within(walkNow()).getByRole('button', { name: 'Back to Gallery' })).toBeTruthy();
       headers.push(within(walkNow()).queryAllByRole('header').map((h) => h.props.accessibilityLabel ?? wordsIn(h)).join(' | '));
       if (step < 2) {
         fireEvent.press(btns[0]!);
@@ -375,7 +375,7 @@ describe('OPEN-7/8 one new post at a time', () => {
     headers.forEach((h, i) => expect(h).toContain(`New photos: ${i + 1} of 3`));
   });
 
-  it('OPEN-8 GUX-R8 oldest first; Next and Previous move one post; on the last, "Done" (spoken "Done, back to Photos") returns to Photos', async () => {
+  it('OPEN-8 GUX-R8 oldest first; Next and Previous move one post; on the last, "Done" (spoken "Done, back to Gallery") returns to Photos', async () => {
     const { walk } = await openWalk();
     expect(within(walk).queryByText('Then the cake')).toBeNull();
     fireEvent.press(within(walk).getByRole('button', { name: NEXT }));
@@ -392,9 +392,9 @@ describe('OPEN-7/8 one new post at a time', () => {
     expect(screen.queryByTestId('new-one-at-a-time')).toBeNull();
   });
 
-  it('OPEN-7 "Back to Photos" returns from any post, no swipe needed (DS-4)', async () => {
+  it('OPEN-7 "Back to Gallery" returns from any post, no swipe needed (DS-4)', async () => {
     await openWalk();
-    fireEvent.press(screen.getByRole('button', { name: 'Back to Photos' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Back to Gallery' }));
     expect(await screen.findByTestId('top-bar')).toBeTruthy();
     expect(screen.queryByTestId('new-one-at-a-time')).toBeNull();
   });
@@ -499,7 +499,7 @@ describe('OPEN-11 words', () => {
     expect(screenWords()).not.toMatch(banned);
     expectGrandparentSafe();
 
-    fireEvent.press(screen.getByRole('button', { name: 'Back to Photos' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Back to Gallery' }));
     await gridReady();
     expect(screenWords()).not.toMatch(banned);
     expectGrandparentSafe();

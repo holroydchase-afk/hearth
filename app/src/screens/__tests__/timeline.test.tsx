@@ -59,10 +59,10 @@ describe('BETA-TIME-2 timeline ("Show by date")', () => {
     expect(screen.getByText(/Taken .*Jul 4/)).toBeTruthy();
   });
 
-  it('BETA-TIME-2 "Back to Photos" returns to newest shared first', async () => {
+  it('BETA-TIME-2 "Back to Gallery" returns to newest shared first', async () => {
     await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: 'Show photos by the date they were taken' }));
-    fireEvent.press(await screen.findByRole('button', { name: 'Back to Photos' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Back to Gallery' }));
     expect(await screen.findByRole('header', { name: /^Good (morning|afternoon|evening), Grandma Jo$/ } /* RD-11 */)).toBeTruthy();
   });
 
@@ -77,7 +77,7 @@ describe('BETA-TIME-2 timeline ("Show by date")', () => {
 });
 
 describe('BETA-TIME-2 Android back button (Grandaddy, Pawpaw)', () => {
-  it('BETA-TIME-2 the phone\'s Back button goes from a year list to the photos, then back to Photos (not out of Hearth)', async () => {
+  it('BETA-TIME-2 the phone\'s Back button goes from a year list to the photos, then back to Gallery (not out of Hearth)', async () => {
     const handlers: (() => boolean)[] = [];
     const spy = jest.spyOn(BackHandler, 'addEventListener').mockImplementation((_e, h) => {
       handlers.push(h as () => boolean);

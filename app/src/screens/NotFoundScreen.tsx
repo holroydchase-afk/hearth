@@ -12,7 +12,7 @@ export function NotFoundScreen() {
       <Card>
         <Txt variant="title" role="header">We couldn't find that page.</Txt>
         <Txt>The link may be old or mistyped. Your photos are safe.</Txt>
-        <Button variant="secondary" label="Go to Photos" onPress={() => nav.goPhotos()} />
+        <Button variant="secondary" label="Go to Gallery" onPress={() => nav.goPhotos()} />
       </Card>
     </Screen>
   );

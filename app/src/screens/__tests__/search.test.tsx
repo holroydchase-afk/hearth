@@ -95,7 +95,7 @@ describe('SEARCH-UI photo search', () => {
     expect(await screen.findByRole('header', { name: 'Search photos' })).toBeTruthy();
   });
 
-  it('SEARCH-UI-8 "Back to Photos" and the phone\'s Back button return to Photos', async () => {
+  it('SEARCH-UI-8 "Back to Gallery" and the phone\'s Back button return to Photos', async () => {
     const handlers: Array<() => boolean> = [];
     const spy = jest.spyOn(BackHandler, 'addEventListener').mockImplementation((_e, h) => {
       handlers.push(h as () => boolean);
@@ -104,7 +104,7 @@ describe('SEARCH-UI photo search', () => {
     const back = () => { let used = false; act(() => { used = [...handlers].reverse().some((h) => h()); }); return used; };
     await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
     await openSearch();
-    fireEvent.press(screen.getByRole('button', { name: 'Back to Photos' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Back to Gallery' }));
     expect(await screen.findByTestId('top-bar')).toBeTruthy();
     await openSearch();
     expect(back()).toBe(true);

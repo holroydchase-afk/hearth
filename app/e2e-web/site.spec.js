@@ -16,7 +16,7 @@ const resetDemo = async (page) => {
   await page.getByRole('button', { name: 'Reset', exact: true }).click();
 };
 
-for (const tab of ['', 'photos', 'share', 'groups', 'me']) {
+for (const tab of ['', 'photos', 'share', 'groups', 'me', 'help']) {
   test(`DEMO-5 a cold load of ${BASE}/${tab} works with no server fallback`, async ({ page, baseURL }) => {
     const failed = [];
     // ARCH-R3: only the demo's own files count; an outside script (Umami, when it's on) can't fail this.
@@ -29,6 +29,8 @@ for (const tab of ['', 'photos', 'share', 'groups', 'me']) {
       await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible(); // RD-18: Gallery shows photos, not captions
       await expect.poll(() => page.evaluate(() => [...document.images].filter((i) => i.complete && i.naturalWidth > 0).length)).toBeGreaterThan(0);
     }
+    // B19 (QA-R1): the old Groups, Me and Help tabs land on that row under More.
+    if (['groups', 'me', 'help'].includes(tab)) await expect(page.getByRole('button', { name: 'Back to More' })).toBeVisible();
     expect(failed).toEqual([]);
   });
 }
