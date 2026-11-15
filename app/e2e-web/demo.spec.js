@@ -158,3 +158,31 @@ test('DEMO-BAR Reset asks first: Keep changes nothing; Reset restores and says s
   await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Demo details' })).toHaveAttribute('aria-expanded', 'false');
 });
+
+// RD-27 (SPEC-REDESIGN phase 1a, DEC-59): Kai, the family's owner, can switch Family color and the demo
+// recolors; Grandma Jo's view stays Ember and has no picker. Phase 1a: the picker is on Me (1b moves it to More).
+test('RD-27 Kai switches Family color to Forest and the demo recolors; Grandma Jo stays Ember with no picker', async ({ page }) => {
+  const EMBER = 'rgb(178, 58, 30)';
+  const FOREST = 'rgb(46, 125, 79)';
+  const pickedTabColor = (name) => page.getByRole('tab', { name, exact: true }).getByText(name, { exact: true })
+    .evaluate((el) => getComputedStyle(el).color);
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/');
+  await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
+  await page.getByRole('tab', { name: 'Me', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Family color' })).toBeVisible();
+  await expect(page.getByRole('radio', { name: 'Ember' })).toBeChecked();
+  expect(await pickedTabColor('Me')).toBe(EMBER);
+  await page.getByRole('radio', { name: 'Forest' }).click();
+  await expect(page.getByRole('radio', { name: 'Forest' })).toBeChecked();
+  await expect.poll(() => pickedTabColor('Me')).toBe(FOREST);
+  await details(page);
+  await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+  await details(page);
+  await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
+  await page.getByRole('tab', { name: 'Help', exact: true }).click();
+  await expect(page.getByRole('radio', { name: 'Light screen' })).toBeVisible();
+  await expect(page.getByRole('radio', { name: 'Forest' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Family color' })).toHaveCount(0);
+  expect(await pickedTabColor('Help')).toBe(EMBER);
+});

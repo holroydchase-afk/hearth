@@ -4,36 +4,13 @@
 import { render, screen } from '@testing-library/react-native';
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import pkg from '../../../package.json';
 import { NATIVE_TAB_OPTIONS, TAB_ICONS, tabsFor } from '../../screens/TabBar';
 import { expectGrandparentSafe } from '../../test/renderApp';
-import { Button, Txt } from '../kit';
-import { FONT, FONT_FILES, contrast, fontFamily, paletteFor, typeScale } from '../theme';
+import { Button } from '../kit';
+import { contrast, paletteFor, typeScale } from '../theme';
 
 describe('DS native design system', () => {
-  it('DS-12: Atkinson Hyperlegible Next everywhere, only Regular, Medium and SemiBold, no italics', () => {
-    expect(FONT).toEqual({
-      regular: 'AtkinsonHyperlegibleNext_400Regular',
-      medium: 'AtkinsonHyperlegibleNext_500Medium',
-      semibold: 'AtkinsonHyperlegibleNext_600SemiBold',
-    });
-    expect(Object.keys(FONT_FILES).sort()).toEqual(Object.values(FONT).sort());
-    expect(Object.keys(pkg.dependencies).filter((d) => d.startsWith('@expo-google-fonts/'))).toEqual(['@expo-google-fonts/atkinson-hyperlegible-next']);
-    expect(fontFamily).toBe(FONT.regular);
-  });
-
-  it('DS-12: body is Regular; names, titles and buttons are SemiBold; nothing fakes bold with fontWeight', () => {
-    render(<>
-      <Txt>Body words</Txt><Txt variant="muted">Quiet words</Txt><Txt variant="strong">Grandma Jo</Txt>
-      <Txt variant="title">A title</Txt><Txt variant="display">Photos</Txt>
-      <Button label="Send" onPress={() => {}} />
-    </>);
-    const f = (w: string) => StyleSheet.flatten(screen.getByText(w).props.style);
-    expect(f('Body words')).toMatchObject({ fontFamily: FONT.regular });
-    expect(f('Quiet words')).toMatchObject({ fontFamily: FONT.regular });
-    for (const w of ['Grandma Jo', 'A title', 'Photos', 'Send']) expect(f(w)).toMatchObject({ fontFamily: FONT.semibold });
-    for (const w of ['Body words', 'Quiet words', 'Grandma Jo', 'A title', 'Photos', 'Send']) expect(f(w).fontWeight).toBeUndefined();
-  });
+  // DS-12 (Atkinson, Nov 1) is superseded by RD-2 (phone's own font, DEC-59): see redesignLook.test.tsx.
 
   it('DS-2: text follows the platform ramp (body 17, title 22, large 28) and never goes under 17', () => {
     expect(typeScale(false)).toMatchObject({ base: 17, title: 22, display: 28 });
@@ -42,9 +19,9 @@ describe('DS native design system', () => {
     expect(big.title).toBeGreaterThan(big.base);
   });
 
-  it('DS-11: warm Hearth colors on every phone, light and dark (no cold system gray, no pure black; Ember by default, COLOR-1)', () => {
-    expect(paletteFor('ios', false)).toMatchObject({ bg: '#FAF6F1', surface: '#FFFFFF', ink: '#1F1A17', accent: '#A4421F', accentInk: '#FFFFFF' });
-    expect(paletteFor('ios', true)).toMatchObject({ bg: '#171311', surface: '#241E1B', ink: '#F6EFE9', accent: '#F4A47F', accentInk: '#4A1606' });
+  it('DS-11 → RD-1: white and true black on every phone, light and dark, Ember by default (DEC-59 replaces the warm palette)', () => {
+    expect(paletteFor('ios', false)).toMatchObject({ bg: '#FFFFFF', accent: '#B23A1E' });
+    expect(paletteFor('ios', true)).toMatchObject({ bg: '#000000', accent: '#FF8A65' });
     expect(paletteFor('android', false)).toEqual(paletteFor('ios', false));
     expect(paletteFor('android', true)).toEqual(paletteFor('ios', true));
     expect(paletteFor('web', false)).toEqual(paletteFor('ios', false));

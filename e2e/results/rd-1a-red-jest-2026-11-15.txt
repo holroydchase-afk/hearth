@@ -1,0 +1,3998 @@
+FAIL src/ui/__tests__/redesignLint.test.ts
+  ● RD 1a source scans › RD-2 Atkinson is no longer loaded anywhere in the app
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 14
+
+    - Array []
+    + Array [
+    +   "ui/theme.ts:7 AtkinsonHyperlegible",
+    +   "ui/theme.ts:7 atkinson-hyperlegible",
+    +   "ui/theme.ts:8 AtkinsonHyperlegible",
+    +   "ui/theme.ts:8 atkinson-hyperlegible",
+    +   "ui/theme.ts:9 AtkinsonHyperlegible",
+    +   "ui/theme.ts:9 atkinson-hyperlegible",
+    +   "ui/theme.ts:107 AtkinsonHyperlegible",
+    +   "ui/theme.ts:108 AtkinsonHyperlegible",
+    +   "ui/theme.ts:109 AtkinsonHyperlegible",
+    +   "ui/theme.ts:115 AtkinsonHyperlegible",
+    +   "ui/theme.ts:116 AtkinsonHyperlegible",
+    +   "ui/theme.ts:117 AtkinsonHyperlegible",
+    + ]
+
+      52 | describe('RD 1a source scans', () => {
+      53 |   it('RD-2 Atkinson is no longer loaded anywhere in the app', () => {
+    > 54 |     expect(find(/atkinson-hyperlegible|AtkinsonHyperlegible/i)).toEqual([]);
+         |                                                                 ^
+      55 |     expect(find(/useFonts\s*\(/)).toEqual([]);
+      56 |   });
+      57 |
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:54:65)
+
+  ● RD 1a source scans › RD-2 no Medium, Bold or heavier weights outside the large title (kit display)
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 7
+
+    - Array []
+    + Array [
+    +   "screens/TabBar.tsx:35 FONT.medium",
+    +   "screens/TabBar.tsx:79 FONT.medium",
+    +   "screens/VideoPoster.tsx:36 FONT.medium",
+    +   "ui/kit.tsx:110 FONT.medium",
+    +   "ui/kit.tsx:135 FONT.medium",
+    + ]
+
+      58 |   it('RD-2 no Medium, Bold or heavier weights outside the large title (kit display)', () => {
+      59 |     expect(find(/FONT\.medium|fontWeight:\s*['"](500|700|800|900|bold)['"]/, sources(), (f) => f === 'ui/theme.ts')
+    > 60 |       .filter((hit) => !/^ui\/kit\.tsx:\d+ fontWeight: ['"](700|bold)['"]/.test(hit))).toEqual([]);
+         |                                                                                        ^
+      61 |   });
+      62 |
+      63 |   it('RD-3 no component hard-codes an accent hex (old or new); theme.ts is the only home', () => {
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:60:88)
+
+  ● RD 1a source scans › RD-4 the accent is used only by the tab bar, the kit (switch On, link words, main tap word or chip), New for you and the new-message dot
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 8
+
+    - Array []
+    + Array [
+    +   "screens/EventsScreen.tsx:21 c.accent",
+    +   "screens/MediaImage.tsx:37 c.accent",
+    +   "screens/PostCard.tsx:64 c.accent",
+    +   "screens/PostCard.tsx:198 c.accent",
+    +   "screens/PostCard.tsx:216 c.accent",
+    +   "screens/VideoPoster.tsx:34 c.accent",
+    + ]
+
+      69 |     // Allowed homes for c.accent. Anything else (avatar letters, event card borders, video pills, spinners) is ink.
+      70 |     const allowed = new Set(['ui/theme.ts', 'ui/kit.tsx', 'screens/TabBar.tsx', 'app/(tabs)/_layout.tsx', 'screens/NewForYou.tsx', 'demo/DemoBar.tsx']);
+    > 71 |     expect(find(/\bc\.accent\b(?!Ink|Soft)/, sources(), (f) => allowed.has(f))).toEqual([]);
+         |                                                                                 ^
+      72 |   });
+      73 |
+      74 |   it('RD-4 a spinner is never the accent color', () => {
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:71:81)
+
+  ● RD 1a source scans › RD-4 a spinner is never the accent color
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 4
+
+    - Array []
+    + Array [
+    +   "screens/MediaImage.tsx:37 <ActivityIndicator color={c.accent}",
+    +   "ui/kit.tsx:230 <ActivityIndicator size=\"large\" color={c.accent}",
+    + ]
+
+      73 |
+      74 |   it('RD-4 a spinner is never the accent color', () => {
+    > 75 |     expect(find(/<ActivityIndicator[^>]*color=\{c\.accent\}/)).toEqual([]);
+         |                                                                ^
+      76 |   });
+      77 |
+      78 |   it('RD-6 outline symbols only: no SF ".fill" names and no filled Material names', () => {
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:75:64)
+
+  ● RD 1a source scans › RD-6 outline symbols only: no SF ".fill" names and no filled Material names
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 8
+
+    - Array []
+    + Array [
+    +   "screens/HelpScreen.tsx:22 sf: 'phone.fill'",
+    +   "screens/VideoPlayer.tsx:103 sf: 'pause.fill'",
+    +   "screens/VideoPlayer.tsx:104 sf: 'play.fill'",
+    +   "screens/VideoPlayer.tsx:106 sf: 'speaker.wave.2.fill'",
+    +   "screens/VideoPlayer.tsx:107 sf: 'speaker.slash.fill'",
+    +   "screens/VideoPoster.tsx:16 sf: 'play.fill'",
+    + ]
+
+      77 |
+      78 |   it('RD-6 outline symbols only: no SF ".fill" names and no filled Material names', () => {
+    > 79 |     expect(find(/sf:\s*['"][\w.]+\.fill['"]|ios:\s*['"][\w.]+\.fill['"]/)).toEqual([]);
+         |                                                                            ^
+      80 |     expect(find(/md:\s*['"]\w+_filled['"]/)).toEqual([]);
+      81 |     // Regular weight: no symbol asks for a heavier weight.
+      82 |     expect(find(/<SymbolView[^>]*weight=\{?['"](medium|semibold|bold|heavy|black)['"]/)).toEqual([]);
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:79:76)
+
+  ● RD 1a source scans › RD-7 no large filled button except Delete and Leave confirms, sign-in, Start a family, and Post on Share
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 33
+
+    - Array []
+    + Array [
+    +   "demo/DemoFrame.tsx:39 primary \"Read the case study on chaseholroyd.com\"",
+    +   "screens/BatchReview.tsx:107 primary \"`Send ${photos(plan.photoCount)\"",
+    +   "screens/EventsScreen.tsx:24 primary \"`Open ${eventName\"",
+    +   "screens/EventsScreen.tsx:73 primary \"`Open ${item.eventName\"",
+    +   "screens/GroupsScreen.tsx:236 primary \"Make the group\"",
+    +   "screens/GroupsScreen.tsx:240 primary \"New group\"",
+    +   "screens/GroupsScreen.tsx:272 primary \"Turn on Always shared\"",
+    +   "screens/GroupsScreen.tsx:281 primary \"Save name\"",
+    +   "screens/GroupsScreen.tsx:335 primary \"Make the invite\"",
+    +   "screens/HelpScreen.tsx:22 primary \"`Call ${who\"",
+    +   "screens/InviteCard.tsx:25 primary \"Text the invite\"",
+    +   "screens/MessagesScreen.tsx:123 primary \"Send\"",
+    +   "screens/NewForYou.tsx:28 primary \"See the new photos\"",
+    +   "screens/NewForYou.tsx:67 primary \"last ? 'Done, back to Photos' : 'Next'\"",
+    +   "screens/NotFoundScreen.tsx:15 primary \"Go to Photos\"",
+    +   "screens/PhotosScreen.tsx:32 primary \"`See ${g.authorName\"",
+    +   "screens/PhotosScreen.tsx:207 primary \"Turn on notices\"",
+    +   "screens/PostCard.tsx:281 primary \"Save the new words\"",
+    +   "screens/PostCard.tsx:378 primary \"Send\"",
+    +   "screens/QueueStatus.tsx:46 primary \"Try sending again\"",
+    +   "screens/SearchScreen.tsx:135 primary \"Search for these words\"",
+    +   "screens/ShareScreen.tsx:177 primary \"videos ? 'Pick photos or videos from your phone' :\"",
+    +   "screens/TimelineScreen.tsx:87 primary \"Pick a year\"",
+    +   "screens/VideoPlayer.tsx:60 primary \"Try again\"",
+    +   "screens/VideoPlayer.tsx:103 primary \"Pause the video\"",
+    +   "screens/VideoPlayer.tsx:104 primary \"Play the video\"",
+    +   "screens/VideoPoster.tsx:50 primary \"Play video\"",
+    +   "screens/ViewerScreen.tsx:187 primary \"Save to my phone\"",
+    +   "screens/YourName.tsx:45 primary \"Save my name\"",
+    +   "ui/ErrorBoundary.tsx:38 primary \"Try again\"",
+    +   "ui/kit.tsx:4 primary \"\"",
+    + ]
+
+      102 |       offenders.push(`${b.at} ${variant} "${words.slice(0, 50)}"`);
+      103 |     }
+    > 104 |     expect(offenders).toEqual([]);
+          |                       ^
+      105 |   });
+      106 |
+      107 |   it('RD-7 a Confirm dialog with a filled button is only for Delete or Leave', () => {
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:104:23)
+
+  ● RD 1a source scans › RD-7 a Confirm dialog with a filled button is only for Delete or Leave
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "screens/Preferences.tsx:162 yes=Yes, sign out",
+    + ]
+
+      115 |       }
+      116 |     }
+    > 117 |     expect(offenders).toEqual([]);
+          |                       ^
+      118 |   });
+      119 |
+      120 |   it('RD-8 corners stay on the scale: 0, 4, 12, 14/28 dialogs, pills, or a true circle; no 10, 16 or 20', () => {
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:117:23)
+
+  ● RD 1a source scans › RD-8 corners stay on the scale: 0, 4, 12, 14/28 dialogs, pills, or a true circle; no 10, 16 or 20
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 7
+
+    - Array []
+    + Array [
+    +   "screens/BatchReview.tsx:98 borderRadius: 10",
+    +   "screens/EventsScreen.tsx:21 borderRadius: 20",
+    +   "screens/MessagesScreen.tsx:133 borderRadius: 16",
+    +   "screens/PostCard.tsx:363 borderRadius: 20",
+    +   "screens/ShareScreen.tsx:184 borderRadius: 10",
+    + ]
+
+      130 |       }
+      131 |     }
+    > 132 |     expect(offenders).toEqual([]);
+          |                       ^
+      133 |     expect(find(/RADIUS\.large/)).toEqual([]);
+      134 |   });
+      135 | });
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:132:23)
+
+FAIL src/ui/__tests__/designSystem.test.tsx
+  ● DS native design system › DS-11 → RD-1: white and true black on every phone, light and dark, Ember by default (DEC-59 replaces the warm palette)
+
+    expect(received).toMatchObject(expected)
+
+    - Expected  - 2
+    + Received  + 2
+
+      Object {
+    -   "accent": "#B23A1E",
+    -   "bg": "#FFFFFF",
+    +   "accent": "#A4421F",
+    +   "bg": "#FAF6F1",
+      }
+
+      21 |
+      22 |   it('DS-11 → RD-1: white and true black on every phone, light and dark, Ember by default (DEC-59 replaces the warm palette)', () => {
+    > 23 |     expect(paletteFor('ios', false)).toMatchObject({ bg: '#FFFFFF', accent: '#B23A1E' });
+         |                                      ^
+      24 |     expect(paletteFor('ios', true)).toMatchObject({ bg: '#000000', accent: '#FF8A65' });
+      25 |     expect(paletteFor('android', false)).toEqual(paletteFor('ios', false));
+      26 |     expect(paletteFor('android', true)).toEqual(paletteFor('ios', true));
+
+      at Object.toMatchObject (src/ui/__tests__/designSystem.test.tsx:23:38)
+
+FAIL src/ui/__tests__/designTokens.test.ts
+  ● DS-TOKENS portable design tokens › DS-TOKENS carries one font family, three weights, the type scale, spacing, corners and both palettes
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /system/i
+    Received string:  "Atkinson Hyperlegible Next"
+
+      20 |     const t = portableTokens();
+      21 |     // RD-2 (DEC-59): the phone's own font, Regular and Semibold (Bold only in the large title); no Medium.
+    > 22 |     expect(t.font.family).toMatch(/system/i);
+         |                           ^
+      23 |     expect(Object.values(t.font.weight).every((w) => [400, 600, 700].includes(w as number))).toBe(true);
+      24 |     expect(Object.values(t.font.weight)).toEqual(expect.arrayContaining([400, 600]));
+      25 |     expect(t.type.default.base).toBe(17);
+
+      at Object.toMatch (src/ui/__tests__/designTokens.test.ts:22:27)
+
+FAIL src/ui/__tests__/redesignLook.test.tsx
+  ● RD 1a the look: black and white with one accent › RD-1 light mode is a white #FFFFFF screen with near-black words; dark mode is true black #000000 with near-white words
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "bg": "#FFFFFF",
+    +   "bg": "#FAF6F1",
+        "os": "ios",
+      }
+
+      37 |       const light = paletteFor(os, false);
+      38 |       const dark = paletteFor(os, true);
+    > 39 |       expect({ os, bg: light.bg }).toEqual({ os, bg: '#FFFFFF' });
+         |                                    ^
+      40 |       expect({ os, bg: dark.bg }).toEqual({ os, bg: '#000000' });
+      41 |       expect(contrast(light.ink, light.bg)).toBeGreaterThanOrEqual(15);
+      42 |       expect(contrast(dark.ink, dark.bg)).toBeGreaterThanOrEqual(15);
+
+      at Object.toEqual (src/ui/__tests__/redesignLook.test.tsx:39:36)
+
+  ● RD 1a the look: black and white with one accent › RD-1 no warm off-white or charcoal remains in paletteFor (dark false): every non-accent color is a neutral gray
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "k": "bg",
+        "n": "ember",
+    -   "neutral": true,
+    +   "neutral": false,
+        "v": "#FAF6F1",
+      }
+
+      49 |       const c = paletteFor('ios', dark, n);
+      50 |       for (const k of NEUTRAL_KEYS) {
+    > 51 |         expect({ n, k, v: c[k], neutral: neutral(c[k]) }).toEqual({ n, k, v: c[k], neutral: true });
+         |                                                           ^
+      52 |         expect(OLD_WARM).not.toContain(c[k].toUpperCase());
+      53 |       }
+      54 |     }
+
+      at toEqual (src/ui/__tests__/redesignLook.test.tsx:51:59)
+
+  ● RD 1a the look: black and white with one accent › RD-1 no warm off-white or charcoal remains in paletteFor (dark true): every non-accent color is a neutral gray
+
+    expect(received).not.toContain(expected) // indexOf
+
+    Expected value: not "#171311"
+    Received array:     ["#FAF6F1", "#171311", "#241E1B", "#1F1A17", "#F6EFE9", "#EFE8E1", "#352C27", "#DDD3C9", "#40362F", "#5E5650", "#BDB2A9"]
+
+      50 |       for (const k of NEUTRAL_KEYS) {
+      51 |         expect({ n, k, v: c[k], neutral: neutral(c[k]) }).toEqual({ n, k, v: c[k], neutral: true });
+    > 52 |         expect(OLD_WARM).not.toContain(c[k].toUpperCase());
+         |                              ^
+      53 |       }
+      54 |     }
+      55 |   });
+
+      at toContain (src/ui/__tests__/redesignLook.test.tsx:52:30)
+
+  ● RD 1a the look: black and white with one accent › RD-2 the phone's own font: Atkinson is not a dependency and no Text asks for a custom font family
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "@expo-google-fonts/atkinson-hyperlegible-next",
+    + ]
+
+      56 |
+      57 |   it('RD-2 the phone\'s own font: Atkinson is not a dependency and no Text asks for a custom font family', () => {
+    > 58 |     expect(Object.keys(pkg.dependencies).filter((d) => d.startsWith('@expo-google-fonts/'))).toEqual([]);
+         |                                                                                              ^
+      59 |     render(<>
+      60 |       <Txt>Body words</Txt><Txt variant="muted">Quiet words</Txt><Txt variant="strong">Grandma Jo</Txt>
+      61 |       <Txt variant="title">A title</Txt><Txt variant="display">Large title</Txt>
+
+      at Object.toEqual (src/ui/__tests__/redesignLook.test.tsx:58:94)
+
+  ● RD 1a the look: black and white with one accent › RD-2 Regular or Semibold only; Bold appears only in the large title
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "t": "Grandma Jo",
+    -   "weight": "600",
+    +   "weight": "400",
+      }
+
+      78 |     const w = (t: string) => String(StyleSheet.flatten(screen.getByText(t).props.style).fontWeight ?? '400');
+      79 |     expect({ body: w('Body words'), muted: w('Quiet words') }).toEqual({ body: expect.stringMatching(/^(400|normal)$/), muted: expect.stringMatching(/^(400|normal)$/) });
+    > 80 |     for (const t of ['Grandma Jo', 'A title', 'Send']) expect({ t, weight: w(t) }).toEqual({ t, weight: '600' });
+         |                                                                                    ^
+      81 |     expect(['600', '700', 'bold']).toContain(w('Large title'));
+      82 |   });
+      83 |
+
+      at Object.toEqual (src/ui/__tests__/redesignLook.test.tsx:80:84)
+
+  ● RD 1a the look: black and white with one accent › RD-3 one accent token per palette, from one setting: Ember (default), Forest and Plum, light and dark
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Array [
+        "ember",
+    -   "forest",
+    +   "sage",
+        "plum",
+      ]
+
+      83 |
+      84 |   it('RD-3 one accent token per palette, from one setting: Ember (default), Forest and Plum, light and dark', () => {
+    > 85 |     expect([...COLOR_NAMES]).toEqual(['ember', 'forest', 'plum']);
+         |                              ^
+      86 |     expect(paletteFor('ios', false)).toEqual(paletteFor('ios', false, 'ember'));
+      87 |     for (const n of CHOICES) {
+      88 |       expect({ n, light: paletteFor('ios', false, n).accent, dark: paletteFor('ios', true, n).accent }).toEqual({ n, ...ACCENTS[n] });
+
+      at Object.toEqual (src/ui/__tests__/redesignLook.test.tsx:85:30)
+
+  ● RD 1a the look: black and white with one accent › RD-3 the family color changes only the accent: black, white and grays are the same for every choice
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "dark": false,
+        "k": "bg",
+        "n": "plum",
+    -   "v": "#FAF6F1",
+    +   "v": "#F8F6FA",
+      }
+
+       99 |       for (const n of CHOICES) {
+      100 |         const c = paletteFor('ios', dark, n);
+    > 101 |         for (const k of [...NEUTRAL_KEYS, 'safe', 'safeSoft', 'danger', 'onDanger', 'scrim'] as const) expect({ n, dark, k, v: c[k] }).toEqual({ n, dark, k, v: base[k] });
+          |                                                                                                                                        ^
+      102 |       }
+      103 |     }
+      104 |   });
+
+      at Object.toEqual (src/ui/__tests__/redesignLook.test.tsx:101:136)
+
+  ● RD 1a the look: black and white with one accent › RD-4 Search and By date are ink, not accent (words and icons)
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "color": "#1F1A17",
+    +   "color": "#A4421F",
+        "word": "Search",
+      }
+
+      140 |       const btn = await screen.findByRole('button', { name });
+      141 |       const color = StyleSheet.flatten(within(btn).getByText(word).props.style).color;
+    > 142 |       expect({ word, color }).toEqual({ word, color: c.ink });
+          |                               ^
+      143 |       const tint = (btn.findAll((n) => n.type === SymbolView)[0]?.props as { tintColor?: string } | undefined)?.tintColor;
+      144 |       expect({ word, tint }).toEqual({ word, tint: c.ink });
+      145 |     }
+
+      at Object.toEqual (src/ui/__tests__/redesignLook.test.tsx:142:31)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD 1a the look: black and white with one accent › RD-8 corners: 12 for rows and cards, 14 for iPhone dialogs and 28 for Android, nothing rounder than 12 but pills
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "k": "large",
+    -   "ok": true,
+    +   "ok": false,
+        "v": 20,
+      }
+
+      170 |     // RD-8: the old 20 pt "large" corner (event card, reply box) is gone; rows use 12.
+      171 |     const allowed = new Set([0, 4, 12, 999]);
+    > 172 |     for (const [k, v] of Object.entries(RADIUS)) expect({ k, v, ok: allowed.has(v) }).toEqual({ k, v, ok: true });
+          |                                                                                       ^
+      173 |   });
+      174 |
+      175 |   it('RD-8 rows and cards are 12 corners on iPhone', () => {
+
+      at Object.toEqual (src/ui/__tests__/redesignLook.test.tsx:172:87)
+
+FAIL src/ui/__tests__/familyColor.test.tsx (11.118 s)
+  ● RD Family color › RD-24 the owner sees Family color: Ember (picked by default), Forest and Plum, each with a swatch and its name
+
+    Unable to find an element with role: header, name: Family color
+
+    <RNCSafeAreaView>
+      <RCTScrollView>
+        <View>
+          <Text
+            accessibilityRole="header"
+          >
+            Me
+          </Text>
+          <View>
+            <Text>
+              Signed in as chase@example.com
+            </Text>
+            <Text>
+              You can share photos and choose who sees them.
+            </Text>
+          </View>
+          <View>
+            <View
+              accessibilityLabel="Bigger text"
+              accessibilityRole="switch"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <Text>
+                  Bigger text
+                </Text>
+                <Text>
+                  Tap to make the words bigger.
+                </Text>
+              </View>
+              <View
+                accessibilityElementsHidden={true}
+                importantForAccessibility="no-hide-descendants"
+                pointerEvents="none"
+              >
+                <Text>
+                  Off
+                </Text>
+                <RCTSwitch
+                  accessibilityRole="switch"
+                  value={false}
+                />
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Light or dark screen
+            </Text>
+            <View
+              accessibilityLabel="Same as my phone (Recommended)"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <View />
+              </View>
+              <View>
+                <Text>
+                  Same as my phone (Recommended)
+                </Text>
+                <Text>
+                  Light in the day, dark at night if your phone does that.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Light screen"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Light screen
+                </Text>
+                <Text>
+                  Dark words on a white screen.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Dark screen"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Dark screen
+                </Text>
+                <Text>
+                  Light words on a dark screen. Easier on the eyes at night.
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Colors
+            </Text>
+            <View
+              accessibilityLabel="Ember"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <View />
+              </View>
+              <View>
+                <Text>
+                  Ember
+                </Text>
+                <Text>
+                  Warm red-brown, like a fire. Hearth starts here.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Sage"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Sage
+                </Text>
+                <Text>
+                  Calm green, like leaves.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Plum"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Plum
+                </Text>
+                <Text>
+                  Soft purple.
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              How should we tell you about new photos?
+            </Text>
+            <View
+              accessibilityLabel="A sound on your phone when there are new photos (Recommended)"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <View />
+              </View>
+              <View>
+                <Text>
+                  A sound on your phone when there are new photos (Recommended)
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="An email every evening with the day's new photos"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  An email every evening with the day's new photos
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="An email every Sunday morning"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  An email every Sunday morning
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Who reads what family members write
+            </Text>
+            <Text>
+              For comments and hearts. The kids' parents read them all, and your own replies reach everyone the photo went to. People in the same household, or in the same event, read each other's.
+            </Text>
+            <View
+              accessibilityLabel="The parents, plus their own household and events (safest)"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <View />
+              </View>
+              <View>
+                <Text>
+                  The parents, plus their own household and events (safest)
+                </Text>
+                <Text>
+                  A grandparent's comment reaches you, the other parent, and their own household. Never the other side.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Everyone the photo was shared with"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Everyone the photo was shared with
+                </Text>
+                <Text>
+                  Divorced grandparents on the same photo will read each other's comments.
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Photo helpers
+            </Text>
+            <Text>
+              When anyone picks 4 or more photos to send, Hearth can set some aside first. Each one has a Put back button. Nothing is deleted from the phone. These switches are for the whole family.
+            </Text>
+            <View
+              accessibilityLabel="Set aside repeats"
+              accessibilityRole="switch"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <Text>
+                  Set aside repeats
+                </Text>
+                <Text>
+                  The same photo twice, look-alikes, and photos sent in the last 30 days.
+                </Text>
+              </View>
+              <View
+                accessibilityElementsHidden={true}
+                importantForAccessibility="no-hide-descendants"
+                pointerEvents="none"
+              >
+                <Text>
+                  On
+                </Text>
+                <RCTSwitch
+                  accessibilityRole="switch"
+                  value={true}
+                />
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Set aside screenshots and blurry photos"
+              accessibilityRole="switch"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <Text>
+                  Set aside screenshots and blurry photos
+                </Text>
+                <Text>
+                  Pictures of a phone's screen, and photos that came out blurry.
+                </Text>
+              </View>
+              <View
+                accessibilityElementsHidden={true}
+                importantForAccessibility="no-hide-descendants"
+                pointerEvents="none"
+              >
+                <Text>
+                  On
+                </Text>
+                <RCTSwitch
+                  accessibilityRole="switch"
+                  value={true}
+                />
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Keeping your photos private
+            </Text>
+            <Text>
+              Your photos stay in the United States.
+            </Text>
+            <Text>
+              No one outside the family can see them. No ads, no strangers.
+            </Text>
+            <Text>
+              No computer program learns from your photos.
+            </Text>
+            <Text>
+              Photos don't show where they were taken.
+            </Text>
+            <Text>
+              You can delete everything at any time.
+            </Text>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Notice timing
+            </Text>
+            <Text>
+              For testing: how fast notices reach this phone. It stays on this phone.
+            </Text>
+            <View
+              accessibilityLabel="Show notice timing"
+              accessibilityRole="button"
+              accessibilityState={
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }
+              accessible={true}
+            >
+              <Text>
+                Show notice timing
+              </Text>
+            </View>
+          </View>
+          <View
+            accessibilityLabel="Sign out of Hearth"
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": false,
+                "disabled": false,
+                "selected": false,
+              }
+            }
+            accessible={true}
+          >
+            <Text>
+              Sign out of Hearth
+            </Text>
+          </View>
+        </View>
+      </RCTScrollView>
+    </RNCSafeAreaView>
+
+      33 |   it('RD-24 the owner sees Family color: Ember (picked by default), Forest and Plum, each with a swatch and its name', async () => {
+      34 |     await renderApp(<MeScreen />, { user: 'chase' });
+    > 35 |     expect(await screen.findByRole('header', { name: 'Family color' })).toBeTruthy();
+         |                         ^
+      36 |     const rows = NAMES.map((n) => screen.getByRole('radio', { name: n }));
+      37 |     expect(rows.map((r) => r.props.accessibilityState?.checked)).toEqual([true, false, false]);
+      38 |     expect(screen.queryByRole('radio', { name: 'Sage' })).toBeNull();
+
+      at Object.findByRole (src/ui/__tests__/familyColor.test.tsx:35:25)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD Family color › RD-24 / RD-25 the owner picks Forest: the app recolors, it is saved in prefs.color, and it stays after reopening
+
+    Unable to find an element with role: radio, name: Forest
+
+    [
+      <RNCSafeAreaView>
+        <RCTScrollView>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Me
+            </Text>
+            <View>
+              <Text>
+                Signed in as chase@example.com
+              </Text>
+              <Text>
+                You can share photos and choose who sees them.
+              </Text>
+            </View>
+            <View>
+              <View
+                accessibilityLabel="Bigger text"
+                accessibilityRole="switch"
+                accessibilityState={
+                  {
+                    "checked": false,
+                  }
+                }
+                accessible={true}
+              >
+                <View>
+                  <Text>
+                    Bigger text
+                  </Text>
+                  <Text>
+                    Tap to make the words bigger.
+                  </Text>
+                </View>
+                <View
+                  accessibilityElementsHidden={true}
+                  importantForAccessibility="no-hide-descendants"
+                  pointerEvents="none"
+                >
+                  <Text>
+                    Off
+                  </Text>
+                  <RCTSwitch
+                    accessibilityRole="switch"
+                    value={false}
+                  />
+                </View>
+              </View>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Light or dark screen
+              </Text>
+              <View
+                accessibilityLabel="Same as my phone (Recommended)"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": true,
+                  }
+                }
+                accessible={true}
+              >
+                <View>
+                  <View />
+                </View>
+                <View>
+                  <Text>
+                    Same as my phone (Recommended)
+                  </Text>
+                  <Text>
+                    Light in the day, dark at night if your phone does that.
+                  </Text>
+                </View>
+              </View>
+              <View
+                accessibilityLabel="Light screen"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": false,
+                  }
+                }
+                accessible={true}
+              >
+                <View />
+                <View>
+                  <Text>
+                    Light screen
+                  </Text>
+                  <Text>
+                    Dark words on a white screen.
+                  </Text>
+                </View>
+              </View>
+              <View
+                accessibilityLabel="Dark screen"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": false,
+                  }
+                }
+                accessible={true}
+              >
+                <View />
+                <View>
+                  <Text>
+                    Dark screen
+                  </Text>
+                  <Text>
+                    Light words on a dark screen. Easier on the eyes at night.
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Colors
+              </Text>
+              <View
+                accessibilityLabel="Ember"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": true,
+                  }
+                }
+                accessible={true}
+              >
+                <View>
+                  <View />
+                </View>
+                <View>
+                  <Text>
+                    Ember
+                  </Text>
+                  <Text>
+                    Warm red-brown, like a fire. Hearth starts here.
+                  </Text>
+                </View>
+              </View>
+              <View
+                accessibilityLabel="Sage"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": false,
+                  }
+                }
+                accessible={true}
+              >
+                <View />
+                <View>
+                  <Text>
+                    Sage
+                  </Text>
+                  <Text>
+                    Calm green, like leaves.
+                  </Text>
+                </View>
+              </View>
+              <View
+                accessibilityLabel="Plum"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": false,
+                  }
+                }
+                accessible={true}
+              >
+                <View />
+                <View>
+                  <Text>
+                    Plum
+                  </Text>
+                  <Text>
+                    Soft purple.
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                How should we tell you about new photos?
+              </Text>
+              <View
+                accessibilityLabel="A sound on your phone when there are new photos (Recommended)"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": true,
+                  }
+                }
+                accessible={true}
+              >
+                <View>
+                  <View />
+                </View>
+                <View>
+                  <Text>
+                    A sound on your phone when there are new photos (Recommended)
+                  </Text>
+                </View>
+              </View>
+              <View
+                accessibilityLabel="An email every evening with the day's new photos"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": false,
+                  }
+                }
+                accessible={true}
+              >
+                <View />
+                <View>
+                  <Text>
+                    An email every evening with the day's new photos
+                  </Text>
+                </View>
+              </View>
+              <View
+                accessibilityLabel="An email every Sunday morning"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": false,
+                  }
+                }
+                accessible={true}
+              >
+                <View />
+                <View>
+                  <Text>
+                    An email every Sunday morning
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Who reads what family members write
+              </Text>
+              <Text>
+                For comments and hearts. The kids' parents read them all, and your own replies reach everyone the photo went to. People in the same household, or in the same event, read each other's.
+              </Text>
+              <View
+                accessibilityLabel="The parents, plus their own household and events (safest)"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": true,
+                  }
+                }
+                accessible={true}
+              >
+                <View>
+                  <View />
+                </View>
+                <View>
+                  <Text>
+                    The parents, plus their own household and events (safest)
+                  </Text>
+                  <Text>
+                    A grandparent's comment reaches you, the other parent, and their own household. Never the other side.
+                  </Text>
+                </View>
+              </View>
+              <View
+                accessibilityLabel="Everyone the photo was shared with"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": false,
+                  }
+                }
+                accessible={true}
+              >
+                <View />
+                <View>
+                  <Text>
+                    Everyone the photo was shared with
+                  </Text>
+                  <Text>
+                    Divorced grandparents on the same photo will read each other's comments.
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Photo helpers
+              </Text>
+              <Text>
+                When anyone picks 4 or more photos to send, Hearth can set some aside first. Each one has a Put back button. Nothing is deleted from the phone. These switches are for the whole family.
+              </Text>
+              <View
+                accessibilityLabel="Set aside repeats"
+                accessibilityRole="switch"
+                accessibilityState={
+                  {
+                    "checked": true,
+                  }
+                }
+                accessible={true}
+              >
+                <View>
+                  <Text>
+                    Set aside repeats
+                  </Text>
+                  <Text>
+                    The same photo twice, look-alikes, and photos sent in the last 30 days.
+                  </Text>
+                </View>
+                <View
+                  accessibilityElementsHidden={true}
+                  importantForAccessibility="no-hide-descendants"
+                  pointerEvents="none"
+                >
+                  <Text>
+                    On
+                  </Text>
+                  <RCTSwitch
+                    accessibilityRole="switch"
+                    value={true}
+                  />
+                </View>
+              </View>
+              <View
+                accessibilityLabel="Set aside screenshots and blurry photos"
+                accessibilityRole="switch"
+                accessibilityState={
+                  {
+                    "checked": true,
+                  }
+                }
+                accessible={true}
+              >
+                <View>
+                  <Text>
+                    Set aside screenshots and blurry photos
+                  </Text>
+                  <Text>
+                    Pictures of a phone's screen, and photos that came out blurry.
+                  </Text>
+                </View>
+                <View
+                  accessibilityElementsHidden={true}
+                  importantForAccessibility="no-hide-descendants"
+                  pointerEvents="none"
+                >
+                  <Text>
+                    On
+                  </Text>
+                  <RCTSwitch
+                    accessibilityRole="switch"
+                    value={true}
+                  />
+                </View>
+              </View>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Keeping your photos private
+              </Text>
+              <Text>
+                Your photos stay in the United States.
+              </Text>
+              <Text>
+                No one outside the family can see them. No ads, no strangers.
+              </Text>
+              <Text>
+                No computer program learns from your photos.
+              </Text>
+              <Text>
+                Photos don't show where they were taken.
+              </Text>
+              <Text>
+                You can delete everything at any time.
+              </Text>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Notice timing
+              </Text>
+              <Text>
+                For testing: how fast notices reach this phone. It stays on this phone.
+              </Text>
+              <View
+                accessibilityLabel="Show notice timing"
+                accessibilityRole="button"
+                accessibilityState={
+                  {
+                    "busy": false,
+                    "disabled": false,
+                    "selected": false,
+                  }
+                }
+                accessible={true}
+              >
+                <Text>
+                  Show notice timing
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Sign out of Hearth"
+              accessibilityRole="button"
+              accessibilityState={
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }
+              accessible={true}
+            >
+              <Text>
+                Sign out of Hearth
+              </Text>
+            </View>
+          </View>
+        </RCTScrollView>
+      </RNCSafeAreaView>,
+      <Text
+        testID="probe"
+      >
+        #A4421F
+      </Text>,
+    ]
+
+      49 |     const kv = memoryKV();
+      50 |     const first = await renderApp(<><MeScreen /><Probe /></>, { user: 'chase', kv });
+    > 51 |     await screen.findByRole('radio', { name: 'Forest' });
+         |                  ^
+      52 |     expect(probe()).toBe(EMBER);
+      53 |     fireEvent.press(screen.getByRole('radio', { name: 'Forest' }));
+      54 |     await waitFor(() => expect(probe()).toBe(FOREST.light));
+
+      at Object.findByRole (src/ui/__tests__/familyColor.test.tsx:51:18)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD Family color › RD-25 an old Sage on the owner's phone becomes Forest; an unknown value falls back to Ember
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "forest"
+    Received: "sage"
+
+      66 |     expect((await loadPrefs(kv, 'u1', 'owner')).color).toBe('ember');
+      67 |     await put('sage');
+    > 68 |     expect((await loadPrefs(kv, 'u1', 'owner')).color).toBe('forest');
+         |                                                        ^
+      69 |     await put('forest');
+      70 |     expect((await loadPrefs(kv, 'u1', 'owner')).color).toBe('forest');
+      71 |     await put('blue');
+
+      at Object.toBe (src/ui/__tests__/familyColor.test.tsx:68:56)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD Family color › RD-25 a saved Sage, Plum or Forest from COLOR-1 is ignored for an adult: Ember
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "color": "sage",
+    -   "loaded": "ember",
+    +   "loaded": "sage",
+      }
+
+      77 |     for (const color of ['sage', 'plum', 'forest']) {
+      78 |       await kv.setItem('hearth.prefs.v1.u2', JSON.stringify({ bigText: true, notify: 'push', look: 'system', color }));
+    > 79 |       expect({ color, loaded: (await loadPrefs(kv, 'u2', role)).color }).toEqual({ color, loaded: 'ember' });
+         |                                                                          ^
+      80 |     }
+      81 |   });
+      82 |
+
+      at toEqual (src/ui/__tests__/familyColor.test.tsx:79:74)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD Family color › RD-25 a saved Sage, Plum or Forest from COLOR-1 is ignored for an viewer: Ember
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "color": "sage",
+    -   "loaded": "ember",
+    +   "loaded": "sage",
+      }
+
+      77 |     for (const color of ['sage', 'plum', 'forest']) {
+      78 |       await kv.setItem('hearth.prefs.v1.u2', JSON.stringify({ bigText: true, notify: 'push', look: 'system', color }));
+    > 79 |       expect({ color, loaded: (await loadPrefs(kv, 'u2', role)).color }).toEqual({ color, loaded: 'ember' });
+         |                                                                          ^
+      80 |     }
+      81 |   });
+      82 |
+
+      at toEqual (src/ui/__tests__/familyColor.test.tsx:79:74)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD Family color › RD-25 the owner's pick recolors only the owner's phone: Grandma Jo with an old Plum still sees Ember
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "#B23A1E"
+    Received: "#5A3EA6"
+
+      86 |     await renderApp(<><HelpScreen /><Probe /></>, { user: 'jo', kv });
+      87 |     await screen.findByRole('radio', { name: 'Light screen' });
+    > 88 |     expect(probe()).toBe(EMBER);
+         |                     ^
+      89 |   });
+      90 |
+      91 |   it.each([
+
+      at Object.toBe (src/ui/__tests__/familyColor.test.tsx:88:21)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD Family color › RD-26 no color picker anywhere for the viewer Grandma Jo on Help
+
+    expect(received).toBeNull()
+
+    Received: {"_fiber": {"_debugHookTypes": null, "_debugInfo": null, "_debugNeedsRemount": false, "_debugOwner": [FiberNode], "_debugStack": [Error: react-stack-top-frame], "_debugTask": null, "actualDuration": 0, "actualStartTime": 1794778554719, "alternate": null, "child": [FiberNode], "childLanes": 0, "deletions": null, "dependencies": null, "elementType": "View", "flags": 0, "index": 0, "key": null, "lanes": 0, "memoizedProps": [Object], "memoizedState": null, "mode": 3, "pendingProps": [Object], "ref": null, "refCleanup": null, "return": [FiberNode], "selfBaseDuration": 0, "sibling": null, "stateNode": [Object], "subtreeFlags": 1572865, "tag": 5, "treeBaseDuration": 0, "type": "View", "updateQueue": null}}
+
+       95 |     await renderApp(<>{ui()}<Probe /></>, { user });
+       96 |     await screen.findByRole('radio', { name: 'Light screen' });
+    >  97 |     for (const n of [...NAMES, 'Sage']) expect(screen.queryByRole('radio', { name: n })).toBeNull();
+          |                                                                                          ^
+       98 |     expect(screen.queryByRole('header', { name: /^(Family color|Colors)$/ })).toBeNull();
+       99 |     expect(screenWords()).not.toMatch(/Family color|\bColors\b/);
+      100 |     expect(probe()).toBe(EMBER);
+
+      at toBeNull (src/ui/__tests__/familyColor.test.tsx:97:90)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD Family color › RD-26 no color picker anywhere for the adult Alex on Me
+
+    expect(received).toBeNull()
+
+    Received: {"_fiber": {"_debugHookTypes": null, "_debugInfo": null, "_debugNeedsRemount": false, "_debugOwner": [FiberNode], "_debugStack": [Error: react-stack-top-frame], "_debugTask": null, "actualDuration": 0, "actualStartTime": 1794778557373, "alternate": null, "child": [FiberNode], "childLanes": 0, "deletions": null, "dependencies": null, "elementType": "View", "flags": 0, "index": 0, "key": null, "lanes": 0, "memoizedProps": [Object], "memoizedState": null, "mode": 3, "pendingProps": [Object], "ref": null, "refCleanup": null, "return": [FiberNode], "selfBaseDuration": 0, "sibling": null, "stateNode": [Object], "subtreeFlags": 1572865, "tag": 5, "treeBaseDuration": 0, "type": "View", "updateQueue": null}}
+
+       95 |     await renderApp(<>{ui()}<Probe /></>, { user });
+       96 |     await screen.findByRole('radio', { name: 'Light screen' });
+    >  97 |     for (const n of [...NAMES, 'Sage']) expect(screen.queryByRole('radio', { name: n })).toBeNull();
+          |                                                                                          ^
+       98 |     expect(screen.queryByRole('header', { name: /^(Family color|Colors)$/ })).toBeNull();
+       99 |     expect(screenWords()).not.toMatch(/Family color|\bColors\b/);
+      100 |     expect(probe()).toBe(EMBER);
+
+      at toBeNull (src/ui/__tests__/familyColor.test.tsx:97:90)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD Family color › RD-24 the picker sits after Light or dark on the owner's Me
+
+    Unable to find an element with role: header, name: Family color
+
+    <RNCSafeAreaView>
+      <RCTScrollView>
+        <View>
+          <Text
+            accessibilityRole="header"
+          >
+            Me
+          </Text>
+          <View>
+            <Text>
+              Signed in as chase@example.com
+            </Text>
+            <Text>
+              You can share photos and choose who sees them.
+            </Text>
+          </View>
+          <View>
+            <View
+              accessibilityLabel="Bigger text"
+              accessibilityRole="switch"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <Text>
+                  Bigger text
+                </Text>
+                <Text>
+                  Tap to make the words bigger.
+                </Text>
+              </View>
+              <View
+                accessibilityElementsHidden={true}
+                importantForAccessibility="no-hide-descendants"
+                pointerEvents="none"
+              >
+                <Text>
+                  Off
+                </Text>
+                <RCTSwitch
+                  accessibilityRole="switch"
+                  value={false}
+                />
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Light or dark screen
+            </Text>
+            <View
+              accessibilityLabel="Same as my phone (Recommended)"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <View />
+              </View>
+              <View>
+                <Text>
+                  Same as my phone (Recommended)
+                </Text>
+                <Text>
+                  Light in the day, dark at night if your phone does that.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Light screen"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Light screen
+                </Text>
+                <Text>
+                  Dark words on a white screen.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Dark screen"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Dark screen
+                </Text>
+                <Text>
+                  Light words on a dark screen. Easier on the eyes at night.
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Colors
+            </Text>
+            <View
+              accessibilityLabel="Ember"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <View />
+              </View>
+              <View>
+                <Text>
+                  Ember
+                </Text>
+                <Text>
+                  Warm red-brown, like a fire. Hearth starts here.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Sage"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Sage
+                </Text>
+                <Text>
+                  Calm green, like leaves.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Plum"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Plum
+                </Text>
+                <Text>
+                  Soft purple.
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              How should we tell you about new photos?
+            </Text>
+            <View
+              accessibilityLabel="A sound on your phone when there are new photos (Recommended)"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <View />
+              </View>
+              <View>
+                <Text>
+                  A sound on your phone when there are new photos (Recommended)
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="An email every evening with the day's new photos"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  An email every evening with the day's new photos
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="An email every Sunday morning"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  An email every Sunday morning
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Who reads what family members write
+            </Text>
+            <Text>
+              For comments and hearts. The kids' parents read them all, and your own replies reach everyone the photo went to. People in the same household, or in the same event, read each other's.
+            </Text>
+            <View
+              accessibilityLabel="The parents, plus their own household and events (safest)"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <View />
+              </View>
+              <View>
+                <Text>
+                  The parents, plus their own household and events (safest)
+                </Text>
+                <Text>
+                  A grandparent's comment reaches you, the other parent, and their own household. Never the other side.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Everyone the photo was shared with"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Everyone the photo was shared with
+                </Text>
+                <Text>
+                  Divorced grandparents on the same photo will read each other's comments.
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Photo helpers
+            </Text>
+            <Text>
+              When anyone picks 4 or more photos to send, Hearth can set some aside first. Each one has a Put back button. Nothing is deleted from the phone. These switches are for the whole family.
+            </Text>
+            <View
+              accessibilityLabel="Set aside repeats"
+              accessibilityRole="switch"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <Text>
+                  Set aside repeats
+                </Text>
+                <Text>
+                  The same photo twice, look-alikes, and photos sent in the last 30 days.
+                </Text>
+              </View>
+              <View
+                accessibilityElementsHidden={true}
+                importantForAccessibility="no-hide-descendants"
+                pointerEvents="none"
+              >
+                <Text>
+                  On
+                </Text>
+                <RCTSwitch
+                  accessibilityRole="switch"
+                  value={true}
+                />
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Set aside screenshots and blurry photos"
+              accessibilityRole="switch"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <Text>
+                  Set aside screenshots and blurry photos
+                </Text>
+                <Text>
+                  Pictures of a phone's screen, and photos that came out blurry.
+                </Text>
+              </View>
+              <View
+                accessibilityElementsHidden={true}
+                importantForAccessibility="no-hide-descendants"
+                pointerEvents="none"
+              >
+                <Text>
+                  On
+                </Text>
+                <RCTSwitch
+                  accessibilityRole="switch"
+                  value={true}
+                />
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Keeping your photos private
+            </Text>
+            <Text>
+              Your photos stay in the United States.
+            </Text>
+            <Text>
+              No one outside the family can see them. No ads, no strangers.
+            </Text>
+            <Text>
+              No computer program learns from your photos.
+            </Text>
+            <Text>
+              Photos don't show where they were taken.
+            </Text>
+            <Text>
+              You can delete everything at any time.
+            </Text>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Notice timing
+            </Text>
+            <Text>
+              For testing: how fast notices reach this phone. It stays on this phone.
+            </Text>
+            <View
+              accessibilityLabel="Show notice timing"
+              accessibilityRole="button"
+              accessibilityState={
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }
+              accessible={true}
+            >
+              <Text>
+                Show notice timing
+              </Text>
+            </View>
+          </View>
+          <View
+            accessibilityLabel="Sign out of Hearth"
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": false,
+                "disabled": false,
+                "selected": false,
+              }
+            }
+            accessible={true}
+          >
+            <Text>
+              Sign out of Hearth
+            </Text>
+          </View>
+        </View>
+      </RCTScrollView>
+    </RNCSafeAreaView>
+
+      103 |   it('RD-24 the picker sits after Light or dark on the owner\'s Me', async () => {
+      104 |     await renderApp(<MeScreen />, { user: 'chase' });
+    > 105 |     await screen.findByRole('header', { name: 'Family color' });
+          |                  ^
+      106 |     const words = screenWords();
+      107 |     expect(words.indexOf('Light or dark screen')).toBeGreaterThanOrEqual(0);
+      108 |     expect(words.indexOf('Light or dark screen')).toBeLessThan(words.indexOf('Family color'));
+
+      at Object.findByRole (src/ui/__tests__/familyColor.test.tsx:105:18)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+
+Summary of all failing tests
+FAIL src/ui/__tests__/redesignLint.test.ts
+  ● RD 1a source scans › RD-2 Atkinson is no longer loaded anywhere in the app
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 14
+
+    - Array []
+    + Array [
+    +   "ui/theme.ts:7 AtkinsonHyperlegible",
+    +   "ui/theme.ts:7 atkinson-hyperlegible",
+    +   "ui/theme.ts:8 AtkinsonHyperlegible",
+    +   "ui/theme.ts:8 atkinson-hyperlegible",
+    +   "ui/theme.ts:9 AtkinsonHyperlegible",
+    +   "ui/theme.ts:9 atkinson-hyperlegible",
+    +   "ui/theme.ts:107 AtkinsonHyperlegible",
+    +   "ui/theme.ts:108 AtkinsonHyperlegible",
+    +   "ui/theme.ts:109 AtkinsonHyperlegible",
+    +   "ui/theme.ts:115 AtkinsonHyperlegible",
+    +   "ui/theme.ts:116 AtkinsonHyperlegible",
+    +   "ui/theme.ts:117 AtkinsonHyperlegible",
+    + ]
+
+      52 | describe('RD 1a source scans', () => {
+      53 |   it('RD-2 Atkinson is no longer loaded anywhere in the app', () => {
+    > 54 |     expect(find(/atkinson-hyperlegible|AtkinsonHyperlegible/i)).toEqual([]);
+         |                                                                 ^
+      55 |     expect(find(/useFonts\s*\(/)).toEqual([]);
+      56 |   });
+      57 |
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:54:65)
+
+  ● RD 1a source scans › RD-2 no Medium, Bold or heavier weights outside the large title (kit display)
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 7
+
+    - Array []
+    + Array [
+    +   "screens/TabBar.tsx:35 FONT.medium",
+    +   "screens/TabBar.tsx:79 FONT.medium",
+    +   "screens/VideoPoster.tsx:36 FONT.medium",
+    +   "ui/kit.tsx:110 FONT.medium",
+    +   "ui/kit.tsx:135 FONT.medium",
+    + ]
+
+      58 |   it('RD-2 no Medium, Bold or heavier weights outside the large title (kit display)', () => {
+      59 |     expect(find(/FONT\.medium|fontWeight:\s*['"](500|700|800|900|bold)['"]/, sources(), (f) => f === 'ui/theme.ts')
+    > 60 |       .filter((hit) => !/^ui\/kit\.tsx:\d+ fontWeight: ['"](700|bold)['"]/.test(hit))).toEqual([]);
+         |                                                                                        ^
+      61 |   });
+      62 |
+      63 |   it('RD-3 no component hard-codes an accent hex (old or new); theme.ts is the only home', () => {
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:60:88)
+
+  ● RD 1a source scans › RD-4 the accent is used only by the tab bar, the kit (switch On, link words, main tap word or chip), New for you and the new-message dot
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 8
+
+    - Array []
+    + Array [
+    +   "screens/EventsScreen.tsx:21 c.accent",
+    +   "screens/MediaImage.tsx:37 c.accent",
+    +   "screens/PostCard.tsx:64 c.accent",
+    +   "screens/PostCard.tsx:198 c.accent",
+    +   "screens/PostCard.tsx:216 c.accent",
+    +   "screens/VideoPoster.tsx:34 c.accent",
+    + ]
+
+      69 |     // Allowed homes for c.accent. Anything else (avatar letters, event card borders, video pills, spinners) is ink.
+      70 |     const allowed = new Set(['ui/theme.ts', 'ui/kit.tsx', 'screens/TabBar.tsx', 'app/(tabs)/_layout.tsx', 'screens/NewForYou.tsx', 'demo/DemoBar.tsx']);
+    > 71 |     expect(find(/\bc\.accent\b(?!Ink|Soft)/, sources(), (f) => allowed.has(f))).toEqual([]);
+         |                                                                                 ^
+      72 |   });
+      73 |
+      74 |   it('RD-4 a spinner is never the accent color', () => {
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:71:81)
+
+  ● RD 1a source scans › RD-4 a spinner is never the accent color
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 4
+
+    - Array []
+    + Array [
+    +   "screens/MediaImage.tsx:37 <ActivityIndicator color={c.accent}",
+    +   "ui/kit.tsx:230 <ActivityIndicator size=\"large\" color={c.accent}",
+    + ]
+
+      73 |
+      74 |   it('RD-4 a spinner is never the accent color', () => {
+    > 75 |     expect(find(/<ActivityIndicator[^>]*color=\{c\.accent\}/)).toEqual([]);
+         |                                                                ^
+      76 |   });
+      77 |
+      78 |   it('RD-6 outline symbols only: no SF ".fill" names and no filled Material names', () => {
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:75:64)
+
+  ● RD 1a source scans › RD-6 outline symbols only: no SF ".fill" names and no filled Material names
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 8
+
+    - Array []
+    + Array [
+    +   "screens/HelpScreen.tsx:22 sf: 'phone.fill'",
+    +   "screens/VideoPlayer.tsx:103 sf: 'pause.fill'",
+    +   "screens/VideoPlayer.tsx:104 sf: 'play.fill'",
+    +   "screens/VideoPlayer.tsx:106 sf: 'speaker.wave.2.fill'",
+    +   "screens/VideoPlayer.tsx:107 sf: 'speaker.slash.fill'",
+    +   "screens/VideoPoster.tsx:16 sf: 'play.fill'",
+    + ]
+
+      77 |
+      78 |   it('RD-6 outline symbols only: no SF ".fill" names and no filled Material names', () => {
+    > 79 |     expect(find(/sf:\s*['"][\w.]+\.fill['"]|ios:\s*['"][\w.]+\.fill['"]/)).toEqual([]);
+         |                                                                            ^
+      80 |     expect(find(/md:\s*['"]\w+_filled['"]/)).toEqual([]);
+      81 |     // Regular weight: no symbol asks for a heavier weight.
+      82 |     expect(find(/<SymbolView[^>]*weight=\{?['"](medium|semibold|bold|heavy|black)['"]/)).toEqual([]);
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:79:76)
+
+  ● RD 1a source scans › RD-7 no large filled button except Delete and Leave confirms, sign-in, Start a family, and Post on Share
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 33
+
+    - Array []
+    + Array [
+    +   "demo/DemoFrame.tsx:39 primary \"Read the case study on chaseholroyd.com\"",
+    +   "screens/BatchReview.tsx:107 primary \"`Send ${photos(plan.photoCount)\"",
+    +   "screens/EventsScreen.tsx:24 primary \"`Open ${eventName\"",
+    +   "screens/EventsScreen.tsx:73 primary \"`Open ${item.eventName\"",
+    +   "screens/GroupsScreen.tsx:236 primary \"Make the group\"",
+    +   "screens/GroupsScreen.tsx:240 primary \"New group\"",
+    +   "screens/GroupsScreen.tsx:272 primary \"Turn on Always shared\"",
+    +   "screens/GroupsScreen.tsx:281 primary \"Save name\"",
+    +   "screens/GroupsScreen.tsx:335 primary \"Make the invite\"",
+    +   "screens/HelpScreen.tsx:22 primary \"`Call ${who\"",
+    +   "screens/InviteCard.tsx:25 primary \"Text the invite\"",
+    +   "screens/MessagesScreen.tsx:123 primary \"Send\"",
+    +   "screens/NewForYou.tsx:28 primary \"See the new photos\"",
+    +   "screens/NewForYou.tsx:67 primary \"last ? 'Done, back to Photos' : 'Next'\"",
+    +   "screens/NotFoundScreen.tsx:15 primary \"Go to Photos\"",
+    +   "screens/PhotosScreen.tsx:32 primary \"`See ${g.authorName\"",
+    +   "screens/PhotosScreen.tsx:207 primary \"Turn on notices\"",
+    +   "screens/PostCard.tsx:281 primary \"Save the new words\"",
+    +   "screens/PostCard.tsx:378 primary \"Send\"",
+    +   "screens/QueueStatus.tsx:46 primary \"Try sending again\"",
+    +   "screens/SearchScreen.tsx:135 primary \"Search for these words\"",
+    +   "screens/ShareScreen.tsx:177 primary \"videos ? 'Pick photos or videos from your phone' :\"",
+    +   "screens/TimelineScreen.tsx:87 primary \"Pick a year\"",
+    +   "screens/VideoPlayer.tsx:60 primary \"Try again\"",
+    +   "screens/VideoPlayer.tsx:103 primary \"Pause the video\"",
+    +   "screens/VideoPlayer.tsx:104 primary \"Play the video\"",
+    +   "screens/VideoPoster.tsx:50 primary \"Play video\"",
+    +   "screens/ViewerScreen.tsx:187 primary \"Save to my phone\"",
+    +   "screens/YourName.tsx:45 primary \"Save my name\"",
+    +   "ui/ErrorBoundary.tsx:38 primary \"Try again\"",
+    +   "ui/kit.tsx:4 primary \"\"",
+    + ]
+
+      102 |       offenders.push(`${b.at} ${variant} "${words.slice(0, 50)}"`);
+      103 |     }
+    > 104 |     expect(offenders).toEqual([]);
+          |                       ^
+      105 |   });
+      106 |
+      107 |   it('RD-7 a Confirm dialog with a filled button is only for Delete or Leave', () => {
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:104:23)
+
+  ● RD 1a source scans › RD-7 a Confirm dialog with a filled button is only for Delete or Leave
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "screens/Preferences.tsx:162 yes=Yes, sign out",
+    + ]
+
+      115 |       }
+      116 |     }
+    > 117 |     expect(offenders).toEqual([]);
+          |                       ^
+      118 |   });
+      119 |
+      120 |   it('RD-8 corners stay on the scale: 0, 4, 12, 14/28 dialogs, pills, or a true circle; no 10, 16 or 20', () => {
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:117:23)
+
+  ● RD 1a source scans › RD-8 corners stay on the scale: 0, 4, 12, 14/28 dialogs, pills, or a true circle; no 10, 16 or 20
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 7
+
+    - Array []
+    + Array [
+    +   "screens/BatchReview.tsx:98 borderRadius: 10",
+    +   "screens/EventsScreen.tsx:21 borderRadius: 20",
+    +   "screens/MessagesScreen.tsx:133 borderRadius: 16",
+    +   "screens/PostCard.tsx:363 borderRadius: 20",
+    +   "screens/ShareScreen.tsx:184 borderRadius: 10",
+    + ]
+
+      130 |       }
+      131 |     }
+    > 132 |     expect(offenders).toEqual([]);
+          |                       ^
+      133 |     expect(find(/RADIUS\.large/)).toEqual([]);
+      134 |   });
+      135 | });
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:132:23)
+
+FAIL src/ui/__tests__/designSystem.test.tsx
+  ● DS native design system › DS-11 → RD-1: white and true black on every phone, light and dark, Ember by default (DEC-59 replaces the warm palette)
+
+    expect(received).toMatchObject(expected)
+
+    - Expected  - 2
+    + Received  + 2
+
+      Object {
+    -   "accent": "#B23A1E",
+    -   "bg": "#FFFFFF",
+    +   "accent": "#A4421F",
+    +   "bg": "#FAF6F1",
+      }
+
+      21 |
+      22 |   it('DS-11 → RD-1: white and true black on every phone, light and dark, Ember by default (DEC-59 replaces the warm palette)', () => {
+    > 23 |     expect(paletteFor('ios', false)).toMatchObject({ bg: '#FFFFFF', accent: '#B23A1E' });
+         |                                      ^
+      24 |     expect(paletteFor('ios', true)).toMatchObject({ bg: '#000000', accent: '#FF8A65' });
+      25 |     expect(paletteFor('android', false)).toEqual(paletteFor('ios', false));
+      26 |     expect(paletteFor('android', true)).toEqual(paletteFor('ios', true));
+
+      at Object.toMatchObject (src/ui/__tests__/designSystem.test.tsx:23:38)
+
+FAIL src/ui/__tests__/designTokens.test.ts
+  ● DS-TOKENS portable design tokens › DS-TOKENS carries one font family, three weights, the type scale, spacing, corners and both palettes
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /system/i
+    Received string:  "Atkinson Hyperlegible Next"
+
+      20 |     const t = portableTokens();
+      21 |     // RD-2 (DEC-59): the phone's own font, Regular and Semibold (Bold only in the large title); no Medium.
+    > 22 |     expect(t.font.family).toMatch(/system/i);
+         |                           ^
+      23 |     expect(Object.values(t.font.weight).every((w) => [400, 600, 700].includes(w as number))).toBe(true);
+      24 |     expect(Object.values(t.font.weight)).toEqual(expect.arrayContaining([400, 600]));
+      25 |     expect(t.type.default.base).toBe(17);
+
+      at Object.toMatch (src/ui/__tests__/designTokens.test.ts:22:27)
+
+FAIL src/ui/__tests__/redesignLook.test.tsx
+  ● RD 1a the look: black and white with one accent › RD-1 light mode is a white #FFFFFF screen with near-black words; dark mode is true black #000000 with near-white words
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "bg": "#FFFFFF",
+    +   "bg": "#FAF6F1",
+        "os": "ios",
+      }
+
+      37 |       const light = paletteFor(os, false);
+      38 |       const dark = paletteFor(os, true);
+    > 39 |       expect({ os, bg: light.bg }).toEqual({ os, bg: '#FFFFFF' });
+         |                                    ^
+      40 |       expect({ os, bg: dark.bg }).toEqual({ os, bg: '#000000' });
+      41 |       expect(contrast(light.ink, light.bg)).toBeGreaterThanOrEqual(15);
+      42 |       expect(contrast(dark.ink, dark.bg)).toBeGreaterThanOrEqual(15);
+
+      at Object.toEqual (src/ui/__tests__/redesignLook.test.tsx:39:36)
+
+  ● RD 1a the look: black and white with one accent › RD-1 no warm off-white or charcoal remains in paletteFor (dark false): every non-accent color is a neutral gray
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "k": "bg",
+        "n": "ember",
+    -   "neutral": true,
+    +   "neutral": false,
+        "v": "#FAF6F1",
+      }
+
+      49 |       const c = paletteFor('ios', dark, n);
+      50 |       for (const k of NEUTRAL_KEYS) {
+    > 51 |         expect({ n, k, v: c[k], neutral: neutral(c[k]) }).toEqual({ n, k, v: c[k], neutral: true });
+         |                                                           ^
+      52 |         expect(OLD_WARM).not.toContain(c[k].toUpperCase());
+      53 |       }
+      54 |     }
+
+      at toEqual (src/ui/__tests__/redesignLook.test.tsx:51:59)
+
+  ● RD 1a the look: black and white with one accent › RD-1 no warm off-white or charcoal remains in paletteFor (dark true): every non-accent color is a neutral gray
+
+    expect(received).not.toContain(expected) // indexOf
+
+    Expected value: not "#171311"
+    Received array:     ["#FAF6F1", "#171311", "#241E1B", "#1F1A17", "#F6EFE9", "#EFE8E1", "#352C27", "#DDD3C9", "#40362F", "#5E5650", "#BDB2A9"]
+
+      50 |       for (const k of NEUTRAL_KEYS) {
+      51 |         expect({ n, k, v: c[k], neutral: neutral(c[k]) }).toEqual({ n, k, v: c[k], neutral: true });
+    > 52 |         expect(OLD_WARM).not.toContain(c[k].toUpperCase());
+         |                              ^
+      53 |       }
+      54 |     }
+      55 |   });
+
+      at toContain (src/ui/__tests__/redesignLook.test.tsx:52:30)
+
+  ● RD 1a the look: black and white with one accent › RD-2 the phone's own font: Atkinson is not a dependency and no Text asks for a custom font family
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "@expo-google-fonts/atkinson-hyperlegible-next",
+    + ]
+
+      56 |
+      57 |   it('RD-2 the phone\'s own font: Atkinson is not a dependency and no Text asks for a custom font family', () => {
+    > 58 |     expect(Object.keys(pkg.dependencies).filter((d) => d.startsWith('@expo-google-fonts/'))).toEqual([]);
+         |                                                                                              ^
+      59 |     render(<>
+      60 |       <Txt>Body words</Txt><Txt variant="muted">Quiet words</Txt><Txt variant="strong">Grandma Jo</Txt>
+      61 |       <Txt variant="title">A title</Txt><Txt variant="display">Large title</Txt>
+
+      at Object.toEqual (src/ui/__tests__/redesignLook.test.tsx:58:94)
+
+  ● RD 1a the look: black and white with one accent › RD-2 Regular or Semibold only; Bold appears only in the large title
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "t": "Grandma Jo",
+    -   "weight": "600",
+    +   "weight": "400",
+      }
+
+      78 |     const w = (t: string) => String(StyleSheet.flatten(screen.getByText(t).props.style).fontWeight ?? '400');
+      79 |     expect({ body: w('Body words'), muted: w('Quiet words') }).toEqual({ body: expect.stringMatching(/^(400|normal)$/), muted: expect.stringMatching(/^(400|normal)$/) });
+    > 80 |     for (const t of ['Grandma Jo', 'A title', 'Send']) expect({ t, weight: w(t) }).toEqual({ t, weight: '600' });
+         |                                                                                    ^
+      81 |     expect(['600', '700', 'bold']).toContain(w('Large title'));
+      82 |   });
+      83 |
+
+      at Object.toEqual (src/ui/__tests__/redesignLook.test.tsx:80:84)
+
+  ● RD 1a the look: black and white with one accent › RD-3 one accent token per palette, from one setting: Ember (default), Forest and Plum, light and dark
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Array [
+        "ember",
+    -   "forest",
+    +   "sage",
+        "plum",
+      ]
+
+      83 |
+      84 |   it('RD-3 one accent token per palette, from one setting: Ember (default), Forest and Plum, light and dark', () => {
+    > 85 |     expect([...COLOR_NAMES]).toEqual(['ember', 'forest', 'plum']);
+         |                              ^
+      86 |     expect(paletteFor('ios', false)).toEqual(paletteFor('ios', false, 'ember'));
+      87 |     for (const n of CHOICES) {
+      88 |       expect({ n, light: paletteFor('ios', false, n).accent, dark: paletteFor('ios', true, n).accent }).toEqual({ n, ...ACCENTS[n] });
+
+      at Object.toEqual (src/ui/__tests__/redesignLook.test.tsx:85:30)
+
+  ● RD 1a the look: black and white with one accent › RD-3 the family color changes only the accent: black, white and grays are the same for every choice
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "dark": false,
+        "k": "bg",
+        "n": "plum",
+    -   "v": "#FAF6F1",
+    +   "v": "#F8F6FA",
+      }
+
+       99 |       for (const n of CHOICES) {
+      100 |         const c = paletteFor('ios', dark, n);
+    > 101 |         for (const k of [...NEUTRAL_KEYS, 'safe', 'safeSoft', 'danger', 'onDanger', 'scrim'] as const) expect({ n, dark, k, v: c[k] }).toEqual({ n, dark, k, v: base[k] });
+          |                                                                                                                                        ^
+      102 |       }
+      103 |     }
+      104 |   });
+
+      at Object.toEqual (src/ui/__tests__/redesignLook.test.tsx:101:136)
+
+  ● RD 1a the look: black and white with one accent › RD-4 Search and By date are ink, not accent (words and icons)
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "color": "#1F1A17",
+    +   "color": "#A4421F",
+        "word": "Search",
+      }
+
+      140 |       const btn = await screen.findByRole('button', { name });
+      141 |       const color = StyleSheet.flatten(within(btn).getByText(word).props.style).color;
+    > 142 |       expect({ word, color }).toEqual({ word, color: c.ink });
+          |                               ^
+      143 |       const tint = (btn.findAll((n) => n.type === SymbolView)[0]?.props as { tintColor?: string } | undefined)?.tintColor;
+      144 |       expect({ word, tint }).toEqual({ word, tint: c.ink });
+      145 |     }
+
+      at Object.toEqual (src/ui/__tests__/redesignLook.test.tsx:142:31)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD 1a the look: black and white with one accent › RD-8 corners: 12 for rows and cards, 14 for iPhone dialogs and 28 for Android, nothing rounder than 12 but pills
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "k": "large",
+    -   "ok": true,
+    +   "ok": false,
+        "v": 20,
+      }
+
+      170 |     // RD-8: the old 20 pt "large" corner (event card, reply box) is gone; rows use 12.
+      171 |     const allowed = new Set([0, 4, 12, 999]);
+    > 172 |     for (const [k, v] of Object.entries(RADIUS)) expect({ k, v, ok: allowed.has(v) }).toEqual({ k, v, ok: true });
+          |                                                                                       ^
+      173 |   });
+      174 |
+      175 |   it('RD-8 rows and cards are 12 corners on iPhone', () => {
+
+      at Object.toEqual (src/ui/__tests__/redesignLook.test.tsx:172:87)
+
+FAIL src/ui/__tests__/familyColor.test.tsx (11.118 s)
+  ● RD Family color › RD-24 the owner sees Family color: Ember (picked by default), Forest and Plum, each with a swatch and its name
+
+    Unable to find an element with role: header, name: Family color
+
+    <RNCSafeAreaView>
+      <RCTScrollView>
+        <View>
+          <Text
+            accessibilityRole="header"
+          >
+            Me
+          </Text>
+          <View>
+            <Text>
+              Signed in as chase@example.com
+            </Text>
+            <Text>
+              You can share photos and choose who sees them.
+            </Text>
+          </View>
+          <View>
+            <View
+              accessibilityLabel="Bigger text"
+              accessibilityRole="switch"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <Text>
+                  Bigger text
+                </Text>
+                <Text>
+                  Tap to make the words bigger.
+                </Text>
+              </View>
+              <View
+                accessibilityElementsHidden={true}
+                importantForAccessibility="no-hide-descendants"
+                pointerEvents="none"
+              >
+                <Text>
+                  Off
+                </Text>
+                <RCTSwitch
+                  accessibilityRole="switch"
+                  value={false}
+                />
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Light or dark screen
+            </Text>
+            <View
+              accessibilityLabel="Same as my phone (Recommended)"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <View />
+              </View>
+              <View>
+                <Text>
+                  Same as my phone (Recommended)
+                </Text>
+                <Text>
+                  Light in the day, dark at night if your phone does that.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Light screen"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Light screen
+                </Text>
+                <Text>
+                  Dark words on a white screen.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Dark screen"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Dark screen
+                </Text>
+                <Text>
+                  Light words on a dark screen. Easier on the eyes at night.
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Colors
+            </Text>
+            <View
+              accessibilityLabel="Ember"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <View />
+              </View>
+              <View>
+                <Text>
+                  Ember
+                </Text>
+                <Text>
+                  Warm red-brown, like a fire. Hearth starts here.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Sage"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Sage
+                </Text>
+                <Text>
+                  Calm green, like leaves.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Plum"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Plum
+                </Text>
+                <Text>
+                  Soft purple.
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              How should we tell you about new photos?
+            </Text>
+            <View
+              accessibilityLabel="A sound on your phone when there are new photos (Recommended)"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <View />
+              </View>
+              <View>
+                <Text>
+                  A sound on your phone when there are new photos (Recommended)
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="An email every evening with the day's new photos"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  An email every evening with the day's new photos
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="An email every Sunday morning"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  An email every Sunday morning
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Who reads what family members write
+            </Text>
+            <Text>
+              For comments and hearts. The kids' parents read them all, and your own replies reach everyone the photo went to. People in the same household, or in the same event, read each other's.
+            </Text>
+            <View
+              accessibilityLabel="The parents, plus their own household and events (safest)"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <View />
+              </View>
+              <View>
+                <Text>
+                  The parents, plus their own household and events (safest)
+                </Text>
+                <Text>
+                  A grandparent's comment reaches you, the other parent, and their own household. Never the other side.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Everyone the photo was shared with"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Everyone the photo was shared with
+                </Text>
+                <Text>
+                  Divorced grandparents on the same photo will read each other's comments.
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Photo helpers
+            </Text>
+            <Text>
+              When anyone picks 4 or more photos to send, Hearth can set some aside first. Each one has a Put back button. Nothing is deleted from the phone. These switches are for the whole family.
+            </Text>
+            <View
+              accessibilityLabel="Set aside repeats"
+              accessibilityRole="switch"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <Text>
+                  Set aside repeats
+                </Text>
+                <Text>
+                  The same photo twice, look-alikes, and photos sent in the last 30 days.
+                </Text>
+              </View>
+              <View
+                accessibilityElementsHidden={true}
+                importantForAccessibility="no-hide-descendants"
+                pointerEvents="none"
+              >
+                <Text>
+                  On
+                </Text>
+                <RCTSwitch
+                  accessibilityRole="switch"
+                  value={true}
+                />
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Set aside screenshots and blurry photos"
+              accessibilityRole="switch"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <Text>
+                  Set aside screenshots and blurry photos
+                </Text>
+                <Text>
+                  Pictures of a phone's screen, and photos that came out blurry.
+                </Text>
+              </View>
+              <View
+                accessibilityElementsHidden={true}
+                importantForAccessibility="no-hide-descendants"
+                pointerEvents="none"
+              >
+                <Text>
+                  On
+                </Text>
+                <RCTSwitch
+                  accessibilityRole="switch"
+                  value={true}
+                />
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Keeping your photos private
+            </Text>
+            <Text>
+              Your photos stay in the United States.
+            </Text>
+            <Text>
+              No one outside the family can see them. No ads, no strangers.
+            </Text>
+            <Text>
+              No computer program learns from your photos.
+            </Text>
+            <Text>
+              Photos don't show where they were taken.
+            </Text>
+            <Text>
+              You can delete everything at any time.
+            </Text>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Notice timing
+            </Text>
+            <Text>
+              For testing: how fast notices reach this phone. It stays on this phone.
+            </Text>
+            <View
+              accessibilityLabel="Show notice timing"
+              accessibilityRole="button"
+              accessibilityState={
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }
+              accessible={true}
+            >
+              <Text>
+                Show notice timing
+              </Text>
+            </View>
+          </View>
+          <View
+            accessibilityLabel="Sign out of Hearth"
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": false,
+                "disabled": false,
+                "selected": false,
+              }
+            }
+            accessible={true}
+          >
+            <Text>
+              Sign out of Hearth
+            </Text>
+          </View>
+        </View>
+      </RCTScrollView>
+    </RNCSafeAreaView>
+
+      33 |   it('RD-24 the owner sees Family color: Ember (picked by default), Forest and Plum, each with a swatch and its name', async () => {
+      34 |     await renderApp(<MeScreen />, { user: 'chase' });
+    > 35 |     expect(await screen.findByRole('header', { name: 'Family color' })).toBeTruthy();
+         |                         ^
+      36 |     const rows = NAMES.map((n) => screen.getByRole('radio', { name: n }));
+      37 |     expect(rows.map((r) => r.props.accessibilityState?.checked)).toEqual([true, false, false]);
+      38 |     expect(screen.queryByRole('radio', { name: 'Sage' })).toBeNull();
+
+      at Object.findByRole (src/ui/__tests__/familyColor.test.tsx:35:25)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD Family color › RD-24 / RD-25 the owner picks Forest: the app recolors, it is saved in prefs.color, and it stays after reopening
+
+    Unable to find an element with role: radio, name: Forest
+
+    [
+      <RNCSafeAreaView>
+        <RCTScrollView>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Me
+            </Text>
+            <View>
+              <Text>
+                Signed in as chase@example.com
+              </Text>
+              <Text>
+                You can share photos and choose who sees them.
+              </Text>
+            </View>
+            <View>
+              <View
+                accessibilityLabel="Bigger text"
+                accessibilityRole="switch"
+                accessibilityState={
+                  {
+                    "checked": false,
+                  }
+                }
+                accessible={true}
+              >
+                <View>
+                  <Text>
+                    Bigger text
+                  </Text>
+                  <Text>
+                    Tap to make the words bigger.
+                  </Text>
+                </View>
+                <View
+                  accessibilityElementsHidden={true}
+                  importantForAccessibility="no-hide-descendants"
+                  pointerEvents="none"
+                >
+                  <Text>
+                    Off
+                  </Text>
+                  <RCTSwitch
+                    accessibilityRole="switch"
+                    value={false}
+                  />
+                </View>
+              </View>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Light or dark screen
+              </Text>
+              <View
+                accessibilityLabel="Same as my phone (Recommended)"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": true,
+                  }
+                }
+                accessible={true}
+              >
+                <View>
+                  <View />
+                </View>
+                <View>
+                  <Text>
+                    Same as my phone (Recommended)
+                  </Text>
+                  <Text>
+                    Light in the day, dark at night if your phone does that.
+                  </Text>
+                </View>
+              </View>
+              <View
+                accessibilityLabel="Light screen"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": false,
+                  }
+                }
+                accessible={true}
+              >
+                <View />
+                <View>
+                  <Text>
+                    Light screen
+                  </Text>
+                  <Text>
+                    Dark words on a white screen.
+                  </Text>
+                </View>
+              </View>
+              <View
+                accessibilityLabel="Dark screen"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": false,
+                  }
+                }
+                accessible={true}
+              >
+                <View />
+                <View>
+                  <Text>
+                    Dark screen
+                  </Text>
+                  <Text>
+                    Light words on a dark screen. Easier on the eyes at night.
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Colors
+              </Text>
+              <View
+                accessibilityLabel="Ember"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": true,
+                  }
+                }
+                accessible={true}
+              >
+                <View>
+                  <View />
+                </View>
+                <View>
+                  <Text>
+                    Ember
+                  </Text>
+                  <Text>
+                    Warm red-brown, like a fire. Hearth starts here.
+                  </Text>
+                </View>
+              </View>
+              <View
+                accessibilityLabel="Sage"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": false,
+                  }
+                }
+                accessible={true}
+              >
+                <View />
+                <View>
+                  <Text>
+                    Sage
+                  </Text>
+                  <Text>
+                    Calm green, like leaves.
+                  </Text>
+                </View>
+              </View>
+              <View
+                accessibilityLabel="Plum"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": false,
+                  }
+                }
+                accessible={true}
+              >
+                <View />
+                <View>
+                  <Text>
+                    Plum
+                  </Text>
+                  <Text>
+                    Soft purple.
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                How should we tell you about new photos?
+              </Text>
+              <View
+                accessibilityLabel="A sound on your phone when there are new photos (Recommended)"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": true,
+                  }
+                }
+                accessible={true}
+              >
+                <View>
+                  <View />
+                </View>
+                <View>
+                  <Text>
+                    A sound on your phone when there are new photos (Recommended)
+                  </Text>
+                </View>
+              </View>
+              <View
+                accessibilityLabel="An email every evening with the day's new photos"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": false,
+                  }
+                }
+                accessible={true}
+              >
+                <View />
+                <View>
+                  <Text>
+                    An email every evening with the day's new photos
+                  </Text>
+                </View>
+              </View>
+              <View
+                accessibilityLabel="An email every Sunday morning"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": false,
+                  }
+                }
+                accessible={true}
+              >
+                <View />
+                <View>
+                  <Text>
+                    An email every Sunday morning
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Who reads what family members write
+              </Text>
+              <Text>
+                For comments and hearts. The kids' parents read them all, and your own replies reach everyone the photo went to. People in the same household, or in the same event, read each other's.
+              </Text>
+              <View
+                accessibilityLabel="The parents, plus their own household and events (safest)"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": true,
+                  }
+                }
+                accessible={true}
+              >
+                <View>
+                  <View />
+                </View>
+                <View>
+                  <Text>
+                    The parents, plus their own household and events (safest)
+                  </Text>
+                  <Text>
+                    A grandparent's comment reaches you, the other parent, and their own household. Never the other side.
+                  </Text>
+                </View>
+              </View>
+              <View
+                accessibilityLabel="Everyone the photo was shared with"
+                accessibilityRole="radio"
+                accessibilityState={
+                  {
+                    "checked": false,
+                  }
+                }
+                accessible={true}
+              >
+                <View />
+                <View>
+                  <Text>
+                    Everyone the photo was shared with
+                  </Text>
+                  <Text>
+                    Divorced grandparents on the same photo will read each other's comments.
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Photo helpers
+              </Text>
+              <Text>
+                When anyone picks 4 or more photos to send, Hearth can set some aside first. Each one has a Put back button. Nothing is deleted from the phone. These switches are for the whole family.
+              </Text>
+              <View
+                accessibilityLabel="Set aside repeats"
+                accessibilityRole="switch"
+                accessibilityState={
+                  {
+                    "checked": true,
+                  }
+                }
+                accessible={true}
+              >
+                <View>
+                  <Text>
+                    Set aside repeats
+                  </Text>
+                  <Text>
+                    The same photo twice, look-alikes, and photos sent in the last 30 days.
+                  </Text>
+                </View>
+                <View
+                  accessibilityElementsHidden={true}
+                  importantForAccessibility="no-hide-descendants"
+                  pointerEvents="none"
+                >
+                  <Text>
+                    On
+                  </Text>
+                  <RCTSwitch
+                    accessibilityRole="switch"
+                    value={true}
+                  />
+                </View>
+              </View>
+              <View
+                accessibilityLabel="Set aside screenshots and blurry photos"
+                accessibilityRole="switch"
+                accessibilityState={
+                  {
+                    "checked": true,
+                  }
+                }
+                accessible={true}
+              >
+                <View>
+                  <Text>
+                    Set aside screenshots and blurry photos
+                  </Text>
+                  <Text>
+                    Pictures of a phone's screen, and photos that came out blurry.
+                  </Text>
+                </View>
+                <View
+                  accessibilityElementsHidden={true}
+                  importantForAccessibility="no-hide-descendants"
+                  pointerEvents="none"
+                >
+                  <Text>
+                    On
+                  </Text>
+                  <RCTSwitch
+                    accessibilityRole="switch"
+                    value={true}
+                  />
+                </View>
+              </View>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Keeping your photos private
+              </Text>
+              <Text>
+                Your photos stay in the United States.
+              </Text>
+              <Text>
+                No one outside the family can see them. No ads, no strangers.
+              </Text>
+              <Text>
+                No computer program learns from your photos.
+              </Text>
+              <Text>
+                Photos don't show where they were taken.
+              </Text>
+              <Text>
+                You can delete everything at any time.
+              </Text>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Notice timing
+              </Text>
+              <Text>
+                For testing: how fast notices reach this phone. It stays on this phone.
+              </Text>
+              <View
+                accessibilityLabel="Show notice timing"
+                accessibilityRole="button"
+                accessibilityState={
+                  {
+                    "busy": false,
+                    "disabled": false,
+                    "selected": false,
+                  }
+                }
+                accessible={true}
+              >
+                <Text>
+                  Show notice timing
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Sign out of Hearth"
+              accessibilityRole="button"
+              accessibilityState={
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }
+              accessible={true}
+            >
+              <Text>
+                Sign out of Hearth
+              </Text>
+            </View>
+          </View>
+        </RCTScrollView>
+      </RNCSafeAreaView>,
+      <Text
+        testID="probe"
+      >
+        #A4421F
+      </Text>,
+    ]
+
+      49 |     const kv = memoryKV();
+      50 |     const first = await renderApp(<><MeScreen /><Probe /></>, { user: 'chase', kv });
+    > 51 |     await screen.findByRole('radio', { name: 'Forest' });
+         |                  ^
+      52 |     expect(probe()).toBe(EMBER);
+      53 |     fireEvent.press(screen.getByRole('radio', { name: 'Forest' }));
+      54 |     await waitFor(() => expect(probe()).toBe(FOREST.light));
+
+      at Object.findByRole (src/ui/__tests__/familyColor.test.tsx:51:18)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD Family color › RD-25 an old Sage on the owner's phone becomes Forest; an unknown value falls back to Ember
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "forest"
+    Received: "sage"
+
+      66 |     expect((await loadPrefs(kv, 'u1', 'owner')).color).toBe('ember');
+      67 |     await put('sage');
+    > 68 |     expect((await loadPrefs(kv, 'u1', 'owner')).color).toBe('forest');
+         |                                                        ^
+      69 |     await put('forest');
+      70 |     expect((await loadPrefs(kv, 'u1', 'owner')).color).toBe('forest');
+      71 |     await put('blue');
+
+      at Object.toBe (src/ui/__tests__/familyColor.test.tsx:68:56)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD Family color › RD-25 a saved Sage, Plum or Forest from COLOR-1 is ignored for an adult: Ember
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "color": "sage",
+    -   "loaded": "ember",
+    +   "loaded": "sage",
+      }
+
+      77 |     for (const color of ['sage', 'plum', 'forest']) {
+      78 |       await kv.setItem('hearth.prefs.v1.u2', JSON.stringify({ bigText: true, notify: 'push', look: 'system', color }));
+    > 79 |       expect({ color, loaded: (await loadPrefs(kv, 'u2', role)).color }).toEqual({ color, loaded: 'ember' });
+         |                                                                          ^
+      80 |     }
+      81 |   });
+      82 |
+
+      at toEqual (src/ui/__tests__/familyColor.test.tsx:79:74)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD Family color › RD-25 a saved Sage, Plum or Forest from COLOR-1 is ignored for an viewer: Ember
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "color": "sage",
+    -   "loaded": "ember",
+    +   "loaded": "sage",
+      }
+
+      77 |     for (const color of ['sage', 'plum', 'forest']) {
+      78 |       await kv.setItem('hearth.prefs.v1.u2', JSON.stringify({ bigText: true, notify: 'push', look: 'system', color }));
+    > 79 |       expect({ color, loaded: (await loadPrefs(kv, 'u2', role)).color }).toEqual({ color, loaded: 'ember' });
+         |                                                                          ^
+      80 |     }
+      81 |   });
+      82 |
+
+      at toEqual (src/ui/__tests__/familyColor.test.tsx:79:74)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD Family color › RD-25 the owner's pick recolors only the owner's phone: Grandma Jo with an old Plum still sees Ember
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "#B23A1E"
+    Received: "#5A3EA6"
+
+      86 |     await renderApp(<><HelpScreen /><Probe /></>, { user: 'jo', kv });
+      87 |     await screen.findByRole('radio', { name: 'Light screen' });
+    > 88 |     expect(probe()).toBe(EMBER);
+         |                     ^
+      89 |   });
+      90 |
+      91 |   it.each([
+
+      at Object.toBe (src/ui/__tests__/familyColor.test.tsx:88:21)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD Family color › RD-26 no color picker anywhere for the viewer Grandma Jo on Help
+
+    expect(received).toBeNull()
+
+    Received: {"_fiber": {"_debugHookTypes": null, "_debugInfo": null, "_debugNeedsRemount": false, "_debugOwner": [FiberNode], "_debugStack": [Error: react-stack-top-frame], "_debugTask": null, "actualDuration": 0, "actualStartTime": 1794778554719, "alternate": null, "child": [FiberNode], "childLanes": 0, "deletions": null, "dependencies": null, "elementType": "View", "flags": 0, "index": 0, "key": null, "lanes": 0, "memoizedProps": [Object], "memoizedState": null, "mode": 3, "pendingProps": [Object], "ref": null, "refCleanup": null, "return": [FiberNode], "selfBaseDuration": 0, "sibling": null, "stateNode": [Object], "subtreeFlags": 1572865, "tag": 5, "treeBaseDuration": 0, "type": "View", "updateQueue": null}}
+
+       95 |     await renderApp(<>{ui()}<Probe /></>, { user });
+       96 |     await screen.findByRole('radio', { name: 'Light screen' });
+    >  97 |     for (const n of [...NAMES, 'Sage']) expect(screen.queryByRole('radio', { name: n })).toBeNull();
+          |                                                                                          ^
+       98 |     expect(screen.queryByRole('header', { name: /^(Family color|Colors)$/ })).toBeNull();
+       99 |     expect(screenWords()).not.toMatch(/Family color|\bColors\b/);
+      100 |     expect(probe()).toBe(EMBER);
+
+      at toBeNull (src/ui/__tests__/familyColor.test.tsx:97:90)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD Family color › RD-26 no color picker anywhere for the adult Alex on Me
+
+    expect(received).toBeNull()
+
+    Received: {"_fiber": {"_debugHookTypes": null, "_debugInfo": null, "_debugNeedsRemount": false, "_debugOwner": [FiberNode], "_debugStack": [Error: react-stack-top-frame], "_debugTask": null, "actualDuration": 0, "actualStartTime": 1794778557373, "alternate": null, "child": [FiberNode], "childLanes": 0, "deletions": null, "dependencies": null, "elementType": "View", "flags": 0, "index": 0, "key": null, "lanes": 0, "memoizedProps": [Object], "memoizedState": null, "mode": 3, "pendingProps": [Object], "ref": null, "refCleanup": null, "return": [FiberNode], "selfBaseDuration": 0, "sibling": null, "stateNode": [Object], "subtreeFlags": 1572865, "tag": 5, "treeBaseDuration": 0, "type": "View", "updateQueue": null}}
+
+       95 |     await renderApp(<>{ui()}<Probe /></>, { user });
+       96 |     await screen.findByRole('radio', { name: 'Light screen' });
+    >  97 |     for (const n of [...NAMES, 'Sage']) expect(screen.queryByRole('radio', { name: n })).toBeNull();
+          |                                                                                          ^
+       98 |     expect(screen.queryByRole('header', { name: /^(Family color|Colors)$/ })).toBeNull();
+       99 |     expect(screenWords()).not.toMatch(/Family color|\bColors\b/);
+      100 |     expect(probe()).toBe(EMBER);
+
+      at toBeNull (src/ui/__tests__/familyColor.test.tsx:97:90)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD Family color › RD-24 the picker sits after Light or dark on the owner's Me
+
+    Unable to find an element with role: header, name: Family color
+
+    <RNCSafeAreaView>
+      <RCTScrollView>
+        <View>
+          <Text
+            accessibilityRole="header"
+          >
+            Me
+          </Text>
+          <View>
+            <Text>
+              Signed in as chase@example.com
+            </Text>
+            <Text>
+              You can share photos and choose who sees them.
+            </Text>
+          </View>
+          <View>
+            <View
+              accessibilityLabel="Bigger text"
+              accessibilityRole="switch"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <Text>
+                  Bigger text
+                </Text>
+                <Text>
+                  Tap to make the words bigger.
+                </Text>
+              </View>
+              <View
+                accessibilityElementsHidden={true}
+                importantForAccessibility="no-hide-descendants"
+                pointerEvents="none"
+              >
+                <Text>
+                  Off
+                </Text>
+                <RCTSwitch
+                  accessibilityRole="switch"
+                  value={false}
+                />
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Light or dark screen
+            </Text>
+            <View
+              accessibilityLabel="Same as my phone (Recommended)"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <View />
+              </View>
+              <View>
+                <Text>
+                  Same as my phone (Recommended)
+                </Text>
+                <Text>
+                  Light in the day, dark at night if your phone does that.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Light screen"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Light screen
+                </Text>
+                <Text>
+                  Dark words on a white screen.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Dark screen"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Dark screen
+                </Text>
+                <Text>
+                  Light words on a dark screen. Easier on the eyes at night.
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Colors
+            </Text>
+            <View
+              accessibilityLabel="Ember"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <View />
+              </View>
+              <View>
+                <Text>
+                  Ember
+                </Text>
+                <Text>
+                  Warm red-brown, like a fire. Hearth starts here.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Sage"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Sage
+                </Text>
+                <Text>
+                  Calm green, like leaves.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Plum"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Plum
+                </Text>
+                <Text>
+                  Soft purple.
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              How should we tell you about new photos?
+            </Text>
+            <View
+              accessibilityLabel="A sound on your phone when there are new photos (Recommended)"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <View />
+              </View>
+              <View>
+                <Text>
+                  A sound on your phone when there are new photos (Recommended)
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="An email every evening with the day's new photos"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  An email every evening with the day's new photos
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="An email every Sunday morning"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  An email every Sunday morning
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Who reads what family members write
+            </Text>
+            <Text>
+              For comments and hearts. The kids' parents read them all, and your own replies reach everyone the photo went to. People in the same household, or in the same event, read each other's.
+            </Text>
+            <View
+              accessibilityLabel="The parents, plus their own household and events (safest)"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <View />
+              </View>
+              <View>
+                <Text>
+                  The parents, plus their own household and events (safest)
+                </Text>
+                <Text>
+                  A grandparent's comment reaches you, the other parent, and their own household. Never the other side.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Everyone the photo was shared with"
+              accessibilityRole="radio"
+              accessibilityState={
+                {
+                  "checked": false,
+                }
+              }
+              accessible={true}
+            >
+              <View />
+              <View>
+                <Text>
+                  Everyone the photo was shared with
+                </Text>
+                <Text>
+                  Divorced grandparents on the same photo will read each other's comments.
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Photo helpers
+            </Text>
+            <Text>
+              When anyone picks 4 or more photos to send, Hearth can set some aside first. Each one has a Put back button. Nothing is deleted from the phone. These switches are for the whole family.
+            </Text>
+            <View
+              accessibilityLabel="Set aside repeats"
+              accessibilityRole="switch"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <Text>
+                  Set aside repeats
+                </Text>
+                <Text>
+                  The same photo twice, look-alikes, and photos sent in the last 30 days.
+                </Text>
+              </View>
+              <View
+                accessibilityElementsHidden={true}
+                importantForAccessibility="no-hide-descendants"
+                pointerEvents="none"
+              >
+                <Text>
+                  On
+                </Text>
+                <RCTSwitch
+                  accessibilityRole="switch"
+                  value={true}
+                />
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Set aside screenshots and blurry photos"
+              accessibilityRole="switch"
+              accessibilityState={
+                {
+                  "checked": true,
+                }
+              }
+              accessible={true}
+            >
+              <View>
+                <Text>
+                  Set aside screenshots and blurry photos
+                </Text>
+                <Text>
+                  Pictures of a phone's screen, and photos that came out blurry.
+                </Text>
+              </View>
+              <View
+                accessibilityElementsHidden={true}
+                importantForAccessibility="no-hide-descendants"
+                pointerEvents="none"
+              >
+                <Text>
+                  On
+                </Text>
+                <RCTSwitch
+                  accessibilityRole="switch"
+                  value={true}
+                />
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Keeping your photos private
+            </Text>
+            <Text>
+              Your photos stay in the United States.
+            </Text>
+            <Text>
+              No one outside the family can see them. No ads, no strangers.
+            </Text>
+            <Text>
+              No computer program learns from your photos.
+            </Text>
+            <Text>
+              Photos don't show where they were taken.
+            </Text>
+            <Text>
+              You can delete everything at any time.
+            </Text>
+          </View>
+          <View>
+            <Text
+              accessibilityRole="header"
+            >
+              Notice timing
+            </Text>
+            <Text>
+              For testing: how fast notices reach this phone. It stays on this phone.
+            </Text>
+            <View
+              accessibilityLabel="Show notice timing"
+              accessibilityRole="button"
+              accessibilityState={
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }
+              accessible={true}
+            >
+              <Text>
+                Show notice timing
+              </Text>
+            </View>
+          </View>
+          <View
+            accessibilityLabel="Sign out of Hearth"
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": false,
+                "disabled": false,
+                "selected": false,
+              }
+            }
+            accessible={true}
+          >
+            <Text>
+              Sign out of Hearth
+            </Text>
+          </View>
+        </View>
+      </RCTScrollView>
+    </RNCSafeAreaView>
+
+      103 |   it('RD-24 the picker sits after Light or dark on the owner\'s Me', async () => {
+      104 |     await renderApp(<MeScreen />, { user: 'chase' });
+    > 105 |     await screen.findByRole('header', { name: 'Family color' });
+          |                  ^
+      106 |     const words = screenWords();
+      107 |     expect(words.indexOf('Light or dark screen')).toBeGreaterThanOrEqual(0);
+      108 |     expect(words.indexOf('Light or dark screen')).toBeLessThan(words.indexOf('Family color'));
+
+      at Object.findByRole (src/ui/__tests__/familyColor.test.tsx:105:18)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+
+Test Suites: 5 failed, 118 passed, 123 total
+Tests:       28 failed, 1 skipped, 1021 passed, 1050 total
+Snapshots:   0 total
+Time:        78.769 s
+Ran all test suites.

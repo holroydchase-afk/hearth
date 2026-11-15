@@ -18,8 +18,10 @@ describe('DS-TOKENS portable design tokens', () => {
 
   it('DS-TOKENS carries one font family, three weights, the type scale, spacing, corners and both palettes', () => {
     const t = portableTokens();
-    expect(t.font.family).toBe('Atkinson Hyperlegible Next');
-    expect(Object.values(t.font.weight)).toEqual([400, 500, 600]);
+    // RD-2 (DEC-59): the phone's own font, Regular and Semibold (Bold only in the large title); no Medium.
+    expect(t.font.family).toMatch(/system/i);
+    expect(Object.values(t.font.weight).every((w) => [400, 600, 700].includes(w as number))).toBe(true);
+    expect(Object.values(t.font.weight)).toEqual(expect.arrayContaining([400, 600]));
     expect(t.type.default.base).toBe(17);
     expect(t.type.large.base).toBe(21);
     expect(t.space.lg).toBe(16);

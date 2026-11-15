@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// LOOK-1..3 (intake #95, Chase Nov 4: keep Atkinson, fix the dated look with spacing and tokens).
+// LOOK-1..3 (intake #95, Chase Nov 4: fix the dated look with spacing and tokens). Atkinson was dropped by RD-2 (DEC-59).
 // The post card reads cleaner: the date and who it went to sit on their own lines instead of one
 // wrapped run, the initial lines up with the name, and the card's insets come from the 4 pt grid.
 import { screen, within } from '@testing-library/react-native';
