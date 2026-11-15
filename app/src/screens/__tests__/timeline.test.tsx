@@ -8,7 +8,9 @@ import React from 'react';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { seedPost } from '../../test/seed';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
-import { GalleryScreen } from '../../test/redesignScreens'; // RD-13: Search and By date live in Gallery's top bar
+import { FeedScreen, GalleryScreen } from '../../test/redesignScreens'; // RD-13: Search and By date live in Gallery's top bar
+// RD-18 (redesign 1c): Gallery is the photo grid, so the post list and BETA-TIME-1's "Older photos" card are on Feed
+// (RD-17: nothing on the list is lost). Where old photos added today sit in Gallery's grid is open (staff-pm).
 
 /** A bulk import of old photos (Jul 2024, Dec 2023) plus one new post, all shared today. */
 async function family() {
@@ -20,8 +22,8 @@ async function family() {
 }
 
 describe('BETA-TIME-1 Photos with old photos added', () => {
-  it('BETA-TIME-1 new posts stay on top; old ones go in one "Older photos" card that names the months', async () => {
-    await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
+  it('BETA-TIME-1 RD-17 on Feed, new posts stay on top; old ones go in one "Older photos" card that names the months', async () => {
+    await renderApp(<FeedScreen />, { be: await family(), user: 'jo' });
     expect(await screen.findByText('Pumpkins today')).toBeTruthy();
     const card = screen.getByTestId('earlier-card-' + FIXTURE.users.chase.id);
     expect(within(card).getByRole('header', { name: 'Older photos' })).toBeTruthy();
@@ -32,8 +34,8 @@ describe('BETA-TIME-1 Photos with old photos added', () => {
     expect(screen.queryByText('Christmas 2023')).toBeNull();
   });
 
-  it('BETA-TIME-1/2 "See them" opens the timeline at that month', async () => {
-    await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
+  it('BETA-TIME-1/2 RD-17 "See them" on Feed opens the timeline at that month', async () => {
+    await renderApp(<FeedScreen />, { be: await family(), user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: "See Chase's older photos by date" }));
     expect(await screen.findByRole('header', { name: 'July 2024' })).toBeTruthy();
     expect(screen.getByText('Fourth of July')).toBeTruthy();
@@ -117,7 +119,7 @@ describe('BETA-TIME-4 "Pick a year"', () => {
 describe('BETA-TIME grandparent rules', () => {
   it('BETA-TIME-1..4 Photos, timeline and years are grandparent-safe (labels, 48 pt, 17 pt+)', async () => {
     await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
-    await screen.findByText('Pumpkins today');
+    await waitFor(() => expect(within(screen.getByTestId('gallery-grid')).queryAllByTestId(/^gallery-tile-/).length).toBeGreaterThan(0)); // RD-18: photos, not captions
     expectGrandparentSafe();
     fireEvent.press(screen.getByRole('button', { name: 'Show photos by the date they were taken' }));
     await screen.findByText('Christmas 2023');

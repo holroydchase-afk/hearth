@@ -26,7 +26,7 @@ for (const tab of ['', 'photos', 'share', 'groups', 'me']) {
     await page.goto(`${BASE}/${tab}`);
     await expect(page.getByRole('button', { name: 'Demo details' })).toBeVisible();
     if (tab === '' || tab === 'photos') {
-      await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible(); // RD-18: Gallery shows photos, not captions
       await expect.poll(() => page.evaluate(() => [...document.images].filter((i) => i.complete && i.naturalWidth > 0).length)).toBeGreaterThan(0);
     }
     expect(failed).toEqual([]);
@@ -35,7 +35,7 @@ for (const tab of ['', 'photos', 'share', 'groups', 'me']) {
 
 test(`DEMO-5 every link inside the demo stays under ${BASE}/ or goes to chaseholroyd.com`, async ({ page }) => {
   await page.goto(`${BASE}/`);
-  await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible(); // RD-18: Gallery shows photos, not captions
   const hrefs = await page.evaluate(() => [...document.querySelectorAll('a[href]')].map((a) => a.getAttribute('href')));
   for (const h of hrefs) expect(h.startsWith(BASE) || h.startsWith('https://chaseholroyd.com')).toBe(true);
 });
@@ -64,7 +64,7 @@ test('RR-15 reloading an open full-screen photo on the static host keeps the pho
 // DEMO-LIVE-2/3: the two newest things a visitor tries also work on the static host (and, with SITE_URL, live).
 test('DEMO-LIVE-2 Search for "lake" finds the one lake photo', async ({ page }) => {
   await page.goto(`${BASE}/`);
-  await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible(); // RD-18: Gallery shows photos, not captions
   await page.getByRole('button', { name: /Search/ }).first().click();
   const box = page.getByRole('textbox').first();
   await box.fill('lake');
@@ -72,12 +72,11 @@ test('DEMO-LIVE-2 Search for "lake" finds the one lake photo', async ({ page }) 
   await expect(page.getByText('Found 1 photo', { exact: true })).toBeVisible();
 });
 
-test('DEMO-LIVE-3 All photos opens the wall with month headings', async ({ page }) => {
+test('DEMO-LIVE-3 RD-18 Gallery is the wall: month headings and photo tiles on the first screen, no All photos button', async ({ page }) => {
   await page.goto(`${BASE}/`);
-  await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: /All photos|three to a row/ }).first().click();
   await expect(page.getByText(/^(January|February|March|April|May|June|July|August|September|October|November|December) \d{4}$/).first()).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Back to Photos' }).first()).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Open photo from / }).first()).toBeVisible();
+  await expect(page.getByRole('button', { name: /All photos|three to a row/ })).toHaveCount(0);
 });
 
 // DEMO-LIVE-4 (ARCH-R1): the build says which commit it is, so the live check waits for the new copy.
@@ -87,10 +86,11 @@ test('DEMO-LIVE-4 the build serves version.txt naming its commit', async ({ requ
   expect((await r.text()).trim()).toMatch(/^([0-9a-f]{40}|local)$/);
 });
 
-// DEMO-NEW-5 (R45 step 2): a first-time visitor lands on the New for you card and can walk the new photos.
-test('DEMO-NEW-5 a first visit opens on New for you, and Next walks the new photos', async ({ page }) => {
+// DEMO-NEW-5 (R45 step 2; RD-19..21): a first-time visitor lands on New for you and can walk the new photos.
+test('DEMO-NEW-5 RD-21 a first visit opens on New for you; See all walks the new photos', async ({ page }) => {
   await page.goto(`${BASE}/`);
-  const see = page.getByRole('button', { name: /See the new photos/ });
+  await expect(page.getByText('Tap a photo to start', { exact: true })).toBeVisible();
+  const see = page.getByRole('button', { name: /^See all(?! the photos)/ });
   await expect(see).toBeVisible();
   await see.click();
   await expect(page.getByText('New photos: 1 of 2', { exact: true })).toBeVisible();
