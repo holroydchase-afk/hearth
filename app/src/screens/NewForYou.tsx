@@ -1,40 +1,76 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// OPEN-1..8 (docs/product/SPEC-OPENING.md, DEC-58): the New for you card at the top of Photos, and the new posts
-// one at a time (oldest first) with Next, Previous and "Back to Gallery" (DS-4, no swipe needed). No counts or badges (A1, A2).
-// GUX-R1/R2/R5..R8 (OPEN-12): Next never moves, Previous sits under it, "Sent today by …", no collage without a ready photo.
+// OPEN-1..8 (docs/product/SPEC-OPENING.md, DEC-58) and RD-19..RD-21 (SPEC-REDESIGN 1c): New for you at the top of
+// Gallery, and the new posts one at a time (oldest first) with Next, Previous and "Back to Gallery" (DS-4, no swipe
+// needed). The only number is the "N new" chip (RD-19, Chase Nov 15); no "unread" (A1, A2).
+// GUX-R1/R2/R7/R8 (OPEN-12): Next never moves, Previous sits under it; no tiles without a ready photo.
 import React, { useEffect, useState } from 'react';
-import { BackHandler, ScrollView, View } from 'react-native';
+import { BackHandler, Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { FeedPost } from '../api/HearthApi';
 import { newSinceDay } from '../feed/newForYou';
 import { useFeed } from '../state/AppContext';
-import { Button, Card, Txt } from '../ui/kit';
+import { Button, Txt } from '../ui/kit';
 import { andList, shortDate } from '../ui/format';
 import { SPACE, useTheme } from '../ui/theme';
-import { PhotoCollage, type CollageMedia } from './PhotoCollage';
+import { MediaImage } from './MediaImage';
 import { PostCard } from './PostCard';
 
-/** OPEN-1..4: "Sent today by Chase and Alex", a collage (only when a photo is ready, GUX-R6) of the new photos and one filled button. */
-export function NewForYouCard({ posts, since, onSee }: { posts: FeedPost[]; since: string; onSee: () => void }) {
-  const tiles: CollageMedia[] = posts.flatMap((p) =>
-    p.media.filter((m) => m.status === 'ready').map((m, index) => ({ ...m, postId: p.post_id, index, from: `${p.author_name}, ${shortDate(p.published_at)}` })),
-  );
+/** Tile size for the sideways row: large (about 60% of the screen), never under 140 or over 260. */
+const tileSide = (screenWidth: number) => Math.max(140, Math.min(260, Math.round(screenWidth * 0.6)));
+
+/** RD-19..RD-21 (1c): "New for you" with See all, a sideways row of large photo tiles (12 pt corners, RD-8; the
+ *  first carries a solid accent "N new" chip, N = photos), then "Tap a photo to start" and "From Alex since
+ *  Wednesday" (OPEN-2's day rules). Any tile or See all opens the walk at the oldest new post. No group names. */
+export function NewForYouRow({ posts, since, onSee }: { posts: FeedPost[]; since: string; onSee: () => void }) {
+  const { c } = useTheme();
+  const { width } = useWindowDimensions();
+  const side = tileSide(width);
+  // GUX-R6 / OPEN-12: only photos that are ready make tiles; the words and See all stay either way.
+  const tiles = posts.flatMap((p) => p.media.filter((m) => m.status === 'ready').map((m) => ({ postId: p.post_id, mediaId: m.media_id, from: `${p.author_name}, ${shortDate(p.published_at)}` })));
+  const count = `${tiles.length} new`;
   return (
-    <Card testID="new-for-you">
-      <Txt variant="title" role="header">New for you</Txt>
-      {tiles.length ? <PhotoCollage postId="new-for-you" media={tiles} /> : null}
-      <Txt>{sentLine(since, posts.map((p) => p.author_name))}</Txt>
-      <Button variant="tinted" label="See the new photos" onPress={onSee} />
-    </Card>
+    <View testID="new-for-you" style={{ gap: SPACE.sm }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: SPACE.sm }}>
+        <Txt variant="title" role="header">New for you</Txt>
+        <Button variant="quiet" label="See all the new photos, one at a time" text="See all" onPress={onSee} />
+      </View>
+      {tiles.length ? (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: SPACE.md }} style={{ marginHorizontal: -SPACE.lg }}>
+          <View style={{ width: SPACE.lg - SPACE.md }} />
+          {tiles.map((t, i) => (
+            <Pressable
+              key={t.mediaId}
+              testID={`new-tile-${t.mediaId}`}
+              accessibilityRole="button"
+              accessibilityLabel={`${i === 0 ? `${count}. ` : ''}New photo from ${t.from}. Start the new photos`}
+              onPress={onSee}
+              style={{ width: side, height: side, borderRadius: 12, overflow: 'hidden', backgroundColor: c.photo }}
+            >
+              <MediaImage postId={t.postId} mediaId={t.mediaId} fit="cover" full={false} style={{ flex: 1 }} />
+              {i === 0 ? (
+                <View style={{ position: 'absolute', top: SPACE.sm, left: SPACE.sm, backgroundColor: c.accent, borderRadius: 12, paddingHorizontal: SPACE.md, paddingVertical: SPACE.xs }}>
+                  <Txt variant="strong" style={{ color: c.accentInk }}>{count}</Txt>
+                </View>
+              ) : null}
+            </Pressable>
+          ))}
+          <View style={{ width: SPACE.lg - SPACE.md }} />
+        </ScrollView>
+      ) : null}
+      <View>
+        <Txt>Tap a photo to start</Txt>
+        <Txt variant="muted">{fromLine(since, posts.map((p) => p.author_name))}</Txt>
+      </View>
+    </View>
   );
 }
 
-/** GUX-R5: "Sent today by Chase and Alex"; earlier days read "Sent since yesterday|Tuesday|Nov 3 by …". */
-function sentLine(since: string, names: string[]): string {
+/** RD-20 (QA-R3): "From Chase and Alex today"; earlier days "From Alex since yesterday|Wednesday|Nov 3" (OPEN-2). */
+export function fromLine(since: string, names: string[]): string {
   const day = newSinceDay(since);
   const who = andList(names);
-  return day === 'today' ? `Sent today by ${who}` : `Sent since ${day} by ${who}`;
+  return day === 'today' ? `From ${who} today` : `From ${who} since ${day}`;
 }
 
 /** OPEN-7/8: one new post at a time, in place of Photos. Next reads Done on the last and returns to Photos. */

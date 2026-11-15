@@ -5,6 +5,9 @@ const { test, expect } = require('../../e2e/node_modules/@playwright/test');
 
 const FIXTURE = path.join(__dirname, 'fixtures', 'park-gps.jpg');
 
+// RD-18 (redesign 1c): Gallery is the photo grid; the post cards (captions, hearts, replies) are on Feed (RD-17).
+const onFeed = (page) => page.getByRole('tab', { name: /^Feed/ }).click();
+
 async function signIn(page, email) {
   await page.goto('/sign-in');
   await page.getByLabel('Your email').fill(email);
@@ -49,6 +52,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await page.getByLabel("What's happening?").fill('Pumpkin patch');
   await page.getByRole('checkbox', { name: "Grandparents – Dad's side, 2 people" }).click(); // Jo hasn't joined yet
   await page.getByRole('button', { name: 'Post' }).click();
+  await onFeed(page);
   await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
   await expect(page.getByText(/to Grandparents – Dad's side/)).toBeVisible(); // MOMENT-1: on the card
   await page.getByRole('button', { name: 'More for this photo' }).click(); // MOMENT-6: the full words are under More
@@ -69,6 +73,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await page.getByRole('button', { name: 'Send me a code' }).click();
   await page.getByLabel('6-number code').fill('123456');
   await page.getByRole('button', { name: 'Continue' }).click();
+  await onFeed(page);
   await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: /^You, .+ can see this$/ })).toBeVisible(); // WHO-6/10: names, never the group
   await page.getByRole('button', { name: 'More for this photo' }).click();
@@ -79,12 +84,14 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
 
   // 3. Nana Ruth (Mom's side) does not see it.
   await signIn(page, 'ruth@example.com');
+  await onFeed(page);
   await expect(page.getByText(/No photos yet/)).toBeVisible();
   await expect(page.getByText('Pumpkin patch', { exact: true })).toHaveCount(0);
   await signOut(page, 'Help');
 
   // 4. Grandma Jo hearts it and writes back.
   await signIn(page, 'jo@example.com');
+  await onFeed(page);
   await page.getByRole('button', { name: 'Love it' }).click();
   await expect(page.getByText('❤️ 1')).toBeVisible(); // REACT-11: the phone's own emoji
   await page.getByLabel('Write something back to Chase').fill('Look at those cheeks!');
@@ -99,6 +106,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
 
   // 5. Chase sees the heart and the comment (no "Seen by" count), then deletes it.
   await signIn(page, 'chase@example.com');
+  await onFeed(page);
   await expect(page.getByText('❤️ 1')).toBeVisible(); // REACT-11: the phone's own emoji
   await expect(page.getByText(/Look at those cheeks!/)).toBeVisible();
   await expect(page.getByText(/Seen by/)).toHaveCount(0); // RV-U1 (DEC-21): no "Seen by" count

@@ -51,7 +51,7 @@ Split into three PRs, in order, one at a time (small PRs, no bursts). Each is sh
 ### 1c. Gallery and New for you
 | ID | Given / When / Then | Type |
 |---|---|---|
-| RD-18 | Given posts, Gallery shows every photo by month ("November 2026") in a tight square grid, newest first, with Show older photos; every tile is 48 pt+ and its spoken label names the sender and day (OPEN-10 kept). | auto |
+| RD-18 | Given posts, Gallery shows every photo by month ("November 2026") in a tight square grid, newest first, with Show older photos; every tile is 48 pt+ and its spoken label names the sender and day (OPEN-10 kept). The grid orders by the date the photo was taken when the phone knew it, otherwise the date it was shared, like Apple Photos (QA-R2, Nov 15), so old photos added today sit in their own months. | auto |
 | RD-19 | Given new posts from others since the last visit (OPEN-1, OPEN-5), then above the grid sits "New for you" with a sideways row of large photo tiles; the first tile carries a solid accent chip "N new" (N = new photos, not posts). | auto |
 | RD-20 | Under "New for you" one line reads "Tap a photo to start" and the sender line ("From Alex since Wednesday", OPEN-2's day rules). | auto |
 | RD-21 | Tapping any New for you tile opens the one-at-a-time walk at the oldest new post (OPEN-7, OPEN-8 unchanged); Done returns to Gallery. The row also has a "See all" text button that opens the same walk (no swipe needed to reach it, DS-4). | auto |

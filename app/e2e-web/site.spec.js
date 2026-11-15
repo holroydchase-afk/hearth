@@ -56,7 +56,7 @@ test(`DEMO-5 Grandma's view and Start over stay inside ${BASE}/`, async ({ page 
 
 test('RR-15 reloading an open full-screen photo on the static host keeps the photo open', async ({ page }) => {
   await page.goto(`${BASE}/`);
-  await page.getByRole('button', { name: /Open photo 1 of/ }).first().click();
+  await page.getByRole('button', { name: /^Open photo from / }).first().click(); // RD-18: a Gallery grid tile
   await expect(page.getByRole('button', { name: 'Save to my phone' })).toBeVisible();
   const status = (await page.reload()).status();
   expect(status).toBe(200);

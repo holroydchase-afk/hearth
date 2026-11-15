@@ -55,6 +55,7 @@ test('VID-18 a video post shows its poster with a Play word button on Photos and
   await page.getByLabel("What's happening?").fill('Leo on the slide');
   await page.getByRole('checkbox', { name: "Grandparents – Dad's side, 2 people" }).click();
   await page.getByRole('button', { name: 'Post' }).click();
+  await page.getByRole('tab', { name: /^Feed/ }).click(); // RD-18: the post card (and its Play button) is on Feed
   await expect(page.getByText('Leo on the slide', { exact: true })).toBeVisible();
 
   // Stored as a video with a poster thumb (no migration: display = MP4, thumb = JPEG).

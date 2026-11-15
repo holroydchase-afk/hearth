@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// The post list, newest first, in two places (SPEC-REDESIGN 1b): Feed (RD-17, today's Photos list, everything kept)
-// and, for now, Gallery (RD-11..13: the greeting, the two-item top bar, New for you and All photos above the same
-// list; 1c replaces Gallery's list with the photo grid). The old five-button toolbar is gone (RD-13): Search and
-// By date sit in Gallery's top bar; Messages and Events moved to More (RD-15).
+// Two screens share this file's state (search, the timeline, the walk, the last visit). Feed (RD-17) is the post
+// list, newest first, with everything the old Photos list had. Gallery (SPEC-REDESIGN 1b/1c) is the greeting and the
+// two-item top bar (RD-11..13), New for you's sideways row when others sent photos since the last visit (RD-19..21),
+// then every photo by month in a square grid (RD-18). Messages and Events moved to More (RD-15).
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, FlatList, RefreshControl, View, useWindowDimensions, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { Animated, FlatList, RefreshControl, ScrollView, View, useWindowDimensions, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PhotosDemoTip } from '../demo/DemoTip';
 import { useApp, useFeed } from '../state/AppContext';
@@ -19,8 +19,8 @@ import { useTheme } from '../ui/theme';
 import { AppGate } from './AppGate';
 import { EventCard, EventsScreen, EventUpdate, type EventsView } from './EventsScreen';
 import { FOLD_AT, GalleryTopBar, LargeGreeting, greeting, useFamilyName } from './GalleryTop';
-import { NewForYouCard, OneAtATime } from './NewForYou';
-import { PhotoWall } from './PhotoWall';
+import { GalleryGrid } from './GalleryGrid';
+import { NewForYouRow, OneAtATime } from './NewForYou';
 import { PostCard } from './PostCard';
 import { QueueStatus } from './QueueStatus';
 import { SearchScreen } from './SearchScreen';
@@ -70,11 +70,9 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
     saved.current = me;
     void saveLastSeen(kv, me, fetchedAt);
   }, [kv, me, lastSeen, fetchedAt]);
-  // OPEN-7: the new posts one at a time; OPEN-9: the photo wall. Both open in place; Back returns here.
+  // OPEN-7 / RD-21: the new posts one at a time, in place; Back and Done return here.
   const [walk, setWalk] = useState<string[] | null>(null);
-  const [wall, setWall] = useState(false);
   const closeWalk = useCallback(() => setWalk(null), []);
-  const closeWall = useCallback(() => setWall(false), []);
   // RD-11/RD-12: Gallery's greeting, folded into the top bar once the list scrolls past it.
   const familyName = useFamilyName(gallery);
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -88,7 +86,6 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   const feed = app.feed;
   if (search) return <SearchScreen onClose={() => setSearch(false)} />;
   if (walk) return <OneAtATime postIds={walk} onClose={closeWalk} />;
-  if (wall) return <PhotoWall onClose={closeWall} />;
   if (timeline) return <TimelineScreen startAt={timeline.startAt} onClose={() => setTimeline(null)} />;
   if (events) {
     return (
@@ -120,7 +117,6 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
           : null;
 
   const words = familyName === undefined ? null : greeting(new Date(), familyName);
-  const hasPosts = state.loaded && state.posts.length > 0;
   const header = (
     <View style={{ gap: 12 }}>
       {/* RD-11: Gallery's large title is the greeting (shown once the name is known, so it never flips mid-read);
@@ -128,26 +124,24 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
       {gallery
         ? (words ? <LargeGreeting words={words} scrollY={scrollY} /> : null)
         : <Txt variant="display" role="header">{`Photos of ${app.space.name}`}</Txt>}
-      {senders ? <Txt variant="muted">{`Sent by ${senders}`}</Txt> : null}
+      {/* RD-18: Gallery has no "Sent by" line; the grid tiles and New for you name the senders. */}
+      {senders && !gallery ? <Txt variant="muted">{`Sent by ${senders}`}</Txt> : null}
       {fresh.length && lastSeen?.at ? (
-        <NewForYouCard posts={fresh} since={lastSeen.at} onSee={() => setWalk(fresh.map((p) => p.post_id))} />
-      ) : null}
-      {/* OPEN-9 (GUX-R3): the wall, until 1c makes Gallery the wall itself. Never in the top bar (RD-13). */}
-      {gallery && hasPosts ? (
-        <Button variant="secondary" label="See all the photos, three to a row" text="All photos" icon={{ sf: 'square.grid.3x3', md: 'grid_view' }} onPress={() => setWall(true)} />
+        <NewForYouRow posts={fresh} since={lastSeen.at} onSee={() => setWalk(fresh.map((p) => p.post_id))} />
       ) : null}
       <PhotosDemoTip width={width} />
       {app.space.can_post ? <YourName /> : null}
       <QueueStatus />
       {app.pushAsk && state.posts.length ? <PushAsk /> : null}
       {state.notice ? <Notice text={state.notice} onClose={() => feed.clearNotice()} /> : null}
-      {earlier.map((g) => (
+      {/* BETA-TIME-1 on Feed; on Gallery old photos sit in their own months in the grid (RD-18, QA-R2). */}
+      {gallery ? null : earlier.map((g) => (
         <EarlierCard key={g.authorId} g={g} onOpen={() => setTimeline({ startAt: startOfNextMonth(g.openAt) })} />
       ))}
     </View>
   );
 
-  const empty = state.loaded && earlier.length ? null : !state.loaded ? (
+  const empty = state.loaded && (gallery ? state.posts.length : earlier.length) ? null : !state.loaded ? (
     <Loading words="Loading the photos…" />
   ) : (
     <Txt variant="muted">
@@ -157,28 +151,46 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
     </Txt>
   );
 
+  const older = state.hasMore ? (
+    <Button label="Show older photos" variant="secondary" busy={state.status === 'loadingMore'} onPress={() => void feed.loadMore()} />
+  ) : undefined;
+  const refresh = <RefreshControl refreshing={state.status === 'refreshing'} onRefresh={() => void feed.refresh()} />;
+
+  if (gallery) {
+    // RD-18: a ScrollView, not a FlatList: a page is 20 posts of thumbnails, and every month block shows at once.
+    return (
+      <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
+        <GalleryTopBar words={words} folded={folded} onSearch={() => setSearch(true)} onByDate={() => setTimeline({ startAt: null })} />
+        <ScrollView
+          testID="gallery-scroll"
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          refreshControl={refresh}
+          contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          {header}
+          {empty}
+          {state.posts.length ? <GalleryGrid posts={state.posts} /> : null}
+          {older}
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
-      {gallery ? (
-        <GalleryTopBar words={words} folded={folded} onSearch={() => setSearch(true)} onByDate={() => setTimeline({ startAt: null })} />
-      ) : null}
       <FlatList
-        testID={gallery ? 'gallery-scroll' : undefined}
-        onScroll={gallery ? onScroll : undefined}
         scrollEventThrottle={16}
         data={rows}
         keyExtractor={(r) => r.key}
         renderItem={renderRow}
         ListHeaderComponent={header ?? undefined}
         ListEmptyComponent={empty ?? undefined}
-        ListFooterComponent={
-          state.hasMore ? (
-            <Button label="Show older photos" variant="secondary" busy={state.status === 'loadingMore'} onPress={() => void feed.loadMore()} />
-          ) : undefined
-        }
+        ListFooterComponent={older}
         onEndReached={() => void feed.loadMore()}
         onEndReachedThreshold={0.5}
-        refreshControl={<RefreshControl refreshing={state.status === 'refreshing'} onRefresh={() => void feed.refresh()} />}
+        refreshControl={refresh}
         contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 }}
         keyboardShouldPersistTaps="handled"
         removeClippedSubviews={false}

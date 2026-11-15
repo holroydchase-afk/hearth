@@ -4,12 +4,18 @@ stage: building
 goal: hearth-beta
 milestone: HRT-M1
 now: push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
-next: redesign R46 phase 1b built (RD-9..17); qa-tdd 3x, then grandparent-ux on the tabs, greeting and More, then 1c; CLAUDE.md rule 3 words line waits on Chase; stop date Nov 19
+next: redesign R46 phases 1a..1c built (RD-1..27); qa-tdd 3x, then grandparent-ux on 1a..1c; CLAUDE.md rule 3 words line waits on Chase; stop date Nov 19
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 15: redesign 1c built, Gallery grid and New for you (RD-18..23; B19 fixed; branch claude/project-thread-iyml94, local commits)
+- **B19 / QA-R1, QA-R4 (commit 1):** `app/src/app/groups|me|help.tsx` redirect to `/more?open=<row>`; `MoreScreen initialOpen` opens it only if the role has that row (a viewer asking for Groups gets the menu). `build-demo.sh` copies index.html for those routes. "Back to Photos", "Done, back to Photos", "Go to Photos" now say Gallery. Tests: `oldTabLinks.test.tsx`, DEMO-5 (now also /help and checks Back to More).
+- **1c (commit 2):** `feed/gallery.ts` (months, sorted by date taken else shared: QA-R2, written into SPEC RD-18), `screens/GalleryGrid.tsx`, `NewForYouRow` in `NewForYou.tsx` ("N new" accent chip on the first tile, 12 pt corners, "Tap a photo to start", "From Alex since Thursday" per QA-R3, See all text button). Gallery is a ScrollView; Feed keeps the list, "Sent by" and Older photos cards. PhotoWall removed. Demo "Try this" step 1 reworded.
+- **Tests moved (flag for qa-tdd):** e2e-web `core-loop`, `perf`, `video` open the Feed tab before reading captions (perf goes back to Gallery to time it); `site.spec` RR-15 taps a grid tile instead of "Open photo 1 of". Guarantees unchanged.
+- **Next exact step:** qa-tdd all suites 3x; grandparent-ux on shots `1c-*.png` (session scratchpad). Demo tip still says "a parent's Photos" (words pass). Not pushed.
 
 ## Nov 15: redesign 1c failing tests written (RD-18..23, RD-8 New for you corners; branch claude/project-thread-iyml94, local commit)
 - **qa-tdd, red on purpose (run r27):** `app/src/screens/__tests__/redesignGallery.test.tsx` (new) plus the old rules moved over: `opening.test.tsx`, `timeline.test.tsx` (BETA-TIME-1 card now checked on Feed), `demoFrame.test.tsx`, `e2e-web/demo.spec.js`, `e2e-web/site.spec.js`. Jest 44 red the same on 3 runs; typecheck clean. The engineer's contract (header of redesignGallery): testIDs `gallery-grid`, `gallery-tile-<mediaId>`, `new-for-you`, `new-tile-<mediaId>`; a "See all" text button; Gallery shows no post cards and no "Sent by" line (spec: greeting then grid); "See the new photos" and All photos go.
