@@ -4,7 +4,7 @@ Owner: grandparent-ux (Hearth's UI/UX designer). Written Oct 19, 2026, from Chas
 
 ## Portable tokens (DS-TOKENS, Nov 4)
 
-The type scale, spacing, corners, tap target, font and both palettes are also in [`docs/design/tokens.json`](../design/tokens.json), generated from `app/src/ui/theme.ts` (a test fails if they drift). Other studio products reuse it and swap the colors. Font: Atkinson Hyperlegible Next only (Chase, Nov 1, reaffirmed Nov 4).
+The type scale, spacing, corners, tap target, font and both palettes are also in [`docs/design/tokens.json`](../design/tokens.json), generated from `app/src/ui/theme.ts` (a test fails if they drift). Other studio products reuse it and swap the colors. Font: the phone's own (DEC-59, Nov 15; Atkinson Hyperlegible Next until the redesign's phase 1a merges).
 
 ## The rule
 
@@ -34,21 +34,23 @@ The web viewer (for GG and anyone without the app) follows the iPhone column wit
 
 ## Hearth overrides (stricter than the platform)
 
+DEC-59 (Nov 15, `SPEC-REDESIGN.md`) rewrote DS-3, DS-7, DS-9, DS-11, DS-12 and DS-13. The app follows the old rows until each phase 1 PR merges; "How the app does it" and the palette table below describe today's build until then.
+
 | # | Override | Platform default it tightens | Why |
 |---|---|---|---|
 | DS-1 | Tap targets are **48 pt** on both phones, with space between them | HIG allows 44 pt | CLAUDE.md rule 3; older hands and older phones |
 | DS-2 | **No text smaller than 17 pt** at the default size, including captions, timestamps and tab labels | HIG and Material use 11–13 pt for captions and tabs | Rule 3; UX-REVIEW found 11–12 pt labels June couldn't read |
-| DS-3 | **Every icon has a word** under or beside it. No icon-only buttons, even in toolbars | HIG and Material allow icon-only toolbar buttons | Rule 3; G3 "tap the one that says…" over the phone |
+| DS-3 | **Every icon has a word** under or beside it. No icon-only buttons, even in toolbars. Top right holds only **Search** and **By date**; no row of buttons above the title (DEC-59) | HIG and Material allow icon-only toolbar buttons | Rule 3; G3 "tap the one that says…" over the phone; Chase, Nov 14: "I only want like search … and maybe 1 more in the upper right" |
 | DS-4 | **Every swipe, long-press or pinch also has a button** that does the same thing | HIG says offer alternatives; Hearth makes it a must | Rule 3: no gesture-only actions |
 | DS-5 | **Tab labels never hide**: no tab bar that minimizes on scroll, no labels that show only when selected | iOS lets the tab bar minimize; Material lets labels show only when selected | The way back must always be visible, with its word |
 | DS-6 | **Text sits on a solid background.** No text over translucent glass or a photo without a solid backing | iOS translucent materials | Contrast outdoors and on old screens; honors Reduce Transparency |
-| DS-7 | **Hearth's words**: group (not circle), Photos (not feed), Help (not Me) | Platform words like "Library" or "Settings" | Rule 3 |
+| DS-7 | **Hearth's words**: group (not circle). Tabs **Gallery, Share, Feed, More** (viewers: Gallery, Feed, More); Me and Help are rows in More (DEC-59; was Photos, not feed; Help, not Me) | Platform words like "Library" or "Settings" | Rule 3; Chase's tab names, Nov 14 |
 | DS-8 | **Errors and loading use words**: what happened, what to do, who to call; spinners always have a line of text | Platforms allow a bare spinner | G2, GOALS "never empty, never silent" |
-| DS-9 | **One main action per screen**, as one filled button | Platforms allow several prominent buttons | "Just show me the babies" (LG) |
-| DS-10 | **Anyone can pick a light or dark screen** (Same as my phone, Light, Dark) on Help or Me, right after Bigger text | Apps usually just follow the phone | Chase, Nov 1 2026 (DEC-47); a relative can be told one step instead of changing the whole phone |
-| DS-11 | **Warm Hearth colors on every phone** (Nov 5, DEC-50: Ember, Sage or Plum, picked under Colors on Help or Me; Ember by default): warm off-white and warm charcoal (never pure black), one blue for taps, body text 7:1 (AAA), waiting buttons solid gray (no see-through) | Each platform's own system colors at 4.5:1 | Chase found the system colors "rough" (DEC-47); one look across phones and the web |
-| DS-12 | **Atkinson Hyperlegible Next** (Braille Institute, SIL OFL) on every phone and the web, in three weights only: Regular for reading, Medium for Android buttons and unpicked tabs, SemiBold for names, titles, buttons and the picked tab. Never Light, Bold, ExtraBold, italics or all caps | Each phone's own font | Made for low-vision readers; Chase picked it from three side by side and found bold too heavy (DEC-47) |
-| DS-13 | **One spacing scale and four corner sizes**: gaps from `SPACE` (4, 8, 12, 16, 24, 32), corners from `RADIUS` (small 4, medium 12, large 20, pill). Dialogs keep each phone's own corner (14 pt iPhone, 28 dp Android) | Platforms give guidance, not one scale | The Nov 1 sweep found 9 corner sizes and 13 gaps picked by hand (V3, V5). New code uses the tokens; old screens move as they're touched (R30) |
+| DS-9 | **No large filled buttons** except deliberate ones: Delete and Leave confirms, sign-in and Start a family, Post. Main actions are tappable rows, photos, text buttons or small tinted capsules, still 48 pt to tap (DEC-59, RD-7; was one filled button per screen) | Platforms allow several prominent buttons | Chase, Nov 15: giant buttons "look dated" |
+| DS-10 | **Anyone can pick a light or dark screen** (Same as my phone, Light, Dark) on Help or Me (More → Light or dark after DEC-59), right after Bigger text | Apps usually just follow the phone | Chase, Nov 1 2026 (DEC-47); a relative can be told one step instead of changing the whole phone |
+| DS-11 | **Black and white plus one family accent** (DEC-59): white and true black screens; one `accent` token (Ember `#B23A1E` / `#FF8A65` by default; Forest or Plum picked by the family's owner under More → Family color, RD-24..26), used only on the main tap word or chip, the picked tab and the new-message dot; text 4.5:1 minimum, body 7:1. Replaces the warm palette and the per-person picker (DEC-47, DEC-50) | Each platform's own system colors at 4.5:1 | Chase, Nov 14: "black and white and an accent"; one colored word is the easiest thing to name over the phone |
+| DS-12 | **The phone's own font** (SF Pro on iPhone, Roboto on Android, the system stack on the web) in Regular and Semibold; Bold only for the large greeting title. Never Light, italics or all caps. Outline icons (SF Symbols, Material Symbols Outlined) (DEC-59; replaces Atkinson Hyperlegible Next, DEC-47) | Each phone's own font | Chase, Nov 14: "Follow Apple to the T"; Dynamic Type works on its own |
+| DS-13 | **One spacing scale and few corners**: gaps from `SPACE` (4, 8, 12, 16, 24, 32); corners 12 for rows and New for you photos, 14 pt dialogs (28 dp Android), square in the Gallery grid. No card inside a card (DEC-59, RD-8) | Platforms give guidance, not one scale | The Nov 1 sweep found 9 corner sizes and 13 gaps picked by hand (V3, V5); Chase's redesign, Nov 14 |
 | DS-14 | **Follow the phone's accessibility settings** (Nov 6, HIG-3, -7, -8, -11): Increase Contrast gives each color a high-contrast set (secondary words 7:1, edges 4.5:1); Reduce Motion fades sheets instead of sliding; tab and toolbar words and icons grow with Larger Text up to 1.5x (`LABEL_SCALE_CAP`), then the tab shows Apple's large pop-up label | Apple asks for all of these | Apple design guidelines sweep, doc https://claude.ai/artifact/3N1G5jF4ezeQ2Gtf2jFwZU; DEC-54 |
 | DS-15 | **Ask for notices only after the first photo, with a Hearth card first** (HIG-1), one button that opens the phone's prompt, plus Not now. Never at launch | Apple: ask when needed and say why first | A "Don't Allow" can only be undone in iPhone Settings, which nobody can do for Gammy from far away (GOALS); DEC-54 |
 
