@@ -273,7 +273,7 @@ describe('RD-16 no group names past More for anyone but parents', () => {
     for (const row of rows) {
       fireEvent.press(screen.getByRole('button', { name: new RegExp(`^${row}(,|$)`) }));
       await screen.findByRole('button', { name: 'Back to More' });
-      if (row === 'Messages') await screen.findByRole('button', { name: /^Open the chat/ }, slow);
+      if (row === 'Messages') await screen.findAllByRole('button', { name: /^Open the chat/ }, slow); // Jo has two chats (Everyone, Dad's side)
       expect({ row, words: screenWords() }).toEqual({ row, words: expect.not.stringMatching(GROUP_NAMES) });
       fireEvent.press(screen.getByRole('button', { name: 'Back to More' }));
       await screen.findByRole('header', { name: 'More' });

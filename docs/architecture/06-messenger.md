@@ -37,6 +37,7 @@ The server decides who *may* be in the chat; the phones decide who *is* in the M
 | Sealed messages, commits, welcomes | `chat_messages` (base64), kept indefinitely for now | Nobody can open them without a member's keys |
 | Public signing key, key packages | `chat_devices`, `chat_key_packages` | Hearth's server (public material) |
 | Who sent a row to which chat, when, its kind, epoch and size | `chat_messages` | **Hearth's server** (metadata) |
+| The highest row number this person has seen in each chat, for More's "N new" count (RD-14) | This phone only (`hearth.chatSeen.v1.<user>.<chat>`, `app/src/messenger/newMessages.ts`) | That phone; never sent, so no read receipts (A2) |
 
 ## Guarantees and limits
 
@@ -46,8 +47,8 @@ The server decides who *may* be in the chat; the phones decide who *is* in the M
 - **Gap: metadata.** The server sees who posts to which chat, when, and roughly how much.
 - **Gap: one phone per person.** A new phone replaces the old one at the next key change; history doesn't move to the new phone.
 - **Gap: someone must open Messages to let a newcomer in.** Only members' phones can add people.
-- **Gap: no push for messages** until milestone 2; the screen checks every 10 seconds while open.
+- **Gap: no push for messages** until milestone 2; the screen checks every 10 seconds while open. Built (RD-14, Nov 15): the app counts others' message rows past the last one seen on this phone (sender and row number only, never decrypted) every two minutes, for the dot on More and "N new" on Messages.
 - **Gap: not audited.** `mlsCrypto.ts` is about 170 lines of our own glue code (hand-written HPKE plus the ciphersuite wiring) around the audited `@noble` primitives and ts-mls. It has had no outside review. Our privacy-security agent checked it against RFC 9180 and RFC 9420 on 2026-10-19 and found the math right (labels, key schedule, nonces, export, the all-zero X25519 check). It found one real problem, now fixed: expo-crypto's `getRandomBytes` quietly uses `Math.random` in development builds, which includes Expo Go, so keys could have been predictable. All app randomness now goes through `app/src/crypto/random.ts`, which uses only `getRandomValues` and fails rather than fall back (tests MS4). That fix also covers photo keys and the local-storage key, which used the same call. Smaller items still open: no RFC 9180 known-answer test vectors, and export is interop-tested in one direction only. Signatures use strict RFC 8032 checks.
 
 ---
-Last checked against code: 2026-10-26, messenger moved into the shared library `packages/messenger` (behavior unchanged; migration 0015)
+Last checked against code: 2026-11-15, RD-14 new-message count (rows read from the relay, last-seen row kept on the phone only; no server change); earlier 2026-10-26, messenger moved into the shared library `packages/messenger` (behavior unchanged; migration 0015)

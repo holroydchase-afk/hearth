@@ -21,8 +21,8 @@ const nav: Nav = {
   openViewer: (postId, i) => router.push(DEMO_MODE
     ? { pathname: '/viewer', params: { postId, i: String(i) } }
     : { pathname: '/viewer/[postId]', params: { postId, i: String(i) } }),
-  close: () => (router.canGoBack() ? router.back() : router.replace('/photos')),
-  goPhotos: () => router.replace('/photos'),
+  close: () => (router.canGoBack() ? router.back() : router.replace('/gallery')),
+  goPhotos: () => router.replace('/gallery'),
   goSignIn: (opts) => router.replace(opts?.with === 'email' ? { pathname: '/sign-in', params: { with: 'email' } } : '/sign-in'),
   goJoin: (code) => router.push({ pathname: '/join/[code]', params: { code } }),
 };

@@ -1,20 +1,24 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
+// The post list, newest first, in two places (SPEC-REDESIGN 1b): Feed (RD-17, today's Photos list, everything kept)
+// and, for now, Gallery (RD-11..13: the greeting, the two-item top bar, New for you and All photos above the same
+// list; 1c replaces Gallery's list with the photo grid). The old five-button toolbar is gone (RD-13): Search and
+// By date sit in Gallery's top bar; Messages and Events moved to More (RD-15).
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FlatList, RefreshControl, View, useWindowDimensions } from 'react-native';
+import { Animated, FlatList, RefreshControl, View, useWindowDimensions, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PhotosDemoTip } from '../demo/DemoTip';
 import { useApp, useFeed } from '../state/AppContext';
 import { loadLastSeen, saveLastSeen } from '../state/lastSeen';
-import { eventList, photosRows, type PhotosRow } from '../feed/events';
+import { photosRows, type PhotosRow } from '../feed/events';
 import { newForYou } from '../feed/newForYou';
 import { earlierGroups, isFromEarlier, monthSpan, startOfNextMonth, type EarlierGroup } from '../feed/timeline';
-import { Button, Card, IconButton, Loading, Notice, Txt } from '../ui/kit';
+import { Button, Card, Loading, Notice, Txt } from '../ui/kit';
 import { andList } from '../ui/format';
 import { useTheme } from '../ui/theme';
 import { AppGate } from './AppGate';
 import { EventCard, EventsScreen, EventUpdate, type EventsView } from './EventsScreen';
-import { MessagesScreen } from './MessagesScreen';
+import { FOLD_AT, GalleryTopBar, LargeGreeting, greeting, useFamilyName } from './GalleryTop';
 import { NewForYouCard, OneAtATime } from './NewForYou';
 import { PhotoWall } from './PhotoWall';
 import { PostCard } from './PostCard';
@@ -34,13 +38,10 @@ function EarlierCard({ g, onOpen }: { g: EarlierGroup; onOpen: () => void }) {
   );
 }
 
-// LIVE-2: the toolbar sits at the top right; with Bigger text it wraps instead of squeezing.
-const TOOLBAR = { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 4 } as const;
-// TOOLBAR-1 (UX-R1): when the buttons don't fit in one row, two to a row, so none sits alone on the second line.
-const TOOLBAR_HALF = { ...TOOLBAR, columnGap: 0 } as const;
-const HALF = { width: '50%', alignItems: 'center' } as const;
+export type PhotosMode = 'feed' | 'gallery';
 
-export function PhotosScreen() {
+export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
+  const gallery = mode === 'gallery';
   const app = useApp();
   const state = useFeed();
   const { c } = useTheme();
@@ -49,8 +50,6 @@ export function PhotosScreen() {
   const [timeline, setTimeline] = useState<{ startAt: string | null } | null>(null);
   // EVT-3/4: the Events list or one event, opened in place; Back returns here.
   const [events, setEvents] = useState<EventsView | null>(null);
-  // SPEC-MESSENGER: Messages opens in place too; Back returns here.
-  const [messages, setMessages] = useState(false);
   // SEARCH-UI-1: Search opens in place too; Back returns here.
   const [search, setSearch] = useState(false);
   // OPEN-5 (GUX-R4, QA-R1): the last visit, read once when Photos loads. It is saved only once the first network load
@@ -59,11 +58,11 @@ export function PhotosScreen() {
   const kv = app.deps.kv;
   const [lastSeen, setLastSeen] = useState<{ user: string; at: string | null } | null>(null);
   useEffect(() => {
-    if (!me) return;
+    if (!me || !gallery) return; // New for you lives on Gallery (the start screen); Feed never moves the last visit
     let live = true;
     void loadLastSeen(kv, me).then((at) => { if (live) setLastSeen({ user: me, at }); });
     return () => { live = false; };
-  }, [kv, me]);
+  }, [kv, me, gallery]);
   const saved = useRef<string | null>(null);
   const fetchedAt = state.fetchedAt;
   useEffect(() => {
@@ -72,15 +71,21 @@ export function PhotosScreen() {
     void saveLastSeen(kv, me, fetchedAt);
   }, [kv, me, lastSeen, fetchedAt]);
   // OPEN-7: the new posts one at a time; OPEN-9: the photo wall. Both open in place; Back returns here.
-  const [barWidth, setBarWidth] = useState(0);
-  const [buttonWidths, setButtonWidths] = useState<Record<string, number>>({});
   const [walk, setWalk] = useState<string[] | null>(null);
   const [wall, setWall] = useState(false);
   const closeWalk = useCallback(() => setWalk(null), []);
   const closeWall = useCallback(() => setWall(false), []);
+  // RD-11/RD-12: Gallery's greeting, folded into the top bar once the list scrolls past it.
+  const familyName = useFamilyName(gallery);
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const [folded, setFolded] = useState(false);
+  const onScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const y = e.nativeEvent.contentOffset.y;
+    scrollY.setValue(y);
+    setFolded(y > FOLD_AT);
+  }, [scrollY]);
   if (app.status !== 'ready' || !app.space || !app.feed) return <AppGate />;
   const feed = app.feed;
-  if (messages) return <MessagesScreen onClose={() => setMessages(false)} />;
   if (search) return <SearchScreen onClose={() => setSearch(false)} />;
   if (walk) return <OneAtATime postIds={walk} onClose={closeWalk} />;
   if (wall) return <PhotoWall onClose={closeWall} />;
@@ -99,7 +104,7 @@ export function PhotosScreen() {
     );
   }
   // OPEN-1: others' posts since the last visit on this phone; none on a first open (OPEN-5) or for my own posts.
-  const fresh = me && lastSeen?.user === me ? newForYou(state.posts, lastSeen.at, me) : [];
+  const fresh = gallery && me && lastSeen?.user === me ? newForYou(state.posts, lastSeen.at, me) : [];
   const senders = andList(state.posts.map((p) => p.author_name));
   // BETA-TIME-1: old photos added today don't take over the top; they go in a card.
   const earlier = earlierGroups(state.posts);
@@ -107,7 +112,6 @@ export function PhotosScreen() {
   // EVT-2/3: an event's first post is a bigger card; its later posts are ordinary cards (EVENT_LATER_POSTS_IN_PHOTOS).
   // MOMENT-7: each upload is its own moment (one card), even several within an hour.
   const rows = photosRows(recent);
-  const hasEvents = eventList(state.posts).length > 0;
   const openEvent = (eventId: string) => setEvents({ eventId, fromList: false });
   const renderRow = ({ item }: { item: PhotosRow }) =>
     item.type === 'post' ? <PostCard post={item.post} />
@@ -115,40 +119,22 @@ export function PhotosScreen() {
         : item.type === 'update' ? <EventUpdate eventId={item.eventId} eventName={item.eventName} photoCount={item.photoCount} onOpen={() => openEvent(item.eventId)} />
           : null;
 
-  // TOOLBAR-1: measured at their own width (never while halved), then halved only if they don't fit in one row.
-  const shown = ['Messages', ...(state.loaded && state.posts.length ? ['By date', 'Search', 'All photos'] : []), ...(hasEvents ? ['Events'] : [])];
-  const measured = shown.every((k) => buttonWidths[k]);
-  const half = barWidth > 0 && measured && shown.reduce((t, k) => t + buttonWidths[k]!, 0) + (shown.length - 1) * TOOLBAR.gap > barWidth;
-  const slot = (key: string, child: React.ReactNode) => (
-    <View key={key} testID="photos-toolbar-item" style={half ? HALF : undefined}
-      onLayout={half ? undefined : (e) => { const w = e.nativeEvent.layout.width; setButtonWidths((m) => (m[key] === w ? m : { ...m, [key]: w })); }}>
-      {child}
-    </View>
-  );
+  const words = familyName === undefined ? null : greeting(new Date(), familyName);
+  const hasPosts = state.loaded && state.posts.length > 0;
   const header = (
     <View style={{ gap: 12 }}>
-      {/* LIVE-2 (Chase, Nov 5): Messages, By date, Search and Events are everyday actions, so they sit as compact icon
-          buttons (a word under each) in a toolbar above the big title, like the phone's own large-title screens.
-          UI-26 still holds: no "Check for new photos" button; photos refresh on their own and on pull-down. */}
-      <View testID="photos-toolbar" style={half ? TOOLBAR_HALF : TOOLBAR} onLayout={(e) => setBarWidth(e.nativeEvent.layout.width)}>
-        {slot('Messages', <IconButton label="Messages" text="Messages" icon={{ sf: 'bubble.left.and.bubble.right', md: 'chat' }} onPress={() => setMessages(true)} />)}
-        {state.loaded && state.posts.length ? (
-          slot('By date', <IconButton label="Show photos by the date they were taken" text="By date" icon={{ sf: 'arrow.up.arrow.down', md: 'sort' }} onPress={() => setTimeline({ startAt: null })} />)
-        ) : null}
-        {state.loaded && state.posts.length ? (
-          slot('Search', <IconButton label="Search the photos" text="Search" icon={{ sf: 'magnifyingglass', md: 'search' }} onPress={() => setSearch(true)} />)
-        ) : null}
-        {state.loaded && state.posts.length ? (
-          slot('All photos', <IconButton label="See all the photos, three to a row" text="All photos" icon={{ sf: 'square.grid.3x3', md: 'grid_view' }} onPress={() => setWall(true)} />)
-        ) : null}
-        {hasEvents ? (
-          slot('Events', <IconButton label="See events" text="Events" icon={{ sf: 'calendar', md: 'event' }} onPress={() => setEvents({ eventId: null, fromList: true })} />)
-        ) : null}
-      </View>
-      <Txt variant="display" role="header">{`Photos of ${app.space.name}`}</Txt>
+      {/* RD-11: Gallery's large title is the greeting (shown once the name is known, so it never flips mid-read);
+          Feed keeps today's title. UI-26 still holds: no "Check for new photos" button; pull down to refresh. */}
+      {gallery
+        ? (words ? <LargeGreeting words={words} scrollY={scrollY} /> : null)
+        : <Txt variant="display" role="header">{`Photos of ${app.space.name}`}</Txt>}
       {senders ? <Txt variant="muted">{`Sent by ${senders}`}</Txt> : null}
       {fresh.length && lastSeen?.at ? (
         <NewForYouCard posts={fresh} since={lastSeen.at} onSee={() => setWalk(fresh.map((p) => p.post_id))} />
+      ) : null}
+      {/* OPEN-9 (GUX-R3): the wall, until 1c makes Gallery the wall itself. Never in the top bar (RD-13). */}
+      {gallery && hasPosts ? (
+        <Button variant="secondary" label="See all the photos, three to a row" text="All photos" icon={{ sf: 'square.grid.3x3', md: 'grid_view' }} onPress={() => setWall(true)} />
       ) : null}
       <PhotosDemoTip width={width} />
       {app.space.can_post ? <YourName /> : null}
@@ -173,7 +159,13 @@ export function PhotosScreen() {
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
+      {gallery ? (
+        <GalleryTopBar words={words} folded={folded} onSearch={() => setSearch(true)} onByDate={() => setTimeline({ startAt: null })} />
+      ) : null}
       <FlatList
+        testID={gallery ? 'gallery-scroll' : undefined}
+        onScroll={gallery ? onScroll : undefined}
+        scrollEventThrottle={16}
         data={rows}
         keyExtractor={(r) => r.key}
         renderItem={renderRow}

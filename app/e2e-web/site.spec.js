@@ -46,7 +46,7 @@ test(`DEMO-5 Grandma's view and Start over stay inside ${BASE}/`, async ({ page 
   await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
   await details(page);
   await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
-  expect(new URL(page.url()).pathname).toMatch(new RegExp(`^${baseRe}\\/photos\\/?$`));
+  expect(new URL(page.url()).pathname).toMatch(new RegExp(`^${baseRe}\\/gallery\\/?$`));
   await resetDemo(page);
   await expect(page.getByText(/You're Kai, a parent/)).toBeVisible();
   expect(new URL(page.url()).pathname).toMatch(new RegExp(`^${baseRe}\\/`));

@@ -3,16 +3,17 @@
 import React, { useEffect, useState } from 'react';
 import { DEMO_MODE } from '../demo/flags';
 import { useApp } from '../state/AppContext';
-import { Card, Screen, Txt } from '../ui/kit';
+import { BackButton, Card, Screen, Txt } from '../ui/kit';
 import { AppGate } from './AppGate';
 import { NoticeTiming } from './NoticeTiming';
 import { ProblemDetailsCard } from './ProblemDetails';
-import { BiggerText, DeleteAccount, HowToTell, FamilyColor, LightOrDark, PhotoHelpers, Privacy, ReplyAudience, SignOut } from './Preferences';
+import { BiggerText, DeleteAccount, HowToTell, LightOrDark, PhotoHelpers, Privacy, ReplyAudience, SignOut } from './Preferences';
 
-export function MeScreen() {
+/** `onBack`: opened from More (RD-15), so a "Back to More" button sits under the title. */
+export function MeScreen({ onBack }: { onBack?: () => void } = {}) {
   const app = useApp();
   if (app.status !== 'ready') return <AppGate />;
-  return <MeReady />;
+  return <MeReady onBack={onBack} />;
 }
 
 /** UI-4: the demo names its made-up person; the real app says which email you signed in with. */
@@ -29,18 +30,20 @@ function WhoYouAre() {
   return <Txt>{name ? `You're ${name}, in the made-up sample family.` : "You're in the made-up sample family."}</Txt>;
 }
 
-function MeReady() {
+function MeReady({ onBack }: { onBack?: () => void }) {
   const app = useApp();
   return (
     <Screen>
       <Txt variant="display" role="header">Me</Txt>
+      {onBack ? <BackButton to="More" onPress={onBack} /> : null}
       <Card>
         <WhoYouAre />
-        <Txt variant="muted">You can share photos and choose who sees them.</Txt>
+        {/* RD-15: viewers reach Me from More too, so say what each can do. */}
+        <Txt variant="muted">{app.space?.can_post ? 'You can share photos and choose who sees them.' : 'You can look at photos and write back.'}</Txt>
       </Card>
       <BiggerText />
       <LightOrDark />
-      <FamilyColor />
+      {/* RD-15 / RD-24: Family color moved to More (owner only). */}
       <HowToTell />
       <ReplyAudience />
       <PhotoHelpers />

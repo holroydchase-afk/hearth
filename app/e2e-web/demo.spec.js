@@ -192,6 +192,7 @@ test('RD-27 Kai switches Family color to Forest and the demo recolors; Grandma J
 // Feed, More with Gallery picked on open; More is a full-screen menu in the spec's order; Grandma Jo's view has
 // Gallery, Feed, More and no Groups or Family color.
 test('RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma Jo gets three tabs', async ({ page }) => {
+  const before = errors.length; // `errors` spans the file; HARD-7's blocked storage logs one on purpose
   await page.setViewportSize({ width: 360, height: 740 });
   await page.goto('/');
   await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
@@ -218,6 +219,7 @@ test('RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma 
   await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
   await expect(page.getByRole('tab')).toHaveText([/Gallery/, /Feed/, /More/]);
   await page.getByRole('tab', { name: /^More/ }).click();
+  await expect(page.getByRole('heading', { name: 'More' })).toBeVisible(); // wait for the menu before reading its rows
   expect(await labels()).toEqual(rows.filter((r) => r !== 'Groups' && r !== 'Family color'));
-  expect(errors).toEqual([]);
+  expect(errors.slice(before)).toEqual([]);
 });

@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Help tab for viewers (UX-REVIEW #11-#15): Call Chase first, Bigger text on by default.
+// Help (UX-REVIEW #11-#15): Call Chase first, Bigger text on by default. RD-15: a row in More for everyone.
 import React from 'react';
 import { useApp } from '../state/AppContext';
-import { Button, Card, Screen, Txt } from '../ui/kit';
+import { BackButton, Button, Card, Screen, Txt } from '../ui/kit';
 import { AppGate } from './AppGate';
 import { ProblemDetailsCard } from './ProblemDetails';
 import { BiggerText, DeleteAccount, LightOrDark, HowToTell, Privacy, SignOut } from './Preferences';
 
-export function HelpScreen() {
+export function HelpScreen({ onBack }: { onBack?: () => void } = {}) {
   const app = useApp();
   if (app.status !== 'ready') return <AppGate />;
   const who = app.helper;
@@ -16,6 +16,7 @@ export function HelpScreen() {
   return (
     <Screen>
       <Txt variant="display" role="header">Help</Txt>
+      {onBack ? <BackButton to="More" onPress={onBack} /> : null}
       <Card>
         <Txt variant="title">Need help?</Txt>
         {who && phone ? (

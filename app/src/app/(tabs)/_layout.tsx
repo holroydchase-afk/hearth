@@ -6,15 +6,19 @@ import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import React from 'react';
 import { Platform } from 'react-native';
 import { AppGate } from '../../screens/AppGate';
+import { useNewMessages } from '../../messenger/newMessages';
+import { resetMore } from '../../screens/MoreScreen';
 import { HearthTabBar, NATIVE_TAB_OPTIONS, TAB_ICONS, tabsFor, usesNativeTabs, type TabName } from '../../screens/TabBar';
 import { useApp } from '../../state/AppContext';
 import { useTheme } from '../../ui/theme';
 
-const ALL: TabName[] = ['photos', 'share', 'groups', 'help', 'me'];
+// RD-9: Gallery first (RD-10), Share in the middle for parents, then Feed and More.
+const ALL: TabName[] = ['gallery', 'share', 'feed', 'more'];
 
 export default function TabsLayout() {
   const app = useApp();
   const { c } = useTheme();
+  const { total: newMessages } = useNewMessages(); // RD-14: the dot on More
   if (app.status === 'signedOut') return <Redirect href="/sign-in" />;
   if (app.status !== 'ready' || !app.space) return <AppGate />;
   const role = app.space.role;
@@ -33,9 +37,13 @@ export default function TabsLayout() {
         {ALL.map((name) => {
           const tab = tabs.find((t) => t.name === name);
           return (
-            <NativeTabs.Trigger key={name} name={name} hidden={!allowed.has(name)}>
+            <NativeTabs.Trigger key={name} name={name} hidden={!allowed.has(name)}
+              listeners={name === 'more' ? { tabPress: resetMore } : undefined}
+              accessibilityLabel={name === 'more' && newMessages > 0 ? 'More, new message' : undefined}>
               <NativeTabs.Trigger.Icon sf={TAB_ICONS[name].sf as never} md={TAB_ICONS[name].md as never} />
               <NativeTabs.Trigger.Label>{tab?.label ?? name}</NativeTabs.Trigger.Label>
+              {/* RD-14: an empty badge is the phone's own dot. */}
+              {name === 'more' ? <NativeTabs.Trigger.Badge hidden={newMessages === 0} selectedBackgroundColor={c.accent}>{' '}</NativeTabs.Trigger.Badge> : null}
             </NativeTabs.Trigger>
           );
         })}
@@ -50,7 +58,9 @@ export default function TabsLayout() {
         <HearthTabBar
           role={role}
           current={props.state.routes[props.state.index]!.name as TabName}
+          newMessages={newMessages}
           onNavigate={(t) => {
+            if (t === 'more') resetMore(); // tapping More again shows the menu, like the phone's own tabs
             // SDK 58: the tab bar gets navigateToTab(routeKey) instead of navigation.
             const key = props.state.routes.find((r) => r.name === t)?.key;
             if (key) props.navigateToTab(key);

@@ -142,6 +142,33 @@ export function IconButton({ label, text, icon, onPress, testID }: { label: stri
   );
 }
 
+/** A labeled way back to the screen this one was opened from ("Back to More"); DS-4, no swipe needed. */
+export function BackButton({ to, onPress }: { to: string; onPress: () => void }) {
+  return <Button label={`Back to ${to}`} icon={{ sf: 'chevron.backward', md: 'arrow_back' }} variant="secondary" onPress={onPress} />;
+}
+
+/** RD-15: one of More's big rows: icon, word, an optional accent count ("2 new", RD-14) and a chevron, the whole
+ *  row one 48 pt+ target. The screen reader hears the word, then the count ("Messages, 2 new"). */
+export function MenuRow({ text, icon, count, onPress, testID }: { text: string; icon: Icon; count?: string | null; onPress: () => void; testID?: string }) {
+  const { c, t, os } = useTheme();
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={count ? `${text}, ${count}` : text}
+      onPress={onPress}
+      testID={testID}
+      android_ripple={{ color: c.line }}
+      style={({ pressed }) => [styles.menuRow, { borderBottomColor: c.line, opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
+    >
+      <SystemIcon icon={icon} color={c.ink} size={26} />
+      <Text style={{ flex: 1, color: c.ink, fontSize: t.base, lineHeight: t.line }}>{text}</Text>
+      {count ? <Text style={{ color: c.accent, fontSize: t.base, fontWeight: WEIGHT.semibold }}>{count}</Text> : null}
+      <SystemIcon icon={CHEVRON} color={c.muted} size={18} />
+    </Pressable>
+  );
+}
+const CHEVRON: Icon = { sf: 'chevron.forward', md: 'chevron_right' };
+
 /** A whole-card checkbox / radio / switch: the full row is the 48 pt+ target. Switches are the phone's own
  *  switch with the word On or Off beside it (DS-3); checkboxes and radios take each platform's shape. */
 export function Choice({ label, title, detail, checked, onPress, kind }: {
@@ -303,6 +330,7 @@ const styles = StyleSheet.create({
   sheetScrim: { flex: 1, justifyContent: 'flex-end' },
   menu: { padding: 20, paddingTop: 8, gap: 14 },
   grabber: { alignSelf: 'center', width: 36, height: 5, borderRadius: RADIUS.pill, opacity: 0.5 },
+  menuRow: { minHeight: MIN_TARGET + 12, minWidth: MIN_TARGET, alignSelf: 'stretch', flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth },
   iconBtn: { flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: MIN_TARGET + 12, minWidth: MIN_TARGET + 12, paddingHorizontal: 6, gap: 2 },
   capsule: { alignSelf: 'flex-start' },
   btn: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, borderRadius: RADIUS.pill, borderWidth: 1, paddingHorizontal: 18, paddingVertical: 10, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 },

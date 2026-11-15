@@ -44,7 +44,7 @@ export interface EventsView {
 }
 
 /** EVT-4: the events list, or one event's posts. */
-export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, onOpen, onClose }: {
+export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, onOpen, onClose, backTo = 'Photos' }: {
   posts: FeedPost[];
   view: EventsView;
   hasMore: boolean;
@@ -52,6 +52,8 @@ export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, on
   onLoadMore: () => void;
   onOpen: (eventId: string | null) => void;
   onClose: () => void;
+  /** Where the list's Back goes: "More" from the More menu (RD-15). */
+  backTo?: string;
 }) {
   const { c } = useTheme();
   const more = hasMore ? <Button label="Show older photos" variant="secondary" busy={loadingMore} onPress={onLoadMore} /> : null;
@@ -76,7 +78,7 @@ export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, on
         ListHeaderComponent={
           <View style={{ gap: 12 }}>
             <Txt variant="display" role="header">Events</Txt>
-            <Button label="Back to Photos" variant="secondary" onPress={onClose} />
+            <Button label={`Back to ${backTo}`} variant="secondary" onPress={onClose} />
           </View>
         }
         ListEmptyComponent={<Txt variant="muted">No events yet.</Txt>}
@@ -123,6 +125,8 @@ function EventTimeline({ posts, fromList, more, onOpen, onClose }: {
   more: React.ReactNode;
   onOpen: (eventId: string | null) => void;
   onClose: () => void;
+  /** Where the list's Back goes: "More" from the More menu (RD-15). */
+  backTo?: string;
 }) {
   const { c } = useTheme();
   const [person, setPerson] = useState<string | null>(null);

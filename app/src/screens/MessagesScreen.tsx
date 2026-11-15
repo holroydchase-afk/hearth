@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Messenger (docs/product/SPEC-MESSENGER.md): opened in place from a "Messages" button at the top of Photos, like
+// Messenger (docs/product/SPEC-MESSENGER.md): opened in place from the Messages row in More (RD-15), like
 // Events. The list of chats, then one chat. End to end encrypted (MLS); the words never reach Hearth's servers.
 // A2: no read receipts, typing dots, "seen" or last-active anywhere. Relatives see a group chat titled by its
 // people, never the group's name (AUD-14; the server sends the title).
@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { ChatSummary } from '../api/types';
 import { messageFor } from '../errors/messages';
 import { ChatClient, type ChatLine, type ChatView } from '../messenger/client';
+import { markChatSeen } from '../messenger/newMessages';
 import { useApp } from '../state/AppContext';
 import { Button, Card, Field, Loading, Notice, Txt } from '../ui/kit';
 import { useTheme } from '../ui/theme';
@@ -18,7 +19,8 @@ const POLL_MS = 10_000;
 // RR-18: parents are in every chat (REPLY-10), so a chat's count can be higher than its group's; say why.
 const PRIVACY = 'Only the people in this chat can read it. Parents are in every chat. Not even Hearth can read it: messages are locked on your phone before they are sent.';
 
-export function MessagesScreen({ onClose }: { onClose: () => void }) {
+/** `backTo` names where Back goes ("More" from the More menu). */
+export function MessagesScreen({ onClose, backTo = 'Photos' }: { onClose: () => void; backTo?: string }) {
   const app = useApp();
   const userId = app.session?.userId ?? null;
   const client = useMemo(() => (userId ? new ChatClient(app.deps.api, userId) : null), [app.deps.api, userId]);
@@ -37,7 +39,7 @@ export function MessagesScreen({ onClose }: { onClose: () => void }) {
   return (
     <Shell>
       <Txt variant="display" role="header">Messages</Txt>
-      <Button label="Back to Photos" icon={{ sf: 'chevron.backward', md: 'arrow_back' }} variant="secondary" onPress={onClose} />
+      <Button label={`Back to ${backTo}`} icon={{ sf: 'chevron.backward', md: 'arrow_back' }} variant="secondary" onPress={onClose} />
       <Txt variant="muted">{PRIVACY}</Txt>
       {error ? <Notice text={error} /> : null}
       {!chats && !error ? <Loading words="Getting your chats…" /> : null}
@@ -59,6 +61,7 @@ export function chatOpenLabel(c: ChatSummary): string {
 }
 
 function ChatScreen({ chat, client, onClose }: { chat: ChatSummary; client: ChatClient; onClose: () => void }) {
+  const app = useApp();
   const [view, setView] = useState<ChatView | null>(null);
   const [busy, setBusy] = useState(false);
   const [draft, setDraft] = useState('');
@@ -70,12 +73,14 @@ function ChatScreen({ chat, client, onClose }: { chat: ChatSummary; client: Chat
     try {
       const v = await client.open(chat.circle_id);
       if (live.current) { setView(v); setError(null); }
+      // RD-14: what is on screen now counts as seen (on this phone only), so More's "N new" goes away.
+      if (app.session) void markChatSeen(app.deps.api, app.deps.kv, app.session.userId, chat.circle_id);
     } catch (e) {
       if (live.current) setError(messageFor(e));
     } finally {
       if (live.current) setBusy(false);
     }
-  }, [client, chat.circle_id]);
+  }, [client, chat.circle_id, app.deps.api, app.deps.kv, app.session]);
 
   useEffect(() => {
     live.current = true;

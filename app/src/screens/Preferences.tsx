@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Blocks shared by Help (viewers) and Me (posters): Bigger text, notice choice, privacy, sign out.
+// Blocks shared by Help, Me and More (RD-15): Bigger text, light or dark, Family color, notice choice, privacy, sign out.
 import React, { useState } from 'react';
 import { isPhoneOnly } from '../api/phone';
 import { useApp } from '../state/AppContext';
@@ -32,12 +32,12 @@ const LOOKS: { id: ScreenLook; title: string; detail: string }[] = [
   { id: 'dark', title: 'Dark screen', detail: 'Light words on a dark screen. Easier on the eyes at night.' },
 ];
 
-/** DS-10: light or dark screen. Saved on this phone only. */
-export function LightOrDark() {
+/** DS-10: light or dark screen. Saved on this phone only. `heading={false}` when the screen's own title says it (More). */
+export function LightOrDark({ heading = true }: { heading?: boolean }) {
   const { prefs, setPrefs } = useApp();
   return (
     <Card>
-      <Txt variant="title" role="header">Light or dark screen</Txt>
+      {heading ? <Txt variant="title" role="header">Light or dark screen</Txt> : null}
       {LOOKS.map((l) => (
         <Choice key={l.id} kind="radio" label={l.title} title={l.title} detail={l.detail} checked={prefs.look === l.id} onPress={() => setPrefs({ look: l.id })} />
       ))}
@@ -53,13 +53,13 @@ const COLORS: { id: ColorName; title: string }[] = [
 
 /** RD-24..RD-26: the family's owner picks the family color: Ember (default), Forest or Plum. Each row shows the
  *  color itself, its name and a check on the picked one. Phase 1: saved on this phone only (prefs.color). */
-export function FamilyColor() {
+export function FamilyColor({ heading = true }: { heading?: boolean }) {
   const { prefs, setPrefs, space } = useApp();
   const { c, dark } = useTheme();
   if (!space || space.role !== 'owner') return null;
   return (
     <Card>
-      <Txt variant="title" role="header">Family color</Txt>
+      {heading ? <Txt variant="title" role="header">Family color</Txt> : null}
       {COLORS.map((k) => {
         const on = prefs.color === k.id;
         const swatch = paletteFor('ios', dark, k.id).accent;
