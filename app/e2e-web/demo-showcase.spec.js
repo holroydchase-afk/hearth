@@ -52,7 +52,7 @@ for (const size of SIZES) {
       };
 
       await page.goto('');
-      await expect(page.getByText('Pumpkin patch day', { exact: true })).toBeVisible();
+      await expect(page.getByText('Bridge walk on the trail', { exact: true })).toBeVisible();
       await shot('photos');
       await page.getByRole('button', { name: 'Show photos by the date they were taken' }).click();
       await shot('by-date');

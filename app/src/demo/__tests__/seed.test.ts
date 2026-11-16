@@ -85,7 +85,7 @@ describe('DEMO-1..3, DEMO-10 sample-data demo', () => {
 
   it('DEMO-2 a picture that fails to load skips its post; the rest still show', async () => {
     const be = FakeBackend.withFixture({ joIsMember: true });
-    await seedDemo(be, (name) => (name === 'kite' ? Promise.reject(new Error('offline')) : picture(name)));
+    await seedDemo(be, (name) => (name === 'playground' ? Promise.reject(new Error('offline')) : picture(name)));
     const feed = be.getFeed(F.users.chase.id, { space: F.space.id, limit: 50 });
     expect(feed).toHaveLength(DEMO_POSTS.length - 1);
     expect((await be.clientFor(null, { trackAppSession: true }).getSession())?.userId).toBe(F.users.chase.id);

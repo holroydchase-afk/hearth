@@ -11,6 +11,11 @@ waiting_on_chase:
 blockers: []
 -->
 
+## Nov 16: the demo shows Chase's own photos (DEC-62, TRACKER R47; branch claude/project-thread-s1r7xd, PR)
+- **Done, test-first:** `app/public/demo-pictures/` now holds 10 of Chase's photos (beach, dunes, museum, playground, porch, bike, splash, bridge, overlook, hug), re-saved from HEIC with no EXIF/GPS/XMP, 1200px long side, 400px thumbs. `DEMO_PICTURE_SIZES` in `app/src/demo/pictures.ts` gives each its own shape. `DEMO_POSTS` captions match the photos; "lake" still finds one photo; Alex's two new posts are the overlook and the hug.
+- **Tests:** `app/src/demo/__tests__/realPhotos.test.ts` (DEMO-PHOTO-1..3); e2e captions moved to "Bridge walk on the trail", "Bike day at the lake", "Life jackets on and in all afternoon".
+- **Next:** Chase's "merge"; then regenerate `og-hearth.png` in the new look with a real photo.
+
 ## Nov 16: plain white content, names on posts, less clutter (RD-34, DEC-60, DEC-61; branch claude/project-thread-iyml94, local commit)
 - **Done, test-first (qa-tdd's red tests d6734ab, 241b265):** kit `Card` is plain (no fill or outline); new kit `GroupedSection` keeps the grey grouped look, used only on More's settings screens (Preferences, Me, Help, Your name, Notice timing). Post cards sit on white/black with a hairline under each. Tab bar and native tabs on `c.bg`. The card's who-can-see line is names ("Alex, Grandma Jo and 2 more can see this."), people only; tap still opens the Who sheet. "Tap a photo to start" and the demo's numbered steps are gone (`demoTip` returns null).
 - **Test changes to tell qa-tdd:** chief of staff's call, text input fields (Share caption, reply) may keep their grey fill: `plainBackground.test.tsx` allows `TextInput` and kit `Field`; SPEC RD-34 line says so. `redesignLook.test.tsx` RD-8 corner and no-nesting checks now target `GroupedSection` (Card is plain by RD-34).
