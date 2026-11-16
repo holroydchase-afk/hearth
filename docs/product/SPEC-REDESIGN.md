@@ -66,6 +66,11 @@ Split into three PRs, in order, one at a time (small PRs, no bursts). Each is sh
 | RD-26 | Given an adult or viewer, there is no color picker anywhere. | auto |
 | RD-27 | Demo: Kai (owner) can switch Family color and the demo recolors; Grandma Jo's view stays Ember. | auto (Playwright) |
 
+### 1d. Plain background (Chase, Nov 16: "why is everything grey?"; Apple HIG Color)
+| ID | Given / When / Then | Type |
+|---|---|---|
+| RD-34 | Content screens (Gallery, Feed, post cards, New for you, Share, walk, top bar, tab bar) sit on the plain background, white light / black dark, with no grey card fill; posts are separated by hairline dividers (c.line) and spacing. Grey (grouped background) only on Settings-style lists under More (Bigger text, Light or dark, Family color, Help, Me), on the reply text field, and on reaction/tinted capsules. | auto (`app/src/screens/__tests__/plainBackground.test.tsx`) |
+
 ### Phase 1 gate (manual)
 | ID | Given / When / Then | Type |
 |---|---|---|
