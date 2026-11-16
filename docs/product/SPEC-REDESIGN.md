@@ -53,7 +53,7 @@ Split into three PRs, in order, one at a time (small PRs, no bursts). Each is sh
 |---|---|---|
 | RD-18 | Given posts, Gallery shows every photo by month ("November 2026") in a tight square grid, newest first, with Show older photos; every tile is 48 pt+ and its spoken label names the sender and day (OPEN-10 kept). The grid orders by the date the photo was taken when the phone knew it, otherwise the date it was shared, like Apple Photos (QA-R2, Nov 15), so old photos added today sit in their own months. | auto |
 | RD-19 | Given new posts from others since the last visit (OPEN-1, OPEN-5), then above the grid sits "New for you" with a sideways row of large photo tiles; the first tile carries a solid accent chip "N new" (N = new photos, not posts). | auto |
-| RD-20 | Under "New for you" one line reads "Tap a photo to start" and the sender line ("From Alex since Wednesday", OPEN-2's day rules). | auto |
+| RD-20 | Under "New for you" only the sender line ("From Alex since Wednesday", OPEN-2's day rules); See all and the tappable tiles are the way in (DS-4). No "Tap a photo to start" line (Chase, Nov 16: "that is messy", DEC-61). | auto |
 | RD-21 | Tapping any New for you tile opens the one-at-a-time walk at the oldest new post (OPEN-7, OPEN-8 unchanged); Done returns to Gallery. The row also has a "See all" text button that opens the same walk (no swipe needed to reach it, DS-4). | auto |
 | RD-22 | Nothing new: no New for you section; Gallery opens on the greeting and the grid. First ever open: no section. | auto |
 | RD-23 | No group name appears on Gallery, New for you or the walk. | auto |
@@ -70,6 +70,8 @@ Split into three PRs, in order, one at a time (small PRs, no bursts). Each is sh
 | ID | Given / When / Then | Type |
 |---|---|---|
 | RD-34 | Content screens (Gallery, Feed, post cards, New for you, Share, walk, top bar, tab bar) sit on the plain background, white light / black dark, with no grey card fill; posts are separated by hairline dividers (c.line) and spacing. Grey (grouped background) only on Settings-style lists under More (Bigger text, Light or dark, Family color, Help, Me), on the reply text field, and on reaction/tinted capsules. | auto (`app/src/screens/__tests__/plainBackground.test.tsx`) |
+
+The demo's numbered Try-this steps on Gallery and Feed (FIRSTMIN-3, PR #113) are gone too (Chase, Nov 16, DEC-61); the demo bar's Details menu keeps "See it as Grandma Jo".
 
 ### Phase 1 gate (manual)
 | ID | Given / When / Then | Type |

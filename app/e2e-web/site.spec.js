@@ -100,7 +100,8 @@ test('DEMO-LIVE-4 the build serves version.txt naming its commit', async ({ requ
 // DEMO-NEW-5 (R45 step 2; RD-19..21): a first-time visitor lands on New for you and can walk the new photos.
 test('DEMO-NEW-5 RD-21 a first visit opens on New for you; See all walks the new photos', async ({ page }) => {
   await page.goto(`${BASE}/`);
-  await expect(page.getByText('Tap a photo to start', { exact: true })).toBeVisible();
+  await expect(page.getByText(/^From Alex (today|since \S+)$/)).toBeVisible(); // DEC-61: the sender line, no "Tap a photo to start"
+  await expect(page.getByText('Tap a photo to start', { exact: true })).toHaveCount(0);
   const see = page.getByRole('button', { name: /^See all(?! the photos)/ });
   await expect(see).toBeVisible();
   await see.click();

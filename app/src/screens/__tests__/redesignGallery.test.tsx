@@ -246,12 +246,15 @@ describe('RD-19 New for you: a sideways row of large photos', () => {
 });
 
 describe('RD-20 the words under New for you', () => {
-  it('RD-20 "Tap a photo to start" and the sender line, today: "From Chase and Alex today" (oldest sender first)', async () => {
+  // Chase, Nov 16 (DEC-61): "get rid of the tap a photo to start ... that is messy." Only the sender line stays;
+  // See all and the tappable tiles stay the way in (DS-4).
+  it('RD-20 only the sender line, no "Tap a photo to start": today, "From Chase and Alex today" (oldest sender first)', async () => {
     const { be, kv } = await joWithNew([{ caption: 'One' }, { caption: 'Two', author: alex.id, circles: [everyone.id] }]);
     await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     const section = await screen.findByTestId('new-for-you');
-    expect(within(section).getByText('Tap a photo to start')).toBeTruthy();
     expect(within(section).getByText('From Chase and Alex today')).toBeTruthy();
+    expect(within(section).queryByText(/tap a photo/i)).toBeNull();
+    expect(within(section).getByRole('button', { name: /^See all(?! the photos)/ })).toBeTruthy(); // still a way in
     expect(wordsIn(section)).not.toMatch(/Sent (today|since)|unread|badge/i); // the old line and no "unread"
     const o = order();
     expect(o.indexOf('new-tile-' + ids('new-tile-', section)[0])).toBeGreaterThan(o.indexOf('new-for-you'));
