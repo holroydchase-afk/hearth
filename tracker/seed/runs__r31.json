@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-16T07:30:00-05:00",
+ "label": "Redesign polish (GUX-R1..R5, R7..R10): all suites 3x (green); GUX-R6 skipped pending Chase",
+ "passed": 1133,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs each at 133a70f (engineer) on the red tests ad655d6: app jest 1133 passed (4 skipped: 3 GUX-R6 names-line tests waiting on Chase, 1 contract stub) x3, typecheck clean x3, e2e:demo 12 passed (5 skipped) x3, e2e:web 5 passed (11 skipped) x3, e2e:site 14 passed x3, backend tests/run.sh 1199 passed 0 failed x3 (local Postgres 16, as the postgres user), agents.verify OK x3. Reviewed the engineer's test edits: who.test.tsx WHO-10/LIVE-4 and firstMin.test.tsx FIRSTMIN-2 initials tests restored as on main; redesignPolish GUX-R6 names-line tests it.skip by decision, its Ruth privacy pair and Who-sheet tests still run; no guarantee weakened. Diff from main has no real phone numbers (only 304-555-0100, reserved fictional) or real family names. Deno, GitHub CI and phones not run. e2e/results/gux-polish-green-3x-2026-11-16.txt"
+}
