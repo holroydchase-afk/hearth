@@ -46,7 +46,7 @@ describe('EVT-2 event card in Photos', () => {
     expect(within(card).getByRole('button', { name: `Open ${BDAY}` })).toBeTruthy();
     expect(screen.getByText('Park day')).toBeTruthy();
     expectGrandparentSafe();
-    expect(screenWords()).not.toMatch(/\b(feed|circles?)\b/i);
+    expect(screenWords().replace('Feed', '')).not.toMatch(/\b(feed|circles?)\b/i); // GUX-R5: only the title says Feed
   });
 });
 

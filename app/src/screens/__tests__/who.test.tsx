@@ -31,7 +31,7 @@ describe('WHO: who can see this post, by name', () => {
   it('WHO-7 "More" lists every name too, not only "Shared with you"', async () => {
     const { id, el } = await dadSidePost('earl');
     await within(el).findByTestId(`who-${id}`);
-    fireEvent.press(within(el).getByRole('button', { name: 'More for this photo' }));
+    fireEvent.press(within(el).getByRole('button', { name: 'Options for this photo' }));
     const menu = await screen.findByTestId(`more-${id}`);
     expect(within(menu).getByText('You, Alex, Chase and Grandma Jo can see this')).toBeTruthy();
     expect(within(menu).queryByText('Shared with you')).toBeNull();
@@ -69,16 +69,18 @@ describe('WHO: who can see this post, by name', () => {
     expect(screenWords()).not.toMatch(/can see this/);
   });
 
-  it('WHO-10 (Chase, Nov 5: "contact circles or chips... a discreet icon") the card shows small initial circles, not a sentence', async () => {
+  // Nov 16, grandparent-ux GUX-R6 replaces WHO-10's initial circles and LIVE-4's "Can see" word with names in words.
+  // Reverses Chase's Nov 5 call (circles); see QA-R1 in the qa-tdd report. Full GUX-R6 rules: redesignPolish.test.tsx.
+  it('GUX-R6 (was WHO-10) the card says who can see it in names, not initial circles', async () => {
     const { id, el } = await dadSidePost('jo');
     const who = await within(el).findByTestId(`who-${id}`);
     expect(who.props.accessibilityRole).toBe('button');
-    expect(within(who).queryByText(/can see this/)).toBeNull();
-    expect(within(who).getAllByTestId(/^face-/)).toHaveLength(3);
-    expect(within(who).getByText('+1')).toBeTruthy();
+    expect(within(who).getByText('Alex, Chase and Grandpa Earl can see this.')).toBeTruthy();
+    expect(within(who).queryAllByTestId(/^face-/)).toHaveLength(0);
+    expect(within(who).queryByText('+1')).toBeNull();
   });
 
-  it('WHO-10 tapping the circles opens a sheet with one chip per person; Close shuts it', async () => {
+  it('WHO-10 tapping who can see it opens a sheet with one chip per person; Close shuts it', async () => {
     const { id, el } = await dadSidePost('jo');
     fireEvent.press(await within(el).findByTestId(`who-${id}`));
     const sheet = await screen.findByTestId(`who-sheet-${id}`);
@@ -88,11 +90,5 @@ describe('WHO: who can see this post, by name', () => {
     expect(within(sheet).queryByText(/Grandparents|Dad's side/)).toBeNull();
     fireEvent.press(within(sheet).getByRole('button', { name: 'Close who can see this' }));
     await waitFor(() => expect(screen.queryByTestId(`who-sheet-${id}`)).toBeNull());
-  });
-
-  it('LIVE-4 the little circles carry a word, "Can see", so a lone initial isn\'t a mystery (Chase, Nov 5)', async () => {
-    const { id, el } = await dadSidePost('jo');
-    const who = await within(el).findByTestId(`who-${id}`);
-    expect(within(who).getByText('Can see')).toBeTruthy();
   });
 });

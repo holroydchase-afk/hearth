@@ -241,7 +241,7 @@ describe('RD-15 More', () => {
     else expect(await screen.findByRole('switch', { name: shows.switch })).toBeTruthy();
     expect(screen.queryByRole('header', { name: 'More' })).toBeNull(); // fills the screen in place of the menu
     const back = screen.getByRole('button', { name: 'Back to More' });
-    expect(within(back).getByText(/^Back/)).toBeTruthy();
+    expect(within(back).getByText(/(^|‹ ?)More$/)).toBeTruthy(); // GUX-R1: shows "‹ More", spoken "Back to More"
     fireEvent.press(back);
     expect(await screen.findByRole('header', { name: 'More' })).toBeTruthy();
   });

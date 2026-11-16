@@ -98,7 +98,7 @@ describe('DBG-3 Help and Me: Problem details', () => {
     delete process.env.EXPO_PUBLIC_HEARTH_DEBUG;
     recordProblem(new ApiError('42501', 'not allowed'), 'groups: rename');
     await renderApp(ui, { user });
-    await screen.findByRole('switch', { name: 'Bigger text' });
+    await screen.findByText('How should we tell you about new photos?'); // GUX-R10: Help has no Bigger text now
     expect(screen.queryByText('Problem details')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Copy problem details for Claude' })).toBeNull();
   });

@@ -55,7 +55,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await onFeed(page);
   await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
   await expect(page.getByText(/to Grandparents – Dad's side/)).toBeVisible(); // MOMENT-1: on the card
-  await page.getByRole('button', { name: 'More for this photo' }).click(); // MOMENT-6: the full words are under More
+  await page.getByRole('button', { name: 'Options for this photo' }).click(); // MOMENT-6: the full words are under More
   await expect(page.getByText("Shared with Grandparents – Dad's side · 2 people")).toBeVisible();
   await page.getByRole('button', { name: 'Close this menu' }).click();
 
@@ -76,7 +76,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await onFeed(page);
   await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: /^You, .+ can see this$/ })).toBeVisible(); // WHO-6/10: names, never the group
-  await page.getByRole('button', { name: 'More for this photo' }).click();
+  await page.getByRole('button', { name: 'Options for this photo' }).click();
   await expect(page.getByText('Who can see this')).toBeVisible();
   await page.getByRole('button', { name: 'Close this menu' }).click();
   await expect(page.getByRole('tab')).toHaveText([/Gallery/, /Feed/, /More/]); // RD-9: no Share tab for viewers
@@ -110,7 +110,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await expect(page.getByText('❤️ 1')).toBeVisible(); // REACT-11: the phone's own emoji
   await expect(page.getByText(/Look at those cheeks!/)).toBeVisible();
   await expect(page.getByText(/Seen by/)).toHaveCount(0); // RV-U1 (DEC-21): no "Seen by" count
-  await page.getByRole('button', { name: 'More for this photo' }).click();
+  await page.getByRole('button', { name: 'Options for this photo' }).click();
   await page.getByRole('button', { name: 'Delete this photo' }).click();
   await page.getByRole('button', { name: 'Yes, delete it' }).click();
   await expect(page.getByText('Pumpkin patch', { exact: true })).toHaveCount(0);

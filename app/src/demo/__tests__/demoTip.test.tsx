@@ -18,9 +18,9 @@ describe('FIRSTMIN-3 the phone tip is three numbered steps', () => {
       list.forEach((s) => expect(typeof s === 'string' && s.trim().length > 0).toBe(true));
       expect(list.some((s) => /Details/.test(s))).toBe(true);
       expect(list[2]).toMatch(/See it as Grandma Jo/);
-      expect(list[0]).toMatch(/Photos/);
+      expect(list[0]).toMatch(/Gallery/); // GUX-R4
       // GUX-R2: step 1 reads as a step, not a label.
-      expect(list[0]).toBe("You're seeing a parent's Photos.");
+      expect(list[0]).toBe("You're seeing a parent's Gallery.");
     }
   });
 

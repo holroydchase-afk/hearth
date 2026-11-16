@@ -205,7 +205,7 @@ describe('HIG-8 Reduce Motion', () => {
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     await screen.findByText('At the lake');
     await act(async () => { await Promise.resolve(); });
-    fireEvent.press(screen.getByRole('button', { name: 'More for this photo' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Options for this photo' }));
     await screen.findByText('Who can see this');
     const modals = screen.UNSAFE_getAllByType(Modal);
     expect(modals.map((m) => m.props.animationType)).toEqual(['fade']);
@@ -216,7 +216,7 @@ describe('HIG-8 Reduce Motion', () => {
     await seedPost(be, { caption: 'At the lake' });
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     await screen.findByText('At the lake');
-    fireEvent.press(screen.getByRole('button', { name: 'More for this photo' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Options for this photo' }));
     await screen.findByText('Who can see this');
     expect(screen.UNSAFE_getAllByType(Modal).map((m) => m.props.animationType)).toEqual(['slide']);
   });
@@ -238,7 +238,7 @@ describe('HIG-10 bottom sheets have a grabber and close with a swipe down', () =
     const p = await seedPost(be, { caption: 'At the lake' });
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     await screen.findByText('At the lake');
-    fireEvent.press(screen.getByRole('button', { name: 'More for this photo' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Options for this photo' }));
     expect(within(await screen.findByTestId(`more-${p.id}`)).getByTestId('sheet-grabber', { includeHiddenElements: true })).toBeTruthy();
     fireEvent.press(screen.getByRole('button', { name: 'Close this menu' }));
     fireEvent.press(await screen.findByTestId(`who-${p.id}`));
@@ -330,7 +330,7 @@ describe('QA-R4 HIG-8 turning Reduce Motion on while the app is open', () => {
     await screen.findByText('At the lake');
     expect(handlers.reduceMotionChanged).toBeDefined();
     await act(async () => { handlers.reduceMotionChanged!(true); });
-    fireEvent.press(screen.getByRole('button', { name: 'More for this photo' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Options for this photo' }));
     await screen.findByText('Who can see this');
     expect(screen.UNSAFE_getAllByType(Modal).map((m) => m.props.animationType)).toEqual(['fade']);
   });

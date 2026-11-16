@@ -6,7 +6,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { Text } from 'react-native';
 import { memoryKV } from '../../platform/kv';
-import { HelpScreen } from '../../screens/HelpScreen';
+import { MoreScreen } from '../../screens/MoreScreen';
 import { MeScreen } from '../../screens/MeScreen';
 import { loadPrefs } from '../../state/prefs';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
@@ -44,9 +44,11 @@ describe('DS-10 light and dark screens', () => {
     expect((await loadPrefs(kv, 'u1', 'viewer')).look).toBe('dark');
   });
 
-  it('DS-10: a grandparent picks a dark screen on Help, the whole app turns dark, and it stays after reopening', async () => {
+  // GUX-R10 (Nov 16): Light or dark left Help; she picks it in More → Light or dark.
+  it('DS-10: a grandparent picks a dark screen in More, the whole app turns dark, and it stays after reopening', async () => {
     const kv = memoryKV();
-    const first = await renderApp(<><HelpScreen /><Probe /></>, { user: 'jo', kv });
+    const first = await renderApp(<><MoreScreen /><Probe /></>, { user: 'jo', kv });
+    fireEvent.press(await screen.findByRole('button', { name: 'Light or dark' }));
     const same = await screen.findByRole('radio', { name: 'Same as my phone (Recommended)' });
     expect(same.props.accessibilityState).toMatchObject({ checked: true });
     expect(probe()).toMatch(/^light /);
@@ -56,7 +58,8 @@ describe('DS-10 light and dark screens', () => {
     expect(screen.getByRole('radio', { name: 'Dark screen' }).props.accessibilityState).toMatchObject({ checked: true });
     first.unmount();
 
-    await renderApp(<><HelpScreen /><Probe /></>, { user: 'jo', kv });
+    await renderApp(<><MoreScreen /><Probe /></>, { user: 'jo', kv });
+    fireEvent.press(await screen.findByRole('button', { name: 'Light or dark' }));
     await screen.findByRole('radio', { name: 'Dark screen' });
     expect(probe()).toMatch(/^dark /);
 
@@ -64,19 +67,12 @@ describe('DS-10 light and dark screens', () => {
     await waitFor(() => expect(probe()).toMatch(/^light /));
   });
 
-  it('DS-10: the choice sits right after Bigger text, in plain words, on Help and on Me', async () => {
-    const help = await renderApp(<HelpScreen />, { user: 'jo' });
-    await screen.findByRole('radio', { name: 'Dark screen' });
-    let words = screenWords();
-    expect(words.indexOf('Bigger text')).toBeLessThan(words.indexOf('Light or dark screen'));
-    expect(words.indexOf('Light or dark screen')).toBeLessThan(words.indexOf('How should we tell you about new photos?'));
-    expect(words).not.toMatch(/\b(theme|mode|appearance|system|settings)\b/i);
-    expectGrandparentSafe();
-    help.unmount();
-
+  // GUX-R10 (Nov 16): Help no longer repeats Light or dark (it's a row in More); Me keeps it after Bigger text.
+  it('DS-10: the choice sits right after Bigger text, in plain words, on Me', async () => {
     await renderApp(<MeScreen />, { user: 'chase' });
     await screen.findByRole('radio', { name: 'Light screen' });
-    words = screenWords();
+    const words = screenWords();
+    expect(words).not.toMatch(/\b(theme|mode|appearance|system|settings)\b/i);
     expect(words.indexOf('Bigger text')).toBeLessThan(words.indexOf('Light or dark screen'));
     expectGrandparentSafe();
   });

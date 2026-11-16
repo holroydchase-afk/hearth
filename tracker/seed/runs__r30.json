@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-16T06:00:00-05:00",
+ "label": "Redesign polish (grandparent-ux GUX-R1..R10): tests written first (red)",
+ "passed": 1085,
+ "failed": 49,
+ "results": {},
+ "note": "Red on purpose; same 49 failures on 3 full jest runs (1085 passed, 1 skipped), typecheck clean. New: screens/__tests__/redesignPolish.test.tsx (GUX-R1 top-left text back button, spoken Back to More/Gallery, shows the word; R2 no box inside a box on Help, Bigger text, Share; R3 Options not More; R4 demo tip says a parent's Gallery; R5 Feed title; R6 names line, no initials, no group titles, Ruth privacy pair; R7 Done clears New for you; R8 Previous left of Next/Done on one row; R9 neutral avatars, accent check on picked rows; R10 Help without Bigger text and Light or dark, inviter's name and number). GUX-R11 skipped (REACT-7). Changed to the new rule: redesignNav RD-15 (shows More), moments, changeWords, wordsPass, photos, hig, who, sessions, core-loop.spec.js (Options), demoTip (Gallery), photos/sessions/events (Feed title allowed), opening OPEN-7 (GUX-R8 layout), who WHO-10/LIVE-4 and firstMin FIRSTMIN-2 (no faces on the card), help, screenColors, problemDetails, redesignLook, familyColor (Help no longer has Bigger text or Light or dark). QA-R1: GUX-R6 reverses Chase's WHO-10/LIVE-4 (Nov 5) circles call; needs his word. e2e, backend, Deno not run. e2e/results/gux-polish-red-2026-11-16.txt"
+}

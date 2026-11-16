@@ -11,7 +11,7 @@ import { expectGrandparentSafe, renderApp } from '../../test/renderApp';
 import { PhotosScreen } from '../PhotosScreen';
 
 async function openChange() {
-  fireEvent.press(await screen.findByRole('button', { name: 'More for this photo' }));
+  fireEvent.press(await screen.findByRole('button', { name: 'Options for this photo' }));
   fireEvent.press(await screen.findByRole('button', { name: 'Change the words' }));
   return screen.findByTestId(/^words-/);
 }
@@ -56,7 +56,7 @@ describe('CAP change the words', () => {
     const be = FakeBackend.withFixture({ joIsMember: true });
     await seedPost(be, { title: 'Party' });
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
-    fireEvent.press(await screen.findByRole('button', { name: 'More for this photo' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Options for this photo' }));
     await screen.findByText('Who can see this');
     expect(screen.queryByRole('button', { name: 'Change the words' })).toBeNull();
   });

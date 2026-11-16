@@ -92,7 +92,7 @@ describe('RD Family color', () => {
     const kv = memoryKV();
     await kv.setItem(`hearth.prefs.v1.${FIXTURE.users.jo.id}`, JSON.stringify({ bigText: true, notify: 'push', look: 'system', color: 'plum' }));
     await renderApp(<><HelpScreen /><Probe /></>, { user: 'jo', kv });
-    await screen.findByRole('radio', { name: 'Light screen' });
+    await screen.findByText('How should we tell you about new photos?'); // GUX-R10: Light or dark left Help
     expect(probe()).toBe(EMBER);
   });
 

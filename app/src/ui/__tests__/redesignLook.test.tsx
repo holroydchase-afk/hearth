@@ -182,7 +182,8 @@ describe('RD 1a the look: black and white with one accent', () => {
     ['grandparent on Help', 'jo', () => <HelpScreen />],
   ] as const)('RD-8 no card inside a card (%s)', async (_n, user, ui) => {
     await renderApp(ui(), { user });
-    await screen.findByRole('radio', { name: 'Light screen' });
+    // GUX-R10 (Nov 16): Help no longer has Light or dark; wait for a section both screens keep.
+    await screen.findByText('How should we tell you about new photos?');
     const cards = screen.UNSAFE_getAllByType(Card);
     expect(cards.length).toBeGreaterThan(0);
     for (const card of cards) {

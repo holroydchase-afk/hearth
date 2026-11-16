@@ -318,7 +318,7 @@ describe('OPEN-7/8 one new post at a time', () => {
     const inCard = new Set(card.findAll(isButton));
     return walkNow().findAll(isButton).filter((b) => !inCard.has(b) && b.props.accessibilityLabel !== 'Back to Gallery');
   }
-  /** GUX-R1: full width = no other button shares a row with it. */
+  /** How many other buttons share the nearest row with this one. */
   function rowMates(btn: Inst): number {
     for (let n = btn.parent; n && n !== walkNow(); n = n.parent) {
       if (typeof n.type === 'string' && flat(n.props.style).flexDirection === 'row') return n.findAll(isButton).length - 1;
@@ -349,29 +349,33 @@ describe('OPEN-7/8 one new post at a time', () => {
     expectGrandparentSafe();
   });
 
-  it('OPEN-7 GUX-R1 GUX-R2 the filled full-width Next stays first in its own row every step; from step 2 a full-width "Previous" under it; never a bare "Back"', async () => {
+  // Updated Nov 16 for the redesign polish GUX-R8 (Previous left, Next/Done right, one row); it replaces OPEN-12's
+  // "Next first, full-width Previous under it" layout. Next stays the one filled step button, 48 pt, never a bare "Back".
+  it('OPEN-7 GUX-R8 Next (Done on the last) is the filled step button; from step 2 "Previous" sits left of it on one row; never a bare "Back"', async () => {
     const { ids } = await openWalk(['One', 'Two', 'Three']);
-    const expected = [[NEXT], [NEXT, PREV], [DONE, PREV]];
+    const expected = [[NEXT], [PREV, NEXT], [PREV, DONE]];
     const headers: string[] = [];
     for (let step = 0; step < 3; step++) {
       const btns = stepButtons(ids[step]!);
       expect(btns.map((b) => b.props.accessibilityLabel)).toEqual(expected[step]);
-      expect(isFilled(btns[0] as unknown as Node)).toBe(true); // the one filled step button is always first
-      for (const b of btns) {
-        expect(rowMates(b)).toBe(0); // full width: alone in its row
-        expect(Number(flat(b.props.style).minHeight)).toBeGreaterThanOrEqual(48);
+      const forward = btns[btns.length - 1]!;
+      expect(isFilled(forward as unknown as Node)).toBe(true); // the one filled step button, on the right
+      if (step > 0) {
+        expect(isFilled(btns[0] as unknown as Node)).toBe(false);
+        expect(rowMates(btns[0]!)).toBe(1); // Previous and the forward button share one row
+        expect(within(walkNow()).getByText('Previous')).toBeTruthy();
       }
-      if (step > 0) expect(within(walkNow()).getByText('Previous')).toBeTruthy();
+      for (const b of btns) expect(Number(flat(b.props.style).minHeight)).toBeGreaterThanOrEqual(48);
       expect(within(walkNow()).queryByText('Back')).toBeNull();
       expect(within(walkNow()).queryByRole('button', { name: 'Back' })).toBeNull();
       expect(within(walkNow()).getByRole('button', { name: 'Back to Gallery' })).toBeTruthy();
       headers.push(within(walkNow()).queryAllByRole('header').map((h) => h.props.accessibilityLabel ?? wordsIn(h)).join(' | '));
       if (step < 2) {
-        fireEvent.press(btns[0]!);
+        fireEvent.press(forward);
         expect(await within(walkNow()).findByText(['Two', 'Three'][step]!)).toBeTruthy();
       }
     }
-    // GUX-R7: checked last so the layout above fails on its own.
+    // GUX-R7 (Nov 11): checked last so the layout above fails on its own.
     headers.forEach((h, i) => expect(h).toContain(`New photos: ${i + 1} of 3`));
   });
 
