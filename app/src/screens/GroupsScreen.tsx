@@ -42,7 +42,7 @@ interface NewGroup {
 }
 const NEW_GROUP: NewGroup = { name: '', event: false, ticked: [], copied: [], mode: 'private', history: null, need: null, busy: false };
 
-/** `onBack`: opened from More (RD-15), so a "Back to More" button sits under the title. */
+/** `onBack`: opened from More (RD-15), so a "‹ More" back button (spoken "Back to More") sits above the title (GUX-R1). */
 export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
   const app = useApp();
   const { c } = useTheme();
@@ -184,8 +184,8 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
 
   return (
     <Screen>
-      <Txt variant="display" role="header">Your groups</Txt>
       {onBack ? <BackButton to="More" onPress={onBack} /> : null}
+      <Txt variant="display" role="header">Your groups</Txt>
       <Txt variant="muted">Each photo goes only to the groups you pick. People never see group names.</Txt>
       {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
       {circles === null ? <Loading words="Loading your groups…" /> : null}

@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Help (UX-REVIEW #11-#15): Call Chase first, Bigger text on by default. RD-15: a row in More for everyone.
+// Help (UX-REVIEW #11-#15): Call Chase first. RD-15: a row in More for everyone. GUX-R10: Bigger text and Light or
+// dark are More's own rows, so Help doesn't repeat them.
 import React from 'react';
 import { useApp } from '../state/AppContext';
 import { BackButton, Button, Card, Screen, Txt } from '../ui/kit';
 import { AppGate } from './AppGate';
 import { ProblemDetailsCard } from './ProblemDetails';
-import { BiggerText, DeleteAccount, LightOrDark, HowToTell, Privacy, SignOut } from './Preferences';
+import { DeleteAccount, HowToTell, Privacy, SignOut } from './Preferences';
 
 export function HelpScreen({ onBack }: { onBack?: () => void } = {}) {
   const app = useApp();
@@ -15,18 +16,23 @@ export function HelpScreen({ onBack }: { onBack?: () => void } = {}) {
   const phone = app.deps.helpPhone?.replace(/[^+\d]/g, '') || null;
   return (
     <Screen>
-      <Txt variant="display" role="header">Help</Txt>
       {onBack ? <BackButton to="More" onPress={onBack} /> : null}
-      <Card>
-        <Txt variant="title">Need help?</Txt>
-        {who && phone ? (
-          <Button variant="secondary" label={`Call ${who}`} icon={{ sf: 'phone', md: 'call' }} onPress={() => void app.deps.openUrl(`tel:${phone}`)} />
-        ) : (
-          <Txt>{`Ask ${who ?? 'the person who invited you'} for help.`}</Txt>
-        )}
-      </Card>
-      <BiggerText />
-      <LightOrDark />
+      <Txt variant="display" role="header">Help</Txt>
+      {/* GUX-R10: name the person who invited her, and show the number too. The owner set the family up, so no
+          "ask someone" line for him. Bigger text and Light or dark live in More now, not here. */}
+      {app.space?.role === 'owner' ? null : (
+        <Card>
+          <Txt variant="title">Need help?</Txt>
+          {who && phone ? (
+            <>
+              <Txt>{`${who} can help. Their number is ${app.deps.helpPhone}.`}</Txt>
+              <Button variant="quiet" label={`Call ${who}`} icon={{ sf: 'phone', md: 'call' }} onPress={() => void app.deps.openUrl(`tel:${phone}`)} style={{ alignSelf: 'flex-start' }} />
+            </>
+          ) : (
+            <Txt>{`Ask ${who ?? 'the person who invited you'} for help.`}</Txt>
+          )}
+        </Card>
+      )}
       <HowToTell />
       <Privacy who={who} />
       <Card>

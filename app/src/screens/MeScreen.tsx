@@ -9,7 +9,7 @@ import { NoticeTiming } from './NoticeTiming';
 import { ProblemDetailsCard } from './ProblemDetails';
 import { BiggerText, DeleteAccount, HowToTell, LightOrDark, PhotoHelpers, Privacy, ReplyAudience, SignOut } from './Preferences';
 
-/** `onBack`: opened from More (RD-15), so a "Back to More" button sits under the title. */
+/** `onBack`: opened from More (RD-15), so a "‹ More" back button (spoken "Back to More") sits above the title (GUX-R1). */
 export function MeScreen({ onBack }: { onBack?: () => void } = {}) {
   const app = useApp();
   if (app.status !== 'ready') return <AppGate />;
@@ -34,8 +34,8 @@ function MeReady({ onBack }: { onBack?: () => void }) {
   const app = useApp();
   return (
     <Screen>
-      <Txt variant="display" role="header">Me</Txt>
       {onBack ? <BackButton to="More" onPress={onBack} /> : null}
+      <Txt variant="display" role="header">Me</Txt>
       <Card>
         <WhoYouAre />
         {/* RD-15: viewers reach Me from More too, so say what each can do. */}

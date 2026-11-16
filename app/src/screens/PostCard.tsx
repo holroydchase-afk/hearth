@@ -60,7 +60,7 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   return (
     <Card testID={`post-${post.post_id}`} style={{ padding: 0, gap: 0, overflow: 'hidden' }}>
       <View testID={`card-head-${post.post_id}`} style={styles.head}>
-        <View style={[styles.avatar, { backgroundColor: c.accentSoft }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+        <View style={[styles.avatar, { backgroundColor: c.line }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           <Txt variant="strong" style={{ color: c.ink, letterSpacing: -0.5 }}>{initialOf(post.author_name)}</Txt>
         </View>
         <View style={{ flex: 1, minWidth: 0 }}>
@@ -69,8 +69,8 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
           {to ? <Txt variant="muted" testID={`to-${post.post_id}`}>{to}</Txt> : null}
         </View>
         <Button
-          label={`More for ${many ? 'these photos' : 'this photo'}`}
-          text="More"
+          label={`Options for ${many ? 'these photos' : 'this photo'}`}
+          text="Options"
           icon={{ sf: 'ellipsis.circle', md: 'more_horiz' }}
           variant="quiet"
           style={styles.more}
@@ -194,7 +194,7 @@ function Faces({ post, viewers, me, onPress }: { post: FeedPost; viewers: Viewer
       <Text style={[styles.faceWord, { color: c.muted }]}>Can see</Text>
       {shown.map((p, i) => (
         <View key={p.id} testID={`face-${p.id}`}
-          style={[styles.face, { backgroundColor: c.accentSoft, borderColor: c.surface, marginLeft: i ? -SPACE.sm : 0 }]}>
+          style={[styles.face, { backgroundColor: c.line, borderColor: c.surface, marginLeft: i ? -SPACE.sm : 0 }]}>
           <Text maxFontSizeMultiplier={FACE_MAX_SCALE} style={[styles.faceText, { color: c.ink }]}>{initialOf(p.name === 'You' ? viewers.find((v) => v.user_id === me)?.name ?? 'You' : p.name)}</Text>
         </View>
       ))}
@@ -212,7 +212,7 @@ function WhoSheet({ post, viewers, me, onClose }: { post: FeedPost; viewers: Vie
           <View style={styles.people}>
             {ordered(viewers, me).map((p) => (
               <View key={p.id} testID={`person-${p.id}`} style={[styles.person, { backgroundColor: c.fill }]}>
-                <View style={[styles.face, { backgroundColor: c.accentSoft, borderColor: c.fill }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+                <View style={[styles.face, { backgroundColor: c.line, borderColor: c.fill }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
                   <Text maxFontSizeMultiplier={FACE_MAX_SCALE} style={[styles.faceText, { color: c.ink }]}>{initialOf(p.name === 'You' ? viewers.find((v) => v.user_id === me)?.name ?? 'You' : p.name)}</Text>
                 </View>
                 <Txt testID="person-name">{p.name}</Txt>

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 // DEMO-BAR review (ux-reviewer P1): Grandma Jo's view lives in the demo bar's Details drawer, so on a phone
-// the parent's Photos points to it. Beside the laptop story panel it isn't needed.
+// the parent's Gallery points to it. Beside the laptop story panel it isn't needed.
 // FIRSTMIN-3 (Chase, Nov 6): the one tip line became three short numbered steps.
 import React from 'react';
 import { Platform, View } from 'react-native';
@@ -12,7 +12,7 @@ import { WIDE } from './DemoFrame';
 import { DEMO_MODE } from './flags';
 import { demoViewer } from './seed';
 
-export const DEMO_STEPS = ["You're seeing a parent's Photos.", 'Tap Details at the top.', 'Tap See it as Grandma Jo.'] as const;
+export const DEMO_STEPS = ["You're seeing a parent's Gallery.", 'Tap Details at the top.', 'Tap See it as Grandma Jo.'] as const;
 
 export function demoTip(width: number, viewer: 'parent' | 'grandma'): string[] | null {
   return width < WIDE && viewer === 'parent' ? [...DEMO_STEPS] : null;

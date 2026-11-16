@@ -9,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { TimelinePost } from '../api/HearthApi';
 import { TimelineStore, startOfNextYear, timelineRows, type TimelineRow } from '../feed/timeline';
 import { useApp, useFeed } from '../state/AppContext';
-import { Button, Card, Loading, Notice, Txt } from '../ui/kit';
+import { BackButton, Button, Card, Loading, Notice, Txt } from '../ui/kit';
 import { photos, shortDate } from '../ui/format';
 import { MIN_TARGET, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
@@ -82,8 +82,8 @@ export function TimelineScreen({ startAt, onClose }: { startAt: string | null; o
 
   const header = (
     <View style={{ gap: 12 }}>
+      <BackButton to="Gallery" onPress={onClose} />
       <Txt variant="display" role="header">Photos by date</Txt>
-      <Button label="Back to Gallery" variant="secondary" onPress={onClose} />
       {years ? null : <Button variant="secondary" label="Pick a year" onPress={showYears} />}
       {!years && state.startAt ? (
         <Button label="Show the newest photos first" text="Show the newest first" variant="secondary" onPress={() => void store.open(null)} />

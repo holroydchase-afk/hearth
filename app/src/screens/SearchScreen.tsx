@@ -10,7 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { TimelinePost, TimelineYear } from '../api/HearthApi';
 import { messageFor } from '../errors/messages';
 import { useApp, useFeed } from '../state/AppContext';
-import { Button, Field, Loading, Notice, Txt } from '../ui/kit';
+import { BackButton, Button, Field, Loading, Notice, Txt } from '../ui/kit';
 import { useTheme } from '../ui/theme';
 import { PostCard } from './PostCard';
 import { TimelineCard } from './TimelineScreen';
@@ -119,8 +119,8 @@ export function SearchScreen({ onClose }: { onClose: () => void }) {
 
   const header = (
     <View style={{ gap: 12 }}>
+      <BackButton to="Gallery" onPress={onClose} />
       <Txt variant="display" role="header">Search photos</Txt>
-      <Button label="Back to Gallery" variant="secondary" onPress={onClose} />
       <Txt variant="muted">Search looks at the words people wrote and who sent them. It never looks inside your photos.</Txt>
       <Field
         label="Words to look for"

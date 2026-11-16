@@ -4,12 +4,18 @@ stage: building
 goal: hearth-beta
 milestone: HRT-M1
 now: push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
-next: redesign R46 phases 1a..1c built (RD-1..27); qa-tdd 3x, then grandparent-ux on 1a..1c; CLAUDE.md rule 3 words line waits on Chase; stop date Nov 19
+next: redesign R46 1a..1c plus polish GUX-R1..R5, R7..R10 built; qa-tdd 3x green, then grandparent-ux recheck; GUX-R6 (names vs initials) waits on Chase; stop date Nov 19
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 16: redesign polish built (GUX-R1..R5, R7..R10; branch claude/project-thread-iyml94, local commit)
+- **Done, test-first (qa-tdd's red tests at ad655d6):** kit `BackButton` is now a top-left text button (chevron + place word, accent, 48 pt, spoken "Back to More"/"Back to Gallery"; optional `label` keeps "Back to events"/"Back to all messages") above the title on every More sub-screen, Search, By date, Events, Messages and the walk. `Choice` is a plain grouped row (no border or tint): radio shows an accent check at the end, checkbox an empty circle that fills with an accent check. Share's Pick/Remove buttons are quiet text buttons. Post "··· More" is "Options" ("Options for this photo/these photos"). Feed's title is "Feed". Demo tip: "a parent's Gallery". Done on the walk clears New for you for those posts (in memory; the next load's save covers the rest). Previous left, Next/Done right on one row. Avatars and Who faces neutral grey (`c.line`). Help drops Bigger text and Light or dark, names the inviter with the number and a Call button, and shows the owner no "ask someone" card.
+- **GUX-R6 not built (waits on Chase: names vs initials, reverses WHO-10 / LIVE-4):** its three names-line tests are `it.skip`; the privacy and Who-sheet ones run (they hold today). who/firstMin initials tests restored to guard today's circles.
+- **Web note:** the web build shows Material icons (arrow_back, check_box), so the demo's back button reads "← More"; iPhone gets the chevron.
+- **Next exact step:** qa-tdd all suites 3x; grandparent-ux on shots `polish-*.png` (session scratchpad). Not pushed.
 
 ## Nov 15: redesign 1c built, Gallery grid and New for you (RD-18..23; B19 fixed; branch claude/project-thread-iyml94, local commits)
 - **B19 / QA-R1, QA-R4 (commit 1):** `app/src/app/groups|me|help.tsx` redirect to `/more?open=<row>`; `MoreScreen initialOpen` opens it only if the role has that row (a viewer asking for Groups gets the menu). `build-demo.sh` copies index.html for those routes. "Back to Photos", "Done, back to Photos", "Go to Photos" now say Gallery. Tests: `oldTabLinks.test.tsx`, DEMO-5 (now also /help and checks Back to More).

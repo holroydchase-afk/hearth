@@ -243,7 +243,8 @@ describe('GUX-R6 the card names who can see it', () => {
     return { id };
   }
 
-  it('GUX-R6 a long list: "Alex, Chase and 2 more can see this." in words, no initials circles', async () => {
+  // waits for Chase (names vs initials): reverses WHO-10 / LIVE-4 (Nov 5).
+  it.skip('GUX-R6 a long list: "Alex, Chase and 2 more can see this." in words, no initials circles', async () => {
     const { id } = await card('jo', everyone.id);
     const who = await screen.findByTestId(`who-${id}`, {}, slow);
     expect(wordsIn(who)).toBe('Alex, Chase and 2 more can see this.');
@@ -252,13 +253,15 @@ describe('GUX-R6 the card names who can see it', () => {
     expect(wordsIn(who)).not.toMatch(GROUP_NAMES);
   });
 
-  it('GUX-R6 three others are all named: Grandpa Earl reads "Alex, Chase and Grandma Jo can see this."', async () => {
+  // waits for Chase (names vs initials): reverses WHO-10 / LIVE-4 (Nov 5).
+  it.skip('GUX-R6 three others are all named: Grandpa Earl reads "Alex, Chase and Grandma Jo can see this."', async () => {
     const { id } = await card('earl', dadSide.id);
     const who = await screen.findByTestId(`who-${id}`, {}, slow);
     expect(wordsIn(who)).toBe('Alex, Chase and Grandma Jo can see this.');
   });
 
-  it('GUX-R6 DEC-49 the sender sees people\'s names on that line too, never the group\'s title', async () => {
+  // waits for Chase (names vs initials): reverses WHO-10 / LIVE-4 (Nov 5).
+  it.skip('GUX-R6 DEC-49 the sender sees people\'s names on that line too, never the group\'s title', async () => {
     const { id } = await card('chase', dadSide.id);
     const who = await screen.findByTestId(`who-${id}`, {}, slow);
     expect(wordsIn(who)).toMatch(/can see this\.$/);
@@ -266,6 +269,7 @@ describe('GUX-R6 the card names who can see it', () => {
     expect(wordsIn(who)).not.toMatch(GROUP_NAMES);
   });
 
+  // Runs today: it holds with the initials circles too, so it guards privacy while GUX-R6 waits.
   it('GUX-R6 privacy both ways: Nana Ruth (not in Dad\'s side) is never named, and she never sees that post', async () => {
     const { id } = await card('jo', dadSide.id);
     const who = await screen.findByTestId(`who-${id}`, {}, slow);
@@ -279,6 +283,7 @@ describe('GUX-R6 the card names who can see it', () => {
     expect(screen.queryByText('Dad side only')).toBeNull();
   });
 
+  // Runs today: it holds with the initials circles too, so it guards privacy while GUX-R6 waits.
   it('GUX-R6 tapping the names still opens everyone who can see it', async () => {
     const { id } = await card('jo', dadSide.id);
     fireEvent.press(await screen.findByTestId(`who-${id}`, {}, slow));

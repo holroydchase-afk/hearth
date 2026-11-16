@@ -10,7 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { FeedPost } from '../api/HearthApi';
 import { newSinceDay } from '../feed/newForYou';
 import { useFeed } from '../state/AppContext';
-import { Button, Txt } from '../ui/kit';
+import { BackButton, Button, Txt } from '../ui/kit';
 import { andList, shortDate } from '../ui/format';
 import { SPACE, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
@@ -74,7 +74,12 @@ export function fromLine(since: string, names: string[]): string {
 }
 
 /** OPEN-7/8: one new post at a time, in place of Photos. Next reads Done on the last and returns to Photos. */
-export function OneAtATime({ postIds, onClose }: { postIds: string[]; onClose: () => void }) {
+export function OneAtATime({ postIds, onClose, onDone }: {
+  postIds: string[];
+  onClose: () => void;
+  /** GUX-R7: Done on the last one: she has seen them all, so New for you lets them go. Defaults to onClose. */
+  onDone?: () => void;
+}) {
   const state = useFeed();
   const { c } = useTheme();
   const [at, setAt] = useState(0);
@@ -95,13 +100,14 @@ export function OneAtATime({ postIds, onClose }: { postIds: string[]; onClose: (
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
       <ScrollView testID="new-one-at-a-time" contentContainerStyle={{ padding: SPACE.lg, gap: SPACE.lg, paddingBottom: SPACE.xxl }} keyboardShouldPersistTaps="handled">
-        <Button label="Back to Gallery" icon={{ sf: 'chevron.backward', md: 'arrow_back' }} variant="secondary" onPress={onClose} />
+        <BackButton to="Gallery" onPress={onClose} />
         <Txt variant="title" role="header" label={heading}>{heading}</Txt>
         <PostCard key={post.post_id} post={post} />
-        {/* GUX-R1/R2/R8: Next (Done on the last) is always first in its own row, so it never moves; RD-7 makes it a capsule. */}
-        <View style={{ gap: SPACE.md }}>
-          <Button variant="tinted" label={last ? 'Done, back to Gallery' : 'Next'} text={last ? 'Done' : 'Next'} onPress={() => (last ? onClose() : setAt(step + 1))} />
+        {/* GUX-R8 (Nov 16): one row, Previous on the left and Next (Done on the last) on the right, like a book. */}
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: SPACE.md }}>
           {step > 0 ? <Button label="Previous new photo" text="Previous" variant="secondary" onPress={() => setAt(step - 1)} /> : null}
+          <View style={{ flex: 1 }} />
+          <Button variant="tinted" label={last ? 'Done, back to Gallery' : 'Next'} text={last ? 'Done' : 'Next'} onPress={() => (last ? (onDone ?? onClose)() : setAt(step + 1))} />
         </View>
       </ScrollView>
     </SafeAreaView>

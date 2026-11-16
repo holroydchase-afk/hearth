@@ -12,7 +12,7 @@ import { messageFor } from '../errors/messages';
 import { ChatClient, type ChatLine, type ChatView } from '../messenger/client';
 import { markChatSeen } from '../messenger/newMessages';
 import { useApp } from '../state/AppContext';
-import { Button, Card, Field, Loading, Notice, Txt } from '../ui/kit';
+import { BackButton, Button, Card, Field, Loading, Notice, Txt } from '../ui/kit';
 import { useTheme } from '../ui/theme';
 
 const POLL_MS = 10_000;
@@ -38,8 +38,8 @@ export function MessagesScreen({ onClose, backTo = 'Gallery' }: { onClose: () =>
   if (open && client) return <ChatScreen chat={open} client={client} onClose={() => setOpen(null)} />;
   return (
     <Shell>
+      <BackButton to={backTo} onPress={onClose} />
       <Txt variant="display" role="header">Messages</Txt>
-      <Button label={`Back to ${backTo}`} icon={{ sf: 'chevron.backward', md: 'arrow_back' }} variant="secondary" onPress={onClose} />
       <Txt variant="muted">{PRIVACY}</Txt>
       {error ? <Notice text={error} /> : null}
       {!chats && !error ? <Loading words="Getting your chats…" /> : null}
@@ -109,8 +109,8 @@ function ChatScreen({ chat, client, onClose }: { chat: ChatSummary; client: Chat
 
   return (
     <Shell>
+      <BackButton to="Messages" label="Back to all messages" onPress={onClose} />
       <Txt variant="display" role="header">{chat.title}</Txt>
-      <Button label="Back to all messages" icon={{ sf: 'chevron.backward', md: 'arrow_back' }} variant="secondary" onPress={onClose} />
       <Txt variant="muted">{PRIVACY}</Txt>
       {error ? <Notice text={error} /> : null}
       {!view ? <Loading words="Opening the chat…" /> : null}

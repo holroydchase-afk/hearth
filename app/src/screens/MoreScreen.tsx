@@ -92,8 +92,8 @@ export function MoreScreen({ initialOpen }: { initialOpen?: string } = {}) {
     const title = open === 'bigText' ? 'Bigger text' : open === 'look' ? 'Light or dark screen' : 'Family color';
     return (
       <Screen>
-        <Txt variant="display" role="header">{title}</Txt>
         <BackButton to="More" onPress={back} />
+        <Txt variant="display" role="header">{title}</Txt>
         {open === 'bigText' ? <BiggerText /> : open === 'look' ? <LightOrDark heading={false} /> : <FamilyColor heading={false} />}
         {open === 'color' ? <Txt variant="muted">It colors the picked tab and links. For now it changes this phone only.</Txt> : null}
       </Screen>

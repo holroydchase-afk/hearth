@@ -85,7 +85,15 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   if (app.status !== 'ready' || !app.space || !app.feed) return <AppGate />;
   const feed = app.feed;
   if (search) return <SearchScreen onClose={() => setSearch(false)} />;
-  if (walk) return <OneAtATime postIds={walk} onClose={closeWalk} />;
+  if (walk) {
+    // GUX-R7: finishing the walk (Done) marks those posts seen here, so New for you and its "N new" chip go away.
+    const finish = () => {
+      const newest = Math.max(...state.posts.filter((p) => walk.includes(p.post_id)).map((p) => Date.parse(p.published_at)));
+      if (me && Number.isFinite(newest)) setLastSeen((s) => (s && s.user === me && s.at && Date.parse(s.at) >= newest ? s : { user: me, at: new Date(newest).toISOString() }));
+      setWalk(null);
+    };
+    return <OneAtATime postIds={walk} onClose={closeWalk} onDone={finish} />;
+  }
   if (timeline) return <TimelineScreen startAt={timeline.startAt} onClose={() => setTimeline(null)} />;
   if (events) {
     return (
@@ -120,10 +128,10 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   const header = (
     <View style={{ gap: 12 }}>
       {/* RD-11: Gallery's large title is the greeting (shown once the name is known, so it never flips mid-read);
-          Feed keeps today's title. UI-26 still holds: no "Check for new photos" button; pull down to refresh. */}
+          Feed's title is "Feed" (GUX-R5), the tab's own word. UI-26 still holds: no "Check for new photos" button; pull down to refresh. */}
       {gallery
         ? (words ? <LargeGreeting words={words} scrollY={scrollY} /> : null)
-        : <Txt variant="display" role="header">{`Photos of ${app.space.name}`}</Txt>}
+        : <Txt variant="display" role="header">Feed</Txt>}
       {/* RD-18: Gallery has no "Sent by" line; the grid tiles and New for you name the senders. */}
       {senders && !gallery ? <Txt variant="muted">{`Sent by ${senders}`}</Txt> : null}
       {fresh.length && lastSeen?.at ? (

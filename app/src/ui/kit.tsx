@@ -142,9 +142,22 @@ export function IconButton({ label, text, icon, onPress, testID }: { label: stri
   );
 }
 
-/** A labeled way back to the screen this one was opened from ("Back to More"); DS-4, no swipe needed. */
-export function BackButton({ to, onPress }: { to: string; onPress: () => void }) {
-  return <Button label={`Back to ${to}`} icon={{ sf: 'chevron.backward', md: 'arrow_back' }} variant="secondary" onPress={onPress} />;
+/** GUX-R1: Apple's back button, top left above the title: a chevron and the place's word ("‹ More") as a plain text
+ *  button, 48 pt tall. The screen reader still hears "Back to More" (DS-4: a labeled way back, no swipe needed). */
+export function BackButton({ to, onPress, label }: { to: string; onPress: () => void; /** Spoken name, when not "Back to <to>". */ label?: string }) {
+  const { c, t, os } = useTheme();
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label ?? `Back to ${to}`}
+      onPress={onPress}
+      android_ripple={{ color: c.line }}
+      style={({ pressed }) => [styles.back, { opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
+    >
+      <SystemIcon icon={{ sf: 'chevron.backward', md: 'arrow_back' }} color={c.accent} />
+      <Text style={{ color: c.accent, fontSize: t.base, lineHeight: t.line }}>{to}</Text>
+    </Pressable>
+  );
 }
 
 /** RD-15: one of More's big rows: icon, word, an optional accent count ("2 new", RD-14) and a chevron, the whole
@@ -169,13 +182,15 @@ export function MenuRow({ text, icon, count, onPress, testID }: { text: string; 
 }
 const CHEVRON: Icon = { sf: 'chevron.forward', md: 'chevron_right' };
 
-/** A whole-card checkbox / radio / switch: the full row is the 48 pt+ target. Switches are the phone's own
- *  switch with the word On or Off beside it (DS-3); checkboxes and radios take each platform's shape. */
+/** A whole-row checkbox / radio / switch: the full row is the 48 pt+ target. GUX-R2 / GUX-R9 (Nov 16): a plain grouped
+ *  row (no box of its own, no tinted fill), like the phone's own settings. A picked radio shows an accent check
+ *  mark at the end; a checkbox shows an empty circle that fills with an accent check (iPhone) or the phone's own
+ *  check box (Android). Switches are the phone's own switch with the word On or Off beside it (DS-3). */
 export function Choice({ label, title, detail, checked, onPress, kind }: {
   label: string; title: string; detail?: string; checked: boolean; onPress: () => void; kind: 'checkbox' | 'radio' | 'switch';
 }) {
-  const { c, t, os } = useTheme();
-  const round = kind === 'radio' || (kind === 'checkbox' && os !== 'android');
+  const { c, os } = useTheme();
+  const box: Icon = checked ? { sf: 'checkmark.circle', md: 'check_box' } : { sf: 'circle', md: 'check_box_outline_blank' };
   return (
     <Pressable
       accessibilityRole={kind}
@@ -183,24 +198,17 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
       accessibilityState={{ checked }}
       onPress={onPress}
       android_ripple={{ color: c.line }}
-      style={({ pressed }) => [
-        styles.choice,
-        { borderColor: checked ? c.accent : c.line, backgroundColor: checked ? c.accentSoft : c.surface, opacity: pressed && os !== 'android' ? 0.7 : 1 },
-      ]}
+      style={({ pressed }) => [styles.choice, { opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
     >
-      {kind === 'switch' ? null : (
-        <View style={[styles.mark, { borderRadius: round ? RADIUS.pill : RADIUS.small, borderColor: checked ? c.accent : c.muted, backgroundColor: checked && kind === 'checkbox' ? c.accent : 'transparent' }]}>
-          {checked && kind === 'radio' ? <View style={[styles.dot, { backgroundColor: c.accent }]} /> : null}
-          {checked && kind === 'checkbox' ? <Text style={{ color: c.accentInk, fontSize: t.base, fontWeight: WEIGHT.semibold }}>✓</Text> : null}
-        </View>
-      )}
+      {kind === 'checkbox' ? <SystemIcon icon={box} color={checked ? c.accent : c.muted} size={26} /> : null}
       <View style={{ flex: 1 }}>
         <Txt variant="strong">{title}</Txt>
         {detail ? <Txt variant="muted">{detail}</Txt> : null}
       </View>
+      {kind === 'radio' && checked ? <SystemIcon icon={{ sf: 'checkmark', md: 'check' }} color={c.accent} size={22} /> : null}
       {kind === 'switch' ? (
         <View style={styles.switchBox} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-          <Text style={{ color: c.ink, fontSize: t.base, fontWeight: WEIGHT.semibold }}>{checked ? 'On' : 'Off'}</Text>
+          <SwitchWord on={checked} />
           {/* A11Y-2: the web's default On thumb is teal; keep it in Hearth's colors (phones ignore activeThumbColor).
               A11Y-3: the Off track is muted, not line, so the switch shows at 3:1 (WCAG 1.4.11). */}
           <Switch value={checked} trackColor={{ true: c.accent, false: c.muted }} {...({ activeThumbColor: c.surface } as object)} />
@@ -208,6 +216,11 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
       ) : null}
     </Pressable>
   );
+}
+
+function SwitchWord({ on }: { on: boolean }) {
+  const { c, t } = useTheme();
+  return <Text style={{ color: c.ink, fontSize: t.base, fontWeight: WEIGHT.semibold }}>{on ? 'On' : 'Off'}</Text>;
 }
 
 export function Field(props: TextInputProps & { label: string }) {
@@ -333,10 +346,9 @@ const styles = StyleSheet.create({
   menuRow: { minHeight: MIN_TARGET + 12, minWidth: MIN_TARGET, alignSelf: 'stretch', flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth },
   iconBtn: { flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: MIN_TARGET + 12, minWidth: MIN_TARGET + 12, paddingHorizontal: 6, gap: 2 },
   capsule: { alignSelf: 'flex-start' },
+  back: { alignSelf: 'flex-start', minHeight: MIN_TARGET, minWidth: MIN_TARGET, flexDirection: 'row', alignItems: 'center', gap: 4, marginLeft: -6, marginBottom: -8 },
   btn: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, borderRadius: RADIUS.pill, borderWidth: 1, paddingHorizontal: 18, paddingVertical: 10, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 },
-  choice: { minHeight: MIN_TARGET + 8, minWidth: MIN_TARGET, borderWidth: 2, borderRadius: RADIUS.medium, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  mark: { width: 28, height: 28, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
-  dot: { width: 14, height: 14, borderRadius: RADIUS.pill },
+  choice: { minHeight: MIN_TARGET + 8, minWidth: MIN_TARGET, paddingVertical: 8, flexDirection: 'row', alignItems: 'center', gap: 12 },
   switchBox: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   card: { padding: 14, gap: 12 },
   screen: { padding: 16, gap: 16, paddingBottom: 32 },

@@ -174,7 +174,8 @@ export function ShareScreen() {
       {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
 
       <Card>
-        <Button variant="secondary"
+        {/* GUX-R2: plain accent text buttons inside the section, never a box inside a box. */}
+        <Button variant="quiet" icon={{ sf: 'photo.on.rectangle', md: 'add_photo_alternate' }} style={{ alignSelf: 'flex-start' }}
           label={videos ? 'Pick photos or videos from your phone' : 'Pick photos from your phone'}
           text={videos ? (items.length ? 'Pick more photos or videos' : 'Pick photos or videos') : (items.length ? 'Pick more photos' : 'Pick photos')} onPress={() => void pick()} disabled={items.length >= MAX} />
         {items.length ? <Txt variant="strong">{`${photos(items.length)} picked`}</Txt> : null}
@@ -182,7 +183,7 @@ export function ShareScreen() {
           {items.map((it, i) => (
             <View key={`${it.uri}-${i}`} style={{ width: 120, gap: 6 }}>
               <Image source={{ uri: it.uri }} style={{ width: 120, height: 120, borderRadius: 12 }} accessibilityIgnoresInvertColors />
-              <Button label={`Remove photo ${i + 1}`} text="Remove" variant="secondary" onPress={() => setItems((cur) => cur.filter((_, j) => j !== i))} />
+              <Button label={`Remove photo ${i + 1}`} text="Remove" variant="quiet" onPress={() => setItems((cur) => cur.filter((_, j) => j !== i))} />
             </View>
           ))}
         </View>
@@ -231,7 +232,7 @@ export function ShareScreen() {
         <Card>
           <Txt variant="title" role="header">Lots of photos?</Txt>
           <Txt>Pick up to 100. Hearth puts them in order by the day they were taken.</Txt>
-          <Button label="Pick up to 100 photos at once" text="Pick lots of photos" variant="secondary" onPress={() => void pickMany()} />
+          <Button label="Pick up to 100 photos at once" text="Pick lots of photos" variant="quiet" style={{ alignSelf: 'flex-start' }} onPress={() => void pickMany()} />
         </Card>
       ) : null}
     </Screen>
