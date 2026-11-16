@@ -36,7 +36,7 @@ export function DemoFrame({ width, children, open = () => {} }: { width: number;
         </View>
         <Txt variant="title" role="header">Try this</Txt>
         {TRY.map((t, i) => <Txt key={t}>{`${i + 1}. ${t}`}</Txt>)}
-        <Button role="link" label="Read the case study on chaseholroyd.com" text="Read the case study" onPress={() => open(PORTFOLIO_URL)} style={styles.cta} />
+        <Button variant="quiet" role="link" label="Read the case study on chaseholroyd.com" text="Read the case study" onPress={() => open(PORTFOLIO_URL)} style={styles.cta} />
         <Txt variant="muted">Built test-first by Chase Holroyd, a product manager, with a team of AI agents. The family here is made up and stays in this browser.</Txt>
       </View>
       <View

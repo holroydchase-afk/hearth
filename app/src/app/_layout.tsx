@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 import { Stack, router } from 'expo-router';
-import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import React, { useMemo } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -13,7 +12,7 @@ import { NavContext, type Nav } from '../state/nav';
 import { createRuntime } from '../state/runtime';
 import { ErrorBoundary } from '../ui/ErrorBoundary';
 import { Screen, Txt } from '../ui/kit';
-import { FONT_FILES, statusBarStyle, useTheme } from '../ui/theme';
+import { statusBarStyle, useTheme } from '../ui/theme';
 
 const runtime = createRuntime();
 
@@ -35,9 +34,6 @@ function ThemedStatusBar() {
 
 export default function RootLayout() {
   useNotificationTaps(useMemo(() => (postId: string) => nav.openViewer(postId, 0), []));
-  // DS-12: wait for Atkinson Hyperlegible (bundled, no network). If it ever fails, go on with the phone's font.
-  const [fontsReady, fontError] = useFonts(FONT_FILES);
-  if (!fontsReady && !fontError) return null;
   if ('error' in runtime) {
     return <SafeAreaProvider><Screen><Txt variant="title">{runtime.error}</Txt></Screen></SafeAreaProvider>;
   }

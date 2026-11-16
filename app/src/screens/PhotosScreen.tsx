@@ -29,7 +29,7 @@ function EarlierCard({ g, onOpen }: { g: EarlierGroup; onOpen: () => void }) {
     <Card testID={`earlier-card-${g.authorId}`}>
       <Txt variant="title" role="header">Older photos</Txt>
       <Txt>{`${g.authorName} added ${g.photoCount === 1 ? '1 older photo' : `${g.photoCount} older photos`} from ${monthSpan(g.fromAt, g.openAt)}.`}</Txt>
-      <Button label={`See ${g.authorName}'s older photos by date`} text="See them" onPress={onOpen} />
+      <Button variant="secondary" label={`See ${g.authorName}'s older photos by date`} text="See them" onPress={onOpen} />
     </Card>
   );
 }
@@ -204,7 +204,7 @@ function PushAsk() {
     <Card testID="push-ask">
       <Txt variant="title" role="header">Get a notice when the family shares photos?</Txt>
       <Txt>Your phone will ask next. Tap Allow to get a notice for new photos.</Txt>
-      <Button label="Turn on notices" icon={{ sf: 'bell', md: 'notifications' }} onPress={() => void app.askPush()} />
+      <Button variant="secondary" label="Turn on notices" icon={{ sf: 'bell', md: 'notifications' }} onPress={() => void app.askPush()} />
       <Button label="Not now, maybe later" text="Not now" variant="quiet" onPress={app.skipPushAsk} />
     </Card>
   );

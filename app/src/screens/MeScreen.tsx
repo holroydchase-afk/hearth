@@ -7,7 +7,7 @@ import { Card, Screen, Txt } from '../ui/kit';
 import { AppGate } from './AppGate';
 import { NoticeTiming } from './NoticeTiming';
 import { ProblemDetailsCard } from './ProblemDetails';
-import { BiggerText, DeleteAccount, HowToTell, ColorChoice, LightOrDark, PhotoHelpers, Privacy, ReplyAudience, SignOut } from './Preferences';
+import { BiggerText, DeleteAccount, HowToTell, FamilyColor, LightOrDark, PhotoHelpers, Privacy, ReplyAudience, SignOut } from './Preferences';
 
 export function MeScreen() {
   const app = useApp();
@@ -40,7 +40,7 @@ function MeReady() {
       </Card>
       <BiggerText />
       <LightOrDark />
-      <ColorChoice />
+      <FamilyColor />
       <HowToTell />
       <ReplyAudience />
       <PhotoHelpers />

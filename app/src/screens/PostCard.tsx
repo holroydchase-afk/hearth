@@ -9,7 +9,7 @@ import { useApp, useFeed } from '../state/AppContext';
 import { BottomSheet, Button, Card, Confirm, Field, Notice, Txt } from '../ui/kit';
 import { haptic } from '../platform/haptics';
 import { andList, initialOf, people, shortDate } from '../ui/format';
-import { FONT, MIN_TARGET, RADIUS, SPACE, fontFamily, useTheme } from '../ui/theme';
+import { MIN_TARGET, RADIUS, SPACE, WEIGHT, useTheme } from '../ui/theme';
 import { PhotoCollage } from './PhotoCollage';
 
 /** MOMENT-1..8 (UAT 9): one upload as one compact card, like a standard photo feed. Who and when, the caption,
@@ -61,7 +61,7 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
     <Card testID={`post-${post.post_id}`} style={{ padding: 0, gap: 0, overflow: 'hidden' }}>
       <View testID={`card-head-${post.post_id}`} style={styles.head}>
         <View style={[styles.avatar, { backgroundColor: c.accentSoft }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-          <Txt variant="strong" style={{ color: c.accent, letterSpacing: -0.5 }}>{initialOf(post.author_name)}</Txt>
+          <Txt variant="strong" style={{ color: c.ink, letterSpacing: -0.5 }}>{initialOf(post.author_name)}</Txt>
         </View>
         <View style={{ flex: 1, minWidth: 0 }}>
           <Txt variant="strong">{post.author_name}</Txt>
@@ -195,7 +195,7 @@ function Faces({ post, viewers, me, onPress }: { post: FeedPost; viewers: Viewer
       {shown.map((p, i) => (
         <View key={p.id} testID={`face-${p.id}`}
           style={[styles.face, { backgroundColor: c.accentSoft, borderColor: c.surface, marginLeft: i ? -SPACE.sm : 0 }]}>
-          <Text maxFontSizeMultiplier={FACE_MAX_SCALE} style={[styles.faceText, { color: c.accent }]}>{initialOf(p.name === 'You' ? viewers.find((v) => v.user_id === me)?.name ?? 'You' : p.name)}</Text>
+          <Text maxFontSizeMultiplier={FACE_MAX_SCALE} style={[styles.faceText, { color: c.ink }]}>{initialOf(p.name === 'You' ? viewers.find((v) => v.user_id === me)?.name ?? 'You' : p.name)}</Text>
         </View>
       ))}
       {rest > 0 ? <Text style={[styles.faceMore, { color: c.muted }]}>{`+${rest}`}</Text> : null}
@@ -213,7 +213,7 @@ function WhoSheet({ post, viewers, me, onClose }: { post: FeedPost; viewers: Vie
             {ordered(viewers, me).map((p) => (
               <View key={p.id} testID={`person-${p.id}`} style={[styles.person, { backgroundColor: c.fill }]}>
                 <View style={[styles.face, { backgroundColor: c.accentSoft, borderColor: c.fill }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-                  <Text maxFontSizeMultiplier={FACE_MAX_SCALE} style={[styles.faceText, { color: c.accent }]}>{initialOf(p.name === 'You' ? viewers.find((v) => v.user_id === me)?.name ?? 'You' : p.name)}</Text>
+                  <Text maxFontSizeMultiplier={FACE_MAX_SCALE} style={[styles.faceText, { color: c.ink }]}>{initialOf(p.name === 'You' ? viewers.find((v) => v.user_id === me)?.name ?? 'You' : p.name)}</Text>
                 </View>
                 <Txt testID="person-name">{p.name}</Txt>
               </View>
@@ -278,7 +278,7 @@ function WordsSheet({ post, onClose }: { post: FeedPost; onClose: () => void }) 
           <Field label="Title (optional)" value={title} onChangeText={setTitle} maxLength={80} />
           <Field label="What's happening?" value={caption} onChangeText={setCaption} multiline maxLength={2000} />
           {error ? <Notice text={error} /> : null}
-          <Button label="Save the new words" text="Save" busy={busy} onPress={() => void save()} />
+          <Button variant="secondary" label="Save the new words" text="Save" busy={busy} onPress={() => void save()} />
           <Button label="Cancel, keep the words" text="Cancel" variant="secondary" onPress={onClose} />
         </ScrollView>
       </SafeAreaView>
@@ -360,7 +360,7 @@ const ReplyBox = forwardRef<TextInputInstance, { post: FeedPost; mine: boolean }
   // iPhone: a rounded field like a grouped-list cell. Android: Material's outlined field (as kit Field).
   const box = os === 'android'
     ? { borderWidth: 1, borderColor: c.muted, borderRadius: 4 }
-    : { borderWidth: 1, borderColor: c.line, backgroundColor: c.surface, borderRadius: 20 };
+    : { borderWidth: 1, borderColor: c.line, backgroundColor: c.surface, borderRadius: RADIUS.medium };
   return (
     <View style={{ gap: 6 }}>
       <View testID={`reply-${post.post_id}`} style={styles.replyRow}>
@@ -373,9 +373,9 @@ const ReplyBox = forwardRef<TextInputInstance, { post: FeedPost; mine: boolean }
           onChangeText={(v) => { setSent(false); feed?.setDraft(post.post_id, v); }}
           multiline
           maxLength={500}
-          style={[{ flex: 1, minHeight: MIN_TARGET, color: c.ink, paddingHorizontal: 14, paddingVertical: 12, fontSize: t.base, fontFamily }, box]}
+          style={[{ flex: 1, minHeight: MIN_TARGET, color: c.ink, paddingHorizontal: 14, paddingVertical: 12, fontSize: t.base }, box]}
         />
-        <Button label="Send" onPress={() => void send()} disabled={!draft.trim()} />
+        <Button variant="secondary" label="Send" onPress={() => void send()} disabled={!draft.trim()} />
       </View>
       {/* BETA-REPLY-6: say who can read it, matching the server (everyone the post was shared with). */}
       <Txt variant="muted">{sent ? sentWords : readers}</Txt>
@@ -417,13 +417,13 @@ const styles = StyleSheet.create({
   counts: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.sm, flexShrink: 1 },
   chip: { borderRadius: RADIUS.pill, paddingHorizontal: SPACE.md, paddingVertical: SPACE.xs },
   mine: { borderWidth: 0 },
-  faceWord: { fontFamily, fontSize: 17, marginRight: SPACE.xs },
+  faceWord: { fontSize: 17, marginRight: SPACE.xs },
   faces: { flexDirection: 'row', alignItems: 'center', minHeight: MIN_TARGET, minWidth: MIN_TARGET, paddingHorizontal: SPACE.xs },
   face: { width: 36, height: 36, borderRadius: RADIUS.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   // FIRSTMIN-1: two letters ("GJ") fit the 32 pt inside the ring at 17 pt with slightly tighter tracking.
-  faceText: { fontFamily: FONT.semibold, fontSize: 17, lineHeight: 20, letterSpacing: -0.5 },
+  faceText: { fontWeight: WEIGHT.semibold, fontSize: 17, lineHeight: 20, letterSpacing: -0.5 },
   emoji: { fontSize: 24, lineHeight: 30, textAlign: 'center' },
-  faceMore: { fontFamily, fontSize: 17, marginLeft: SPACE.xs },
+  faceMore: { fontSize: 17, marginLeft: SPACE.xs },
   people: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.sm },
   person: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, borderRadius: RADIUS.pill, paddingLeft: SPACE.xs, paddingRight: SPACE.md, minHeight: MIN_TARGET },
   actions: { flexDirection: 'row', gap: SPACE.sm, marginHorizontal: SPACE.sm, marginTop: SPACE.sm, paddingVertical: SPACE.xs, borderTopWidth: StyleSheet.hairlineWidth },

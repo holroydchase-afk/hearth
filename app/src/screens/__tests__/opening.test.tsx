@@ -58,7 +58,9 @@ function wordsIn(root: ReturnType<typeof screen.getByTestId>): string {
 }
 /** Document order of testIDs, to check what sits above what. */
 const order = () => (screen.UNSAFE_root.findAll((n: Node) => typeof n.type === 'string' && typeof n.props.testID === 'string') as Node[]).map((n) => n.props.testID as string);
-const FILLED = new Set([paletteFor('ios', false).accent, paletteFor('ios', true).accent, paletteFor('android', false).accent, paletteFor('android', true).accent]);
+// RD-7 (DEC-59): the one main button is no longer a big filled one but the accent-tinted capsule (RD-4's "main tap
+// word"); "filled" here now means that one highlighted button.
+const FILLED = new Set([paletteFor('ios', false).accentSoft, paletteFor('ios', true).accentSoft, paletteFor('android', false).accentSoft, paletteFor('android', true).accentSoft]);
 const isFilled = (b: Node) => FILLED.has(flat(b.props.style).backgroundColor as string);
 
 /** Jo visited an hour ago; one older post she has seen, then `fresh` new ones from Chase since. */

@@ -22,7 +22,7 @@ export function InviteReady({ link, code, onText }: { link: string; code: string
       <Txt selectable>{link}</Txt>
       <Txt selectable>{`Or they can type this code in Hearth: ${code.slice(0, 5)} ${code.slice(5)}`}</Txt>
       <Txt>Works for 30 days.</Txt>
-      <Button label="Text the invite" onPress={onText} />
+      <Button variant="secondary" label="Text the invite" onPress={onText} />
     </Card>
   );
 }

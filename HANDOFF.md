@@ -4,12 +4,22 @@ stage: building
 goal: hearth-beta
 milestone: HRT-M1
 now: push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
-next: R45 step 2 PR (New for you in the demo, Try this steps, link preview, toolbar two to a row); then Chase checks the demo in iPhone Safari and records the video
+next: redesign R46 phase 1a built (RD-1..8, RD-24..27); qa-tdd 3x and grandparent-ux next, then 1b (RD-9..17) and 1c; stop date Nov 19
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 15: redesign 1a built, the look (RD-1..8, RD-24..27; branch claude/project-thread-iyml94, local commit)
+- **Done, test-first (qa-tdd's red tests at 652a1d6):** `theme.ts` white/true-black neutral palette, one `accent` per family color (Ember, Forest, Plum; Sage gone), high-contrast set kept; phone's own font, `WEIGHT` Regular/Semibold, Bold only in the large title; Atkinson and `@expo-google-fonts/atkinson-hyperlegible-next` removed (package.json + lock, one line; `expo-font` kept for the app.json plugin); `RADIUS.large` gone; outline icons; filled buttons only per RD-7 (others `secondary`, the main tap word the new `tinted` capsule, the demo's "Read the case study" a text link); "Family color" picker on the owner's Me (`FamilyColor` in Preferences.tsx), saved in `prefs.color`, others Ember (`loadPrefs` by role, sage→forest); launch screen white/black; `docs/design/tokens.json` regenerated.
+- **Tests changed (stale against RD-7/RD-8, flagged for qa-tdd):** `a11ySweep` DS-13 corners now `[4, 12, 999]`; `opening.test.tsx` OPEN-4/OPEN-7 "filled" now means the accent-tinted capsule; `redesignLint` RD-7 confirm allowlist adds "Yes, sign out" (SPEC RD-7 line added).
+- **Next exact step:** qa-tdd runs all suites 3x; grandparent-ux on the new look (shots in the session scratchpad); then 1b. Not pushed.
+
+## Nov 15: redesign specced (DEC-59, `SPEC-REDESIGN.md` RD-1..33, TRACKER R46; branch claude/project-thread-iyml94, docs only)
+- **Why:** Chase, Nov 14-15, picked look B ("black and white and an accent", "Go with the 4 new chip on the pic", "Make the color a variable that can be set in the admin", "Go Claude go"). Persona check `decisions/2026-11-15-redesign.md`: CU Red on the word "Feed", Chase override. DESIGN-SYSTEM DS-3, -7, -9, -11, -12, -13 rewritten.
+- **Next exact step:** qa-tdd writes RD-1..8 (phase 1a, the look) red; engineer builds; one PR. Then 1b (RD-9..17), then 1c (RD-18..23). Family color phase 1 = owner-only picker on `prefs.color` (owner's phone only; everyone else Ember); phase 2 `spaces.accent` after the beta.
+- **Open:** CLAUDE.md rule 3 and `docs/eng/AGENT-NOTES.md` still say "Photos (not feed)" and "Help (not Me)"; update them (then `sync-agents.sh`) in the 1b PR.
 
 ## Nov 13: the demo opens on New for you, with a link preview (TRACKER R45 step 2; branch claude/project-thread-s1r7xd, PR)
 - **Done, test-first:** `seedDemo(be, load, kv)` writes a last visit 3 days ago for Kai and Grandma Jo (kept if one is saved; Start over clears it) and two new posts from Alex (Apple picking, First snow), so a first visit lands on the New for you card (DEMO-NEW-1..5). New drawings `apples` and `balloons` (`make-demo-pictures.py [name ...]`); no drawing repeats (DEMO-NEW-3). Laptop Try this: See the new photos, See it as Grandma Jo, Search for lake (DEMO-NEW-6). `scripts/add-site-meta.sh` adds a description, Open Graph and Twitter tags and `og-hearth.png` (made by `scripts/make-og-picture.py`) to the site build only (DEMO-META-1/2, `site_meta_test.sh` in test-all). Proof pill now "Stored in the US", the claims register's words (POS-R1). Photos toolbar: when its buttons don't fit one row (bigger text), two to a row instead of one left alone (TOOLBAR-1, UX-R1).

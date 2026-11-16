@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-15T19:30:00-05:00",
+ "label": "Redesign 1a, the look and Family color (RD-1..8, RD-24..27): all suites 3x (green)",
+ "passed": 1049,
+ "failed": 0,
+ "results": {},
+ "note": "Green on 3 runs each at a4b4ccd (on the red tests 652a1d6): app jest 1049 passed (1 skipped, 123 suites), typecheck clean, e2e:demo 10 passed (5 skipped), e2e:web 5 passed (11 screenshot-only skips), backend tests/run.sh every RESULT line 0 failed (local Postgres 16), agents.verify OK. Same counts on all 3 runs. Reviewed the engineer's test edits: DS-13 corners [4,12,999] (RD-8 drops 20), OPEN-4/OPEN-7 filled = tinted capsule, RD-7 allowlist adds an exact 'Yes, sign out'; none weakens a guarantee. Opened T15 (stale 'filled' wording). Deno and GitHub CI not run. e2e/results/rd-1a-green-3x-2026-11-15.txt"
+}

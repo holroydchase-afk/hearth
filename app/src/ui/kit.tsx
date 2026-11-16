@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 // Grandparent-first building blocks in each phone's own style (DESIGN-SYSTEM.md): Apple's on iPhone and the
-// web, Material 3 on Android. Every tappable thing is a <Button>/<Choice>: it always has an
+// web, Material 3 on Android. Every tappable thing is a Button or Choice: it always has an
 // accessibilityLabel, a visible word (DS-3), and a 48 pt minimum target (DS-1).
 import { SymbolView } from 'expo-symbols';
 import React, { type ReactNode } from 'react';
@@ -10,7 +10,7 @@ import {
   useWindowDimensions, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FONT, LABEL_SCALE_CAP, MIN_TARGET, RADIUS, dialogRadius, fontFamily, iconSize, sheetShouldClose, useTheme } from './theme';
+import { LABEL_SCALE_CAP, MIN_TARGET, RADIUS, WEIGHT, dialogRadius, iconSize, sheetShouldClose, useTheme } from './theme';
 
 /** A system symbol: SF Symbol name on iPhone, Material Symbol name on Android and the web. */
 export interface Icon { sf: string; md: string }
@@ -34,13 +34,14 @@ export function Txt({ variant = 'body', style, children, role, testID, numberOfL
   variant?: TxtVariant; style?: StyleProp<TextStyle>; children: ReactNode; role?: 'header' | 'alert' | 'text'; testID?: string; numberOfLines?: number;
 }) {
   const { c, t } = useTheme();
-  // DS-12 weights: body and muted Regular; strong (names), title and display SemiBold.
+  // RD-2: the phone's own font (no fontFamily). Body and muted Regular; strong (names) and title Semibold;
+  // display is the large title, the one place Bold is used.
   const v: Record<TxtVariant, TextStyle> = {
-    body: { fontFamily, fontSize: t.base, lineHeight: t.line, color: c.ink },
-    strong: { fontFamily: FONT.semibold, fontSize: t.base, lineHeight: t.line, color: c.ink },
-    muted: { fontFamily, fontSize: t.base, lineHeight: t.line, color: c.muted },
-    title: { fontFamily: FONT.semibold, fontSize: t.title, lineHeight: Math.round(t.title * 1.25), color: c.ink },
-    display: { fontFamily: FONT.semibold, fontSize: t.display, lineHeight: Math.round(t.display * 1.2), color: c.ink },
+    body: { fontSize: t.base, lineHeight: t.line, color: c.ink },
+    strong: { fontWeight: WEIGHT.semibold, fontSize: t.base, lineHeight: t.line, color: c.ink },
+    muted: { fontSize: t.base, lineHeight: t.line, color: c.muted },
+    title: { fontWeight: WEIGHT.semibold, fontSize: t.title, lineHeight: Math.round(t.title * 1.25), color: c.ink },
+    display: { fontWeight: '700', fontSize: t.display, lineHeight: Math.round(t.display * 1.2), color: c.ink },
   };
   return (
     <Text
@@ -59,7 +60,10 @@ export function Txt({ variant = 'body', style, children, role, testID, numberOfL
   );
 }
 
-export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'quiet';
+/** RD-7: primary (filled accent) and danger (filled red) are only for the few deliberate big buttons (sign-in, Start a
+ *  family, Post, Delete/Leave confirms). tinted is the small accent capsule for a screen's main tap word (RD-4);
+ *  secondary the gray capsule; quiet a text button or link. Every one stays 48 pt tall to tap (DS-1). */
+export type ButtonVariant = 'primary' | 'secondary' | 'tinted' | 'danger' | 'quiet';
 
 export function Button({ label, text, onPress, variant = 'primary', disabled, softDisabled, style, selected, testID, busy, role = 'button', icon }: {
   /** What a screen reader says. Required: no unlabeled targets. */
@@ -84,8 +88,8 @@ export function Button({ label, text, onPress, variant = 'primary', disabled, so
   // iPhone: filled, gray (tinted fill) and plain buttons. Android: filled, outlined and text buttons.
   // DS-11: a waiting button is solid gray with readable words, never a see-through blue.
   const waiting = !!disabled || !!softDisabled;
-  const bg = waiting && variant !== 'quiet' ? c.fill : { primary: c.accent, secondary: material ? 'transparent' : c.fill, danger: c.danger, quiet: 'transparent' }[variant];
-  const fg = waiting ? c.muted : { primary: c.accentInk, secondary: c.accent, danger: c.onDanger, quiet: c.accent }[variant];
+  const bg = waiting && variant !== 'quiet' ? c.fill : { primary: c.accent, secondary: material ? 'transparent' : c.fill, tinted: c.accentSoft, danger: c.danger, quiet: 'transparent' }[variant];
+  const fg = waiting ? c.muted : { primary: c.accentInk, secondary: c.ink, tinted: c.accent, danger: c.onDanger, quiet: c.accent }[variant];
   const border = variant === 'secondary' && material ? c.muted : bg;
   return (
     <Pressable
@@ -99,6 +103,7 @@ export function Button({ label, text, onPress, variant = 'primary', disabled, so
       android_ripple={{ color: c.line }}
       style={({ pressed }) => [
         styles.btn,
+        variant === 'tinted' ? styles.capsule : null,
         { backgroundColor: bg, borderColor: border, opacity: !waiting && pressed && !material ? 0.7 : 1 },
         selected ? { borderColor: c.accent, borderWidth: 2, backgroundColor: c.accentSoft } : null,
         style,
@@ -107,7 +112,7 @@ export function Button({ label, text, onPress, variant = 'primary', disabled, so
       {busy ? <ActivityIndicator color={fg} /> : null}
       {icon && !busy ? <SystemIcon icon={icon} color={selected ? c.accent : fg} /> : null}
       {typeof (text ?? label) === 'string' ? (
-        <Text style={{ color: selected ? c.ink : fg, fontFamily: material ? FONT.medium : FONT.semibold, fontSize: t.base, textAlign: 'center' }}>{text ?? label}</Text>
+        <Text style={{ color: selected ? c.ink : fg, fontWeight: WEIGHT.semibold, fontSize: t.base, textAlign: 'center' }}>{text ?? label}</Text>
       ) : (
         text
       )}
@@ -130,9 +135,9 @@ export function IconButton({ label, text, icon, onPress, testID }: { label: stri
       android_ripple={{ color: c.line, borderless: true }}
       style={({ pressed }) => [styles.iconBtn, { opacity: pressed ? 0.7 : 1 }]}
     >
-      <SystemIcon icon={icon} color={c.accent} size={28} />
+      <SystemIcon icon={icon} color={c.ink} size={28} />
       {/* HIG-3: a toolbar word stops growing at 1.5x so the row still fits at the largest text size. */}
-      <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.accent, fontFamily: FONT.medium, fontSize: t.base }}>{text}</Text>
+      <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.ink, fontSize: t.base }}>{text}</Text>
     </Pressable>
   );
 }
@@ -159,7 +164,7 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
       {kind === 'switch' ? null : (
         <View style={[styles.mark, { borderRadius: round ? RADIUS.pill : RADIUS.small, borderColor: checked ? c.accent : c.muted, backgroundColor: checked && kind === 'checkbox' ? c.accent : 'transparent' }]}>
           {checked && kind === 'radio' ? <View style={[styles.dot, { backgroundColor: c.accent }]} /> : null}
-          {checked && kind === 'checkbox' ? <Text style={{ color: c.accentInk, fontSize: t.base, fontFamily: FONT.semibold }}>✓</Text> : null}
+          {checked && kind === 'checkbox' ? <Text style={{ color: c.accentInk, fontSize: t.base, fontWeight: WEIGHT.semibold }}>✓</Text> : null}
         </View>
       )}
       <View style={{ flex: 1 }}>
@@ -168,7 +173,7 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
       </View>
       {kind === 'switch' ? (
         <View style={styles.switchBox} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-          <Text style={{ color: c.ink, fontSize: t.base, fontFamily: FONT.semibold }}>{checked ? 'On' : 'Off'}</Text>
+          <Text style={{ color: c.ink, fontSize: t.base, fontWeight: WEIGHT.semibold }}>{checked ? 'On' : 'Off'}</Text>
           {/* A11Y-2: the web's default On thumb is teal; keep it in Hearth's colors (phones ignore activeThumbColor).
               A11Y-3: the Off track is muted, not line, so the switch shows at 3:1 (WCAG 1.4.11). */}
           <Switch value={checked} trackColor={{ true: c.accent, false: c.muted }} {...({ activeThumbColor: c.surface } as object)} />
@@ -194,7 +199,7 @@ export function Field(props: TextInputProps & { label: string }) {
         placeholderTextColor={c.muted}
         {...rest}
         style={[
-          { minHeight: 56, color: c.ink, paddingHorizontal: 14, paddingVertical: 12, fontSize: t.base, fontFamily, ...box },
+          { minHeight: 56, color: c.ink, paddingHorizontal: 14, paddingVertical: 12, fontSize: t.base, ...box },
           style,
         ]}
       />
@@ -227,7 +232,7 @@ export function Loading({ words }: { words: string }) {
   const { c } = useTheme();
   return (
     <View style={styles.loading} accessibilityLiveRegion="polite">
-      <ActivityIndicator size="large" color={c.accent} />
+      <ActivityIndicator size="large" color={c.muted} />
       <Txt variant="muted">{words}</Txt>
     </View>
   );
@@ -299,6 +304,7 @@ const styles = StyleSheet.create({
   menu: { padding: 20, paddingTop: 8, gap: 14 },
   grabber: { alignSelf: 'center', width: 36, height: 5, borderRadius: RADIUS.pill, opacity: 0.5 },
   iconBtn: { flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: MIN_TARGET + 12, minWidth: MIN_TARGET + 12, paddingHorizontal: 6, gap: 2 },
+  capsule: { alignSelf: 'flex-start' },
   btn: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, borderRadius: RADIUS.pill, borderWidth: 1, paddingHorizontal: 18, paddingVertical: 10, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 },
   choice: { minHeight: MIN_TARGET + 8, minWidth: MIN_TARGET, borderWidth: 2, borderRadius: RADIUS.medium, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 },
   mark: { width: 28, height: 28, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },

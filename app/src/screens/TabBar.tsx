@@ -8,7 +8,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Role } from '../api/HearthApi';
-import { FONT, LABEL_SCALE_CAP, MIN_TARGET, iconSize, typeScale, useTheme } from '../ui/theme';
+import { WEIGHT, LABEL_SCALE_CAP, MIN_TARGET, iconSize, typeScale, useTheme } from '../ui/theme';
 
 export type TabName = 'photos' | 'share' | 'groups' | 'help' | 'me';
 export interface TabDef { name: TabName; label: string }
@@ -32,7 +32,7 @@ export function usesNativeTabs(os: string): boolean {
 export const NATIVE_TAB_OPTIONS = {
   minimizeBehavior: 'never', // DS-5: iOS 26 can shrink the bar on scroll; the way back stays visible
   labelVisibilityMode: 'labeled', // DS-5: Android shows every label, not only the selected one
-  labelStyle: { fontSize: 17, fontFamily: FONT.medium }, // DS-2: platform tab labels are 10–12 pt; DS-12 font
+  labelStyle: { fontSize: 17 }, // DS-2: platform tab labels are 10–12 pt; RD-2 the phone's own font
 } as const;
 
 const ALL: Record<TabName, TabDef> = {
@@ -76,7 +76,7 @@ export function HearthTabBar({ role, current, onNavigate }: { role: Role; curren
                 tintColor={color}
               />
             </View>
-            <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ fontSize: t.base, fontFamily: on ? FONT.semibold : FONT.medium, color }}>{tab.label}</Text>
+            <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ fontSize: t.base, fontWeight: on ? WEIGHT.semibold : WEIGHT.regular, color }}>{tab.label}</Text>
           </Pressable>
         );
       })}

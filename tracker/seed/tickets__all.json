@@ -1029,6 +1029,17 @@
    "fixed": "2026-11-11"
   },
   {
+   "id": "T15",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (RD-7, OPEN-4/OPEN-7): after redesign 1a the opening tests' FILLED now means the accent-tinted capsule (accentSoft), but their titles and comments still say \"filled\" and \"filled full-width Next\". The guarantee holds (redesignLint RD-7 bans stray primary/danger buttons app-wide); only the names mislead. Rename to \"highlighted\" in screens/__tests__/opening.test.tsx",
+   "tests": [],
+   "found": "2026-11-15",
+   "fixed": null
+  },
+  {
    "id": "B15",
    "kind": "bug",
    "layer": "backend",
