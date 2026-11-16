@@ -22,7 +22,7 @@ const galleryLoaded = async (page) => {
 };
 const onFeed = async (page) => {
   await page.getByRole('tab', { name: /^Feed/ }).click();
-  await expect(page.getByText('Mia turned 5!', { exact: true }).filter({ visible: true })).toBeVisible();
+  await expect(page.getByText('Life jackets on and in all afternoon', { exact: true }).filter({ visible: true })).toBeVisible();
 };
 
 const FIXTURE = path.join(__dirname, 'fixtures', 'park-gps.jpg');
@@ -53,15 +53,15 @@ test("DEMO-10 RD-17 Grandma Jo's view hides the Mom's-side posts; the parent's v
   await details(page);
   await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
   await onFeed(page);
-  await expect(page.getByText('Pumpkin patch day', { exact: true })).toBeVisible();
-  await expect(page.getByText('Canoe day at the lake', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('Bridge walk on the trail', { exact: true })).toBeVisible();
+  await expect(page.getByText('Bike day at the lake', { exact: true })).toHaveCount(0);
   await details(page);
   await page.getByRole('button', { name: "Back to Kai's view, the parent" }).click();
   await details(page);
   await expect(page.getByText(/You're Kai, a parent/)).toBeVisible();
   await onFeed(page);
-  await page.getByText('Canoe day at the lake', { exact: true }).scrollIntoViewIfNeeded();
-  await expect(page.getByText('Canoe day at the lake', { exact: true })).toBeVisible();
+  await page.getByText('Bike day at the lake', { exact: true }).scrollIntoViewIfNeeded();
+  await expect(page.getByText('Bike day at the lake', { exact: true })).toBeVisible();
 });
 
 test('RR-14 add a photo, reload keeps it, Start over brings back the sample family', async ({ page }) => {

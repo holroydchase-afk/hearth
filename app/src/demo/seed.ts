@@ -35,23 +35,23 @@ export interface DemoPost {
 
 /** Oldest first. Grandma Jo is on Dad's side, so she never sees the Mom's-side posts (DEMO-10). */
 export const DEMO_POSTS: DemoPost[] = [
-  { title: 'Beach weekend', caption: 'Found these on my phone from August', pictures: ['beach'], to: 'everyone', daysAgo: 24,
+  { title: 'Beach weekend', caption: 'Found these on my phone from August', pictures: ['beach', 'dunes'], to: 'everyone', daysAgo: 24,
     hearts: ['jo', 'ruth', 'earl'], replies: [{ who: 'ruth', body: 'Look at that sky!' }] },
-  { caption: 'First day of second grade. Leo wanted the front seat', pictures: ['bus'], to: 'everyone', daysAgo: 19,
-    hearts: ['jo', 'ruth', 'earl', 'alex'], replies: [{ who: 'jo', body: 'So grown up! Tell him Grandma is proud.' }] },
-  { caption: 'The kite finally flew at the park', pictures: ['kite'], to: 'dadSide', daysAgo: 15,
-    hearts: ['earl', 'jo'], replies: [{ who: 'earl', body: "Next time I'll bring the big one." }] },
-  { caption: "Mia's sunflowers are taller than she is", pictures: ['sunflowers'], to: 'momSide', daysAgo: 12,
+  { caption: 'Leo and his cousin met a mammoth at the museum', pictures: ['museum'], to: 'everyone', daysAgo: 19,
+    hearts: ['jo', 'ruth', 'earl', 'alex'], replies: [{ who: 'jo', body: 'Look at those tusks! Tell him Grandma says hi.' }] },
+  { caption: 'He went down the big slide all by himself', pictures: ['playground'], to: 'dadSide', daysAgo: 15,
+    hearts: ['earl', 'jo'], replies: [{ who: 'earl', body: "Next time I'll push him on the swings." }] },
+  { caption: 'Watering the flowers on a foggy morning', pictures: ['porch'], to: 'momSide', daysAgo: 12,
     hearts: ['ruth'], replies: [{ who: 'ruth', body: 'Your grandpa would love that garden.' }] },
-  { caption: 'Canoe day at the lake', pictures: ['lake'], to: 'momSide', daysAgo: 9, hearts: ['ruth'], replies: [] },
-  { title: "Mia's 5th birthday", caption: 'Mia turned 5!', pictures: ['cake', 'balloons'], to: 'everyone', daysAgo: 6,
-    hearts: ['jo', 'ruth', 'earl', 'alex'], replies: [{ who: 'jo', body: 'Happy birthday, sweet girl!' }, { who: 'ruth', body: 'Five already!' }] },
-  { caption: 'Pumpkin patch day', pictures: ['pumpkins'], to: 'dadSide', daysAgo: 2,
-    hearts: ['jo'], replies: [{ who: 'jo', body: 'Save me one for a pie!' }] },
+  { caption: 'Bike day at the lake', pictures: ['bike'], to: 'momSide', daysAgo: 9, hearts: ['ruth'], replies: [] },
+  { title: 'Splash pad', caption: 'Life jackets on and in all afternoon', pictures: ['splash'], to: 'everyone', daysAgo: 6,
+    hearts: ['jo', 'ruth', 'earl', 'alex'], replies: [{ who: 'jo', body: 'Those two are best buddies!' }, { who: 'ruth', body: 'Looks like a perfect day.' }] },
+  { caption: 'Bridge walk on the trail', pictures: ['bridge'], to: 'dadSide', daysAgo: 2,
+    hearts: ['jo'], replies: [{ who: 'jo', body: 'Hold on to that railing!' }] },
   // DEMO-NEW-2: Alex's posts since the demo's last visit, so the New for you card has something to show.
-  { title: 'Apple picking', caption: 'Leo picked a whole basket by himself', pictures: ['apples'], to: 'everyone', daysAgo: 1.6, from: 'alex',
-    hearts: ['ruth'], replies: [{ who: 'ruth', body: 'Bring some by on Sunday!' }] },
-  { caption: 'First snow! Mia wants to build a snowman', pictures: ['snow'], to: 'everyone', daysAgo: 0.8, from: 'alex',
+  { title: 'Fall colors', caption: 'We drove up to the overlook. The leaves are turning', pictures: ['overlook'], to: 'everyone', daysAgo: 1.6, from: 'alex',
+    hearts: ['ruth'], replies: [{ who: 'ruth', body: 'Bring the boys by on Sunday!' }] },
+  { caption: 'One big hug before the drive home', pictures: ['hug'], to: 'everyone', daysAgo: 0.8, from: 'alex',
     hearts: ['jo', 'earl'], replies: [] },
 ];
 

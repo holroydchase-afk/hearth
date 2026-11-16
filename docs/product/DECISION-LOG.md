@@ -444,5 +444,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** less text above the photos; the way in is already visible.
 - **Source:** `docs/product/SPEC-REDESIGN.md` RD-20
 
+### DEC-62 · The public demo uses Chase's own photos (DEMO-PHOTO-1..3)
+- **When / status:** Nov 16 · Chase sent 10 phone photos: "give me a demo I can use", "don't worry about faces, I checked that", "these are good" · Built
+- **Chose:** the demo's 9 sample moments show those photos (beach and dunes, museum, playground, porch, bike by the lake, splash pad, bridge, overlook, hug), with captions rewritten to match each one. Each photo is re-saved with no camera data (no EXIF, GPS or XMP) at 1200px on the long side, and loads at its own shape.
+- **Over:** the drawn flat pictures from `scripts/make-demo-pictures.py` (DEMO-3's "no people, no real places").
+- **Because:** real photos make the demo feel like a family's app, which is what a recruiter or a relative needs to see; Chase checked the faces himself. Demo content only, no change for a relative using the app, so no persona check.
+- **Source:** `app/src/demo/__tests__/realPhotos.test.ts`
+
 ---
-Last updated: Nov 16, 2026 (DEC-61)
+Last updated: Nov 16, 2026 (DEC-62)
