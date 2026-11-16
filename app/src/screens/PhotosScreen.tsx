@@ -5,9 +5,8 @@
 // two-item top bar (RD-11..13), New for you's sideways row when others sent photos since the last visit (RD-19..21),
 // then every photo by month in a square grid (RD-18). Messages and Events moved to More (RD-15).
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, FlatList, RefreshControl, ScrollView, View, useWindowDimensions, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { Animated, FlatList, RefreshControl, ScrollView, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { PhotosDemoTip } from '../demo/DemoTip';
 import { useApp, useFeed } from '../state/AppContext';
 import { loadLastSeen, saveLastSeen } from '../state/lastSeen';
 import { photosRows, type PhotosRow } from '../feed/events';
@@ -45,7 +44,6 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   const app = useApp();
   const state = useFeed();
   const { c } = useTheme();
-  const { width } = useWindowDimensions();
   // BETA-TIME-2: the timeline opens in place; "Back to Gallery" returns here.
   const [timeline, setTimeline] = useState<{ startAt: string | null } | null>(null);
   // EVT-3/4: the Events list or one event, opened in place; Back returns here.
@@ -137,7 +135,6 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
       {fresh.length && lastSeen?.at ? (
         <NewForYouRow posts={fresh} since={lastSeen.at} onSee={() => setWalk(fresh.map((p) => p.post_id))} />
       ) : null}
-      <PhotosDemoTip width={width} />
       {app.space.can_post ? <YourName /> : null}
       <QueueStatus />
       {app.pushAsk && state.posts.length ? <PushAsk /> : null}

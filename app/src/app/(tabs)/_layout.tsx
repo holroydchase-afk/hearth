@@ -32,7 +32,7 @@ export default function TabsLayout() {
         labelVisibilityMode={NATIVE_TAB_OPTIONS.labelVisibilityMode}
         labelStyle={{ default: { ...NATIVE_TAB_OPTIONS.labelStyle, color: c.muted }, selected: { ...NATIVE_TAB_OPTIONS.labelStyle, color: c.accent } }}
         tintColor={c.accent}
-        backgroundColor={c.surface}
+        backgroundColor={c.bg}
       >
         {ALL.map((name) => {
           const tab = tabs.find((t) => t.name === name);

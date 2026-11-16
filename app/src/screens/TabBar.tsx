@@ -59,7 +59,7 @@ export function HearthTabBar({ role, current, onNavigate, newMessages = 0 }: {
   const insets = useSafeAreaInsets();
   const { fontScale } = useWindowDimensions();
   return (
-    <View accessibilityRole="tablist" style={[styles.bar, { backgroundColor: c.surface, borderTopColor: c.line, paddingBottom: Math.max(insets.bottom, 6) }]}>
+    <View accessibilityRole="tablist" style={[styles.bar, { backgroundColor: c.bg, borderTopColor: c.line, paddingBottom: Math.max(insets.bottom, 6) }]}>
       {tabsFor(role).map((tab) => {
         const on = tab.name === current;
         const color = on ? c.accent : c.muted;
@@ -86,7 +86,7 @@ export function HearthTabBar({ role, current, onNavigate, newMessages = 0 }: {
                 />
               </View>
               {/* RD-14: the dot is spoken through the tab's name ("More, new message"), so it is only drawn. */}
-              {dot ? <View testID="more-dot" accessible={false} style={[styles.dot, { backgroundColor: c.accent, borderColor: c.surface }]} /> : null}
+              {dot ? <View testID="more-dot" accessible={false} style={[styles.dot, { backgroundColor: c.accent, borderColor: c.bg }]} /> : null}
             </View>
             <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ fontSize: t.base, fontWeight: on ? WEIGHT.semibold : WEIGHT.regular, color }}>{tab.label}</Text>
           </Pressable>

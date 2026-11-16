@@ -211,11 +211,10 @@ describe('GUX-R3 the post\'s menu button says Options, not More', () => {
 // GUX-R4 and GUX-R5: words.
 // ---------------------------------------------------------------------------------------------------------------
 
-describe('GUX-R4 the demo tip names Gallery', () => {
-  it('GUX-R4 step 1 reads "You\'re seeing a parent\'s Gallery." and no step says "parent\'s Photos"', () => {
-    const steps = demoTip(390, 'parent') as unknown as string[];
-    expect(steps[0]).toBe("You're seeing a parent's Gallery.");
-    for (const s of steps) expect(s).not.toMatch(/parent's Photos/);
+// DEC-61 (Chase, Nov 16): the numbered Try-this steps are gone from Gallery and Feed, so GUX-R4's wording moot.
+describe('GUX-R4 / DEC-61 no demo steps on Gallery or Feed', () => {
+  it('GUX-R4 DEC-61 no numbered steps for the parent on a phone, so nothing says "parent\'s Photos"', () => {
+    expect(demoTip(390, 'parent')).toBeNull();
   });
 });
 
@@ -243,8 +242,8 @@ describe('GUX-R6 the card names who can see it', () => {
     return { id };
   }
 
-  // waits for Chase (names vs initials): reverses WHO-10 / LIVE-4 (Nov 5).
-  it.skip('GUX-R6 a long list: "Alex, Chase and 2 more can see this." in words, no initials circles', async () => {
+  // Chase, Nov 16 (DEC-60): "Names". Reverses WHO-10 / LIVE-4 (Nov 5).
+  it('GUX-R6 a long list: "Alex, Chase and 2 more can see this." in words, no initials circles', async () => {
     const { id } = await card('jo', everyone.id);
     const who = await screen.findByTestId(`who-${id}`, {}, slow);
     expect(wordsIn(who)).toBe('Alex, Chase and 2 more can see this.');
@@ -253,15 +252,15 @@ describe('GUX-R6 the card names who can see it', () => {
     expect(wordsIn(who)).not.toMatch(GROUP_NAMES);
   });
 
-  // waits for Chase (names vs initials): reverses WHO-10 / LIVE-4 (Nov 5).
-  it.skip('GUX-R6 three others are all named: Grandpa Earl reads "Alex, Chase and Grandma Jo can see this."', async () => {
+  // Chase, Nov 16 (DEC-60): "Names". Reverses WHO-10 / LIVE-4 (Nov 5).
+  it('GUX-R6 three others are all named: Grandpa Earl reads "Alex, Chase and Grandma Jo can see this."', async () => {
     const { id } = await card('earl', dadSide.id);
     const who = await screen.findByTestId(`who-${id}`, {}, slow);
     expect(wordsIn(who)).toBe('Alex, Chase and Grandma Jo can see this.');
   });
 
-  // waits for Chase (names vs initials): reverses WHO-10 / LIVE-4 (Nov 5).
-  it.skip('GUX-R6 DEC-49 the sender sees people\'s names on that line too, never the group\'s title', async () => {
+  // Chase, Nov 16 (DEC-60): "Names". Reverses WHO-10 / LIVE-4 (Nov 5).
+  it('GUX-R6 DEC-49 the sender sees people\'s names on that line too, never the group\'s title', async () => {
     const { id } = await card('chase', dadSide.id);
     const who = await screen.findByTestId(`who-${id}`, {}, slow);
     expect(wordsIn(who)).toMatch(/can see this\.$/);
@@ -269,7 +268,7 @@ describe('GUX-R6 the card names who can see it', () => {
     expect(wordsIn(who)).not.toMatch(GROUP_NAMES);
   });
 
-  // Runs today: it holds with the initials circles too, so it guards privacy while GUX-R6 waits.
+  // Privacy both ways for the names line (GUX-R6, DEC-60).
   it('GUX-R6 privacy both ways: Nana Ruth (not in Dad\'s side) is never named, and she never sees that post', async () => {
     const { id } = await card('jo', dadSide.id);
     const who = await screen.findByTestId(`who-${id}`, {}, slow);
@@ -283,7 +282,7 @@ describe('GUX-R6 the card names who can see it', () => {
     expect(screen.queryByText('Dad side only')).toBeNull();
   });
 
-  // Runs today: it holds with the initials circles too, so it guards privacy while GUX-R6 waits.
+  // Privacy both ways for the names line (GUX-R6, DEC-60).
   it('GUX-R6 tapping the names still opens everyone who can see it', async () => {
     const { id } = await card('jo', dadSide.id);
     fireEvent.press(await screen.findByTestId(`who-${id}`, {}, slow));

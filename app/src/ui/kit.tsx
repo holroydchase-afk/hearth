@@ -247,9 +247,16 @@ export function Field(props: TextInputProps & { label: string }) {
   );
 }
 
+/** RD-34 (Chase, Nov 16: "why is everything grey?"; Apple HIG Color): content sits on the plain background, so a
+ *  Card is only a padded group with no fill or outline. Settings-style lists use GroupedSection instead. */
 export function Card({ children, style, testID }: { children: ReactNode; style?: StyleProp<ViewStyle>; testID?: string }) {
+  return <View testID={testID} style={[styles.card, style]}>{children}</View>;
+}
+
+/** RD-34: the Settings-style grouped section (iPhone inset grouped list; Android outlined card), only for the
+ *  settings lists under More (Bigger text, Light or dark, Family color, Help, Me). */
+export function GroupedSection({ children, style, testID }: { children: ReactNode; style?: StyleProp<ViewStyle>; testID?: string }) {
   const { c, os } = useTheme();
-  // iPhone: an inset grouped section. Android: Material's outlined card.
   const look = os === 'android' ? { borderWidth: 1, borderColor: c.line, borderRadius: RADIUS.medium } : { borderWidth: 0, borderRadius: RADIUS.medium };
   return <View testID={testID} style={[styles.card, { backgroundColor: c.surface }, look, style]}>{children}</View>;
 }

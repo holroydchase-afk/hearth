@@ -430,5 +430,19 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** Chase found the warm look, heavy icons and buttons above the title "rough" and "dated" on his iPhone; black and white with one colored word keeps the easiest rule to teach over the phone ("tap the orange word") while looking like Apple's own apps.
 - **Source:** `docs/product/decisions/2026-11-15-redesign.md`, `docs/product/SPEC-REDESIGN.md`
 
+### DEC-60 · The post card names who can see it, not initials circles (GUX-R6)
+- **When / status:** Nov 16 · Chase picked "Names" on the GUX-R6 decision card · Failing tests written (redesignPolish GUX-R6, who.test WHO-10/LIVE-4, firstMin FIRSTMIN-2)
+- **Chose:** Chase Nov 16: names, not initials circles. The card says "Alex, Chase and 2 more can see this." in people's names (never a group's title, DEC-49); tapping it still opens everyone.
+- **Over:** WHO-10 / LIVE-4 (Nov 5) initials circles with "+1" and a "Can see" label.
+- **Because:** grandparent-ux GUX-R6: two "G" faces told Grandma Jo nothing; names read at a glance.
+- **Source:** `app/src/screens/__tests__/redesignPolish.test.tsx`
+
+### DEC-61 · No "Tap a photo to start" and no demo Try-this steps (RD-20)
+- **When / status:** Nov 16 · Chase: "get rid of the tap a photo to start and the steps below. that is messy." · Failing tests written
+- **Chose:** New for you keeps only the sender line; See all and the tiles are the way in. The demo's numbered steps leave Gallery and Feed; Details keeps "See it as Grandma Jo".
+- **Over:** DEC-59's "Tap a photo to start" line; FIRSTMIN-3's three numbered steps (PR #113).
+- **Because:** less text above the photos; the way in is already visible.
+- **Source:** `docs/product/SPEC-REDESIGN.md` RD-20
+
 ---
-Last updated: Nov 15, 2026 (DEC-59)
+Last updated: Nov 16, 2026 (DEC-61)

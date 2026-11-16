@@ -4,7 +4,7 @@
 // and the photo wall. GUX-R1..R8 (grandparent-ux) and QA-R1/QA-R3 are folded in. RD-10/RD-13 (redesign 1b): this
 // opening content now sits on Gallery under the greeting, and the old Photos toolbar is Gallery's two-item top bar. Last visit is seeded through the KV store renderApp hands the app (`hearth.lastSeen.v1.<user>`).
 // RD-18..RD-23 (redesign 1c, Nov 15): Gallery is the photo grid itself (testID `gallery-grid`, tiles
-// `gallery-tile-<mediaId>`), New for you is a sideways row of photo tiles with "Tap a photo to start", the sender
+// `gallery-tile-<mediaId>`), New for you is a sideways row of photo tiles (no "Tap a photo to start" since Nov 16, DEC-61), the sender
 // line "From Chase since yesterday" and a "See all" text button; the collage, "See the new photos" and the separate
 // All photos wall are gone. The new rules' own tests are in redesignGallery.test.tsx; these keep OPEN-1..12 on them.
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react-native';

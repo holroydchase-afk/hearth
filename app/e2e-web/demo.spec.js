@@ -124,8 +124,9 @@ for (const width of [390, 1280]) {
     expect((await bar.boundingBox()).height).toBeLessThanOrEqual(48);
     // The middle note only where it fits whole at 17 pt (DS-2).
     await expect(page.getByText(/^Sample data/)).toHaveCount(0); // 390 px phone and the 430 px laptop column: no room at 17 pt
-    // FIRSTMIN-3: three numbered steps on a phone.
-    await expect(page.getByText('3. Tap See it as Grandma Jo.', { exact: true })).toHaveCount(width < 900 ? 1 : 0);
+    // DEC-61 (Chase, Nov 16: "that is messy"): no numbered Try-this steps on Gallery at any width (replaces FIRSTMIN-3).
+    await expect(page.getByTestId('demo-tip')).toHaveCount(0);
+    await expect(page.getByText(/^\d\. (You're seeing a parent's Gallery|Tap Details|Tap See it as Grandma Jo)/)).toHaveCount(0);
     const heading = page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ } /* RD-11 */);
     const before = (await heading.boundingBox()).y;
     await toggle.click();
@@ -240,7 +241,7 @@ test('RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma 
 
 // RD-18..RD-21 (SPEC-REDESIGN 1c) on the demo build at a 360 px phone: Kai's last visit was 3 days ago and Alex
 // sent two posts since, one picture each. Gallery: New for you with a sideways row, "2 new" on the first photo,
-// "Tap a photo to start", the sender line and See all; under it the grid by month. Any photo opens the walk at
+// the sender line and See all (no "Tap a photo to start", DEC-61); under it the grid by month. Any photo opens the walk at
 // the oldest new post; Done comes back to Gallery. No All photos button, no group name.
 test('RD-18 RD-19 RD-20 RD-21 New for you and the grid at 360 px; a tap walks the new photos and Done comes back', async ({ page }) => {
   const before = errors.length;
@@ -249,7 +250,7 @@ test('RD-18 RD-19 RD-20 RD-21 New for you and the grid at 360 px; a tap walks th
   await galleryLoaded(page);
   await expect(page.getByRole('heading', { name: 'New for you' })).toBeVisible();
   await expect(page.getByText('2 new', { exact: true })).toBeVisible();
-  await expect(page.getByText('Tap a photo to start', { exact: true })).toBeVisible();
+  await expect(page.getByText('Tap a photo to start', { exact: true })).toHaveCount(0); // DEC-61
   await expect(page.getByText(/^From Alex (today|since \S+)$/)).toBeVisible();
   await expect(page.getByRole('button', { name: /^See all(?! the photos)/ })).toBeVisible();
   await expect(page.getByText(/^(January|February|March|April|May|June|July|August|September|October|November|December) \d{4}$/).first()).toBeVisible();
