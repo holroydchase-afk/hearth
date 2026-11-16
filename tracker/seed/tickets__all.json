@@ -1044,10 +1044,43 @@
    "kind": "bug",
    "layer": "app",
    "severity": "Medium",
-   "status": "open",
-   "title": "QA-R1 (redesign 1b, RD-9/RD-10): the hosted demo's cold loads of /demo/hearth/groups and /demo/hearth/me show no app (no Demo details, no Hearth) because 1b removed those routes and only /photos redirects (to /gallery). e2e:site DEMO-5 is red for both, so the demo-site workflow's pre-upload check would stop the deploy, and old links people saved break. Fix: redirect /groups and /me (likely to /more), or retire them from DEMO-5's list on staff-pm's word. Test: app/e2e-web/site.spec.js DEMO-5",
+   "status": "fixed",
+   "title": "QA-R1 (redesign 1b, RD-9/RD-10): the hosted demo's cold loads of /demo/hearth/groups and /demo/hearth/me show no app (no Demo details, no Hearth) because 1b removed those routes and only /photos redirects (to /gallery). e2e:site DEMO-5 is red for both, so the demo-site workflow's pre-upload check would stop the deploy, and old links people saved break. Fix: redirect /groups and /me (likely to /more), or retire them from DEMO-5's list on staff-pm's word. Test: app/e2e-web/site.spec.js DEMO-5. Fixed (e6312e2): /groups, /me, /help redirect to More with that row open; e2e:site DEMO-5 green 3x (r28)",
    "tests": [],
    "found": "2026-11-15",
+   "fixed": "2026-11-16"
+  },
+  {
+   "id": "T16",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "open",
+   "title": "QA-R1 (redesign 1c, PERF-FEED-1): flaky. e2e-web/perf.spec.js now taps the Gallery tab and reloads straight away; on 1 of 3 runs page.reload failed with net::ERR_ABORTED (frame detached), most likely because the tab's own navigation was still in flight. Wait for the Gallery greeting heading (or the URL) after the tap, before the timing loop",
+   "tests": [],
+   "found": "2026-11-16",
+   "fixed": null
+  },
+  {
+   "id": "T17",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R2 (B19): screens/__tests__/oldTabLinks.test.tsx and site.spec.js DEMO-5 only check that Back to More shows, not which row opened, so /help opening Me (or /groups opening Help) would still pass. Also assert the row's heading (Your groups, Me, Help), and that a parent's /groups shows a group name (the allowed half of DEC-49)",
+   "tests": [],
+   "found": "2026-11-16",
+   "fixed": null
+  },
+  {
+   "id": "T18",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "open",
+   "title": "QA-R3 (RD-18 privacy pair): in screens/__tests__/redesignGallery.test.tsx Ruth's half uses arrayContaining(Mom's side media), so a Dad's side tile leaking into Ruth's grid would still pass. Jo's half is exact. Add: Ruth's grid holds none of the Dad's side post's media",
+   "tests": [],
+   "found": "2026-11-16",
    "fixed": null
   },
   {

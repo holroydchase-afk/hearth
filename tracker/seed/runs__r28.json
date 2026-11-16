@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-16T02:30:00-05:00",
+ "label": "Redesign 1b fix (B19) and 1c Gallery (RD-18..23): flaky, PERF-FEED-1 failed 1 of 3 e2e:web runs (T16)",
+ "passed": 1112,
+ "failed": 1,
+ "results": {},
+ "note": "3 runs each at ad3207d (1c) on e6312e2 (1b fix): app jest 1112 passed (1 skipped) x3, typecheck clean x3, e2e:demo 12 passed (5 skipped) x3, e2e:site 14 passed x3 (B19 fixed: /groups, /me, /help land under More), backend tests/run.sh 1199 passed 0 failed x3 (local Postgres 16, run as the postgres user), agents.verify OK x3. e2e:web 5 passed, then 4 passed 1 failed (PERF-FEED-1 page.reload net::ERR_ABORTED after the new Gallery tab tap; T16), then 5 passed: flaky. Reviewed the engineer's test edits: core-loop/video tap Feed before reading captions (fine; Ruth's exclusion is now checked on Feed only, the Gallery grid half is RD-18 in jest, weak, T18); perf returns to Gallery before timing (keeps the guarantee, but causes the flake); RR-15 taps a grid tile (fine); DEMO-5 adds /help and Back to More; oldTabLinks.test.tsx checks Back to More but not which row (T17). Deno and GitHub CI not run. e2e/results/rd-1c-gate-3x-2026-11-16.txt"
+}
