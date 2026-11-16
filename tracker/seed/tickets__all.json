@@ -1055,33 +1055,33 @@
    "kind": "test fix",
    "layer": "app",
    "severity": "Medium",
-   "status": "open",
-   "title": "QA-R1 (redesign 1c, PERF-FEED-1): flaky. e2e-web/perf.spec.js now taps the Gallery tab and reloads straight away; on 1 of 3 runs page.reload failed with net::ERR_ABORTED (frame detached), most likely because the tab's own navigation was still in flight. Wait for the Gallery greeting heading (or the URL) after the tap, before the timing loop",
+   "status": "fixed",
+   "title": "QA-R1 (redesign 1c, PERF-FEED-1): flaky. e2e-web/perf.spec.js now taps the Gallery tab and reloads straight away; on 1 of 3 runs page.reload failed with net::ERR_ABORTED (frame detached), most likely because the tab's own navigation was still in flight. Wait for the Gallery greeting heading (or the URL) after the tap, before the timing loop. Fixed (r29): perf.spec.js now waits for the /gallery URL and the Good morning/afternoon/evening heading after the Gallery tap, before the timing loop; PERF-FEED-1 passed 3 of 3 e2e:web runs",
    "tests": [],
    "found": "2026-11-16",
-   "fixed": null
+   "fixed": "2026-11-16"
   },
   {
    "id": "T17",
    "kind": "test fix",
    "layer": "app",
    "severity": "Low",
-   "status": "open",
-   "title": "QA-R2 (B19): screens/__tests__/oldTabLinks.test.tsx and site.spec.js DEMO-5 only check that Back to More shows, not which row opened, so /help opening Me (or /groups opening Help) would still pass. Also assert the row's heading (Your groups, Me, Help), and that a parent's /groups shows a group name (the allowed half of DEC-49)",
+   "status": "fixed",
+   "title": "QA-R2 (B19): screens/__tests__/oldTabLinks.test.tsx and site.spec.js DEMO-5 only check that Back to More shows, not which row opened, so /help opening Me (or /groups opening Help) would still pass. Also assert the row's heading (Your groups, Me, Help), and that a parent's /groups shows a group name (the allowed half of DEC-49). Fixed (r29): oldTabLinks.test.tsx asserts the opened row's heading (Your groups, Me, Help), that the other two are absent, and that a parent's /groups shows a group name; site.spec.js DEMO-5 checks the same headings on cold loads. Mutation check: /help opening Me fails it",
    "tests": [],
    "found": "2026-11-16",
-   "fixed": null
+   "fixed": "2026-11-16"
   },
   {
    "id": "T18",
    "kind": "test fix",
    "layer": "app",
    "severity": "Medium",
-   "status": "open",
-   "title": "QA-R3 (RD-18 privacy pair): in screens/__tests__/redesignGallery.test.tsx Ruth's half uses arrayContaining(Mom's side media), so a Dad's side tile leaking into Ruth's grid would still pass. Jo's half is exact. Add: Ruth's grid holds none of the Dad's side post's media",
+   "status": "fixed",
+   "title": "QA-R3 (RD-18 privacy pair): in screens/__tests__/redesignGallery.test.tsx Ruth's half uses arrayContaining(Mom's side media), so a Dad's side tile leaking into Ruth's grid would still pass. Jo's half is exact. Add: Ruth's grid holds none of the Dad's side post's media. Fixed (r29): Ruth's half of the RD-18 pair in redesignGallery.test.tsx now asserts her grid is exactly the Mom's side post's media and holds none of the Dad's side post's media",
    "tests": [],
    "found": "2026-11-16",
-   "fixed": null
+   "fixed": "2026-11-16"
   },
   {
    "id": "B15",

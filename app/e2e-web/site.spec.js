@@ -30,7 +30,16 @@ for (const tab of ['', 'photos', 'share', 'groups', 'me', 'help']) {
       await expect.poll(() => page.evaluate(() => [...document.images].filter((i) => i.complete && i.naturalWidth > 0).length)).toBeGreaterThan(0);
     }
     // B19 (QA-R1): the old Groups, Me and Help tabs land on that row under More.
-    if (['groups', 'me', 'help'].includes(tab)) await expect(page.getByRole('button', { name: 'Back to More' })).toBeVisible();
+    if (['groups', 'me', 'help'].includes(tab)) {
+      await expect(page.getByRole('button', { name: 'Back to More' })).toBeVisible();
+      // T17 (QA-R2): the row that opened is the one asked for, not just any row under More.
+      const heading = { groups: 'Your groups', me: 'Me', help: 'Help' }[tab];
+      await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
+      for (const other of ['Your groups', 'Me', 'Help'].filter((h) => h !== heading)) {
+        await expect(page.getByRole('heading', { name: other, exact: true })).toHaveCount(0);
+      }
+      if (tab === 'groups') await expect(page.getByText(/Grandparents –|Dad's side|Mom's side/).first()).toBeVisible(); // DEC-49 allowed half: the demo's parent sees a group
+    }
     expect(failed).toEqual([]);
   });
 }

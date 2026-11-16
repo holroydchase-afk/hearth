@@ -15,12 +15,21 @@ describe('B19 old tab links land under More', () => {
     await renderApp(<MoreScreen initialOpen="groups" />, { user: 'chase' });
     expect(await screen.findByRole('button', { name: 'Back to More' })).toBeTruthy();
     expect(screen.queryByRole('header', { name: 'More' })).toBeNull();
+    // T17 (QA-R2): it is the Groups row that opened, and a parent sees a group name (the allowed half of DEC-49).
+    expect(await screen.findByRole('header', { name: 'Your groups' })).toBeTruthy();
+    expect(screen.queryByRole('header', { name: 'Me' })).toBeNull();
+    expect(screen.queryByRole('header', { name: 'Help' })).toBeNull();
+    expect(screenWords()).toMatch(GROUP_NAMES);
   });
 
   it('B19 /me opens More → Me for a parent and a viewer', async () => {
     for (const user of ['chase', 'jo'] as const) {
       const r = await renderApp(<MoreScreen initialOpen="me" />, { user });
       expect(await screen.findByRole('button', { name: 'Back to More' })).toBeTruthy();
+      // T17 (QA-R2): the Me row opened, not Help or Groups.
+      expect(screen.getByRole('header', { name: 'Me' })).toBeTruthy();
+      expect(screen.queryByRole('header', { name: 'Help' })).toBeNull();
+      expect(screen.queryByRole('header', { name: 'Your groups' })).toBeNull();
       r.unmount();
     }
   });
@@ -28,6 +37,9 @@ describe('B19 old tab links land under More', () => {
   it('B19 /help opens More → Help for a viewer', async () => {
     await renderApp(<MoreScreen initialOpen="help" />, { user: 'jo' });
     expect(await screen.findByRole('button', { name: 'Back to More' })).toBeTruthy();
+    // T17 (QA-R2): the Help row opened, not Me.
+    expect(screen.getByRole('header', { name: 'Help' })).toBeTruthy();
+    expect(screen.queryByRole('header', { name: 'Me' })).toBeNull();
   });
 
   it('B19 DEC-49 a viewer opening /groups gets the More menu, never a group name', async () => {

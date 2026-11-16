@@ -167,6 +167,9 @@ describe('RD-18 Gallery is the photo grid', () => {
     await renderApp(<GalleryScreen />, { be, user: 'ruth' });
     await screen.findByTestId('gallery-grid');
     await waitFor(() => expect(gridTiles()).toEqual(expect.arrayContaining(mediaOf(be, mom.id))));
+    // T18 (QA-R3): Ruth's grid is exactly the Mom's side photos; no Dad's side tile leaks in.
+    expect(gridTiles()).toEqual(mediaOf(be, mom.id));
+    for (const m of mediaOf(be, dad.id)) expect(gridTiles()).not.toContain(m);
   });
 });
 
