@@ -4,12 +4,18 @@ stage: building
 goal: hearth-beta
 milestone: HRT-M1
 now: push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
-next: redesign R46 1a..1c plus polish GUX-R1..R5, R7..R10 built; qa-tdd 3x green, then grandparent-ux recheck; GUX-R6 (names vs initials) waits on Chase; stop date Nov 19
+next: redesign R46 1a..1c, polish GUX-R1..R10, RD-34 plain background, DEC-60 names, DEC-61 no demo steps built; qa-tdd 3x, then grandparent-ux recheck; stop date Nov 19
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 16: plain white content, names on posts, less clutter (RD-34, DEC-60, DEC-61; branch claude/project-thread-iyml94, local commit)
+- **Done, test-first (qa-tdd's red tests d6734ab, 241b265):** kit `Card` is plain (no fill or outline); new kit `GroupedSection` keeps the grey grouped look, used only on More's settings screens (Preferences, Me, Help, Your name, Notice timing). Post cards sit on white/black with a hairline under each. Tab bar and native tabs on `c.bg`. The card's who-can-see line is names ("Alex, Grandma Jo and 2 more can see this."), people only; tap still opens the Who sheet. "Tap a photo to start" and the demo's numbered steps are gone (`demoTip` returns null).
+- **Test changes to tell qa-tdd:** chief of staff's call, text input fields (Share caption, reply) may keep their grey fill: `plainBackground.test.tsx` allows `TextInput` and kit `Field`; SPEC RD-34 line says so. `redesignLook.test.tsx` RD-8 corner and no-nesting checks now target `GroupedSection` (Card is plain by RD-34).
+- **Shots:** `/mnt/project-files/design/2026-11-16-nogrey-*.png`.
+- **Next exact step:** qa-tdd all suites 3x; grandparent-ux recheck on the nogrey shots. Not pushed.
 
 ## Nov 16: redesign polish built (GUX-R1..R5, R7..R10; branch claude/project-thread-iyml94, local commit)
 - **Done, test-first (qa-tdd's red tests at ad655d6):** kit `BackButton` is now a top-left text button (chevron + place word, accent, 48 pt, spoken "Back to More"/"Back to Gallery"; optional `label` keeps "Back to events"/"Back to all messages") above the title on every More sub-screen, Search, By date, Events, Messages and the walk. `Choice` is a plain grouped row (no border or tint): radio shows an accent check at the end, checkbox an empty circle that fills with an accent check. Share's Pick/Remove buttons are quiet text buttons. Post "··· More" is "Options" ("Options for this photo/these photos"). Feed's title is "Feed". Demo tip: "a parent's Gallery". Done on the walk clears New for you for those posts (in memory; the next load's save covers the rest). Previous left, Next/Done right on one row. Avatars and Who faces neutral grey (`c.line`). Help drops Bigger text and Light or dark, names the inviter with the number and a Call button, and shows the owner no "ask someone" card.

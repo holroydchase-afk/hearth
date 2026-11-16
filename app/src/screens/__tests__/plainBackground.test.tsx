@@ -8,7 +8,7 @@
 //   - Content (Gallery, Feed, post cards, New for you and its walk, Share, the top bar, the tab bar) draws on c.bg
 //     (white light, black dark) with no c.surface / c.fill box. Posts are split by a hairline in c.line plus space.
 //   - Grey stays only on: Settings-style lists under More (Bigger text, Light or dark, Family color, Help, Me), the
-//     reply text field, and reaction / tinted capsules (buttons, chips, the "who can see" people, chat bubbles).
+//     text input fields (reply field, Share caption), and reaction / tinted capsules (buttons, chips, the "who can see" people, chat bubbles).
 //   - In source, c.surface / c.fill appear only inside the allowlisted components below. The Settings-style section
 //     lives in a kit component named `GroupedSection` (Card turns plain), used only by the More settings screens.
 import { fireEvent, render, screen, within } from '@testing-library/react-native';
@@ -45,9 +45,11 @@ const bgOf = (n: Inst) => flat(n.props.style).backgroundColor;
 const plain = (n: Inst, c: Colors) => noColor(bgOf(n)) || bgOf(n) === c.bg;
 const grey = (v: unknown, c: Colors) => v === c.surface || v === c.fill;
 
-/** Allowed grey on content screens: the reply field, reaction chips and tinted capsules (buttons). */
+/** Allowed grey on content screens: text input fields (the reply field, Share's caption), reaction chips and tinted
+ *  capsules (buttons). Text input fields: chief of staff's call, Nov 16 (an input field, like the reply field). */
 function allowedGrey(n: Inst): boolean {
   for (let p: Inst | null = n; p; p = p.parent) {
+    if ((p.type as unknown) === 'TextInput') return true;
     const id = String(p.props?.testID ?? '');
     if (/^(reply|chip|person)-/.test(id)) return true;
     if (isHost(p) && p.props?.accessibilityRole === 'button') return true;
@@ -137,7 +139,7 @@ describe('RD-34 content screens sit on the plain background, no grey card fill',
       expect(greyBoxes(pal(dark))).toEqual([]);
     });
 
-    it(`RD-34 Share (${name}): the share screen has no grey cards or fields`, async () => {
+    it(`RD-34 Share (${name}): the share screen has no grey cards (its text input fields may keep their fill)`, async () => {
       await renderApp(<ShareScreen />, { user: 'chase', kv: look(dark, chase.id) });
       await screen.findByRole('checkbox', { name: "Grandparents – Dad's side, 3 people" });
       fireEvent.press(screen.getByRole('button', { name: 'Pick photos from your phone' }));
@@ -204,6 +206,7 @@ const GREY_ALLOWED: Record<string, Record<string, string>> = {
   'ui/kit.tsx': {
     Button: 'tinted capsule (iPhone gray button, waiting state)',
     GroupedSection: 'Settings-style grouped list under More',
+    Field: 'a text input field, like the reply field (Share caption; chief of staff, Nov 16)',
     Confirm: 'dialog layered on top',
     BottomSheet: 'sheet layered on top',
   },

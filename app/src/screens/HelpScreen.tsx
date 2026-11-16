@@ -4,7 +4,7 @@
 // dark are More's own rows, so Help doesn't repeat them.
 import React from 'react';
 import { useApp } from '../state/AppContext';
-import { BackButton, Button, Card, Screen, Txt } from '../ui/kit';
+import { BackButton, Button, GroupedSection, Screen, Txt } from '../ui/kit';
 import { AppGate } from './AppGate';
 import { ProblemDetailsCard } from './ProblemDetails';
 import { DeleteAccount, HowToTell, Privacy, SignOut } from './Preferences';
@@ -21,7 +21,7 @@ export function HelpScreen({ onBack }: { onBack?: () => void } = {}) {
       {/* GUX-R10: name the person who invited her, and show the number too. The owner set the family up, so no
           "ask someone" line for him. Bigger text and Light or dark live in More now, not here. */}
       {app.space?.role === 'owner' ? null : (
-        <Card>
+        <GroupedSection>
           <Txt variant="title">Need help?</Txt>
           {who && phone ? (
             <>
@@ -31,13 +31,13 @@ export function HelpScreen({ onBack }: { onBack?: () => void } = {}) {
           ) : (
             <Txt>{`Ask ${who ?? 'the person who invited you'} for help.`}</Txt>
           )}
-        </Card>
+        </GroupedSection>
       )}
       <HowToTell />
       <Privacy who={who} />
-      <Card>
+      <GroupedSection>
         <Txt>You can look at photos and write back.</Txt>
-      </Card>
+      </GroupedSection>
       <ProblemDetailsCard />
       <SignOut />
       <DeleteAccount />

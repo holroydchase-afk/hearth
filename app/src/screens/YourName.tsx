@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { ApiError } from '../api/HearthApi';
 import { useApp } from '../state/AppContext';
-import { Button, Card, Field, Txt } from '../ui/kit';
+import { Button, GroupedSection, Field, Txt } from '../ui/kit';
 
 export function YourName() {
   const app = useApp();
@@ -21,7 +21,7 @@ export function YourName() {
     return () => { live = false; };
   }, [api]);
 
-  if (saved) return <Card><Txt>{`Saved. Your family will see "${saved}".`}</Txt></Card>;
+  if (saved) return <GroupedSection><Txt>{`Saved. Your family will see "${saved}".`}</Txt></GroupedSection>;
   if (!ask) return null;
 
   const save = async () => {
@@ -37,12 +37,12 @@ export function YourName() {
   };
 
   return (
-    <Card>
+    <GroupedSection>
       <Txt variant="title" role="header">What should your family call you?</Txt>
       <Txt>Your family sees this name on every photo and message you send.</Txt>
       <Field label="Your name" value={name} onChangeText={setName} placeholder='Like "Chase"' maxLength={40} />
       {msg ? <Txt>{msg}</Txt> : null}
       <Button variant="secondary" label="Save my name" onPress={() => void save()} disabled={!name.trim()} />
-    </Card>
+    </GroupedSection>
   );
 }

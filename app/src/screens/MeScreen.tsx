@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { DEMO_MODE } from '../demo/flags';
 import { useApp } from '../state/AppContext';
-import { BackButton, Card, Screen, Txt } from '../ui/kit';
+import { BackButton, GroupedSection, Screen, Txt } from '../ui/kit';
 import { AppGate } from './AppGate';
 import { NoticeTiming } from './NoticeTiming';
 import { ProblemDetailsCard } from './ProblemDetails';
@@ -36,11 +36,11 @@ function MeReady({ onBack }: { onBack?: () => void }) {
     <Screen>
       {onBack ? <BackButton to="More" onPress={onBack} /> : null}
       <Txt variant="display" role="header">Me</Txt>
-      <Card>
+      <GroupedSection>
         <WhoYouAre />
         {/* RD-15: viewers reach Me from More too, so say what each can do. */}
         <Txt variant="muted">{app.space?.can_post ? 'You can share photos and choose who sees them.' : 'You can look at photos and write back.'}</Txt>
-      </Card>
+      </GroupedSection>
       <BiggerText />
       <LightOrDark />
       {/* RD-15 / RD-24: Family color moved to More (owner only). */}

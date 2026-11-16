@@ -20,7 +20,7 @@ import { PostCard } from './PostCard';
 const tileSide = (screenWidth: number) => Math.max(140, Math.min(260, Math.round(screenWidth * 0.6)));
 
 /** RD-19..RD-21 (1c): "New for you" with See all, a sideways row of large photo tiles (12 pt corners, RD-8; the
- *  first carries a solid accent "N new" chip, N = photos), then "Tap a photo to start" and "From Alex since
+ *  first carries a solid accent "N new" chip, N = photos), then the sender line "From Alex since
  *  Wednesday" (OPEN-2's day rules). Any tile or See all opens the walk at the oldest new post. No group names. */
 export function NewForYouRow({ posts, since, onSee }: { posts: FeedPost[]; since: string; onSee: () => void }) {
   const { c } = useTheme();
@@ -58,10 +58,8 @@ export function NewForYouRow({ posts, since, onSee }: { posts: FeedPost[]; since
           <View style={{ width: SPACE.lg - SPACE.md }} />
         </ScrollView>
       ) : null}
-      <View>
-        <Txt>Tap a photo to start</Txt>
-        <Txt variant="muted">{fromLine(since, posts.map((p) => p.author_name))}</Txt>
-      </View>
+      {/* RD-20 / DEC-61 (Chase, Nov 16: "that is messy"): only the sender line; the tiles and See all are the way in. */}
+      <Txt variant="muted">{fromLine(since, posts.map((p) => p.author_name))}</Txt>
     </View>
   );
 }

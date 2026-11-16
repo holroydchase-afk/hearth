@@ -69,7 +69,7 @@ Split into three PRs, in order, one at a time (small PRs, no bursts). Each is sh
 ### 1d. Plain background (Chase, Nov 16: "why is everything grey?"; Apple HIG Color)
 | ID | Given / When / Then | Type |
 |---|---|---|
-| RD-34 | Content screens (Gallery, Feed, post cards, New for you, Share, walk, top bar, tab bar) sit on the plain background, white light / black dark, with no grey card fill; posts are separated by hairline dividers (c.line) and spacing. Grey (grouped background) only on Settings-style lists under More (Bigger text, Light or dark, Family color, Help, Me), on the reply text field, and on reaction/tinted capsules. | auto (`app/src/screens/__tests__/plainBackground.test.tsx`) |
+| RD-34 | Content screens (Gallery, Feed, post cards, New for you, Share, walk, top bar, tab bar) sit on the plain background, white light / black dark, with no grey card fill; posts are separated by hairline dividers (c.line) and spacing. Grey (grouped background) only on Settings-style lists under More (Bigger text, Light or dark, Family color, Help, Me), on text input fields (the reply field, Share's caption), and on reaction/tinted capsules. | auto (`app/src/screens/__tests__/plainBackground.test.tsx`) |
 
 The demo's numbered Try-this steps on Gallery and Feed (FIRSTMIN-3, PR #113) are gone too (Chase, Nov 16, DEC-61); the demo bar's Details menu keeps "See it as Grandma Jo".
 
