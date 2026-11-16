@@ -20,7 +20,12 @@ test('PERF-FEED-1 cold start to the first photo on screen is under 2 s', async (
   await page.getByLabel("What's happening?").fill('Cold start');
   await page.getByRole('checkbox', { name: "Grandparents – Dad's side, 2 people" }).click();
   await page.getByRole('button', { name: 'Post' }).click();
+  await page.getByRole('tab', { name: /^Feed/ }).click(); // RD-18: captions are on Feed; Gallery is the photo grid
   await expect(page.getByText('Cold start', { exact: true })).toBeVisible();
+  await page.getByRole('tab', { name: /^Gallery/ }).click(); // time the start screen, as before
+  // T16/QA-R1: let the tab's own navigation finish before reloading, or page.reload can abort (ERR_ABORTED).
+  await expect(page).toHaveURL(/\/gallery$/);
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible();
 
   const runs = [];
   for (let i = 0; i < 3; i++) {

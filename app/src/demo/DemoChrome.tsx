@@ -12,7 +12,7 @@ import { webStorage } from '../platform/webStorage';
 import { demoKeysToClear } from './seed';
 
 const BASE = (process.env.EXPO_BASE_URL ?? '').replace(/\/$/, '');
-const goPhotos = () => window.location.assign(`${BASE}/photos`);
+const goPhotos = () => window.location.assign(`${BASE}/gallery`);
 
 // DEMO-BAR: after Reset demo the drawer opens once and says the sample data is back.
 const RESTORED = 'hearthDemoRestored';

@@ -8,7 +8,7 @@ import type { Circle, CommentMode, Person, ShareHistory } from '../api/HearthApi
 import { messageFor } from '../errors/messages';
 import { textsOn, usE164 } from '../api/phone';
 import { useApp } from '../state/AppContext';
-import { Button, Card, Choice, Field, Loading, Notice, Screen, Txt } from '../ui/kit';
+import { Button, Card, Choice, Field, Loading, Notice, Screen, Txt, BackButton } from '../ui/kit';
 import { BAD_NUMBER } from './TextCodeFlow';
 import { andList, people } from '../ui/format';
 import { useTheme } from '../ui/theme';
@@ -42,7 +42,8 @@ interface NewGroup {
 }
 const NEW_GROUP: NewGroup = { name: '', event: false, ticked: [], copied: [], mode: 'private', history: null, need: null, busy: false };
 
-export function GroupsScreen() {
+/** `onBack`: opened from More (RD-15), so a "‹ More" back button (spoken "Back to More") sits above the title (GUX-R1). */
+export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
   const app = useApp();
   const { c } = useTheme();
   const [circles, setCircles] = useState<Circle[] | null>(null);
@@ -183,6 +184,7 @@ export function GroupsScreen() {
 
   return (
     <Screen>
+      {onBack ? <BackButton to="More" onPress={onBack} /> : null}
       <Txt variant="display" role="header">Your groups</Txt>
       <Txt variant="muted">Each photo goes only to the groups you pick. People never see group names.</Txt>
       {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}

@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-16T01:00:00-05:00",
+ "label": "Redesign 1c, Gallery and New for you (RD-18..23, RD-8 New for you corners): tests written first (red)",
+ "passed": 1063,
+ "failed": 44,
+ "results": {},
+ "note": "Red on purpose; same 44 failures on 3 full jest runs (1063 passed, 1 skipped, 4 suites failed), typecheck clean. New: screens/__tests__/redesignGallery.test.tsx (RD-18 grid by month, newest first, square, 48 pt+, sender and day, Show older photos, Jo/Ruth privacy pair, no All photos or Sent by line; RD-19 sideways row of large tiles, solid accent chip N new counting photos; RD-8 12 pt corners; RD-20 Tap a photo to start and From Chase since yesterday; RD-21 any tile or See all opens the walk at the oldest new post, Done back to Gallery; RD-22 nothing new or first open: no section; RD-23 no group names for Jo or Ruth). Reasons: no gallery-grid, no new-tile-*, no See all, old Sent line. Changed to the new rule: opening.test.tsx (OPEN-1..12 now on the grid and See all; OPEN-3 collage and OPEN-4 filled button retired into RD-19/RD-21; OPEN-9/10 wall is Gallery itself), timeline.test.tsx (BETA-TIME-1 card checked on Feed), demoFrame.test.tsx (Try this step 1 can't name See the new photos), demo.spec.js (captions checked on Feed; new RD-18..21 walk at 360 px, red on the missing 2 new chip), site.spec.js (DEMO-LIVE-3 and DEMO-NEW-5 red). e2e:demo 11 passed 1 failed, e2e:web 5 passed, e2e:site 9 passed 4 failed (2 are B19). e2e/results/rd-1c-red-2026-11-15.txt"
+}

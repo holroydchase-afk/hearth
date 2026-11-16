@@ -5,6 +5,7 @@ import React from 'react';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
 import { HelpScreen } from '../HelpScreen';
 import { MeScreen } from '../MeScreen';
+import { MoreScreen } from '../MoreScreen';
 
 describe('Help tab (viewers) — UXG-14', () => {
   it('puts "Call Chase" first and it dials', async () => {
@@ -15,12 +16,12 @@ describe('Help tab (viewers) — UXG-14', () => {
     expect(deps.openUrl).toHaveBeenCalledWith('tel:+13045550100');
   });
 
-  it('Bigger text is ON by default for viewers and comes before the notice choices', async () => {
-    await renderApp(<HelpScreen />, { user: 'jo' });
+  // GUX-R10 (Nov 16): Help no longer repeats Bigger text; the default is checked where it lives, More → Bigger text.
+  it('Bigger text is ON by default for viewers (More → Bigger text)', async () => {
+    await renderApp(<MoreScreen />, { user: 'jo' });
+    fireEvent.press(await screen.findByRole('button', { name: 'Bigger text' }));
     const sw = await screen.findByRole('switch', { name: 'Bigger text' });
     expect(sw.props.accessibilityState).toMatchObject({ checked: true });
-    const words = screenWords();
-    expect(words.indexOf('Bigger text')).toBeLessThan(words.indexOf('How should we tell you about new photos?'));
     fireEvent.press(sw);
     expect(screen.getByRole('switch', { name: 'Bigger text' }).props.accessibilityState).toMatchObject({ checked: false });
   });
@@ -41,7 +42,7 @@ describe('Help tab (viewers) — UXG-14', () => {
 
   it('is grandparent-safe', async () => {
     await renderApp(<HelpScreen />, { user: 'jo' });
-    await screen.findByRole('switch', { name: 'Bigger text' });
+    await screen.findByText('How should we tell you about new photos?'); // GUX-R10: Bigger text moved out of Help
     expectGrandparentSafe();
   });
 });

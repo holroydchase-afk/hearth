@@ -8,7 +8,7 @@ import React from 'react';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { seedPost } from '../../test/seed';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
-import { PhotosScreen } from '../PhotosScreen';
+import { MoreScreen } from '../../test/redesignScreens'; // RD-15: Messages and Events are rows in More
 
 /** Local time, Oct 2026 (the 24th is a Saturday). */
 const at = (day: number, h: number, m = 0) => new Date(2026, 9, day, h, m).toISOString();
@@ -28,8 +28,8 @@ async function beach() {
 }
 
 async function openEvent(be: FakeBackend) {
-  await renderApp(<PhotosScreen />, { be, user: 'jo' });
-  fireEvent.press(await screen.findByRole('button', { name: 'See events' }));
+  await renderApp(<MoreScreen />, { be, user: 'jo' });
+  fireEvent.press(await screen.findByRole('button', { name: 'Events' }));
   fireEvent.press(await screen.findByRole('button', { name: `Open ${EV}` }));
   expect(await screen.findByRole('header', { name: EV })).toBeTruthy();
 }

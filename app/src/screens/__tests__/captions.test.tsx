@@ -8,6 +8,7 @@ import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { seedPost } from '../../test/seed';
 import { expectGrandparentSafe, renderApp } from '../../test/renderApp';
 import { PhotosScreen } from '../PhotosScreen';
+import { GalleryScreen } from '../../test/redesignScreens'; // RD-13: By date lives in Gallery's top bar
 import { ShareScreen } from '../ShareScreen';
 
 const DAD = "Grandparents – Dad's side";
@@ -71,7 +72,7 @@ describe('CAP post titles', () => {
   it('CAP-11 By date shows the title too', async () => {
     const be = FakeBackend.withFixture({ joIsMember: true });
     await seedPost(be, { title: 'Beach weekend', caption: 'Found these from August', takenAt: '2026-08-10T12:00:00.000Z' });
-    await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: 'Show photos by the date they were taken' }));
     expect(await screen.findByRole('header', { name: 'Beach weekend' })).toBeTruthy();
     expect(screen.getByRole('header', { name: /by date|By date/ })).toBeTruthy();

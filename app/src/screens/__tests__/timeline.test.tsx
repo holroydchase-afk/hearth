@@ -8,7 +8,9 @@ import React from 'react';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { seedPost } from '../../test/seed';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
-import { PhotosScreen } from '../PhotosScreen';
+import { FeedScreen, GalleryScreen } from '../../test/redesignScreens'; // RD-13: Search and By date live in Gallery's top bar
+// RD-18 (redesign 1c): Gallery is the photo grid, so the post list and BETA-TIME-1's "Older photos" card are on Feed
+// (RD-17: nothing on the list is lost). Where old photos added today sit in Gallery's grid is open (staff-pm).
 
 /** A bulk import of old photos (Jul 2024, Dec 2023) plus one new post, all shared today. */
 async function family() {
@@ -20,8 +22,8 @@ async function family() {
 }
 
 describe('BETA-TIME-1 Photos with old photos added', () => {
-  it('BETA-TIME-1 new posts stay on top; old ones go in one "Older photos" card that names the months', async () => {
-    await renderApp(<PhotosScreen />, { be: await family(), user: 'jo' });
+  it('BETA-TIME-1 RD-17 on Feed, new posts stay on top; old ones go in one "Older photos" card that names the months', async () => {
+    await renderApp(<FeedScreen />, { be: await family(), user: 'jo' });
     expect(await screen.findByText('Pumpkins today')).toBeTruthy();
     const card = screen.getByTestId('earlier-card-' + FIXTURE.users.chase.id);
     expect(within(card).getByRole('header', { name: 'Older photos' })).toBeTruthy();
@@ -32,8 +34,8 @@ describe('BETA-TIME-1 Photos with old photos added', () => {
     expect(screen.queryByText('Christmas 2023')).toBeNull();
   });
 
-  it('BETA-TIME-1/2 "See them" opens the timeline at that month', async () => {
-    await renderApp(<PhotosScreen />, { be: await family(), user: 'jo' });
+  it('BETA-TIME-1/2 RD-17 "See them" on Feed opens the timeline at that month', async () => {
+    await renderApp(<FeedScreen />, { be: await family(), user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: "See Chase's older photos by date" }));
     expect(await screen.findByRole('header', { name: 'July 2024' })).toBeTruthy();
     expect(screen.getByText('Fourth of July')).toBeTruthy();
@@ -44,7 +46,7 @@ describe('BETA-TIME-1 Photos with old photos added', () => {
 
 describe('BETA-TIME-2 timeline ("Show by date")', () => {
   it('BETA-TIME-2 a labeled button opens the timeline: newest taken first, with month and year headers', async () => {
-    await renderApp(<PhotosScreen />, { be: await family(), user: 'jo' });
+    await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: 'Show photos by the date they were taken' }));
     expect(await screen.findByRole('header', { name: 'Photos by date' })).toBeTruthy();
     await screen.findByText('Christmas 2023');
@@ -57,17 +59,17 @@ describe('BETA-TIME-2 timeline ("Show by date")', () => {
     expect(screen.getByText(/Taken .*Jul 4/)).toBeTruthy();
   });
 
-  it('BETA-TIME-2 "Back to Photos" returns to newest shared first', async () => {
-    await renderApp(<PhotosScreen />, { be: await family(), user: 'jo' });
+  it('BETA-TIME-2 "Back to Gallery" returns to newest shared first', async () => {
+    await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: 'Show photos by the date they were taken' }));
-    fireEvent.press(await screen.findByRole('button', { name: 'Back to Photos' }));
-    expect(await screen.findByRole('header', { name: 'Photos of Mia and Leo' })).toBeTruthy();
+    fireEvent.press(await screen.findByRole('button', { name: 'Back to Gallery' }));
+    expect(await screen.findByRole('header', { name: /^Good (morning|afternoon|evening), Grandma Jo$/ } /* RD-11 */)).toBeTruthy();
   });
 
   it('BETA-TIME-3 the timeline shows a relative only what was shared with her', async () => {
     const be = await family();
     await seedPost(be, { caption: 'Mom side only', takenAt: '2024-07-05T16:00:00.000Z', circles: [FIXTURE.circles.momSide.id] });
-    await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: 'Show photos by the date they were taken' }));
     await screen.findByText('Fourth of July');
     expect(screen.queryByText('Mom side only')).toBeNull();
@@ -75,7 +77,7 @@ describe('BETA-TIME-2 timeline ("Show by date")', () => {
 });
 
 describe('BETA-TIME-2 Android back button (Grandaddy, Pawpaw)', () => {
-  it('BETA-TIME-2 the phone\'s Back button goes from a year list to the photos, then back to Photos (not out of Hearth)', async () => {
+  it('BETA-TIME-2 the phone\'s Back button goes from a year list to the photos, then back to Gallery (not out of Hearth)', async () => {
     const handlers: (() => boolean)[] = [];
     const spy = jest.spyOn(BackHandler, 'addEventListener').mockImplementation((_e, h) => {
       handlers.push(h as () => boolean);
@@ -83,14 +85,14 @@ describe('BETA-TIME-2 Android back button (Grandaddy, Pawpaw)', () => {
     });
     const back = () => { let used = false; act(() => { used = [...handlers].reverse().some((h) => h()); }); return used; };
     try {
-      await renderApp(<PhotosScreen />, { be: await family(), user: 'jo' });
+      await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
       fireEvent.press(await screen.findByRole('button', { name: 'Show photos by the date they were taken' }));
       fireEvent.press(await screen.findByRole('button', { name: 'Pick a year' }));
       await screen.findByRole('button', { name: 'See 2024, 3 photos' });
       expect(back()).toBe(true);
       expect(await screen.findByRole('button', { name: 'Pick a year' })).toBeTruthy();
       expect(back()).toBe(true);
-      expect(await screen.findByRole('header', { name: 'Photos of Mia and Leo' })).toBeTruthy();
+      expect(await screen.findByRole('header', { name: /^Good (morning|afternoon|evening), Grandma Jo$/ } /* RD-11 */)).toBeTruthy();
     } finally {
       spy.mockRestore();
     }
@@ -99,7 +101,7 @@ describe('BETA-TIME-2 Android back button (Grandaddy, Pawpaw)', () => {
 
 describe('BETA-TIME-4 "Pick a year"', () => {
   it('BETA-TIME-4 lists years newest first with photo counts; a year opens the timeline there', async () => {
-    await renderApp(<PhotosScreen />, { be: await family(), user: 'jo' });
+    await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: 'Show photos by the date they were taken' }));
     fireEvent.press(await screen.findByRole('button', { name: 'Pick a year' }));
     expect(await screen.findByRole('header', { name: 'Which year?' })).toBeTruthy();
@@ -116,8 +118,8 @@ describe('BETA-TIME-4 "Pick a year"', () => {
 
 describe('BETA-TIME grandparent rules', () => {
   it('BETA-TIME-1..4 Photos, timeline and years are grandparent-safe (labels, 48 pt, 17 pt+)', async () => {
-    await renderApp(<PhotosScreen />, { be: await family(), user: 'jo' });
-    await screen.findByText('Pumpkins today');
+    await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
+    await waitFor(() => expect(within(screen.getByTestId('gallery-grid')).queryAllByTestId(/^gallery-tile-/).length).toBeGreaterThan(0)); // RD-18: photos, not captions
     expectGrandparentSafe();
     fireEvent.press(screen.getByRole('button', { name: 'Show photos by the date they were taken' }));
     await screen.findByText('Christmas 2023');

@@ -31,7 +31,7 @@ describe('WHO: who can see this post, by name', () => {
   it('WHO-7 "More" lists every name too, not only "Shared with you"', async () => {
     const { id, el } = await dadSidePost('earl');
     await within(el).findByTestId(`who-${id}`);
-    fireEvent.press(within(el).getByRole('button', { name: 'More for this photo' }));
+    fireEvent.press(within(el).getByRole('button', { name: 'Options for this photo' }));
     const menu = await screen.findByTestId(`more-${id}`);
     expect(within(menu).getByText('You, Alex, Chase and Grandma Jo can see this')).toBeTruthy();
     expect(within(menu).queryByText('Shared with you')).toBeNull();
@@ -41,7 +41,7 @@ describe('WHO: who can see this post, by name', () => {
   it('WHO-8 the sender still sees the group by name; another parent sees the people', async () => {
     const sender = await dadSidePost('chase');
     expect(within(sender.el).getByTestId(`to-${sender.id}`).props.children).toBe("Sent to Grandparents – Dad's side");
-    // WHO-10: the sender gets the same little circles too
+    // WHO-10 / GUX-R6: the sender gets the same names line too
     expect((await within(sender.el).findByTestId(`who-${sender.id}`)).props.accessibilityLabel).toBe('You, Alex, Grandma Jo and Grandpa Earl can see this');
   });
 
@@ -69,16 +69,17 @@ describe('WHO: who can see this post, by name', () => {
     expect(screenWords()).not.toMatch(/can see this/);
   });
 
-  it('WHO-10 (Chase, Nov 5: "contact circles or chips... a discreet icon") the card shows small initial circles, not a sentence', async () => {
+  // GUX-R6 (Chase, Nov 16: "Names", DEC-60): replaces WHO-10's initials circles and "+1" with people's names.
+  it('WHO-10 / GUX-R6 the card names who can see it in words, with no initials circles or "+1"', async () => {
     const { id, el } = await dadSidePost('jo');
     const who = await within(el).findByTestId(`who-${id}`);
     expect(who.props.accessibilityRole).toBe('button');
-    expect(within(who).queryByText(/can see this/)).toBeNull();
-    expect(within(who).getAllByTestId(/^face-/)).toHaveLength(3);
-    expect(within(who).getByText('+1')).toBeTruthy();
+    expect(within(who).getByText('Alex, Chase and Grandpa Earl can see this.')).toBeTruthy();
+    expect(within(who).queryAllByTestId(/^face-/, { includeHiddenElements: true })).toHaveLength(0);
+    expect(within(who).queryByText(/^\+\d+$/, { includeHiddenElements: true })).toBeNull();
   });
 
-  it('WHO-10 tapping the circles opens a sheet with one chip per person; Close shuts it', async () => {
+  it('WHO-10 tapping the names opens a sheet with one chip per person; Close shuts it', async () => {
     const { id, el } = await dadSidePost('jo');
     fireEvent.press(await within(el).findByTestId(`who-${id}`));
     const sheet = await screen.findByTestId(`who-sheet-${id}`);
@@ -90,9 +91,11 @@ describe('WHO: who can see this post, by name', () => {
     await waitFor(() => expect(screen.queryByTestId(`who-sheet-${id}`)).toBeNull());
   });
 
-  it('LIVE-4 the little circles carry a word, "Can see", so a lone initial isn\'t a mystery (Chase, Nov 5)', async () => {
+  // GUX-R6 (Chase, Nov 16, DEC-60): no circles left, so LIVE-4's "Can see" label folds into the sentence.
+  it('LIVE-4 / GUX-R6 the names line says what it means, "can see this.", with no lone "Can see" label', async () => {
     const { id, el } = await dadSidePost('jo');
     const who = await within(el).findByTestId(`who-${id}`);
-    expect(within(who).getByText('Can see')).toBeTruthy();
+    expect(within(who).getByText(/can see this\.$/)).toBeTruthy();
+    expect(within(who).queryByText('Can see')).toBeNull();
   });
 });

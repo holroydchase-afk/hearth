@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { Share } from 'react-native';
 import { loadArrivals, timingReport } from '../notify/latency';
 import { useApp } from '../state/AppContext';
-import { Button, Card, Txt } from '../ui/kit';
+import { Button, GroupedSection, Txt } from '../ui/kit';
 
 export function NoticeTiming() {
   const app = useApp();
@@ -17,7 +17,7 @@ export function NoticeTiming() {
     setText(timingReport(arrivals, app.feed.getState().posts).text);
   };
   return (
-    <Card>
+    <GroupedSection>
       <Txt variant="title" role="header">Notice timing</Txt>
       <Txt variant="muted">For testing: how fast notices reach this phone. It stays on this phone.</Txt>
       {text ? (
@@ -28,6 +28,6 @@ export function NoticeTiming() {
       ) : (
         <Button label="Show notice timing" variant="secondary" onPress={() => void show()} />
       )}
-    </Card>
+    </GroupedSection>
   );
 }

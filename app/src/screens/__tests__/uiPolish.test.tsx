@@ -8,14 +8,14 @@ import { StyleSheet } from 'react-native';
 import { FakeBackend } from '../../api/fake/FakeBackend';
 import { renderApp } from '../../test/renderApp';
 import { MeScreen } from '../MeScreen';
-import { PhotosScreen } from '../PhotosScreen';
+import { MoreScreen } from '../../test/redesignScreens'; // RD-15: Messages and Events are rows in More
 
 let mockDemo = false;
 jest.mock('../../demo/flags', () => ({ get DEMO_MODE() { return mockDemo; } }));
 
 describe('UI-3 Messages list', () => {
   it('UI-3 each chat\'s Open button is a gray button, not a row of solid blue ones', async () => {
-    await renderApp(<PhotosScreen />, { be: FakeBackend.withFixture({ joIsMember: true }), user: 'chase' });
+    await renderApp(<MoreScreen />, { be: FakeBackend.withFixture({ joIsMember: true }), user: 'chase' });
     fireEvent.press(await screen.findByRole('button', { name: 'Messages' }));
     const opens = await screen.findAllByRole('button', { name: /^Open the chat/ });
     expect(opens.length).toBeGreaterThan(1);

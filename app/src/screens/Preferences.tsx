@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Blocks shared by Help (viewers) and Me (posters): Bigger text, notice choice, privacy, sign out.
+// Blocks shared by Help, Me and More (RD-15): Bigger text, light or dark, Family color, notice choice, privacy, sign out.
 import React, { useState } from 'react';
 import { isPhoneOnly } from '../api/phone';
 import { useApp } from '../state/AppContext';
@@ -8,12 +8,12 @@ import { HELPER_FEATURES } from '../share/helpers';
 import type { NotifyChoice } from '../state/prefs';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { MIN_TARGET, paletteFor, useTheme, type ColorName, type ScreenLook } from '../ui/theme';
-import { Button, Card, Choice, Confirm, Notice, SystemIcon, Txt } from '../ui/kit';
+import { Button, GroupedSection, Choice, Confirm, Notice, SystemIcon, Txt } from '../ui/kit';
 
 export function BiggerText() {
   const { prefs, setPrefs } = useApp();
   return (
-    <Card>
+    <GroupedSection>
       <Choice
         kind="switch"
         label="Bigger text"
@@ -22,7 +22,7 @@ export function BiggerText() {
         checked={prefs.bigText}
         onPress={() => setPrefs({ bigText: !prefs.bigText })}
       />
-    </Card>
+    </GroupedSection>
   );
 }
 
@@ -32,16 +32,16 @@ const LOOKS: { id: ScreenLook; title: string; detail: string }[] = [
   { id: 'dark', title: 'Dark screen', detail: 'Light words on a dark screen. Easier on the eyes at night.' },
 ];
 
-/** DS-10: light or dark screen. Saved on this phone only. */
-export function LightOrDark() {
+/** DS-10: light or dark screen. Saved on this phone only. `heading={false}` when the screen's own title says it (More). */
+export function LightOrDark({ heading = true }: { heading?: boolean }) {
   const { prefs, setPrefs } = useApp();
   return (
-    <Card>
-      <Txt variant="title" role="header">Light or dark screen</Txt>
+    <GroupedSection>
+      {heading ? <Txt variant="title" role="header">Light or dark screen</Txt> : null}
       {LOOKS.map((l) => (
         <Choice key={l.id} kind="radio" label={l.title} title={l.title} detail={l.detail} checked={prefs.look === l.id} onPress={() => setPrefs({ look: l.id })} />
       ))}
-    </Card>
+    </GroupedSection>
   );
 }
 
@@ -53,13 +53,13 @@ const COLORS: { id: ColorName; title: string }[] = [
 
 /** RD-24..RD-26: the family's owner picks the family color: Ember (default), Forest or Plum. Each row shows the
  *  color itself, its name and a check on the picked one. Phase 1: saved on this phone only (prefs.color). */
-export function FamilyColor() {
+export function FamilyColor({ heading = true }: { heading?: boolean }) {
   const { prefs, setPrefs, space } = useApp();
   const { c, dark } = useTheme();
   if (!space || space.role !== 'owner') return null;
   return (
-    <Card>
-      <Txt variant="title" role="header">Family color</Txt>
+    <GroupedSection>
+      {heading ? <Txt variant="title" role="header">Family color</Txt> : null}
       {COLORS.map((k) => {
         const on = prefs.color === k.id;
         const swatch = paletteFor('ios', dark, k.id).accent;
@@ -79,7 +79,7 @@ export function FamilyColor() {
           </Pressable>
         );
       })}
-    </Card>
+    </GroupedSection>
   );
 }
 
@@ -102,7 +102,7 @@ export function HowToTell() {
   // BETA-SMS-14: a phone-only account has no email address, so no email choices (the server never emails it).
   const phoneOnly = isPhoneOnly(session);
   return (
-    <Card>
+    <GroupedSection>
       <Txt variant="title" role="header">How should we tell you about new photos?</Txt>
       {phoneOnly ? <Txt>You sign in with a text, so Hearth tells you about new photos on this phone, not by email.</Txt> : null}
       {CHOICES.filter((c) => !phoneOnly || c.id === 'push').map((c) => (
@@ -121,7 +121,7 @@ export function HowToTell() {
         />
       ))}
       {saved ? <Notice text={saved.text} tone={saved.good ? 'good' : 'info'} /> : null}
-    </Card>
+    </GroupedSection>
   );
 }
 
@@ -137,7 +137,7 @@ export function PhotoHelpers() {
   const [busy, setBusy] = useState(false);
   if (!space || space.role !== 'owner') return null;
   return (
-    <Card>
+    <GroupedSection>
       <Txt variant="title" role="header">Photo helpers</Txt>
       <Txt variant="muted">When anyone picks 4 or more photos to send, Hearth can set some aside first. Each one has a Put back button. Nothing is deleted from the phone. These switches are for the whole family.</Txt>
       {HELPERS.map((h) => {
@@ -163,20 +163,20 @@ export function PhotoHelpers() {
         );
       })}
       {note ? <Notice text={note} tone="info" /> : null}
-    </Card>
+    </GroupedSection>
   );
 }
 
 export function Privacy({ who }: { who: string | null }) {
   return (
-    <Card>
+    <GroupedSection>
       <Txt variant="title" role="header">Keeping your photos private</Txt>
       <Txt>Your photos stay in the United States.</Txt>
       <Txt>No one outside the family can see them. No ads, no strangers.</Txt>
       <Txt>No computer program learns from your photos.</Txt>
       <Txt>Photos don't show where they were taken.</Txt>
       <Txt>{`${who ?? 'You'} can delete everything at any time.`}</Txt>
-    </Card>
+    </GroupedSection>
   );
 }
 
@@ -244,12 +244,12 @@ export function ReplyAudience() {
     app.deps.api.setReplyAudience(app.space!.space_id, c).catch(() => { setChoice(before); setFailed(true); });
   };
   return (
-    <Card>
+    <GroupedSection>
       <Txt variant="title" role="header">Who reads what family members write</Txt>
       <Txt variant="muted">For comments and hearts. The kids' parents read them all, and your own replies reach everyone the photo went to. People in the same household, or in the same event, read each other's.</Txt>
       <Choice kind="radio" label="The parents, plus their own household and events (safest)" title="The parents, plus their own household and events (safest)" detail="A grandparent's comment reaches you, the other parent, and their own household. Never the other side." checked={choice === 'parents'} onPress={() => pick('parents')} />
       <Choice kind="radio" label="Everyone the photo was shared with" title="Everyone the photo was shared with" detail="Divorced grandparents on the same photo will read each other's comments." checked={choice === 'everyone'} onPress={() => pick('everyone')} />
       {failed ? <Notice text="Didn't save. Check your internet and try again." /> : null}
-    </Card>
+    </GroupedSection>
   );
 }

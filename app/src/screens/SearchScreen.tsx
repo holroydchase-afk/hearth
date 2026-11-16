@@ -3,14 +3,14 @@
 // SEARCH-UI-1..8 (go-live item 9, docs/product/SPEC-SEARCH.md): find photos by the words people wrote, who sent
 // them and the year they were taken. Plain words only (search_posts, migration 0025): it never looks inside a
 // photo and nothing typed is kept. Only posts you can see are found, and group names never show. Every choice
-// is a labeled button; opened from Photos ("Search"), "Back to Photos" and the phone's Back return there.
+// is a labeled button; opened from Photos ("Search"), "Back to Gallery" and the phone's Back return there.
 import React, { useEffect, useMemo, useState } from 'react';
 import { BackHandler, FlatList, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { TimelinePost, TimelineYear } from '../api/HearthApi';
 import { messageFor } from '../errors/messages';
 import { useApp, useFeed } from '../state/AppContext';
-import { Button, Field, Loading, Notice, Txt } from '../ui/kit';
+import { BackButton, Button, Field, Loading, Notice, Txt } from '../ui/kit';
 import { useTheme } from '../ui/theme';
 import { PostCard } from './PostCard';
 import { TimelineCard } from './TimelineScreen';
@@ -119,8 +119,8 @@ export function SearchScreen({ onClose }: { onClose: () => void }) {
 
   const header = (
     <View style={{ gap: 12 }}>
+      <BackButton to="Gallery" onPress={onClose} />
       <Txt variant="display" role="header">Search photos</Txt>
-      <Button label="Back to Photos" variant="secondary" onPress={onClose} />
       <Txt variant="muted">Search looks at the words people wrote and who sent them. It never looks inside your photos.</Txt>
       <Field
         label="Words to look for"

@@ -2,32 +2,30 @@
 // Copyright (C) 2026 Chase Holroyd
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import React from 'react';
-import { HearthTabBar, tabsFor, usesNativeTabs } from '../TabBar';
+import { HearthTabBar, tabsFor, usesNativeTabs, type TabName } from '../TabBar';
 import { expectGrandparentSafe } from '../../test/renderApp';
 
 describe('tabs', () => {
-  it('viewers get exactly Photos and Help (no Share tab)', () => {
-    expect(tabsFor('viewer').map((t) => t.label)).toEqual(['Photos', 'Help']);
-    render(<HearthTabBar role="viewer" current="photos" onNavigate={() => {}} />);
-    expect(screen.getByRole('tab', { name: 'Photos' })).toBeTruthy();
-    expect(screen.getByRole('tab', { name: 'Help' })).toBeTruthy();
-    expect(screen.queryByRole('tab', { name: 'Share' })).toBeNull();
-    expect(screen.queryByRole('tab', { name: 'Groups' })).toBeNull();
-    expect(screen.queryByRole('tab', { name: 'Me' })).toBeNull();
+  // RD-9 (SPEC-REDESIGN 1b) replaced Photos/Help (viewers) and Photos/Share/Groups/Me (posters).
+  it('RD-9 viewers get exactly Gallery, Feed and More (no Share tab)', () => {
+    expect(tabsFor('viewer').map((t) => t.label)).toEqual(['Gallery', 'Feed', 'More']);
+    render(<HearthTabBar role="viewer" current={'gallery' as string as TabName} onNavigate={() => {}} />);
+    for (const name of ['Gallery', 'Feed', 'More']) expect(screen.getByRole('tab', { name })).toBeTruthy();
+    for (const name of ['Share', 'Photos', 'Groups', 'Me', 'Help']) expect(screen.queryByRole('tab', { name })).toBeNull();
   });
 
-  it('posters get Photos, Share, Groups and Me', () => {
-    expect(tabsFor('owner').map((t) => t.label)).toEqual(['Photos', 'Share', 'Groups', 'Me']);
-    expect(tabsFor('adult').map((t) => t.label)).toEqual(['Photos', 'Share', 'Groups', 'Me']);
+  it('RD-9 posters get Gallery, Share, Feed and More', () => {
+    expect(tabsFor('owner').map((t) => t.label)).toEqual(['Gallery', 'Share', 'Feed', 'More']);
+    expect(tabsFor('adult').map((t) => t.label)).toEqual(['Gallery', 'Share', 'Feed', 'More']);
   });
 
   it('words under icons, 48 pt, and it navigates', () => {
     const go = jest.fn();
-    render(<HearthTabBar role="owner" current="photos" onNavigate={go} />);
+    render(<HearthTabBar role="owner" current={'gallery' as string as TabName} onNavigate={go} />);
     expect(screen.getByText('Share')).toBeTruthy();
     fireEvent.press(screen.getByRole('tab', { name: 'Share' }));
     expect(go).toHaveBeenCalledWith('share');
-    expect(screen.getByRole('tab', { name: 'Photos' }).props.accessibilityState).toMatchObject({ selected: true });
+    expect(screen.getByRole('tab', { name: 'Gallery' }).props.accessibilityState).toMatchObject({ selected: true });
     expectGrandparentSafe();
   });
 

@@ -14,7 +14,7 @@ export const WIDE = 900;
 
 // DEMO-NEW-6: the newest features first (New for you, DEC-58; Search, DEC-56).
 const TRY = [
-  'Tap See the new photos. You get what the family sent since your last visit, one post at a time.',
+  'Tap a photo under New for you. You get what the family sent since your last visit, one post at a time.',
   'Open Details at the top and tap See it as Grandma Jo. She sees only what was shared with her side of the family.',
   'Tap Search and type lake. It looks at the words people wrote, never inside the photos.',
 ];

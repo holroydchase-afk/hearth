@@ -25,14 +25,12 @@ async function joAndEarlPost() {
 const textOf = (node: ReturnType<typeof screen.getByTestId>) => within(node).getByText(/^[A-Z?]{1,2}$/, { includeHiddenElements: true }).props.children;
 
 describe('FIRSTMIN-2 two grandparents get different faces', () => {
-  it('FIRSTMIN-2 the Can see faces read GJ and GE, so the two faces differ', async () => {
+  // GUX-R6 (Chase, Nov 16, DEC-60): the card names people instead of initials circles, so they differ by name.
+  it('FIRSTMIN-2 / GUX-R6 the card names Grandma Jo and Grandpa Earl in full, with no faces', async () => {
     const { id, el } = await joAndEarlPost();
     const who = await within(el).findByTestId(`who-${id}`);
-    const joFace = within(who).getByTestId(`face-${jo.id}`);
-    const earlFace = within(who).getByTestId(`face-${earl.id}`);
-    expect(textOf(joFace)).toBe('GJ');
-    expect(textOf(earlFace)).toBe('GE');
-    expect(textOf(joFace)).not.toBe(textOf(earlFace));
+    expect(within(who).getByText('Grandma Jo and Grandpa Earl can see this.')).toBeTruthy();
+    expect(within(who).queryAllByTestId(/^face-/, { includeHiddenElements: true })).toHaveLength(0);
   });
 
   it('FIRSTMIN-2 the Who sheet chips read GJ and GE too', async () => {
@@ -53,12 +51,9 @@ describe('FIRSTMIN-2 two grandparents get different faces', () => {
     expect(within(head).getByText(/^[A-Z?]{1,2}$/, { includeHiddenElements: true }).props.children).toBe('DC');
   });
 
-  it('GUX-R1 face letters cap their growth at 1.3x so GJ stays inside the 36 pt circle at 200% text', async () => {
+  it('GUX-R1 face letters cap their growth at 1.3x so GJ stays inside its circle at 200% text (the Who sheet)', async () => {
     const { id, el } = await joAndEarlPost();
-    const who = await within(el).findByTestId(`who-${id}`);
-    const letters = within(within(who).getByTestId(`face-${jo.id}`)).getByText('GJ', { includeHiddenElements: true });
-    expect(letters.props.maxFontSizeMultiplier).toBe(1.3);
-    fireEvent.press(who);
+    fireEvent.press(await within(el).findByTestId(`who-${id}`));
     const sheet = await screen.findByTestId(`who-sheet-${id}`);
     expect(within(within(sheet).getByTestId(`person-${jo.id}`)).getByText('GJ', { includeHiddenElements: true }).props.maxFontSizeMultiplier).toBe(1.3);
   });

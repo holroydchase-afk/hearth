@@ -32,7 +32,7 @@ describe('MOMENT-7 one card per upload, even within an hour', () => {
     expect(within(cards[2]!).getByText('Boat ride')).toBeTruthy();
     expect(screen.queryByTestId(/^session-/)).toBeNull();
     expectGrandparentSafe();
-    expect(screenWords()).not.toMatch(/\b(feed|circles?|session)\b/i);
+    expect(screenWords().replace('Feed', '')).not.toMatch(/\b(feed|circles?|session)\b/i); // GUX-R5: only the title says Feed
   });
 
   it('MOMENT-7 a reply shows only on its own card, and a heart goes to the card tapped', async () => {
@@ -58,7 +58,7 @@ describe('MOMENT-7 one card per upload, even within an hour', () => {
   it('MOMENT-7 the sender deletes one upload; the others stay', async () => {
     const { be, lake, dock } = await threeUploads();
     await renderApp(<PhotosScreen />, { be, user: 'chase' });
-    fireEvent.press(within(await screen.findByTestId(`post-${dock}`)).getByRole('button', { name: 'More for these photos' }));
+    fireEvent.press(within(await screen.findByTestId(`post-${dock}`)).getByRole('button', { name: 'Options for these photos' }));
     fireEvent.press(await screen.findByRole('button', { name: 'Delete these 3 photos' }));
     fireEvent.press(await screen.findByRole('button', { name: 'Yes, delete them' }));
     await waitFor(() => expect(be.state.posts[dock]!.deleted).toBe(true));

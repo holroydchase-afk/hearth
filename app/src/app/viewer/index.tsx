@@ -8,6 +8,6 @@ import { ViewerScreen } from '../../screens/ViewerScreen';
 
 export default function ViewerByQuery() {
   const { postId, i } = useLocalSearchParams<{ postId?: string; i?: string }>();
-  if (!postId) return <Redirect href="/photos" />; // a host that drops the query lands on Photos, not an error
+  if (!postId) return <Redirect href="/gallery" />; // a host that drops the query lands on Gallery, not an error
   return <ViewerScreen postId={String(postId)} index={Number(i ?? 0) || 0} />;
 }

@@ -196,7 +196,7 @@ describe('MOMENT: one compact card per upload', () => {
   it('MOMENT-6 More says who can see it; the sender can Delete there, after a confirm', async () => {
     const { be, id } = await one({ photos: 3 });
     await renderApp(<PhotosScreen />, { be, user: 'chase' });
-    fireEvent.press(within(await screen.findByTestId(`post-${id}`)).getByRole('button', { name: 'More for these photos' }));
+    fireEvent.press(within(await screen.findByTestId(`post-${id}`)).getByRole('button', { name: 'Options for these photos' }));
     const menu = await screen.findByTestId(`more-${id}`);
     expect(within(menu).getByText("Shared with Grandparents – Dad's side · 3 people")).toBeTruthy();
     expectGrandparentSafe();
@@ -210,7 +210,7 @@ describe('MOMENT: one compact card per upload', () => {
     const { be, id } = await one();
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     await screen.findByTestId(`who-${id}`);
-    fireEvent.press(within(await screen.findByTestId(`post-${id}`)).getByRole('button', { name: 'More for this photo' }));
+    fireEvent.press(within(await screen.findByTestId(`post-${id}`)).getByRole('button', { name: 'Options for this photo' }));
     const menu = await screen.findByTestId(`more-${id}`);
     expect(within(menu).getByText(/^You, .+ can see this$/)).toBeTruthy(); // WHO-7: names, not a group
     expect(within(menu).queryByRole('button', { name: /Delete/ })).toBeNull();

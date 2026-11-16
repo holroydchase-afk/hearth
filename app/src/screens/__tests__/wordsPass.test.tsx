@@ -10,6 +10,7 @@ import { ApiError } from '../../api/HearthApi';
 import { seedPost } from '../../test/seed';
 import { renderApp } from '../../test/renderApp';
 import { PhotosScreen } from '../PhotosScreen';
+import { MoreScreen } from '../../test/redesignScreens'; // RD-15: Messages and Events are rows in More
 import { ShareScreen } from '../ShareScreen';
 
 const DAD = "Grandparents – Dad's side";
@@ -28,7 +29,7 @@ describe('WORDS grandparent-ux words pass', () => {
     await seedPost(be, { title: 'Party' });
     await renderApp(<PhotosScreen />, { be, user: 'chase' });
     jest.spyOn(be, 'editPostWords').mockImplementation(() => { throw new ApiError('42501', 'no'); });
-    fireEvent.press(await screen.findByRole('button', { name: 'More for this photo' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Options for this photo' }));
     fireEvent.press(await screen.findByRole('button', { name: 'Change the words' }));
     const sheet = await screen.findByTestId(/^words-/);
     fireEvent.press(within(sheet).getByRole('button', { name: 'Save the new words' }));
@@ -36,7 +37,7 @@ describe('WORDS grandparent-ux words pass', () => {
   });
 
   it('WORDS-3 the Messages privacy line reads as whole sentences: "Not even Hearth can read it"', async () => {
-    await renderApp(<PhotosScreen />, { be: FakeBackend.withFixture({ joIsMember: true }), user: 'jo' });
+    await renderApp(<MoreScreen />, { be: FakeBackend.withFixture({ joIsMember: true }), user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: 'Messages' }));
     expect(await screen.findByText(
       'Only the people in this chat can read it. Parents are in every chat. Not even Hearth can read it: messages are locked on your phone before they are sent.',

@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-15T23:55:00-05:00",
+ "label": "Redesign 1b, getting around (RD-9..17): all suites 3x green, but e2e:site red on old tab links (QA-R1)",
+ "passed": 1087,
+ "failed": 2,
+ "results": {},
+ "note": "Green on 3 runs each at f2695cb (engineer b298503 on the red tests 2613c20): app jest 1087 passed (1 skipped, 125 suites), typecheck clean, e2e:demo 11 passed (5 skipped), e2e:web 5 passed (11 screenshot-only skips), backend tests/run.sh 1208 passed 0 failed (local Postgres 16), agents.verify OK. Same counts on all 3 runs. Reviewed the engineer's test edits: RD-16 findAllByRole (Jo has two chats; the no-group-names check is unchanged), demo RD-9 waits for the More heading and checks only its own errors (HARD-7 logs one on purpose), core-loop signOut matches the row word exactly, site DEMO-5 /gallery (RD-10); none weakens a guarantee. Then e2e:site once at the same commit: 11 passed, 2 failed (DEMO-5 cold loads of /demo/hearth/groups and /demo/hearth/me show no app: 1b removed those routes and only /photos redirects; QA-R1, P1, ticket B19). Deno and GitHub CI not run. e2e/results/rd-1b-green-3x-2026-11-15.txt"
+}

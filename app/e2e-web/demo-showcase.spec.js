@@ -57,7 +57,8 @@ for (const size of SIZES) {
       await page.getByRole('button', { name: 'Show photos by the date they were taken' }).click();
       await shot('by-date');
       await page.goto('photos');
-      await page.getByRole('button', { name: 'Messages' }).click();
+      await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Messages is a row in More
+      await page.getByRole('button', { name: /^Messages(,|$)/ }).click();
       await shot('messages');
       await page.goto('share');
       await shot('share-empty');
@@ -73,16 +74,19 @@ for (const size of SIZES) {
       await page.getByRole('button', { name: /Open photo 1 of/ }).first().click();
       await shot('full-screen');
       await page.getByRole('button', { name: 'Close' }).click();
-      await page.getByRole('tab', { name: 'Groups' }).click();
+      await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Groups is a row in More
+      await page.getByRole('button', { name: /^Groups(,|$)/ }).click();
       await shot('groups');
-      await page.getByRole('tab', { name: 'Me' }).click();
+      await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Me is a row in More
+      await page.getByRole('button', { name: /^Me(,|$)/ }).click();
       await shot('me');
       await details(page);
       await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
       await details(page);
       await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
       await shot('grandparent');
-      await page.getByRole('tab', { name: 'Help' }).click();
+      await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Help is a row in More
+      await page.getByRole('button', { name: /^Help(,|$)/ }).click();
       await shot('grandparent-help');
       await page.goto('no-such-page');
       await shot('not-found');

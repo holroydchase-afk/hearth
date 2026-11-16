@@ -9,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { FeedPost } from '../api/HearthApi';
 import { eventCountWords, eventList, eventPosts, updateWords } from '../feed/events';
 import { eventContributors, eventTimeline, type EventPhoto, type EventTimelineRow } from '../feed/eventTimeline';
-import { Button, Card, Txt } from '../ui/kit';
+import { BackButton, Button, Card, Txt } from '../ui/kit';
 import { RADIUS, useTheme } from '../ui/theme';
 import { PhotoSwipe } from './PhotoSwipe';
 import { PostCard } from './PostCard';
@@ -44,7 +44,7 @@ export interface EventsView {
 }
 
 /** EVT-4: the events list, or one event's posts. */
-export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, onOpen, onClose }: {
+export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, onOpen, onClose, backTo = 'Gallery' }: {
   posts: FeedPost[];
   view: EventsView;
   hasMore: boolean;
@@ -52,6 +52,8 @@ export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, on
   onLoadMore: () => void;
   onOpen: (eventId: string | null) => void;
   onClose: () => void;
+  /** Where the list's Back goes: "More" from the More menu (RD-15). */
+  backTo?: string;
 }) {
   const { c } = useTheme();
   const more = hasMore ? <Button label="Show older photos" variant="secondary" busy={loadingMore} onPress={onLoadMore} /> : null;
@@ -75,8 +77,8 @@ export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, on
         )}
         ListHeaderComponent={
           <View style={{ gap: 12 }}>
+            <BackButton to={backTo} onPress={onClose} />
             <Txt variant="display" role="header">Events</Txt>
-            <Button label="Back to Photos" variant="secondary" onPress={onClose} />
           </View>
         }
         ListEmptyComponent={<Txt variant="muted">No events yet.</Txt>}
@@ -123,6 +125,8 @@ function EventTimeline({ posts, fromList, more, onOpen, onClose }: {
   more: React.ReactNode;
   onOpen: (eventId: string | null) => void;
   onClose: () => void;
+  /** Where the list's Back goes: "More" from the More menu (RD-15). */
+  backTo?: string;
 }) {
   const { c } = useTheme();
   const [person, setPerson] = useState<string | null>(null);
@@ -142,10 +146,10 @@ function EventTimeline({ posts, fromList, more, onOpen, onClose }: {
             : <Txt variant="title" role="header">{item.label}</Txt>}
         ListHeaderComponent={
           <View style={{ gap: 12 }}>
-            <Txt variant="display" role="header">{name}</Txt>
             {fromList
-              ? <Button label="Back to events" variant="secondary" onPress={() => onOpen(null)} />
-              : <Button label="Back to Photos" variant="secondary" onPress={onClose} />}
+              ? <BackButton to="Events" label="Back to events" onPress={() => onOpen(null)} />
+              : <BackButton to="Gallery" onPress={onClose} />}
+            <Txt variant="display" role="header">{name}</Txt>
             {/* EVT-8: buttons, not gestures. */}
             {people.length > 1 ? (
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>

@@ -11,11 +11,11 @@ import pkg from '../../../package.json';
 import { FakeBackend } from '../../api/fake/FakeBackend';
 import { HelpScreen } from '../../screens/HelpScreen';
 import { MeScreen } from '../../screens/MeScreen';
-import { PhotosScreen } from '../../screens/PhotosScreen';
+import { GalleryScreen } from '../../test/redesignScreens';
 import { HearthTabBar, tabsFor } from '../../screens/TabBar';
 import { renderApp } from '../../test/renderApp';
 import { seedPost } from '../../test/seed';
-import { Button, Card, Txt } from '../kit';
+import { Button, GroupedSection, Txt } from '../kit';
 import { COLOR_NAMES, ColorContext, RADIUS, contrast, dialogRadius, paletteFor, useTheme, type ColorName } from '../theme';
 
 const ACCENTS: Record<string, { light: string; dark: string }> = {
@@ -134,7 +134,7 @@ describe('RD 1a the look: black and white with one accent', () => {
   it('RD-4 Search and By date are ink, not accent (words and icons)', async () => {
     const be = FakeBackend.withFixture();
     await seedPost(be, { caption: 'Sandcastle' });
-    await renderApp(<PhotosScreen />, { be, user: 'jo' });
+    await renderApp(<GalleryScreen />, { be, user: 'jo' }); // RD-13: they sit in Gallery's top bar
     const c = paletteFor(Platform.OS as 'ios', false);
     for (const [name, word] of [['Search the photos', 'Search'], ['Show photos by the date they were taken', 'By date']] as const) {
       const btn = await screen.findByRole('button', { name });
@@ -172,8 +172,9 @@ describe('RD 1a the look: black and white with one accent', () => {
     for (const [k, v] of Object.entries(RADIUS)) expect({ k, v, ok: allowed.has(v) }).toEqual({ k, v, ok: true });
   });
 
-  it('RD-8 rows and cards are 12 corners on iPhone', () => {
-    render(<Card testID="row"><Txt>Row</Txt></Card>);
+  // RD-34 (Nov 16): Card is plain now; the grouped (Settings-style) section carries the 12 pt corners.
+  it('RD-8 rows and grouped sections are 12 corners on iPhone', () => {
+    render(<GroupedSection testID="row"><Txt>Row</Txt></GroupedSection>);
     expect(StyleSheet.flatten(screen.getByTestId('row').props.style).borderRadius).toBe(12);
   });
 
@@ -182,11 +183,12 @@ describe('RD 1a the look: black and white with one accent', () => {
     ['grandparent on Help', 'jo', () => <HelpScreen />],
   ] as const)('RD-8 no card inside a card (%s)', async (_n, user, ui) => {
     await renderApp(ui(), { user });
-    await screen.findByRole('radio', { name: 'Light screen' });
-    const cards = screen.UNSAFE_getAllByType(Card);
+    // GUX-R10 (Nov 16): Help no longer has Light or dark; wait for a section both screens keep.
+    await screen.findByText('How should we tell you about new photos?');
+    const cards = screen.UNSAFE_getAllByType(GroupedSection); // RD-34: the grouped section is the boxed one now
     expect(cards.length).toBeGreaterThan(0);
     for (const card of cards) {
-      const inner = card.findAll((n) => n.type === Card && n !== card);
+      const inner = card.findAll((n) => n.type === GroupedSection && n !== card);
       expect(inner).toHaveLength(0);
     }
   });

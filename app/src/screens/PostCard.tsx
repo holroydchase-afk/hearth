@@ -51,16 +51,17 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   // MOMENT-1: the sender sees which groups it went to, by name.
   // LOOK-1: on its own line under the date, so a long group name doesn't wrap the date with it.
   const to = mine && post.audience?.length ? `Sent to ${andList(post.audience.map((a) => a.name))}` : null;
-  // WHO-6/10 (Chase, Nov 4-5): small initial circles say who can see it, by name, never the group's name.
+  // WHO-6 / GUX-R6 (Chase, Nov 16, DEC-60): one line names who can see it, people only, never the group's name.
   const viewers = post.viewers?.length ? post.viewers : null;
   const [whoOpen, setWhoOpen] = useState(false);
   // CAP-6: "Edited" after the date once the sender changed the words.
   const when = [shortDate(post.published_at), post.words_edited_at ? 'Edited' : null].filter(Boolean).join(' · ');
 
   return (
-    <Card testID={`post-${post.post_id}`} style={{ padding: 0, gap: 0, overflow: 'hidden' }}>
+    // RD-34 (Chase, Nov 16): the card sits on the plain background; a hairline under it splits one post from the next.
+    <Card testID={`post-${post.post_id}`} style={[styles.card, { borderBottomColor: c.line }]}>
       <View testID={`card-head-${post.post_id}`} style={styles.head}>
-        <View style={[styles.avatar, { backgroundColor: c.accentSoft }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+        <View style={[styles.avatar, { backgroundColor: c.line }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           <Txt variant="strong" style={{ color: c.ink, letterSpacing: -0.5 }}>{initialOf(post.author_name)}</Txt>
         </View>
         <View style={{ flex: 1, minWidth: 0 }}>
@@ -69,8 +70,8 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
           {to ? <Txt variant="muted" testID={`to-${post.post_id}`}>{to}</Txt> : null}
         </View>
         <Button
-          label={`More for ${many ? 'these photos' : 'this photo'}`}
-          text="More"
+          label={`Options for ${many ? 'these photos' : 'this photo'}`}
+          text="Options"
           icon={{ sf: 'ellipsis.circle', md: 'more_horiz' }}
           variant="quiet"
           style={styles.more}
@@ -92,8 +93,8 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
                 </View>
               ))}
             </View>
-          ) : <View />}
-          {viewers ? <Faces post={post} viewers={viewers} me={session?.userId} onPress={() => setWhoOpen(true)} /> : null}
+          ) : null}
+          {viewers ? <WhoLine post={post} viewers={viewers} me={session?.userId} onPress={() => setWhoOpen(true)} /> : null}
         </View>
       ) : null}
       {/* REACT-7 (Chase, Oct 25): icons only, no words under them (his call over DS-3); each keeps its spoken label.
@@ -180,25 +181,22 @@ function ordered(viewers: Viewer[], me: string | undefined): { id: string; name:
 /** GUX-R1: two letters in a fixed 36 pt circle; past 1.3x they would clip. The name beside a chip carries full size. */
 const FACE_MAX_SCALE = 1.3;
 
-/** WHO-10 (Chase, Nov 5: "a contact circle component or chips... a discreet icon somewhere"): up to three small
- *  overlapping initials and "+n", beside More. One 48 pt button that reads every name out; a tap shows them all. */
-function Faces({ post, viewers, me, onPress }: { post: FeedPost; viewers: Viewer[]; me: string | undefined; onPress: () => void }) {
+/** GUX-R6 (Chase, Nov 16: "Names", DEC-60): the others who can see it, in words. Up to three are all named;
+ *  past that, two names and "N more". People only, never a group's title (DEC-49). */
+export function namesLine(viewers: Viewer[], me: string | undefined): string {
+  const others = viewers.filter((v) => v.user_id !== me).map((v) => v.name);
+  if (!others.length) return 'Only you can see this.';
+  const list = others.length <= 3 ? andList(others) : `${others.slice(0, 2).join(', ')} and ${others.length - 2} more`;
+  return `${list} can see this.`;
+}
+
+/** GUX-R6: one 48 pt button with the names line; a tap shows everyone (the Who sheet). Replaces WHO-10's circles. */
+function WhoLine({ post, viewers, me, onPress }: { post: FeedPost; viewers: Viewer[]; me: string | undefined; onPress: () => void }) {
   const { c } = useTheme();
-  const list = ordered(viewers, me);
-  const shown = list.slice(0, 3);
-  const rest = list.length - shown.length;
   return (
     <Pressable testID={`who-${post.post_id}`} accessibilityRole="button" accessibilityLabel={whoCanSee(viewers, me, 3)}
-      accessibilityHint="Shows everyone who can see this" onPress={onPress} hitSlop={4} style={styles.faces}>
-      {/* LIVE-4 (Chase, Nov 5): a word with the circles, so a lone initial isn't a mystery. */}
-      <Text style={[styles.faceWord, { color: c.muted }]}>Can see</Text>
-      {shown.map((p, i) => (
-        <View key={p.id} testID={`face-${p.id}`}
-          style={[styles.face, { backgroundColor: c.accentSoft, borderColor: c.surface, marginLeft: i ? -SPACE.sm : 0 }]}>
-          <Text maxFontSizeMultiplier={FACE_MAX_SCALE} style={[styles.faceText, { color: c.ink }]}>{initialOf(p.name === 'You' ? viewers.find((v) => v.user_id === me)?.name ?? 'You' : p.name)}</Text>
-        </View>
-      ))}
-      {rest > 0 ? <Text style={[styles.faceMore, { color: c.muted }]}>{`+${rest}`}</Text> : null}
+      accessibilityHint="Shows everyone who can see this" onPress={onPress} hitSlop={4} style={styles.who}>
+      <Txt style={{ color: c.muted }}>{namesLine(viewers, me)}</Txt>
     </Pressable>
   );
 }
@@ -212,7 +210,7 @@ function WhoSheet({ post, viewers, me, onClose }: { post: FeedPost; viewers: Vie
           <View style={styles.people}>
             {ordered(viewers, me).map((p) => (
               <View key={p.id} testID={`person-${p.id}`} style={[styles.person, { backgroundColor: c.fill }]}>
-                <View style={[styles.face, { backgroundColor: c.accentSoft, borderColor: c.fill }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+                <View style={[styles.face, { backgroundColor: c.line, borderColor: c.fill }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
                   <Text maxFontSizeMultiplier={FACE_MAX_SCALE} style={[styles.faceText, { color: c.ink }]}>{initialOf(p.name === 'You' ? viewers.find((v) => v.user_id === me)?.name ?? 'You' : p.name)}</Text>
                 </View>
                 <Txt testID="person-name">{p.name}</Txt>
@@ -413,17 +411,16 @@ const styles = StyleSheet.create({
   title: { paddingHorizontal: SPACE.lg, paddingBottom: SPACE.xs },
   caption: { paddingHorizontal: SPACE.lg, paddingBottom: SPACE.md },
   fold: { alignSelf: 'flex-start', paddingHorizontal: 0 },
-  summary: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: SPACE.sm, paddingHorizontal: SPACE.lg, paddingTop: SPACE.sm },
+  card: { padding: 0, gap: 0, overflow: 'hidden', borderBottomWidth: StyleSheet.hairlineWidth, paddingBottom: SPACE.md },
+  summary: { gap: SPACE.xs, paddingHorizontal: SPACE.lg, paddingTop: SPACE.sm, alignItems: 'flex-start' },
   counts: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.sm, flexShrink: 1 },
   chip: { borderRadius: RADIUS.pill, paddingHorizontal: SPACE.md, paddingVertical: SPACE.xs },
   mine: { borderWidth: 0 },
-  faceWord: { fontSize: 17, marginRight: SPACE.xs },
-  faces: { flexDirection: 'row', alignItems: 'center', minHeight: MIN_TARGET, minWidth: MIN_TARGET, paddingHorizontal: SPACE.xs },
+  who: { minHeight: MIN_TARGET, justifyContent: 'center', alignSelf: 'stretch' },
   face: { width: 36, height: 36, borderRadius: RADIUS.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   // FIRSTMIN-1: two letters ("GJ") fit the 32 pt inside the ring at 17 pt with slightly tighter tracking.
   faceText: { fontWeight: WEIGHT.semibold, fontSize: 17, lineHeight: 20, letterSpacing: -0.5 },
   emoji: { fontSize: 24, lineHeight: 30, textAlign: 'center' },
-  faceMore: { fontSize: 17, marginLeft: SPACE.xs },
   people: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.sm },
   person: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, borderRadius: RADIUS.pill, paddingLeft: SPACE.xs, paddingRight: SPACE.md, minHeight: MIN_TARGET },
   actions: { flexDirection: 'row', gap: SPACE.sm, marginHorizontal: SPACE.sm, marginTop: SPACE.sm, paddingVertical: SPACE.xs, borderTopWidth: StyleSheet.hairlineWidth },

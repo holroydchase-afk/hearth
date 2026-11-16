@@ -1,0 +1,45 @@
+Redesign 1b fix (e6312e2) + 1c (ad3207d) gate, 3 runs each, 2026-11-16. Verdict: FLAKY (PERF-FEED-1, T16)
+Backend run as the postgres user (root has no Postgres role here).
+== run 1
+jest: Tests:       1 skipped, 1112 passed, 1113 total
+typecheck: exit 0
+e2e_demo:  5 skipped  12 passed (31.9s) 
+e2e_web:  11 skipped  5 passed (30.0s) 
+e2e_site:  14 passed (19.2s) 
+backend: 1199 passed, 0 failed
+agents.verify: AGENT RUNS RESULT: 20 passed, 0 failed
+== run 2
+jest: Tests:       1 skipped, 1112 passed, 1113 total
+typecheck: exit 0
+e2e_demo:  5 skipped  12 passed (34.3s) 
+e2e_web:  1 failed  11 skipped  4 passed (28.6s) 
+e2e_site:  14 passed (21.2s) 
+backend: 1199 passed, 0 failed
+agents.verify: AGENT RUNS RESULT: 20 passed, 0 failed
+== run 3
+jest: Tests:       1 skipped, 1112 passed, 1113 total
+typecheck: exit 0
+e2e_demo:  5 skipped  12 passed (32.3s) 
+e2e_web:  11 skipped  5 passed (31.2s) 
+e2e_site:  14 passed (20.0s) 
+backend: 1199 passed, 0 failed
+agents.verify: AGENT RUNS RESULT: 20 passed, 0 failed
+
+== e2e:web run 2 failure
+  1) e2e-web/perf.spec.js:10:1 › PERF-FEED-1 cold start to the first photo on screen is under 2 s ──
+
+    Error: page.reload: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+    [2m  - waiting for navigation until "load"[22m
+
+
+      28 |   for (let i = 0; i < 3; i++) {
+      29 |     const t0 = Date.now();
+    > 30 |     await page.reload();
+         |                ^
+      31 |     await expect(page.locator('img[src^="data:image/jpeg"]').first()).toBeVisible({ timeout: 10_000 });
+      32 |     runs.push(Date.now() - t0);
+      33 |   }
+        at /home/user/Hearth/app/e2e-web/perf.spec.js:30:16
+
+    Error Context: test-results/e2e-web-artifacts/perf-PERF-FEED-1-cold-star-3cfd7-hoto-on-screen-is-under-2-s/error-context.md

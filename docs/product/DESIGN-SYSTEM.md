@@ -107,9 +107,9 @@ Chase, Nov 1 2026: "There are very standardized aspects of the design and design
 | P-5 | Pull down to refresh | Matches | |
 | P-6 | Comments open as a sheet over the post, with the box at the bottom | Matches | |
 | P-7 | A "+" or Share tab: pick photos from the phone's own picker, add words, choose who sees it, Post | Matches, with "Who can see this" before Post | |
-| P-8 | Filters as a row of chips or words just under the title (Instagram's All / Friends / Latest) | Messages, By date and See events buttons | No "who" filter yet (the Who row idea, ANCHORS ideas log) |
+| P-8 | Filters as a row of chips or words just under the title (Instagram's All / Friends / Latest) | Search and By date in Gallery's top bar (RD-13); Messages and Events are rows in More | No "who" filter yet (the Who row idea, ANCHORS ideas log) |
 | P-9 | Browse by month or by date (Google Photos, FamilyAlbum, Tinybeans) | By date | |
-| P-10 | Your account and settings live in the last tab | Me for posters, Help for viewers (DS-7) | |
+| P-10 | Your account and settings live in the last tab | More, for everyone: Me, Help, Bigger text, Light or dark (DS-7, RD-15) | |
 | P-11 | Double-tap a photo to like it | Not built | Familiar, but gesture-only; allowed only as a second way with the Love button kept (DS-4). Ideas log |
 | P-12 | Long-press for more options | Not used; "⋯ More" is a visible button | Keep it that way: hidden gestures are where older relatives get lost |
 
