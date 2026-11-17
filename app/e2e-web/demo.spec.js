@@ -179,8 +179,9 @@ test('DEMO-BAR Reset asks first: Keep changes nothing; Reset restores and says s
 test('RD-27 Chase switches Family color to Forest and the demo recolors; Grandma Jo stays Ember with no picker', async ({ page }) => {
   const EMBER = 'rgb(178, 58, 30)';
   const FOREST = 'rgb(46, 125, 79)';
-  const pickedTabColor = (name) => page.getByRole('tab', { name: new RegExp(`^${name}`) }).getByText(name, { exact: true })
-    .evaluate((el) => getComputedStyle(el).color);
+  // engineer, flagged for qa-tdd: Chase's tabs are icons only (Easy view Off, RD-76), so read the tab's drawn glyph or word, whichever it shows.
+  const pickedTabColor = (name) => page.getByRole('tab', { name: new RegExp(`^${name}`) })
+    .evaluate((el) => getComputedStyle([...el.querySelectorAll('*')].find((d) => d.children.length === 0 && d.textContent.trim() !== '') ?? el).color);
   await page.emulateMedia({ colorScheme: 'light' });
   await page.goto('/');
   await galleryLoaded(page);
@@ -211,14 +212,16 @@ test('RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma 
   await page.setViewportSize({ width: 360, height: 740 });
   await page.goto('/');
   await galleryLoaded(page);
-  await expect(page.getByRole('tab')).toHaveText([/Gallery/, /Share/, /Feed/, /More/]);
+  // engineer, flagged for qa-tdd: Chase's Easy view is Off (RD-76), so the tabs are read by their spoken names, not their words.
+  for (const name of ['Gallery', 'Share', 'Feed', 'More']) await expect(page.getByRole('tab', { name, exact: true })).toBeVisible();
+  await expect(page.getByRole('tab')).toHaveCount(4);
   await expect(page.getByRole('tab', { name: 'Gallery' })).toHaveAttribute('aria-selected', 'true');
   await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible();
   await page.getByRole('tab', { name: /^More/ }).click();
   await expect(page.getByRole('heading', { name: 'More' })).toBeVisible();
-  const rows = ['Messages', 'Groups', 'Events', 'Bigger text', 'Light or dark', 'Family color', 'Me', 'Help'];
+  const rows = ['Messages', 'Groups', 'Events', 'Easy view', 'Light or dark', 'Family color', 'Me', 'Help']; // engineer, flagged for qa-tdd: RD-78
   const labels = async () => (await page.getByRole('button').evaluateAll((els) => els.map((e) => e.getAttribute('aria-label') ?? e.textContent ?? '')))
-    .map((l) => l.split(',')[0]).filter((l) => /^(Messages|Groups|Events|Bigger text|Light or dark|Family color|Me|Help)$/.test(l));
+    .map((l) => l.split(',')[0]).filter((l) => /^(Messages|Groups|Events|Easy view|Light or dark|Family color|Me|Help)$/.test(l));
   expect(await labels()).toEqual(rows);
   for (const r of rows) {
     const box = await page.getByRole('button', { name: new RegExp(`^${r}(,|$)`) }).boundingBox();

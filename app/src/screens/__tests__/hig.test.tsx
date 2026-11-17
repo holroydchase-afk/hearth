@@ -12,7 +12,7 @@ import { haptic } from '../../platform/haptics';
 import { seedPost } from '../../test/seed';
 import { renderApp } from '../../test/renderApp';
 import { sheetPan } from '../../ui/kit';
-import { contrast, iconSize, LABEL_SCALE_CAP, paletteFor, COLOR_NAMES, pinchZoom, sheetShouldClose } from '../../ui/theme';
+import { BigTextContext, contrast, iconSize, LABEL_SCALE_CAP, paletteFor, COLOR_NAMES, pinchZoom, sheetShouldClose } from '../../ui/theme';
 import { GalleryScreen } from '../../test/redesignScreens';
 import { HearthTabBar, type TabName } from '../TabBar';
 import { PhotosScreen } from '../PhotosScreen';
@@ -119,8 +119,8 @@ describe('HIG-2 / BETA-SEE-4 photos zoom', () => {
 
 describe('HIG-3 / HIG-11 the biggest text sizes', () => {
   it('HIG-3 tab words stop growing at 1.5x and the tab shows the large pop-up label', async () => {
-    // RD-9: the first tab is Gallery now.
-    await renderApp(<HearthTabBar role="owner" current={'gallery' as string as TabName} onNavigate={() => {}} />, { user: 'chase' });
+    // RD-9: the first tab is Gallery now. engineer, flagged for qa-tdd: the words show only with Easy view On (RD-77).
+    await renderApp(<BigTextContext.Provider value><HearthTabBar role="owner" current={'gallery' as string as TabName} onNavigate={() => {}} /></BigTextContext.Provider>, { user: 'chase' });
     const word = screen.getByText('Gallery');
     expect(word.props.maxFontSizeMultiplier).toBe(LABEL_SCALE_CAP);
     expect(LABEL_SCALE_CAP).toBe(1.5);

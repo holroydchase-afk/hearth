@@ -11,6 +11,7 @@ blockers: []
 -->
 
 ## Nov 17: Easy view specced (DEC-66, R49)
+- **Engineer, Easy view built (R49) plus RD-82:** `Prefs.easyView` replaces bigText (viewer On, owner/adult Off; saved bigText migrates, saves drop it). Off: icon-only tabs (Android's own bar unlabeled) keeping spoken names; On: words under tabs and 21 pt text. More row "Easy view" with On/Off, page with one line and On/Off rows; Me shows the same block. RD-82: Gallery's pinned Search photos backing spans the screen in `c.bg`, hairline shade once scrolled. Jest, typecheck, demo, web, site e2e green once. Updated tests (flagged for qa-tdd): redesignNav, redesignPolish, reviewRound2, hig, tabs, plainBackground, help, demoMe, screenColors, searchBacking (helper picked the scroll, not its content), demo.spec.js RD-27 and RD-9. Next: qa-tdd 3x, grandparent-ux, RD-81 on phones. Not pushed.
 - **Staff-pm, docs only:** Chase: Easy view On for grandparents (viewer), Off for parents. One More setting replaces Bigger text: words under tabs plus bigger text; icon-only tabs keep spoken names and 48 pt; saved bigText carries over; demo Chase Off, Grandma Jo On. `SPEC-REDESIGN.md` 1g RD-74..81, persona check `decisions/2026-11-17-easy-view.md` (FA Red, mitigated), CLAUDE.md rule 3, DS-3/5/10, AGENT-NOTES (engineer) updated by hand to match `sync-agents.sh` output (no studio-agents clone here; `--check` passes). Next: qa-tdd red tests, then engineer.
 
 ## Nov 17: returning visitors see the current demo family (DEMO-FRESH-1..3, TRACKER R48; branch claude/project-thread-s1r7xd, PR)

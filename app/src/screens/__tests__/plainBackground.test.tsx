@@ -161,12 +161,13 @@ describe('RD-34 grey stays where Apple uses it (the other direction)', () => {
   for (const dark of LOOKS) {
     const name = lookName(dark);
 
-    it(`RD-34 More → Bigger text and Help (${name}) keep the grouped (grey) section`, async () => {
+    // engineer, flagged for qa-tdd: Easy view's page (RD-78) replaces Bigger text's.
+    it(`RD-34 More → Easy view and Help (${name}) keep the grouped (grey) section`, async () => {
       const c = pal(dark);
       const groupedOn = () => (screen.UNSAFE_root.findAll(isHost) as Inst[]).some((n) => grey(bgOf(n), c));
       const first = await renderApp(<MoreScreen />, { user: 'jo', kv: look(dark, jo.id) });
-      fireEvent.press(await screen.findByRole('button', { name: 'Bigger text' }));
-      await screen.findByRole('switch', { name: 'Bigger text' });
+      fireEvent.press(await screen.findByRole('button', { name: 'Easy view, On' }));
+      await screen.findByRole('radio', { name: 'On' });
       expect({ biggerText: groupedOn() }).toEqual({ biggerText: true });
       first.unmount();
       await renderApp(<HelpScreen />, { user: 'jo', kv: look(dark, jo.id) });

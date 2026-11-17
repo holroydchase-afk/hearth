@@ -8,7 +8,7 @@ import { Platform } from 'react-native';
 import { AppGate } from '../../screens/AppGate';
 import { useNewMessages } from '../../messenger/newMessages';
 import { resetMore } from '../../screens/MoreScreen';
-import { HearthTabBar, NATIVE_TAB_OPTIONS, TAB_ICONS, tabsFor, usesNativeTabs, type TabName } from '../../screens/TabBar';
+import { HearthTabBar, NATIVE_TAB_OPTIONS, TAB_ICONS, nativeLabelMode, tabsFor, usesNativeTabs, type TabName } from '../../screens/TabBar';
 import { useApp } from '../../state/AppContext';
 import { useTheme } from '../../ui/theme';
 
@@ -17,7 +17,7 @@ const ALL: TabName[] = ['gallery', 'share', 'feed', 'more'];
 
 export default function TabsLayout() {
   const app = useApp();
-  const { c } = useTheme();
+  const { c, bigText: easyView } = useTheme();
   const { total: newMessages } = useNewMessages(); // RD-14: the dot on More
   if (app.status === 'signedOut') return <Redirect href="/sign-in" />;
   if (app.status !== 'ready' || !app.space) return <AppGate />;
@@ -29,7 +29,7 @@ export default function TabsLayout() {
     return (
       <NativeTabs
         minimizeBehavior={NATIVE_TAB_OPTIONS.minimizeBehavior}
-        labelVisibilityMode={NATIVE_TAB_OPTIONS.labelVisibilityMode}
+        labelVisibilityMode={nativeLabelMode(easyView)}
         labelStyle={{ default: { ...NATIVE_TAB_OPTIONS.labelStyle, color: c.muted }, selected: { ...NATIVE_TAB_OPTIONS.labelStyle, color: c.accent } }}
         tintColor={c.accent}
         backgroundColor={c.bg}

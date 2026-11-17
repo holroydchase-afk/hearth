@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-import { fireEvent, screen } from '@testing-library/react-native';
+import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
 import { HelpScreen } from '../HelpScreen';
@@ -16,14 +16,15 @@ describe('Help tab (viewers) — UXG-14', () => {
     expect(deps.openUrl).toHaveBeenCalledWith('tel:+13045550100');
   });
 
-  // GUX-R10 (Nov 16): Help no longer repeats Bigger text; the default is checked where it lives, More → Bigger text.
-  it('Bigger text is ON by default for viewers (More → Bigger text)', async () => {
+  // GUX-R10 (Nov 16): Help no longer repeats Bigger text; the default is checked where it lives in More.
+  // engineer, flagged for qa-tdd: Bigger text is Easy view now (RD-74 / RD-78): On / Off rows instead of a switch.
+  it('Easy view is ON by default for viewers (More → Easy view)', async () => {
     await renderApp(<MoreScreen />, { user: 'jo' });
-    fireEvent.press(await screen.findByRole('button', { name: 'Bigger text' }));
-    const sw = await screen.findByRole('switch', { name: 'Bigger text' });
-    expect(sw.props.accessibilityState).toMatchObject({ checked: true });
-    fireEvent.press(sw);
-    expect(screen.getByRole('switch', { name: 'Bigger text' }).props.accessibilityState).toMatchObject({ checked: false });
+    fireEvent.press(await screen.findByRole('button', { name: 'Easy view, On' }));
+    const on = await screen.findByRole('radio', { name: 'On' });
+    expect(on.props.accessibilityState).toMatchObject({ checked: true });
+    fireEvent.press(screen.getByRole('radio', { name: 'Off' }));
+    await waitFor(() => expect(screen.getByRole('radio', { name: 'On' }).props.accessibilityState).toMatchObject({ checked: false }));
   });
 
   it('notice choices are in plain words and confirm when picked', async () => {
@@ -48,9 +49,10 @@ describe('Help tab (viewers) — UXG-14', () => {
 });
 
 describe('Me tab (posters)', () => {
-  it('Bigger text is off by default for posters; sign out asks first', async () => {
+  // engineer, flagged for qa-tdd: Easy view (RD-74) replaces Bigger text on Me too; Off is the checked row.
+  it('Easy view is off by default for posters; sign out asks first', async () => {
     await renderApp(<MeScreen />, { user: 'chase' });
-    expect((await screen.findByRole('switch', { name: 'Bigger text' })).props.accessibilityState).toMatchObject({ checked: false });
+    expect((await screen.findByRole('radio', { name: 'Off' })).props.accessibilityState).toMatchObject({ checked: true });
     expect(screen.getByText('Signed in as chase@example.com')).toBeTruthy();
     fireEvent.press(screen.getByRole('button', { name: 'Sign out of Hearth' }));
     expect(screen.getByText('Sign out of Hearth?')).toBeTruthy();

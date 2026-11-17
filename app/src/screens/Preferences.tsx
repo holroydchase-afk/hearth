@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Blocks shared by Help, Me and More (RD-15): Bigger text, light or dark, Family color, notice choice, privacy, sign out.
+// Blocks shared by Help, Me and More (RD-15): Easy view, light or dark, Family color, notice choice, privacy, sign out.
 import React, { useState } from 'react';
 import { isPhoneOnly } from '../api/phone';
 import { useApp } from '../state/AppContext';
@@ -10,18 +10,34 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { MIN_TARGET, paletteFor, useTheme, type ColorName, type ScreenLook } from '../ui/theme';
 import { Button, GroupedSection, Choice, Confirm, Notice, SystemIcon, Txt } from '../ui/kit';
 
-export function BiggerText() {
+const EASY: { id: 'on' | 'off'; title: string }[] = [{ id: 'on', title: 'On' }, { id: 'off', title: 'Off' }];
+
+/** RD-78 (DEC-66): Easy view's page under More: one line, then On and Off rows with a check on the current one (like
+ *  Light or dark). Picking one changes the tabs and text at once and saves it for this person on this phone. */
+export function EasyView({ heading = false }: { heading?: boolean }) {
   const { prefs, setPrefs } = useApp();
+  const { c } = useTheme();
   return (
     <GroupedSection>
-      <Choice
-        kind="switch"
-        label="Bigger text"
-        title="Bigger text"
-        detail={prefs.bigText ? 'Words are extra large.' : 'Tap to make the words bigger.'}
-        checked={prefs.bigText}
-        onPress={() => setPrefs({ bigText: !prefs.bigText })}
-      />
+      {heading ? <Txt variant="title" role="header">Easy view</Txt> : null}
+      <Txt>Bigger words, and a word under each button at the bottom of the screen.</Txt>
+      {EASY.map((k) => {
+        const on = prefs.easyView === (k.id === 'on');
+        return (
+          <Pressable
+            key={k.id}
+            accessibilityRole="radio"
+            accessibilityLabel={k.title}
+            accessibilityState={{ checked: on }}
+            aria-checked={on} // the web build reads aria-checked, not accessibilityState
+            onPress={() => setPrefs({ easyView: k.id === 'on' })}
+            style={({ pressed }) => [styles.row, { opacity: pressed ? 0.7 : 1 }]}
+          >
+            <Txt style={{ flex: 1 }}>{k.title}</Txt>
+            {on ? <SystemIcon icon={CHECK} color={c.ink} /> : null}
+          </Pressable>
+        );
+      })}
     </GroupedSection>
   );
 }

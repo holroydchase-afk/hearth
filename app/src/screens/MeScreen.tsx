@@ -7,7 +7,7 @@ import { BackButton, GroupedSection, Screen, Txt } from '../ui/kit';
 import { AppGate } from './AppGate';
 import { NoticeTiming } from './NoticeTiming';
 import { ProblemDetailsCard } from './ProblemDetails';
-import { BiggerText, DeleteAccount, HowToTell, LightOrDark, PhotoHelpers, Privacy, ReplyAudience, SignOut } from './Preferences';
+import { DeleteAccount, EasyView, HowToTell, LightOrDark, PhotoHelpers, Privacy, ReplyAudience, SignOut } from './Preferences';
 
 /** `onBack`: opened from More (RD-15), so a "‹ More" back button (spoken "Back to More") sits above the title (GUX-R1). */
 export function MeScreen({ onBack }: { onBack?: () => void } = {}) {
@@ -41,7 +41,7 @@ function MeReady({ onBack }: { onBack?: () => void }) {
         {/* RD-15: viewers reach Me from More too, so say what each can do. */}
         <Txt variant="muted">{app.space?.can_post ? 'You can share photos and choose who sees them.' : 'You can look at photos and write back.'}</Txt>
       </GroupedSection>
-      <BiggerText />
+      <EasyView heading />
       <LightOrDark />
       {/* RD-15 / RD-24: Family color moved to More (owner only). */}
       <HowToTell />

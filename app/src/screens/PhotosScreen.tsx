@@ -7,7 +7,7 @@
 // By date left Gallery (the months are the by-date view) and opens from Feed's Older photos card.
 // Feed is the existing FlatList (Instagram-style posts, 32 pt apart, no lines: RD-48..54).
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, FlatList, RefreshControl, ScrollView, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { Animated, FlatList, RefreshControl, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useApp, useFeed } from '../state/AppContext';
 import { loadLastSeen, saveLastSeen } from '../state/lastSeen';
@@ -81,10 +81,14 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   // month's title then sticks right under it (pinAt: the field's height with its 8 pt below).
   const [pinAt, setPinAt] = useState(0);
   const [relayout, setRelayout] = useState(0);
+  // RD-82: where the field sits in the scroll; once the list scrolls past it, content is under the pinned bar.
+  const fieldAt = useRef(0);
+  const [under, setUnder] = useState(false);
   const onScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
     scrollY.setValue(y);
     setFolded(y > FOLD_AT);
+    setUnder(y > Math.max(fieldAt.current, 0));
   }, [scrollY]);
   if (app.status !== 'ready' || !app.space || !app.feed) return <AppGate />;
   const feed = app.feed;
@@ -189,8 +193,15 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
         >
           {/* RD-11 / RD-55: the greeting is the large title; RD-47: the "Search photos" field right under it. */}
           <View style={words ? null : { marginBottom: -16 }}>{words ? <LargeGreeting words={words} scrollY={scrollY} /> : null}</View>
-          <View style={{ backgroundColor: c.bg, paddingBottom: 8, marginBottom: -8 }} onLayout={(e) => setPinAt(e.nativeEvent.layout.height)}>
+          {/* RD-82 (Chase, Nov 17): the pinned bar's backing spans the full screen width (it steps out of the scroll's
+              16 pt padding and puts it back inside), so nothing shows past its edges; a soft shade below it once
+              content is under it, none at the top. */}
+          <View
+            style={{ backgroundColor: c.bg, paddingBottom: 8, marginBottom: -8, marginHorizontal: -16, paddingHorizontal: 16 }}
+            onLayout={(e) => { setPinAt(e.nativeEvent.layout.height); fieldAt.current = e.nativeEvent.layout.y; }}
+          >
             <SearchField testID="search-field" onPress={() => setSearch(true)} />
+            {under ? <View testID="search-bar-shade" pointerEvents="none" accessible={false} style={[shade.line, { backgroundColor: c.line }]} /> : null}
           </View>
           {header}
           {empty}
@@ -239,3 +250,11 @@ function PushAsk() {
     </Card>
   );
 }
+
+/** RD-82: a hairline with a soft shadow under the pinned Search photos bar. */
+const shade = StyleSheet.create({
+  line: {
+    position: 'absolute', left: 0, right: 0, bottom: -StyleSheet.hairlineWidth, height: StyleSheet.hairlineWidth,
+    shadowColor: '#000', shadowOpacity: 0.12, shadowRadius: 3, shadowOffset: { width: 0, height: 2 },
+  },
+});

@@ -171,12 +171,14 @@ export function BackButton({ to, onPress, label, ink }: {
 
 /** RD-15: one of More's big rows: icon, word, an optional accent count ("2 new", RD-14) and a chevron, the whole
  *  row one 48 pt+ target. The screen reader hears the word, then the count ("Messages, 2 new"). */
-export function MenuRow({ text, icon, count, onPress, testID }: { text: string; icon: Icon; count?: string | null; onPress: () => void; testID?: string }) {
+/** `value` (RD-78): a setting's state in words at the row's end, in the muted color ("Easy view, On"). */
+export function MenuRow({ text, icon, count, value, onPress, testID }: { text: string; icon: Icon; count?: string | null; value?: string | null; onPress: () => void; testID?: string }) {
   const { c, t, os } = useTheme();
+  const extra = count || value;
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={count ? `${text}, ${count}` : text}
+      accessibilityLabel={extra ? `${text}, ${extra}` : text}
       onPress={onPress}
       testID={testID}
       android_ripple={{ color: c.line }}
@@ -185,6 +187,7 @@ export function MenuRow({ text, icon, count, onPress, testID }: { text: string; 
       <SystemIcon icon={icon} color={c.ink} size={26} />
       <Text style={{ flex: 1, color: c.ink, fontSize: t.base, lineHeight: t.line }}>{text}</Text>
       {count ? <Text style={{ color: c.accent, fontSize: t.base, fontWeight: WEIGHT.semibold }}>{count}</Text> : null}
+      {value ? <Text style={{ color: c.muted, fontSize: t.base }}>{value}</Text> : null}
       <SystemIcon icon={CHEVRON} color={c.muted} size={18} />
     </Pressable>
   );
@@ -286,7 +289,7 @@ export function Card({ children, style, testID }: { children: ReactNode; style?:
 }
 
 /** RD-34: the Settings-style grouped section (iPhone inset grouped list; Android outlined card), only for the
- *  settings lists under More (Bigger text, Light or dark, Family color, Help, Me). */
+ *  settings lists under More (Easy view, Light or dark, Family color, Help, Me). */
 export function GroupedSection({ children, style, testID }: { children: ReactNode; style?: StyleProp<ViewStyle>; testID?: string }) {
   const { c, os } = useTheme();
   const look = os === 'android' ? { borderWidth: 1, borderColor: c.line, borderRadius: RADIUS.medium } : { borderWidth: 0, borderRadius: RADIUS.medium };

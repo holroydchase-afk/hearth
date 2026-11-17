@@ -282,7 +282,7 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
     <Ctx.Provider value={value}>
       <LookContext.Provider value={s.prefs.look}>
         <ColorContext.Provider value={s.space?.role === 'owner' ? s.prefs.color : 'ember'}>
-          <BigTextContext.Provider value={s.prefs.bigText}>
+          <BigTextContext.Provider value={s.prefs.easyView}>
             <PhoneA11yContext.Provider value={a11y}>{children}</PhoneA11yContext.Provider>
           </BigTextContext.Provider>
         </ColorContext.Provider>

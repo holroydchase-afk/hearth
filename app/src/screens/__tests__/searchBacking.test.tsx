@@ -37,7 +37,9 @@ const scrollTo = async (scroll: Inst, y: number) => act(async () => {
 /** The scroll's sticky child that holds the search field: the bar's backing. */
 function backing(scroll: Inst): Inst {
   const sticky = (scroll.props.stickyHeaderIndices as number[] | undefined) ?? [];
-  const content = scroll.findAll(isHost)[0]!;
+  // engineer, flagged for qa-tdd: findAll includes the scroll itself (and the refresh control is its first child), so
+  // take the content container, the scroll's first host View, whose children are the sticky-indexed rows.
+  const content = scroll.findAll((n) => isHost(n) && (n.type as unknown) === 'View')[0]!;
   const kids = content.children as Inst[];
   const field = screen.getAllByLabelText('Search photos').find(isHost)!;
   const hit = sticky.map((i) => kids[i]).find((k) => k && (k === field || k.findAll(isHost).includes(field)));
