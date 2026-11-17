@@ -6,8 +6,8 @@
 //   - UX-R36 / AC-R36: the comment field's text input has lineHeight 22 and paddingVertical 13 at default size, so
 //     the placeholder and the "Post" text button share a center (within 1 pt). In Bigger text the line is at least
 //     as tall as the font and the two still center within 1 pt. Checked on the style in jest (no layout engine).
-//   - UX-R37 / AC-R37: people(3) is "3 people" (people(1) "1 person"); the first line of Post options on your own
-//     post is "Shared with <group>, <people(n)>".
+//   - UX-R37 / AC-R37: the number and its word never wrap apart: people(3) is "3\u00a0people" and people(1)
+//     "1\u00a0person" (a no-break space). The first line of Post options on your own post ends with it.
 //   - UX-R38 / AC-R38: New for you's "See all" quiet button sits flush with the right edge: marginRight equals
 //     minus its paddingHorizontal (the words line up with the screen margin), and its target stays ≥ 48 pt.
 import { fireEvent, screen, within } from '@testing-library/react-native';
@@ -92,15 +92,15 @@ describe('UX-R36 AC-R36 (P2) the comment field: placeholder and "Post" share a c
 
 // =================================================================================================================
 describe('UX-R37 AC-R37 (P2) "3 people", and Post options leads with it', () => {
-  it('UX-R37 AC-R37 people(3) is "3 people"; people(1) is "1 person"', () => {
-    expect([people(3), people(1)]).toEqual(['3 people', '1 person']);
+  it('UX-R37 AC-R37 people(3) is "3 people" with a no-break space; people(1) is "1 person"', () => {
+    expect([people(3), people(1)]).toEqual(['3\u00a0people', '1\u00a0person']);
   });
 
-  it('UX-R37 AC-R37 the first line of Post options on my own post is "Shared with <group>, <people(n)>"', async () => {
+  it('UX-R37 AC-R37 the first line of Post options on my own post is "Shared with <group>, 3 people" (no-break space)', async () => {
     const { id, card } = await feedCard('chase'); // Grandparents – Dad's side has 3 people in the fixture
     fireEvent.press(within(card).getByRole('button', { name: 'Post options' }));
     const menu = await screen.findByTestId(`more-${id}`);
-    expect(texts(menu)[0]).toBe(`Shared with ${dadSide.name}, ${people(3)}`);
+    expect(texts(menu)[0]).toBe(`Shared with ${dadSide.name}, 3\u00a0people`);
   });
 });
 
