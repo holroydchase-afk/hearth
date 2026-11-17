@@ -1084,6 +1084,17 @@
    "fixed": "2026-11-16"
   },
   {
+   "id": "T19",
+   "kind": "test fix",
+   "layer": "backend",
+   "severity": "High",
+   "status": "open",
+   "title": "QA-R1 (review round 1 gate): backend/tests/notify_test.sql #29 'prefs: push wanted but no phone registered -> falls back to the evening email' is a time bomb. It creates the post at now() and claims at a fixed 2026-11-16 18:30 America/New_York with no tests.queued_at, so since Nov 16 23:30 UTC the notice is newer than the claim clock and the test fails every run (3/3 on Nov 17; backend unchanged on the branch). Fix: call tests.queued_at('2026-11-16 17:00 America/New_York') before the claim, like the other NOTIFY-5 cases. Not a product bug",
+   "tests": [],
+   "found": "2026-11-17",
+   "fixed": null
+  },
+  {
    "id": "B15",
    "kind": "bug",
    "layer": "backend",

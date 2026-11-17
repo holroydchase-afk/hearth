@@ -1,0 +1,52 @@
+Review round 1 gate, 2026-11-17, branch claude/project-thread-iyml94 at 4db49da (engineer) on red tests e5c352c. 3 runs of every suite.
+
+jest run1 rc=0
+jest run2 rc=0
+jest run3 rc=0
+typecheck run1 rc=0
+typecheck run2 rc=0
+typecheck run3 rc=0
+e2edemo run1 rc=0
+e2edemo run2 rc=0
+e2edemo run3 rc=0
+e2eweb run1 rc=0
+e2eweb run2 rc=0
+e2eweb run3 rc=0
+e2esite run1 rc=0
+e2esite run2 rc=0
+e2esite run3 rc=0
+sql run1 rc=1
+sql run2 rc=1
+sql run3 rc=1
+verify run1 rc=0
+verify run2 rc=0
+verify run3 rc=0
+DONE
+
+== run 1 ==
+jest: Tests:       1 skipped, 1166 passed, 1167 total
+e2edemo:  5 skipped 15 passed (37.6s) 
+e2eweb:  11 skipped 5 passed (32.6s) 
+e2esite:  14 passed (18.8s) 
+backend sql: 1082 table rows ok; NOT OK rows:
+ 29 | NOT OK | prefs: push wanted but no phone registered -> falls back to the evening email
+NOTIFY RESULT: 59 passed, 1 failed
+== run 2 ==
+jest: Tests:       1 skipped, 1166 passed, 1167 total
+e2edemo:  5 skipped 15 passed (38.3s) 
+e2eweb:  11 skipped 5 passed (32.2s) 
+e2esite:  14 passed (19.1s) 
+backend sql: 1082 table rows ok; NOT OK rows:
+ 29 | NOT OK | prefs: push wanted but no phone registered -> falls back to the evening email
+NOTIFY RESULT: 59 passed, 1 failed
+== run 3 ==
+jest: Tests:       1 skipped, 1166 passed, 1167 total
+e2edemo:  5 skipped 15 passed (38.6s) 
+e2eweb:  11 skipped 5 passed (31.8s) 
+e2esite:  14 passed (18.3s) 
+backend sql: 1082 table rows ok; NOT OK rows:
+ 29 | NOT OK | prefs: push wanted but no phone registered -> falls back to the evening email
+NOTIFY RESULT: 59 passed, 1 failed
+
+Backend SQL red cause (QA-R1 / T19): notify_test.sql #29 creates a post at now() and claims at a fixed '2026-11-16 18:30 America/New_York' with no tests.queued_at; since that moment passed (Nov 16 23:30 UTC) the notice is newer than the claim clock, so it fails every run. Backend unchanged on this branch (git diff 85d80e9..4db49da -- backend is empty). Test bug, not a product bug.
+Old-test edits reviewed: photos.test BETA-AUD-10 (RD-42) still proves Earl and Alex are named (on the can-see line, and same-people only shows when readers == viewers; fewer-readers direction kept in reviewRound1 UX-R10). UXG-07 exempts one ' Post ' occurrence only; the word stays banned elsewhere. Neither weakens a guarantee.
