@@ -120,6 +120,18 @@ Review round 2 (ux-reviewer, Nov 17). Tests (written first, red): `app/src/scree
 | RD-65 | R22 (P2): names (post head, description, comments) are body size and grow with Bigger text (21 pt on, 17 pt off). | auto |
 | RD-66 | R23 (P2, G9): each tab (Gallery, Share, Feed, More) has exactly one h1, its title; month titles and other headings are level 2. | auto (Playwright) |
 
+Review round 3 (ux-reviewer, Nov 17). Tests (written first, red): `app/src/screens/__tests__/reviewRound3.test.tsx`, `app/src/feed/__tests__/gallery.test.ts` (UX-R30), `app/e2e-web/demo.spec.js` (UX-R27 at 390 px), `app/e2e-web/core-loop.spec.js` (the new Delete words). Supersedes: RD-57's "No, keep it" words, GUX-R6's "up to three others all named", CAP-3's title heading, RD-56's lone square in a 2-photo month.
+
+| ID | Given / When / Then | Type |
+|---|---|---|
+| RD-67 | UX-R24 (P1): Delete post asks in an iOS-style alert over the screen (a Modal, never inline in the feed): title "Delete this post?" (one photo or many), "Keep it" (Semibold, the default) and "Delete" (Regular, red text); neither is a filled button. Keep it keeps the post; Delete deletes it. | auto |
+| RD-68 | UX-R25 (P2): the sticky month title box is the page color with 12 pt of padding under the words, so photos sliding under it never touch them. | auto |
+| RD-69 | UX-R26 (P2): "Your comment goes to the same people." shows only while the comment field is focused or holds words. When fewer people read the comment, that line ("Alex and Chase will read this.") still shows at rest. | auto |
+| RD-70 | UX-R27 (P2): the who-can-see line names at most 2 others, then "and N more" ("Alex, Chase and 1 more can see this."), and fits one line at default size on a 390 pt screen. The Who sheet still lists everyone; the spoken label keeps the full list. | auto (jest + Playwright 390) |
+| RD-71 | UX-R28 (P2): a post's title is never a heading above the words; the description starts with the title in Medium, after the name row, then the caption. | auto |
+| RD-72 | UX-R29 (P2): "Delete post" and the alert's "Delete" are #FF453A (iOS systemRed, dark) in dark mode; in light, #D70015 or the palette red, at 4.5:1 or better on the sheet. | auto |
+| RD-73 | UX-R30 (P2): a month or group with exactly 2 photos shows two squares side by side: no wide photo and no lone square. One photo alone in a month stays wide. | auto (jest unit) |
+
 ### Phase 1 gate (manual)
 | ID | Given / When / Then | Type |
 |---|---|---|

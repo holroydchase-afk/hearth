@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 // CAP-1, CAP-3..5 (docs/product/SPEC-CAPTIONS.md, DEC-39): an optional title for the whole set, shown as the
 // card's heading above the caption; a long caption folds to 4 lines behind a worded Read more.
-import { fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react-native';
 import React from 'react';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { seedPost } from '../../test/seed';
@@ -31,12 +31,14 @@ describe('CAP post titles', () => {
     });
   });
 
-  it('CAP-3 the card shows the title as a heading, then the caption', async () => {
+  it('CAP-3 UX-R28 the description opens with the title, then the caption (no heading, RD-71)', async () => {
     const be = FakeBackend.withFixture({ joIsMember: true });
     await seedPost(be, { title: "Lily's 5th birthday", caption: 'Cake, candles, a nap' });
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
-    expect(await screen.findByRole('header', { name: "Lily's 5th birthday" })).toBeTruthy();
-    expect(screen.getByText('Cake, candles, a nap')).toBeTruthy();
+    const desc = await screen.findByTestId(/^desc-/);
+    expect(screen.queryByRole('header', { name: "Lily's 5th birthday" })).toBeNull();
+    expect(within(desc).getByText("Lily's 5th birthday")).toBeTruthy();
+    expect(within(desc).getByText('Cake, candles, a nap')).toBeTruthy();
     expectGrandparentSafe();
   });
 

@@ -203,8 +203,8 @@ describe('MOMENT: one compact card per upload', () => {
     expect(within(menu).getByText("Shared with Grandparents – Dad's side · 3 people")).toBeTruthy();
     expectGrandparentSafe();
     fireEvent.press(within(menu).getByRole('button', { name: 'Delete post' }));
-    expect(await screen.findByText('Delete these 3 photos for everyone?')).toBeTruthy();
-    fireEvent.press(screen.getByRole('button', { name: 'Yes, delete them' }));
+    expect(await screen.findByText('Delete this post?')).toBeTruthy(); // UX-R24 (RD-67): the iOS-style alert
+    fireEvent.press(screen.getByRole('button', { name: 'Delete' }));
     await waitFor(() => expect(be.state.posts[id]!.deleted).toBe(true));
   });
 

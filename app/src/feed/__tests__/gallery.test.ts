@@ -83,3 +83,34 @@ describe('RD-44 months mosaic layout (pure)', () => {
     expect(galleryMonths([p])).toEqual([]);
   });
 });
+
+// UX-R30 (review round 3, Nov 17; RD-73): a month (or a group) with exactly 2 photos is two squares side by side,
+// with no wide photo and no lone square. One photo alone in a month stays wide.
+describe('UX-R30 RD-73 exactly 2 photos: two squares side by side', () => {
+  it('UX-R30 a month of one post with 2 photos: no wide tile; one row of the two squares', () => {
+    const [m] = galleryMonths([post('a', at(9, 17, 10), 2)]);
+    expect(m!.tiles.map((t) => t.wide)).toEqual([false, false]);
+    expect(m!.groups.flatMap((g) => mosaicRows(g.tiles).map((r) => r.map((t) => t.mediaId)))).toEqual([['a-0', 'a-1']]);
+  });
+
+  it('UX-R30 a month of two 1-photo posts on different days: no wide tile; one range with the two squares in one row', () => {
+    const [m] = galleryMonths([post('b', at(10, 15, 9), 1), post('c', at(10, 11, 9), 1)]);
+    expect(m!.tiles.filter((t) => t.wide)).toEqual([]);
+    expect(m!.groups.map((g) => [g.label, mosaicRows(g.tiles).map((r) => r.length)])).toEqual([['Nov 11–15', [2]]]);
+  });
+
+  it('UX-R30 one photo alone in a month stays wide; 3 photos keep one wide and two squares', () => {
+    expect(galleryMonths([post('d', at(8, 30, 9), 1)])[0]!.tiles.map((t) => t.wide)).toEqual([true]);
+    const [m] = galleryMonths([post('e', at(7, 3, 9), 3)]);
+    expect(m!.groups.flatMap((g) => mosaicRows(g.tiles).map((r) => r.length))).toEqual([1, 2]);
+  });
+
+  it('UX-R30 no group in any month draws a lone square (2..12 photos in a month, spread over days)', () => {
+    for (let n = 2; n <= 12; n++) {
+      const posts = Array.from({ length: n }, (_, i) => post(`p${n}-${i}`, at(5, 28 - i * 2, 9), 1));
+      const [m] = galleryMonths(posts);
+      const rows = m!.groups.flatMap((g) => mosaicRows(g.tiles));
+      expect({ n, lone: rows.filter((r) => r.length === 1 && !r[0]!.wide).length }).toEqual({ n, lone: 0 });
+    }
+  });
+});

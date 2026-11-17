@@ -412,3 +412,19 @@ test('R23 Gallery, Share, Feed and More each have exactly one h1', async ({ page
   expect(Object.fromEntries(Object.entries(got).map(([k, v]) => [k, v.length]))).toEqual({ Gallery: 1, Share: 1, Feed: 1, More: 1 });
   expect(got.Gallery[0]).toMatch(/^Good (morning|afternoon|evening)/);
 });
+
+// UX-R27 (review round 3, RD-70): at default text size on a 390 px phone, each who-can-see line fits on one line
+// (two names at most, then "and N more"); the Who sheet keeps the full list.
+test('UX-R27 every "can see this." line on Feed is one line at 390 px', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await onFeed(page);
+  const lines = page.getByText(/can see this\.$/).filter({ visible: true });
+  await expect(lines.first()).toBeVisible();
+  const got = await lines.evaluateAll((els) => els.map((e) => {
+    const lh = parseFloat(getComputedStyle(e).lineHeight) || parseFloat(getComputedStyle(e).fontSize) * 1.3;
+    return { words: e.innerText, lines: Math.round(e.getBoundingClientRect().height / lh) };
+  }));
+  expect(got.filter((l) => l.lines > 1)).toEqual([]);
+});

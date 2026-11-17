@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-17T17:00:00-05:00",
+ "label": "Review round 3 (UX-R24..R30, RD-67..RD-73): tests written first (red)",
+ "passed": 1245,
+ "failed": 20,
+ "results": {},
+ "note": "Red on purpose, 1 run each, typecheck clean. jest 1245 passed, 20 failed (1 skipped, 1 todo): new screens/__tests__/reviewRound3.test.tsx (UX-R24 iOS-style Delete alert: Delete this post?, Keep it Semibold, Delete red Regular, no fill, in a Modal; R25 month title 12 pt page-colored padding; R26 same-people line only while commenting, the fewer-readers line still always; R27 two names then N more, Who sheet lists all; R28 title opens the description in Medium, no heading; R29 #FF453A in dark, 4.5:1 red in light) and feed/__tests__/gallery.test.ts UX-R30 (2 photos = two squares, no wide, no lone square). Old tests moved: moments MOMENT-6, sessions MOMENT-7, photos BETA-AUD-5 and BETA-AUD-10 (focus first), reviewRound1 UX-R10 (focus first), reviewRound2 UX-R14, redesignPolish GUX-R6, who WHO-10, captions CAP-3; e2e core-loop (Delete this post? / Delete). e2e:demo 19 passed, 1 failed (UX-R27: names line wraps to 2 lines at 390 px); e2e:web 4 passed, 1 failed (core-loop at Delete this post?). e2e:site, backend, Deno not run (no SQL or function change). e2e/results/review-r3-red-2026-11-17.txt"
+}

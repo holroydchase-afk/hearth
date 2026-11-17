@@ -151,12 +151,12 @@ describe('UX-R14 (P1) Post options: plain iOS-style rows; Delete post is red tex
     expect(row('Delete post')).toEqual({ plain: true, pill: false, centered: false, color: c.danger, tall: true });
   });
 
-  it('UX-R14 Delete post still asks first; "No, keep it" keeps the post', async () => {
+  it('UX-R14 Delete post still asks first; "Keep it" keeps the post (words moved by UX-R24, RD-67)', async () => {
     const { be, id, card } = await feedCard('chase');
     fireEvent.press(within(card).getByRole('button', { name: 'Post options' }));
     fireEvent.press(within(await screen.findByTestId(`more-${id}`)).getByRole('button', { name: 'Delete post' }));
-    expect(await screen.findByText('Delete this photo for everyone?')).toBeTruthy();
-    fireEvent.press(screen.getByRole('button', { name: 'No, keep it' }));
+    expect(await screen.findByText('Delete this post?')).toBeTruthy();
+    fireEvent.press(screen.getByRole('button', { name: 'Keep it' }));
     expect(be.state.posts[id]!.deleted).toBe(false);
   });
 });

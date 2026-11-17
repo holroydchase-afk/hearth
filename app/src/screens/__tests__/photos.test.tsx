@@ -108,7 +108,8 @@ describe('Photos screen', () => {
     const be = await twoPosts();
     be.state.spaces[FIXTURE.space.id]!.reply_audience = 'everyone';
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
-    await screen.findAllByLabelText('Add a comment for Chase');
+    const fields = await screen.findAllByLabelText('Add a comment for Chase');
+    fireEvent(fields[0]!, 'focus'); // UX-R26 (RD-69): the line shows while commenting
     expect((await screen.findAllByText('Your comment goes to the same people.')).length).toBeGreaterThan(0);
     const words = screen.getAllByText(/ can see this\.$/)[0]!.props.children as string;
     expect(words).toMatch(/Alex/);
@@ -134,13 +135,13 @@ describe('Photos screen', () => {
     const card = await screen.findByTestId(`post-${Object.values(be.state.posts).find((p) => p.caption === 'Shared with Dad side')!.id}`);
     fireEvent.press(within(card).getByRole('button', { name: 'Post options' }));
     fireEvent.press(await screen.findByRole('button', { name: 'Delete post' }));
-    expect(await screen.findByText('Delete this photo for everyone?')).toBeTruthy();
-    fireEvent.press(screen.getByRole('button', { name: 'No, keep it' }));
-    expect(screen.queryByText('Delete this photo for everyone?')).toBeNull();
+    expect(await screen.findByText('Delete this post?')).toBeTruthy(); // UX-R24 (RD-67): the iOS-style alert's words
+    fireEvent.press(screen.getByRole('button', { name: 'Keep it' }));
+    expect(screen.queryByText('Delete this post?')).toBeNull();
     expect(screen.getByText('Shared with Dad side')).toBeTruthy();
     fireEvent.press(within(card).getByRole('button', { name: 'Post options' }));
     fireEvent.press(await screen.findByRole('button', { name: 'Delete post' }));
-    fireEvent.press(await screen.findByRole('button', { name: 'Yes, delete it' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Delete' }));
     await waitFor(() => expect(screen.queryByText('Shared with Dad side')).toBeNull());
     expect(await be.clientFor(FIXTURE.users.jo.id).getFeed({ space: FIXTURE.space.id })).toHaveLength(0);
   });

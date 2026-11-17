@@ -269,6 +269,7 @@ describe('UX-R9 (P2) in the walk the accent is only on Next photo (RD-4)', () =>
 describe('UX-R10 (P2) one sentence about who sees it, unless the comment goes to fewer people', () => {
   it('UX-R10 replies open to everyone who can see it: "Your comment goes to the same people." and no second names line', async () => {
     const { card } = await oneCard('jo', 'everyone');
+    fireEvent(within(card).getByLabelText('Add a comment for Chase'), 'focus'); // UX-R26 (RD-69): shown while commenting
     expect(await within(card).findByText('Your comment goes to the same people.')).toBeTruthy();
     expect(within(card).queryByText(/will read this\.$|can read this\.$/)).toBeNull();
     expect(within(card).getByText(/can see this\.$/)).toBeTruthy();

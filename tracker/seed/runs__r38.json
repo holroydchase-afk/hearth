@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-17T16:30:00-05:00",
+ "label": "Review round 2 (UX-R13..R23, RD-56..RD-66): all suites 3x (green)",
+ "passed": 1249,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs each at 1ea6b4f (engineer): jest 1249 passed (1 skipped, 1 todo RD-49) x3, typecheck clean x3, e2e:demo 19 passed (5 skipped) x3, e2e:web 5 passed (11 skipped) x3, e2e:site 14 passed x3, backend SQL 0 failed x3 (as the postgres OS user), agents.verify passed x3. Engineer test edits reviewed: MOMENT-1, BETA-AUD-1 and core-loop now prove the group name through Post options (DEC-49 kept; core-loop's names-line check uses .first() and the Post options line carries the post-specific proof); T20 familyColor is a wait-only change (4 s waits and a waitFor on the reopened color; the saved-color check is unchanged). No guarantee weakened. Deno, CI and phones not run (sticky month and search need an iPhone and Android look, RD-28). e2e/results/rd-56-green-3x-2026-11-17.txt"
+}

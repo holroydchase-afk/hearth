@@ -254,10 +254,10 @@ describe('GUX-R6 the card names who can see it', () => {
   });
 
   // Chase, Nov 16 (DEC-60): "Names". Reverses WHO-10 / LIVE-4 (Nov 5).
-  it('GUX-R6 three others are all named: Grandpa Earl reads "Alex, Chase and Grandma Jo can see this."', async () => {
+  it('GUX-R6 UX-R27 three others: Grandpa Earl reads two names and "1 more" (RD-70)', async () => {
     const { id } = await card('earl', dadSide.id);
     const who = await screen.findByTestId(`who-${id}`, {}, slow);
-    expect(wordsIn(who)).toBe('Alex, Chase and Grandma Jo can see this.');
+    expect(wordsIn(who)).toBe('Alex, Chase and 1 more can see this.');
   });
 
   // Chase, Nov 16 (DEC-60): "Names". Reverses WHO-10 / LIVE-4 (Nov 5).

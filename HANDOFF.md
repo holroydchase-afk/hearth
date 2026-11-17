@@ -3,13 +3,18 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: review round 2 fixes (UX-R13..R23, RD-56..66) built Nov 17, qa-tdd 3x next; push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
+now: review round 2 green 3x (r38); round 3 failing tests written (UX-R24..R30, RD-67..73), engineer next; push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
 next: redesign R46 1a..1c, polish GUX-R1..R10, RD-34 plain background, DEC-60 names, DEC-61 no demo steps built; qa-tdd 3x, then grandparent-ux recheck; stop date Nov 19
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 17: review round 2 gate green; round 3 failing tests (UX-R24..R30, RD-67..73; branch claude/project-thread-iyml94, local commit)
+- **QA green (r38):** all suites 3x green at 1ea6b4f (jest 1249, typecheck, e2e:demo 19, e2e:web 5, e2e:site 14, backend SQL 0 failed, agents.verify). Engineer test edits (MOMENT-1, BETA-AUD-1, core-loop via Post options; T20 waits) weaken no guarantee (`e2e/results/rd-56-green-3x-2026-11-17.txt`).
+- **qa-tdd, red on purpose (r39):** new `app/src/screens/__tests__/reviewRound3.test.tsx` (contract in its header), UX-R30 in `feed/__tests__/gallery.test.ts`, UX-R27 at 390 px in `e2e-web/demo.spec.js`. jest 20 failed (13 new, 7 moved), e2e:demo 1 failed, e2e:web 1 failed (core-loop's new Delete words). Moved: moments, sessions, photos, reviewRound1, reviewRound2, redesignPolish, who, captions, core-loop (`e2e/results/review-r3-red-2026-11-17.txt`).
+- **Next exact step:** engineer builds RD-67..73. Watch: a dark #FF453A as `c.danger` breaks designSystem's onDanger-on-danger contrast pair unless the filled danger button keeps its own color. Not pushed.
 
 ## Nov 17: review round 2 fixes built (UX-R13..R23, RD-56..66; branch claude/project-thread-iyml94, local commit)
 - **Engineer, green (jest 1249 x3, typecheck, e2e:demo 19, e2e:web 5, e2e:site 14):** Gallery has one wide photo per month, quiet days join into ranges ("Nov 2–8"), and no square sits alone (`feed/gallery.ts` `mosaicRows`). The group date shows once above each group. The search field is now the scroll's sticky header (index 1), and month titles stick under it with an Animated translate (`GalleryGrid.tsx`; on the web, places are re-read via offsetTop because onLayout misses moves). Post options use plain rows with red "Delete post" text, and the confirm still asks. The card has one who-can-see line, with no "Sent to" and no reader line on your own post. There's no Comments heading; one rounded field holds Post inside. More uses outline icons and inset `MenuLine`. Share's sections are plain blocks on one 16 pt edge. Small tiles show a spinner spoken "Loading". The first emoji sits on the 16 pt edge. Names follow Bigger text. Month titles are h2.

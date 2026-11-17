@@ -78,7 +78,7 @@ describe('WHO: who can see this post, by name', () => {
     const { id, el } = await dadSidePost('jo');
     const who = await within(el).findByTestId(`who-${id}`);
     expect(who.props.accessibilityRole).toBe('button');
-    expect(within(who).getByText('Alex, Chase and Grandpa Earl can see this.')).toBeTruthy();
+    expect(within(who).getByText('Alex, Chase and 1 more can see this.')).toBeTruthy(); // UX-R27 (RD-70): two names, then "N more"
     expect(within(who).queryAllByTestId(/^face-/, { includeHiddenElements: true })).toHaveLength(0);
     expect(within(who).queryByText(/^\+\d+$/, { includeHiddenElements: true })).toBeNull();
   });

@@ -60,7 +60,7 @@ describe('MOMENT-7 one card per upload, even within an hour', () => {
     await renderApp(<PhotosScreen />, { be, user: 'chase' });
     fireEvent.press(within(await screen.findByTestId(`post-${dock}`)).getByRole('button', { name: 'Post options' }));
     fireEvent.press(await screen.findByRole('button', { name: 'Delete post' }));
-    fireEvent.press(await screen.findByRole('button', { name: 'Yes, delete them' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Delete' })); // UX-R24 (RD-67)
     await waitFor(() => expect(be.state.posts[dock]!.deleted).toBe(true));
     expect(be.state.posts[lake]!.deleted).toBe(false);
     expect(await screen.findByTestId(`post-${lake}`)).toBeTruthy();

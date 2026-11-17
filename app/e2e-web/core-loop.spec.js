@@ -112,7 +112,8 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await expect(page.getByText(/Seen by/)).toHaveCount(0); // RV-U1 (DEC-21): no "Seen by" count
   await page.getByRole('button', { name: 'Post options' }).click();
   await page.getByRole('button', { name: 'Delete post' }).click();
-  await page.getByRole('button', { name: 'Yes, delete it' }).click();
+  await expect(page.getByText('Delete this post?')).toBeVisible(); // UX-R24 (RD-67): the iOS-style alert
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
   await expect(page.getByText('Pumpkin patch', { exact: true })).toHaveCount(0);
   const left = await page.evaluate(() => Object.values(globalThis.__hearthFake.state.posts).filter((p) => !p.deleted && p.status === 'published').length);
   expect(left).toBe(0);
