@@ -465,5 +465,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** it's Chase's own public demo with his own photos (DEC-62); his first name is already public as the founder. Demo only; relatives never see it.
 - **Source:** `app/src/demo/__tests__/seed.test.ts` DEMO-3, `app/e2e-web/demo.spec.js` UX-R12
 
+### DEC-65 · Apple Photos months, a search field, Instagram-style posts (RD-44..RD-55)
+- **When / status:** Nov 17 · Chase on the round 2 mockup: "A - 1", "B3", "C1 - 5 photos seems like a lot.. 1 large, 2 small, 1 small or 1 small with the +x", "Search- B but hide the months vs all toggle for now" · Failing tests written
+- **Chose:** Gallery as a months mosaic like the newest Apple Photos (month name, a wide photo then rounded squares per day group, 16 pt corners, 8 pt gaps, inset 16 pt, the day number on the photo, no sender lines). A "Search photos" field under the greeting that pins on scroll; Search and By date leave the top right; the Months / All photos switch stays hidden. Feed posts in Instagram's order (face and name with a small "⋯", photos, reactions, description, "3 hours ago", who can see it, comments), 32 pt of space instead of lines (A-1), all four emoji with counts in one row (B3), at most 4 photo tiles with "+N" (C1), no Bold anywhere.
+- **Over:** the edge-to-edge square grid (RD-39), Search and By date top right (RD-13), hairline dividers (RD-34), the 8 pt gray band (A-2), Slack-style chips (B1) and a Facebook heart (B2), a carousel (C2) and a big photo with a strip (C3), a 5-tile mosaic, Search as a round button by the tabs (A) or two words top right (C).
+- **Because:** Chase: "their monthly timeline looks much better", "the search and filters are in an odd place", "our fonts are very heavy". Every reaction and photo stays in sight with one tap (grandparents); a box that says Search is easy to explain over the phone.
+- **Source:** `app/src/screens/__tests__/photosStyle.test.tsx`, `app/src/ui/__tests__/relativeTime.test.ts`, `app/e2e-web/demo.spec.js`; persona check `decisions/2026-11-17-photos-style.md`
+
 ---
-Last updated: Nov 17, 2026 (DEC-64)
+Last updated: Nov 17, 2026 (DEC-65)

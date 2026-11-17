@@ -334,7 +334,7 @@ describe('OPEN-7/8 one new post at a time', () => {
     expect(within(walk).getByText('First at the park')).toBeTruthy();
     expect(within(walk).getByRole('header', { name: 'New photos: 1 of 2' })).toBeTruthy();
     expect(within(walk).queryByText('1 of 2')).toBeNull(); // GUX-R7: never the bare count
-    expect(within(walk).getByText('Chase')).toBeTruthy(); // sender
+    expect(within(walk).getAllByText('Chase').length).toBeGreaterThan(0); // sender (RD-48: in the head and the description)
     expect(within(walk).getByRole('button', { name: 'Love it' })).toBeTruthy(); // reactions
     expect(within(walk).getByLabelText('Add a comment for Chase')).toBeTruthy(); // comments
     expect(within(walk).getByLabelText(/can see this/)).toBeTruthy(); // who can see
@@ -444,9 +444,15 @@ describe('OPEN-9/10 RD-18 the wall is Gallery itself', () => {
     expect(headers.filter((h) => h === thisMonth || h === oldMonth)).toEqual([thisMonth, oldMonth]);
     const tiles = within(wall).getAllByTestId(/^gallery-tile-/).map((t) => t.props.testID as string);
     expect(tiles).toEqual([...mediaOf(be, recent), ...mediaOf(be, old)].map((m) => `gallery-tile-${m}`));
-    const w = flat(within(wall).getAllByTestId(/^gallery-tile-/)[0]!.props.style).width;
-    if (typeof w === 'string') expect(parseFloat(w)).toBeLessThanOrEqual(34);
-    else expect(Number(w)).toBeLessThanOrEqual(Dimensions.get('window').width / 3);
+    // Updated Nov 17 for RD-44 (engineer; qa-tdd to confirm): each day opens on one full-width 3:2 photo, then
+    // squares three to a row (a third of the row, flex 1 beside two others).
+    const squares = within(wall).getAllByTestId(/^gallery-tile-/).filter((t) => Number(flat(t.props.style).aspectRatio) === 1);
+    expect(squares.length).toBeGreaterThan(0);
+    for (const sq of squares) {
+      const w = flat(sq.props.style).width;
+      if (w !== undefined) expect(typeof w === 'string' ? parseFloat(w) <= 34 : Number(w) <= Dimensions.get('window').width / 3).toBe(true);
+      else expect(flat(sq.props.style).flex).toBe(1);
+    }
   });
 
   it('OPEN-10 RD-18 every tile is at least 48 pt, names the sender and day, and opens that photo full screen', async () => {
@@ -461,7 +467,7 @@ describe('OPEN-9/10 RD-18 the wall is Gallery itself', () => {
       expect(t.props.accessibilityLabel).toMatch(/Chase/);
     }
     const second = within(wall).getByTestId(`gallery-tile-${mediaOf(be, old)[1]}`);
-    expect(second.props.accessibilityLabel).toContain(`${MONTHS[back.getMonth()]} ${back.getDate()}`);
+    expect(second.props.accessibilityLabel).toContain(`${LONG_MONTHS[back.getMonth()]} ${back.getDate()}`); // RD-45: the full date
     fireEvent.press(second);
     expect(nav.openViewer).toHaveBeenLastCalledWith(old, 1);
     expectGrandparentSafe();

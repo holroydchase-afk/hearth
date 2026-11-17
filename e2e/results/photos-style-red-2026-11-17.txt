@@ -1,0 +1,196 @@
+RD-44..RD-55 (DEC-65, Chase's Nov 17 picks): failing tests written first. Branch claude/project-thread-iyml94 on 85775fa. 1 run each, red on purpose.
+
+== app jest (npx jest --ci) ==
+Test Suites: 21 failed, 112 passed, 133 total
+Tests:       94 failed, 1 skipped, 1 todo, 1121 passed, 1217 total
+FAIL src/screens/__tests__/changeWords.test.tsx (6.042 s)
+FAIL src/screens/__tests__/hig.test.tsx (9.328 s)
+FAIL src/screens/__tests__/moments.test.tsx (11.504 s)
+FAIL src/screens/__tests__/photos.test.tsx (8.485 s)
+FAIL src/screens/__tests__/photosHeader.test.tsx (9.555 s)
+FAIL src/screens/__tests__/photosStyle.test.tsx (41.335 s)
+FAIL src/screens/__tests__/plainBackground.test.tsx (9.211 s)
+FAIL src/screens/__tests__/redesignGallery.test.tsx (14.099 s)
+FAIL src/screens/__tests__/redesignNav.test.tsx (20.97 s)
+FAIL src/screens/__tests__/redesignPolish.test.tsx (15.086 s)
+FAIL src/screens/__tests__/search.test.tsx (12.205 s)
+FAIL src/screens/__tests__/sessions.test.tsx
+FAIL src/screens/__tests__/timeline.test.tsx
+FAIL src/screens/__tests__/toolbarWrap.test.tsx (7.753 s)
+FAIL src/screens/__tests__/who.test.tsx
+FAIL src/screens/__tests__/wordsPass.test.tsx
+FAIL src/ui/__tests__/a11ySweep.test.tsx
+FAIL src/ui/__tests__/designTokens.test.ts
+FAIL src/ui/__tests__/redesignLint.test.ts
+FAIL src/ui/__tests__/redesignLook.test.tsx
+FAIL src/ui/__tests__/relativeTime.test.ts
+
+Failing tests:
+- BETA-TIME-2 timeline ("Show by date") › BETA-TIME-2 RD-47 opened from Feed, "Back to Feed" returns to the post list
+- CAP change the words › CAP-6 Cancel closes the sheet and keeps the words
+- CAP change the words › CAP-6 the sender opens More, Change the words: both boxes come filled in; Save updates the card and says Edited
+- CAP change the words › CAP-7 if the server refuses, the sheet says so in plain words and the card keeps the old words
+- CAP change the words › CAP-7 someone who did not send it never sees Change the words
+- DS-13 tokens › DS-13: one spacing scale on a 4 pt grid and three corner sizes since RD-8 (plus each phone's own dialog corner)
+- DS-TOKENS portable design tokens › DS-TOKENS carries one font family, three weights, the type scale, spacing, corners and both palettes
+- GUX-R1 a top-left "‹ More" / "‹ Gallery" back button › GUX-R1 RD-47 Search, opened from Gallery's field, shows "‹ Gallery" the same way
+- GUX-R3 RD-50 the post's menu button is "⋯" (Post options), not More › GUX-R3 RD-50 one photo: "⋯" (spoken "Post options") opens who can see it; no "More" on the card
+- GUX-R3 RD-50 the post's menu button is "⋯" (Post options), not More › GUX-R3 RD-50 several photos: the same "Post options"
+- HIG-10 bottom sheets have a grabber and close with a swipe down › HIG-10 More and Who can see this show a grabber, and keep their Close button
+- HIG-8 Reduce Motion › HIG-8 and slide when it is off
+- HIG-8 Reduce Motion › HIG-8 sheets fade instead of sliding when Reduce Motion is on
+- MOMENT-7 one card per upload, even within an hour › MOMENT-7 the sender deletes one upload; the others stay
+- MOMENT: one compact card per upload › MOMENT-6 More says who can see it; the sender can Delete there, after a confirm
+- MOMENT: one compact card per upload › MOMENT-6 a viewer's More has no Delete, and Close shuts it
+- MOMENT: one compact card per upload › REACT-11 RD-53 each kind's count sits beside its emoji in the one row (the phone's own emoji, no icons)
+- MOMENT: one compact card per upload › REACT-12 Hooray works like the others and is counted
+- MOMENT: one compact card per upload › REACT-8 tapping Haha picks it, Love switches to Love, tapping Love again takes it back
+- MOMENT: one compact card per upload › REACT-9 RD-53 the card counts each kind from everyone, beside each emoji, and reads each count out
+- Photos screen › BETA-AUD-1 / RV-U1 (DEC-21): the author sees who it went to in words, and no "Seen by" count
+- Photos screen › BETA-AUD-5: deleting asks first; "No" keeps it, "Yes" removes it everywhere
+- Photos screen › BETA-JOIN-1 / BETA-AUD-3: a viewer sees only posts shared with her
+- Photos screen › viewers have no Delete button
+- QA-R4 HIG-8 turning Reduce Motion on while the app is open › QA-R4 the next sheet fades
+- RD 1a source scans › RD-2 RD-55 no Bold or heavier weight anywhere (WEIGHT.bold, 700, 800, 900, "bold")
+- RD 1a the look: black and white with one accent › RD-2 RD-55 Regular or Semibold only; the large title is Semibold too (no Bold anywhere)
+- RD 1a the look: black and white with one accent › RD-4 RD-47 the "Search photos" field is never the accent (words and icon)
+- RD-13 top bar (superseded by RD-47) › RD-13 RD-47 the "Search photos" field opens today's Search; Back returns to Gallery
+- RD-13 top bar (superseded by RD-47) › RD-13 RD-47 the top bar holds no buttons; the old Search / By date pair and the toolbar are gone
+- RD-18 Gallery is the photo grid › RD-18 OPEN-10 RD-45 every tile is 48 pt+, a button whose spoken label names the sender and full date, and opens that photo full screen
+- RD-18 Gallery is the photo grid › RD-18 RD-44 every photo by month ("November 2026"), newest first, in the months mosaic; no post cards on Gallery
+- RD-19 New for you: a sideways row of large photos › RD-8 RD-44 New for you photos have 12 pt corners; the months mosaic tiles have 16
+- RD-34 content screens sit on the plain background, no grey card fill › RD-34 RD-52 Feed (dark): posts are separated by space, with no hairline divider and no boxes
+- RD-34 content screens sit on the plain background, no grey card fill › RD-34 RD-52 Feed (light): posts are separated by space, with no hairline divider and no boxes
+- RD-44 Gallery is a months mosaic, like the newest Apple Photos › RD-44 every tile has 16 pt corners, 8 pt gaps and sits inside the 16 pt margins (not edge to edge)
+- RD-44 Gallery is a months mosaic, like the newest Apple Photos › RD-44 per day group: the first tile is wide (3:2) and the rest are squares, newest first
+- RD-44 Gallery is a months mosaic, like the newest Apple Photos › RD-44 the month title is its own header ("October 2025"), Semibold 24 pt, never Bold
+- RD-44 Gallery is a months mosaic, like the newest Apple Photos › RD-44 the wide tile is the most-loved photo of its group, else the newest
+- RD-45 the day number sits on each group's first photo › RD-45 "17" and "4" at the top left of each wide tile, 20 pt Semibold white
+- RD-45 the day number sits on each group's first photo › RD-45 every tile's spoken label carries the full date ("October 17", "October 4")
+- RD-46 no sender lines on the months; New for you stays on top › RD-46 with something new, New for you sits above the months (and under the search field)
+- RD-47 Gallery top (replaces RD-13, R11 RV-U3 and LIVE-2) › LIVE-2 RD-47 the greeting is the large title, then the "Search photos" field, 48 pt tall
+- RD-47 Gallery top (replaces RD-13, R11 RV-U3 and LIVE-2) › UI-26 RD-47 nothing tappable up top: no Search, By date, Messages, Events or "Check for new photos"
+- RD-47 a "Search photos" field under the greeting; no top-right buttons; no Months | All photos switch › RD-47 tapping the field opens today's Search; Back returns to Gallery
+- RD-47 a "Search photos" field under the greeting; no top-right buttons; no Months | All photos switch › RD-47 the field sits under the greeting and above the months
+- RD-47 a "Search photos" field under the greeting; no top-right buttons; no Months | All photos switch › RD-47 the top-right Search and By date buttons are gone, and so is any Months | All photos switch
+- RD-47 a "Search photos" field under the greeting; no top-right buttons; no Months | All photos switch › RD-47 when Gallery scrolls, the field pins under the bar (outside the scroll, or a sticky header)
+- RD-48 a Feed post in Instagram's order › RD-48 face and name, then photos, reactions, description, time, who can see it, then comments
+- RD-48 a Feed post in Instagram's order › RD-48 the description is the sender's name in Medium, then the words ("Chase First snow!")
+- RD-48 a Feed post in Instagram's order › RD-48 the head: a round 36 pt face, the name 17 pt Medium; no time or "Sent to" line beside the name
+- RD-50 a small "⋯" (spoken "Post options") replaces the Options word › RD-50 icon only, at the far right of the head, 48 pt to tap; no "Options" word anywhere on the card
+- RD-50 a small "⋯" (spoken "Post options") replaces the Options word › RD-50 on my own post: Who can see this, Edit description and Delete post (which asks first)
+- RD-50 a small "⋯" (spoken "Post options") replaces the Options word › RD-50 on someone else's post: Who can see this only, no Edit description or Delete post
+- RD-51 relative time on a post › RD-51 a bad date reads nothing rather than "NaN"
+- RD-51 relative time on a post › RD-51 a clock that runs ahead (a time in the future) reads "Just now", never "-2 minutes ago"
+- RD-51 relative time on a post › RD-51 a day or more: six days back
+- RD-51 relative time on a post › RD-51 a day or more: two days back
+- RD-51 relative time on a post › RD-51 a day or more: yesterday morning
+- RD-51 relative time on a post › RD-51 a week or more this year reads the month and day, "Nov 3"
+- RD-51 relative time on a post › RD-51 across New Year, a few days back still reads "2 days ago"
+- RD-51 relative time on a post › RD-51 another year adds the year, "Nov 3, 2025"
+- RD-51 relative time on a post › RD-51 under a day: 1 hour ago
+- RD-51 relative time on a post › RD-51 under a day: 1 minute ago
+- RD-51 relative time on a post › RD-51 under a day: 18 hours ago (still today)
+- RD-51 relative time on a post › RD-51 under a day: 3 hours ago
+- RD-51 relative time on a post › RD-51 under a day: 30 seconds ago
+- RD-51 relative time on a post › RD-51 under a day: 5 minutes ago
+- RD-51 relative time on a post › RD-51 under a day: 59 minutes ago
+- RD-51 relative time on a post › RD-51 under a day: now
+- RD-51 the time on a post reads like Instagram's › RD-51 a post just shared reads "Just now"; three hours back reads "3 hours ago"
+- RD-52 no lines between posts: 32 pt of space › RD-52 Feed has no hairline divider anywhere (between posts or inside one)
+- RD-52 no lines between posts: 32 pt of space › RD-52 posts sit 32 pt apart (the list gap plus the card's own outer space)
+- RD-53 B3: all four emoji in one row, each with its count beside it › RD-53 each button reads its count as its value ("Love it, 2"); none for a zero
+- RD-53 B3: all four emoji in one row, each with its count beside it › RD-53 no separate count chips under the photo any more
+- RD-53 B3: all four emoji in one row, each with its count beside it › RD-53 one row: ❤️ 2, �� 1, �� and �� (a zero shows no number); mine is highlighted
+- RD-53 B3: all four emoji in one row, each with its count beside it › RD-53 one row: ❤️ 2, 😂 1, 👍 and 🎉 (a zero shows no number); mine is highlighted
+- RD-53 B3: all four emoji in one row, each with its count beside it › RD-53 one tap switches my pick and the counts change right there; the same tap again takes it back
+- RD-54 C1: a rounded mosaic of at most 4 photos › RD-54 every tile has 16 pt corners, like Gallery; tapping one opens that photo
+- RD-54 C1: a rounded mosaic of at most 4 photos › RD-54 one photo is rounded too (16 pt), keeping its own shape
+- RD-54 C1: a rounded mosaic of at most 4 photos › RD-54 six photos: 4 tiles (1 large, 3 small), the 4th says "+2" on a solid chip, not a dark wash
+- RD-55 lighter type: no Bold anywhere › RD-55 nothing on Gallery or Feed is Bold (700 or heavier)
+- RD-55 lighter type: no Bold anywhere › RD-55 the greeting (large title) is 34 pt Semibold, not Bold
+- RD-55 lighter type: no Bold anywhere › RD-55 the kit's large title (display) is Semibold
+- SEARCH-UI photo search › SEARCH-UI-1 Photos has a labeled Search button; it opens a grandparent-safe search screen
+- SEARCH-UI photo search › SEARCH-UI-2 typed words find the matching post, title included, and nothing else
+- SEARCH-UI photo search › SEARCH-UI-3 a post in a group you are not in is never found
+- SEARCH-UI photo search › SEARCH-UI-4 nothing found says so in plain words with what to try
+- SEARCH-UI photo search › SEARCH-UI-5 "From" a person lists what they sent, with no words needed
+- SEARCH-UI photo search › SEARCH-UI-6 a year narrows it to photos taken that year
+- SEARCH-UI photo search › SEARCH-UI-7 a found post opens to love it or write back, with Back to the search
+- SEARCH-UI photo search › SEARCH-UI-8 "Back to Gallery" and the phone's Back button return to Photos
+- TOOLBAR-1 retired by RD-13 and RD-47 › TOOLBAR-1 RD-47 no wrapping toolbar is left: no buttons up top, and at Bigger text the search field is one 48 pt+ row
+- WHO: who can see this post, by name › WHO-7 "More" lists every name too, not only "Shared with you"
+- WORDS grandparent-ux words pass › WORDS-2 if changing the words is refused, the sheet says the old words are kept
+
+== typecheck (npx tsc --noEmit) ==
+clean
+
+== e2e:demo, -g 'RD-44|RD-47' (export:web:demo then playwright) ==
+Running 3 tests using 1 worker
+[1/3] e2e-web/demo.spec.js:285:3 › RD-44 RD-45 months mosaic at a 360 px phone: a wide first photo with its day number, then rounded squares, inset 16
+  1) e2e-web/demo.spec.js:285:3 › RD-44 RD-45 months mosaic at a 360 px phone: a wide first photo with its day number, then rounded squares, inset 16 
+    Error: expect(received).toEqual(expected) // deep equality
+    - Expected  - 3
+    + Received  + 3
+      Object {
+    -   "left": 16,
+    -   "right": 16,
+    -   "wide": true,
+    +   "left": 0,
+    +   "right": 240,
+    +   "wide": false,
+      }
+      300 |     const square = (inner - 16) / 3;
+      301 |     expect({ left: Math.round(hero.x), right: Math.round(width - hero.x - hero.width), wide: Math.abs(hero.width / hero.height - 1.5) <= 0.03 })
+    > 302 |       .toEqual({ left: 16, right: 16, wide: true });
+          |        ^
+      303 |     // Every tile is either a wide group opener (full inner width, 3:2) or a square a third of the row less two 8 px gaps.
+      304 |     for (const [i, t] of boxes.entries()) {
+      305 |       const isWide = Math.abs(t.width - inner) <= 1.5 && Math.abs(t.width / t.height - 1.5) <= 0.03;
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:302:8
+    Error Context: test-results/e2e-demo-artifacts/demo-RD-44-RD-45-months-mo-7af83-en-rounded-squares-inset-16/error-context.md
+[2/3] e2e-web/demo.spec.js:285:3 › RD-44 RD-45 months mosaic at a 390 px phone: a wide first photo with its day number, then rounded squares, inset 16
+  2) e2e-web/demo.spec.js:285:3 › RD-44 RD-45 months mosaic at a 390 px phone: a wide first photo with its day number, then rounded squares, inset 16 
+    Error: expect(received).toEqual(expected) // deep equality
+    - Expected  - 3
+    + Received  + 3
+      Object {
+    -   "left": 16,
+    -   "right": 16,
+    -   "wide": true,
+    +   "left": 0,
+    +   "right": 260,
+    +   "wide": false,
+      }
+      300 |     const square = (inner - 16) / 3;
+      301 |     expect({ left: Math.round(hero.x), right: Math.round(width - hero.x - hero.width), wide: Math.abs(hero.width / hero.height - 1.5) <= 0.03 })
+    > 302 |       .toEqual({ left: 16, right: 16, wide: true });
+          |        ^
+      303 |     // Every tile is either a wide group opener (full inner width, 3:2) or a square a third of the row less two 8 px gaps.
+      304 |     for (const [i, t] of boxes.entries()) {
+      305 |       const isWide = Math.abs(t.width - inner) <= 1.5 && Math.abs(t.width / t.height - 1.5) <= 0.03;
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:302:8
+    Error Context: test-results/e2e-demo-artifacts/demo-RD-44-RD-45-months-mo-45eed-en-rounded-squares-inset-16/error-context.md
+[3/3] e2e-web/demo.spec.js:326:1 › RD-47 a "Search photos" field under the greeting opens Search; By date and the view switch are gone
+  3) e2e-web/demo.spec.js:326:1 › RD-47 a "Search photos" field under the greeting opens Search; By date and the view switch are gone 
+    Error: expect(locator).toBeVisible() failed
+    Locator: getByLabel('Search photos').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+    Call log:
+      - Expect "toBeVisible" with timeout 15000ms
+      - waiting for getByLabel('Search photos').first()
+      329 |   await galleryLoaded(page);
+      330 |   const field = page.getByLabel('Search photos').first();
+    > 331 |   await expect(field).toBeVisible();
+          |                       ^
+      332 |   const g = await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ }).boundingBox();
+      333 |   const f = await field.boundingBox();
+      334 |   expect(f.y).toBeGreaterThan(g.y + g.height - 1);
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:331:23
+    Error Context: test-results/e2e-demo-artifacts/demo-RD-47-a-Search-photos-d74e4-nd-the-view-switch-are-gone/error-context.md
+  3 failed
+    e2e-web/demo.spec.js:285:3 › RD-44 RD-45 months mosaic at a 360 px phone: a wide first photo with its day number, then rounded squares, inset 16 
+    e2e-web/demo.spec.js:285:3 › RD-44 RD-45 months mosaic at a 390 px phone: a wide first photo with its day number, then rounded squares, inset 16 
+    e2e-web/demo.spec.js:326:1 › RD-47 a "Search photos" field under the greeting opens Search; By date and the view switch are gone 

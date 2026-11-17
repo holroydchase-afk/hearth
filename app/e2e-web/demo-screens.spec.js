@@ -38,7 +38,7 @@ test('portfolio screenshots from the demo', async ({ page }) => {
   await page.getByLabel("What's happening?").fill('First snow!');
   await page.getByRole('checkbox', { name: /Grandparents – Dad's side/ }).click();
   await shot('iphone-02-share');
-  await page.getByRole('button', { name: 'Post' }).click();
+  await page.getByRole('button', { name: 'Post', exact: true }).click();
   await expect(page.getByText('First snow!', { exact: true })).toBeVisible();
   await shot('iphone-03-posted');
 

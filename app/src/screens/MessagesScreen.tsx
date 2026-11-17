@@ -12,6 +12,7 @@ import { messageFor } from '../errors/messages';
 import { ChatClient, type ChatLine, type ChatView } from '../messenger/client';
 import { markChatSeen } from '../messenger/newMessages';
 import { useApp } from '../state/AppContext';
+import { people } from '../ui/format';
 import { BackButton, Button, Card, Field, Loading, Notice, Txt } from '../ui/kit';
 import { useTheme } from '../ui/theme';
 
@@ -47,7 +48,7 @@ export function MessagesScreen({ onClose, backTo = 'Gallery' }: { onClose: () =>
       {chats?.map((c) => (
         <Card key={c.circle_id}>
           <Txt variant="title">{c.title}</Txt>
-          <Txt variant="muted">{c.kind === 'event' ? `Event · ${c.member_count} people` : `${c.member_count} people`}</Txt>
+          <Txt variant="muted">{c.kind === 'event' ? `Event · ${people(c.member_count)}` : people(c.member_count)}</Txt>
           <Button label={chatOpenLabel(c)} text="Open" variant="secondary" onPress={() => setOpen(c)} />
         </Card>
       ))}

@@ -73,7 +73,7 @@ test('RR-14 add a photo, reload keeps it, Start over brings back the sample fami
   await (await chooser).setFiles(FIXTURE);
   await page.getByLabel("What's happening?").fill('Leaf pile');
   await page.getByRole('checkbox', { name: /Grandparents – Dad's side/ }).click();
-  await page.getByRole('button', { name: 'Post' }).click();
+  await page.getByRole('button', { name: 'Post', exact: true }).click();
   await onFeed(page); // RD-18: captions live on Feed (Gallery may stay mounted behind it, so only what shows counts)
   await expect(page.getByText('Leaf pile', { exact: true }).filter({ visible: true })).toBeVisible();
   await page.reload();
@@ -279,21 +279,77 @@ test('UX-R12 the demo greets the parent as Chase and "Kai" appears nowhere', asy
   expect(await page.evaluate(() => /\bKai\b/.test(document.body.innerText))).toBe(false);
 });
 
-// UX-R7: All photos is Apple's grid: square tiles, 3 across, edge to edge (no side margins).
-test('UX-R7 Gallery grid tiles are square, three across, edge to edge at a 390 px phone', async ({ page }) => {
+// RD-44 (DEC-65, Nov 17; replaces UX-R7's edge-to-edge grid, RD-39) and UX-R13 (review round 2): Gallery is Apple
+// Photos' months mosaic. Each MONTH opens on one wide 3:2 photo, then squares (three across; a short last row widens
+// to fill, never one square alone); 16 px corners, 8 px gaps, inside 16 px side margins.
+const MONTH = /^(January|February|March|April|May|June|July|August|September|October|November|December) \d{4}$/;
+for (const width of [360, 390]) {
+  test(`RD-44 UX-R13 months mosaic at a ${width} px phone: one wide photo per month, then rounded squares that fill each row, inset 16`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/');
+    await galleryLoaded(page);
+    const tiles = page.locator('[data-testid^="gallery-tile-"]');
+    await expect(tiles.first()).toBeAttached();
+    await tiles.first().scrollIntoViewIfNeeded();
+    const n = await tiles.count();
+    const boxes = [];
+    for (let i = 0; i < n; i++) {
+      await tiles.nth(i).scrollIntoViewIfNeeded();
+      boxes.push(await tiles.nth(i).boundingBox());
+    }
+    const hero = boxes[0];
+    const inner = width - 32;
+    const third = (inner - 16) / 3;
+    const half = (inner - 8) / 2;
+    expect({ left: Math.round(hero.x), right: Math.round(width - hero.x - hero.width), wide: Math.abs(hero.width / hero.height - 1.5) <= 0.03 })
+      .toEqual({ left: 16, right: 16, wide: true });
+    // Each tile is the month's wide opener (full inner width, 3:2) or a square a third or a half of the row.
+    let wides = 0;
+    for (const [i, t] of boxes.entries()) {
+      const isWide = Math.abs(t.width - inner) <= 1.5 && Math.abs(t.width / t.height - 1.5) <= 0.03;
+      const isSquare = [third, half].some((w) => Math.abs(t.width - w) <= 1.5) && Math.abs(t.width - t.height) <= 1.5;
+      if (isWide) wides += 1;
+      expect({ i, ok: isWide || isSquare, insideMargins: t.x >= 15.5 && t.x + t.width <= width - 15.5 }).toEqual({ i, ok: true, insideMargins: true });
+    }
+    // UX-R13: one wide photo per month, not per day.
+    const months = await page.getByText(MONTH).count();
+    expect({ wides, months }).toEqual({ wides: months, months });
+    // UX-R13: no square alone on its row.
+    const rows = new Map();
+    for (const t of boxes) if (Math.abs(t.width - inner) > 1.5) rows.set(Math.round(t.y), (rows.get(Math.round(t.y)) ?? 0) + 1);
+    expect([...rows.values()].filter((k) => k < 2)).toEqual([]);
+    const radius = await tiles.first().evaluate((el) => {
+      const all = [el, ...el.querySelectorAll('*')];
+      return Math.max(...all.map((x) => parseFloat(getComputedStyle(x).borderTopLeftRadius) || 0));
+    });
+    expect(radius).toBe(16);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  });
+}
+
+// RD-47 (Chase: "Search- B but hide the months vs all toggle for now"): a "Search photos" field under the greeting; no
+// top-right Search or By date; no Months | All photos switch.
+test('RD-47 a "Search photos" field under the greeting opens Search; By date and the view switch are gone', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 740 });
   await page.goto('/');
   await galleryLoaded(page);
-  const tiles = page.locator('[data-testid^="gallery-tile-"]');
-  await expect(tiles.first()).toBeAttached();
-  const vw = page.viewportSize().width;
-  const boxes = [];
-  for (let i = 0; i < 3; i++) {
-    await tiles.nth(i).scrollIntoViewIfNeeded();
-    boxes.push(await tiles.nth(i).boundingBox());
-  }
-  for (const [i, b] of boxes.entries()) expect({ i, square: Math.abs(b.width - b.height) <= 1.5 }).toEqual({ i, square: true });
-  expect({ sameRow: Math.abs(boxes[0].y - boxes[2].y) <= 1, left: Math.round(boxes[0].x), right: Math.round(boxes[2].x + boxes[2].width) })
-    .toEqual({ sameRow: true, left: 0, right: vw });
+  const field = page.getByLabel('Search photos').first();
+  await expect(field).toBeVisible();
+  const g = await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ }).boundingBox();
+  const f = await field.boundingBox();
+  expect(f.y).toBeGreaterThan(g.y + g.height - 1);
+  expect(Math.round(f.height)).toBeGreaterThanOrEqual(48);
+  await expect(page.getByRole('button', { name: 'Show photos by the date they were taken' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Search the photos' })).toHaveCount(0);
+  await expect(page.getByText('By date', { exact: true })).toHaveCount(0);
+  await expect(page.getByText(/^(Months|All photos)$/)).toHaveCount(0);
+  // It pins under the bar when Gallery scrolls.
+  await page.mouse.move(180, 500);
+  await page.mouse.wheel(0, 1500);
+  await expect.poll(async () => (await page.getByLabel('Search photos').first().boundingBox())?.y ?? -1).toBeGreaterThanOrEqual(0);
+  await expect(page.getByLabel('Search photos').first()).toBeInViewport();
+  await page.getByLabel('Search photos').first().click();
+  await expect(page.getByRole('heading', { name: 'Search photos' })).toBeVisible();
 });
 
 // UX-R1 (P0): typing a comment in the walk. The tab bar goes away while the field is focused, and the field stays in
@@ -320,4 +376,69 @@ test('UX-R1 focusing the walk\'s comment field hides the tab bar and keeps the f
   await page.setViewportSize({ width: 390, height: 844 });
   await field.evaluate((el) => el.blur());
   await expect(page.getByRole('tab')).toHaveCount(4);
+});
+
+test('DEMO-FRESH-1 a browser that saved an older demo family sees the current one on its next visit', async ({ page }) => {
+  await page.goto('/');
+  await galleryLoaded(page);
+  // Pretend this browser kept the family from an older demo: the parent was Kai, and no seed version was saved.
+  await page.evaluate(() => {
+    const k = 'hearth.fakeBackend.v1';
+    localStorage.setItem(k, localStorage.getItem(k).replaceAll('"Chase"', '"Kai"'));
+    localStorage.removeItem('hearth.demoSeed');
+  });
+  await page.reload();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Chase$/ })).toBeVisible();
+  await expect(page.getByText(/\bKai\b/)).toHaveCount(0);
+});
+
+// ---------------------------------------------------------------------------------------------------------------
+// Review round 2 (ux-reviewer, Nov 17; SPEC-REDESIGN RD-56..). Written first (red).
+
+// R18 (P2): scrolling Gallery, the current month's title sticks right under the pinned "Search photos" field.
+test('R18 the current month title sticks under the pinned search field while Gallery scrolls', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.mouse.move(195, 600);
+  await page.mouse.wheel(0, 1200);
+  await page.waitForTimeout(400);
+  const field = await page.getByLabel('Search photos').first().boundingBox();
+  const heads = await page.getByText(MONTH).evaluateAll((els) => els.map((e) => { const r = e.getBoundingClientRect(); return { top: r.top, bottom: r.bottom }; }));
+  // Some month title sits just under the field (within 24 px), not scrolled away above it.
+  const stuck = heads.filter((h) => h.top >= field.y + field.height - 1 && h.top <= field.y + field.height + 24);
+  expect({ field: Math.round(field.y + field.height), stuck: stuck.length }).toEqual({ field: Math.round(field.y + field.height), stuck: 1 });
+});
+
+// R23 (P2, G9 in scripts/ux-rules.mjs): every tab has exactly one h1, its title.
+test('R23 Gallery, Share, Feed and More each have exactly one h1', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  // Tabs left behind stay mounted but aria-hidden; count what a screen reader can reach.
+  const h1s = async () => page.locator('h1').evaluateAll((els) => els.filter((e) => !e.closest('[aria-hidden="true"],[inert]')).map((e) => e.innerText));
+  const got = {};
+  for (const tab of ['Gallery', 'Share', 'Feed', 'More']) {
+    await page.getByRole('tab', { name: new RegExp(`^${tab}`) }).click();
+    await page.waitForTimeout(500);
+    got[tab] = await h1s();
+  }
+  expect(Object.fromEntries(Object.entries(got).map(([k, v]) => [k, v.length]))).toEqual({ Gallery: 1, Share: 1, Feed: 1, More: 1 });
+  expect(got.Gallery[0]).toMatch(/^Good (morning|afternoon|evening)/);
+});
+
+// UX-R27 (review round 3, RD-70): at default text size on a 390 px phone, each who-can-see line fits on one line
+// (two names at most, then "and N more"); the Who sheet keeps the full list.
+test('UX-R27 every "can see this." line on Feed is one line at 390 px', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await onFeed(page);
+  const lines = page.getByText(/can see this\.$/).filter({ visible: true });
+  await expect(lines.first()).toBeVisible();
+  const got = await lines.evaluateAll((els) => els.map((e) => {
+    const lh = parseFloat(getComputedStyle(e).lineHeight) || parseFloat(getComputedStyle(e).fontSize) * 1.3;
+    return { words: e.innerText, lines: Math.round(e.getBoundingClientRect().height / lh) };
+  }));
+  expect(got.filter((l) => l.lines > 1)).toEqual([]);
 });

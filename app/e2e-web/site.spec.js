@@ -76,7 +76,8 @@ test('RR-15 reloading an open full-screen photo on the static host keeps the pho
 test('DEMO-LIVE-2 Search for "lake" finds the one lake photo', async ({ page }) => {
   await page.goto(`${BASE}/`);
   await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible(); // RD-18: Gallery shows photos, not captions
-  await page.getByRole('button', { name: /Search/ }).first().click();
+  // RD-47 (Nov 17): the "Search photos" field under the greeting; the old top-right button until the live site is republished.
+  await page.getByLabel('Search photos').or(page.getByRole('button', { name: /Search/ })).first().click();
   const box = page.getByRole('textbox').first();
   await box.fill('lake');
   await box.press('Enter');

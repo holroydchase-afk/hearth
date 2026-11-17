@@ -6,15 +6,15 @@ import { COLOR_NAMES, MIN_TARGET, RADIUS, SPACE, paletteFor, typeScale } from '.
 
 export function portableTokens() {
   return {
-    $description: 'Hearth design tokens, generated from app/src/ui/theme.ts (DS-2, DS-13, RD-1..RD-8). Do not edit by hand.',
+    $description: 'Hearth design tokens, generated from app/src/ui/theme.ts (DS-2, DS-13, RD-1..RD-8, RD-44, RD-55). Do not edit by hand.',
     font: {
       family: 'system (SF Pro on iPhone, Roboto on Android, system-ui on the web)',
-      weight: { regular: 400, semibold: 600, bold: 700 },
-      rules: 'Regular for reading; Semibold for names, titles, buttons and the picked tab; Bold only in the large title. No Light, Medium, italics or all caps.',
+      weight: { regular: 400, medium: 500, semibold: 600 },
+      rules: 'Regular for reading; Semibold for titles, buttons, the picked tab and the large title; Medium for a name on a post. No Bold, Light, italics or all caps (RD-55).',
     },
     type: { default: typeScale(false), large: typeScale(true) },
     space: { ...SPACE },
-    radius: { ...RADIUS, grid: 0, dialogIos: 14, dialogAndroid: 28 },
+    radius: { ...RADIUS, dialogIos: 14, dialogAndroid: 28 },
     target: { min: MIN_TARGET },
     color: { light: { ...paletteFor('web', false) }, dark: { ...paletteFor('web', true) } },
     // RD-24: every family color the owner can pick; color above is the default (Ember). Only the accent differs.

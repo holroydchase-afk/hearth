@@ -21,6 +21,7 @@ import { saveLastAudience } from '../../share/audienceMemory';
 import { seedPost } from '../../test/seed';
 import { FeedScreen, GalleryScreen, MoreScreen } from '../../test/redesignScreens';
 import { renderApp, screenWords } from '../../test/renderApp';
+import { tapSearchField } from '../../test/galleryEntry';
 import { paletteFor } from '../../ui/theme';
 import { HelpScreen } from '../HelpScreen';
 import { ShareScreen } from '../ShareScreen';
@@ -109,17 +110,16 @@ describe('GUX-R1 a top-left "‹ More" / "‹ Gallery" back button', () => {
     }
   });
 
-  it('GUX-R1 Search and By date, opened from Gallery, show "‹ Gallery" the same way', async () => {
+  // Updated Nov 17 for RD-47 (DEC-65): Search opens from the "Search photos" field; By date is no longer on Gallery.
+  it('GUX-R1 RD-47 Search, opened from Gallery\'s field, shows "‹ Gallery" the same way', async () => {
     const be = FakeBackend.withFixture();
     await seedPost(be, { caption: 'Lake day' });
     await renderApp(<GalleryScreen />, { be, user: 'jo' });
-    fireEvent.press(await screen.findByRole('button', { name: 'Search the photos' }));
+    await tapSearchField();
     await screen.findByRole('header', { name: 'Search photos' });
     expectTopBack('Gallery');
     fireEvent.press(screen.getByRole('button', { name: 'Back to Gallery' }));
-    fireEvent.press(await screen.findByRole('button', { name: 'Show photos by the date they were taken' }));
-    await screen.findByRole('header', { name: 'Photos by date' });
-    expectTopBack('Gallery');
+    expect(await screen.findByRole('header', { name: /^Good (morning|afternoon|evening)/ })).toBeTruthy();
   });
 });
 
@@ -181,29 +181,30 @@ describe('GUX-R2 plain grouped rows, one level: no box inside a box', () => {
 });
 
 // ---------------------------------------------------------------------------------------------------------------
-// GUX-R3: the post's "··· More" is "Options".
+// GUX-R3: the post's "··· More" is "Options". Updated Nov 17 for RD-50 (DEC-65): the word goes; a small "⋯" spoken
+// "Post options" opens the same menu. Still no "More" on the card.
 // ---------------------------------------------------------------------------------------------------------------
 
-describe('GUX-R3 the post\'s menu button says Options, not More', () => {
-  it('GUX-R3 one photo: "Options" (spoken "Options for this photo") opens who can see it; no "More" on the card', async () => {
+describe('GUX-R3 RD-50 the post\'s menu button is "⋯" (Post options), not More', () => {
+  it('GUX-R3 RD-50 one photo: "⋯" (spoken "Post options") opens who can see it; no "More" on the card', async () => {
     const be = FakeBackend.withFixture();
     const { id } = await seedPost(be, { caption: 'Lake day' });
     await renderApp(<FeedScreen />, { be, user: 'jo' });
     const card = await screen.findByTestId(`post-${id}`);
-    const btn = within(card).getByRole('button', { name: 'Options for this photo' });
-    expect(wordsIn(btn)).toBe('Options');
+    const btn = within(card).getByRole('button', { name: 'Post options' });
+    expect(wordsIn(btn)).toMatch(/^[⋯…·\s]*$/);
     expect(within(card).queryByText('More')).toBeNull();
     expect(within(card).queryByRole('button', { name: /^More\b/ })).toBeNull();
     fireEvent.press(btn);
     expect(within(await screen.findByTestId(`more-${id}`)).getByText('Who can see this')).toBeTruthy();
   });
 
-  it('GUX-R3 several photos: "Options for these photos"', async () => {
+  it('GUX-R3 RD-50 several photos: the same "Post options"', async () => {
     const be = FakeBackend.withFixture();
     const { id } = await seedPost(be, { caption: 'Lake day', photos: 3 });
     await renderApp(<FeedScreen />, { be, user: 'jo' });
     const card = await screen.findByTestId(`post-${id}`);
-    expect(wordsIn(within(card).getByRole('button', { name: 'Options for these photos' }))).toBe('Options');
+    expect(wordsIn(within(card).getByRole('button', { name: 'Post options' }))).toMatch(/^[⋯…·\s]*$/);
   });
 });
 
@@ -235,16 +236,19 @@ describe('GUX-R5 the Feed screen is titled Feed', () => {
 // ---------------------------------------------------------------------------------------------------------------
 
 describe('GUX-R6 the card names who can see it', () => {
-  async function card(user: 'jo' | 'earl' | 'ruth' | 'chase', circle: string) {
+  async function card(user: 'jo' | 'earl' | 'ruth' | 'chase', circle: string, bigText?: boolean) {
     const be = FakeBackend.withFixture();
     const { id } = await seedPost(be, { caption: 'At the lake', circles: [circle] });
-    await renderApp(<FeedScreen />, { be, user });
+    // UX-R35 (engineer, flagged for qa-tdd): Bigger text names one person; `bigText: false` keeps RD-70's two names.
+    const kv = bigText === undefined ? undefined
+      : memoryKV({ [`hearth.prefs.v1.${FIXTURE.users[user].id}`]: JSON.stringify({ bigText, notify: 'push', look: 'light', color: 'ember' }) });
+    await renderApp(<FeedScreen />, { be, user, kv });
     return { id };
   }
 
   // Chase, Nov 16 (DEC-60): "Names". Reverses WHO-10 / LIVE-4 (Nov 5).
   it('GUX-R6 a long list: "Alex, Chase and 2 more can see this." in words, no initials circles', async () => {
-    const { id } = await card('jo', everyone.id);
+    const { id } = await card('jo', everyone.id, false);
     const who = await screen.findByTestId(`who-${id}`, {}, slow);
     expect(wordsIn(who)).toBe('Alex, Chase and 2 more can see this.');
     expect(within(who).queryAllByTestId(/^face-/)).toHaveLength(0);
@@ -253,10 +257,10 @@ describe('GUX-R6 the card names who can see it', () => {
   });
 
   // Chase, Nov 16 (DEC-60): "Names". Reverses WHO-10 / LIVE-4 (Nov 5).
-  it('GUX-R6 three others are all named: Grandpa Earl reads "Alex, Chase and Grandma Jo can see this."', async () => {
-    const { id } = await card('earl', dadSide.id);
+  it('GUX-R6 UX-R27 three others: Grandpa Earl reads two names and "1 more" (RD-70)', async () => {
+    const { id } = await card('earl', dadSide.id, false);
     const who = await screen.findByTestId(`who-${id}`, {}, slow);
-    expect(wordsIn(who)).toBe('Alex, Chase and Grandma Jo can see this.');
+    expect(wordsIn(who)).toBe('Alex, Chase and 1 more can see this.');
   });
 
   // Chase, Nov 16 (DEC-60): "Names". Reverses WHO-10 / LIVE-4 (Nov 5).

@@ -2,6 +2,16 @@
 
 One entry per post mortem, newest first. Each entry gives what happened, why, and the rule or guard that now prevents it. Every agent follows the rules here.
 
+## Nov 17, 2026: "the site hasn't updated" (returning visitors kept the old demo family)
+
+**What happened.** After #116 and #117 went live, Chase saw the old demo (Kai, drawn pictures) in every browser he tried. The site had updated: `version.txt` matched and the live checks were green. But the demo saves its sample family in the browser on the first visit, and `runtime.ts` used any saved copy forever, so anyone who had visited before kept the old family on the new code. Our checks always start with an empty browser, so they never saw it. I told Chase it was live before checking what a returning visitor sees.
+
+**Why.** Saved demo data had no version, and no test covered a browser that had visited before.
+
+**Rules from now on.**
+1. **Saved data carries the version that wrote it.** The demo saves `hearth.demoSeed` (a hash of the sample posts and names); a different value clears Hearth's demo keys as Start over does (DEMO-FRESH-1..3).
+2. **"It's live" covers returning visitors.** A change to anything the demo saves gets a test that loads it over an older saved copy.
+
 ## Oct 28, 2026: the real-API proof went quiet, and Photos got slow without anyone seeing
 
 **What happened.** Two things, found in the same night run. (1) Since the SDK 58 move, jest-expo swapped the global `fetch` for Expo's native-only one, so the app's contract against the real Postgres + PostgREST API got no answers: 60 of 63 checks failed as UNKNOWN. It didn't run in CI, so nobody saw it for two days (REAL-1). (2) Once that ran again, one timeline test timed out about 1 run in 3. The cause: once a family has a few dozen posts, Postgres's cost estimate for `feed_rows` (behind Photos and By date) passes `jit_above_cost`, and Postgres JIT-compiles the query before running it, which made each page take 1.5-2 s instead of 20-50 ms (HARD-17).

@@ -11,14 +11,17 @@ import { seedPost } from '../../test/seed';
 import { GalleryScreen } from '../../test/redesignScreens';
 import { renderApp } from '../../test/renderApp';
 
-describe('TOOLBAR-1 retired by RD-13', () => {
-  it('TOOLBAR-1 RD-13 no wrapping toolbar is left: the top bar is one row of exactly two', async () => {
+// Updated Nov 17 for RD-47 (DEC-65): the top bar holds no buttons at all now; Search is a field under the greeting.
+describe('TOOLBAR-1 retired by RD-13 and RD-47', () => {
+  it('TOOLBAR-1 RD-47 no wrapping toolbar is left: no buttons up top, and at Bigger text the search field is one 48 pt+ row', async () => {
     const be = FakeBackend.withFixture({ joIsMember: true });
     await seedPost(be, { caption: 'Lake day', photos: 1 });
     await renderApp(<GalleryScreen />, { be, user: 'jo' }); // a viewer: Bigger text is on by default
-    const bar = await screen.findByTestId('top-bar');
+    await screen.findByRole('header', { name: /^Good (morning|afternoon|evening)/ });
     expect(screen.queryAllByTestId('photos-toolbar-item')).toHaveLength(0);
-    expect(within(bar).getAllByRole('button')).toHaveLength(2);
-    expect(StyleSheet.flatten(bar.props.style)).toMatchObject({ flexDirection: 'row' });
+    const bar = screen.queryByTestId('top-bar');
+    if (bar) expect(within(bar).queryAllByRole('button')).toHaveLength(0);
+    const field = (await screen.findAllByLabelText('Search photos')).find((n) => typeof n.type === 'string')!;
+    expect(Number((StyleSheet.flatten(field.props.style) ?? {}).minHeight ?? 0)).toBeGreaterThanOrEqual(48);
   });
 });

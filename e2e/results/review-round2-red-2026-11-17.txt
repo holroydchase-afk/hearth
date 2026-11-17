@@ -1,0 +1,46 @@
+# Review round 2 (UX-R13..R23) red run, 2026-11-17T06:41:00Z, head b7d3622 + tests only
+## jest (full)
+  ● DEC-49 group titles only for the sender, after the redesign › DEC-49 RD-48 UX-R15 the sender (Chase) does see "Grandparents – Dad's side", in Post options
+  ● LOOK: a cleaner post card › LOOK-1 UX-R15 the date says only when; the card has no "Sent to" line (the group name is in Post options)
+  ● R17 (P2) More: one outline icon style; separators inset from the left › R17 every More row uses an outline symbol (no ".fill" / "filled" names)
+  ● R17 (P2) More: one outline icon style; separators inset from the left › R17 rows carry no full-width line; each separator starts after the icon (iOS inset)
+  ● R18 (P2) Gallery: the month title sticks while scrolling › R18 each month title is a sticky header of the Gallery scroll (under the pinned search field)
+  ● R19 (P2) Share: one 16 pt left edge for all content › R19 the title, Pick photos, the boxes' labels, "Who can see it" and the group rows all start 16 pt in
+  ● R20 (P2) a photo still loading in a small square says so without clipping › R20 a Gallery square shows "Loading…" or a spinner with a spoken label, never "Loading the photo…"
+  ● R20 (P2) a photo still loading in a small square says so without clipping › R20 the Feed mosaic's small tiles too
+  ● R21 (P2) the reaction row starts at the 16 pt content edge › R21 the first emoji sits 16 pt in, like the name, the photos and the words
+  ● R22 (P2) names grow with Bigger text, like the words around them › R22 Bigger text true: the name on the post, in the description and on a comment are all 21 pt
+  ● RD Family color › RD-24 / RD-25 the owner picks Forest: the app recolors, it is saved in prefs.color, and it stays after reopening
+  ● RD-44 Gallery is a months mosaic, like the newest Apple Photos › UX-R13 RD-44 one wide (3:2) tile per month, then squares, newest first
+  ● RD-44 months mosaic layout (pure) › UX-R13 RD-44 groups by month, then by day, newest first; only the month's first tile is wide
+  ● RD-44 months mosaic layout (pure) › UX-R13 RD-44 the most-loved post in the month gives the wide tile its first photo; a tie goes to the newest
+  ● RD-44 months mosaic layout (pure) › UX-R13 a range never crosses a month
+  ● RD-44 months mosaic layout (pure) › UX-R13 days with few photos join into a range ("Nov 11–15"); a full day stays on its own
+  ● RD-44 months mosaic layout (pure) › UX-R13 each group carries its date label: "Oct 17" for one day
+  ● RD-44 months mosaic layout (pure) › UX-R13 rows: the wide tile alone, then squares up to three across, and never one square left alone in a row
+  ● RD-45 the day number sits on each group's first photo › UX-R13 RD-45 each group's date shows once in the grid, in order: "Oct 17", then "Oct 4"
+  ● RD-48 a Feed post in Instagram's order › RD-48 R22 the head: a round 36 pt face, the name Medium at body size (17 pt; Grandma Jo's Bigger text grows it); no time or "Sent to" line beside the name
+  ● UX-R13 (P1) Gallery: one wide photo per month; quiet days join into a range; no lone square › UX-R13 a day of 5 photos: one wide, then rows of 2 or 3 squares that fill the row (no lone square, no empty filler)
+  ● UX-R13 (P1) Gallery: one wide photo per month; quiet days join into a range; no lone square › UX-R13 three quiet days (one photo each) show as one range, "Nov 11–15"; a full day keeps its own date
+  ● UX-R14 (P1) Post options: plain iOS-style rows; Delete post is red text, not a red pill › UX-R14 Edit description and Delete post are plain rows (no filled capsule, words not centered); Delete post is red text
+  ● UX-R15 (P1) on my own post, who can see it is said once › UX-R15 my own post has one who-can-see line (not the names line plus "Sent to" plus "can read this")
+  ● UX-R16 (P1) comments: no heading; one rounded "Add a comment…" field with Post inside it › UX-R16 no "Comments" heading or word on the card
+  ● UX-R16 (P1) comments: no heading; one rounded "Add a comment…" field with Post inside it › UX-R16 one rounded field box, 48 pt+ tall, with no second box drawn around the text input
+  ● UX-R6 the comment field has a real label and Post looks on once you type › UX-R6 UX-R16 the field is labeled for a screen reader, and no "Comments" heading sits above it
+  ● WHO: who can see this post, by name › WHO-8 the sender still sees the group by name; another parent sees the people
+Test Suites: 8 failed, 128 passed, 136 total
+Tests:       28 failed, 1 skipped, 1 todo, 1221 passed, 1251 total
+## Playwright demo (RD-44/UX-R13, R18, R23)
+  ✘  1 e2e-web/demo.spec.js:287:3 › RD-44 UX-R13 months mosaic at a 360 px phone: one wide photo per month, then rounded squares that fill each row, inset 16 (2.1s)
+  ✘  2 e2e-web/demo.spec.js:287:3 › RD-44 UX-R13 months mosaic at a 390 px phone: one wide photo per month, then rounded squares that fill each row, inset 16 (2.0s)
+  ✘  3 e2e-web/demo.spec.js:385:1 › R18 the current month title sticks under the pinned search field while Gallery scrolls (1.9s)
+  ✘  4 e2e-web/demo.spec.js:400:1 › R23 Gallery, Share, Feed and More each have exactly one h1 (3.7s)
+  1) e2e-web/demo.spec.js:287:3 › RD-44 UX-R13 months mosaic at a 360 px phone: one wide photo per month, then rounded squares that fill each row, inset 16 
+  2) e2e-web/demo.spec.js:287:3 › RD-44 UX-R13 months mosaic at a 390 px phone: one wide photo per month, then rounded squares that fill each row, inset 16 
+  3) e2e-web/demo.spec.js:385:1 › R18 the current month title sticks under the pinned search field while Gallery scrolls 
+  4) e2e-web/demo.spec.js:400:1 › R23 Gallery, Share, Feed and More each have exactly one h1 ───────
+  4 failed
+## Notes
+- Full jest ran 3 times on the red tree: 27, 28, 27 failures. The extra one (run 2, above) is src/ui/__tests__/familyColor.test.tsx RD-24/RD-25, untouched by these tests, 3/3 green alone: flaky, filed as T20 / QA-R1.
+- Every other failure is a round 2 test (or an old test moved to round 2) failing for its intended reason. typecheck clean.
+- Playwright demo RD-44/R18/R23: 0/4 on all 3 runs (stable red).

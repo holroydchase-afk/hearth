@@ -40,7 +40,8 @@ describe('DS-13 tokens', () => {
   it('DS-13: one spacing scale on a 4 pt grid and three corner sizes since RD-8 (plus each phone\'s own dialog corner)', () => {
     const { SPACE, RADIUS, dialogRadius } = require('../theme');
     expect(Object.values(SPACE)).toEqual([4, 8, 12, 16, 24, 32]);
-    expect(Object.values(RADIUS)).toEqual([4, 12, 999]); // RD-8 (DEC-59): the 20 pt large corner is gone
+    // RD-8 (DEC-59): the 20 pt large corner is gone. RD-44/RD-54 (Nov 17): 16 for photo tiles, like Apple Photos.
+    expect([...(Object.values(RADIUS) as number[])].sort((a, b) => a - b)).toEqual([4, 12, 16, 999]);
     expect(dialogRadius('ios')).toBe(14);
     expect(dialogRadius('android')).toBe(28);
   });

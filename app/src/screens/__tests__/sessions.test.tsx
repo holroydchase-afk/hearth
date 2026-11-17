@@ -43,7 +43,7 @@ describe('MOMENT-7 one card per upload, even within an hour', () => {
     expect(within(dockCard).queryByText(/Look at her go/)).toBeNull();
     fireEvent.press(within(dockCard).getByRole('button', { name: 'Love it' }));
     await waitFor(() => expect(be.state.hearts).toEqual([{ post: dock, user: FIXTURE.users.jo.id, emoji: '❤️' }]));
-    expect(await within(dockCard).findByLabelText('1 love')).toBeTruthy();
+    await waitFor(() => expect(within(dockCard).getByRole('button', { name: 'Love it' }).props.accessibilityValue?.text).toBe('1')); // RD-53
   });
 
   it('MOMENT-7 a reply written from a card goes to that card\'s post', async () => {
@@ -58,9 +58,9 @@ describe('MOMENT-7 one card per upload, even within an hour', () => {
   it('MOMENT-7 the sender deletes one upload; the others stay', async () => {
     const { be, lake, dock } = await threeUploads();
     await renderApp(<PhotosScreen />, { be, user: 'chase' });
-    fireEvent.press(within(await screen.findByTestId(`post-${dock}`)).getByRole('button', { name: 'Options for these photos' }));
-    fireEvent.press(await screen.findByRole('button', { name: 'Delete these 3 photos' }));
-    fireEvent.press(await screen.findByRole('button', { name: 'Yes, delete them' }));
+    fireEvent.press(within(await screen.findByTestId(`post-${dock}`)).getByRole('button', { name: 'Post options' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Delete post' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Delete' })); // UX-R24 (RD-67)
     await waitFor(() => expect(be.state.posts[dock]!.deleted).toBe(true));
     expect(be.state.posts[lake]!.deleted).toBe(false);
     expect(await screen.findByTestId(`post-${lake}`)).toBeTruthy();

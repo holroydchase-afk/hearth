@@ -54,8 +54,7 @@ for (const size of SIZES) {
       await page.goto('');
       await expect(page.getByText('Bridge walk on the trail', { exact: true })).toBeVisible();
       await shot('photos');
-      await page.getByRole('button', { name: 'Show photos by the date they were taken' }).click();
-      await shot('by-date');
+      // RD-47 (Nov 17): By date left Gallery's top bar; the months are the by-date view, so no by-date shot.
       await page.goto('photos');
       await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Messages is a row in More
       await page.getByRole('button', { name: /^Messages(,|$)/ }).click();
@@ -68,7 +67,7 @@ for (const size of SIZES) {
       await page.getByLabel("What's happening?").fill('First snow!');
       await page.getByRole('checkbox', { name: /Grandparents – Dad's side/ }).click();
       await shot('share-filled');
-      await page.getByRole('button', { name: 'Post' }).click();
+      await page.getByRole('button', { name: 'Post', exact: true }).click();
       await expect(page.getByText('First snow!', { exact: true })).toBeVisible();
       await shot('posted');
       await page.getByRole('button', { name: /Open photo 1 of/ }).first().click();

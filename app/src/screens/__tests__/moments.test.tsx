@@ -13,7 +13,7 @@ import { expectGrandparentSafe, renderApp } from '../../test/renderApp';
 import { MediaImage } from '../MediaImage';
 import { SystemIcon } from '../../ui/kit';
 import { PhotosScreen } from '../PhotosScreen';
-import { collageShape } from '../PhotoCollage';
+import { collageShape, collageTiles, singleAspect } from '../PhotoCollage';
 
 const { dadSide } = FIXTURE.circles;
 const flat = (s: unknown) => StyleSheet.flatten(s as never) as Record<string, unknown>;
@@ -29,9 +29,12 @@ describe('MOMENT: one compact card per upload', () => {
     const { be, id } = await one();
     await renderApp(<PhotosScreen />, { be, user: 'chase' });
     const card = await screen.findByTestId(`post-${id}`);
-    expect(within(card).getByText('Chase')).toBeTruthy();
-    expect(within(card).getByText(/to Grandparents – Dad's side/)).toBeTruthy();
+    expect(within(within(card).getByTestId(`card-head-${id}`)).getByText('Chase')).toBeTruthy(); // RD-48: the description repeats the name
+    // RD-58 (UX-R15): the card says who can see it once (the names line); the group's name is in Post options.
+    expect(await within(card).findByTestId(`who-${id}`)).toBeTruthy();
     expect(within(card).getByText('At the lake')).toBeTruthy();
+    fireEvent.press(within(card).getByRole('button', { name: 'Post options' }));
+    expect(within(await screen.findByTestId(`more-${id}`)).getByText(/Grandparents – Dad's side/)).toBeTruthy();
   });
 
   it('MOMENT-2 collage shapes: 1 photo alone, 2 side by side, 3 = one big and two, 4+ = one big and three with "+N"', () => {
@@ -88,17 +91,20 @@ describe('MOMENT: one compact card per upload', () => {
     const card = await screen.findByTestId(`post-${id}`);
     fireEvent.press(within(card).getByRole('button', { name: 'Hooray' }));
     await waitFor(() => expect(be.state.hearts).toEqual([{ post: id, user: FIXTURE.users.jo.id, emoji: '🎉' }]));
-    expect(await within(card).findByText('🎉 1')).toBeTruthy();
-    expect(within(card).getByTestId(`reactions-${id}`).props.accessibilityLabel).toBe('1 hooray');
+    // RD-53 (B3, Nov 17): the count sits beside the emoji in its own button, and is read as its value.
+    await waitFor(() => expect(within(card).getByRole('button', { name: 'Hooray' }).props.accessibilityValue?.text).toBe('1'));
+    expect(within(within(card).getByRole('button', { name: 'Hooray' })).UNSAFE_queryAllByType(Text).map((t) => String(t.props.children)).join(' ')).toBe('🎉 1');
   });
 
-  it('REACT-11 the count under the photo is one emoji chip per kind, like a chat app', async () => {
+  // Updated Nov 17 for RD-53 (B3, DEC-65): no chip row under the photo; each emoji button carries its own count.
+  it('REACT-11 RD-53 each kind\'s count sits beside its emoji in the one row (the phone\'s own emoji, no icons)', async () => {
     const { be, id } = await one();
     await be.clientFor(FIXTURE.users.jo.id).setReaction(id, '❤️');
     await renderApp(<PhotosScreen />, { be, user: 'chase' });
     const card = await screen.findByTestId(`post-${id}`);
-    const chip = await within(card).findByTestId(`chip-❤️-${id}`);
-    expect(within(chip).getByText('❤️ 1')).toBeTruthy();
+    const love = within(within(card).getByTestId(`actions-${id}`)).getByRole('button', { name: 'Love it' });
+    await waitFor(() => expect(within(love).UNSAFE_queryAllByType(Text).map((t) => String(t.props.children)).join(' ')).toBe('❤️ 1'));
+    expect(within(card).queryAllByTestId(/^chip-/)).toHaveLength(0);
     expect(within(card).UNSAFE_queryAllByType(SystemIcon).filter((i) => /heart|thumb|smil/.test(JSON.stringify(i.props.icon)))).toHaveLength(0);
   });
 
@@ -111,16 +117,17 @@ describe('MOMENT: one compact card per upload', () => {
     fireEvent.press(btn('Haha'));
     await waitFor(() => expect(be.state.hearts).toEqual([{ post: id, user: FIXTURE.users.jo.id, emoji: '😂' }]));
     expect(btn('Haha').props.accessibilityState.selected).toBe(true);
-    expect(await within(card).findByText('😂 1')).toBeTruthy();
+    const words = (name: string) => within(btn(name)).UNSAFE_queryAllByType(Text).map((t) => String(t.props.children)).join(' ');
+    await waitFor(() => expect(words('Haha')).toBe('😂 1')); // RD-53: the count beside the emoji
     fireEvent.press(btn('Love it'));
     await waitFor(() => expect(be.state.hearts).toEqual([{ post: id, user: FIXTURE.users.jo.id, emoji: '❤️' }]));
     expect(btn('Love it').props.accessibilityState.selected).toBe(true);
     expect(btn('Haha').props.accessibilityState.selected).toBe(false);
-    expect(await within(card).findByText('❤️ 1')).toBeTruthy();
+    await waitFor(() => expect({ love: words('Love it'), haha: words('Haha') }).toEqual({ love: '❤️ 1', haha: '😂' }));
     fireEvent.press(btn('Love it'));
     await waitFor(() => expect(be.state.hearts).toHaveLength(0));
     expect(btn('Love it').props.accessibilityState.selected).toBe(false);
-    expect(within(card).queryByTestId(`reactions-${id}`)).toBeNull();
+    await waitFor(() => expect(words('Love it')).toBe('❤️')); // a zero shows no number (RD-53)
   });
 
   it('LIVE-3 my reaction shows as a soft fill, not a heavy outlined pill (Chase, Nov 5)', async () => {
@@ -135,17 +142,18 @@ describe('MOMENT: one compact card per upload', () => {
     expect(s.backgroundColor).not.toBe('transparent');
   });
 
-  it('REACT-9 the card counts each kind from everyone, most first, and reads it out in words', async () => {
+  // Updated Nov 17 for RD-53 (B3): the four stay in their fixed order, each with its count; no "most first" chip line.
+  it('REACT-9 RD-53 the card counts each kind from everyone, beside each emoji, and reads each count out', async () => {
     const { be, id } = await one();
     await be.clientFor(FIXTURE.users.alex.id).setReaction(id, '😂');
     await be.clientFor(FIXTURE.users.chase.id).setReaction(id, '😂');
     await be.clientFor(FIXTURE.users.jo.id).setReaction(id, '❤️');
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     const card = await screen.findByTestId(`post-${id}`);
-    const line = await within(card).findByTestId(`reactions-${id}`);
-    // REACT-11: one emoji chip per kind, most first; read out in words
-    expect(within(line).UNSAFE_queryAllByType(Text).map((t) => String(t.props.children))).toEqual(['😂 2', '❤️ 1']);
-    expect(line.props.accessibilityLabel).toBe('2 haha, 1 love');
+    const row = within(card).getByTestId(`actions-${id}`);
+    const words = (name: string) => within(within(row).getByRole('button', { name })).UNSAFE_queryAllByType(Text).map((t) => String(t.props.children)).join(' ');
+    await waitFor(() => expect([words('Love it'), words('Haha'), words('Like it'), words('Hooray')]).toEqual(['❤️ 1', '😂 2', '👍', '🎉']));
+    expect(within(row).getByRole('button', { name: 'Haha' }).props.accessibilityValue?.text).toBe('2');
     expect(within(card).getByRole('button', { name: 'Love it' }).props.accessibilityState.selected).toBe(true);
   });
 
@@ -190,13 +198,13 @@ describe('MOMENT: one compact card per upload', () => {
   it('MOMENT-6 More says who can see it; the sender can Delete there, after a confirm', async () => {
     const { be, id } = await one({ photos: 3 });
     await renderApp(<PhotosScreen />, { be, user: 'chase' });
-    fireEvent.press(within(await screen.findByTestId(`post-${id}`)).getByRole('button', { name: 'Options for these photos' }));
+    fireEvent.press(within(await screen.findByTestId(`post-${id}`)).getByRole('button', { name: 'Post options' }));
     const menu = await screen.findByTestId(`more-${id}`);
-    expect(within(menu).getByText("Shared with Grandparents – Dad's side · 3 people")).toBeTruthy();
+    expect(within(menu).getByText("Shared with Grandparents – Dad's side, 3 people")).toBeTruthy(); // UX-R33 (engineer, flagged for qa-tdd)
     expectGrandparentSafe();
-    fireEvent.press(within(menu).getByRole('button', { name: 'Delete these 3 photos' }));
-    expect(await screen.findByText('Delete these 3 photos for everyone?')).toBeTruthy();
-    fireEvent.press(screen.getByRole('button', { name: 'Yes, delete them' }));
+    fireEvent.press(within(menu).getByRole('button', { name: 'Delete post' }));
+    expect(await screen.findByText('Delete this post?')).toBeTruthy(); // UX-R24 (RD-67): the iOS-style alert
+    fireEvent.press(screen.getByRole('button', { name: 'Delete' }));
     await waitFor(() => expect(be.state.posts[id]!.deleted).toBe(true));
   });
 
@@ -204,9 +212,9 @@ describe('MOMENT: one compact card per upload', () => {
     const { be, id } = await one();
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     await screen.findByTestId(`who-${id}`);
-    fireEvent.press(within(await screen.findByTestId(`post-${id}`)).getByRole('button', { name: 'Options for this photo' }));
+    fireEvent.press(within(await screen.findByTestId(`post-${id}`)).getByRole('button', { name: 'Post options' }));
     const menu = await screen.findByTestId(`more-${id}`);
-    expect(within(menu).getByText(/^You, .+ can see this$/)).toBeTruthy(); // WHO-7: names, not a group
+    expect(within(menu).getByText(/^You, .+ can see this\.$/)).toBeTruthy(); // WHO-7: names, not a group; UX-R34: ends with a period
     expect(within(menu).queryByRole('button', { name: /Delete/ })).toBeNull();
     fireEvent.press(within(menu).getByRole('button', { name: 'Close this menu' }));
     await waitFor(() => expect(screen.queryByTestId(`more-${id}`)).toBeNull());
@@ -226,5 +234,21 @@ describe('MOMENT: one compact card per upload', () => {
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     await screen.findByText('At the lake');
     expectGrandparentSafe();
+  });
+});
+
+// RD-54 (C1, DEC-65): the post mosaic's shapes as a pure function.
+describe('RD-54 collage tiles (pure)', () => {
+  it('RD-54 at most 4 tiles: one alone keeps its shape, two side by side 4:5, three or more a wide 3:2 then squares', () => {
+    expect(collageTiles(1, 0.8)).toEqual([{ aspect: 0.8, wide: true }]);
+    expect(collageTiles(2)).toEqual([{ aspect: 0.8, wide: false }, { aspect: 0.8, wide: false }]);
+    expect(collageTiles(3)).toEqual([{ aspect: 1.5, wide: true }, { aspect: 1, wide: false }, { aspect: 1, wide: false }]);
+    expect(collageTiles(9)).toHaveLength(4);
+    expect(collageTiles(9).map((t) => t.aspect)).toEqual([1.5, 1, 1, 1]);
+  });
+  it('RD-54 one photo is clamped to Instagram\'s range, 4:5 tall to 3:2 wide', () => {
+    expect(singleAspect({ width: 1536, height: 4000 })).toBe(0.8);
+    expect(singleAspect({ width: 4000, height: 1000 })).toBe(1.5);
+    expect(singleAspect({ width: 1200, height: 1000 })).toBe(1.2);
   });
 });

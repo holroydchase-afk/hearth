@@ -29,8 +29,8 @@ describe('WORDS grandparent-ux words pass', () => {
     await seedPost(be, { title: 'Party' });
     await renderApp(<PhotosScreen />, { be, user: 'chase' });
     jest.spyOn(be, 'editPostWords').mockImplementation(() => { throw new ApiError('42501', 'no'); });
-    fireEvent.press(await screen.findByRole('button', { name: 'Options for this photo' }));
-    fireEvent.press(await screen.findByRole('button', { name: 'Change the words' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Post options' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Edit description' }));
     const sheet = await screen.findByTestId(/^words-/);
     fireEvent.press(within(sheet).getByRole('button', { name: 'Save the new words' }));
     expect(await within(sheet).findByText("These words can't be changed now. Your old words are kept.")).toBeTruthy();

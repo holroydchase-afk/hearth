@@ -11,7 +11,9 @@ export type OS = 'ios' | 'android' | 'web';
 export interface Colors {
   bg: string; surface: string; ink: string; muted: string; line: string;
   accent: string; accentInk: string; accentSoft: string; fill: string;
-  safe: string; safeSoft: string; danger: string; onDanger: string; scrim: string; photo: string;
+  safe: string; safeSoft: string; danger: string; onDanger: string;
+  /** RD-72 (UX-R29): red words on the page or a sheet (Delete post, the alert's Delete); iOS systemRed in dark. */
+  dangerText: string; scrim: string; photo: string;
 }
 
 // RD-1 (DEC-59, Chase Nov 14 2026: "black and white and an accent"): a white screen with near-black words in light
@@ -24,8 +26,8 @@ export const COLOR_NAMES: readonly ColorName[] = ['ember', 'forest', 'plum'];
 export const ColorContext = createContext<ColorName>('ember');
 
 const status = {
-  light: { safe: '#1C6E31', safeSoft: '#E3F3E7', danger: '#B3261E', onDanger: '#FFFFFF', scrim: 'rgba(0,0,0,0.4)' },
-  dark: { safe: '#7DD394', safeSoft: '#173322', danger: '#F2B8B5', onDanger: '#601410', scrim: 'rgba(0,0,0,0.6)' },
+  light: { safe: '#1C6E31', safeSoft: '#E3F3E7', danger: '#B3261E', dangerText: '#B3261E', onDanger: '#FFFFFF', scrim: 'rgba(0,0,0,0.4)' },
+  dark: { safe: '#7DD394', safeSoft: '#173322', danger: '#F2B8B5', dangerText: '#FF453A', onDanger: '#601410', scrim: 'rgba(0,0,0,0.6)' },
 };
 
 const NEUTRAL = {
@@ -98,8 +100,9 @@ function highContrast(c: Colors): Colors {
 
 // RD-2 (DEC-59): the phone's own font, SF Pro on iPhone, Roboto on Android, the system stack on the web, so no
 // fontFamily is ever set and nothing is loaded. Regular for reading; Semibold for names, titles, buttons and the
-// picked tab; Bold only in the large title. Never Light, Medium, italics or all caps.
-export const WEIGHT = { regular: '400', semibold: '600', bold: '700' } as const;
+// picked tab and the large title; Medium for a person's name on a post (RD-48). No Bold anywhere (RD-55, DEC-65),
+// never Light, italics or all caps.
+export const WEIGHT = { regular: '400', medium: '500', semibold: '600' } as const;
 
 export const MIN_TARGET = 48;
 
@@ -131,8 +134,9 @@ export function sheetShouldClose(dy: number, vy: number): boolean {
 /** Gaps and padding, on a 4 pt grid. Related things sit closer (sm) than unrelated ones (lg, xl). */
 export const SPACE = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 } as const;
 /** Corners (RD-8): small (checkbox, quiet field), medium (rows, cards, choices, notices, fields, New for you
- *  photos), pill (capsules, chips, avatars). The Gallery grid is square. */
-export const RADIUS = { small: 4, medium: 12, pill: 999 } as const;
+ *  photos), photo (Gallery's months mosaic and a post's photos, like Apple Photos: RD-44, RD-54), pill (capsules,
+ *  chips, avatars). */
+export const RADIUS = { small: 4, medium: 12, photo: 16, pill: 999 } as const;
 /** The one exception: dialogs keep each phone's own corner (HIG alert 14 pt, Material 3 dialog 28 dp). */
 export function dialogRadius(os: OS): number {
   return os === 'android' ? 28 : 14;
@@ -143,6 +147,10 @@ export function typeScale(bigText: boolean) {
   const base = bigText ? 21 : 17;
   return { base, title: Math.round(base * 1.3), display: Math.round(base * 1.65), line: Math.round(base * 1.3) };
 }
+
+/** RD-44 / RD-55: Gallery's two big words, at Apple's sizes: the greeting is the Large Title (34) and each month's
+ *  name 24. Already big, so Bigger text leaves them as they are; the phone's own text size still scales them. */
+export const GALLERY_TYPE = { largeTitle: 34, month: 24 } as const;
 
 /** WCAG 2 contrast ratio of two opaque #RRGGBB colors. */
 export function contrast(a: string, b: string): number {

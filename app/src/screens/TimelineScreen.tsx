@@ -18,7 +18,8 @@ import { PostCard } from './PostCard';
 
 const SHOW_INLINE = 4;
 
-export function TimelineScreen({ startAt, onClose }: { startAt: string | null; onClose: () => void }) {
+/** backTo: the place word on Back (RD-47: opened from Feed's Older photos card it reads "Back to Feed"). */
+export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { startAt: string | null; onClose: () => void; backTo?: string }) {
   const app = useApp();
   const { c } = useTheme();
   const store = useMemo(
@@ -82,7 +83,7 @@ export function TimelineScreen({ startAt, onClose }: { startAt: string | null; o
 
   const header = (
     <View style={{ gap: 12 }}>
-      <BackButton to="Gallery" onPress={onClose} />
+      <BackButton to={backTo} onPress={onClose} />
       <Txt variant="display" role="header">Photos by date</Txt>
       {years ? null : <Button variant="secondary" label="Pick a year" onPress={showYears} />}
       {!years && state.startAt ? (
