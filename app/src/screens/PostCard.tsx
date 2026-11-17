@@ -410,7 +410,8 @@ function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
           // The web's textarea starts two rows tall; one row, like the phone, until the words wrap.
           {...(Platform.OS === 'web' ? { rows: 1 } : {})}
           maxLength={500}
-          style={{ flex: 1, minHeight: MIN_TARGET, color: c.ink, paddingLeft: SPACE.lg, paddingRight: SPACE.sm, paddingVertical: 12, fontSize: t.base, borderWidth: 0, ...noWebOutline() }}
+          // UX-R36: a 22 pt line in 13 pt padding (48 tall) centers the placeholder on Post at default and Bigger text.
+          style={{ flex: 1, minHeight: MIN_TARGET, color: c.ink, paddingLeft: SPACE.lg, paddingRight: SPACE.sm, paddingVertical: 13, fontSize: t.base, lineHeight: 22, borderWidth: 0, ...noWebOutline() }}
         />
         {/* UX-R6 / RD-59: Post is a text button inside the field, grey and off while empty, accent once there are words. */}
         <Button variant="quiet" label="Post" onPress={() => void send()} disabled={!draft.trim()} style={styles.post} />

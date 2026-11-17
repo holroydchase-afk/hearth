@@ -10,7 +10,8 @@ export function shortDate(iso: string): string {
   return `${DAYS[d.getDay()]}, ${SHORT_MONTHS[d.getMonth()]} ${d.getDate()}`;
 }
 
-export const people = (n: number) => `${n} ${n === 1 ? 'person' : 'people'}`;
+/** UX-R37: a no-break space (U+00A0) so the number and its word never wrap apart. */
+export const people = (n: number) => `${n}\u00a0${n === 1 ? 'person' : 'people'}`;
 export const photos = (n: number) => `${n} ${n === 1 ? 'photo' : 'photos'}`;
 
 /** "Chase", "Chase and Alex", "Chase, Alex and Jo" */

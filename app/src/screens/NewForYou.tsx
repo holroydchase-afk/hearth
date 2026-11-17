@@ -33,7 +33,8 @@ export function NewForYouRow({ posts, since, onSee }: { posts: FeedPost[]; since
     <View testID="new-for-you" style={{ gap: SPACE.sm }}>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: SPACE.sm }}>
         <Txt variant="title" role="header">New for you</Txt>
-        <Button variant="quiet" label="See all the new photos, one at a time" text="See all" onPress={onSee} />
+        {/* UX-R38: the words sit flush with the screen margin (minus the button's 18 pt side padding); still 48 pt to tap. */}
+        <Button variant="quiet" label="See all the new photos, one at a time" text="See all" onPress={onSee} style={{ marginRight: -18 }} />
       </View>
       {tiles.length ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: SPACE.md }} style={{ marginHorizontal: -SPACE.lg }}>

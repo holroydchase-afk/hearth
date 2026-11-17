@@ -39,8 +39,9 @@ describe('UX-G share sheet words (BETA-AUD-17)', () => {
     await renderApp(<ShareScreen />, { be, user: 'chase', deps: { api } });
     await screen.findByRole('checkbox', { name: 'Everyone, 6 people' });
     const boxes = screen.getAllByRole('checkbox').map((b) => b.props.accessibilityLabel as string);
-    expect(boxes[0]).toBe('Everyone, 6 people');
-    expect(boxes[boxes.length - 1]).toBe('Charleston trip, 3 people');
+    // UX-R37: people() joins with a no-break space (engineer, flagged for qa-tdd).
+    expect(boxes[0]).toBe('Everyone, 6\u00a0people');
+    expect(boxes[boxes.length - 1]).toBe('Charleston trip, 3\u00a0people');
     expect(screen.getByRole('header', { name: 'Groups' })).toBeTruthy();
     expect(screen.getByRole('header', { name: 'Events' })).toBeTruthy();
     expectGrandparentSafe();

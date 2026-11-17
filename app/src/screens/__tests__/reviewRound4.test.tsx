@@ -135,8 +135,9 @@ describe('UX-R32 (P2) the Feed description never starts with the poster\'s name;
 // =================================================================================================================
 describe('UX-R33 (P2) Post options on your own post: "Shared with <group>, N people", then Edit and Delete; no heading', () => {
   it.each([
-    ['chase', 'owner', 'chase', dadSide.id, "Shared with Grandparents – Dad's side, 3 people"],
-    ['alex', 'adult', 'alex', momSide.id, "Shared with Grandparents – Mom's side, 3 people"],
+    // UX-R37: people() joins with a no-break space (engineer, flagged for qa-tdd).
+    ['chase', 'owner', 'chase', dadSide.id, "Shared with Grandparents – Dad's side, 3\u00a0people"],
+    ['alex', 'adult', 'alex', momSide.id, "Shared with Grandparents – Mom's side, 3\u00a0people"],
   ] as const)('UX-R33 DEC-49 %s (%s) on their own post', async (user, _role, author, circle, shared) => {
     const { id, card } = await feedCard(user, { author, circle });
     const sheet = await openOptions(card, id);
