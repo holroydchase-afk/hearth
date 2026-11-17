@@ -1110,11 +1110,13 @@
    "kind": "test fix",
    "layer": "app",
    "severity": "Medium",
-   "status": "open",
-   "title": "QA-R1 (RD-83 red run, Nov 17): vacuous test. app/src/screens/__tests__/reviewRound2.test.tsx R18 'each month title is a sticky header' finds the content container with scroll.findAll(isHost)[0], which is the scroll itself, so kids[1] is the whole content and every month reads as sticky. With the content-container lookup the engineer used in searchBacking.test.tsx the check reads sticky:false for both months, because the titles stick by translateY, not stickyHeaderIndices. Rewrite R18 on behavior (pinnedBlock.test.tsx RD-83 offsets) or fix the helper; the R18 e2e allows 24 px of slack and missed the 17 px gap RD-83 catches",
-   "tests": [],
+   "status": "fixed",
+   "title": "QA-R1 (RD-83 red run, Nov 17): vacuous test. app/src/screens/__tests__/reviewRound2.test.tsx R18 'each month title is a sticky header' finds the content container with scroll.findAll(isHost)[0], which is the scroll itself, so kids[1] is the whole content and every month reads as sticky. With the content-container lookup the engineer used in searchBacking.test.tsx the check reads sticky:false for both months, because the titles stick by translateY, not stickyHeaderIndices. Rewrite R18 on behavior (pinnedBlock.test.tsx RD-83 offsets) or fix the helper; the R18 e2e allows 24 px of slack and missed the 17 px gap RD-83 catches. Fixed (r42): R18 rewritten on behavior (title top under the bar at 4 scroll points, next month scrolls with its photos); red with the phone translateY removed",
+   "tests": [
+    "app/src/screens/__tests__/reviewRound2.test.tsx"
+   ],
    "found": "2026-11-17",
-   "fixed": null
+   "fixed": "2026-11-17"
   },
   {
    "id": "B15",

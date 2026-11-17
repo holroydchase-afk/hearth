@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-17T21:00:00-05:00",
+ "label": "Easy view review (GUX-R11, GUX-R12) and pinned block (RD-83): all suites 3x (green)",
+ "passed": 1332,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs each at 12e3b6c (engineer) on the red tests d1748a3: jest 1332 passed (1 skipped, 1 todo RD-49) x3, typecheck clean x3, e2e:demo 24 passed (5 skipped) x3, e2e:web 5 passed (11 skipped) x3, e2e:site 14 passed x3, backend SQL 0 failed x3 (as the postgres OS user), agents.verify passed x3. Engineer's 4 flagged test edits accepted after mutation checks, each red with its product change removed: reviewRound2 R18 rewrite (T21 fixed), easyViewReview GUX-R11 aria-checked read on the Pressable, photosStyle RD-44 leaves out the full-width month headers (tiles still checked), demo.spec RD-83 scroll back 250 plus sticky/top/no-transform check (native:false without CSS sticky). Deno, CI and phones not run (RD-83 pinning on a real iPhone Safari and on native iOS/Android is unproven here). e2e/results/easyview-gux-rd83-green-3x-2026-11-17.txt"
+}
