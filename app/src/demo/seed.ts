@@ -130,3 +130,25 @@ export function demoViewer(be: FakeBackend): 'parent' | 'grandma' {
 export function demoKeysToClear(keys: string[]): string[] {
   return keys.filter((k) => k.startsWith('hearth.') || k.startsWith('hs_'));
 }
+
+/** DEMO-FRESH-1..3: names the sample family a browser saved, so a changed demo replaces an old copy. */
+export const DEMO_SEED_KEY = 'hearth.demoSeed';
+
+export function demoSeedVersion(src: { posts: DemoPost[]; names: Record<string, string> } = { posts: DEMO_POSTS, names: DEMO_NAMES }): string {
+  const s = JSON.stringify([src.posts, src.names, DEMO_LAST_VISIT_DAYS]);
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+
+type DemoStorage = { readonly length: number; key(i: number): string | null; getItem(k: string): string | null; setItem(k: string, v: string): void; removeItem(k: string): void };
+
+/** Clears Hearth's saved demo keys (as Start over does) when they came from another sample family. True if it cleared. */
+export function freshenDemoStorage(ls: DemoStorage): boolean {
+  const now = demoSeedVersion();
+  if (ls.getItem(DEMO_SEED_KEY) === now) return false;
+  const keys = Array.from({ length: ls.length }, (_, i) => ls.key(i)).filter((k): k is string => k != null);
+  for (const k of demoKeysToClear(keys)) ls.removeItem(k);
+  ls.setItem(DEMO_SEED_KEY, now);
+  return true;
+}

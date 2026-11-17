@@ -6,10 +6,13 @@ milestone: HRT-M1
 now: push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
 next: redesign R46 1a..1c, polish GUX-R1..R10, RD-34 plain background, DEC-60 names, DEC-61 no demo steps built; qa-tdd 3x, then grandparent-ux recheck; stop date Nov 19
 waiting_on_chase:
-  - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 17: returning visitors see the current demo family (DEMO-FRESH-1..3, TRACKER R48; branch claude/project-thread-s1r7xd, PR)
+- **Done, test-first:** `freshenDemoStorage` in `app/src/demo/seed.ts` runs before `runtime.ts` reads the saved demo; a missing or different `hearth.demoSeed` clears Hearth's demo keys (as Start over) and saves the current version. Tests: `app/src/demo/__tests__/demoFreshen.test.ts`, e2e `DEMO-FRESH-1` in `app/e2e-web/demo.spec.js`.
+- **Why:** Chase saw the old demo (Kai) after #116/#117 went live; see `docs/eng/LESSONS.md` Nov 17.
 
 ## Nov 17: review round 1 built (UX-R1, R2, R5..R10, R12; RD-35..43, DEC-63, DEC-64; branch claude/project-thread-iyml94, local commits)
 - **Engineer, green:** tab bar hides while any field is focused (`app/src/ui/typing.ts`; comes back 250 ms after blur; web keeps the field in view on visualViewport resize; iPhone uses KeyboardAvoidingView in the walk and keyboard insets on Feed/Screen). Walk: one `walk-bar` under the scroll (Previous off on the first, "Next photo"/"Done"), post edge to edge with one 16 pt edge, Back and Options in ink. Comments: no 💬; "Comments" heading, "Add a comment…" field, Post text button; "Your comment goes to the same people." when readers equal viewers. Gallery grid edge to edge. Demo parent is Chase.

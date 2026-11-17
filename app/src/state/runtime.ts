@@ -7,7 +7,7 @@ import { Linking, Platform } from 'react-native';
 import { FakeBackend, type FakeState } from '../api/fake/FakeBackend';
 import { DEMO_MODE } from '../demo/flags';
 import { loadDemoPicture } from '../demo/pictures';
-import { seedDemo } from '../demo/seed';
+import { freshenDemoStorage, seedDemo } from '../demo/seed';
 import { SupabaseApi } from '../api/SupabaseApi';
 import { pickBulk, pickPhotos } from '../media/pick';
 import { expoManipulator } from '../media/expoManipulator';
@@ -31,6 +31,8 @@ function fakeBackend(): FakeBackend {
   let seeding = DEMO_MODE;
   const persist = ls ? (s: FakeState) => { if (seeding) return; try { ls.setItem(FAKE_KEY, JSON.stringify(s)); } catch { /* full */ } } : undefined;
   let saved: string | null | undefined;
+  // DEMO-FRESH-1: a family saved by an older demo is dropped, so returning visitors see the new one.
+  if (DEMO_MODE && ls) { try { freshenDemoStorage(ls); } catch { /* blocked: start fresh below */ } }
   try { saved = ls?.getItem(FAKE_KEY); } catch { /* blocked: start fresh */ }
   if (saved) {
     try {

@@ -321,3 +321,17 @@ test('UX-R1 focusing the walk\'s comment field hides the tab bar and keeps the f
   await field.evaluate((el) => el.blur());
   await expect(page.getByRole('tab')).toHaveCount(4);
 });
+
+test('DEMO-FRESH-1 a browser that saved an older demo family sees the current one on its next visit', async ({ page }) => {
+  await page.goto('/');
+  await galleryLoaded(page);
+  // Pretend this browser kept the family from an older demo: the parent was Kai, and no seed version was saved.
+  await page.evaluate(() => {
+    const k = 'hearth.fakeBackend.v1';
+    localStorage.setItem(k, localStorage.getItem(k).replaceAll('"Chase"', '"Kai"'));
+    localStorage.removeItem('hearth.demoSeed');
+  });
+  await page.reload();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Chase$/ })).toBeVisible();
+  await expect(page.getByText(/\bKai\b/)).toHaveCount(0);
+});
