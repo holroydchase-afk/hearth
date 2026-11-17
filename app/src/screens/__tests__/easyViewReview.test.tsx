@@ -51,7 +51,12 @@ describe('GUX-R11 (RD-78) Easy view On / Off rows are Light or dark\'s radio row
     for (const [name, checked] of [['On', false], ['Off', true]] as const) {
       const r = screen.getByRole('radio', { name });
       expect({ name, tall: Number(flat(r.props.style).minHeight) >= 48 }).toEqual({ name, tall: true });
-      expect({ name, aria: r.props['aria-checked'], state: r.props.accessibilityState?.checked }).toEqual({ name, aria: checked, state: checked });
+      // engineer, flagged for qa-tdd: on a phone React Native's Pressable and View fold aria-checked into
+      // accessibilityState, so the host never carries it; read it on the Pressable that renders the host (the web
+      // build passes it to the DOM as aria-checked).
+      let p: Inst | null = r;
+      while (p && p.props['aria-checked'] === undefined) p = p.parent as Inst | null;
+      expect({ name, aria: p?.props['aria-checked'], state: r.props.accessibilityState?.checked }).toEqual({ name, aria: checked, state: checked });
     }
   });
 });

@@ -215,6 +215,7 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
       accessibilityRole={kind}
       accessibilityLabel={label}
       accessibilityState={{ checked }}
+      aria-checked={checked} // GUX-R11: the web build reads aria-checked, not accessibilityState
       onPress={onPress}
       android_ripple={{ color: c.line }}
       style={({ pressed }) => [styles.choice, { opacity: pressed && os !== 'android' ? 0.7 : 1 }]}

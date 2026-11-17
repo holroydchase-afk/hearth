@@ -16,28 +16,14 @@ const EASY: { id: 'on' | 'off'; title: string }[] = [{ id: 'on', title: 'On' }, 
  *  Light or dark). Picking one changes the tabs and text at once and saves it for this person on this phone. */
 export function EasyView({ heading = false }: { heading?: boolean }) {
   const { prefs, setPrefs } = useApp();
-  const { c } = useTheme();
   return (
     <GroupedSection>
       {heading ? <Txt variant="title" role="header">Easy view</Txt> : null}
       <Txt>Bigger words, and a word under each button at the bottom of the screen.</Txt>
-      {EASY.map((k) => {
-        const on = prefs.easyView === (k.id === 'on');
-        return (
-          <Pressable
-            key={k.id}
-            accessibilityRole="radio"
-            accessibilityLabel={k.title}
-            accessibilityState={{ checked: on }}
-            aria-checked={on} // the web build reads aria-checked, not accessibilityState
-            onPress={() => setPrefs({ easyView: k.id === 'on' })}
-            style={({ pressed }) => [styles.row, { opacity: pressed ? 0.7 : 1 }]}
-          >
-            <Txt style={{ flex: 1 }}>{k.title}</Txt>
-            {on ? <SystemIcon icon={CHECK} color={c.ink} /> : null}
-          </Pressable>
-        );
-      })}
+      {/* GUX-R11: the same radio rows as Light or dark (kit Choice): an accent check on the picked one, 48 pt+. */}
+      {EASY.map((k) => (
+        <Choice key={k.id} kind="radio" label={k.title} title={k.title} checked={prefs.easyView === (k.id === 'on')} onPress={() => setPrefs({ easyView: k.id === 'on' })} />
+      ))}
     </GroupedSection>
   );
 }

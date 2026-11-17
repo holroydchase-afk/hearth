@@ -7,7 +7,7 @@
 // By date left Gallery (the months are the by-date view) and opens from Feed's Older photos card.
 // Feed is the existing FlatList (Instagram-style posts, 32 pt apart, no lines: RD-48..54).
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, FlatList, RefreshControl, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { Animated, FlatList, RefreshControl, ScrollView, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useApp, useFeed } from '../state/AppContext';
 import { loadLastSeen, saveLastSeen } from '../state/lastSeen';
@@ -20,7 +20,7 @@ import { useTheme } from '../ui/theme';
 import { AppGate } from './AppGate';
 import { EventCard, EventsScreen, EventUpdate, type EventsView } from './EventsScreen';
 import { FOLD_AT, GalleryTopBar, LargeGreeting, SearchField, greeting, useFamilyName } from './GalleryTop';
-import { GalleryGrid } from './GalleryGrid';
+import { GalleryGrid, shadeLine } from './GalleryGrid';
 import { NewForYouRow, OneAtATime } from './NewForYou';
 import { PostCard } from './PostCard';
 import { QueueStatus } from './QueueStatus';
@@ -84,6 +84,8 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   // RD-82: where the field sits in the scroll; once the list scrolls past it, content is under the pinned bar.
   const fieldAt = useRef(0);
   const [under, setUnder] = useState(false);
+  // RD-83: while a month title is pinned under the bar, the shade sits under the title instead (one pinned block).
+  const [monthPinned, setMonthPinned] = useState(false);
   const onScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
     scrollY.setValue(y);
@@ -201,11 +203,11 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
             onLayout={(e) => { setPinAt(e.nativeEvent.layout.height); fieldAt.current = e.nativeEvent.layout.y; }}
           >
             <SearchField testID="search-field" onPress={() => setSearch(true)} />
-            {under ? <View testID="search-bar-shade" pointerEvents="none" accessible={false} style={[shade.line, { backgroundColor: c.line }]} /> : null}
+            {under && !monthPinned ? <View testID="search-bar-shade" pointerEvents="none" accessible={false} style={[shadeLine, { backgroundColor: c.line }]} /> : null}
           </View>
           {header}
           {empty}
-          {state.posts.length ? <GalleryGrid posts={state.posts} scrollY={scrollY} pinAt={pinAt} relayout={relayout} /> : null}
+          {state.posts.length ? <GalleryGrid posts={state.posts} scrollY={scrollY} pinAt={pinAt} relayout={relayout} onPinned={setMonthPinned} /> : null}
           {older}
         </ScrollView>
       </SafeAreaView>
@@ -250,11 +252,3 @@ function PushAsk() {
     </Card>
   );
 }
-
-/** RD-82: a hairline with a soft shadow under the pinned Search photos bar. */
-const shade = StyleSheet.create({
-  line: {
-    position: 'absolute', left: 0, right: 0, bottom: -StyleSheet.hairlineWidth, height: StyleSheet.hairlineWidth,
-    shadowColor: '#000', shadowOpacity: 0.12, shadowRadius: 3, shadowOffset: { width: 0, height: 2 },
-  },
-});

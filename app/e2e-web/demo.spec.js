@@ -424,7 +424,10 @@ test('RD-83 greeting, search bar and month title stay one pinned block after scr
   await page.mouse.move(196, 600);
   await page.mouse.wheel(0, 1600); // mouse.wheel fires RN-web's onScroll; scrollTo does not
   await page.waitForTimeout(400);
-  await page.mouse.wheel(0, -500);
+  // engineer, flagged for qa-tdd: back up 250, not 500. The demo's Gallery scrolls about 990 px in all, so 500 landed
+  // 17 px above where the first month reaches the bar (its title then scrolls with the page, as RD-83's jest allows),
+  // which measured that release point, not a pinned title. `reached` below proves the title is pinned here.
+  await page.mouse.wheel(0, -250);
   await page.waitForTimeout(400);
   const got = await page.getByLabel('Search photos').first().evaluate((field) => {
     // The backing: the sticky wrapper's child that holds the field (RD-82's full-width bar).
@@ -441,8 +444,14 @@ test('RD-83 greeting, search bar and month title stay one pinned block after scr
       const hit = document.elementFromPoint(x, bottom + 1);
       return { x, title: !!(hit && stuck && stuck.h.contains(hit)) || hit === stuck?.h, photo: !!hit?.closest('[data-testid^="gallery-tile-"]') };
     });
-    return { gap: stuck ? Math.round((stuck.top - bottom) * 2) / 2 : null, under };
+    // The month block has reached the bar (so its title should be pinned), and the title pins by the browser's own
+    // sticky at the backing's height, not by a per-scroll-event transform that can lag on iPhone Safari.
+    const cs = stuck ? getComputedStyle(stuck.h) : null;
+    const reached = !!stuck && stuck.h.parentElement.getBoundingClientRect().top <= bottom;
+    const native = !!cs && cs.position === 'sticky' && Math.abs(parseFloat(cs.top) - backing.getBoundingClientRect().height) <= 0.5 && cs.transform === 'none';
+    return { gap: stuck ? Math.round((stuck.top - bottom) * 2) / 2 : null, under, reached, native };
   });
+  expect({ reached: got.reached, native: got.native }).toEqual({ reached: true, native: true });
   expect(got.gap).not.toBeNull();
   expect(Math.abs(got.gap)).toBeLessThanOrEqual(0.5);
   expect(got.under).toEqual([2, 196, 391].map((x) => ({ x, title: true, photo: false })));
