@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-17T13:30:00-05:00",
+ "label": "Apple Photos months, search field, Instagram-style posts (RD-44..RD-55, DEC-65): all suites 3x (green)",
+ "passed": 1227,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs each at f731805 (engineer) on the red tests 5b61720: jest 1227 passed (1 skipped, 1 todo RD-49) x3, typecheck clean x3, e2e:demo 17 passed (5 skipped) x3, e2e:web 5 passed (11 skipped) x3, e2e:site 14 passed x3, backend SQL 0 failed x3 (run as the postgres OS user; a first try as root failed on peer auth, harness only), agents.verify passed x3. New qa-tdd test screens/__tests__/groupTitles.test.tsx: DEC-49 both directions on the new Feed and Gallery (Jo and Earl see no group title in words, labels or Post options; Chase sees Sent to). Engineer test edits reviewed: RD-53 Earl to Alex matches BETA-AUD-8 (default reply scope parents), no guarantee weakened. Deno, CI and phones not run (RD-28 day-number fade unchecked on a phone). e2e/results/rd-44-green-3x-2026-11-17.txt"
+}
