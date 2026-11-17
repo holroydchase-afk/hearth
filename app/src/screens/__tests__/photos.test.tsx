@@ -102,12 +102,15 @@ describe('Photos screen', () => {
     expect(screen.getAllByText("Only the kids' parents can read this.").length).toBeGreaterThan(0);
   });
 
-  it('BETA-AUD-10: when the family opens replies to everyone, the box names who', async () => {
+  // Moved Nov 17 for UX-R10 / RD-42 (engineer, flagged for qa-tdd): replies open to everyone who can see the post, so
+  // the box says "Your comment goes to the same people." and the names sit once, on the "can see this" line above it.
+  it('BETA-AUD-10 UX-R10: when the family opens replies to everyone, the card names who (once) and the box says the same people', async () => {
     const be = await twoPosts();
     be.state.spaces[FIXTURE.space.id]!.reply_audience = 'everyone';
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     await screen.findAllByLabelText('Add a comment for Chase');
-    const words = (await screen.findAllByText(/ will read this\.$/))[0]!.props.children as string;
+    expect((await screen.findAllByText('Your comment goes to the same people.')).length).toBeGreaterThan(0);
+    const words = screen.getAllByText(/ can see this\.$/)[0]!.props.children as string;
     expect(words).toMatch(/Alex/);
     expect(words).toMatch(/Earl/); // a relative in the group now reads it too
   });
@@ -182,7 +185,8 @@ describe('Photos screen', () => {
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     await screen.findByText('Shared with Dad side');
     // GUX-R5: the screen's own title is "Feed" (DEC-59); the word stays banned everywhere else.
-    expect(screenWords().replace('Feed', '')).not.toMatch(/\b(feed|circles?|audience|sync|upload|notifications?|expired|account|settings|digest|posts?|react|servers?|encrypted)\b/i);
+    // DEC-63 (Chase, Nov 17): the comment field's button is the standard "Post"; the word stays banned everywhere else.
+    expect(screenWords().replace('Feed', '').replace(' Post ', ' ')).not.toMatch(/\b(feed|circles?|audience|sync|upload|notifications?|expired|account|settings|digest|posts?|react|servers?|encrypted)\b/i);
   });
 });
 

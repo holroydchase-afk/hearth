@@ -3,9 +3,9 @@
 // OPEN-1..8 (docs/product/SPEC-OPENING.md, DEC-58) and RD-19..RD-21 (SPEC-REDESIGN 1c): New for you at the top of
 // Gallery, and the new posts one at a time (oldest first) with Next, Previous and "Back to Gallery" (DS-4, no swipe
 // needed). The only number is the "N new" chip (RD-19, Chase Nov 15); no "unread" (A1, A2).
-// GUX-R1/R2/R7/R8 (OPEN-12): Next never moves, Previous sits under it; no tiles without a ready photo.
+// GUX-R1/R2/R7/R8 (OPEN-12): Next never moves; no tiles without a ready photo. UX-R2: one bottom bar for the steps.
 import React, { useEffect, useState } from 'react';
-import { BackHandler, Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
+import { BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { FeedPost } from '../api/HearthApi';
 import { newSinceDay } from '../feed/newForYou';
@@ -95,19 +95,27 @@ export function OneAtATime({ postIds, onClose, onDone }: {
   useEffect(() => { if (!post) onClose(); }, [post, onClose]);
   if (!post) return null;
 
+  // UX-R2 (RD-36): the post scrolls; Previous and Next photo (Done on the last) share one bar pinned at the bottom,
+  // outside the scroll, with a hairline on top, like a toolbar. Previous is always there, off on the first.
+  // UX-R8 (RD-40): the post runs edge to edge, so the heading, avatar row, title, caption and reactions share one
+  // 16 pt left edge. UX-R9 (RD-41): the accent is only on Next photo; "‹ Gallery" and Options are ink.
   return (
-    <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
-      <ScrollView testID="new-one-at-a-time" contentContainerStyle={{ padding: SPACE.lg, gap: SPACE.lg, paddingBottom: SPACE.xxl }} keyboardShouldPersistTaps="handled">
-        <BackButton to="Gallery" onPress={onClose} />
-        <Txt variant="title" role="header" label={heading}>{heading}</Txt>
-        <PostCard key={post.post_id} post={post} />
-        {/* GUX-R8 (Nov 16): one row, Previous on the left and Next (Done on the last) on the right, like a book. */}
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: SPACE.md }}>
-          {step > 0 ? <Button label="Previous new photo" text="Previous" variant="secondary" onPress={() => setAt(step - 1)} /> : null}
+    <SafeAreaView testID="new-one-at-a-time" edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
+      {/* UX-R1: on iPhone the scroll and the bar rise above the keyboard; the web build handles it in ui/typing. */}
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingTop: SPACE.lg, gap: SPACE.lg, paddingBottom: SPACE.xxl }} keyboardShouldPersistTaps="handled">
+          <View style={{ paddingHorizontal: SPACE.lg, gap: SPACE.lg }}>
+            <BackButton to="Gallery" ink onPress={onClose} />
+            <Txt variant="title" role="header" label={heading}>{heading}</Txt>
+          </View>
+          <PostCard key={post.post_id} post={post} />
+        </ScrollView>
+        <View testID="walk-bar" style={{ flexDirection: 'row', alignItems: 'center', gap: SPACE.md, paddingHorizontal: SPACE.lg, paddingVertical: SPACE.sm, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.line, backgroundColor: c.bg }}>
+          <Button label="Previous new photo" text="Previous" variant="secondary" disabled={step === 0} onPress={() => setAt(Math.max(0, step - 1))} />
           <View style={{ flex: 1 }} />
-          <Button variant="tinted" label={last ? 'Done, back to Gallery' : 'Next'} text={last ? 'Done' : 'Next'} onPress={() => (last ? (onDone ?? onClose)() : setAt(step + 1))} />
+          <Button variant="tinted" label={last ? 'Done, back to Gallery' : 'Next new photo'} text={last ? 'Done' : 'Next photo'} style={{ alignSelf: 'center' }} onPress={() => (last ? (onDone ?? onClose)() : setAt(step + 1))} />
         </View>
-      </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

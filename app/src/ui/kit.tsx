@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LABEL_SCALE_CAP, MIN_TARGET, RADIUS, WEIGHT, dialogRadius, iconSize, sheetShouldClose, useTheme } from './theme';
+import { useTypingField } from './typing';
 
 /** A system symbol: SF Symbol name on iPhone, Material Symbol name on Android and the web. */
 export interface Icon { sf: string; md: string }
@@ -65,7 +66,10 @@ export function Txt({ variant = 'body', style, children, role, testID, numberOfL
  *  secondary the gray capsule; quiet a text button or link. Every one stays 48 pt tall to tap (DS-1). */
 export type ButtonVariant = 'primary' | 'secondary' | 'tinted' | 'danger' | 'quiet';
 
-export function Button({ label, text, onPress, variant = 'primary', disabled, softDisabled, style, selected, testID, busy, role = 'button', icon }: {
+export function Button({ label, text, onPress, variant = 'primary', disabled, softDisabled, style, selected, testID, busy, role = 'button', icon, ink }: {
+  /** UX-R9 (RD-4): a quiet button in the words' own color, for secondary tools like Options (the accent is saved
+   *  for the one main tap word). */
+  ink?: boolean;
   /** What a screen reader says. Required: no unlabeled targets. */
   label: string;
   /** Visible words; defaults to the label. */
@@ -89,7 +93,7 @@ export function Button({ label, text, onPress, variant = 'primary', disabled, so
   // DS-11: a waiting button is solid gray with readable words, never a see-through blue.
   const waiting = !!disabled || !!softDisabled;
   const bg = waiting && variant !== 'quiet' ? c.fill : { primary: c.accent, secondary: material ? 'transparent' : c.fill, tinted: c.accentSoft, danger: c.danger, quiet: 'transparent' }[variant];
-  const fg = waiting ? c.muted : { primary: c.accentInk, secondary: c.ink, tinted: c.accent, danger: c.onDanger, quiet: c.accent }[variant];
+  const fg = waiting ? c.muted : { primary: c.accentInk, secondary: c.ink, tinted: c.accent, danger: c.onDanger, quiet: ink ? c.ink : c.accent }[variant];
   const border = variant === 'secondary' && material ? c.muted : bg;
   return (
     <Pressable
@@ -144,8 +148,13 @@ export function IconButton({ label, text, icon, onPress, testID }: { label: stri
 
 /** GUX-R1: Apple's back button, top left above the title: a chevron and the place's word ("‹ More") as a plain text
  *  button, 48 pt tall. The screen reader still hears "Back to More" (DS-4: a labeled way back, no swipe needed). */
-export function BackButton({ to, onPress, label }: { to: string; onPress: () => void; /** Spoken name, when not "Back to <to>". */ label?: string }) {
+export function BackButton({ to, onPress, label, ink }: {
+  to: string; onPress: () => void; /** Spoken name, when not "Back to <to>". */ label?: string;
+  /** UX-R9: in the words' own color, where the screen's one accent belongs to another button (the walk's Next). */
+  ink?: boolean;
+}) {
   const { c, t, os } = useTheme();
+  const color = ink ? c.ink : c.accent;
   return (
     <Pressable
       accessibilityRole="button"
@@ -154,8 +163,8 @@ export function BackButton({ to, onPress, label }: { to: string; onPress: () => 
       android_ripple={{ color: c.line }}
       style={({ pressed }) => [styles.back, { opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
     >
-      <SystemIcon icon={{ sf: 'chevron.backward', md: 'arrow_back' }} color={c.accent} />
-      <Text style={{ color: c.accent, fontSize: t.base, lineHeight: t.line }}>{to}</Text>
+      <SystemIcon icon={{ sf: 'chevron.backward', md: 'arrow_back' }} color={color} />
+      <Text style={{ color, fontSize: t.base, lineHeight: t.line }}>{to}</Text>
     </Pressable>
   );
 }
@@ -225,7 +234,8 @@ function SwitchWord({ on }: { on: boolean }) {
 
 export function Field(props: TextInputProps & { label: string }) {
   const { c, t, os } = useTheme();
-  const { label, style, ...rest } = props;
+  const { label, style, onFocus, onBlur, ...rest } = props;
+  const typing = useTypingField(); // UX-R1: the tab bar steps aside while this field is focused
   // iPhone: a rounded field like a grouped-list cell, with an edge so it shows on any background.
   // Android: Material's outlined text field.
   const box: TextStyle = os === 'android'
@@ -238,6 +248,8 @@ export function Field(props: TextInputProps & { label: string }) {
         accessibilityLabel={label}
         placeholderTextColor={c.muted}
         {...rest}
+        onFocus={(e) => { typing.onFocus(); onFocus?.(e); }}
+        onBlur={(e) => { typing.onBlur(); onBlur?.(e); }}
         style={[
           { minHeight: 56, color: c.ink, paddingHorizontal: 14, paddingVertical: 12, fontSize: t.base, ...box },
           style,
@@ -266,7 +278,7 @@ export function Screen({ children, scroll = true, testID }: { children: ReactNod
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }} testID={testID}>
       {scroll ? (
-        <ScrollView contentContainerStyle={styles.screen} keyboardShouldPersistTaps="handled">{children}</ScrollView>
+        <ScrollView contentContainerStyle={styles.screen} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>{children}</ScrollView>
       ) : (
         <View style={[styles.screen, { flex: 1 }]}>{children}</View>
       )}

@@ -11,6 +11,12 @@ waiting_on_chase:
 blockers: []
 -->
 
+## Nov 17: review round 1 built (UX-R1, R2, R5..R10, R12; RD-35..43, DEC-63, DEC-64; branch claude/project-thread-iyml94, local commits)
+- **Engineer, green:** tab bar hides while any field is focused (`app/src/ui/typing.ts`; comes back 250 ms after blur; web keeps the field in view on visualViewport resize; iPhone uses KeyboardAvoidingView in the walk and keyboard insets on Feed/Screen). Walk: one `walk-bar` under the scroll (Previous off on the first, "Next photo"/"Done"), post edge to edge with one 16 pt edge, Back and Options in ink. Comments: no 💬; "Comments" heading, "Add a comment…" field, Post text button; "Your comment goes to the same people." when readers equal viewers. Gallery grid edge to edge. Demo parent is Chase.
+- **Tests moved by engineer (qa-tdd please confirm):** photos.test BETA-AUD-10 now expects the "same people" line (RD-42 conflicted with it); UXG-07 allows the one word "Post" (DEC-63).
+- **Persona checks:** `docs/product/decisions/2026-11-17-no-comment-emoji.md`, `2026-11-17-demo-parent-is-chase.md` (all Green). Screenshots `/mnt/project-files/design/2026-11-17-r1-*.png`.
+- **Next exact step:** qa-tdd all suites 3x; grandparent-ux recheck; manual M-19 on a real iPhone keyboard. UX-R3, R4, R11 wait on Chase. Not pushed.
+
 ## Nov 17: review round 1 failing tests (UX-R1, R2, R5..R10, R12; RD-35..43, DEC-63, DEC-64; branch claude/project-thread-iyml94, local commit)
 - **qa-tdd, red on purpose (run r33):** new `app/src/screens/__tests__/reviewRound1.test.tsx`; e2e `demo.spec.js` UX-R1 (keyboard), UX-R7 (edge-to-edge grid; tiles are already square), UX-R12 (greeting "Chase"). Contract in the test file's header: tab bar hides while any field is focused; `walk-bar` outside the scroll, Previous always there (off on the first), forward spoken "Next new photo", shown "Next photo"; "Comments" heading, field "Add a comment…" spoken "Add a comment for <sender>", Post text button; "Your comment goes to the same people." only when readers equal viewers.
 - **Old tests moved to the new words:** moments (REACT-7 four emoji; MOMENT-4 cursor test retired), photos, familyShape, sessions, redesignNav, opening (OPEN-7/8 Previous on every step), redesignPolish, redesignGallery, seed DEMO-3 and demoBar (Chase), core-loop/demo/demo-showcase/site specs.
