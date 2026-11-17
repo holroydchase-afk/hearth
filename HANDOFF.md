@@ -3,13 +3,17 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: review round 4 built (UX-R31..R35), qa-tdd 3x next; push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
+now: review rounds 4-6 built (UX-R31..R40), qa-tdd 3x next; push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
 next: redesign R46 1a..1c, polish GUX-R1..R10, RD-34 plain background, DEC-60 names, DEC-61 no demo steps built; qa-tdd 3x, then grandparent-ux recheck; stop date Nov 19
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 17: review rounds 4-6 done; round 6 fixes built (UX-R39..R40; branch claude/project-thread-iyml94, local commit)
+- **Engineer:** New for you "See all" has 16 pt side padding and -16 right margin (box ends at the screen edge, words on the gutter), min height 48. Comment input line is 1.3x the text rounded to even (`commentLine` in PostCard: 22 at 17 pt, 28 at 21 pt Bigger text; not `t.line`, which gives 27) in (48 - line)/2 padding, so it stays 48 tall and centered on Post. Green once: jest 1288, typecheck, demo site rebuilt, e2e:demo 20 (stray :8090 server reused via scratch config), e2e:web 5.
+- **Next exact step:** qa-tdd all suites 3x, then ux-reviewer round-6 recheck. Not pushed.
 
 ## Nov 17: review round 4 fixes built (UX-R31..R35; branch claude/project-thread-iyml94, local commit)
 - **Engineer, green once (jest 1277, typecheck, e2e:demo 20, e2e:web 5):** web comment field: browser outline off, 2 pt accent ring on the rounded edge while focused (kit `useWebFocusRing` / `noWebOutline`, so RD-4 keeps c.accent in the kit). Feed description has no name prefix; a title reads "Title – words". Own-post Post options: no heading, "Shared with <group>, N people", then Edit description, Delete post; members keep the heading and get "... can see this." in c.ink. Bigger text names one person then "and N more"; who line sits 12 pt under the time in both views (flex-start + 8 pt padding).

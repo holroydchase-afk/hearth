@@ -12,7 +12,7 @@ import { newSinceDay } from '../feed/newForYou';
 import { useFeed } from '../state/AppContext';
 import { BackButton, Button, Txt } from '../ui/kit';
 import { andList, shortDate } from '../ui/format';
-import { SPACE, useTheme } from '../ui/theme';
+import { MIN_TARGET, SPACE, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
 import { PostCard } from './PostCard';
 
@@ -33,8 +33,9 @@ export function NewForYouRow({ posts, since, onSee }: { posts: FeedPost[]; since
     <View testID="new-for-you" style={{ gap: SPACE.sm }}>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: SPACE.sm }}>
         <Txt variant="title" role="header">New for you</Txt>
-        {/* UX-R38: the words sit flush with the screen margin (minus the button's 18 pt side padding); still 48 pt to tap. */}
-        <Button variant="quiet" label="See all the new photos, one at a time" text="See all" onPress={onSee} style={{ marginRight: -18 }} />
+        {/* UX-R38/R39: 16 pt side padding pulled back by 16, so the box ends at the screen edge and the words sit on the
+            16 pt gutter; still 48 pt to tap. */}
+        <Button variant="quiet" label="See all the new photos, one at a time" text="See all" onPress={onSee} style={{ paddingHorizontal: SPACE.lg, marginRight: -SPACE.lg, minHeight: MIN_TARGET }} />
       </View>
       {tiles.length ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: SPACE.md }} style={{ marginHorizontal: -SPACE.lg }}>

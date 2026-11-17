@@ -410,8 +410,9 @@ function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
           // The web's textarea starts two rows tall; one row, like the phone, until the words wrap.
           {...(Platform.OS === 'web' ? { rows: 1 } : {})}
           maxLength={500}
-          // UX-R36: a 22 pt line in 13 pt padding (48 tall) centers the placeholder on Post at default and Bigger text.
-          style={{ flex: 1, minHeight: MIN_TARGET, color: c.ink, paddingLeft: SPACE.lg, paddingRight: SPACE.sm, paddingVertical: 13, fontSize: t.base, lineHeight: 22, borderWidth: 0, ...noWebOutline() }}
+          // UX-R36/R40: a 1.3x line (22 at 17 pt, 28 at 21 pt) in (48 - line)/2 padding keeps the field 48 tall and
+          // the words centered on Post at default and Bigger text.
+          style={{ flex: 1, minHeight: MIN_TARGET, color: c.ink, paddingLeft: SPACE.lg, paddingRight: SPACE.sm, paddingVertical: (MIN_TARGET - commentLine(t.base)) / 2, fontSize: t.base, lineHeight: commentLine(t.base), borderWidth: 0, ...noWebOutline() }}
         />
         {/* UX-R6 / RD-59: Post is a text button inside the field, grey and off while empty, accent once there are words. */}
         <Button variant="quiet" label="Post" onPress={() => void send()} disabled={!draft.trim()} style={styles.post} />
@@ -421,6 +422,9 @@ function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
     </View>
   );
 }
+
+/** UX-R40: the comment line is at least 1.3x the text, rounded up to an even number so the padding is whole. */
+const commentLine = (size: number) => 2 * Math.ceil(Math.round(1.3 * size) / 2);
 
 /** CAP-4: past about 4 lines the caption folds, with a worded Read more / Show less (no tap on the text needed). */
 const FOLD_LINES = 4;
