@@ -1,0 +1,9 @@
+{
+ "suite": "backend",
+ "at": "2026-11-17T00:20:00-05:00",
+ "label": "T19: notify_test #29 time bomb fixed (test only); backend SQL red 1x then green 3x",
+ "passed": 1208,
+ "failed": 0,
+ "results": {},
+ "note": "Test-only fix to backend/tests/notify_test.sql #29 (pin queued_at to 2026-11-16 17:00 ET before the 18:30 claim; assertion unchanged). Red before the fix: NOTIFY 59 passed, 1 failed (#29), every other suite green. After: backend tests/run.sh 1208 passed 0 failed x3 (local Postgres 16, as the postgres user). App 1 run to confirm nothing moved: jest 1166 passed (1 skipped), typecheck clean, e2e:demo 15 passed (5 skipped), e2e:web 5 passed (11 skipped), e2e:site 14 passed. App 3x is r34 at 4db49da. Deno, CI and phones not run. e2e/results/t19-notify-fix-2026-11-17.txt"
+}

@@ -56,9 +56,9 @@ test("DEMO-10 RD-17 Grandma Jo's view hides the Mom's-side posts; the parent's v
   await expect(page.getByText('Bridge walk on the trail', { exact: true })).toBeVisible();
   await expect(page.getByText('Bike day at the lake', { exact: true })).toHaveCount(0);
   await details(page);
-  await page.getByRole('button', { name: "Back to Kai's view, the parent" }).click();
+  await page.getByRole('button', { name: "Back to Chase's view, the parent" }).click();
   await details(page);
-  await expect(page.getByText(/You're Kai, a parent/)).toBeVisible();
+  await expect(page.getByText(/You're Chase, a parent/)).toBeVisible();
   await onFeed(page);
   await page.getByText('Bike day at the lake', { exact: true }).scrollIntoViewIfNeeded();
   await expect(page.getByText('Bike day at the lake', { exact: true })).toBeVisible();
@@ -174,9 +174,9 @@ test('DEMO-BAR Reset asks first: Keep changes nothing; Reset restores and says s
   await expect(page.getByRole('button', { name: 'Demo details' })).toHaveAttribute('aria-expanded', 'false');
 });
 
-// RD-27 (SPEC-REDESIGN, DEC-59): Kai, the family's owner, can switch Family color and the demo recolors;
+// RD-27 (SPEC-REDESIGN, DEC-59): Chase, the family's owner, can switch Family color and the demo recolors;
 // Grandma Jo's view stays Ember and has no picker. 1b: the picker is More → Family color (RD-15).
-test('RD-27 Kai switches Family color to Forest and the demo recolors; Grandma Jo stays Ember with no picker', async ({ page }) => {
+test('RD-27 Chase switches Family color to Forest and the demo recolors; Grandma Jo stays Ember with no picker', async ({ page }) => {
   const EMBER = 'rgb(178, 58, 30)';
   const FOREST = 'rgb(46, 125, 79)';
   const pickedTabColor = (name) => page.getByRole('tab', { name: new RegExp(`^${name}`) }).getByText(name, { exact: true })
@@ -203,7 +203,7 @@ test('RD-27 Kai switches Family color to Forest and the demo recolors; Grandma J
   expect(await pickedTabColor('More')).toBe(EMBER);
 });
 
-// RD-9 / RD-10 / RD-15 (SPEC-REDESIGN 1b) on the demo build at a 360 px phone: Kai's tabs are Gallery, Share,
+// RD-9 / RD-10 / RD-15 (SPEC-REDESIGN 1b) on the demo build at a 360 px phone: Chase's tabs are Gallery, Share,
 // Feed, More with Gallery picked on open; More is a full-screen menu in the spec's order; Grandma Jo's view has
 // Gallery, Feed, More and no Groups or Family color.
 test('RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma Jo gets three tabs', async ({ page }) => {
@@ -239,7 +239,7 @@ test('RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma 
   expect(errors.slice(before)).toEqual([]);
 });
 
-// RD-18..RD-21 (SPEC-REDESIGN 1c) on the demo build at a 360 px phone: Kai's last visit was 3 days ago and Alex
+// RD-18..RD-21 (SPEC-REDESIGN 1c) on the demo build at a 360 px phone: Chase's last visit was 3 days ago and Alex
 // sent two posts since, one picture each. Gallery: New for you with a sideways row, "2 new" on the first photo,
 // the sender line and See all (no "Tap a photo to start", DEC-61); under it the grid by month. Any photo opens the walk at
 // the oldest new post; Done comes back to Gallery. No All photos button, no group name.
@@ -265,4 +265,59 @@ test('RD-18 RD-19 RD-20 RD-21 New for you and the grid at 360 px; a tap walks th
   await page.getByRole('button', { name: /^Done/ }).first().click();
   await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible();
   expect(errors.slice(before)).toEqual([]);
+});
+
+// ---------------------------------------------------------------------------------------------------------------
+// Review round 1 (ux-reviewer on Chase's iPhone, Nov 17; SPEC-REDESIGN RD-35..). Written first (red).
+
+// UX-R12 (Chase, Nov 17): the demo parent is Chase, so the greeting uses his name.
+test('UX-R12 the demo greets the parent as Chase and "Kai" appears nowhere', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Chase$/ })).toBeVisible();
+  await details(page);
+  await expect(page.getByText(/You're Chase, a parent/)).toBeVisible();
+  expect(await page.evaluate(() => /\bKai\b/.test(document.body.innerText))).toBe(false);
+});
+
+// UX-R7: All photos is Apple's grid: square tiles, 3 across, edge to edge (no side margins).
+test('UX-R7 Gallery grid tiles are square, three across, edge to edge at a 390 px phone', async ({ page }) => {
+  await page.goto('/');
+  await galleryLoaded(page);
+  const tiles = page.locator('[data-testid^="gallery-tile-"]');
+  await expect(tiles.first()).toBeAttached();
+  const vw = page.viewportSize().width;
+  const boxes = [];
+  for (let i = 0; i < 3; i++) {
+    await tiles.nth(i).scrollIntoViewIfNeeded();
+    boxes.push(await tiles.nth(i).boundingBox());
+  }
+  for (const [i, b] of boxes.entries()) expect({ i, square: Math.abs(b.width - b.height) <= 1.5 }).toEqual({ i, square: true });
+  expect({ sameRow: Math.abs(boxes[0].y - boxes[2].y) <= 1, left: Math.round(boxes[0].x), right: Math.round(boxes[2].x + boxes[2].width) })
+    .toEqual({ sameRow: true, left: 0, right: vw });
+});
+
+// UX-R1 (P0): typing a comment in the walk. The tab bar goes away while the field is focused, and the field stays in
+// view and uncovered when the screen gets shorter (a keyboard opening; a real iPhone keyboard is manual case M-19).
+test('UX-R1 focusing the walk\'s comment field hides the tab bar and keeps the field uncovered when the keyboard opens', async ({ page }) => {
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.getByText('2 new', { exact: true }).click();
+  await expect(page.getByText('New photos: 1 of 2', { exact: true })).toBeVisible();
+  await expect(page.getByRole('tab')).toHaveCount(4);
+  const field = page.getByRole('textbox');
+  await expect(field).toHaveCount(1);
+  await field.click();
+  await field.fill('So pretty');
+  await expect(page.getByRole('tab')).toHaveCount(0); // the tab bar is gone while typing
+  await page.setViewportSize({ width: 390, height: 480 }); // about a keyboard's worth less screen
+  await expect.poll(async () => field.evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    const x = r.left + r.width / 2;
+    const y = r.bottom - 4;
+    const hit = document.elementFromPoint(x, y);
+    return r.bottom <= window.innerHeight && !!hit && (hit === el || el.contains(hit));
+  })).toBe(true);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await field.evaluate((el) => el.blur());
+  await expect(page.getByRole('tab')).toHaveCount(4);
 });

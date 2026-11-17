@@ -1,19 +1,20 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-import React, { forwardRef, memo, useEffect, useRef, useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, type TextInputInstance, View } from 'react-native';
+import React, { memo, useEffect, useState } from 'react';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { REACTIONS, type FeedPost, type Reaction } from '../api/HearthApi';
 import type { CommentView } from '../feed/store';
 import { useApp, useFeed } from '../state/AppContext';
 import { BottomSheet, Button, Card, Confirm, Field, Notice, Txt } from '../ui/kit';
+import { useTypingField } from '../ui/typing';
 import { haptic } from '../platform/haptics';
 import { andList, initialOf, people, shortDate } from '../ui/format';
 import { MIN_TARGET, RADIUS, SPACE, WEIGHT, useTheme } from '../ui/theme';
 import { PhotoCollage } from './PhotoCollage';
 
 /** MOMENT-1..8 (UAT 9): one upload as one compact card, like a standard photo feed. Who and when, the caption,
- *  a photo collage, one row of Love, Haha, Like and Comment icons (REACT-7), the newest comment, and the reply box as one row with Send
+ *  a photo collage, one row of Love, Haha, Like and Hooray emoji (REACT-7; no 💬 since DEC-63), the newest comment, and the comment field as one row with Post
  *  beside it (DEC-30 keeps the box on the card). Older comments, who can see it and Delete are one worded tap
  *  away (See all, More), so the card no longer stacks full-width rows.
  *  Prototype: prototype/moments.html. No "Seen by" count (DEC-21, RV-U1): it counts who didn't look (A2). */
@@ -29,7 +30,6 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   const ready = post.media.filter((m) => m.status === 'ready');
   const mine = post.author_id === session?.userId;
   const [sheet, setSheet] = useState<'comments' | 'more' | 'delete' | 'words' | null>(null);
-  const box = useRef<TextInputInstance>(null);
 
   useEffect(() => {
     feed?.markSeen(post);
@@ -74,6 +74,7 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
           text="Options"
           icon={{ sf: 'ellipsis.circle', md: 'more_horiz' }}
           variant="quiet"
+          ink // UX-R9 (RD-4): Options is a tool, not the screen's main tap word
           style={styles.more}
           onPress={() => setSheet('more')}
         />
@@ -112,14 +113,15 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
             onPress={() => { haptic('tap'); void feed?.react(post.post_id, e); }}
           />
         ))}
-        <Button label="Write a comment" text={<Text style={styles.emoji}>💬</Text>} variant="quiet" style={{ flex: 1 }} onPress={() => box.current?.focus()} />
       </View>
       <View style={[styles.newest, { borderColor: c.line }]}>
+        {/* UX-R5/R6 (Chase, Nov 17, DEC-63): a standard comment area on every post, under a visible "Comments" label. */}
+        <Txt variant="strong" role="header">Comments</Txt>
         {newest ? <CommentList post={post} list={[newest]} /> : null}
         {nComments > 1 ? (
           <Button label={`See all ${nComments} comments`} variant="quiet" style={styles.seeAll} onPress={() => setSheet('comments')} />
         ) : null}
-        <ReplyBox ref={box} post={post} mine={mine} />
+        <ReplyBox post={post} mine={mine} />
       </View>
 
       {/* Mounted only while open: a hidden Modal stays in the web page and its Close button with it. */}
@@ -312,8 +314,8 @@ function CommentList({ post, list }: { post: FeedPost; list: CommentView[] }) {
 }
 
 /** DEC-30: the reply box stays on every card with its "who will read this" line (no extra tap for LG),
- *  now as one row: the box with Send beside it (MOMENT-4). */
-const ReplyBox = forwardRef<TextInputInstance, { post: FeedPost; mine: boolean }>(function ReplyBox({ post, mine }, ref) {
+ *  as one row: the "Add a comment…" field with Post beside it (MOMENT-4, UX-R5/R6, DEC-63). */
+function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
   const { feed, session, deps } = useApp();
   const { c, t, os } = useTheme();
   // REPLY-11 (0011): the server names exactly who will read my reply; until it answers (or on an older
@@ -330,12 +332,19 @@ const ReplyBox = forwardRef<TextInputInstance, { post: FeedPost; mine: boolean }
   const state = useFeed();
   const draft = state.drafts[post.post_id] ?? '';
   const [sent, setSent] = useState(false);
-  const prompt = mine ? 'Write something back' : `Write something back to ${post.author_name}`;
+  // UX-R5/R6 (DEC-63): the standard "Add a comment…" field; spoken with whose post it is.
+  const spoken = mine ? 'Add a comment' : `Add a comment for ${post.author_name}`;
+  const typing = useTypingField(); // UX-R1: the tab bar steps aside while typing
+  // UX-R10 (RD-42): when exactly the people who can see the post will read my comment, say so in one line
+  // (the names are already on the "can see this" line above).
+  const others = (post.viewers ?? []).filter((v) => v.user_id !== session?.userId).map((v) => v.name).sort();
+  const same = !mine && !!names && others.length > 0 && others.length === names.length && [...names].sort().every((n, i) => n === others[i]);
   // BETA-REPLY-6 + grandparent-ux: name who can read it; never a vague "everyone", never group names.
   // AUD-8/9/10: the server says who will read my reply on this post.
   const scope = post.reply_scope ?? 'everyone';
   const readers = mine
     ? 'The family you shared this photo with can read this.'
+    : same ? 'Your comment goes to the same people.'
     : names ? `${readerNames(names)} will read this.`
     : scope === 'parents' ? "Only the kids' parents can read this."
     : scope === 'group' ? "The kids' parents and your part of the family can read this."
@@ -363,9 +372,10 @@ const ReplyBox = forwardRef<TextInputInstance, { post: FeedPost; mine: boolean }
     <View style={{ gap: 6 }}>
       <View testID={`reply-${post.post_id}`} style={styles.replyRow}>
         <TextInput
-          ref={ref}
-          accessibilityLabel={prompt}
-          placeholder={prompt}
+          accessibilityLabel={spoken}
+          placeholder="Add a comment…"
+          onFocus={typing.onFocus}
+          onBlur={typing.onBlur}
           placeholderTextColor={c.muted}
           value={draft}
           onChangeText={(v) => { setSent(false); feed?.setDraft(post.post_id, v); }}
@@ -373,13 +383,14 @@ const ReplyBox = forwardRef<TextInputInstance, { post: FeedPost; mine: boolean }
           maxLength={500}
           style={[{ flex: 1, minHeight: MIN_TARGET, color: c.ink, paddingHorizontal: 14, paddingVertical: 12, fontSize: t.base }, box]}
         />
-        <Button variant="secondary" label="Send" onPress={() => void send()} disabled={!draft.trim()} />
+        {/* UX-R6: Post is a text button, grey and off while empty, accent once there are words. */}
+        <Button variant="quiet" label="Post" onPress={() => void send()} disabled={!draft.trim()} />
       </View>
       {/* BETA-REPLY-6: say who can read it, matching the server (everyone the post was shared with). */}
       <Txt variant="muted">{sent ? sentWords : readers}</Txt>
     </View>
   );
-});
+}
 
 /** CAP-4: past about 4 lines the caption folds, with a worded Read more / Show less (no tap on the text needed). */
 const FOLD_LINES = 4;
@@ -423,7 +434,7 @@ const styles = StyleSheet.create({
   emoji: { fontSize: 24, lineHeight: 30, textAlign: 'center' },
   people: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.sm },
   person: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, borderRadius: RADIUS.pill, paddingLeft: SPACE.xs, paddingRight: SPACE.md, minHeight: MIN_TARGET },
-  actions: { flexDirection: 'row', gap: SPACE.sm, marginHorizontal: SPACE.sm, marginTop: SPACE.sm, paddingVertical: SPACE.xs, borderTopWidth: StyleSheet.hairlineWidth },
+  actions: { flexDirection: 'row', gap: SPACE.sm, marginHorizontal: SPACE.lg, marginTop: SPACE.sm, paddingVertical: SPACE.xs, borderTopWidth: StyleSheet.hairlineWidth },
   newest: { borderTopWidth: StyleSheet.hairlineWidth, paddingHorizontal: SPACE.lg, paddingTop: SPACE.md, paddingBottom: SPACE.lg, gap: SPACE.sm },
   seeAll: { alignSelf: 'flex-start', paddingHorizontal: 0 },
   replyRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },

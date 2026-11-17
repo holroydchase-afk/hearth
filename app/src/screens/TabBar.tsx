@@ -9,6 +9,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Role } from '../api/HearthApi';
+import { useTyping } from '../ui/typing';
 import { WEIGHT, LABEL_SCALE_CAP, MIN_TARGET, iconSize, typeScale, useTheme } from '../ui/theme';
 
 export type TabName = 'gallery' | 'share' | 'feed' | 'more';
@@ -58,6 +59,9 @@ export function HearthTabBar({ role, current, onNavigate, newMessages = 0 }: {
   const t = typeScale(bigText);
   const insets = useSafeAreaInsets();
   const { fontScale } = useWindowDimensions();
+  // UX-R1 / RD-35: while a text field is focused the bar is not drawn, so the field can sit right above the keyboard.
+  const typing = useTyping();
+  if (typing) return null;
   return (
     <View accessibilityRole="tablist" style={[styles.bar, { backgroundColor: c.bg, borderTopColor: c.line, paddingBottom: Math.max(insets.bottom, 6) }]}>
       {tabsFor(role).map((tab) => {

@@ -304,7 +304,7 @@ describe('RD-21 opening the walk', () => {
     const walk = await screen.findByTestId('new-one-at-a-time');
     expect(within(walk).getByRole('header', { name: WALK_FIRST })).toBeTruthy();
     expect(within(walk).getByText('First at the park')).toBeTruthy();
-    fireEvent.press(within(walk).getByRole('button', { name: 'Next' }));
+    fireEvent.press(within(walk).getByRole('button', { name: 'Next new photo' }));
     fireEvent.press(await screen.findByRole('button', { name: /^Done/ }));
     expect(await screen.findByTestId('gallery-grid')).toBeTruthy();
     expect(screen.getByRole('header', { name: GREETING })).toBeTruthy();

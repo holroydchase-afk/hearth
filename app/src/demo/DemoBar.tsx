@@ -93,12 +93,12 @@ export function DemoBar({ be, reload, startOver, open, restored = false }: {
         <View nativeID={DRAWER_ID} testID="demo-drawer" style={[styles.drawer, { borderTopColor: c.line }]}>
           {restored && <Txt variant="strong">Sample data restored.</Txt>}
           <Txt style={styles.copy}>{COPY}</Txt>
-          <Txt>{viewer === 'parent' ? "You're Kai, a parent." : "You're Grandma Jo, a grandparent."}</Txt>
+          <Txt>{viewer === 'parent' ? "You're Chase, a parent." : "You're Grandma Jo, a grandparent."}</Txt>
           <View style={styles.actions}>
             <Button
               variant="secondary"
-              label={viewer === 'parent' ? 'See the photos as Grandma Jo sees them' : "Back to Kai's view, the parent"}
-              text={viewer === 'parent' ? 'See it as Grandma Jo' : "Back to Kai's view"}
+              label={viewer === 'parent' ? 'See the photos as Grandma Jo sees them' : "Back to Chase's view, the parent"}
+              text={viewer === 'parent' ? 'See it as Grandma Jo' : "Back to Chase's view"}
               onPress={swap}
             />
             {asking ? (

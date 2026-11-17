@@ -24,8 +24,9 @@ export function GalleryGrid({ posts }: { posts: FeedPost[] }) {
           <View accessible accessibilityRole="header" accessibilityLabel={m.title}>
             <Txt variant="title">{m.title}</Txt>
           </View>
-          {/* Tight: a 1 pt gap in the screen's own color between tiles. */}
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -1 }}>
+          {/* Tight: a 1 pt gap in the screen's own color between tiles. UX-R7 (RD-39): edge to edge, like Apple's
+              Photos grid: the row steps out of the screen's 16 pt side padding. */}
+          <View testID="gallery-grid-row" style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -SPACE.lg }}>
             {m.tiles.map((t) => (
               <Pressable
                 key={t.mediaId}

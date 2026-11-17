@@ -61,12 +61,15 @@ describe('DEMO-1..3, DEMO-10 sample-data demo', () => {
     expect(plain).toEqual((await picture(first.pictures[0]!)).display);
   });
 
-  it('DEMO-3 sample data has made-up names only (the parent is "Kai", never the founder)', async () => {
+  // Updated Nov 17 (UX-R12, Chase's own call for his public demo): the parent is "Chase", the founder's first name;
+  // everyone else stays made up (Mia and Leo, Alex, Grandma Jo) and no surname appears.
+  it('DEMO-3 UX-R12 the demo parent is "Chase"; the rest are made-up names and no surname or "Kai" appears', async () => {
     const be = await seeded();
     const names = Object.values(be.state.users).map((u) => u.name);
-    expect(names).toEqual(expect.arrayContaining(['Kai', 'Grandma Jo']));
-    expect(JSON.stringify(be.state.users)).not.toMatch(/chase/i);
-    expect(Object.values(DEMO_NAMES)).not.toContain('Chase');
+    expect(names).toEqual(expect.arrayContaining(['Chase', 'Alex', 'Grandma Jo']));
+    expect(be.state.users[F.users.chase.id]!.name).toBe('Chase');
+    expect(JSON.stringify(be.state.users)).not.toMatch(/\bKai\b|Holroyd/i);
+    expect(Object.values(DEMO_NAMES)).not.toContain('Kai');
     expect(be.state.spaces[F.space.id]!.name).toBe('Mia and Leo');
   });
 
@@ -108,7 +111,7 @@ describe('DEMO-1..3, DEMO-10 sample-data demo', () => {
 
 // DEMO-NEW-1..4 (TRACKER R45 step 2, plan gap G1/G5): a first-time visitor sees the New for you card (DEC-58).
 describe('DEMO-NEW New for you in the demo', () => {
-  it('DEMO-NEW-1 seeding sets a last visit 3 days ago for Kai and Grandma Jo, on this browser only', async () => {
+  it('DEMO-NEW-1 seeding sets a last visit 3 days ago for Chase and Grandma Jo, on this browser only', async () => {
     const be = FakeBackend.withFixture({ joIsMember: true });
     const kv = memoryKV();
     const before = Date.now();
@@ -127,7 +130,7 @@ describe('DEMO-NEW New for you in the demo', () => {
     expect(await loadLastSeen(kv, F.users.chase.id)).toBe('2026-01-02T03:04:05.000Z');
   });
 
-  it('DEMO-NEW-2 Kai has 2+ new photos from Alex, and Grandma Jo has new ones too', async () => {
+  it('DEMO-NEW-2 Chase has 2+ new photos from Alex, and Grandma Jo has new ones too', async () => {
     const be = FakeBackend.withFixture({ joIsMember: true });
     const kv = memoryKV();
     await seedDemo(be, picture, kv);

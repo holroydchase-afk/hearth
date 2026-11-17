@@ -296,7 +296,7 @@ describe('RD-17 Feed', () => {
     expect(words.indexOf('Lake day')).toBeLessThan(words.indexOf('Pumpkin patch')); // newest first
     expect(screen.getAllByRole('button', { name: 'Love it' })).toHaveLength(2);
     expect(screen.getAllByLabelText(/^You, .+ can see this$/)).toHaveLength(2); // names, never the group (WHO-6)
-    expect(screen.getAllByLabelText('Write something back to Chase').length).toBeGreaterThan(0);
+    expect(screen.getAllByLabelText('Add a comment for Chase').length).toBeGreaterThan(0);
     expect(words).not.toMatch(GROUP_NAMES);
     expect(screen.queryByTestId('photos-toolbar')).toBeNull();
   });

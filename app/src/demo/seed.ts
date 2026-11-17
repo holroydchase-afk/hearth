@@ -11,9 +11,9 @@ import { loadLastSeen, saveLastSeen } from '../state/lastSeen';
 const F = FIXTURE;
 const DAY = 864e5;
 
-/** Made-up names only (DEMO-3). The fixture's parent is renamed so no real person appears. */
+/** DEMO-3 / DEC-64 (Chase, Nov 17): the parent is Chase, the founder's own first name, by his call; everyone else is made up and no surname appears. */
 export const DEMO_NAMES: Record<string, string> = {
-  [F.users.chase.id]: 'Kai',
+  [F.users.chase.id]: 'Chase',
   [F.users.alex.id]: 'Alex',
 };
 
@@ -27,7 +27,7 @@ export interface DemoPost {
   pictures: string[];
   to: 'everyone' | 'dadSide' | 'momSide';
   daysAgo: number;
-  /** DEMO-NEW-2: who sent it; Kai (the visitor) when left out. */
+  /** DEMO-NEW-2: who sent it; Chase (the visitor) when left out. */
   from?: 'alex';
   hearts: Who[];
   replies: { who: Who; body: string }[];
@@ -63,7 +63,7 @@ const iso = (t: number) => new Date(t).toISOString();
 
 /** Seeds the demo family into a fixture backend (made with joIsMember: true). */
 export async function seedDemo(be: FakeBackend, load: (name: string) => Promise<DemoPicture>, kv?: KV): Promise<void> {
-  // DEMO-NEW-1: a last visit 3 days ago for Kai and Grandma Jo, written first so Photos reads it; a saved one is kept.
+  // DEMO-NEW-1: a last visit 3 days ago for Chase and Grandma Jo, written first so Photos reads it; a saved one is kept.
   if (kv) {
     const last = new Date(Date.now() - DEMO_LAST_VISIT_DAYS * DAY).toISOString();
     for (const u of [F.users.chase.id, F.users.jo.id]) {

@@ -312,7 +312,7 @@ describe('GUX-R7 finishing the walk clears New for you', () => {
     expect(within(section).getByText('2 new')).toBeTruthy();
     fireEvent.press(within(section).getByRole('button', { name: /^See all(?! the photos)/ }));
     await screen.findByTestId('new-one-at-a-time');
-    fireEvent.press(screen.getByRole('button', { name: 'Next' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Next new photo' }));
     fireEvent.press(await screen.findByRole('button', { name: /^Done/ }));
     await screen.findByTestId('gallery-grid');
     expect(screen.queryByTestId('new-for-you')).toBeNull();
@@ -326,9 +326,9 @@ describe('GUX-R8 Previous left and Done right, on one row', () => {
     await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     fireEvent.press(within(await screen.findByTestId('new-for-you')).getByRole('button', { name: /^See all(?! the photos)/ }));
     await screen.findByTestId('new-one-at-a-time');
-    fireEvent.press(screen.getByRole('button', { name: 'Next' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Next new photo' }));
     await screen.findByText('Two');
-    for (const forward of ['Next', 'Done, back to Gallery']) {
+    for (const forward of ['Next new photo', 'Done, back to Gallery']) {
       const prev = screen.getByRole('button', { name: 'Previous new photo' });
       const next = screen.getByRole('button', { name: forward });
       // The nearest row holding Previous also holds the forward button, and Previous comes first.
@@ -340,7 +340,7 @@ describe('GUX-R8 Previous left and Done right, on one row', () => {
         sameRow: !!row && row.findAll((x: Inst) => x === next).length === 1,
         previousFirst: order.indexOf(prev) < order.indexOf(next),
       }).toEqual({ forward, sameRow: true, previousFirst: true });
-      if (forward === 'Next') {
+      if (forward === 'Next new photo') {
         fireEvent.press(next);
         await screen.findByText('Three');
       }

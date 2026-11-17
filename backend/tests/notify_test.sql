@@ -289,6 +289,8 @@ select tests.ok_sql($$select tests.claim('2026-11-14 20:00 America/New_York') = 
 delete from public.notification_prefs;
 delete from public.push_tokens where user_id = :gma_riv;
 select tests.mkpost(:alex, :c_a_gp, 1, 'z3');
+-- T19: pin the queue time so the claim clock below is never earlier than the notice (was a time bomb after Nov 16).
+select tests.queued_at('2026-11-16 17:00 America/New_York');
 select tests.setv('n', $$select tests.claim('2026-11-16 18:30 America/New_York')$$);
 select tests.ok_sql(format($$select tests.v('n')::int >= 1
                              and (select channel = 'email' from tests.batches where recipient_id = %L)$$, :gma_riv),

@@ -198,6 +198,7 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
         refreshControl={refresh}
         contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 }}
         keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets // UX-R1: on iPhone the comment field scrolls up above the keyboard
         removeClippedSubviews={false}
       />
     </SafeAreaView>
