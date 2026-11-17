@@ -132,11 +132,24 @@ Review round 3 (ux-reviewer, Nov 17). Tests (written first, red): `app/src/scree
 | RD-72 | UX-R29 (P2): "Delete post" and the alert's "Delete" are #FF453A (iOS systemRed, dark) in dark mode; in light, #D70015 or the palette red, at 4.5:1 or better on the sheet. | auto |
 | RD-73 | UX-R30 (P2): a month or group with exactly 2 photos shows two squares side by side: no wide photo and no lone square. One photo alone in a month stays wide. | auto (jest unit) |
 
+### 1g. Easy view (Chase, Nov 17, DEC-66)
+Chase: words under the tab icons are off by default, behind one setting, "Easy view", that bundles the grandparent comforts; on for invited grandparents (viewer), off for parents (owner, adult). Easy view replaces Bigger text. Tests (written first, red): `app/src/state/__tests__/easyView.test.ts`, `app/src/screens/__tests__/easyView.test.tsx`, `app/e2e-web/demo.spec.js` (RD-80). Supersedes: RD-9's "each with an icon and its word" (now only with Easy view on), RD-15's "Bigger text" row, DS-5 for Easy view off, RD-65's and RD-29's "Bigger text" wording.
+| ID | Given / When / Then | Type |
+|---|---|---|
+| RD-74 | Given no saved choices on this phone, when a viewer signs in, then Easy view is On; when an owner or adult signs in, then it is Off. `Prefs.easyView` replaces `Prefs.bigText`; nothing reads `bigText` after loading. | auto (jest unit) |
+| RD-75 | Given saved choices from before (`hearth.prefs.v1.<user>` with `bigText` and no `easyView`), when they load, then Easy view equals the saved `bigText` (true or false), for any role. When choices are next saved, they hold `easyView` and no `bigText`. Unreadable or missing values fall back to RD-74's role default. | auto (jest unit) |
+| RD-76 | Given Easy view Off, then the tab bar shows icons only, no visible words. Each tab keeps its spoken name ("Gallery", "Share", "Feed", "More"; "More, new message" with the dot, RD-14), the tab role and the selected state; each target is 48 pt+ (DS-1). Text uses the default sizes (names 17 pt, RD-65). | auto |
+| RD-77 | Given Easy view On, then every tab shows its icon with its word under it, 17 pt+ (DS-2), never hidden or shown only when picked (DS-5); text uses today's Bigger text sizes (names 21 pt, RD-65). At the largest text the words don't clip and the tab bar never covers content (LIVE-1 class). | auto (jest + Playwright 360) |
+| RD-78 | More's "Bigger text" row becomes "Easy view", in the same place in RD-15's order, showing "On" or "Off" in words at its right end (spoken "Easy view, On"). Tapping it opens a page titled "Easy view" with one line, "Bigger words, and a word under each button at the bottom of the screen.", and two rows, "On" and "Off", with a check on the current one (like Light or dark), 48 pt+. Picking one changes the tabs and text at once, no restart, and saves it for this person on this phone. The Back word returns to More. | auto |
+| RD-79 | Easy view changes only the tab words and the text size. Every other button keeps its word or spoken name as today (DS-3; RD-50's "⋯" stays as it is), and no action is gesture-only, On or Off. | auto |
+| RD-80 | In the public demo, as Chase, Easy view is Off (icon-only tabs). "See it as Grandma Jo" shows words under the tabs and bigger text; switching back to Chase restores Off. Each person's pick is kept separately in the browser. | auto (jest + Playwright) |
+| RD-81 | On Chase's iPhone (Expo Go) and one Android: Easy view On at the largest text, the viewer's three tab words fit with no clipping; Easy view Off, VoiceOver and TalkBack read each tab's name. | manual |
+
 ### Phase 1 gate (manual)
 | ID | Given / When / Then | Type |
 |---|---|---|
 | RD-28 | On Chase's iPhone (Expo Go) and one Android: light, dark, largest text. The greeting collapses, every word fits, no overlap with the tab bar (LIVE-1 class). | manual |
-| RD-29 | Grandparent test on the new look (GOALS): "Open the new photos", "Find a photo from October", "Send Mom a message", "Make the words bigger", "Go back to the start"; each under 60 s with no help, 4 of 5 testers. | manual |
+| RD-29 | Grandparent test on the new look (GOALS): "Open the new photos", "Find a photo from October", "Send Mom a message", "Turn Easy view off, then on again", "Go back to the start"; each under 60 s with no help, 4 of 5 testers. | manual |
 
 ## Phase 2: the family's color is set once for everyone (after the beta)
 Needs: architect (schema), privacy-security (low risk: a color word, no personal data), a migration Chase deploys, the `docs/architecture/` data section (rule 6), API contract test first.
@@ -151,6 +164,7 @@ Needs: architect (schema), privacy-security (low risk: a color word, no personal
 - Quieter Feed post (mockup's P-3: one "Shared with" line, "Reply to Alex" word button): after phase 1 lands and only if time remains before Nov 22; otherwise after the beta.
 - More than three accents (mockup had six): Apple blue loses Hearth's look; Teal and Amber add choice without need.
 - A per-person color: Chase moved it to the admin.
+- More comforts inside Easy view (simpler Feed, fewer rows in More): not before the beta; Easy view ships as tab words plus bigger text (DEC-66).
 - Tailwind or any new UI library.
 - Per-family email theming.
 

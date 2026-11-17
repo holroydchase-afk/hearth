@@ -472,5 +472,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** Chase: "their monthly timeline looks much better", "the search and filters are in an odd place", "our fonts are very heavy". Every reaction and photo stays in sight with one tap (grandparents); a box that says Search is easy to explain over the phone.
 - **Source:** `app/src/screens/__tests__/photosStyle.test.tsx`, `app/src/ui/__tests__/relativeTime.test.ts`, `app/e2e-web/demo.spec.js`; persona check `decisions/2026-11-17-photos-style.md`
 
+### DEC-66 · Easy view: words under tabs and bigger text, on for grandparents, off for parents (RD-74..RD-81)
+- **When / status:** Nov 17 · Chase: "labels under tab icons should be off by default" behind a profile setting, "Easy view"; then "On for grandparents, off for parents" · Specced, failing tests next
+- **Chose:** one More setting, "Easy view" (On/Off in words), that replaces Bigger text and bundles words under the tab icons with the bigger text sizes. Default On for viewers (invited grandparents), Off for owners and adults. A saved Bigger text choice carries over. Parents see icon-only tabs that still speak their names and stay 48 pt.
+- **Over:** words under every tab for everyone (rule 3, DS-5 as written); a separate "Tab words" switch next to Bigger text; Off for everyone with grandparents told to turn it on.
+- **Because:** parents want the cleaner look of the apps they use; grandparents keep every word with nothing to set. One switch is one sentence over the phone.
+- **Source:** `docs/product/SPEC-REDESIGN.md` 1g; persona check `decisions/2026-11-17-easy-view.md`
+
 ---
-Last updated: Nov 17, 2026 (DEC-65)
+Last updated: Nov 17, 2026 (DEC-66)

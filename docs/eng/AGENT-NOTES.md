@@ -35,7 +35,7 @@ It copies the studio version and appends "Every agent" plus the agent's own sect
 - **Ticket IDs:** `BETA-…`, `B#`, `E#`, `S#`, `T#`, plus spec IDs (`HELP-*`, `MOMENT-*`, …).
 - **Media budget:** resize on the device to 2048 px (about 350 KB) with a 40 KB thumbnail. Cap video at 60 s and 720p. Prefetch the next items, and use optimistic UI.
 - **Floor:** the smallest screen is 360 × 640 with large text on. Know the Expo SDK's minimum Android and iOS versions. Builds are only ready once a phone opened them or `scripts/check-expo-go.sh` passes (`docs/eng/LESSONS.md`).
-- **Grandparent-first UI:** one main action per screen, a verb on every button, labels under icons, text 17 pt or larger that respects Dynamic Type and Android font scale, tap targets of 48 pt or more, no gesture-only actions. Hand anything a relative sees to `grandparent-ux`.
+- **Grandparent-first UI:** one main action per screen, a verb on every button, labels under icons (tab words only with Easy view on: default on for viewers, off for parents, DEC-66), text 17 pt or larger that respects Dynamic Type and Android font scale, tap targets of 48 pt or more, no gesture-only actions. Hand anything a relative sees to `grandparent-ux`.
 - Privacy invariants are `CLAUDE.md` rule 2: never bypass RLS, never log keys, URLs or captions, strip EXIF and GPS on the device, no media or metadata to AI or analytics, no third-party trackers.
 
 ## privacy-security
