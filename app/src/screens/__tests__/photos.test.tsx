@@ -42,7 +42,7 @@ describe('Photos screen', () => {
     const { id } = await seedPost(be, { caption: 'Pumpkins', circles: [dadSide.id] });
     await be.clientFor(FIXTURE.users.jo.id).markSeen(id);
     await renderApp(<PhotosScreen />, { be, user: 'chase' });
-    expect(await screen.findByText(/to Grandparents – Dad's side/)).toBeTruthy(); // MOMENT-1: on the card
+    await screen.findByTestId(`who-${id}`); // RD-58 (UX-R15): the group's name moved from the card into Post options
     fireEvent.press(screen.getByRole('button', { name: 'Post options' }));
     expect(await screen.findByText("Shared with Grandparents – Dad's side · 3 people")).toBeTruthy();
     expect(screen.queryByText(/Seen by/)).toBeNull();

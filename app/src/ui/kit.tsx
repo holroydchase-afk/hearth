@@ -180,7 +180,7 @@ export function MenuRow({ text, icon, count, onPress, testID }: { text: string; 
       onPress={onPress}
       testID={testID}
       android_ripple={{ color: c.line }}
-      style={({ pressed }) => [styles.menuRow, { borderBottomColor: c.line, opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
+      style={({ pressed }) => [styles.menuRow, { opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
     >
       <SystemIcon icon={icon} color={c.ink} size={26} />
       <Text style={{ flex: 1, color: c.ink, fontSize: t.base, lineHeight: t.line }}>{text}</Text>
@@ -190,6 +190,13 @@ export function MenuRow({ text, icon, count, onPress, testID }: { text: string; 
   );
 }
 const CHEVRON: Icon = { sf: 'chevron.forward', md: 'chevron_right' };
+
+/** RD-60 (R17): the line between two MenuRows, inset to start where the words start (after the 26 pt icon and its
+ *  14 pt gap), like the phone's own Settings lists. Never full width. */
+export function MenuLine() {
+  const { c } = useTheme();
+  return <View style={{ height: StyleSheet.hairlineWidth, marginLeft: 40, backgroundColor: c.line }} />;
+}
 
 /** A whole-row checkbox / radio / switch: the full row is the 48 pt+ target. GUX-R2 / GUX-R9 (Nov 16): a plain grouped
  *  row (no box of its own, no tinted fill), like the phone's own settings. A picked radio shows an accent check
@@ -362,7 +369,7 @@ const styles = StyleSheet.create({
   sheetScrim: { flex: 1, justifyContent: 'flex-end' },
   menu: { padding: 20, paddingTop: 8, gap: 14 },
   grabber: { alignSelf: 'center', width: 36, height: 5, borderRadius: RADIUS.pill, opacity: 0.5 },
-  menuRow: { minHeight: MIN_TARGET + 12, minWidth: MIN_TARGET, alignSelf: 'stretch', flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth },
+  menuRow: { minHeight: MIN_TARGET + 12, minWidth: MIN_TARGET, alignSelf: 'stretch', flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 10 },
   iconBtn: { flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: MIN_TARGET + 12, minWidth: MIN_TARGET + 12, paddingHorizontal: 6, gap: 2 },
   capsule: { alignSelf: 'flex-start' },
   back: { alignSelf: 'flex-start', minHeight: MIN_TARGET, minWidth: MIN_TARGET, flexDirection: 'row', alignItems: 'center', gap: 4, marginLeft: -6, marginBottom: -8 },

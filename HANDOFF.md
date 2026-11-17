@@ -3,13 +3,19 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: round 2 (RD-44..55) built Nov 17, qa-tdd 3x next; push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
+now: review round 2 fixes (UX-R13..R23, RD-56..66) built Nov 17, qa-tdd 3x next; push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
 next: redesign R46 1a..1c, polish GUX-R1..R10, RD-34 plain background, DEC-60 names, DEC-61 no demo steps built; qa-tdd 3x, then grandparent-ux recheck; stop date Nov 19
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 17: review round 2 fixes built (UX-R13..R23, RD-56..66; branch claude/project-thread-iyml94, local commit)
+- **Engineer, green (jest 1249 x3, typecheck, e2e:demo 19, e2e:web 5, e2e:site 14):** Gallery has one wide photo per month, quiet days join into ranges ("Nov 2–8"), and no square sits alone (`feed/gallery.ts` `mosaicRows`). The group date shows once above each group. The search field is now the scroll's sticky header (index 1), and month titles stick under it with an Animated translate (`GalleryGrid.tsx`; on the web, places are re-read via offsetTop because onLayout misses moves). Post options use plain rows with red "Delete post" text, and the confirm still asks. The card has one who-can-see line, with no "Sent to" and no reader line on your own post. There's no Comments heading; one rounded field holds Post inside. More uses outline icons and inset `MenuLine`. Share's sections are plain blocks on one 16 pt edge. Small tiles show a spinner spoken "Loading". The first emoji sits on the 16 pt edge. Names follow Bigger text. Month titles are h2.
+- **Test edits for qa-tdd to confirm:** moments MOMENT-1, photos BETA-AUD-1 and e2e core-loop still expected the card's "Sent to" line. RD-58 removes it, so they now check the names line and the group name in Post options. T20: familyColor RD-24/25 now uses 4 s waits plus a waitFor on the reopened color (a wait fix only).
+- **Not on a phone yet:** the sticky month (custom Animated) and the sticky search (native stickyHeaderIndices) need an iPhone and Android look (RD-28). A month with exactly 2 photos still shows one square alone, because the wide photo plus one square leaves no other option.
+- **Shots:** `/mnt/project-files/design/2026-11-17-r3-*.png`. **Next exact step:** qa-tdd all suites 3x, then ux-reviewer and grandparent-ux on the r3 shots. Not pushed.
 
 ## Nov 17: round 2 built, Apple Photos months, Search photos field, Instagram-style posts (RD-44..55, DEC-65; branch claude/project-thread-iyml94, local commit)
 - **Engineer, green:** Gallery = 34 pt Semibold greeting, a "Search photos" field (a 48 pt button that opens Search; pins under the bar on scroll), New for you, then months: month 24 pt Semibold, day groups with a wide 3:2 opener (most-loved, else newest) and the day number on a radial fade, squares 3 across, 16 pt corners, 8 pt gaps, 16 pt margins (pure layout `feed/gallery.ts`, tests `feed/__tests__/gallery.test.ts`). Top bar has no buttons; By date opens only from Feed's Older photos ("Back to Feed"). Posts: face + name (Medium), "⋯" Post options (Edit description, Delete post for own), mosaic max 4 with a solid "+N" chip (`collageTiles`), 4 emoji each with its count (value read out), "<name> <words>", `relativeTime`, who line, comments; no lines, 32 pt apart; Feed list has no side padding (card owns its 16 pt edge). No Bold: `WEIGHT` is regular/medium/semibold; `RADIUS.photo` 16; tokens.json regenerated.

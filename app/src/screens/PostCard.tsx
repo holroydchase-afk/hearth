@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 import React, { memo, useEffect, useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { REACTIONS, type FeedPost, type Reaction } from '../api/HearthApi';
 import type { CommentView } from '../feed/store';
@@ -47,8 +47,6 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   const counts = post.reaction_counts ?? (post.heart_count ? { '❤️': post.heart_count } : {});
   const many = ready.length > 1;
   const these = many ? `these ${ready.length} photos` : 'this photo';
-  // MOMENT-1: the sender sees which groups it went to, by name (RD-48: under the who-can-see line, not by the name).
-  const to = mine && post.audience?.length ? `Sent to ${andList(post.audience.map((a) => a.name))}` : null;
   // WHO-6 / GUX-R6 (Chase, Nov 16, DEC-60): one line names who can see it, people only, never the group's name.
   const viewers = post.viewers?.length ? post.viewers : null;
   const [whoOpen, setWhoOpen] = useState(false);
@@ -95,7 +93,7 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
               accessibilityState={{ selected: on }}
               accessibilityValue={n ? { text: String(n) } : undefined}
               onPress={() => { haptic('tap'); void feed?.react(post.post_id, e); }}
-              style={({ pressed }) => [styles.react, { backgroundColor: on ? c.accentSoft : 'transparent', opacity: pressed ? 0.7 : 1 }]}
+              style={({ pressed }) => [styles.react, e === REACTIONS[0] ? styles.firstReact : null, { backgroundColor: on ? c.accentSoft : 'transparent', opacity: pressed ? 0.7 : 1 }]}
             >
               <Text style={styles.emoji}>{e}</Text>
               {n ? <Text style={[styles.count, { color: c.ink, fontSize: t.base }]}>{String(n)}</Text> : null}
@@ -110,11 +108,10 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
         <Txt variant="muted" testID={`when-${post.post_id}`}>{when}</Txt>
         {/* WHO-6 / DEC-60: the quiet privacy line stays on every post. */}
         {viewers ? <WhoLine post={post} viewers={viewers} me={session?.userId} onPress={() => setWhoOpen(true)} /> : null}
-        {to ? <Txt variant="muted" testID={`to-${post.post_id}`}>{to}</Txt> : null}
       </View>
       <View style={styles.newest}>
-        {/* UX-R5/R6 (Chase, Nov 17, DEC-63): a standard comment area on every post, under a visible "Comments" label. */}
-        <Txt variant="strong" role="header">Comments</Txt>
+        {/* UX-R5 (DEC-63), RD-59 (UX-R16): a standard comment area on every post, with no heading: the field's own
+            words and spoken label say what it is. */}
         {newest ? <CommentList post={post} list={[newest]} /> : null}
         {nComments > 1 ? (
           <Button label={`See all ${nComments} comments`} variant="quiet" style={styles.seeAll} onPress={() => setSheet('comments')} />
@@ -238,14 +235,28 @@ function MoreMenu({ visible, post, mine, onDelete, onChangeWords, onClose }: {
           <Txt variant="title" role="header">Who can see this</Txt>
           <Txt style={{ color: post.audience ? c.ink : c.safe }}>{audience}</Txt>
           {mine ? (
-            <>
-              {/* RD-50 (DEC-65): the standard words, "Edit description" and "Delete post" (which asks first). */}
-              <Button label="Edit description" variant="secondary" onPress={onChangeWords} />
-              <Button label="Delete post" variant="danger" onPress={onDelete} />
-            </>
+            <View>
+              {/* RD-50 (DEC-65): the standard words, "Edit description" and "Delete post" (which asks first). RD-57
+                  (UX-R14): plain rows like the phone's own menus; Delete post is red words, never a red pill. */}
+              <SheetRow label="Edit description" icon={{ sf: 'pencil', md: 'edit' }} color={c.ink} onPress={onChangeWords} />
+              <View style={[styles.rowLine, { backgroundColor: c.line }]} />
+              <SheetRow label="Delete post" icon={{ sf: 'trash', md: 'delete' }} color={c.danger} onPress={onDelete} />
+            </View>
           ) : null}
           <Button label="Close this menu" text="Close" variant="secondary" onPress={onClose} />
     </BottomSheet>
+  );
+}
+
+/** RD-57: one plain menu row: an outline icon, then the words at the left, 48 pt+ tall, on the sheet's own color. */
+function SheetRow({ label, icon, color, onPress }: { label: string; icon: { sf: string; md: string }; color: string; onPress: () => void }) {
+  const { t } = useTheme();
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
+      style={({ pressed }) => [styles.sheetRow, { opacity: pressed ? 0.6 : 1 }]}>
+      <SystemIcon icon={icon} color={color} />
+      <Text style={{ flex: 1, color, fontSize: t.base, lineHeight: t.line }}>{label}</Text>
+    </Pressable>
   );
 }
 
@@ -340,15 +351,16 @@ function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
   // BETA-REPLY-6 + grandparent-ux: name who can read it; never a vague "everyone", never group names.
   // AUD-8/9/10: the server says who will read my reply on this post.
   const scope = post.reply_scope ?? 'everyone';
+  // RD-58 (UX-R15): on my own post the names line already says who can see it, so no second line here.
   const readers = mine
-    ? 'The family you shared this photo with can read this.'
+    ? null
     : same ? 'Your comment goes to the same people.'
     : names ? `${readerNames(names)} will read this.`
     : scope === 'parents' ? "Only the kids' parents can read this."
     : scope === 'group' ? "The kids' parents and your part of the family can read this."
     : `${post.author_name} and the family ${post.author_name} shared this photo with can read this.`;
   const sentWords = mine
-    ? 'Sent. The family you shared this photo with can read it.'
+    ? 'Sent.'
     : names ? `Sent. ${readerNames(names)} will read it.`
     : scope === 'parents' ? "Sent. Only the kids' parents can read it."
     : scope === 'group' ? "Sent. The kids' parents and your part of the family can read it."
@@ -362,13 +374,13 @@ function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
     if (after.some((x) => x.status === 'sent' && x.author_id === session.userId)) setSent(true);
   };
 
-  // iPhone: a rounded field like a grouped-list cell. Android: Material's outlined field (as kit Field).
-  const box = os === 'android'
-    ? { borderWidth: 1, borderColor: c.muted, borderRadius: 4 }
-    : { borderWidth: 1, borderColor: c.line, backgroundColor: c.surface, borderRadius: RADIUS.medium };
+  // RD-59 (UX-R16): one rounded field, like Instagram's and Messages': a quiet fill (an edge on Android), the words,
+  // and Post inside it at the right end once there are words. The text input itself draws no second box.
+  const box = os === 'android' ? { borderWidth: 1, borderColor: c.muted } : { backgroundColor: c.fill };
+  const words = sent ? sentWords : readers;
   return (
     <View style={{ gap: 6 }}>
-      <View testID={`reply-${post.post_id}`} style={styles.replyRow}>
+      <View testID={`reply-${post.post_id}`} style={[styles.replyRow, box]}>
         <TextInput
           accessibilityLabel={spoken}
           placeholder="Add a comment…"
@@ -378,14 +390,16 @@ function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
           value={draft}
           onChangeText={(v) => { setSent(false); feed?.setDraft(post.post_id, v); }}
           multiline
+          // The web's textarea starts two rows tall; one row, like the phone, until the words wrap.
+          {...(Platform.OS === 'web' ? { rows: 1 } : {})}
           maxLength={500}
-          style={[{ flex: 1, minHeight: MIN_TARGET, color: c.ink, paddingHorizontal: 14, paddingVertical: 12, fontSize: t.base }, box]}
+          style={{ flex: 1, minHeight: MIN_TARGET, color: c.ink, paddingLeft: SPACE.lg, paddingRight: SPACE.sm, paddingVertical: 12, fontSize: t.base, borderWidth: 0 }}
         />
-        {/* UX-R6: Post is a text button, grey and off while empty, accent once there are words. */}
-        <Button variant="quiet" label="Post" onPress={() => void send()} disabled={!draft.trim()} />
+        {/* UX-R6 / RD-59: Post is a text button inside the field, grey and off while empty, accent once there are words. */}
+        <Button variant="quiet" label="Post" onPress={() => void send()} disabled={!draft.trim()} style={styles.post} />
       </View>
       {/* BETA-REPLY-6: say who can read it, matching the server (everyone the post was shared with). */}
-      <Txt variant="muted">{sent ? sentWords : readers}</Txt>
+      {words ? <Txt variant="muted">{words}</Txt> : null}
     </View>
   );
 }
@@ -423,12 +437,15 @@ const styles = StyleSheet.create({
   // RD-48: a round 36 pt face; GUX-R1: two letters stop growing past 1.3x so they never clip.
   avatar: { width: 36, height: 36, borderRadius: 18, marginTop: 6, alignItems: 'center', justifyContent: 'center' },
   nameBox: { flex: 1, minWidth: 0, minHeight: MIN_TARGET, justifyContent: 'center' },
-  name: { fontSize: 17, fontWeight: WEIGHT.medium },
+  // RD-65 (R22): the name is body size, so it grows with Bigger text like the words around it.
+  name: { fontWeight: WEIGHT.medium },
   more: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, alignItems: 'center', justifyContent: 'center' },
   inset: { paddingHorizontal: SPACE.lg },
   caption: { gap: SPACE.xs },
   fold: { alignSelf: 'flex-start', paddingHorizontal: 0 },
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.xs, paddingHorizontal: SPACE.lg },
+  // RD-64 (R21): the first emoji's glyph sits on the 16 pt edge; its tap area and highlight reach 8 pt past it.
+  firstReact: { marginLeft: -SPACE.sm },
   react: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingHorizontal: SPACE.sm, borderRadius: RADIUS.pill },
   count: { fontVariant: ['tabular-nums'] },
   words: { gap: SPACE.xs, paddingHorizontal: SPACE.lg },
@@ -441,6 +458,9 @@ const styles = StyleSheet.create({
   person: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, borderRadius: RADIUS.pill, paddingLeft: SPACE.xs, paddingRight: SPACE.md, minHeight: MIN_TARGET },
   newest: { paddingTop: SPACE.sm, paddingHorizontal: SPACE.lg, gap: SPACE.sm },
   seeAll: { alignSelf: 'flex-start', paddingHorizontal: 0 },
-  replyRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
+  replyRow: { flexDirection: 'row', alignItems: 'flex-end', minHeight: MIN_TARGET, borderRadius: RADIUS.pill, paddingRight: SPACE.xs, overflow: 'hidden' },
+  post: { paddingHorizontal: SPACE.md },
+  sheetRow: { minHeight: MIN_TARGET, alignSelf: 'stretch', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: SPACE.md, paddingVertical: SPACE.sm },
+  rowLine: { height: StyleSheet.hairlineWidth, marginLeft: 34 },
   sheetHead: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingTop: 12 },
 });

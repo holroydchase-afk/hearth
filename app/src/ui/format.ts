@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+export const SHORT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 /** "Sun, Oct 11" in the phone's local time. No Intl dependency (old Android/Hermes builds). */
 export function shortDate(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
-  return `${DAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}`;
+  return `${DAYS[d.getDay()]}, ${SHORT_MONTHS[d.getMonth()]} ${d.getDate()}`;
 }
 
 export const people = (n: number) => `${n} ${n === 1 ? 'person' : 'people'}`;
@@ -45,7 +45,7 @@ export function relativeTime(iso: string, now: Date): string {
   const days = Math.round((midnight(now) - midnight(d)) / (24 * 3600e3)); // round: a DST day is 23 or 25 hours
   if (days <= 1) return 'Yesterday';
   if (days <= 6) return `${days} days ago`;
-  const md = `${MONTHS[d.getMonth()]} ${d.getDate()}`;
+  const md = `${SHORT_MONTHS[d.getMonth()]} ${d.getDate()}`;
   return d.getFullYear() === now.getFullYear() ? md : `${md}, ${d.getFullYear()}`;
 }
 

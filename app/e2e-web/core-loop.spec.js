@@ -54,7 +54,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await page.getByRole('button', { name: 'Post', exact: true }).click();
   await onFeed(page);
   await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
-  await expect(page.getByText(/to Grandparents – Dad's side/)).toBeVisible(); // MOMENT-1: on the card
+  await expect(page.getByText(/can see this\.$/).first()).toBeVisible(); // RD-58 (UX-R15): one who-can-see line; the group's name is in Post options
   await page.getByRole('button', { name: 'Post options' }).click(); // MOMENT-6: the full words are under More
   await expect(page.getByText("Shared with Grandparents – Dad's side · 2 people")).toBeVisible();
   await page.getByRole('button', { name: 'Close this menu' }).click();

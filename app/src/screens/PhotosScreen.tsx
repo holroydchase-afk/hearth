@@ -77,14 +77,14 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   const familyName = useFamilyName(gallery);
   const scrollY = useRef(new Animated.Value(0)).current;
   const [folded, setFolded] = useState(false);
-  // RD-47: the "Search photos" field pins under the bar once it scrolls up to it (its top, once laid out).
-  const fieldTop = useRef(FOLD_AT);
-  const [pinned, setPinned] = useState(false);
+  // RD-47: the "Search photos" field is the scroll's sticky header, so it pins under the bar; RD-61 (R18): each
+  // month's title then sticks right under it (pinAt: the field's height with its 8 pt below).
+  const [pinAt, setPinAt] = useState(0);
+  const [relayout, setRelayout] = useState(0);
   const onScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
     scrollY.setValue(y);
     setFolded(y > FOLD_AT);
-    setPinned(y > fieldTop.current);
   }, [scrollY]);
   if (app.status !== 'ready' || !app.space || !app.feed) return <AppGate />;
   const feed = app.feed;
@@ -176,33 +176,27 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
     return (
       <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
         <GalleryTopBar words={words} folded={folded} />
-        <View style={{ flex: 1 }}>
-          {/* RD-47: once scrolled, the field sits pinned under the bar (drawn first, so it is the one a screen
-              reader and the keyboard reach first; the copy in the list has scrolled away). */}
-          {pinned ? (
-            <View style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 1, paddingHorizontal: 16, paddingBottom: 8, backgroundColor: c.bg }}>
-              <SearchField testID="search-field-pinned" onPress={() => setSearch(true)} />
-            </View>
-          ) : null}
-          <ScrollView
-            testID="gallery-scroll"
-            onScroll={onScroll}
-            scrollEventThrottle={16}
-            refreshControl={refresh}
-            contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 }}
-            keyboardShouldPersistTaps="handled"
-          >
-            {/* RD-11 / RD-55: the greeting is the large title; RD-47: the "Search photos" field right under it. */}
-            {words ? <LargeGreeting words={words} scrollY={scrollY} /> : null}
-            <View onLayout={(e) => { fieldTop.current = Math.max(FOLD_AT, e.nativeEvent.layout.y); }}>
-              <SearchField testID="search-field" onPress={() => setSearch(true)} />
-            </View>
-            {header}
+        <ScrollView
+          testID="gallery-scroll"
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          refreshControl={refresh}
+          // RD-47: child 1 (the field) is sticky. Children 0 and 1 are never null, so the index holds.
+          stickyHeaderIndices={[1]}
+          onContentSizeChange={() => setRelayout((n) => n + 1)}
+          contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* RD-11 / RD-55: the greeting is the large title; RD-47: the "Search photos" field right under it. */}
+          <View style={words ? null : { marginBottom: -16 }}>{words ? <LargeGreeting words={words} scrollY={scrollY} /> : null}</View>
+          <View style={{ backgroundColor: c.bg, paddingBottom: 8, marginBottom: -8 }} onLayout={(e) => setPinAt(e.nativeEvent.layout.height)}>
+            <SearchField testID="search-field" onPress={() => setSearch(true)} />
+          </View>
+          {header}
           {empty}
-          {state.posts.length ? <GalleryGrid posts={state.posts} /> : null}
-            {older}
-          </ScrollView>
-        </View>
+          {state.posts.length ? <GalleryGrid posts={state.posts} scrollY={scrollY} pinAt={pinAt} relayout={relayout} /> : null}
+          {older}
+        </ScrollView>
       </SafeAreaView>
     );
   }

@@ -30,8 +30,11 @@ describe('MOMENT: one compact card per upload', () => {
     await renderApp(<PhotosScreen />, { be, user: 'chase' });
     const card = await screen.findByTestId(`post-${id}`);
     expect(within(within(card).getByTestId(`card-head-${id}`)).getByText('Chase')).toBeTruthy(); // RD-48: the description repeats the name
-    expect(within(card).getByText(/to Grandparents – Dad's side/)).toBeTruthy();
+    // RD-58 (UX-R15): the card says who can see it once (the names line); the group's name is in Post options.
+    expect(await within(card).findByTestId(`who-${id}`)).toBeTruthy();
     expect(within(card).getByText('At the lake')).toBeTruthy();
+    fireEvent.press(within(card).getByRole('button', { name: 'Post options' }));
+    expect(within(await screen.findByTestId(`more-${id}`)).getByText(/Grandparents – Dad's side/)).toBeTruthy();
   });
 
   it('MOMENT-2 collage shapes: 1 photo alone, 2 side by side, 3 = one big and two, 4+ = one big and three with "+N"', () => {

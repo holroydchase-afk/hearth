@@ -73,7 +73,7 @@ export function PhotoCollage({ postId, media, from }: { postId: string; media: C
         onPress={() => nav.openViewer(pid, at)}
         style={[styles.tile, { backgroundColor: c.photo }, style]}
       >
-        <MediaImage postId={pid} mediaId={m.media_id} fit="cover" full={m.kind !== 'video'} style={{ flex: 1 }} />
+        <MediaImage postId={pid} mediaId={m.media_id} fit="cover" full={m.kind !== 'video'} compact={i >= big} style={{ flex: 1 }} />
         {extra ? (
           <View style={styles.more} pointerEvents="none">
             <Text style={styles.moreText}>{`+${extra}`}</Text>

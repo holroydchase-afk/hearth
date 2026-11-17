@@ -27,9 +27,11 @@ function Probe() {
 }
 const probe = () => screen.getByTestId('probe').props.children as string;
 const saved = (kv: ReturnType<typeof memoryKV>, user: keyof typeof FIXTURE.users) => kv.getItem(`hearth.prefs.v1.${FIXTURE.users[user].id}`);
+// T20 / QA-R1: under a loaded full run the app's first load can pass the 1 s default; wait like the other screen tests.
+const slow = { timeout: 4000 };
 /** More → Family color (RD-15). */
 async function openFamilyColor() {
-  fireEvent.press(await screen.findByRole('button', { name: 'Family color' }));
+  fireEvent.press(await screen.findByRole('button', { name: 'Family color' }, slow));
 }
 const backgrounds = (node: ReturnType<typeof screen.getByRole>) =>
   (node.findAll((n) => typeof n.type === 'string') as typeof node[]).map((n) => StyleSheet.flatten(n.props.style)?.backgroundColor);
@@ -55,17 +57,17 @@ describe('RD Family color', () => {
     const kv = memoryKV();
     const first = await renderApp(<><MoreScreen /><Probe /></>, { user: 'chase', kv });
     await openFamilyColor();
-    await screen.findByRole('radio', { name: 'Forest' });
+    await screen.findByRole('radio', { name: 'Forest' }, slow);
     expect(probe()).toBe(EMBER);
     fireEvent.press(screen.getByRole('radio', { name: 'Forest' }));
-    await waitFor(() => expect(probe()).toBe(FOREST.light));
+    await waitFor(() => expect(probe()).toBe(FOREST.light), slow);
     expect(screen.getByRole('radio', { name: 'Forest' }).props.accessibilityState).toMatchObject({ checked: true });
-    await waitFor(async () => expect(JSON.parse((await saved(kv, 'chase'))!)).toMatchObject({ color: 'forest' }));
+    await waitFor(async () => expect(JSON.parse((await saved(kv, 'chase'))!)).toMatchObject({ color: 'forest' }), slow);
     first.unmount();
     await renderApp(<><MoreScreen /><Probe /></>, { user: 'chase', kv });
     await openFamilyColor();
-    await screen.findByRole('radio', { name: 'Forest' });
-    expect(probe()).toBe(FOREST.light);
+    await screen.findByRole('radio', { name: 'Forest' }, slow);
+    await waitFor(() => expect(probe()).toBe(FOREST.light), slow);
   });
 
   it('RD-25 an old Sage on the owner\'s phone becomes Forest; an unknown value falls back to Ember', async () => {
