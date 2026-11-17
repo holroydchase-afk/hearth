@@ -1,0 +1,31 @@
+Review round 6 gate (UX-R39, UX-R40), 2026-11-17, branch claude/project-thread-iyml94 at 4da4c66. 3 runs of every suite; backend as the postgres OS user.
+Fix commit 4da4c66 touches no test files; reviewRound6.test.tsx (11c3982) asserts exact values (16/-16/48; 22/13 at 17 pt, 28/10 at 21 pt; centered within 1 pt). Stale serve-dist.js on :8090 stopped before the runs; no reuse config.
+
+== run 1
+jest: rc=0 Tests:       1 skipped, 1 todo, 1288 passed, 1290 total
+typecheck: rc=0
+e2e_demo: rc=0  5 skipped 20 passed (54.7s) 
+e2e_web: rc=0  11 skipped 5 passed (29.8s) 
+e2e_site: rc=0  14 passed (26.3s) 
+backend: rc=0 psql:../packages/messenger/relay/test.sql:123: NOTICE:  RELAY RESULT: 24 passed, 0 failed
+agents.verify: rc=0 AGENT RUNS RESULT: 20 passed, 0 failed
+== run 2
+jest: rc=0 Tests:       1 skipped, 1 todo, 1288 passed, 1290 total
+typecheck: rc=0
+e2e_demo: rc=0  5 skipped 20 passed (55.9s) 
+e2e_web: rc=0  11 skipped 5 passed (30.3s) 
+e2e_site: rc=0  14 passed (19.8s) 
+backend: rc=0 psql:../packages/messenger/relay/test.sql:123: NOTICE:  RELAY RESULT: 24 passed, 0 failed
+agents.verify: rc=0 AGENT RUNS RESULT: 20 passed, 0 failed
+== run 3
+jest: rc=0 Tests:       1 skipped, 1 todo, 1288 passed, 1290 total
+typecheck: rc=0
+e2e_demo: rc=0  5 skipped 20 passed (56.4s) 
+e2e_web: rc=0  11 skipped 5 passed (32.5s) 
+e2e_site: rc=0  14 passed (20.3s) 
+backend: rc=0 psql:../packages/messenger/relay/test.sql:123: NOTICE:  RELAY RESULT: 24 passed, 0 failed
+agents.verify: rc=0 AGENT RUNS RESULT: 20 passed, 0 failed
+DONE
+backend run 1: 29 suite RESULT lines 0 failed, plus QA-3's expected fixture line 'sent 12, received 11, lost 1'; 0 'not ok'
+backend run 2: 29 suite RESULT lines 0 failed, plus QA-3's expected fixture line 'sent 12, received 11, lost 1'; 0 'not ok'
+backend run 3: 29 suite RESULT lines 0 failed, plus QA-3's expected fixture line 'sent 12, received 11, lost 1'; 0 'not ok'
