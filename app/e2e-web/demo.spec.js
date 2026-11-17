@@ -442,3 +442,78 @@ test('UX-R27 every "can see this." line on Feed is one line at 390 px', async ({
   }));
   expect(got.filter((l) => l.lines > 1)).toEqual([]);
 });
+
+// RD-77 / RD-80 (SPEC-REDESIGN 1g, DEC-66): Easy view. Chase (owner) starts Off: icon-only tabs that keep their
+// spoken names. Grandma Jo (viewer) starts On: a word under each tab and bigger text. Each person's pick is kept
+// separately in the browser. Written first (Nov 17), red until Easy view exists.
+const tabWordsShown = (page) => page.getByRole('tab').evaluateAll((els) => els.map((e) => (e.innerText || '').replace(/[^A-Za-z ]/g, '').trim()));
+const captionSize = (page) => page.getByText('Life jackets on and in all afternoon', { exact: true }).filter({ visible: true }).first()
+  .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+const asJo = async (page) => {
+  await details(page);
+  await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+  await details(page);
+  await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
+};
+const asChase = async (page) => {
+  await details(page);
+  await page.getByRole('button', { name: "Back to Chase's view, the parent" }).click();
+  await details(page);
+  await expect(page.getByText(/You're Chase, a parent/)).toBeVisible();
+};
+
+test('RD-80 RD-76 RD-77 Chase has icon-only tabs; Grandma Jo has words under the tabs and bigger text; back to Chase restores Off', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 740 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await expect(page.getByRole('tab')).toHaveCount(4);
+  for (const name of ['Gallery', 'Share', 'Feed', 'More']) await expect(page.getByRole('tab', { name, exact: true })).toBeVisible();
+  expect(await tabWordsShown(page)).toEqual(['', '', '', '']); // RD-76: icons only, spoken names kept
+  await expect(page.getByRole('tab', { name: 'Gallery', exact: true })).toHaveAttribute('aria-selected', 'true');
+  for (const box of await page.getByRole('tab').evaluateAll((els) => els.map((e) => e.getBoundingClientRect()))) {
+    expect({ h: box.height >= 48, w: box.width >= 48 }).toEqual({ h: true, w: true });
+  }
+  await onFeed(page);
+  expect(await captionSize(page)).toBe(17);
+
+  await asJo(page);
+  await expect.poll(() => tabWordsShown(page)).toEqual(['Gallery', 'Feed', 'More']); // RD-77: a word under every tab
+  const words = await page.getByRole('tab').evaluateAll((els) => els.map((e) => {
+    const t = [...e.querySelectorAll('div')].find((d) => d.children.length === 0 && d.innerText.trim() !== '');
+    return { size: t ? parseFloat(getComputedStyle(t).fontSize) : 0, clipped: t ? t.scrollWidth > t.clientWidth + 1 : true };
+  }));
+  for (const w of words) expect(w).toEqual({ size: expect.any(Number), clipped: false });
+  expect(Math.min(...words.map((w) => w.size))).toBeGreaterThanOrEqual(17);
+  await onFeed(page);
+  expect(await captionSize(page)).toBe(21);
+
+  await asChase(page);
+  await expect.poll(() => tabWordsShown(page)).toEqual(['', '', '', '']);
+  await onFeed(page);
+  expect(await captionSize(page)).toBe(17);
+});
+
+test("RD-80 RD-78 each person's Easy view pick is kept separately: Chase turns it On, Jo turns hers Off, Chase's stays On", async ({ page }) => {
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: 'Easy view, Off' }).click();
+  await expect(page.getByRole('heading', { name: 'Easy view' })).toBeVisible();
+  await expect(page.getByText('Bigger words, and a word under each button at the bottom of the screen.')).toBeVisible();
+  await expect(page.getByRole('radio', { name: 'Off', exact: true })).toBeChecked();
+  await page.getByRole('radio', { name: 'On', exact: true }).click();
+  await expect(page.getByRole('radio', { name: 'On', exact: true })).toBeChecked();
+  await expect.poll(() => tabWordsShown(page)).toEqual(['Gallery', 'Share', 'Feed', 'More']); // at once, no reload
+
+  await asJo(page);
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: 'Easy view, On' }).click();
+  await page.getByRole('radio', { name: 'Off', exact: true }).click();
+  await expect.poll(() => tabWordsShown(page)).toEqual(['', '', '']);
+
+  await asChase(page);
+  await expect.poll(() => tabWordsShown(page)).toEqual(['Gallery', 'Share', 'Feed', 'More']);
+  await page.reload();
+  await galleryLoaded(page);
+  await expect.poll(() => tabWordsShown(page)).toEqual(['Gallery', 'Share', 'Feed', 'More']);
+});

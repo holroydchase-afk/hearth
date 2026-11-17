@@ -144,6 +144,7 @@ Chase: words under the tab icons are off by default, behind one setting, "Easy v
 | RD-79 | Easy view changes only the tab words and the text size. Every other button keeps its word or spoken name as today (DS-3; RD-50's "⋯" stays as it is), and no action is gesture-only, On or Off. | auto |
 | RD-80 | In the public demo, as Chase, Easy view is Off (icon-only tabs). "See it as Grandma Jo" shows words under the tabs and bigger text; switching back to Chase restores Off. Each person's pick is kept separately in the browser. | auto (jest + Playwright) |
 | RD-81 | On Chase's iPhone (Expo Go) and one Android: Easy view On at the largest text, the viewer's three tab words fit with no clipping; Easy view Off, VoiceOver and TalkBack read each tab's name. | manual |
+| RD-82 | Chase on iPhone (Nov 17): while Gallery scrolls, the pinned "Search photos" bar's backing spans the full screen width in the page color (`c.bg`, no gray); the field keeps its 16 pt gutters inside it, so nothing (New for you's sideways photos) shows past its right edge. Once content is under the bar a soft hairline shade shows below it (`search-bar-shade`); none at the top. Test: `app/src/screens/__tests__/searchBacking.test.tsx`. | auto |
 
 ### Phase 1 gate (manual)
 | ID | Given / When / Then | Type |
