@@ -114,6 +114,8 @@ describe('Photos screen', () => {
     const words = screen.getAllByText(/ can see this\.$/)[0]!.props.children as string;
     expect(words).toMatch(/Alex/);
     expect(words).toMatch(/and 1 more/); // a relative in the group now reads it too (Earl; UX-R27 / RD-70 counts past two names)
+    // qa-tdd (round 4 review of the round-3 edit): "and 1 more" alone no longer proves it is Earl; the spoken label keeps everyone.
+    expect(screen.getAllByRole('button', { name: / can see this/ })[0]!.props.accessibilityLabel).toMatch(/Earl/);
   });
 
   it('B6: a half-typed comment survives incoming hearts', async () => {
