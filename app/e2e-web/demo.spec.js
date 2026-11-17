@@ -279,17 +279,19 @@ test('UX-R12 the demo greets the parent as Chase and "Kai" appears nowhere', asy
   expect(await page.evaluate(() => /\bKai\b/.test(document.body.innerText))).toBe(false);
 });
 
-// RD-44 (DEC-65, Nov 17; replaces UX-R7's edge-to-edge grid, RD-39): Gallery is Apple Photos' months mosaic. Each day
-// group opens on one wide 3:2 photo, then squares three across; 16 px corners, 8 px gaps, inside 16 px side margins.
+// RD-44 (DEC-65, Nov 17; replaces UX-R7's edge-to-edge grid, RD-39) and UX-R13 (review round 2): Gallery is Apple
+// Photos' months mosaic. Each MONTH opens on one wide 3:2 photo, then squares (three across; a short last row widens
+// to fill, never one square alone); 16 px corners, 8 px gaps, inside 16 px side margins.
+const MONTH = /^(January|February|March|April|May|June|July|August|September|October|November|December) \d{4}$/;
 for (const width of [360, 390]) {
-  test(`RD-44 RD-45 months mosaic at a ${width} px phone: a wide first photo with its day number, then rounded squares, inset 16`, async ({ page }) => {
+  test(`RD-44 UX-R13 months mosaic at a ${width} px phone: one wide photo per month, then rounded squares that fill each row, inset 16`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('/');
     await galleryLoaded(page);
     const tiles = page.locator('[data-testid^="gallery-tile-"]');
     await expect(tiles.first()).toBeAttached();
     await tiles.first().scrollIntoViewIfNeeded();
-    const n = Math.min(await tiles.count(), 12);
+    const n = await tiles.count();
     const boxes = [];
     for (let i = 0; i < n; i++) {
       await tiles.nth(i).scrollIntoViewIfNeeded();
@@ -297,26 +299,30 @@ for (const width of [360, 390]) {
     }
     const hero = boxes[0];
     const inner = width - 32;
-    const square = (inner - 16) / 3;
+    const third = (inner - 16) / 3;
+    const half = (inner - 8) / 2;
     expect({ left: Math.round(hero.x), right: Math.round(width - hero.x - hero.width), wide: Math.abs(hero.width / hero.height - 1.5) <= 0.03 })
       .toEqual({ left: 16, right: 16, wide: true });
-    // Every tile is either a wide group opener (full inner width, 3:2) or a square a third of the row less two 8 px gaps.
+    // Each tile is the month's wide opener (full inner width, 3:2) or a square a third or a half of the row.
+    let wides = 0;
     for (const [i, t] of boxes.entries()) {
       const isWide = Math.abs(t.width - inner) <= 1.5 && Math.abs(t.width / t.height - 1.5) <= 0.03;
-      const isSquare = Math.abs(t.width - square) <= 1.5 && Math.abs(t.width - t.height) <= 1.5;
+      const isSquare = [third, half].some((w) => Math.abs(t.width - w) <= 1.5) && Math.abs(t.width - t.height) <= 1.5;
+      if (isWide) wides += 1;
       expect({ i, ok: isWide || isSquare, insideMargins: t.x >= 15.5 && t.x + t.width <= width - 15.5 }).toEqual({ i, ok: true, insideMargins: true });
     }
+    // UX-R13: one wide photo per month, not per day.
+    const months = await page.getByText(MONTH).count();
+    expect({ wides, months }).toEqual({ wides: months, months });
+    // UX-R13: no square alone on its row.
+    const rows = new Map();
+    for (const t of boxes) if (Math.abs(t.width - inner) > 1.5) rows.set(Math.round(t.y), (rows.get(Math.round(t.y)) ?? 0) + 1);
+    expect([...rows.values()].filter((k) => k < 2)).toEqual([]);
     const radius = await tiles.first().evaluate((el) => {
       const all = [el, ...el.querySelectorAll('*')];
-      return Math.max(...all.map((n) => parseFloat(getComputedStyle(n).borderTopLeftRadius) || 0));
+      return Math.max(...all.map((x) => parseFloat(getComputedStyle(x).borderTopLeftRadius) || 0));
     });
     expect(radius).toBe(16);
-    // RD-45: the day number on the wide tile, in its top-left corner.
-    const day = tiles.first().getByText(/^\d{1,2}$/);
-    await expect(day).toBeVisible();
-    const d = await day.boundingBox();
-    expect(d.x - hero.x).toBeLessThan(40);
-    expect(d.y - hero.y).toBeLessThan(40);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   });
 }
@@ -370,4 +376,39 @@ test('UX-R1 focusing the walk\'s comment field hides the tab bar and keeps the f
   await page.setViewportSize({ width: 390, height: 844 });
   await field.evaluate((el) => el.blur());
   await expect(page.getByRole('tab')).toHaveCount(4);
+});
+
+// ---------------------------------------------------------------------------------------------------------------
+// Review round 2 (ux-reviewer, Nov 17; SPEC-REDESIGN RD-56..). Written first (red).
+
+// R18 (P2): scrolling Gallery, the current month's title sticks right under the pinned "Search photos" field.
+test('R18 the current month title sticks under the pinned search field while Gallery scrolls', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.mouse.move(195, 600);
+  await page.mouse.wheel(0, 1200);
+  await page.waitForTimeout(400);
+  const field = await page.getByLabel('Search photos').first().boundingBox();
+  const heads = await page.getByText(MONTH).evaluateAll((els) => els.map((e) => { const r = e.getBoundingClientRect(); return { top: r.top, bottom: r.bottom }; }));
+  // Some month title sits just under the field (within 24 px), not scrolled away above it.
+  const stuck = heads.filter((h) => h.top >= field.y + field.height - 1 && h.top <= field.y + field.height + 24);
+  expect({ field: Math.round(field.y + field.height), stuck: stuck.length }).toEqual({ field: Math.round(field.y + field.height), stuck: 1 });
+});
+
+// R23 (P2, G9 in scripts/ux-rules.mjs): every tab has exactly one h1, its title.
+test('R23 Gallery, Share, Feed and More each have exactly one h1', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  // Tabs left behind stay mounted but aria-hidden; count what a screen reader can reach.
+  const h1s = async () => page.locator('h1').evaluateAll((els) => els.filter((e) => !e.closest('[aria-hidden="true"],[inert]')).map((e) => e.innerText));
+  const got = {};
+  for (const tab of ['Gallery', 'Share', 'Feed', 'More']) {
+    await page.getByRole('tab', { name: new RegExp(`^${tab}`) }).click();
+    await page.waitForTimeout(500);
+    got[tab] = await h1s();
+  }
+  expect(Object.fromEntries(Object.entries(got).map(([k, v]) => [k, v.length]))).toEqual({ Gallery: 1, Share: 1, Feed: 1, More: 1 });
+  expect(got.Gallery[0]).toMatch(/^Good (morning|afternoon|evening)/);
 });

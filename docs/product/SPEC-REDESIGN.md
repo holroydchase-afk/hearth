@@ -91,7 +91,7 @@ Tests: `app/src/screens/__tests__/reviewRound1.test.tsx` and `app/e2e-web/demo.s
 Mockup: the Nov 17 "Gallery and Feed, the Apple Photos way" page, sections 1 to 3 (round 2). Persona check `decisions/2026-11-17-photos-style.md`. Tests (written first, red): `app/src/screens/__tests__/photosStyle.test.tsx`, `app/src/ui/__tests__/relativeTime.test.ts`, `app/e2e-web/demo.spec.js` (RD-44, RD-47). Supersedes: RD-2's Bold large title, RD-8's square Gallery corners, RD-13 (Search and By date top right), RD-34's hairline dividers between posts, RD-39 (edge to edge), GUX-R3's "Options" word, REACT-11's separate count chips.
 | ID | Given / When / Then | Type |
 |---|---|---|
-| RD-44 | Gallery is a months mosaic like the newest Apple Photos: the month's name ("November 2026", Semibold), then that month's photos grouped by day (or a day range). Each group's first tile is wide (3:2, full width; the most-loved photo, else the newest), then squares 3 across, newest first. Every tile has 16 pt corners and 8 pt gaps, inside the 16 pt side margins (not edge to edge). Tiles stay 48 pt+ buttons that open that photo. | auto (jest + Playwright 360 px) |
+| RD-44 | Gallery is a months mosaic like the newest Apple Photos: the month's name ("November 2026", Semibold), then that month's photos grouped by day (or a day range, RD-56). Each MONTH's first tile is wide (3:2, full width; the month's most-loved photo, else the newest; UX-R13 replaced one wide tile per day), then squares 3 across, newest first; a short last row widens to fill, never one square alone. Every tile has 16 pt corners and 8 pt gaps, inside the 16 pt side margins (not edge to edge). Tiles stay 48 pt+ buttons that open that photo. | auto (jest + Playwright 360 px) |
 | RD-45 | The day number ("4", "17") sits at the top left of each group's first tile, 20 pt Semibold white over a soft dark fade (the one DS-6 exception: decoration). The tile's spoken label carries the full date ("November 16"). | auto |
 | RD-46 | No sender lines on the months ("From Grandma Jo…" never shows over or under the grid). New for you stays above the months when there's something new (RD-19..22 unchanged). | auto |
 | RD-47 | Search is a "Search photos" field under the greeting, above New for you and the months; tapping it opens today's Search (SEARCH-*). When Gallery scrolls, it pins under the bar. The top-right Search and By date buttons are gone. The Months / All photos switch is hidden for now (Chase): Gallery shows months only. The timeline (BETA-TIME-2) stays, reached from Feed's Older photos card; its Back reads "Back to Feed". | auto (jest + Playwright) |
@@ -103,6 +103,22 @@ Mockup: the Nov 17 "Gallery and Feed, the Apple Photos way" page, sections 1 to 
 | RD-53 | Reactions (B3): ❤️ 😂 👍 🎉 always in one row, each with its count beside it inside its own button; a zero shows no number. Your pick is highlighted; one tap reacts, the same tap takes it back (REACT-8). Emoji only, no words (REACT-7); each keeps its spoken name ("Love it") and reads its count as the value. No separate count chips. | auto |
 | RD-54 | More than one photo (C1): a rounded mosaic of at most 4 tiles (1 large, then up to 3 small), inset 16 pt with 16 pt corners like Gallery; with more than 4 photos the 4th tile shows "+N" on a solid chip (not a dark wash over the photo). Tapping any tile opens that photo. | auto |
 | RD-55 | Lighter type: no Bold anywhere, the large title included (greeting 34 pt Semibold, month 24 pt Semibold); names 17 pt Medium; everything else Regular. Outline icons only (RD-6). | auto (kit + source lint) |
+
+Review round 2 (ux-reviewer, Nov 17). Tests (written first, red): `app/src/screens/__tests__/reviewRound2.test.tsx`, `app/src/feed/__tests__/gallery.test.ts` (UX-R13), `app/e2e-web/demo.spec.js` (RD-44/UX-R13, R18, R23). Supersedes: RD-45's day number on every day's wide tile, UX-R6's "Comments" heading, LOOK-1/WHO-8's "Sent to" line on the card (the sender finds the group's name in Post options, DEC-49 kept).
+
+| ID | Given / When / Then | Type |
+|---|---|---|
+| RD-56 | UX-R13 (P1): one wide 3:2 photo per month, then squares 3 across. Days with fewer than 3 photos join the next older days into one group until it holds 3, shown as a range ("Nov 11–15"); a range never crosses a month. Each group's date shows once ("Oct 17"). No square sits alone in a row (rows of 2 or 3 that fill the width, no empty fillers). | auto (jest unit + screen, Playwright 360/390) |
+| RD-57 | UX-R14 (P1): Post options are plain iOS-style rows (no filled capsule, words not centered, 48 pt+). "Delete post" is red text on a normal row, never a solid red pill; it still asks first ("No, keep it" keeps the post). | auto |
+| RD-58 | UX-R15 (P1): on your own post, who can see it is said once (the names line). No "Sent to" line and no "can read this" line under the comment field on your own post; the group's name stays in Post options (DEC-49). Others' posts unchanged. | auto |
+| RD-59 | UX-R16 (P1): no "Comments" heading. One rounded "Add a comment…" field, 48 pt+ tall (rule 3), no second box around the text, with Post inside it at the right end; Post is hidden or off until there are words. | auto |
+| RD-60 | R17 (P2): More's rows all use outline symbols (no `.fill`/`filled`); separators are inset from the left (start after the icon, iOS style), never full width. | auto |
+| RD-61 | R18 (P2): while Gallery scrolls, the current month's title sticks right under the pinned "Search photos" field. | auto (jest + Playwright) |
+| RD-62 | R19 (P2): Share has one 16 pt left edge: the title, Pick photos, the boxes' labels, "Who can see it" and the group rows. | auto |
+| RD-63 | R20 (P2): a photo still loading in a small square (Gallery squares, Feed mosaic's small tiles) shows "Loading…" or a spinner with a spoken "Loading" label, never the long "Loading the photo…" that clips. | auto |
+| RD-64 | R21 (P2): the reaction row's first emoji starts at the 16 pt content edge, like the name, photos and words. | auto |
+| RD-65 | R22 (P2): names (post head, description, comments) are body size and grow with Bigger text (21 pt on, 17 pt off). | auto |
+| RD-66 | R23 (P2, G9): each tab (Gallery, Share, Feed, More) has exactly one h1, its title; month titles and other headings are level 2. | auto (Playwright) |
 
 ### Phase 1 gate (manual)
 | ID | Given / When / Then | Type |

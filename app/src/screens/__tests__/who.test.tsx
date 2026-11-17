@@ -40,7 +40,11 @@ describe('WHO: who can see this post, by name', () => {
 
   it('WHO-8 the sender still sees the group by name; another parent sees the people', async () => {
     const sender = await dadSidePost('chase');
-    expect(within(sender.el).getByTestId(`to-${sender.id}`).props.children).toBe("Sent to Grandparents – Dad's side");
+    // UX-R15 (review round 2): the group's name is in Post options now, not a "Sent to" line on the card.
+    await within(sender.el).findByTestId(`who-${sender.id}`);
+    expect(within(sender.el).queryByTestId(`to-${sender.id}`)).toBeNull();
+    fireEvent.press(within(sender.el).getByRole('button', { name: 'Post options' }));
+    expect(within(await screen.findByTestId(`more-${sender.id}`)).getByText(/Grandparents – Dad's side/)).toBeTruthy();
     // WHO-10 / GUX-R6: the sender gets the same names line too
     expect((await within(sender.el).findByTestId(`who-${sender.id}`)).props.accessibilityLabel).toBe('You, Alex, Grandma Jo and Grandpa Earl can see this');
   });

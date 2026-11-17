@@ -92,14 +92,14 @@ async function gallery(be: FakeBackend, kv = memoryKV({ [KEY(jo.id)]: new Date(D
 
 // =================================================================================================================
 describe('RD-44 Gallery is a months mosaic, like the newest Apple Photos', () => {
-  it('RD-44 per day group: the first tile is wide (3:2) and the rest are squares, newest first', async () => {
+  it('UX-R13 RD-44 one wide (3:2) tile per month, then squares, newest first', async () => {
     const { be, a, b, c, kv } = await october();
     await gallery(be, kv);
     await waitFor(() => expect(tileIds().length).toBe(8));
     const tiles = tileIds();
     expect(tiles.map(idOf)).toEqual([...mediaOf(be, b), ...mediaOf(be, a), ...mediaOf(be, c)]);
-    // Two day groups (Oct 17, then Oct 4), each opening on one wide photo.
-    expect(tiles.map((t) => Number(flat(t.props.style).aspectRatio))).toEqual([1.5, 1, 1, 1, 1.5, 1, 1, 1]);
+    // UX-R13 (review round 2): only the month opens on a wide photo; both day groups (Oct 17, Oct 4) are squares after it.
+    expect(tiles.map((t) => Number(flat(t.props.style).aspectRatio))).toEqual([1.5, 1, 1, 1, 1, 1, 1, 1]);
   });
 
   it('RD-44 the wide tile is the most-loved photo of its group, else the newest', async () => {
@@ -157,18 +157,14 @@ describe('RD-44 Gallery is a months mosaic, like the newest Apple Photos', () =>
 
 // =================================================================================================================
 describe('RD-45 the day number sits on each group\'s first photo', () => {
-  it('RD-45 "17" and "4" at the top left of each wide tile, 20 pt Semibold white', async () => {
+  // UX-R13 (review round 2) replaces the day number on each day's wide tile: one wide tile per month, and each group
+  // (a day, or a range of quiet days) shows its date once ("Oct 17"). Where it sits is the engineer's call.
+  it('UX-R13 RD-45 each group\'s date shows once in the grid, in order: "Oct 17", then "Oct 4"', async () => {
     const { be, kv } = await october();
     await gallery(be, kv);
     await waitFor(() => expect(tileIds().length).toBe(8));
-    const tiles = tileIds();
-    for (const [i, day] of [[0, '17'], [4, '4']] as const) {
-      const num = tiles[i]!.findAll((n: Inst) => n.type === Text && textOf(n) === day)[0];
-      expect({ day, found: !!num }).toEqual({ day, found: true });
-      const s = flat(num!.props.style);
-      expect({ day, color: String(s.color).toUpperCase(), weight: String(s.fontWeight), size: s.fontSize })
-        .toEqual({ day, color: expect.stringMatching(/^(#FFF|#FFFFFF|WHITE|RGB\(255,\s*255,\s*255\))$/), weight: '600', size: 20 });
-    }
+    const words = wordsIn(screen.getByTestId('gallery-grid'));
+    expect(words.match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{1,2}(–\d{1,2})?\b/g)).toEqual(['Oct 17', 'Oct 4']);
   });
 
   it('RD-45 every tile\'s spoken label carries the full date ("October 17", "October 4")', async () => {
@@ -189,7 +185,8 @@ describe('RD-46 no sender lines on the months; New for you stays on top', () => 
     await waitFor(() => expect(tileIds().length).toBe(8));
     const words = wordsIn(screen.getByTestId('gallery-grid'));
     expect(words).not.toMatch(/\bFrom\b|Chase|Alex|Grandma|Grandpa|Nana/);
-    expect(words.replace(/October 2025/g, '').replace(/\b\d{1,2}\b/g, '').trim()).toBe('');
+    // UX-R13: month names, and each group's date ("Oct 17", "Nov 11–15").
+    expect(words.replace(/October 2025/g, '').replace(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/g, '').replace(/\b\d{1,2}\b|–/g, '').trim()).toBe('');
   });
 
   it('RD-46 with something new, New for you sits above the months (and under the search field)', async () => {
@@ -323,7 +320,7 @@ describe('RD-48 a Feed post in Instagram\'s order', () => {
     expect(above.filter((n) => n.type === Text && /First snow!/.test(textOf(n)))).toEqual([]);
   });
 
-  it('RD-48 the head: a round 36 pt face, the name 17 pt Medium; no time or "Sent to" line beside the name', async () => {
+  it('RD-48 R22 the head: a round 36 pt face, the name Medium at body size (17 pt; Grandma Jo\'s Bigger text grows it); no time or "Sent to" line beside the name', async () => {
     const { id, card } = await feedWith();
     const head = within(card).getByTestId(`card-head-${id}`);
     const face = (head.findAll(isHost) as Inst[]).find((n) => {
@@ -333,7 +330,9 @@ describe('RD-48 a Feed post in Instagram\'s order', () => {
     expect(face).toBeTruthy();
     const name = within(head).getByText('Chase');
     const s = flat(name.props.style);
-    expect({ weight: String(s.fontWeight), size: s.fontSize }).toEqual({ weight: '500', size: 17 });
+    // R22 (review round 2): Jo has Bigger text on (viewer default), so the name matches the words' size, not a fixed 17.
+    const body = flat(within(card).getByText('First snow!').props.style).fontSize;
+    expect({ weight: String(s.fontWeight), size: s.fontSize }).toEqual({ weight: '500', size: body });
     expect(within(head).queryByTestId(`when-${id}`)).toBeNull();
   });
 

@@ -39,9 +39,13 @@ describe('DEC-49 group titles only for the sender, after the redesign', () => {
     expect(spokenLabels()).not.toMatch(GROUP);
   });
 
-  it('DEC-49 RD-48 the sender (Chase) does see "Sent to Grandparents – Dad\'s side" on the Feed', async () => {
+  // UX-R15 (review round 2): the card says who can see it once (names); the group's name moves to Post options.
+  it('DEC-49 RD-48 UX-R15 the sender (Chase) does see "Grandparents – Dad\'s side", in Post options', async () => {
     const { id, card } = await feedAs('chase');
-    expect((await within(card).findByTestId(`to-${id}`, {}, slow)).props.children).toBe("Sent to Grandparents – Dad's side");
+    await within(card).findByTestId(`who-${id}`, {}, slow);
+    expect(within(card).queryByTestId(`to-${id}`)).toBeNull();
+    fireEvent.press(within(card).getByRole('button', { name: 'Post options' }));
+    expect(screenWords()).toMatch(/Grandparents – Dad's side/);
   });
 
   it('DEC-49 RD-44 Grandma Jo\'s months Gallery shows no group title', async () => {

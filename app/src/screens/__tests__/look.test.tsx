@@ -23,10 +23,12 @@ async function card() {
 }
 
 describe('LOOK: a cleaner post card', () => {
-  it('LOOK-1 the date and the audience are two lines, and the audience says "Sent to"', async () => {
+  // UX-R15 (review round 2): who can see it is said once on the card (the names line); the sender finds the group's
+  // name in Post options, so the "Sent to" line is gone from the card.
+  it('LOOK-1 UX-R15 the date says only when; the card has no "Sent to" line (the group name is in Post options)', async () => {
     const { id, el } = await card();
     expect(String(within(el).getByTestId(`when-${id}`).props.children)).not.toMatch(/to Grandparents/);
-    expect(within(el).getByTestId(`to-${id}`).props.children).toBe("Sent to Grandparents – Dad's side");
+    expect(within(el).queryByTestId(`to-${id}`)).toBeNull();
   });
 
   it('LOOK-2 the initial lines up with the name, not the middle of a tall block', async () => {

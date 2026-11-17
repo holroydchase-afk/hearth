@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// RD-44 / RD-45 (DEC-65): the months mosaic as a pure layout, so the screen only draws it.
+// RD-44 / RD-45 (DEC-65), UX-R13 (review round 2): the months mosaic as a pure layout, so the screen only draws it.
 import type { FeedPost } from '../../api/HearthApi';
-import { dayTiles, galleryMonths, loveOf, mosaicRows } from '../gallery';
+import { galleryMonths, loveOf, mosaicRows } from '../gallery';
 
 const at = (m: number, d: number, h: number) => new Date(2025, m, d, h).toISOString();
 function post(id: string, when: string, photos: number, extra: Partial<FeedPost> = {}): FeedPost {
@@ -14,22 +14,43 @@ function post(id: string, when: string, photos: number, extra: Partial<FeedPost>
 }
 
 describe('RD-44 months mosaic layout (pure)', () => {
-  it('RD-44 groups by month, then by day, newest first; each day opens on one wide tile', () => {
-    const months = galleryMonths([post('a', at(9, 17, 10), 2), post('b', at(9, 17, 15), 2), post('c', at(9, 4, 11), 3), post('d', at(8, 30, 9), 1)]);
+  // UX-R13 (review round 2, Nov 17): one wide 3:2 photo per MONTH, not per day; days with few photos join into a
+  // range ("Nov 11–15"); no lone square left in a row. Replaces the per-day wide opener (RD-44 as first built).
+  it('UX-R13 RD-44 groups by month, then by day, newest first; only the month\'s first tile is wide', () => {
+    const months = galleryMonths([post('a', at(9, 17, 10), 2), post('b', at(9, 17, 15), 2), post('c', at(9, 4, 11), 4), post('d', at(8, 30, 9), 1)]);
     expect(months.map((m) => m.title)).toEqual(['October 2025', 'September 2025']);
-    expect(months[0]!.groups.map((g) => g.tiles.map((t) => t.mediaId))).toEqual([['b-0', 'b-1', 'a-0', 'a-1'], ['c-0', 'c-1', 'c-2']]);
-    expect(months[0]!.tiles.map((t) => t.wide)).toEqual([true, false, false, false, true, false, false]);
-    expect(months[0]!.groups.map((g) => g.tiles[0]!.day)).toEqual(['17', '4']);
-    expect(months[0]!.tiles.filter((t) => !t.wide).every((t) => t.day === null)).toBe(true);
-    expect(months[1]!.tiles).toEqual([expect.objectContaining({ mediaId: 'd-0', wide: true, day: '30' })]);
+    expect(months[0]!.groups.map((g) => g.tiles.map((t) => t.mediaId))).toEqual([['b-0', 'b-1', 'a-0', 'a-1'], ['c-0', 'c-1', 'c-2', 'c-3']]);
+    expect(months[0]!.tiles.map((t) => t.wide)).toEqual([true, false, false, false, false, false, false, false]);
+    expect(months[1]!.tiles).toEqual([expect.objectContaining({ mediaId: 'd-0', wide: true })]);
   });
 
-  it('RD-44 the most-loved post gives the wide tile its first photo; a tie goes to the newest', () => {
+  it('UX-R13 each group carries its date label: "Oct 17" for one day', () => {
+    const [m] = galleryMonths([post('b', at(9, 17, 15), 4), post('c', at(9, 4, 11), 3)]);
+    expect(m!.groups.map((g) => (g as { label?: string }).label)).toEqual(['Oct 17', 'Oct 4']);
+  });
+
+  it('UX-R13 days with few photos join into a range ("Nov 11–15"); a full day stays on its own', () => {
+    const [m] = galleryMonths([post('p15', at(10, 15, 9), 1), post('p13', at(10, 13, 9), 1), post('p11', at(10, 11, 9), 1), post('p3', at(10, 3, 9), 3)]);
+    expect(m!.groups.map((g) => (g as { label?: string }).label)).toEqual(['Nov 11–15', 'Nov 3']);
+    expect(m!.groups.map((g) => g.tiles.map((t) => t.mediaId))).toEqual([['p15-0', 'p13-0', 'p11-0'], ['p3-0', 'p3-1', 'p3-2']]);
+    expect(m!.tiles.filter((t) => t.wide).map((t) => t.mediaId)).toEqual(['p15-0']);
+  });
+
+  it('UX-R13 a range never crosses a month', () => {
+    const months = galleryMonths([post('n1', at(10, 1, 9), 1), post('o31', at(9, 31, 9), 1)]);
+    expect(months.map((m) => [m.title, m.groups.map((g) => (g as { label?: string }).label)])).toEqual([['November 2025', ['Nov 1']], ['October 2025', ['Oct 31']]]);
+  });
+
+  it('UX-R13 RD-44 the most-loved post in the month gives the wide tile its first photo; a tie goes to the newest', () => {
     const a = post('a', at(9, 17, 10), 2, { reaction_counts: { '❤️': 1, '🎉': 1 } as never });
     const b = post('b', at(9, 17, 15), 2, { reaction_counts: { '😂': 1 } as never });
-    expect(dayTiles([b, a], new Date(at(9, 17, 15))).map((t) => t.mediaId)).toEqual(['a-0', 'b-0', 'b-1', 'a-1']);
+    const c = post('c', at(9, 4, 11), 3);
+    const [m] = galleryMonths([b, a, c]);
+    expect(m!.tiles[0]).toEqual(expect.objectContaining({ mediaId: 'a-0', wide: true }));
+    expect(m!.tiles.filter((t) => t.wide)).toHaveLength(1);
     const tie = post('t', at(9, 17, 9), 1, { reaction_counts: { '😂': 1 } as never });
-    expect(dayTiles([b, tie], new Date(at(9, 17, 15)))[0]!.mediaId).toBe('b-0');
+    const [n] = galleryMonths([b, tie]);
+    expect(n!.tiles[0]!.mediaId).toBe('b-0');
   });
 
   it('RD-44 love counts every reaction, or hearts on an older server', () => {
@@ -42,10 +63,18 @@ describe('RD-44 months mosaic layout (pure)', () => {
     expect(m!.tiles.map((t) => t.label)).toEqual(['Open photo from Chase, October 4, full screen', 'Open photo from Chase, October 4, full screen']);
   });
 
-  it('RD-44 rows: the wide tile alone, then squares three across, the last row may be short', () => {
+  it('UX-R13 rows: the wide tile alone, then squares up to three across, and never one square left alone in a row', () => {
     const t = (wide: boolean, id: string) => ({ wide, id });
-    const rows = mosaicRows([t(true, 'w'), t(false, '1'), t(false, '2'), t(false, '3'), t(false, '4'), t(true, 'w2'), t(false, '5')]);
-    expect(rows.map((r) => r.map((x) => x.id))).toEqual([['w'], ['1', '2', '3'], ['4'], ['w2'], ['5']]);
+    const sq = (n: number) => Array.from({ length: n }, (_, i) => t(false, String(i + 1)));
+    for (const n of [2, 3, 4, 5, 6, 7, 8, 10]) {
+      const rows = mosaicRows([t(true, 'w'), ...sq(n)]);
+      expect(rows[0]!.map((x) => x.id)).toEqual(['w']);
+      const squares = rows.slice(1);
+      expect({ n, order: squares.flat().map((x) => x.id) }).toEqual({ n, order: sq(n).map((x) => x.id) });
+      expect({ n, sizes: squares.map((r) => r.length).filter((k) => k < 2 || k > 3) }).toEqual({ n, sizes: [] });
+    }
+    // A group of squares with no wide tile (a later group in the month) follows the same rule.
+    expect(mosaicRows(sq(4)).map((r) => r.length).filter((k) => k < 2)).toEqual([]);
   });
 
   it('RD-44 a post with no ready photos leaves no empty month or day', () => {
