@@ -325,7 +325,7 @@ describe('OPEN-7/8 one new post at a time', () => {
     }
     return 0;
   }
-  const NEXT = 'Next';
+  const NEXT = 'Next new photo'; // UX-R2 (Nov 17): spoken "Next new photo", shown "Next photo"
   const PREV = 'Previous new photo';
   const DONE = 'Done, back to Gallery';
 
@@ -336,15 +336,16 @@ describe('OPEN-7/8 one new post at a time', () => {
     expect(within(walk).queryByText('1 of 2')).toBeNull(); // GUX-R7: never the bare count
     expect(within(walk).getByText('Chase')).toBeTruthy(); // sender
     expect(within(walk).getByRole('button', { name: 'Love it' })).toBeTruthy(); // reactions
-    expect(within(walk).getByLabelText('Write something back to Chase')).toBeTruthy(); // comments
+    expect(within(walk).getByLabelText('Add a comment for Chase')).toBeTruthy(); // comments
     expect(within(walk).getByLabelText(/can see this/)).toBeTruthy(); // who can see
     for (const name of [NEXT, 'Back to Gallery']) {
       const b = within(walk).getByRole('button', { name });
       expect(Number(flat(b.props.style).minHeight)).toBeGreaterThanOrEqual(48);
     }
-    expect(within(walk).getByText('Next')).toBeTruthy();
+    expect(within(walk).getByText('Next photo')).toBeTruthy();
     expect(isFilled(within(walk).getByRole('button', { name: NEXT }) as unknown as Node)).toBe(true);
-    expect(within(walk).queryByRole('button', { name: PREV })).toBeNull(); // nothing before the first
+    // UX-R2 (Nov 17): Previous stays in the bottom bar on the first post, switched off, so Next isn't alone.
+    expect(within(walk).getByRole('button', { name: PREV }).props.accessibilityState?.disabled).toBe(true);
     expect(screen.queryByTestId('top-bar')).toBeNull(); // in place of Gallery, like Search
     expectGrandparentSafe();
   });
@@ -353,14 +354,14 @@ describe('OPEN-7/8 one new post at a time', () => {
   // "Next first, full-width Previous under it" layout. Next stays the one filled step button, 48 pt, never a bare "Back".
   it('OPEN-7 GUX-R8 Next (Done on the last) is the filled step button; from step 2 "Previous" sits left of it on one row; never a bare "Back"', async () => {
     const { ids } = await openWalk(['One', 'Two', 'Three']);
-    const expected = [[NEXT], [PREV, NEXT], [PREV, DONE]];
+    const expected = [[PREV, NEXT], [PREV, NEXT], [PREV, DONE]]; // UX-R2: Previous on every step (off on the first)
     const headers: string[] = [];
     for (let step = 0; step < 3; step++) {
       const btns = stepButtons(ids[step]!);
       expect(btns.map((b) => b.props.accessibilityLabel)).toEqual(expected[step]);
       const forward = btns[btns.length - 1]!;
       expect(isFilled(forward as unknown as Node)).toBe(true); // the one filled step button, on the right
-      if (step > 0) {
+      {
         expect(isFilled(btns[0] as unknown as Node)).toBe(false);
         expect(rowMates(btns[0]!)).toBe(1); // Previous and the forward button share one row
         expect(within(walkNow()).getByText('Previous')).toBeTruthy();

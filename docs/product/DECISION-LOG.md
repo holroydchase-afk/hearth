@@ -451,5 +451,19 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** real photos make the demo feel like a family's app, which is what a recruiter or a relative needs to see; Chase checked the faces himself. Demo content only, no change for a relative using the app, so no persona check.
 - **Source:** `app/src/demo/__tests__/realPhotos.test.ts`
 
+### DEC-63 · No comment emoji; a standard comment field on every post (UX-R5)
+- **When / status:** Nov 17 · Chase: "I don't think given our UI we need a comment emoji. Use standard comment UI for the first comment" · Failing tests written (RD-37, RD-38)
+- **Chose:** the reaction row keeps ❤️ 😂 👍 🎉 as emoji only (REACT-7 stands); 💬 leaves it. Every post shows a "Comments" heading, an "Add a comment…" field and a Post button, even before anyone has commented.
+- **Over:** REACT-7's fifth icon, 💬 "Write a comment" (Oct 25); the reviewer's words under each emoji ("❤️ Love"), which REACT-7 keeps out.
+- **Because:** ux-reviewer UX-R5: nobody can say "tap the speech bubble" over the phone, and the field is already on the card.
+- **Source:** `app/src/screens/__tests__/reviewRound1.test.tsx` (UX-R5, UX-R6). Persona check not yet written (staff-pm).
+
+### DEC-64 · The public demo's parent is Chase, not Kai (UX-R12)
+- **When / status:** Nov 17 · Chase: "you can use my name throughout vs Kai" · Failing tests written (RD-43)
+- **Chose:** the demo parent is "Chase" ("Good evening, Chase"); kids Mia and Leo, Alex and Grandma Jo stay made up; no surname.
+- **Over:** DEMO-3's "the parent is Kai, never the founder" (made-up names only).
+- **Because:** it's Chase's own public demo with his own photos (DEC-62); his first name is already public as the founder. Demo only; relatives never see it.
+- **Source:** `app/src/demo/__tests__/seed.test.ts` DEMO-3, `app/e2e-web/demo.spec.js` UX-R12
+
 ---
-Last updated: Nov 16, 2026 (DEC-62)
+Last updated: Nov 17, 2026 (DEC-64)

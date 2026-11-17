@@ -144,8 +144,8 @@ describe('BETA-REPLY-11 the comment box names who will read it', () => {
   it('BETA-REPLY-11 after Send it still names them', async () => {
     const { id } = await photosWithReaders();
     const card = screen.getByTestId(`post-${id}`);
-    fireEvent.changeText(within(card).getByLabelText('Write something back to Chase'), 'So cute!');
-    fireEvent.press(within(card).getByRole('button', { name: 'Send' }));
+    fireEvent.changeText(within(card).getByLabelText('Add a comment for Chase'), 'So cute!');
+    fireEvent.press(within(card).getByRole('button', { name: 'Post' }));
     expect(await within(card).findByText(/Memaw, Pawpaw, Granny, Chase and Mom (will )?read it/)).toBeTruthy();
   });
 });
@@ -184,7 +184,7 @@ describe('BETA-TIME-2 a timeline card opens the full post (hearts and replies)',
     fireEvent.press(within(card).getByRole('button', { name: /^Open (this|Chase's) post/ }));
     const post = await screen.findByTestId(`post-${id}`);
     expect(within(post).getByRole('button', { name: 'Love it' })).toBeTruthy();
-    expect(within(post).getByLabelText('Write something back to Chase')).toBeTruthy();
+    expect(within(post).getByLabelText('Add a comment for Chase')).toBeTruthy();
     expect(within(post).getByText('Fourth of July')).toBeTruthy();
     // and a labeled way back (no gesture-only actions)
     expect(screen.getByRole('button', { name: /^Back to (the )?(photos by date|timeline)/i })).toBeTruthy();

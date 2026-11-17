@@ -50,8 +50,8 @@ describe('MOMENT-7 one card per upload, even within an hour', () => {
     const { be, boat } = await threeUploads();
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     const card = await screen.findByTestId(`post-${boat}`);
-    fireEvent.changeText(within(card).getByLabelText('Write something back to Chase'), 'So fun');
-    fireEvent.press(within(card).getByRole('button', { name: 'Send' }));
+    fireEvent.changeText(within(card).getByLabelText('Add a comment for Chase'), 'So fun');
+    fireEvent.press(within(card).getByRole('button', { name: 'Post' }));
     await waitFor(() => expect(Object.values(be.state.comments).some((c) => c.post === boat && c.body === 'So fun')).toBe(true));
   });
 

@@ -107,10 +107,10 @@ describe('DEMO-BAR studio demo bar', () => {
     expect(open).toHaveBeenCalledWith(PORTFOLIO_URL);
   });
 
-  it("DEMO-10 the drawer switches to Grandma Jo's view and back in one tap", async () => {
+  it("DEMO-10 UX-R12 the drawer switches to Grandma Jo's view and back in one tap", async () => {
     const { be, reload } = await setup();
     fireEvent.press(toggle(false));
-    expect(screen.getByText(/You're Kai, a parent/)).toBeTruthy();
+    expect(screen.getByText(/You're Chase, a parent/)).toBeTruthy();
     fireEvent.press(screen.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }));
     expect(be.state.appSession).toBe(FIXTURE.users.jo.id);
     expect(reload).toHaveBeenCalledTimes(1);
@@ -118,7 +118,7 @@ describe('DEMO-BAR studio demo bar', () => {
     render(<DemoBar be={be} reload={reload} startOver={jest.fn()} open={jest.fn()} />);
     fireEvent.press(toggle(false));
     expect(screen.getByText(/You're Grandma Jo/)).toBeTruthy();
-    fireEvent.press(screen.getByRole('button', { name: "Back to Kai's view, the parent" }));
+    fireEvent.press(screen.getByRole('button', { name: "Back to Chase's view, the parent" }));
     expect(be.state.appSession).toBe(FIXTURE.users.chase.id);
   });
 });

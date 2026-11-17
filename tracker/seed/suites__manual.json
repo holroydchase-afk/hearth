@@ -141,6 +141,14 @@
    "tickets": []
   },
   {
+   "id": "M-19",
+   "title": "UX-R1 Typing a comment with the keyboard up (iPhone Safari demo and Expo Go)",
+   "area": "iPhone",
+   "steps": "Open the demo in Safari on an iPhone, tap 2 new, tap Add a comment and type a sentence. Repeat in Expo Go on a post in Feed, at the largest text size.",
+   "expected": "The tab bar is gone while typing; the comment field and Post sit fully above the keyboard with what you typed visible; the tab bar comes back when the keyboard closes.",
+   "tickets": []
+  },
+  {
    "id": "M1-01",
    "title": "BETA-JOIN-2 Sign in with the 6-digit email code",
    "area": "iPhone (Expo Go)",

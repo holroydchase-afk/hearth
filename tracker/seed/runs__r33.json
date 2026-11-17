@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-17T09:00:00-05:00",
+ "label": "Review round 1 of the live demo (UX-R1, R2, R5..R10, R12): tests written first (red)",
+ "passed": 1134,
+ "failed": 32,
+ "results": {},
+ "note": "Red on purpose, 1 run each, typecheck clean. jest 1134 passed, 32 failed (1 skipped): new screens/__tests__/reviewRound1.test.tsx (UX-R1 tab bar hides while a field is focused; R2 walk-bar outside the scroll with Previous and Next photo; R5 no comment emoji, Comments heading, Add a comment field and Post on every post; R6 Post grey/disabled then accent/enabled; R8 one 16 pt left edge in the walk; R9 accent only on Next photo; R10 same-people line, with the fewer-readers direction still naming them) plus old tests moved to the new words: moments, photos, familyShape, sessions, redesignNav, opening, redesignPolish, redesignGallery, seed (DEMO-3 now Chase), demoBar. e2e:demo 11 passed, 4 failed: DEMO-10 (Back to Chase's view), UX-R12 greeting, UX-R7 grid 15..375 not edge to edge (tiles already square), UX-R1 tab bar stays while typing. e2e:web 4 passed, 1 failed (core-loop: Add a comment for Chase). e2e:site, backend, Deno not run (no app or SQL change). Manual M-19 for the real iPhone keyboard. e2e/results/review-r1-red-2026-11-17.txt"
+}

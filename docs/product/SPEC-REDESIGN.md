@@ -64,7 +64,7 @@ Split into three PRs, in order, one at a time (small PRs, no bursts). Each is sh
 | RD-24 | Given the family's owner, More → Family color shows Ember (default), Forest (`#2E7D4F` / `#6FCF97`) and Plum (`#8E3A8F` / `#D9A0E0`), each a row with a swatch, its name and a check on the picked one. | auto |
 | RD-25 | Phase 1 storage: the owner's pick is saved in today's per-device prefs (`prefs.color`) and recolors only that phone. Everyone else sees Ember; any saved Sage or Plum from COLOR-1 is ignored (Sage maps to Forest on the owner's phone). | auto |
 | RD-26 | Given an adult or viewer, there is no color picker anywhere. | auto |
-| RD-27 | Demo: Kai (owner) can switch Family color and the demo recolors; Grandma Jo's view stays Ember. | auto (Playwright) |
+| RD-27 | Demo: Chase (owner; was Kai until DEC-64) can switch Family color and the demo recolors; Grandma Jo's view stays Ember. | auto (Playwright) |
 
 ### 1d. Plain background (Chase, Nov 16: "why is everything grey?"; Apple HIG Color)
 | ID | Given / When / Then | Type |
@@ -72,6 +72,20 @@ Split into three PRs, in order, one at a time (small PRs, no bursts). Each is sh
 | RD-34 | Content screens (Gallery, Feed, post cards, New for you, Share, walk, top bar, tab bar) sit on the plain background, white light / black dark, with no grey card fill; posts are separated by hairline dividers (c.line) and spacing. Grey (grouped background) only on Settings-style lists under More (Bigger text, Light or dark, Family color, Help, Me), on text input fields (the reply field, Share's caption), and on reaction/tinted capsules. | auto (`app/src/screens/__tests__/plainBackground.test.tsx`) |
 
 The demo's numbered Try-this steps on Gallery and Feed (FIRSTMIN-3, PR #113) are gone too (Chase, Nov 16, DEC-61); the demo bar's Details menu keeps "See it as Grandma Jo".
+
+### 1e. Review round 1 of the live demo (ux-reviewer, Chase's iPhone screenshots, Nov 17)
+Tests: `app/src/screens/__tests__/reviewRound1.test.tsx` and `app/e2e-web/demo.spec.js` (UX-R*). UX-R3 (walk without the tab bar), UX-R4 (search field and Months | All photos) and UX-R11 (tab turned Plum) wait on Chase.
+| ID | Given / When / Then | Type |
+|---|---|---|
+| RD-35 | UX-R1 (P0): while any text field is focused (comment field, Share's caption) the tab bar is hidden and the field sits fully above the keyboard, uncovered; the tab bar returns when typing ends. | auto (jest + Playwright) + manual M-19 |
+| RD-36 | UX-R2: in the New for you walk, Previous (left; shown but off on the first) and "Next photo" (right; "Done" on the last) sit together in one bar pinned at the bottom, outside the scroll, with a hairline on top. | auto |
+| RD-37 | UX-R5 (Chase, Nov 17, DEC-63): no comment emoji. The reaction row is ❤️ 😂 👍 🎉 only, emoji with no words (REACT-7 stands). Every post, even with no comments, shows a "Comments" heading, an "Add a comment…" field and a Post button. | auto |
+| RD-38 | UX-R6: the comment field's label is the visible "Comments" heading and its spoken name is "Add a comment for <sender>" ("Add a comment" on your own post). Post is a text button: grey and off while the field is empty, accent and on once there's text. | auto |
+| RD-39 | UX-R7: Gallery's grid is square tiles, three across, edge to edge (no side margins). | auto (Playwright) |
+| RD-40 | UX-R8 (P2): in the walk, the heading, avatar row, title, caption and reaction row share one 16 pt left edge. | auto |
+| RD-41 | UX-R9 (P2): in the walk the accent appears only on "Next photo"; "‹ Gallery" and "Options" are ink (RD-4). | auto |
+| RD-42 | UX-R10 (P2): when the people who will read my comment are exactly the people who can see the post, the line under the field reads "Your comment goes to the same people."; when fewer read it (the safe default), it still names them. | auto |
+| RD-43 | UX-R12 (Chase, Nov 17, DEC-64): the demo's parent is "Chase", so the greeting reads "Good morning/afternoon/evening, Chase"; "Kai" is gone from the demo. Kids stay Mia and Leo; Alex and Grandma Jo stay. | auto (jest + Playwright) |
 
 ### Phase 1 gate (manual)
 | ID | Given / When / Then | Type |

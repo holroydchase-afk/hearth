@@ -94,8 +94,8 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await onFeed(page);
   await page.getByRole('button', { name: 'Love it' }).click();
   await expect(page.getByText('❤️ 1')).toBeVisible(); // REACT-11: the phone's own emoji
-  await page.getByLabel('Write something back to Chase').fill('Look at those cheeks!');
-  await page.getByRole('button', { name: 'Send' }).click();
+  await page.getByLabel('Add a comment for Chase').fill('Look at those cheeks!');
+  await page.getByRole('button', { name: 'Post' }).click();
   await expect(page.getByText(/^Sent\. .+ will read it\.$/)).toBeVisible(); // BETA-REPLY-6/11: names the readers (AUD-8 default: the parents)
   // Full screen and back (BETA-SEE-3).
   await page.getByRole('button', { name: /^Open photo 1 of 1 full screen/ }).click();

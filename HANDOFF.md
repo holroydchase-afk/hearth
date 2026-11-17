@@ -11,6 +11,11 @@ waiting_on_chase:
 blockers: []
 -->
 
+## Nov 17: review round 1 failing tests (UX-R1, R2, R5..R10, R12; RD-35..43, DEC-63, DEC-64; branch claude/project-thread-iyml94, local commit)
+- **qa-tdd, red on purpose (run r33):** new `app/src/screens/__tests__/reviewRound1.test.tsx`; e2e `demo.spec.js` UX-R1 (keyboard), UX-R7 (edge-to-edge grid; tiles are already square), UX-R12 (greeting "Chase"). Contract in the test file's header: tab bar hides while any field is focused; `walk-bar` outside the scroll, Previous always there (off on the first), forward spoken "Next new photo", shown "Next photo"; "Comments" heading, field "Add a comment…" spoken "Add a comment for <sender>", Post text button; "Your comment goes to the same people." only when readers equal viewers.
+- **Old tests moved to the new words:** moments (REACT-7 four emoji; MOMENT-4 cursor test retired), photos, familyShape, sessions, redesignNav, opening (OPEN-7/8 Previous on every step), redesignPolish, redesignGallery, seed DEMO-3 and demoBar (Chase), core-loop/demo/demo-showcase/site specs.
+- **Next exact step:** engineer builds against them; manual M-19 on a real iPhone keyboard. Persona check for DEC-63 not written (staff-pm). `e2e/results/review-r1-red-2026-11-17.txt`. Not pushed.
+
 ## Nov 16: the demo shows Chase's own photos (DEC-62, TRACKER R47; branch claude/project-thread-s1r7xd, PR)
 - **Done, test-first:** `app/public/demo-pictures/` now holds 10 of Chase's photos (beach, dunes, museum, playground, porch, bike, splash, bridge, overlook, hug), re-saved from HEIC with no EXIF/GPS/XMP, 1200px long side, 400px thumbs. `DEMO_PICTURE_SIZES` in `app/src/demo/pictures.ts` gives each its own shape. `DEMO_POSTS` captions match the photos; "lake" still finds one photo; Alex's two new posts are the overlook and the hug.
 - **Tests:** `app/src/demo/__tests__/realPhotos.test.ts` (DEMO-PHOTO-1..3); e2e captions moved to "Bridge walk on the trail", "Bike day at the lake", "Life jackets on and in all afternoon".

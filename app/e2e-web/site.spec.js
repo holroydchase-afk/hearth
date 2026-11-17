@@ -59,7 +59,7 @@ test(`DEMO-5 Grandma's view and Start over stay inside ${BASE}/`, async ({ page 
   await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
   expect(new URL(page.url()).pathname).toMatch(new RegExp(`^${baseRe}\\/gallery\\/?$`));
   await resetDemo(page);
-  await expect(page.getByText(/You're Kai, a parent/)).toBeVisible();
+  await expect(page.getByText(/You're Chase, a parent/)).toBeVisible();
   expect(new URL(page.url()).pathname).toMatch(new RegExp(`^${baseRe}\\/`));
 });
 

@@ -66,18 +66,19 @@ describe('MOMENT: one compact card per upload', () => {
     expect(flat(tile.props.style).aspectRatio).toBe(0.8);
   });
 
-  it('REACT-7 (Chase, Oct 25) Love, Haha, Like and Comment sit in one row as icons only, each labeled for screen readers', async () => {
+  // Updated Nov 17 for UX-R5 (Chase: "I don't think we need a comment emoji"): 💬 / "Write a comment" leaves the row.
+  it('REACT-7 UX-R5 (Chase, Oct 25 / Nov 17) Love, Haha, Like and Hooray sit in one row as icons only, each labeled for screen readers', async () => {
     const { be, id } = await one();
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     const card = await screen.findByTestId(`post-${id}`);
     const row = within(card).getByTestId(`actions-${id}`);
     expect(flat(row.props.style).flexDirection).toBe('row');
     const names = within(row).getAllByRole('button').map((b) => b.props.accessibilityLabel);
-    expect(names).toEqual(['Love it', 'Haha', 'Like it', 'Hooray', 'Write a comment']); // REACT-12 (Chase, Nov 5): 🎉 added
+    expect(names).toEqual(['Love it', 'Haha', 'Like it', 'Hooray']); // REACT-12 (Chase, Nov 5): 🎉 added; UX-R5: no 💬
     // no words under the icons (REACT-7), and REACT-11 (Chase, Nov 5: "the standard, not 3D emojis, not line
     // icons"): the phone's own emoji, the same ones on its keyboard
     const shown = within(row).UNSAFE_queryAllByType(Text).map((t) => String(t.props.children)).join(' ');
-    expect(shown).toBe('❤️ 😂 👍 🎉 💬');
+    expect(shown).toBe('❤️ 😂 👍 🎉');
     expect(within(row).UNSAFE_queryAllByType(SystemIcon)).toHaveLength(0);
   });
 
@@ -148,31 +149,24 @@ describe('MOMENT: one compact card per upload', () => {
     expect(within(card).getByRole('button', { name: 'Love it' }).props.accessibilityState.selected).toBe(true);
   });
 
-  it('MOMENT-4 the reply box is one row with Send beside it, says who will read it, and no Delete sits on the card', async () => {
+  it('MOMENT-4 UX-R5 the reply box is one row with Post beside it, says who will read it, and no Delete sits on the card', async () => {
     const { be, id } = await one();
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     const card = await screen.findByTestId(`post-${id}`);
     const row = within(card).getByTestId(`reply-${id}`);
     expect(flat(row.props.style).flexDirection).toBe('row');
-    expect(within(row).getByLabelText('Write something back to Chase')).toBeTruthy();
-    expect(within(row).getByRole('button', { name: 'Send' })).toBeTruthy();
+    expect(within(row).getByLabelText('Add a comment for Chase')).toBeTruthy();
+    expect(within(row).getByRole('button', { name: 'Post' })).toBeTruthy();
     expect(await within(card).findByText('Alex and Chase will read this.')).toBeTruthy();
     expect(within(card).queryByRole('button', { name: /Delete/ })).toBeNull();
-    fireEvent.changeText(within(row).getByLabelText('Write something back to Chase'), 'So cute!');
-    fireEvent.press(within(row).getByRole('button', { name: 'Send' }));
+    fireEvent.changeText(within(row).getByLabelText('Add a comment for Chase'), 'So cute!');
+    fireEvent.press(within(row).getByRole('button', { name: 'Post' }));
     expect(await within(card).findByText('Sent. Alex and Chase will read it.')).toBeTruthy();
     expect(await within(card).findByText(/So cute!/)).toBeTruthy();
   });
 
-  it('MOMENT-4 Comment puts the cursor in the reply box (no new screen)', async () => {
-    const { be, id } = await one();
-    await renderApp(<PhotosScreen />, { be, user: 'jo' });
-    const card = await screen.findByTestId(`post-${id}`);
-    const focus = jest.spyOn(within(card).UNSAFE_getByType(TextInput).instance as { focus: () => void }, 'focus');
-    fireEvent.press(within(card).getByRole('button', { name: 'Write a comment' }));
-    expect(focus).toHaveBeenCalled();
-    expect(screen.queryByTestId(`comments-${id}`)).toBeNull();
-  });
+  // Retired Nov 17 (UX-R5, Chase): "MOMENT-4 Comment puts the cursor in the reply box". The 💬 button is gone; the
+  // "Add a comment…" field is always on the card, so there is nothing to tap first (reviewRound1.test.tsx UX-R5).
 
   it('MOMENT-5 the card shows only the newest comment and "See all 3 comments"', async () => {
     const { be, id } = await one();

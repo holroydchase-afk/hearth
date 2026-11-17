@@ -72,9 +72,9 @@ describe('Photos screen', () => {
   it('BETA-REPLY-2: writing back shows the comment and says who will see it', async () => {
     const be = await twoPosts();
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
-    const box = await screen.findByLabelText('Write something back to Chase');
+    const box = await screen.findByLabelText('Add a comment for Chase');
     fireEvent.changeText(box, 'So cute!');
-    fireEvent.press(screen.getByRole('button', { name: 'Send' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Post' }));
     expect((await screen.findAllByText(/So cute!/)).length).toBeGreaterThan(0);
     expect(await screen.findByText(/^Sent\. .+ will read it\.$/)).toBeTruthy(); // REPLY-11: names, not a scope
     await waitFor(() => expect(Object.values(be.state.comments)).toHaveLength(1));
@@ -83,12 +83,12 @@ describe('Photos screen', () => {
   it('BETA-REPLY-6: the words name who can read a comment, never only Chase and never a vague "everyone"', async () => {
     const be = await twoPosts();
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
-    await screen.findAllByLabelText('Write something back to Chase');
+    await screen.findAllByLabelText('Add a comment for Chase');
     expect((await screen.findAllByText('Alex and Chase will read this.')).length).toBeGreaterThan(0); // AUD-8 default: the parents, by name (REPLY-11)
     expect(screen.queryByText(/everyone/i)).toBeNull();
-    const box = screen.getAllByLabelText('Write something back to Chase')[0]!;
+    const box = screen.getAllByLabelText('Add a comment for Chase')[0]!;
     fireEvent.changeText(box, 'Love you all');
-    fireEvent.press(screen.getAllByRole('button', { name: 'Send' })[0]!);
+    fireEvent.press(screen.getAllByRole('button', { name: 'Post' })[0]!);
     expect(await screen.findByText('Sent. Alex and Chase will read it.')).toBeTruthy();
     expect(screen.queryByText(/Chase will see it/)).toBeNull();
   });
@@ -98,7 +98,7 @@ describe('Photos screen', () => {
     const api = be.clientFor(null, { trackAppSession: true }) as unknown as Record<string, unknown>;
     api.replyReaders = async () => null;
     await renderApp(<PhotosScreen />, { be, user: 'jo', deps: { api: api as never } });
-    await screen.findAllByLabelText('Write something back to Chase');
+    await screen.findAllByLabelText('Add a comment for Chase');
     expect(screen.getAllByText("Only the kids' parents can read this.").length).toBeGreaterThan(0);
   });
 
@@ -106,7 +106,7 @@ describe('Photos screen', () => {
     const be = await twoPosts();
     be.state.spaces[FIXTURE.space.id]!.reply_audience = 'everyone';
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
-    await screen.findAllByLabelText('Write something back to Chase');
+    await screen.findAllByLabelText('Add a comment for Chase');
     const words = (await screen.findAllByText(/ will read this\.$/))[0]!.props.children as string;
     expect(words).toMatch(/Alex/);
     expect(words).toMatch(/Earl/); // a relative in the group now reads it too
@@ -115,14 +115,14 @@ describe('Photos screen', () => {
   it('B6: a half-typed comment survives incoming hearts', async () => {
     const be = await twoPosts();
     const { getByLabelText } = await renderApp(<Probe />, { be, user: 'jo' });
-    const box = await screen.findByLabelText('Write something back to Chase');
+    const box = await screen.findByLabelText('Add a comment for Chase');
     fireEvent.changeText(box, 'She looks just like');
     const postId = Object.values(be.state.posts).find((p) => p.caption === 'Shared with Dad side')!.id;
     await be.clientFor(FIXTURE.users.chase.id).toggleHeart(postId);
     await be.clientFor(FIXTURE.users.earl.id).toggleHeart(postId); // AUD-8: Jo can't see a relative's heart
     await act(async () => { await probe.app!.feed!.refresh(); });
     expect(await screen.findByLabelText('1 love')).toBeTruthy();
-    expect(getByLabelText('Write something back to Chase').props.value).toBe('She looks just like');
+    expect(getByLabelText('Add a comment for Chase').props.value).toBe('She looks just like');
   });
 
   it('BETA-AUD-5: deleting asks first; "No" keeps it, "Yes" removes it everywhere', async () => {
