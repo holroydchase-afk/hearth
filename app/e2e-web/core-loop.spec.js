@@ -56,7 +56,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
   await expect(page.getByText(/can see this\.$/).first()).toBeVisible(); // RD-58 (UX-R15): one who-can-see line; the group's name is in Post options
   await page.getByRole('button', { name: 'Post options' }).click(); // MOMENT-6: the full words are under More
-  await expect(page.getByText("Shared with Grandparents – Dad's side · 2 people")).toBeVisible();
+  await expect(page.getByText("Shared with Grandparents – Dad's side, 2 people")).toBeVisible(); // UX-R33 (engineer, flagged for qa-tdd)
   await page.getByRole('button', { name: 'Close this menu' }).click();
 
   // BETA-SHARE-2/3/5 on the real pipeline: stored bytes are ciphertext; inside, a 2048 px JPEG with no EXIF.

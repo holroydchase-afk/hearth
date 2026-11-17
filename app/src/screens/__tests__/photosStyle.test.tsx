@@ -277,10 +277,6 @@ async function feedWith(opts: { user?: 'jo' | 'chase'; photos?: number; caption?
   const card = await screen.findByTestId(`post-${id}`, {}, slow);
   return { ...r, be, id, card };
 }
-/** The Text that reads "<name> <words>" with the name nested inside it. */
-function descriptionOf(card: Inst, name: string, words: string): Inst | undefined {
-  return (card.findAll((n: Inst) => n.type === Text) as Inst[]).find((t) => textOf(t).replace(/\s+/g, ' ').trim() === `${name} ${words}`);
-}
 
 describe('RD-48 a Feed post in Instagram\'s order', () => {
   it('RD-48 face and name, then photos, reactions, description, time, who can see it, then comments', async () => {
@@ -290,7 +286,7 @@ describe('RD-48 a Feed post in Instagram\'s order', () => {
     const at = (n: Inst | undefined) => (n ? order.indexOf(n) : -1);
     const head = within(card).getByTestId(`card-head-${id}`);
     const name = within(head).getByText('Chase');
-    const desc = descriptionOf(card, 'Chase', 'First snow!');
+    const desc = within(card).getByTestId(`desc-${id}`); // UX-R32 (engineer, flagged for qa-tdd): no name to find it by
     const seq = {
       name: at(name),
       photos: at(within(card).getByTestId(`collage-${id}`)),
@@ -305,13 +301,12 @@ describe('RD-48 a Feed post in Instagram\'s order', () => {
       .toEqual({ seq, found: true, inOrder: true });
   });
 
-  it('RD-48 the description is the sender\'s name in Medium, then the words ("Chase First snow!")', async () => {
-    const { card } = await feedWith();
-    const desc = descriptionOf(card, 'Chase', 'First snow!');
-    expect(desc).toBeTruthy();
-    const name = (desc!.findAll((n: Inst) => n.type === Text && n !== desc) as Inst[]).find((t) => textOf(t).trim() === 'Chase');
-    expect(name).toBeTruthy();
-    expect(String(flat(name!.props.style).fontWeight)).toBe('500');
+  // UX-R32 (round 4; engineer, flagged for qa-tdd): replaces RD-48's "Chase First snow!"; the name is on the row above.
+  it('RD-48 UX-R32 the description is just the words ("First snow!"), without the sender\'s name', async () => {
+    const { id, card } = await feedWith();
+    const desc = within(card).getByTestId(`desc-${id}`);
+    expect(textOf(desc).trim()).toBe('First snow!');
+    expect((desc.findAll((n: Inst) => n.type === Text && n !== desc) as Inst[]).some((t) => textOf(t).trim() === 'Chase')).toBe(false);
     // The words keep their own nested Text, so "First snow!" is still found by its words (CAP-*, MOMENT-* tests).
     expect(within(card).getByText('First snow!')).toBeTruthy();
     // The words are not repeated anywhere above the photos any more.
@@ -359,11 +354,12 @@ describe('RD-50 a small "⋯" (spoken "Post options") replaces the Options word'
     expect(within(card).queryByRole('button', { name: /^Options/ })).toBeNull();
   });
 
-  it('RD-50 on my own post: Who can see this, Edit description and Delete post (which asks first)', async () => {
+  it('RD-50 on my own post: Shared with (UX-R33, no heading), Edit description and Delete post (which asks first)', async () => {
     const { be, id, card } = await feedWith({ user: 'chase' });
     fireEvent.press(within(card).getByRole('button', { name: 'Post options' }));
     const menu = await screen.findByTestId(`more-${id}`);
-    expect(within(menu).getByText('Who can see this')).toBeTruthy();
+    expect(within(menu).queryByText('Who can see this')).toBeNull(); // UX-R33 (QA-R2): no heading on my own post
+    expect(within(menu).getByText(/^Shared with .+, \d+ (people|person)$/)).toBeTruthy();
     expect(within(menu).getByRole('button', { name: 'Edit description' })).toBeTruthy();
     fireEvent.press(within(menu).getByRole('button', { name: 'Delete post' }));
     expect(await screen.findByText('Delete this post?')).toBeTruthy(); // UX-R24 (RD-67): the iOS-style alert

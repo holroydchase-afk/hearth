@@ -3,13 +3,18 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: review round 3 built (UX-R24..R30, RD-67..73), qa-tdd 3x next; push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
+now: review round 4 built (UX-R31..R35), qa-tdd 3x next; push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
 next: redesign R46 1a..1c, polish GUX-R1..R10, RD-34 plain background, DEC-60 names, DEC-61 no demo steps built; qa-tdd 3x, then grandparent-ux recheck; stop date Nov 19
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 17: review round 4 fixes built (UX-R31..R35; branch claude/project-thread-iyml94, local commit)
+- **Engineer, green once (jest 1277, typecheck, e2e:demo 20, e2e:web 5):** web comment field: browser outline off, 2 pt accent ring on the rounded edge while focused (kit `useWebFocusRing` / `noWebOutline`, so RD-4 keeps c.accent in the kit). Feed description has no name prefix; a title reads "Title – words". Own-post Post options: no heading, "Shared with <group>, N people", then Edit description, Delete post; members keep the heading and get "... can see this." in c.ink. Bigger text names one person then "and N more"; who line sits 12 pt under the time in both views (flex-start + 8 pt padding).
+- **Test edits for qa-tdd to confirm (each marked "engineer, flagged for qa-tdd"):** QA-R2 photosStyle RD-50; photosStyle RD-48 x2 (UX-R32, `descriptionOf` removed); photos BETA-AUD-1 and moments MOMENT-6 ("·" to ","); moments MOMENT-6 viewer and who WHO-7 (period, UX-R34); photos BETA-AUD-10 and who WHO-10 (Jo's Bigger text, UX-R35); redesignPolish GUX-R6 x2 now set bigText off to keep RD-70's two names; e2e core-loop line 59.
+- **Next exact step:** qa-tdd all suites 3x, then ux-reviewer round-4 recheck. Not pushed. A stray `serve-dist.js dist-demo 8090` from an earlier run was still up; e2e:demo ran against it (same fresh build) via a scratch reuse config.
 
 ## Nov 17: review round 3 fixes built (UX-R24..R30, RD-67..73; branch claude/project-thread-iyml94, local commit)
 - **Engineer, green (jest 1265 x3, typecheck, e2e:demo 20, e2e:web 5, e2e:site 14):** Delete post opens `AlertDialog` (kit): "Delete this post?", Semibold "Keep it" in ink, Regular red "Delete", no fills. New `c.dangerText` token (light #B3261E, dark #FF453A) for red words; `c.danger`/`onDanger` unchanged so the filled-button contrast pair holds. Month title has 12 pt under it. "Same people" line only while the field is focused or holds words. `namesLine`: two names then "and N more", one name when the line passes 44 characters. Title opens the description in Medium (`post-title-<id>` testID kept on it), name shown only when there's no title. Exactly 2 photos in a month are two squares.

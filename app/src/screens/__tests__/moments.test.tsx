@@ -200,7 +200,7 @@ describe('MOMENT: one compact card per upload', () => {
     await renderApp(<PhotosScreen />, { be, user: 'chase' });
     fireEvent.press(within(await screen.findByTestId(`post-${id}`)).getByRole('button', { name: 'Post options' }));
     const menu = await screen.findByTestId(`more-${id}`);
-    expect(within(menu).getByText("Shared with Grandparents – Dad's side · 3 people")).toBeTruthy();
+    expect(within(menu).getByText("Shared with Grandparents – Dad's side, 3 people")).toBeTruthy(); // UX-R33 (engineer, flagged for qa-tdd)
     expectGrandparentSafe();
     fireEvent.press(within(menu).getByRole('button', { name: 'Delete post' }));
     expect(await screen.findByText('Delete this post?')).toBeTruthy(); // UX-R24 (RD-67): the iOS-style alert
@@ -214,7 +214,7 @@ describe('MOMENT: one compact card per upload', () => {
     await screen.findByTestId(`who-${id}`);
     fireEvent.press(within(await screen.findByTestId(`post-${id}`)).getByRole('button', { name: 'Post options' }));
     const menu = await screen.findByTestId(`more-${id}`);
-    expect(within(menu).getByText(/^You, .+ can see this$/)).toBeTruthy(); // WHO-7: names, not a group
+    expect(within(menu).getByText(/^You, .+ can see this\.$/)).toBeTruthy(); // WHO-7: names, not a group; UX-R34: ends with a period
     expect(within(menu).queryByRole('button', { name: /Delete/ })).toBeNull();
     fireEvent.press(within(menu).getByRole('button', { name: 'Close this menu' }));
     await waitFor(() => expect(screen.queryByTestId(`more-${id}`)).toBeNull());

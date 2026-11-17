@@ -236,16 +236,19 @@ describe('GUX-R5 the Feed screen is titled Feed', () => {
 // ---------------------------------------------------------------------------------------------------------------
 
 describe('GUX-R6 the card names who can see it', () => {
-  async function card(user: 'jo' | 'earl' | 'ruth' | 'chase', circle: string) {
+  async function card(user: 'jo' | 'earl' | 'ruth' | 'chase', circle: string, bigText?: boolean) {
     const be = FakeBackend.withFixture();
     const { id } = await seedPost(be, { caption: 'At the lake', circles: [circle] });
-    await renderApp(<FeedScreen />, { be, user });
+    // UX-R35 (engineer, flagged for qa-tdd): Bigger text names one person; `bigText: false` keeps RD-70's two names.
+    const kv = bigText === undefined ? undefined
+      : memoryKV({ [`hearth.prefs.v1.${FIXTURE.users[user].id}`]: JSON.stringify({ bigText, notify: 'push', look: 'light', color: 'ember' }) });
+    await renderApp(<FeedScreen />, { be, user, kv });
     return { id };
   }
 
   // Chase, Nov 16 (DEC-60): "Names". Reverses WHO-10 / LIVE-4 (Nov 5).
   it('GUX-R6 a long list: "Alex, Chase and 2 more can see this." in words, no initials circles', async () => {
-    const { id } = await card('jo', everyone.id);
+    const { id } = await card('jo', everyone.id, false);
     const who = await screen.findByTestId(`who-${id}`, {}, slow);
     expect(wordsIn(who)).toBe('Alex, Chase and 2 more can see this.');
     expect(within(who).queryAllByTestId(/^face-/)).toHaveLength(0);
@@ -255,7 +258,7 @@ describe('GUX-R6 the card names who can see it', () => {
 
   // Chase, Nov 16 (DEC-60): "Names". Reverses WHO-10 / LIVE-4 (Nov 5).
   it('GUX-R6 UX-R27 three others: Grandpa Earl reads two names and "1 more" (RD-70)', async () => {
-    const { id } = await card('earl', dadSide.id);
+    const { id } = await card('earl', dadSide.id, false);
     const who = await screen.findByTestId(`who-${id}`, {}, slow);
     expect(wordsIn(who)).toBe('Alex, Chase and 1 more can see this.');
   });

@@ -6,7 +6,7 @@
 import { SymbolView } from 'expo-symbols';
 import React, { type ReactNode } from 'react';
 import {
-  ActivityIndicator, Modal, PanResponder, Pressable, type PanResponderCallbacks, ScrollView, StyleSheet, Switch, Text, TextInput, View,
+  ActivityIndicator, Modal, PanResponder, Platform, Pressable, type PanResponderCallbacks, ScrollView, StyleSheet, Switch, Text, TextInput, View,
   useWindowDimensions, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -237,6 +237,19 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
 function SwitchWord({ on }: { on: boolean }) {
   const { c, t } = useTheme();
   return <Text style={{ color: c.ink, fontSize: t.base, fontWeight: WEIGHT.semibold }}>{on ? 'On' : 'Off'}</Text>;
+}
+
+/** UX-R31: on the web a rounded field draws its own focus ring: a 2 pt accent edge that follows its corners (the
+ *  browser's square outline is turned off on the input; see `noWebOutline`). At rest the edge is clear, so focusing
+ *  never shifts the words. Phones keep their own focus look, so this is empty there. */
+export function useWebFocusRing(focused: boolean): ViewStyle | null {
+  const { c, os } = useTheme();
+  return os === 'web' ? { borderWidth: 2, borderColor: focused ? c.accent : 'transparent' } : null;
+}
+
+/** UX-R31: the browser's own outline off, for a text input inside a field that draws `useWebFocusRing`. */
+export function noWebOutline(): TextStyle {
+  return (Platform.OS === 'web' ? { outlineStyle: 'none' } : {}) as TextStyle;
 }
 
 export function Field(props: TextInputProps & { label: string }) {

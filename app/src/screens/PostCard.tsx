@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { REACTIONS, type FeedPost, type Reaction } from '../api/HearthApi';
 import type { CommentView } from '../feed/store';
 import { useApp, useFeed } from '../state/AppContext';
-import { AlertDialog, BottomSheet, Button, Card, Field, Notice, SystemIcon, Txt } from '../ui/kit';
+import { AlertDialog, BottomSheet, Button, Card, Field, Notice, SystemIcon, Txt, noWebOutline, useWebFocusRing } from '../ui/kit';
 import { useTypingField } from '../ui/typing';
 import { haptic } from '../platform/haptics';
 import { andList, initialOf, people, relativeTime, shortDate } from '../ui/format';
@@ -101,7 +101,7 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
       </View>
       <View style={styles.words}>
         {/* RD-71 (UX-R28): no heading above the words; the title opens the description in Medium. */}
-        {post.title || post.caption ? <Caption testID={`desc-${post.post_id}`} titleID={`post-title-${post.post_id}`} name={post.author_name} title={post.title ?? null} text={post.caption ?? ''} /> : null}
+        {post.title || post.caption ? <Caption testID={`desc-${post.post_id}`} titleID={`post-title-${post.post_id}`} title={post.title ?? null} text={post.caption ?? ''} /> : null}
         {/* RD-51: "Just now", "3 hours ago", "Yesterday", "Nov 3"; CAP-6's "· Edited" after it. */}
         <Txt variant="muted" testID={`when-${post.post_id}`}>{when}</Txt>
         {/* WHO-6 / DEC-60: the quiet privacy line stays on every post. */}
@@ -180,7 +180,7 @@ const FACE_MAX_SCALE = 1.3;
 /** GUX-R6 (Chase, Nov 16: "Names", DEC-60): the others who can see it, in words. RD-70 (UX-R27): one line, so at
  *  most two names, then "and N more"; when two long names would wrap at default size on a 390 pt phone, one name
  *  and "N more". People only, never a group's title (DEC-49). The spoken label and the Who sheet keep everyone. */
-export function namesLine(viewers: Viewer[], me: string | undefined): string {
+export function namesLine(viewers: Viewer[], me: string | undefined, bigText = false): string {
   const others = viewers.filter((v) => v.user_id !== me).map((v) => v.name);
   if (!others.length) return 'Only you can see this.';
   const line = (shown: number) => {
@@ -188,6 +188,8 @@ export function namesLine(viewers: Viewer[], me: string | undefined): string {
     const list = rest <= 0 ? andList(others) : `${others.slice(0, shown).join(', ')} and ${rest} more`;
     return `${list} can see this.`;
   };
+  // UX-R35: Bigger text fits one name on the line, so it always names one person then "and N more".
+  if (bigText && others.length > 2) return line(1);
   const two = line(Math.min(2, others.length));
   return two.length <= ONE_LINE_CHARS || others.length < 2 ? two : line(1);
 }
@@ -197,11 +199,11 @@ const ONE_LINE_CHARS = 44;
 
 /** GUX-R6: one 48 pt button with the names line; a tap shows everyone (the Who sheet). Replaces WHO-10's circles. */
 function WhoLine({ post, viewers, me, onPress }: { post: FeedPost; viewers: Viewer[]; me: string | undefined; onPress: () => void }) {
-  const { c } = useTheme();
+  const { c, bigText } = useTheme();
   return (
     <Pressable testID={`who-${post.post_id}`} accessibilityRole="button" accessibilityLabel={whoCanSee(viewers, me, 3)}
       accessibilityHint="Shows everyone who can see this" onPress={onPress} hitSlop={4} style={styles.who}>
-      <Txt style={{ color: c.muted }}>{namesLine(viewers, me)}</Txt>
+      <Txt style={{ color: c.muted }}>{namesLine(viewers, me, bigText)}</Txt>
     </Pressable>
   );
 }
@@ -235,14 +237,16 @@ function MoreMenu({ visible, post, mine, onDelete, onChangeWords, onClose }: {
   const { c } = useTheme();
   const { session } = useApp();
   if (!visible) return null;
-  // WHO-7: everyone but the sender gets every name here; the group's name stays with the sender (parents).
+  // WHO-7: everyone but the sender gets every name here; the group's name stays with the sender (parents, DEC-49).
+  // UX-R33: "Shared with <group>, N people" is the first line on my own post, with no heading above it.
+  // UX-R34: the names are a sentence in the normal text color, ending with a period.
   const audience = post.audience
-    ? `Shared with ${post.audience.map((a) => `${a.name} · ${people(a.member_count)}`).join(', ')}`
-    : post.viewers?.length ? whoCanSee(post.viewers, session?.userId) : 'Shared with you';
+    ? `Shared with ${post.audience.map((a) => `${a.name}, ${people(a.member_count)}`).join('; ')}`
+    : post.viewers?.length ? `${whoCanSee(post.viewers, session?.userId)}.` : 'Shared with you.';
   return (
     <BottomSheet testID={`more-${post.post_id}`} onClose={onClose}>
-          <Txt variant="title" role="header">Who can see this</Txt>
-          <Txt style={{ color: post.audience ? c.ink : c.safe }}>{audience}</Txt>
+          {mine ? null : <Txt variant="title" role="header">Who can see this</Txt>}
+          <Txt style={{ color: c.ink }}>{audience}</Txt>
           {mine ? (
             <View>
               {/* RD-50 (DEC-65): the standard words, "Edit description" and "Delete post" (which asks first). RD-57
@@ -388,10 +392,12 @@ function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
   // RD-59 (UX-R16): one rounded field, like Instagram's and Messages': a quiet fill (an edge on Android), the words,
   // and Post inside it at the right end once there are words. The text input itself draws no second box.
   const box = os === 'android' ? { borderWidth: 1, borderColor: c.muted } : { backgroundColor: c.fill };
+  // UX-R31: on the web the browser's square outline is off; focus draws a 2 pt ring on the field's own rounded edge.
+  const ring = useWebFocusRing(focused);
   const words = sent ? sentWords : readers;
   return (
     <View style={{ gap: 6 }}>
-      <View testID={`reply-${post.post_id}`} style={[styles.replyRow, box]}>
+      <View testID={`reply-${post.post_id}`} style={[styles.replyRow, box, ring]}>
         <TextInput
           accessibilityLabel={spoken}
           placeholder="Add a comment…"
@@ -404,7 +410,7 @@ function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
           // The web's textarea starts two rows tall; one row, like the phone, until the words wrap.
           {...(Platform.OS === 'web' ? { rows: 1 } : {})}
           maxLength={500}
-          style={{ flex: 1, minHeight: MIN_TARGET, color: c.ink, paddingLeft: SPACE.lg, paddingRight: SPACE.sm, paddingVertical: 12, fontSize: t.base, borderWidth: 0 }}
+          style={{ flex: 1, minHeight: MIN_TARGET, color: c.ink, paddingLeft: SPACE.lg, paddingRight: SPACE.sm, paddingVertical: 12, fontSize: t.base, borderWidth: 0, ...noWebOutline() }}
         />
         {/* UX-R6 / RD-59: Post is a text button inside the field, grey and off while empty, accent once there are words. */}
         <Button variant="quiet" label="Post" onPress={() => void send()} disabled={!draft.trim()} style={styles.post} />
@@ -419,15 +425,15 @@ function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
 const FOLD_LINES = 4;
 const foldable = (t: string) => t.split('\n').length > FOLD_LINES || t.length > 220;
 
-/** RD-48: the description is one line of text: the sender's name in Medium, then the words in their own Text.
- *  RD-71 (UX-R28): a post with a title opens with the title in Medium instead (the name is on the row above). */
-function Caption({ name, title, text, testID, titleID }: { name: string; title: string | null; text: string; testID: string; titleID: string }) {
+/** UX-R32: the description is just the words (the sender's name is on the row above). RD-71 (UX-R28): a post with
+ *  a title opens with the title in Medium, then " – " (an en dash) and the words. */
+function Caption({ title, text, testID, titleID }: { title: string | null; text: string; testID: string; titleID: string }) {
   const [open, setOpen] = useState(false);
   const fold = foldable(text);
   return (
     <View style={styles.caption}>
       <Txt testID={testID} numberOfLines={fold && !open ? FOLD_LINES : undefined}>
-        <Txt testID={title ? titleID : undefined} style={{ fontWeight: WEIGHT.medium }}>{title || name}</Txt>{text ? ' ' : null}{text ? <Txt>{text}</Txt> : null}
+        {title ? <Txt testID={titleID} style={{ fontWeight: WEIGHT.medium }}>{title}</Txt> : null}{title && text ? ' – ' : null}{text ? <Txt>{text}</Txt> : null}
       </Txt>
       {fold ? (
         <Button
@@ -461,7 +467,8 @@ const styles = StyleSheet.create({
   react: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingHorizontal: SPACE.sm, borderRadius: RADIUS.pill },
   count: { fontVariant: ['tabular-nums'] },
   words: { gap: SPACE.xs, paddingHorizontal: SPACE.lg },
-  who: { minHeight: MIN_TARGET, justifyContent: 'center', alignSelf: 'stretch' },
+  // UX-R35: 12 pt above the words in both views (the 4 pt gap plus 8 pt here); the 48 pt target grows below them.
+  who: { minHeight: MIN_TARGET, justifyContent: 'flex-start', paddingTop: SPACE.sm, alignSelf: 'stretch' },
   face: { width: 36, height: 36, borderRadius: RADIUS.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   // FIRSTMIN-1: two letters ("GJ") fit the 32 pt inside the ring at 17 pt with slightly tighter tracking.
   faceText: { fontWeight: WEIGHT.semibold, fontSize: 17, lineHeight: 20, letterSpacing: -0.5 },

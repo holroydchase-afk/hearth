@@ -33,7 +33,7 @@ describe('WHO: who can see this post, by name', () => {
     await within(el).findByTestId(`who-${id}`);
     fireEvent.press(within(el).getByRole('button', { name: 'Post options' }));
     const menu = await screen.findByTestId(`more-${id}`);
-    expect(within(menu).getByText('You, Alex, Chase and Grandma Jo can see this')).toBeTruthy();
+    expect(within(menu).getByText('You, Alex, Chase and Grandma Jo can see this.')).toBeTruthy(); // UX-R34: a sentence (engineer, flagged for qa-tdd)
     expect(within(menu).queryByText('Shared with you')).toBeNull();
     expect(screen.queryByText(/Grandparents|Dad's side/)).toBeNull();
   });
@@ -78,7 +78,7 @@ describe('WHO: who can see this post, by name', () => {
     const { id, el } = await dadSidePost('jo');
     const who = await within(el).findByTestId(`who-${id}`);
     expect(who.props.accessibilityRole).toBe('button');
-    expect(within(who).getByText('Alex, Chase and 1 more can see this.')).toBeTruthy(); // UX-R27 (RD-70): two names, then "N more"
+    expect(within(who).getByText('Alex and 2 more can see this.')).toBeTruthy(); // UX-R35 (engineer, flagged for qa-tdd): Jo's Bigger text, one name, then "N more"
     expect(within(who).queryAllByTestId(/^face-/, { includeHiddenElements: true })).toHaveLength(0);
     expect(within(who).queryByText(/^\+\d+$/, { includeHiddenElements: true })).toBeNull();
   });

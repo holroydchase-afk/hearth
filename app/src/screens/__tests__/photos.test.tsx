@@ -44,7 +44,7 @@ describe('Photos screen', () => {
     await renderApp(<PhotosScreen />, { be, user: 'chase' });
     await screen.findByTestId(`who-${id}`); // RD-58 (UX-R15): the group's name moved from the card into Post options
     fireEvent.press(screen.getByRole('button', { name: 'Post options' }));
-    expect(await screen.findByText("Shared with Grandparents – Dad's side · 3 people")).toBeTruthy();
+    expect(await screen.findByText("Shared with Grandparents – Dad's side, 3 people")).toBeTruthy(); // UX-R33 (engineer, flagged for qa-tdd)
     expect(screen.queryByText(/Seen by/)).toBeNull();
   });
 
@@ -113,7 +113,8 @@ describe('Photos screen', () => {
     expect((await screen.findAllByText('Your comment goes to the same people.')).length).toBeGreaterThan(0);
     const words = screen.getAllByText(/ can see this\.$/)[0]!.props.children as string;
     expect(words).toMatch(/Alex/);
-    expect(words).toMatch(/and 1 more/); // a relative in the group now reads it too (Earl; UX-R27 / RD-70 counts past two names)
+    // UX-R35 (engineer, flagged for qa-tdd): Jo is in Bigger text, so one name then the count (Chase and Earl).
+    expect(words).toMatch(/and 2 more/); // a relative in the group now reads it too (Earl; UX-R27 / RD-70 counts past the names shown)
     // qa-tdd (round 4 review of the round-3 edit): "and 1 more" alone no longer proves it is Earl; the spoken label keeps everyone.
     expect(screen.getAllByRole('button', { name: / can see this/ })[0]!.props.accessibilityLabel).toMatch(/Earl/);
   });
