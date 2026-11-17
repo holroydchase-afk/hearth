@@ -24,7 +24,7 @@ import { paletteFor, type Colors } from '../../ui/theme';
 import { MediaImage } from '../MediaImage';
 
 const { dadSide } = FIXTURE.circles;
-const { jo, chase, earl } = FIXTURE.users;
+const { jo, chase, earl, alex } = FIXTURE.users;
 const KEY = (u: string) => `hearth.lastSeen.v1.${u}`;
 const HOUR = 3600e3;
 const LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -298,7 +298,7 @@ describe('RD-48 a Feed post in Instagram\'s order', () => {
       name: at(name),
       photos: at(within(card).getByTestId(`collage-${id}`)),
       reactions: at(within(card).getByTestId(`actions-${id}`)),
-      description: at(desc),
+      description: at(desc && (isHost(desc) ? desc : desc.findAll(isHost)[0])), // engineer, Nov 17: desc is the composite Text; order holds hosts
       time: at(within(card).getByTestId(`when-${id}`)),
       who: at(who),
       comments: at(within(card).getByTestId(`reply-${id}`)),
@@ -438,7 +438,7 @@ describe('RD-53 B3: all four emoji in one row, each with its count beside it', (
     const { id } = await seedPost(be, { caption: 'At the lake', circles: [dadSide.id] });
     await be.clientFor(chase.id).setReaction(id, '❤️');
     await be.clientFor(jo.id).setReaction(id, '❤️');
-    await be.clientFor(earl.id).setReaction(id, '😂');
+    await be.clientFor(alex.id).setReaction(id, '😂'); // engineer, Nov 17: was Earl, whose reaction Jo may not see (AUD reply scope 'parents'); Alex is a parent
     await renderApp(<FeedScreen />, { be, user: 'jo' });
     const card = await screen.findByTestId(`post-${id}`, {}, slow);
     const row = within(card).getByTestId(`actions-${id}`);

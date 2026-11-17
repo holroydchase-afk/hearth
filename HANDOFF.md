@@ -3,13 +3,19 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
+now: round 2 (RD-44..55) built Nov 17, qa-tdd 3x next; push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
 next: redesign R46 1a..1c, polish GUX-R1..R10, RD-34 plain background, DEC-60 names, DEC-61 no demo steps built; qa-tdd 3x, then grandparent-ux recheck; stop date Nov 19
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 17: round 2 built, Apple Photos months, Search photos field, Instagram-style posts (RD-44..55, DEC-65; branch claude/project-thread-iyml94, local commit)
+- **Engineer, green:** Gallery = 34 pt Semibold greeting, a "Search photos" field (a 48 pt button that opens Search; pins under the bar on scroll), New for you, then months: month 24 pt Semibold, day groups with a wide 3:2 opener (most-loved, else newest) and the day number on a radial fade, squares 3 across, 16 pt corners, 8 pt gaps, 16 pt margins (pure layout `feed/gallery.ts`, tests `feed/__tests__/gallery.test.ts`). Top bar has no buttons; By date opens only from Feed's Older photos ("Back to Feed"). Posts: face + name (Medium), "⋯" Post options (Edit description, Delete post for own), mosaic max 4 with a solid "+N" chip (`collageTiles`), 4 emoji each with its count (value read out), "<name> <words>", `relativeTime`, who line, comments; no lines, 32 pt apart; Feed list has no side padding (card owns its 16 pt edge). No Bold: `WEIGHT` is regular/medium/semibold; `RADIUS.photo` 16; tokens.json regenerated.
+- **Test edits for qa-tdd to confirm:** photosStyle RD-53 uses Alex not Earl (Jo may not see a relative's reaction, AUD reply scope) and RD-48 maps the composite description Text to its host; old stale tests moved: opening OPEN-9 (squares, not the wide opener), OPEN-10 (full month), OPEN-7 and moments MOMENT-1 (name also in the description), search SEARCH-UI-1 (field, not top bar), photos/sessions "1 love" label → Love it value 1, captions CAP-4 (folds the `desc-` Text), plainBackground allowlists `SearchField`; e2e `name: 'Post'` now `exact: true` (collides with "Post options").
+- **Not on a phone yet:** the day-number fade uses RN 0.88 `backgroundImage` (check RD-28 on iPhone and Android). RD-49 profile photos still a todo (initials).
+- **Next exact step:** qa-tdd all suites 3x; grandparent-ux and ux-reviewer on `/mnt/project-files/design/2026-11-17-r2-*.png`. Not pushed.
 
 ## Nov 17: review round 1 built (UX-R1, R2, R5..R10, R12; RD-35..43, DEC-63, DEC-64; branch claude/project-thread-iyml94, local commits)
 - **Engineer, green:** tab bar hides while any field is focused (`app/src/ui/typing.ts`; comes back 250 ms after blur; web keeps the field in view on visualViewport resize; iPhone uses KeyboardAvoidingView in the walk and keyboard insets on Feed/Screen). Walk: one `walk-bar` under the scroll (Previous off on the first, "Next photo"/"Done"), post edge to edge with one 16 pt edge, Back and Options in ink. Comments: no 💬; "Comments" heading, "Add a comment…" field, Post text button; "Your comment goes to the same people." when readers equal viewers. Gallery grid edge to edge. Demo parent is Chase.

@@ -214,6 +214,7 @@ const GREY_ALLOWED: Record<string, Record<string, string>> = {
     WhoSheet: 'people capsules in the "who can see this" sheet',
   },
   'screens/MessagesScreen.tsx': { Line: 'chat bubble capsule' },
+  'screens/GalleryTop.tsx': { SearchField: 'the "Search photos" field (RD-47), a field like the reply field' },
   'demo/DemoBar.tsx': { DemoBar: 'demo chrome, outside the app' },
   'demo/DemoFrame.tsx': { DemoFrame: 'demo chrome, outside the app' },
 };

@@ -63,7 +63,7 @@ describe('Photos screen', () => {
     fireEvent.press(heart);
     await waitFor(() => expect(screen.getByRole('button', { name: 'Love it' }).props.accessibilityState.selected).toBe(true));
     await waitFor(() => expect(be.state.hearts).toHaveLength(1));
-    expect(screen.getByLabelText('1 love')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Love it' }).props.accessibilityValue?.text).toBe('1'); // RD-53: the count is read as the value
     fireEvent.press(screen.getByRole('button', { name: 'Love it' }));
     await waitFor(() => expect(screen.getByRole('button', { name: 'Love it' }).props.accessibilityState.selected).toBe(false));
     await waitFor(() => expect(be.state.hearts).toHaveLength(0));
@@ -124,7 +124,7 @@ describe('Photos screen', () => {
     await be.clientFor(FIXTURE.users.chase.id).toggleHeart(postId);
     await be.clientFor(FIXTURE.users.earl.id).toggleHeart(postId); // AUD-8: Jo can't see a relative's heart
     await act(async () => { await probe.app!.feed!.refresh(); });
-    expect(await screen.findByLabelText('1 love')).toBeTruthy();
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Love it' }).props.accessibilityValue?.text).toBe('1')); // RD-53
     expect(getByLabelText('Add a comment for Chase').props.value).toBe('She looks just like');
   });
 

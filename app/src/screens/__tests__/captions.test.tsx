@@ -53,12 +53,14 @@ describe('CAP post titles', () => {
     const long = Array.from({ length: 8 }, (_, i) => `Line ${i + 1} of a long story about the beach.`).join('\n');
     await seedPost(be, { caption: long });
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
-    const text = await screen.findByText(long);
-    expect(text.props.numberOfLines).toBe(4);
+    expect(await screen.findByText(long)).toBeTruthy();
+    // RD-48 (Nov 17): the words sit inside the description line ("<name> <words>"), which is the Text that folds.
+    const desc = () => screen.getByTestId(/^desc-/);
+    expect(desc().props.numberOfLines).toBe(4);
     fireEvent.press(screen.getByRole('button', { name: 'Read more of this caption' }));
-    expect(screen.getByText(long).props.numberOfLines ?? 0).toBe(0);
+    expect(desc().props.numberOfLines ?? 0).toBe(0);
     fireEvent.press(screen.getByRole('button', { name: 'Show less of this caption' }));
-    expect(screen.getByText(long).props.numberOfLines).toBe(4);
+    expect(desc().props.numberOfLines).toBe(4);
   });
 
   it('CAP-4 a short caption has no Read more', async () => {

@@ -13,7 +13,7 @@ import { expectGrandparentSafe, renderApp } from '../../test/renderApp';
 import { MediaImage } from '../MediaImage';
 import { SystemIcon } from '../../ui/kit';
 import { PhotosScreen } from '../PhotosScreen';
-import { collageShape } from '../PhotoCollage';
+import { collageShape, collageTiles, singleAspect } from '../PhotoCollage';
 
 const { dadSide } = FIXTURE.circles;
 const flat = (s: unknown) => StyleSheet.flatten(s as never) as Record<string, unknown>;
@@ -29,7 +29,7 @@ describe('MOMENT: one compact card per upload', () => {
     const { be, id } = await one();
     await renderApp(<PhotosScreen />, { be, user: 'chase' });
     const card = await screen.findByTestId(`post-${id}`);
-    expect(within(card).getByText('Chase')).toBeTruthy();
+    expect(within(within(card).getByTestId(`card-head-${id}`)).getByText('Chase')).toBeTruthy(); // RD-48: the description repeats the name
     expect(within(card).getByText(/to Grandparents – Dad's side/)).toBeTruthy();
     expect(within(card).getByText('At the lake')).toBeTruthy();
   });
@@ -231,5 +231,21 @@ describe('MOMENT: one compact card per upload', () => {
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     await screen.findByText('At the lake');
     expectGrandparentSafe();
+  });
+});
+
+// RD-54 (C1, DEC-65): the post mosaic's shapes as a pure function.
+describe('RD-54 collage tiles (pure)', () => {
+  it('RD-54 at most 4 tiles: one alone keeps its shape, two side by side 4:5, three or more a wide 3:2 then squares', () => {
+    expect(collageTiles(1, 0.8)).toEqual([{ aspect: 0.8, wide: true }]);
+    expect(collageTiles(2)).toEqual([{ aspect: 0.8, wide: false }, { aspect: 0.8, wide: false }]);
+    expect(collageTiles(3)).toEqual([{ aspect: 1.5, wide: true }, { aspect: 1, wide: false }, { aspect: 1, wide: false }]);
+    expect(collageTiles(9)).toHaveLength(4);
+    expect(collageTiles(9).map((t) => t.aspect)).toEqual([1.5, 1, 1, 1]);
+  });
+  it('RD-54 one photo is clamped to Instagram\'s range, 4:5 tall to 3:2 wide', () => {
+    expect(singleAspect({ width: 1536, height: 4000 })).toBe(0.8);
+    expect(singleAspect({ width: 4000, height: 1000 })).toBe(1.5);
+    expect(singleAspect({ width: 1200, height: 1000 })).toBe(1.2);
   });
 });

@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 // Two screens share this file's state (search, the timeline, the walk, the last visit). Feed (RD-17) is the post
-// list, newest first, with everything the old Photos list had. Gallery (SPEC-REDESIGN 1b/1c) is the greeting and the
-// two-item top bar (RD-11..13), New for you's sideways row when others sent photos since the last visit (RD-19..21),
-// then every photo by month in a square grid (RD-18). Messages and Events moved to More (RD-15).
+// list, newest first, with everything the old Photos list had. Gallery (SPEC-REDESIGN 1b/1c, RD-44..47) is the
+// greeting, the "Search photos" field (it pins under the bar on scroll), New for you's sideways row when others sent
+// photos since the last visit (RD-19..21), then the months mosaic (RD-44). Messages and Events moved to More (RD-15);
+// By date left Gallery (the months are the by-date view) and opens from Feed's Older photos card.
+// Feed is the existing FlatList (Instagram-style posts, 32 pt apart, no lines: RD-48..54).
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, FlatList, RefreshControl, ScrollView, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,7 +19,7 @@ import { andList } from '../ui/format';
 import { useTheme } from '../ui/theme';
 import { AppGate } from './AppGate';
 import { EventCard, EventsScreen, EventUpdate, type EventsView } from './EventsScreen';
-import { FOLD_AT, GalleryTopBar, LargeGreeting, greeting, useFamilyName } from './GalleryTop';
+import { FOLD_AT, GalleryTopBar, LargeGreeting, SearchField, greeting, useFamilyName } from './GalleryTop';
 import { GalleryGrid } from './GalleryGrid';
 import { NewForYouRow, OneAtATime } from './NewForYou';
 import { PostCard } from './PostCard';
@@ -75,10 +77,14 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   const familyName = useFamilyName(gallery);
   const scrollY = useRef(new Animated.Value(0)).current;
   const [folded, setFolded] = useState(false);
+  // RD-47: the "Search photos" field pins under the bar once it scrolls up to it (its top, once laid out).
+  const fieldTop = useRef(FOLD_AT);
+  const [pinned, setPinned] = useState(false);
   const onScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
     scrollY.setValue(y);
     setFolded(y > FOLD_AT);
+    setPinned(y > fieldTop.current);
   }, [scrollY]);
   if (app.status !== 'ready' || !app.space || !app.feed) return <AppGate />;
   const feed = app.feed;
@@ -92,7 +98,7 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
     };
     return <OneAtATime postIds={walk} onClose={closeWalk} onDone={finish} />;
   }
-  if (timeline) return <TimelineScreen startAt={timeline.startAt} onClose={() => setTimeline(null)} />;
+  if (timeline) return <TimelineScreen startAt={timeline.startAt} onClose={() => setTimeline(null)} backTo={gallery ? 'Gallery' : 'Feed'} />;
   if (events) {
     return (
       <EventsScreen
@@ -116,20 +122,20 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   // MOMENT-7: each upload is its own moment (one card), even several within an hour.
   const rows = photosRows(recent);
   const openEvent = (eventId: string) => setEvents({ eventId, fromList: false });
+  // A post card is edge to edge with its own 16 pt edge (UX-R8); everything else in Feed's list gets the 16 pt here.
+  const side = gallery ? undefined : { paddingHorizontal: 16 };
   const renderRow = ({ item }: { item: PhotosRow }) =>
     item.type === 'post' ? <PostCard post={item.post} />
-      : item.type === 'event' ? <EventCard eventId={item.eventId} eventName={item.eventName} post={item.post} onOpen={() => openEvent(item.eventId)} />
-        : item.type === 'update' ? <EventUpdate eventId={item.eventId} eventName={item.eventName} photoCount={item.photoCount} onOpen={() => openEvent(item.eventId)} />
+      : item.type === 'event' ? <View style={side}><EventCard eventId={item.eventId} eventName={item.eventName} post={item.post} onOpen={() => openEvent(item.eventId)} /></View>
+        : item.type === 'update' ? <View style={side}><EventUpdate eventId={item.eventId} eventName={item.eventName} photoCount={item.photoCount} onOpen={() => openEvent(item.eventId)} /></View>
           : null;
 
   const words = familyName === undefined ? null : greeting(new Date(), familyName);
   const header = (
-    <View style={{ gap: 12 }}>
+    <View style={[{ gap: 12 }, side]}>
       {/* RD-11: Gallery's large title is the greeting (shown once the name is known, so it never flips mid-read);
           Feed's title is "Feed" (GUX-R5), the tab's own word. UI-26 still holds: no "Check for new photos" button; pull down to refresh. */}
-      {gallery
-        ? (words ? <LargeGreeting words={words} scrollY={scrollY} /> : null)
-        : <Txt variant="display" role="header">Feed</Txt>}
+      {gallery ? null : <Txt variant="display" role="header">Feed</Txt>}
       {/* RD-18: Gallery has no "Sent by" line; the grid tiles and New for you name the senders. */}
       {senders && !gallery ? <Txt variant="muted">{`Sent by ${senders}`}</Txt> : null}
       {fresh.length && lastSeen?.at ? (
@@ -147,17 +153,21 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   );
 
   const empty = state.loaded && (gallery ? state.posts.length : earlier.length) ? null : !state.loaded ? (
-    <Loading words="Loading the photos…" />
+    <View style={side}><Loading words="Loading the photos…" /></View>
   ) : (
-    <Txt variant="muted">
-      {app.space.can_post
-        ? 'Nothing shared yet. Tap Share to send your first photos.'
-        : `No photos yet. When ${app.helper ?? 'your family'} shares photos, they'll show up here.`}
-    </Txt>
+    <View style={side}>
+      <Txt variant="muted">
+        {app.space.can_post
+          ? 'Nothing shared yet. Tap Share to send your first photos.'
+          : `No photos yet. When ${app.helper ?? 'your family'} shares photos, they'll show up here.`}
+      </Txt>
+    </View>
   );
 
   const older = state.hasMore ? (
-    <Button label="Show older photos" variant="secondary" busy={state.status === 'loadingMore'} onPress={() => void feed.loadMore()} />
+    <View style={side}>
+      <Button label="Show older photos" variant="secondary" busy={state.status === 'loadingMore'} onPress={() => void feed.loadMore()} />
+    </View>
   ) : undefined;
   const refresh = <RefreshControl refreshing={state.status === 'refreshing'} onRefresh={() => void feed.refresh()} />;
 
@@ -165,20 +175,34 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
     // RD-18: a ScrollView, not a FlatList: a page is 20 posts of thumbnails, and every month block shows at once.
     return (
       <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
-        <GalleryTopBar words={words} folded={folded} onSearch={() => setSearch(true)} onByDate={() => setTimeline({ startAt: null })} />
-        <ScrollView
-          testID="gallery-scroll"
-          onScroll={onScroll}
-          scrollEventThrottle={16}
-          refreshControl={refresh}
-          contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 }}
-          keyboardShouldPersistTaps="handled"
-        >
-          {header}
+        <GalleryTopBar words={words} folded={folded} />
+        <View style={{ flex: 1 }}>
+          {/* RD-47: once scrolled, the field sits pinned under the bar (drawn first, so it is the one a screen
+              reader and the keyboard reach first; the copy in the list has scrolled away). */}
+          {pinned ? (
+            <View style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 1, paddingHorizontal: 16, paddingBottom: 8, backgroundColor: c.bg }}>
+              <SearchField testID="search-field-pinned" onPress={() => setSearch(true)} />
+            </View>
+          ) : null}
+          <ScrollView
+            testID="gallery-scroll"
+            onScroll={onScroll}
+            scrollEventThrottle={16}
+            refreshControl={refresh}
+            contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 }}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* RD-11 / RD-55: the greeting is the large title; RD-47: the "Search photos" field right under it. */}
+            {words ? <LargeGreeting words={words} scrollY={scrollY} /> : null}
+            <View onLayout={(e) => { fieldTop.current = Math.max(FOLD_AT, e.nativeEvent.layout.y); }}>
+              <SearchField testID="search-field" onPress={() => setSearch(true)} />
+            </View>
+            {header}
           {empty}
           {state.posts.length ? <GalleryGrid posts={state.posts} /> : null}
-          {older}
-        </ScrollView>
+            {older}
+          </ScrollView>
+        </View>
       </SafeAreaView>
     );
   }
@@ -196,7 +220,9 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
         onEndReached={() => void feed.loadMore()}
         onEndReachedThreshold={0.5}
         refreshControl={refresh}
-        contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 }}
+        // RD-52: 32 pt between posts, no lines: this 16 pt gap plus each post's own 16 pt below it. No side padding:
+        // a post keeps its own 16 pt edge (UX-R8), and the rest get theirs above.
+        contentContainerStyle={{ paddingTop: 16, gap: 16, paddingBottom: 32 }}
         keyboardShouldPersistTaps="handled"
         automaticallyAdjustKeyboardInsets // UX-R1: on iPhone the comment field scrolls up above the keyboard
         removeClippedSubviews={false}

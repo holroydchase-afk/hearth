@@ -51,7 +51,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await expect(page.getByText('1 photo picked')).toBeVisible();
   await page.getByLabel("What's happening?").fill('Pumpkin patch');
   await page.getByRole('checkbox', { name: "Grandparents – Dad's side, 2 people" }).click(); // Jo hasn't joined yet
-  await page.getByRole('button', { name: 'Post' }).click();
+  await page.getByRole('button', { name: 'Post', exact: true }).click();
   await onFeed(page);
   await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
   await expect(page.getByText(/to Grandparents – Dad's side/)).toBeVisible(); // MOMENT-1: on the card
@@ -95,7 +95,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await page.getByRole('button', { name: 'Love it' }).click();
   await expect(page.getByRole('button', { name: /^Love it/ }).first()).toHaveText(/❤️\s*1/); // RD-53 (B3): the count beside the emoji
   await page.getByLabel('Add a comment for Chase').fill('Look at those cheeks!');
-  await page.getByRole('button', { name: 'Post' }).click();
+  await page.getByRole('button', { name: 'Post', exact: true }).click();
   await expect(page.getByText(/^Sent\. .+ will read it\.$/)).toBeVisible(); // BETA-REPLY-6/11: names the readers (AUD-8 default: the parents)
   // Full screen and back (BETA-SEE-3).
   await page.getByRole('button', { name: /^Open photo 1 of 1 full screen/ }).click();

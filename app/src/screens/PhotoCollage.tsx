@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 // MOMENT-2: a moment's photos as one collage, so the whole upload shows at once (like Facebook or FamilyAlbum).
-// 1 photo alone in its own shape (between 4:5 tall and 1.91:1 wide), 2 side by side, 3 = one big and two,
-// 4 or more = one big and three, the last saying "+5". Every photo fills its tile (no grey bars); tapping
-// one opens the full-screen viewer there, where the whole photo shows with Back and Next (DS-4).
+// RD-54 (C1, DEC-65): a rounded mosaic of at most 4 tiles, like Gallery's months: 1 photo alone in its own shape
+// (between 4:5 tall and 3:2 wide, Instagram's range), 2 side by side, 3 = one wide 3:2 and two squares, 4 or more =
+// one wide and three squares, the last with a solid "+5" chip (not a dark wash over the photo). 16 pt corners and
+// 8 pt gaps. Every photo fills its tile (no grey bars); tapping one opens the full-screen viewer there (DS-4).
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { FeedPost } from '../api/HearthApi';
 import { useNav } from '../state/nav';
-import { Txt } from '../ui/kit';
-import { MIN_TARGET, useTheme } from '../ui/theme';
+import { MIN_TARGET, RADIUS, SPACE, WEIGHT, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
 import { VideoPoster } from './VideoPoster';
 
@@ -25,9 +25,19 @@ export function collageShape(n: number): { big: number; small: number; more: num
   return { big: 1, small: 3, more: n - 4 };
 }
 
-/** One photo keeps its shape, clamped like Instagram: never taller than 4:5 or wider than 1.91:1. */
+/** One photo keeps its shape, clamped like Instagram: never taller than 4:5 or wider than 3:2 (RD-54). */
 export const singleAspect = (m: Pick<Media, 'width' | 'height'> | undefined) =>
-  m?.width && m?.height ? Math.max(0.8, Math.min(1.91, m.width / m.height)) : 4 / 3;
+  m?.width && m?.height ? Math.max(0.8, Math.min(1.5, m.width / m.height)) : 4 / 3;
+
+/** RD-54: each tile's shape, in order: the wide one first (3:2, or the single photo's own shape), then the small
+ *  ones in a row (4:5 when there are only two, else squares). Pure, so the mosaic is tested without drawing it. */
+export function collageTiles(n: number, single = 4 / 3): { aspect: number; wide: boolean }[] {
+  const { big, small } = collageShape(n);
+  const out: { aspect: number; wide: boolean }[] = [];
+  if (big) out.push({ aspect: n === 1 ? single : 1.5, wide: true });
+  for (let k = 0; k < small; k++) out.push({ aspect: n === 2 ? 0.8 : 1, wide: false });
+  return out;
+}
 
 /** from: who sent it and the day ("Chase, Nov 3"), read out after each photo's place (HIG-9). */
 export function PhotoCollage({ postId, media, from }: { postId: string; media: CollageMedia[]; from?: string }) {
@@ -66,7 +76,7 @@ export function PhotoCollage({ postId, media, from }: { postId: string; media: C
         <MediaImage postId={pid} mediaId={m.media_id} fit="cover" full={m.kind !== 'video'} style={{ flex: 1 }} />
         {extra ? (
           <View style={styles.more} pointerEvents="none">
-            <Txt variant="display" style={{ color: '#FFFFFF' }}>{`+${extra}`}</Txt>
+            <Text style={styles.moreText}>{`+${extra}`}</Text>
           </View>
         ) : null}
       </Pressable>
@@ -74,12 +84,13 @@ export function PhotoCollage({ postId, media, from }: { postId: string; media: C
   };
 
   if (!n) return null;
+  const shapes = collageTiles(n, singleAspect(media[0]));
   return (
     <View testID={`collage-${postId}`} style={styles.gap}>
-      {big ? tile(0, n === 1 ? { width: '100%', aspectRatio: singleAspect(media[0]) } : { width: '100%', aspectRatio: 1.6 }) : null}
+      {big ? tile(0, { width: '100%', aspectRatio: shapes[0]!.aspect }) : null}
       {small ? (
         <View style={[styles.row, styles.gap]}>
-          {Array.from({ length: small }, (_, k) => tile(big + k, { flex: 1, aspectRatio: n === 2 ? 0.8 : 1 }))}
+          {Array.from({ length: small }, (_, k) => tile(big + k, { flex: 1, aspectRatio: shapes[big + k]!.aspect }))}
         </View>
       ) : null}
     </View>
@@ -87,8 +98,10 @@ export function PhotoCollage({ postId, media, from }: { postId: string; media: C
 }
 
 const styles = StyleSheet.create({
-  gap: { gap: 2 },
+  gap: { gap: SPACE.sm },
   row: { flexDirection: 'row' },
-  tile: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, overflow: 'hidden' },
-  more: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' },
+  tile: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, overflow: 'hidden', borderRadius: RADIUS.photo },
+  // RD-54: a solid dark chip in the corner, the same in light and dark (the photo stays clear around it).
+  more: { position: 'absolute', right: SPACE.sm, bottom: SPACE.sm, backgroundColor: '#1C1C1E', borderRadius: RADIUS.medium, paddingHorizontal: 10, paddingVertical: 6 },
+  moreText: { color: '#FFFFFF', fontSize: 17, lineHeight: 20, fontWeight: WEIGHT.medium },
 });

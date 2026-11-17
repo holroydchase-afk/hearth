@@ -67,7 +67,7 @@ for (const size of SIZES) {
       await page.getByLabel("What's happening?").fill('First snow!');
       await page.getByRole('checkbox', { name: /Grandparents – Dad's side/ }).click();
       await shot('share-filled');
-      await page.getByRole('button', { name: 'Post' }).click();
+      await page.getByRole('button', { name: 'Post', exact: true }).click();
       await expect(page.getByText('First snow!', { exact: true })).toBeVisible();
       await shot('posted');
       await page.getByRole('button', { name: /Open photo 1 of/ }).first().click();

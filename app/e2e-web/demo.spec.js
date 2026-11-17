@@ -73,7 +73,7 @@ test('RR-14 add a photo, reload keeps it, Start over brings back the sample fami
   await (await chooser).setFiles(FIXTURE);
   await page.getByLabel("What's happening?").fill('Leaf pile');
   await page.getByRole('checkbox', { name: /Grandparents – Dad's side/ }).click();
-  await page.getByRole('button', { name: 'Post' }).click();
+  await page.getByRole('button', { name: 'Post', exact: true }).click();
   await onFeed(page); // RD-18: captions live on Feed (Gallery may stay mounted behind it, so only what shows counts)
   await expect(page.getByText('Leaf pile', { exact: true }).filter({ visible: true })).toBeVisible();
   await page.reload();

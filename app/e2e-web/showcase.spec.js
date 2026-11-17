@@ -57,7 +57,7 @@ for (const size of SIZES) {
       await page.getByLabel("What's happening?").fill('Pumpkin patch');
       await page.getByRole('checkbox', { name: "Grandparents – Dad's side, 2 people" }).click();
       await shot('share-filled');
-      await page.getByRole('button', { name: 'Post' }).click();
+      await page.getByRole('button', { name: 'Post', exact: true }).click();
       await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
       await shot('photos-poster');
       await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Groups is a row in More

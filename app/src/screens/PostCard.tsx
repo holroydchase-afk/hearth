@@ -6,10 +6,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { REACTIONS, type FeedPost, type Reaction } from '../api/HearthApi';
 import type { CommentView } from '../feed/store';
 import { useApp, useFeed } from '../state/AppContext';
-import { BottomSheet, Button, Card, Confirm, Field, Notice, Txt } from '../ui/kit';
+import { BottomSheet, Button, Card, Confirm, Field, Notice, SystemIcon, Txt } from '../ui/kit';
 import { useTypingField } from '../ui/typing';
 import { haptic } from '../platform/haptics';
-import { andList, initialOf, people, shortDate } from '../ui/format';
+import { andList, initialOf, people, relativeTime, shortDate } from '../ui/format';
 import { MIN_TARGET, RADIUS, SPACE, WEIGHT, useTheme } from '../ui/theme';
 import { PhotoCollage } from './PhotoCollage';
 
@@ -26,7 +26,7 @@ const WORD: Record<Reaction, string> = { '❤️': 'love', '😂': 'haha', '👍
 export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   const { feed, session } = useApp();
   const state = useFeed();
-  const { c, reduceMotion } = useTheme();
+  const { c, t, reduceMotion } = useTheme();
   const ready = post.media.filter((m) => m.status === 'ready');
   const mine = post.author_id === session?.userId;
   const [sheet, setSheet] = useState<'comments' | 'more' | 'delete' | 'words' | null>(null);
@@ -45,76 +45,74 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   // REACT-2: my reaction and each kind's count, most first; hearts only until reaction_summary answers.
   const mineNow = post.my_reaction !== undefined ? post.my_reaction : post.i_hearted ? '❤️' : null;
   const counts = post.reaction_counts ?? (post.heart_count ? { '❤️': post.heart_count } : {});
-  const kinds = REACTIONS.map((e) => [e, counts[e] ?? 0] as const).filter(([, k]) => k > 0).sort((a, b) => b[1] - a[1]);
   const many = ready.length > 1;
   const these = many ? `these ${ready.length} photos` : 'this photo';
-  // MOMENT-1: the sender sees which groups it went to, by name.
-  // LOOK-1: on its own line under the date, so a long group name doesn't wrap the date with it.
+  // MOMENT-1: the sender sees which groups it went to, by name (RD-48: under the who-can-see line, not by the name).
   const to = mine && post.audience?.length ? `Sent to ${andList(post.audience.map((a) => a.name))}` : null;
   // WHO-6 / GUX-R6 (Chase, Nov 16, DEC-60): one line names who can see it, people only, never the group's name.
   const viewers = post.viewers?.length ? post.viewers : null;
   const [whoOpen, setWhoOpen] = useState(false);
-  // CAP-6: "Edited" after the date once the sender changed the words.
-  const when = [shortDate(post.published_at), post.words_edited_at ? 'Edited' : null].filter(Boolean).join(' · ');
+  // CAP-6: "Edited" after the time once the sender changed the words. RD-51: the time reads like Instagram's.
+  const when = [relativeTime(post.published_at, new Date()), post.words_edited_at ? 'Edited' : null].filter(Boolean).join(' · ');
 
   return (
-    // RD-34 (Chase, Nov 16): the card sits on the plain background; a hairline under it splits one post from the next.
-    <Card testID={`post-${post.post_id}`} style={[styles.card, { borderBottomColor: c.line }]}>
+    // RD-48 (DEC-65): Instagram's order. RD-52: no lines; 32 pt of space between posts (the list's gap plus this
+    // card's 16 pt below it), so each post's face and name is the divider.
+    <Card testID={`post-${post.post_id}`} style={styles.card}>
       <View testID={`card-head-${post.post_id}`} style={styles.head}>
+        {/* RD-49: the person's round profile photo once there is one; initials until then. LOOK-2: everything sits
+            at the top of one 48 pt row, so the face and the name line up. */}
         <View style={[styles.avatar, { backgroundColor: c.line }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-          <Txt variant="strong" style={{ color: c.ink, letterSpacing: -0.5 }}>{initialOf(post.author_name)}</Txt>
+          <Text maxFontSizeMultiplier={FACE_MAX_SCALE} style={[styles.faceText, { color: c.ink }]}>{initialOf(post.author_name)}</Text>
         </View>
-        <View style={{ flex: 1, minWidth: 0 }}>
-          <Txt variant="strong">{post.author_name}</Txt>
-          <Txt variant="muted" testID={`when-${post.post_id}`}>{when}</Txt>
-          {to ? <Txt variant="muted" testID={`to-${post.post_id}`}>{to}</Txt> : null}
+        <View style={styles.nameBox}>
+          <Txt style={styles.name} numberOfLines={1}>{post.author_name}</Txt>
         </View>
-        <Button
-          label={`Options for ${many ? 'these photos' : 'this photo'}`}
-          text="Options"
-          icon={{ sf: 'ellipsis.circle', md: 'more_horiz' }}
-          variant="quiet"
-          ink // UX-R9 (RD-4): Options is a tool, not the screen's main tap word
-          style={styles.more}
+        {/* RD-50: icon only, spoken "Post options", 48 pt; the menu holds who can see it, and Edit and Delete for mine. */}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Post options"
           onPress={() => setSheet('more')}
-        />
+          hitSlop={4}
+          style={({ pressed }) => [styles.more, { opacity: pressed ? 0.6 : 1 }]}
+        >
+          <SystemIcon icon={{ sf: 'ellipsis', md: 'more_horiz' }} color={c.ink} size={24} />
+        </Pressable>
       </View>
-      {post.title ? <Txt variant="title" role="header" testID={`post-title-${post.post_id}`} style={styles.title}>{post.title}</Txt> : null}
-      {post.caption ? <Caption text={post.caption} /> : null}
-      <PhotoCollage postId={post.post_id} media={ready} from={`${post.author_name}, ${shortDate(post.published_at)}`} />
-      {/* REACT-11 and WHO-10: under the photo, emoji chips on the left and who can see it on the right,
-          like the "liked by" row of a photo app. */}
-      {kinds.length || viewers ? (
-        <View style={styles.summary}>
-          {kinds.length ? (
-            <View testID={`reactions-${post.post_id}`} accessible accessibilityLabel={kinds.map(([e, k]) => `${k} ${WORD[e]}`).join(', ')} style={styles.counts}>
-              {kinds.map(([e, k]) => (
-                <View key={e} testID={`chip-${e}-${post.post_id}`} style={[styles.chip, { backgroundColor: c.fill }]}>
-                  <Txt>{`${e} ${k}`}</Txt>
-                </View>
-              ))}
-            </View>
-          ) : null}
-          {viewers ? <WhoLine post={post} viewers={viewers} me={session?.userId} onPress={() => setWhoOpen(true)} /> : null}
-        </View>
-      ) : null}
-      {/* REACT-7 (Chase, Oct 25): icons only, no words under them (his call over DS-3); each keeps its spoken label.
-          REACT-11 (Nov 5): the phone's own emoji. */}
-      <View testID={`actions-${post.post_id}`} style={[styles.actions, { borderColor: c.line }]}>
-        {REACTIONS.map((e) => (
-          <Button
-            key={e}
-            label={LABEL[e]}
-            text={<Text style={styles.emoji}>{e}</Text>}
-            selected={mineNow === e}
-            variant="quiet"
-            // LIVE-3 (Chase, Nov 5): mine is a soft fill, without the heavy outline other picked buttons get.
-            style={mineNow === e ? [{ flex: 1 }, styles.mine] : { flex: 1 }}
-            onPress={() => { haptic('tap'); void feed?.react(post.post_id, e); }}
-          />
-        ))}
+      {/* RD-54: the photos inset 16 pt with 16 pt corners, like Gallery. */}
+      <View style={styles.inset}>
+        <PhotoCollage postId={post.post_id} media={ready} from={`${post.author_name}, ${shortDate(post.published_at)}`} />
       </View>
-      <View style={[styles.newest, { borderColor: c.line }]}>
+      <View testID={`actions-${post.post_id}`} style={styles.actions}>
+        {REACTIONS.map((e) => {
+          const n = counts[e] ?? 0;
+          const on = mineNow === e;
+          return (
+            <Pressable
+              key={e}
+              accessibilityRole="button"
+              accessibilityLabel={LABEL[e]}
+              accessibilityState={{ selected: on }}
+              accessibilityValue={n ? { text: String(n) } : undefined}
+              onPress={() => { haptic('tap'); void feed?.react(post.post_id, e); }}
+              style={({ pressed }) => [styles.react, { backgroundColor: on ? c.accentSoft : 'transparent', opacity: pressed ? 0.7 : 1 }]}
+            >
+              <Text style={styles.emoji}>{e}</Text>
+              {n ? <Text style={[styles.count, { color: c.ink, fontSize: t.base }]}>{String(n)}</Text> : null}
+            </Pressable>
+          );
+        })}
+      </View>
+      <View style={styles.words}>
+        {post.title ? <Txt variant="title" role="header" testID={`post-title-${post.post_id}`}>{post.title}</Txt> : null}
+        {post.caption ? <Caption testID={`desc-${post.post_id}`} name={post.author_name} text={post.caption} /> : null}
+        {/* RD-51: "Just now", "3 hours ago", "Yesterday", "Nov 3"; CAP-6's "· Edited" after it. */}
+        <Txt variant="muted" testID={`when-${post.post_id}`}>{when}</Txt>
+        {/* WHO-6 / DEC-60: the quiet privacy line stays on every post. */}
+        {viewers ? <WhoLine post={post} viewers={viewers} me={session?.userId} onPress={() => setWhoOpen(true)} /> : null}
+        {to ? <Txt variant="muted" testID={`to-${post.post_id}`}>{to}</Txt> : null}
+      </View>
+      <View style={styles.newest}>
         {/* UX-R5/R6 (Chase, Nov 17, DEC-63): a standard comment area on every post, under a visible "Comments" label. */}
         <Txt variant="strong" role="header">Comments</Txt>
         {newest ? <CommentList post={post} list={[newest]} /> : null}
@@ -143,7 +141,6 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
         visible={sheet === 'more'}
         post={post}
         mine={mine}
-        these={these}
         onDelete={() => setSheet('delete')}
         onChangeWords={() => setSheet('words')}
         onClose={() => setSheet(null)}
@@ -226,8 +223,8 @@ function WhoSheet({ post, viewers, me, onClose }: { post: FeedPost; viewers: Vie
 
 /** MOMENT-6: "More" says who can see it (BETA-AUD-1) and holds, for the sender only, Change the words (CAP-6)
  *  and Delete (BETA-AUD-5). */
-function MoreMenu({ visible, post, mine, these, onDelete, onChangeWords, onClose }: {
-  visible: boolean; post: FeedPost; mine: boolean; these: string; onDelete: () => void; onChangeWords: () => void; onClose: () => void;
+function MoreMenu({ visible, post, mine, onDelete, onChangeWords, onClose }: {
+  visible: boolean; post: FeedPost; mine: boolean; onDelete: () => void; onChangeWords: () => void; onClose: () => void;
 }) {
   const { c } = useTheme();
   const { session } = useApp();
@@ -242,8 +239,9 @@ function MoreMenu({ visible, post, mine, these, onDelete, onChangeWords, onClose
           <Txt style={{ color: post.audience ? c.ink : c.safe }}>{audience}</Txt>
           {mine ? (
             <>
-              <Button label="Change the words" variant="secondary" onPress={onChangeWords} />
-              <Button label={`Delete ${these}`} variant="danger" onPress={onDelete} />
+              {/* RD-50 (DEC-65): the standard words, "Edit description" and "Delete post" (which asks first). */}
+              <Button label="Edit description" variant="secondary" onPress={onChangeWords} />
+              <Button label="Delete post" variant="danger" onPress={onDelete} />
             </>
           ) : null}
           <Button label="Close this menu" text="Close" variant="secondary" onPress={onClose} />
@@ -299,7 +297,7 @@ function CommentList({ post, list }: { post: FeedPost; list: CommentView[] }) {
     <>
       {list.map((c) => (
         <View key={c.client_id ?? c.comment_id} style={{ gap: 4 }}>
-          <Txt numberOfLines={list.length === 1 ? 2 : undefined}><Txt variant="strong">{`${c.author_name} `}</Txt>{c.body}</Txt>
+          <Txt numberOfLines={list.length === 1 ? 2 : undefined}><Txt style={{ fontWeight: WEIGHT.medium }}>{c.author_name}</Txt>{` ${c.body}`}</Txt>
           {c.status === 'sending' ? <Txt variant="muted">Sending…</Txt> : null}
           {c.status === 'failed' ? (
             <>
@@ -396,12 +394,15 @@ function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
 const FOLD_LINES = 4;
 const foldable = (t: string) => t.split('\n').length > FOLD_LINES || t.length > 220;
 
-function Caption({ text }: { text: string }) {
+/** RD-48: the description is one line of text: the sender's name in Medium, then the words in their own Text. */
+function Caption({ name, text, testID }: { name: string; text: string; testID: string }) {
   const [open, setOpen] = useState(false);
   const fold = foldable(text);
   return (
     <View style={styles.caption}>
-      <Txt numberOfLines={fold && !open ? FOLD_LINES : undefined}>{text}</Txt>
+      <Txt testID={testID} numberOfLines={fold && !open ? FOLD_LINES : undefined}>
+        <Txt style={{ fontWeight: WEIGHT.medium }}>{name}</Txt>{' '}<Txt>{text}</Txt>
+      </Txt>
       {fold ? (
         <Button
           label={open ? 'Show less of this caption' : 'Read more of this caption'}
@@ -416,26 +417,29 @@ function Caption({ text }: { text: string }) {
 }
 
 const styles = StyleSheet.create({
-  head: { flexDirection: 'row', alignItems: 'flex-start', gap: SPACE.md, paddingTop: SPACE.md, paddingBottom: SPACE.sm, paddingLeft: SPACE.lg, paddingRight: SPACE.xs },
-  avatar: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
-  more: { paddingHorizontal: SPACE.md },
-  title: { paddingHorizontal: SPACE.lg, paddingBottom: SPACE.xs },
-  caption: { paddingHorizontal: SPACE.lg, paddingBottom: SPACE.md },
+  // The card is edge to edge; its parts keep one 16 pt edge (UX-R8), so Feed's list has no side padding.
+  card: { padding: 0, gap: SPACE.sm, marginBottom: SPACE.lg },
+  head: { flexDirection: 'row', alignItems: 'flex-start', gap: SPACE.md, paddingTop: SPACE.md, paddingBottom: SPACE.xs, paddingLeft: SPACE.lg, paddingRight: SPACE.xs },
+  // RD-48: a round 36 pt face; GUX-R1: two letters stop growing past 1.3x so they never clip.
+  avatar: { width: 36, height: 36, borderRadius: 18, marginTop: 6, alignItems: 'center', justifyContent: 'center' },
+  nameBox: { flex: 1, minWidth: 0, minHeight: MIN_TARGET, justifyContent: 'center' },
+  name: { fontSize: 17, fontWeight: WEIGHT.medium },
+  more: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, alignItems: 'center', justifyContent: 'center' },
+  inset: { paddingHorizontal: SPACE.lg },
+  caption: { gap: SPACE.xs },
   fold: { alignSelf: 'flex-start', paddingHorizontal: 0 },
-  card: { padding: 0, gap: 0, overflow: 'hidden', borderBottomWidth: StyleSheet.hairlineWidth, paddingBottom: SPACE.md },
-  summary: { gap: SPACE.xs, paddingHorizontal: SPACE.lg, paddingTop: SPACE.sm, alignItems: 'flex-start' },
-  counts: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.sm, flexShrink: 1 },
-  chip: { borderRadius: RADIUS.pill, paddingHorizontal: SPACE.md, paddingVertical: SPACE.xs },
-  mine: { borderWidth: 0 },
+  actions: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.xs, paddingHorizontal: SPACE.lg },
+  react: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingHorizontal: SPACE.sm, borderRadius: RADIUS.pill },
+  count: { fontVariant: ['tabular-nums'] },
+  words: { gap: SPACE.xs, paddingHorizontal: SPACE.lg },
   who: { minHeight: MIN_TARGET, justifyContent: 'center', alignSelf: 'stretch' },
   face: { width: 36, height: 36, borderRadius: RADIUS.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   // FIRSTMIN-1: two letters ("GJ") fit the 32 pt inside the ring at 17 pt with slightly tighter tracking.
   faceText: { fontWeight: WEIGHT.semibold, fontSize: 17, lineHeight: 20, letterSpacing: -0.5 },
-  emoji: { fontSize: 24, lineHeight: 30, textAlign: 'center' },
+  emoji: { fontSize: 22, lineHeight: 28, textAlign: 'center' },
   people: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.sm },
   person: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, borderRadius: RADIUS.pill, paddingLeft: SPACE.xs, paddingRight: SPACE.md, minHeight: MIN_TARGET },
-  actions: { flexDirection: 'row', gap: SPACE.sm, marginHorizontal: SPACE.lg, marginTop: SPACE.sm, paddingVertical: SPACE.xs, borderTopWidth: StyleSheet.hairlineWidth },
-  newest: { borderTopWidth: StyleSheet.hairlineWidth, paddingHorizontal: SPACE.lg, paddingTop: SPACE.md, paddingBottom: SPACE.lg, gap: SPACE.sm },
+  newest: { paddingTop: SPACE.sm, paddingHorizontal: SPACE.lg, gap: SPACE.sm },
   seeAll: { alignSelf: 'flex-start', paddingHorizontal: 0 },
   replyRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
   sheetHead: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingTop: 12 },

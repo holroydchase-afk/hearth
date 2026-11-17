@@ -36,13 +36,13 @@ export function Txt({ variant = 'body', style, children, role, testID, numberOfL
 }) {
   const { c, t } = useTheme();
   // RD-2: the phone's own font (no fontFamily). Body and muted Regular; strong (names) and title Semibold;
-  // display is the large title, the one place Bold is used.
+  // display is the large title, Semibold too (RD-55: no Bold anywhere).
   const v: Record<TxtVariant, TextStyle> = {
     body: { fontSize: t.base, lineHeight: t.line, color: c.ink },
     strong: { fontWeight: WEIGHT.semibold, fontSize: t.base, lineHeight: t.line, color: c.ink },
     muted: { fontSize: t.base, lineHeight: t.line, color: c.muted },
     title: { fontWeight: WEIGHT.semibold, fontSize: t.title, lineHeight: Math.round(t.title * 1.25), color: c.ink },
-    display: { fontWeight: '700', fontSize: t.display, lineHeight: Math.round(t.display * 1.2), color: c.ink },
+    display: { fontWeight: WEIGHT.semibold, fontSize: t.display, lineHeight: Math.round(t.display * 1.2), color: c.ink },
   };
   return (
     <Text
