@@ -11,7 +11,7 @@
 //     buttons sit in testID `walk-bar`, a row pinned under the scroll (not inside any ScrollView), hairline on top.
 //     Previous is always there (disabled on the first); the forward button is spoken "Next new photo" and shows
 //     "Next photo" ("Done, back to Gallery" / "Done" on the last).
-//   - UX-R5/R6: no 💬 button. Every card has a "Comments" heading, then a field shown as "Add a comment…" and
+//   - UX-R5/R6: no 💬 button. (UX-R16, round 2: no "Comments" heading any more.) A field shown as "Add a comment…" and
 //     spoken "Add a comment for <sender>" ("Add a comment" on your own post), with a "Post" text button.
 //   - UX-R10: when the people who will read my comment are exactly the people who can see the post, the line under
 //     the field is "Your comment goes to the same people."; when fewer people read it, it names them as today.
@@ -165,12 +165,12 @@ describe('UX-R5 (Chase, Nov 17) no comment emoji; a standard comment field on ev
     expect(within(card).queryByRole('button', { name: 'Write a comment' })).toBeNull();
   });
 
-  it('UX-R5 a post with no comments still shows "Comments", an "Add a comment…" field and Post', async () => {
+  it('UX-R5 UX-R16 a post with no comments still shows an "Add a comment…" field, and Post once you type', async () => {
     const { card } = await oneCard();
-    expect(within(card).getByRole('header', { name: 'Comments' })).toBeTruthy();
     const field = within(card).getByLabelText('Add a comment for Chase');
     expect(field.props.placeholder).toBe('Add a comment…');
-    expect(within(card).getByRole('button', { name: 'Post' })).toBeTruthy();
+    fireEvent.changeText(field, 'Hi'); // UX-R16: Post may stay hidden until there are words
+    expect(await within(card).findByRole('button', { name: 'Post' })).toBeTruthy();
     expect(within(card).queryByRole('button', { name: 'Send' })).toBeNull();
   });
 
@@ -190,21 +190,23 @@ describe('UX-R5 (Chase, Nov 17) no comment emoji; a standard comment field on ev
 
 // ---------------------------------------------------------------------------------------------------------------
 describe('UX-R6 the comment field has a real label and Post looks on once you type', () => {
-  it('UX-R6 "Comments" is a visible heading above the field (not only a placeholder)', async () => {
+  // UX-R16 (review round 2) replaces UX-R6's "Comments" heading: the field's own words and spoken label carry it.
+  it('UX-R6 UX-R16 the field is labeled for a screen reader, and no "Comments" heading sits above it', async () => {
     const { id, card } = await oneCard();
-    const head = within(card).getByRole('header', { name: 'Comments' });
-    const all = card.findAll(isHost) as Inst[];
-    const reply = within(card).getByTestId(`reply-${id}`);
-    expect(all.indexOf(head)).toBeLessThan(all.indexOf(reply));
+    expect(within(within(card).getByTestId(`reply-${id}`)).getByLabelText('Add a comment for Chase')).toBeTruthy();
+    expect(within(card).queryByRole('header', { name: 'Comments' })).toBeNull();
   });
 
-  it('UX-R6 Post is a text button: grey and disabled when empty, accent and enabled once there is text', async () => {
+  it('UX-R6 UX-R16 Post is a text button: hidden, or grey and disabled, when empty; accent and enabled once there is text', async () => {
     const { card } = await oneCard();
     const c = light();
     const post = () => within(card).getByRole('button', { name: 'Post' });
     const color = () => flat(within(post()).getByText('Post').props.style).color;
-    expect(noFill(flat(post().props.style).backgroundColor)).toBe(true); // a text button, not a grey capsule
-    expect({ disabled: post().props.accessibilityState?.disabled, color: color() }).toEqual({ disabled: true, color: c.muted });
+    const empty = within(card).queryByRole('button', { name: 'Post' });
+    if (empty) {
+      expect(noFill(flat(empty.props.style).backgroundColor)).toBe(true); // a text button, not a grey capsule
+      expect({ disabled: empty.props.accessibilityState?.disabled, color: color() }).toEqual({ disabled: true, color: c.muted });
+    }
     fireEvent.changeText(within(card).getByLabelText('Add a comment for Chase'), 'Hi');
     await waitFor(() => expect({ disabled: post().props.accessibilityState?.disabled, color: color() }).toEqual({ disabled: false, color: c.accent }));
     expect(noFill(flat(post().props.style).backgroundColor)).toBe(true);
@@ -247,7 +249,7 @@ describe('UX-R8 (P2) the walk has one 16 pt left edge', () => {
 
 // ---------------------------------------------------------------------------------------------------------------
 describe('UX-R9 (P2) in the walk the accent is only on Next photo (RD-4)', () => {
-  it('UX-R9 "‹ Gallery" and "Options" are ink; the only accent control is the forward button', async () => {
+  it('UX-R9 RD-50 "‹ Gallery" and "Post options" are ink; the only accent control is the forward button', async () => {
     const { walk } = await openWalk();
     const accent = light().accent;
     const owners = new Set<string>();
@@ -267,6 +269,7 @@ describe('UX-R9 (P2) in the walk the accent is only on Next photo (RD-4)', () =>
 describe('UX-R10 (P2) one sentence about who sees it, unless the comment goes to fewer people', () => {
   it('UX-R10 replies open to everyone who can see it: "Your comment goes to the same people." and no second names line', async () => {
     const { card } = await oneCard('jo', 'everyone');
+    fireEvent(within(card).getByLabelText('Add a comment for Chase'), 'focus'); // UX-R26 (RD-69): shown while commenting
     expect(await within(card).findByText('Your comment goes to the same people.')).toBeTruthy();
     expect(within(card).queryByText(/will read this\.$|can read this\.$/)).toBeNull();
     expect(within(card).getByText(/can see this\.$/)).toBeTruthy();

@@ -6,7 +6,7 @@
 import { SymbolView } from 'expo-symbols';
 import React, { type ReactNode } from 'react';
 import {
-  ActivityIndicator, Modal, PanResponder, Pressable, type PanResponderCallbacks, ScrollView, StyleSheet, Switch, Text, TextInput, View,
+  ActivityIndicator, Modal, PanResponder, Platform, Pressable, type PanResponderCallbacks, ScrollView, StyleSheet, Switch, Text, TextInput, View,
   useWindowDimensions, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -36,13 +36,13 @@ export function Txt({ variant = 'body', style, children, role, testID, numberOfL
 }) {
   const { c, t } = useTheme();
   // RD-2: the phone's own font (no fontFamily). Body and muted Regular; strong (names) and title Semibold;
-  // display is the large title, the one place Bold is used.
+  // display is the large title, Semibold too (RD-55: no Bold anywhere).
   const v: Record<TxtVariant, TextStyle> = {
     body: { fontSize: t.base, lineHeight: t.line, color: c.ink },
     strong: { fontWeight: WEIGHT.semibold, fontSize: t.base, lineHeight: t.line, color: c.ink },
     muted: { fontSize: t.base, lineHeight: t.line, color: c.muted },
     title: { fontWeight: WEIGHT.semibold, fontSize: t.title, lineHeight: Math.round(t.title * 1.25), color: c.ink },
-    display: { fontWeight: '700', fontSize: t.display, lineHeight: Math.round(t.display * 1.2), color: c.ink },
+    display: { fontWeight: WEIGHT.semibold, fontSize: t.display, lineHeight: Math.round(t.display * 1.2), color: c.ink },
   };
   return (
     <Text
@@ -180,7 +180,7 @@ export function MenuRow({ text, icon, count, onPress, testID }: { text: string; 
       onPress={onPress}
       testID={testID}
       android_ripple={{ color: c.line }}
-      style={({ pressed }) => [styles.menuRow, { borderBottomColor: c.line, opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
+      style={({ pressed }) => [styles.menuRow, { opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
     >
       <SystemIcon icon={icon} color={c.ink} size={26} />
       <Text style={{ flex: 1, color: c.ink, fontSize: t.base, lineHeight: t.line }}>{text}</Text>
@@ -190,6 +190,13 @@ export function MenuRow({ text, icon, count, onPress, testID }: { text: string; 
   );
 }
 const CHEVRON: Icon = { sf: 'chevron.forward', md: 'chevron_right' };
+
+/** RD-60 (R17): the line between two MenuRows, inset to start where the words start (after the 26 pt icon and its
+ *  14 pt gap), like the phone's own Settings lists. Never full width. */
+export function MenuLine() {
+  const { c } = useTheme();
+  return <View style={{ height: StyleSheet.hairlineWidth, marginLeft: 40, backgroundColor: c.line }} />;
+}
 
 /** A whole-row checkbox / radio / switch: the full row is the 48 pt+ target. GUX-R2 / GUX-R9 (Nov 16): a plain grouped
  *  row (no box of its own, no tinted fill), like the phone's own settings. A picked radio shows an accent check
@@ -230,6 +237,19 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
 function SwitchWord({ on }: { on: boolean }) {
   const { c, t } = useTheme();
   return <Text style={{ color: c.ink, fontSize: t.base, fontWeight: WEIGHT.semibold }}>{on ? 'On' : 'Off'}</Text>;
+}
+
+/** UX-R31: on the web a rounded field draws its own focus ring: a 2 pt accent edge that follows its corners (the
+ *  browser's square outline is turned off on the input; see `noWebOutline`). At rest the edge is clear, so focusing
+ *  never shifts the words. Phones keep their own focus look, so this is empty there. */
+export function useWebFocusRing(focused: boolean): ViewStyle | null {
+  const { c, os } = useTheme();
+  return os === 'web' ? { borderWidth: 2, borderColor: focused ? c.accent : 'transparent' } : null;
+}
+
+/** UX-R31: the browser's own outline off, for a text input inside a field that draws `useWebFocusRing`. */
+export function noWebOutline(): TextStyle {
+  return (Platform.OS === 'web' ? { outlineStyle: 'none' } : {}) as TextStyle;
 }
 
 export function Field(props: TextInputProps & { label: string }) {
@@ -328,6 +348,37 @@ export function Confirm({ visible, title, body, yes, no, onYes, onNo }: {
   );
 }
 
+/** RD-67 (UX-R24): an iOS-style alert over the screen: a short title, then two plain text buttons side by side with no
+ *  fill. The safe choice (`keep`) is Semibold, the default; the destructive one is red Regular words (RD-72). */
+export function AlertDialog({ title, body, keep, destroy, onKeep, onDestroy }: {
+  title: string; body?: string; keep: string; destroy: string; onKeep: () => void; onDestroy: () => void;
+}) {
+  const { c, t, os } = useTheme();
+  const words = (label: string, color: string, weight: '400' | '600', onPress: () => void, first: boolean) => (
+    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
+      style={({ pressed }) => [styles.alertBtn, first ? { borderRightWidth: StyleSheet.hairlineWidth, borderRightColor: c.line } : null,
+        { backgroundColor: pressed ? c.fill : 'transparent' }]}>
+      <Text style={{ color, fontWeight: weight, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{label}</Text>
+    </Pressable>
+  );
+  return (
+    <Modal transparent visible animationType="fade" onRequestClose={onKeep}>
+      <View style={[styles.scrim, { backgroundColor: c.scrim }]}>
+        <View accessibilityViewIsModal style={[styles.alert, { backgroundColor: c.surface, borderRadius: dialogRadius(os) }]}>
+          <View style={styles.alertWords}>
+            <Text accessibilityRole="header" style={{ color: c.ink, fontWeight: WEIGHT.semibold, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{title}</Text>
+            {body ? <Text style={{ color: c.ink, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{body}</Text> : null}
+          </View>
+          <View style={[styles.alertRow, { borderTopColor: c.line }]}>
+            {words(keep, c.ink, WEIGHT.semibold, onKeep, true)}
+            {words(destroy, c.dangerText, WEIGHT.regular, onDestroy, false)}
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
 /** HIG-10 / QA-R2: what a bottom sheet does with a drag: a clear downward drag, released far or fast enough, closes. */
 export function sheetPan(close: () => void): PanResponderCallbacks {
   return {
@@ -359,10 +410,14 @@ export function BottomSheet({ testID, onClose, children }: { testID: string; onC
 }
 
 const styles = StyleSheet.create({
+  alert: { alignSelf: 'center', width: '100%', maxWidth: 320, overflow: 'hidden' },
+  alertWords: { paddingHorizontal: 16, paddingTop: 20, paddingBottom: 16, gap: 4 },
+  alertRow: { flexDirection: 'row', borderTopWidth: StyleSheet.hairlineWidth },
+  alertBtn: { flex: 1, minHeight: MIN_TARGET, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 8, paddingVertical: 10 },
   sheetScrim: { flex: 1, justifyContent: 'flex-end' },
   menu: { padding: 20, paddingTop: 8, gap: 14 },
   grabber: { alignSelf: 'center', width: 36, height: 5, borderRadius: RADIUS.pill, opacity: 0.5 },
-  menuRow: { minHeight: MIN_TARGET + 12, minWidth: MIN_TARGET, alignSelf: 'stretch', flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth },
+  menuRow: { minHeight: MIN_TARGET + 12, minWidth: MIN_TARGET, alignSelf: 'stretch', flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 10 },
   iconBtn: { flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: MIN_TARGET + 12, minWidth: MIN_TARGET + 12, paddingHorizontal: 6, gap: 2 },
   capsule: { alignSelf: 'flex-start' },
   back: { alignSelf: 'flex-start', minHeight: MIN_TARGET, minWidth: MIN_TARGET, flexDirection: 'row', alignItems: 'center', gap: 4, marginLeft: -6, marginBottom: -8 },

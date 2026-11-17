@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// RD-15, RD-16, RD-14 (SPEC-REDESIGN 1b, DEC-59): More fills the screen with big rows (icon, word, chevron,
+// RD-15, RD-16, RD-14 (SPEC-REDESIGN 1b, DEC-59), RD-60 (outline icons, inset lines): More fills the screen with big rows (icon, word, chevron,
 // 48 pt+) in this order: Messages, Groups (owner and adult), Events, Bigger text, Light or dark, Family color
 // (owner), Me, Help. Each opens today's screen in place with "Back to More". Viewers never get Groups or Family
 // color, so no screen reached from here shows them a group's name (DEC-49). Messages says "N new" (a count from
@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useNewMessages } from '../messenger/newMessages';
 import { useApp, useFeed } from '../state/AppContext';
-import { BackButton, MenuRow, Screen, Txt, type Icon } from '../ui/kit';
+import { BackButton, MenuLine, MenuRow, Screen, Txt, type Icon } from '../ui/kit';
 import { AppGate } from './AppGate';
 import { EventsScreen, type EventsView } from './EventsScreen';
 import { GroupsScreen } from './GroupsScreen';
@@ -26,7 +26,7 @@ const ROWS: Row[] = [
   { id: 'groups', text: 'Groups', icon: { sf: 'person.3', md: 'groups' } },
   { id: 'events', text: 'Events', icon: { sf: 'calendar', md: 'event' } },
   { id: 'bigText', text: 'Bigger text', icon: { sf: 'textformat.size', md: 'format_size' } },
-  { id: 'look', text: 'Light or dark', icon: { sf: 'circle.lefthalf.filled', md: 'contrast' } },
+  { id: 'look', text: 'Light or dark', icon: { sf: 'sun.max', md: 'contrast' } },
   { id: 'color', text: 'Family color', icon: { sf: 'paintpalette', md: 'palette' } },
   { id: 'me', text: 'Me', icon: { sf: 'person.crop.circle', md: 'account_circle' } },
   { id: 'help', text: 'Help', icon: { sf: 'questionmark.circle', md: 'help' } },
@@ -104,9 +104,10 @@ export function MoreScreen({ initialOpen }: { initialOpen?: string } = {}) {
     <Screen>
       <Txt variant="display" role="header">More</Txt>
       <View>
-        {moreRowsFor(app.space.role).map((r) => (
+        {moreRowsFor(app.space.role).map((r, i) => (
+          <React.Fragment key={r.id}>
+          {i ? <MenuLine /> : null}
           <MenuRow
-            key={r.id}
             text={r.text}
             icon={r.icon}
             count={r.id === 'messages' && news.total > 0 ? `${news.total} new` : null}
@@ -115,6 +116,7 @@ export function MoreScreen({ initialOpen }: { initialOpen?: string } = {}) {
               setOpen(r.id);
             }}
           />
+          </React.Fragment>
         ))}
       </View>
     </Screen>

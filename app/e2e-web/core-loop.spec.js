@@ -51,12 +51,12 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await expect(page.getByText('1 photo picked')).toBeVisible();
   await page.getByLabel("What's happening?").fill('Pumpkin patch');
   await page.getByRole('checkbox', { name: "Grandparents – Dad's side, 2 people" }).click(); // Jo hasn't joined yet
-  await page.getByRole('button', { name: 'Post' }).click();
+  await page.getByRole('button', { name: 'Post', exact: true }).click();
   await onFeed(page);
   await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
-  await expect(page.getByText(/to Grandparents – Dad's side/)).toBeVisible(); // MOMENT-1: on the card
-  await page.getByRole('button', { name: 'Options for this photo' }).click(); // MOMENT-6: the full words are under More
-  await expect(page.getByText("Shared with Grandparents – Dad's side · 2 people")).toBeVisible();
+  await expect(page.getByText(/can see this\.$/).first()).toBeVisible(); // RD-58 (UX-R15): one who-can-see line; the group's name is in Post options
+  await page.getByRole('button', { name: 'Post options' }).click(); // MOMENT-6: the full words are under More
+  await expect(page.getByText("Shared with Grandparents – Dad's side, 2 people")).toBeVisible(); // UX-R33 (engineer, flagged for qa-tdd)
   await page.getByRole('button', { name: 'Close this menu' }).click();
 
   // BETA-SHARE-2/3/5 on the real pipeline: stored bytes are ciphertext; inside, a 2048 px JPEG with no EXIF.
@@ -76,7 +76,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await onFeed(page);
   await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: /^You, .+ can see this$/ })).toBeVisible(); // WHO-6/10: names, never the group
-  await page.getByRole('button', { name: 'Options for this photo' }).click();
+  await page.getByRole('button', { name: 'Post options' }).click();
   await expect(page.getByText('Who can see this')).toBeVisible();
   await page.getByRole('button', { name: 'Close this menu' }).click();
   await expect(page.getByRole('tab')).toHaveText([/Gallery/, /Feed/, /More/]); // RD-9: no Share tab for viewers
@@ -93,9 +93,9 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await signIn(page, 'jo@example.com');
   await onFeed(page);
   await page.getByRole('button', { name: 'Love it' }).click();
-  await expect(page.getByText('❤️ 1')).toBeVisible(); // REACT-11: the phone's own emoji
+  await expect(page.getByRole('button', { name: /^Love it/ }).first()).toHaveText(/❤️\s*1/); // RD-53 (B3): the count beside the emoji
   await page.getByLabel('Add a comment for Chase').fill('Look at those cheeks!');
-  await page.getByRole('button', { name: 'Post' }).click();
+  await page.getByRole('button', { name: 'Post', exact: true }).click();
   await expect(page.getByText(/^Sent\. .+ will read it\.$/)).toBeVisible(); // BETA-REPLY-6/11: names the readers (AUD-8 default: the parents)
   // Full screen and back (BETA-SEE-3).
   await page.getByRole('button', { name: /^Open photo 1 of 1 full screen/ }).click();
@@ -107,12 +107,13 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   // 5. Chase sees the heart and the comment (no "Seen by" count), then deletes it.
   await signIn(page, 'chase@example.com');
   await onFeed(page);
-  await expect(page.getByText('❤️ 1')).toBeVisible(); // REACT-11: the phone's own emoji
+  await expect(page.getByRole('button', { name: /^Love it/ }).first()).toHaveText(/❤️\s*1/); // RD-53 (B3): the count beside the emoji
   await expect(page.getByText(/Look at those cheeks!/)).toBeVisible();
   await expect(page.getByText(/Seen by/)).toHaveCount(0); // RV-U1 (DEC-21): no "Seen by" count
-  await page.getByRole('button', { name: 'Options for this photo' }).click();
-  await page.getByRole('button', { name: 'Delete this photo' }).click();
-  await page.getByRole('button', { name: 'Yes, delete it' }).click();
+  await page.getByRole('button', { name: 'Post options' }).click();
+  await page.getByRole('button', { name: 'Delete post' }).click();
+  await expect(page.getByText('Delete this post?')).toBeVisible(); // UX-R24 (RD-67): the iOS-style alert
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
   await expect(page.getByText('Pumpkin patch', { exact: true })).toHaveCount(0);
   const left = await page.evaluate(() => Object.values(globalThis.__hearthFake.state.posts).filter((p) => !p.deleted && p.status === 'published').length);
   expect(left).toBe(0);

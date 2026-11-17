@@ -31,16 +31,20 @@ describe('WHO: who can see this post, by name', () => {
   it('WHO-7 "More" lists every name too, not only "Shared with you"', async () => {
     const { id, el } = await dadSidePost('earl');
     await within(el).findByTestId(`who-${id}`);
-    fireEvent.press(within(el).getByRole('button', { name: 'Options for this photo' }));
+    fireEvent.press(within(el).getByRole('button', { name: 'Post options' }));
     const menu = await screen.findByTestId(`more-${id}`);
-    expect(within(menu).getByText('You, Alex, Chase and Grandma Jo can see this')).toBeTruthy();
+    expect(within(menu).getByText('You, Alex, Chase and Grandma Jo can see this.')).toBeTruthy(); // UX-R34: a sentence (engineer, flagged for qa-tdd)
     expect(within(menu).queryByText('Shared with you')).toBeNull();
     expect(screen.queryByText(/Grandparents|Dad's side/)).toBeNull();
   });
 
   it('WHO-8 the sender still sees the group by name; another parent sees the people', async () => {
     const sender = await dadSidePost('chase');
-    expect(within(sender.el).getByTestId(`to-${sender.id}`).props.children).toBe("Sent to Grandparents – Dad's side");
+    // UX-R15 (review round 2): the group's name is in Post options now, not a "Sent to" line on the card.
+    await within(sender.el).findByTestId(`who-${sender.id}`);
+    expect(within(sender.el).queryByTestId(`to-${sender.id}`)).toBeNull();
+    fireEvent.press(within(sender.el).getByRole('button', { name: 'Post options' }));
+    expect(within(await screen.findByTestId(`more-${sender.id}`)).getByText(/Grandparents – Dad's side/)).toBeTruthy();
     // WHO-10 / GUX-R6: the sender gets the same names line too
     expect((await within(sender.el).findByTestId(`who-${sender.id}`)).props.accessibilityLabel).toBe('You, Alex, Grandma Jo and Grandpa Earl can see this');
   });
@@ -74,7 +78,7 @@ describe('WHO: who can see this post, by name', () => {
     const { id, el } = await dadSidePost('jo');
     const who = await within(el).findByTestId(`who-${id}`);
     expect(who.props.accessibilityRole).toBe('button');
-    expect(within(who).getByText('Alex, Chase and Grandpa Earl can see this.')).toBeTruthy();
+    expect(within(who).getByText('Alex and 2 more can see this.')).toBeTruthy(); // UX-R35 (engineer, flagged for qa-tdd): Jo's Bigger text, one name, then "N more"
     expect(within(who).queryAllByTestId(/^face-/, { includeHiddenElements: true })).toHaveLength(0);
     expect(within(who).queryByText(/^\+\d+$/, { includeHiddenElements: true })).toBeNull();
   });

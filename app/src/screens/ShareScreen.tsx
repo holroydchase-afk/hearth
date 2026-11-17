@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 // Share: pick → caption → "Who can see it" → Post (BETA-SHARE-1, BETA-AUD-1/2).
 import React, { useEffect, useMemo, useState } from 'react';
-import { Image, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import type { Circle } from '../api/HearthApi';
 import { messageFor } from '../errors/messages';
 import { loadLastAudience, saveLastAudience } from '../share/audienceMemory';
@@ -11,7 +11,7 @@ import { applyHelpers, findLookAlikes, helperLines, helperSwitches, type LookRes
 import { loadSent, recordSent } from '../share/sentBefore';
 import { useApp } from '../state/AppContext';
 import { useNav } from '../state/nav';
-import { Button, Card, Choice, Field, Loading, Notice, Screen, Txt } from '../ui/kit';
+import { Button, Choice, Field, Loading, Notice, Screen, Txt } from '../ui/kit';
 import { people, photos } from '../ui/format';
 import type { QueueItem } from '../upload/queue';
 import { AppGate } from './AppGate';
@@ -173,9 +173,10 @@ export function ShareScreen() {
       <QueueStatus />
       {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
 
-      <Card>
+      {/* RD-62 (R19): one 16 pt left edge for everything on Share, so the sections are plain blocks, not boxes. */}
+      <View style={styles.section}>
         {/* GUX-R2: plain accent text buttons inside the section, never a box inside a box. */}
-        <Button variant="quiet" icon={{ sf: 'photo.on.rectangle', md: 'add_photo_alternate' }} style={{ alignSelf: 'flex-start' }}
+        <Button variant="quiet" icon={{ sf: 'photo.on.rectangle', md: 'add_photo_alternate' }} style={styles.flush}
           label={videos ? 'Pick photos or videos from your phone' : 'Pick photos from your phone'}
           text={videos ? (items.length ? 'Pick more photos or videos' : 'Pick photos or videos') : (items.length ? 'Pick more photos' : 'Pick photos')} onPress={() => void pick()} disabled={items.length >= MAX} />
         {items.length ? <Txt variant="strong">{`${photos(items.length)} picked`}</Txt> : null}
@@ -187,13 +188,13 @@ export function ShareScreen() {
             </View>
           ))}
         </View>
-      </Card>
+      </View>
 
       {/* CAP-1: optional, shown (CAP-D4), 80 characters; nothing asks for it (CAP-R1). */}
       <Field label="Title (optional)" placeholder="Give it a name, like Lily's 5th birthday" value={title} onChangeText={setTitle} maxLength={80} />
       <Field label="What's happening?" placeholder="Say what's happening. The groups you pick will see it." value={caption} onChangeText={setCaption} multiline maxLength={2000} />
 
-      <Card>
+      <View style={styles.section}>
         <Txt variant="title" role="header">Who can see it</Txt>
         {circles === null ? <Loading words="Loading your groups…" /> : null}
         {(circles ?? []).map((g, i, all) => (
@@ -224,17 +225,23 @@ export function ShareScreen() {
             ? 'Everyone in the family will see these.'
             : `Only ${chosenCircles.map((g) => g.name).join(' and ')} will see these.`}</Txt>
         )}
-      </Card>
+      </View>
 
       <Button label="Post" onPress={() => void post()} disabled={!ready} busy={busy} />
 
       {app.deps.pickBulk && isParent ? (
-        <Card>
+        <View style={styles.section}>
           <Txt variant="title" role="header">Lots of photos?</Txt>
           <Txt>Pick up to 100. Hearth puts them in order by the day they were taken.</Txt>
-          <Button label="Pick up to 100 photos at once" text="Pick lots of photos" variant="quiet" style={{ alignSelf: 'flex-start' }} onPress={() => void pickMany()} />
-        </Card>
+          <Button label="Pick up to 100 photos at once" text="Pick lots of photos" variant="quiet" style={styles.flush} onPress={() => void pickMany()} />
+        </View>
       ) : null}
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  section: { gap: 12 },
+  // A text button whose words start on the 16 pt edge, like the title above it.
+  flush: { alignSelf: 'flex-start', paddingHorizontal: 0 },
+});

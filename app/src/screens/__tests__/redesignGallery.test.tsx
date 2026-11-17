@@ -97,7 +97,9 @@ async function twoMonths() {
 }
 
 describe('RD-18 Gallery is the photo grid', () => {
-  it('RD-18 every photo by month ("November 2026"), newest first, in a tight square grid; no post cards on Gallery', async () => {
+  // Updated Nov 17 for RD-44 (DEC-65): the months mosaic. Each day group opens on a wide 3:2 tile, then squares; 16 pt
+  // corners (RD-8's square grid corners are superseded). Detailed mosaic rules: photosStyle.test.tsx.
+  it('RD-18 RD-44 every photo by month ("November 2026"), newest first, in the months mosaic; no post cards on Gallery', async () => {
     const { be, old, recent, back, kv } = await twoMonths();
     await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     const grid = await screen.findByTestId('gallery-grid');
@@ -108,8 +110,7 @@ describe('RD-18 Gallery is the photo grid', () => {
     expect(gridTiles()).toEqual([...mediaOf(be, recent), ...mediaOf(be, old)]); // newest first; a post's photos keep their order
     for (const t of within(grid).getAllByTestId(/^gallery-tile-/)) {
       const s = flat(t.props.style);
-      expect({ aspectRatio: s.aspectRatio, corner: cornerOf(t) }).toEqual({ aspectRatio: 1, corner: 0 }); // square, square corners (RD-8)
-      if (typeof s.width === 'string') expect(parseFloat(s.width)).toBeLessThanOrEqual(34); // three or more to a row
+      expect({ wideOrSquare: [1, 1.5].includes(Number(s.aspectRatio)), corner: cornerOf(t) }).toEqual({ wideOrSquare: true, corner: 16 });
     }
     // Gallery is the grid, not the post list (that's Feed, RD-17): no post cards, no captions.
     expect(screen.queryByTestId(`post-${recent}`)).toBeNull();
@@ -117,7 +118,8 @@ describe('RD-18 Gallery is the photo grid', () => {
     expect(screen.getByRole('header', { name: GREETING })).toBeTruthy();
   });
 
-  it('RD-18 OPEN-10 every tile is 48 pt+, a button whose spoken label names the sender and day, and opens that photo full screen', async () => {
+  // Updated Nov 17 for RD-45: the spoken label carries the full date ("October 15"), the sender stays (OPEN-10).
+  it('RD-18 OPEN-10 RD-45 every tile is 48 pt+, a button whose spoken label names the sender and full date, and opens that photo full screen', async () => {
     const { be, old, back, kv } = await twoMonths();
     const { nav } = await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     const grid = await screen.findByTestId('gallery-grid');
@@ -130,7 +132,7 @@ describe('RD-18 Gallery is the photo grid', () => {
       expect(t.props.accessibilityLabel).toMatch(/Chase/);
     }
     const second = within(grid).getByTestId(`gallery-tile-${mediaOf(be, old)[1]}`);
-    expect(second.props.accessibilityLabel).toContain(`${SHORT[back.getMonth()]} ${back.getDate()}`);
+    expect(second.props.accessibilityLabel).toMatch(new RegExp(`\\b${LONG[back.getMonth()]} ${back.getDate()}\\b`));
     fireEvent.press(second);
     expect(nav.openViewer).toHaveBeenLastCalledWith(old, 1);
     expectGrandparentSafe();
@@ -235,13 +237,14 @@ describe('RD-19 New for you: a sideways row of large photos', () => {
     expect(within(await screen.findByTestId('new-for-you')).getByText(/^From Alex\b/)).toBeTruthy();
   });
 
-  it('RD-8 New for you photos have 12 pt corners; grid tiles stay square', async () => {
+  // Updated Nov 17 for RD-44: the months mosaic's tiles have 16 pt corners (were square).
+  it('RD-8 RD-44 New for you photos have 12 pt corners; the months mosaic tiles have 16', async () => {
     const { be, kv } = await joWithNew([{ caption: 'Two', photos: 2 }]);
     await renderApp(<GalleryScreen />, { be, kv, user: 'jo' });
     await screen.findByTestId('new-for-you');
     for (const t of newTiles()) expect(cornerOf(t)).toBe(12);
     await waitFor(() => expect(gridTiles().length).toBeGreaterThan(0));
-    for (const t of within(screen.getByTestId('gallery-grid')).getAllByTestId(/^gallery-tile-/)) expect(cornerOf(t)).toBe(0);
+    for (const t of within(screen.getByTestId('gallery-grid')).getAllByTestId(/^gallery-tile-/)) expect(cornerOf(t)).toBe(16);
   });
 });
 

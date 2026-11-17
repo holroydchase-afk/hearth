@@ -101,21 +101,20 @@ describe('RD-34 content screens sit on the plain background, no grey card fill',
       expect(greyBoxes(c)).toEqual([]);
     });
 
-    it(`RD-34 Feed (${name}): posts are separated by a hairline divider in c.line, not by boxes`, async () => {
+    // Updated Nov 17 for RD-52 (DEC-65, Chase picked "A - 1"): no divider lines between posts; space does it.
+    it(`RD-34 RD-52 Feed (${name}): posts are separated by space, with no hairline divider and no boxes`, async () => {
       const be = FakeBackend.withFixture();
       await seedPost(be, { caption: 'Lake day' });
       await seedPost(be, { caption: 'Cake time' });
       await renderApp(<FeedScreen />, { be, user: 'jo', kv: look(dark, jo.id) });
       const c = pal(dark);
-      await screen.findByText('Cake time', {}, slow);
+      await screen.findByText(/Cake time/, {}, slow);
       const cards = hostOrder().filter((n) => /^post-/.test(String(n.props.testID ?? '')));
       expect(cards.length).toBeGreaterThanOrEqual(2);
       const [first, second] = cards as [Inst, Inst];
       const order = hostOrder();
-      const inFirst = new Set(first.findAll(isHost) as Inst[]);
-      const between = order.slice(order.indexOf(first), order.indexOf(second) + 1)
-        .filter((n) => n === first || n === second || !inFirst.has(n));
-      expect(between.some((n) => isDivider(n, c))).toBe(true);
+      const between = order.slice(order.indexOf(first), order.indexOf(second) + 1);
+      expect(between.filter((n) => isDivider(n, c)).map((n) => n.props.testID ?? n.type)).toEqual([]);
       // No card keeps a boxed outline (a border on every side) or a rounded card shape.
       for (const card of cards) expect({ id: card.props.testID, border: Number(flat(card.props.style).borderWidth ?? 0) }).toEqual({ id: card.props.testID, border: 0 });
     });
@@ -208,6 +207,7 @@ const GREY_ALLOWED: Record<string, Record<string, string>> = {
     GroupedSection: 'Settings-style grouped list under More',
     Field: 'a text input field, like the reply field (Share caption; chief of staff, Nov 16)',
     Confirm: 'dialog layered on top',
+    AlertDialog: 'iOS-style alert layered on top (RD-67)',
     BottomSheet: 'sheet layered on top',
   },
   'screens/PostCard.tsx': {
@@ -215,6 +215,7 @@ const GREY_ALLOWED: Record<string, Record<string, string>> = {
     WhoSheet: 'people capsules in the "who can see this" sheet',
   },
   'screens/MessagesScreen.tsx': { Line: 'chat bubble capsule' },
+  'screens/GalleryTop.tsx': { SearchField: 'the "Search photos" field (RD-47), a field like the reply field' },
   'demo/DemoBar.tsx': { DemoBar: 'demo chrome, outside the app' },
   'demo/DemoFrame.tsx': { DemoFrame: 'demo chrome, outside the app' },
 };

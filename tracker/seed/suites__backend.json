@@ -1633,433 +1633,468 @@
   },
   {
    "id": "API-108",
-   "title": "BETA-JOIN-3 expired invite is 22023",
+   "title": "ONB-3 invite_link_base is the hosted web build's /join/ address",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-109",
-   "title": "BETA-JOIN-3 revoked invite is 22023",
+   "title": "ONB-3 create_invite: the link starts with the configured invite_link_base",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-110",
-   "title": "BETA-JOIN-3 used-up invite is 22023",
+   "title": "ONB-3 create_invite: the link never points at hearth.family (not bought, ACCOUNTS.md)",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-111",
-   "title": "BETA-JOIN-3 unknown code is 22023",
+   "title": "ONB-4 create_invite: the link path is /join/<token>, the route the app opens (app/src/app/join/[code].tsx)",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-112",
-   "title": "BETA-JOIN-3 invite addressed to a different email is 22023",
+   "title": "ONB-4 invite_preview: the /join/ path segment of the link previews the invite",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-113",
-   "title": "BETA-JOIN-3 wrong-email and unknown-code responses are byte-identical (no space data, no hint the code is real)",
+   "title": "BETA-JOIN-3 expired invite is 22023",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-114",
-   "title": "redeem_invite: the addressed person redeems (case-insensitive) and gets space_id",
+   "title": "BETA-JOIN-3 revoked invite is 22023",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-115",
-   "title": "redeem_invite: ...and lands in the invited circle",
+   "title": "BETA-JOIN-3 used-up invite is 22023",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-116",
-   "title": "redeem_invite: the long link token redeems",
+   "title": "BETA-JOIN-3 unknown code is 22023",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-117",
-   "title": "BETA-JOIN-4 (S10) 10th failure is still 22023 (failures persist across requests)",
+   "title": "BETA-JOIN-3 invite addressed to a different email is 22023",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-118",
-   "title": "BETA-JOIN-4 (S10) 11th attempt by the same account is 54000, even with a valid code",
+   "title": "BETA-JOIN-3 wrong-email and unknown-code responses are byte-identical (no space data, no hint the code is real)",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-119",
-   "title": "BETA-JOIN-4 (S10) ...and did not join",
+   "title": "redeem_invite: the addressed person redeems (case-insensitive) and gets space_id",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-120",
-   "title": "BETA-JOIN-4 (S10) also 54000 outside PostgREST",
+   "title": "redeem_invite: ...and lands in the invited circle",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-121",
-   "title": "BETA-JOIN-4 (S10) the same IP is limited across accounts (last X-Forwarded-For hop)",
+   "title": "redeem_invite: the long link token redeems",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-122",
-   "title": "BETA-JOIN-4 (S10) a different account on a different IP is not limited",
+   "title": "BETA-JOIN-4 (S10) 10th failure is still 22023 (failures persist across requests)",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-123",
-   "title": "BETA-JOIN-4 (S10) Prefer: tx=rollback (which would erase the failure log) is refused",
+   "title": "BETA-JOIN-4 (S10) 11th attempt by the same account is 54000, even with a valid code",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-124",
-   "title": "BETA-JOIN-4 (S10) the window is 10 minutes",
+   "title": "BETA-JOIN-4 (S10) ...and did not join",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-125",
-   "title": "BETA-JOIN-4 (S10) invite_preview: 11th anon attempt from one IP is 54000",
+   "title": "BETA-JOIN-4 (S10) also 54000 outside PostgREST",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-126",
-   "title": "BETA-JOIN-4 (S10) invite_preview: another IP still works",
+   "title": "BETA-JOIN-4 (S10) the same IP is limited across accounts (last X-Forwarded-For hop)",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-127",
-   "title": "names: a new account starts with a placeholder name, marked not set",
+   "title": "BETA-JOIN-4 (S10) a different account on a different IP is not limited",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-128",
-   "title": "names: my_profile returns the caller's name and whether it is set",
+   "title": "BETA-JOIN-4 (S10) Prefer: tx=rollback (which would erase the failure log) is refused",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-129",
-   "title": "BETA-NOTIFY-7: a poster sets the name the family knows him by",
+   "title": "BETA-JOIN-4 (S10) the window is 10 minutes",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-130",
-   "title": "BETA-NOTIFY-7: ...trimmed and saved",
+   "title": "BETA-JOIN-4 (S10) invite_preview: 11th anon attempt from one IP is 54000",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-131",
-   "title": "names: an empty name is 23514",
+   "title": "BETA-JOIN-4 (S10) invite_preview: another IP still works",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-132",
-   "title": "names: an email address is not a name (23514)",
+   "title": "names: a new account starts with a placeholder name, marked not set",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-133",
-   "title": "names: over 40 characters is 23514",
+   "title": "names: my_profile returns the caller's name and whether it is set",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-134",
-   "title": "names: angle brackets are refused (23514)",
+   "title": "BETA-NOTIFY-7: a poster sets the name the family knows him by",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-135",
-   "title": "JOIN-1: an invite name that is an email is 23514",
+   "title": "BETA-NOTIFY-7: ...trimmed and saved",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-136",
-   "title": "BETA-NOTIFY-7: the invite preview names the real sender (\"Chase invited you\")",
+   "title": "names: an empty name is 23514",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-137",
-   "title": "setup: June joins",
+   "title": "names: an email address is not a name (23514)",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-138",
-   "title": "JOIN-1: joining gives her the name Chase typed; she types nothing",
+   "title": "names: over 40 characters is 23514",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-139",
-   "title": "setup: Earl sets his own name first",
+   "title": "names: angle brackets are refused (23514)",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-140",
-   "title": "setup: Earl joins",
+   "title": "JOIN-1: an invite name that is an email is 23514",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-141",
-   "title": "names: an invite never overwrites a name the person chose",
+   "title": "BETA-NOTIFY-7: the invite preview names the real sender (\"Chase invited you\")",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-142",
-   "title": "names: anon cannot set a name (42501)",
+   "title": "setup: June joins",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-143",
-   "title": "names: a direct profile update cannot bypass set_my_name (42501)",
+   "title": "JOIN-1: joining gives her the name Chase typed; she types nothing",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-144",
-   "title": "names: the table itself refuses brackets or line breaks in a name (23514)",
+   "title": "setup: Earl sets his own name first",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-145",
-   "title": "names: an invite can't reuse a family member's name (no \"Chase\" impersonation, 23514)",
+   "title": "setup: Earl joins",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-146",
-   "title": "rename_circle: the owner renames a group",
+   "title": "names: an invite never overwrites a name the person chose",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-147",
-   "title": "rename_circle: ...trimmed and saved",
+   "title": "names: anon cannot set a name (42501)",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-148",
-   "title": "rename_circle: a name another group already has is 23514 (not 23505)",
+   "title": "names: a direct profile update cannot bypass set_my_name (42501)",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-149",
-   "title": "rename_circle: an empty name is 23514",
+   "title": "names: the table itself refuses brackets or line breaks in a name (23514)",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-150",
-   "title": "rename_circle: over 60 characters is 23514",
+   "title": "names: an invite can't reuse a family member's name (no \"Chase\" impersonation, 23514)",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-151",
-   "title": "rename_circle: a viewer gets not found (P0002), even for her own group",
+   "title": "rename_circle: the owner renames a group",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-152",
-   "title": "rename_circle: a poster in another space gets not found (P0002)",
+   "title": "rename_circle: ...trimmed and saved",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-153",
-   "title": "rename_circle: unknown group is P0002",
+   "title": "rename_circle: a name another group already has is 23514 (not 23505)",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-154",
-   "title": "setup: rename back",
+   "title": "rename_circle: an empty name is 23514",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-155",
-   "title": "BETA-OPS-1: a signed-in member reports an error",
+   "title": "rename_circle: over 60 characters is 23514",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-156",
-   "title": "BETA-OPS-1: exactly 1 row with app version, OS, screen and error type",
+   "title": "rename_circle: a viewer gets not found (P0002), even for her own group",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-157",
-   "title": "BETA-OPS-1: errors before sign-in can be reported too",
+   "title": "rename_circle: a poster in another space gets not found (P0002)",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-158",
-   "title": "BETA-OPS-1: free text (a caption) is refused, not stored",
+   "title": "rename_circle: unknown group is P0002",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-159",
-   "title": "BETA-OPS-1: a URL is refused, not stored",
+   "title": "setup: rename back",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-160",
-   "title": "BETA-OPS-1: an email address is refused, not stored",
+   "title": "BETA-OPS-1: a signed-in member reports an error",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-161",
-   "title": "BETA-OPS-1: app users cannot read error reports",
+   "title": "BETA-OPS-1: exactly 1 row with app version, OS, screen and error type",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-162",
-   "title": "setup: 30 reports in an hour",
+   "title": "BETA-OPS-1: errors before sign-in can be reported too",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-163",
-   "title": "BETA-OPS-1: more than 30 reports an hour from one person is 54000",
+   "title": "BETA-OPS-1: free text (a caption) is refused, not stored",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-164",
-   "title": "BETA-OPS-1: reports older than 30 days are purged; newer ones stay",
+   "title": "BETA-OPS-1: a URL is refused, not stored",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-165",
-   "title": "BETA-OPS-1: only the server can purge",
+   "title": "BETA-OPS-1: an email address is refused, not stored",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-166",
-   "title": "RLS: every policy uses (select auth.uid()), never a per-row auth.uid()",
+   "title": "BETA-OPS-1: app users cannot read error reports",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-167",
-   "title": "RLS: membership helpers are wrapped as once-per-statement (select ...) arrays, not per-row calls",
+   "title": "setup: 30 reports in an hour",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-168",
-   "title": "Indexes: every foreign key has an index on its columns",
+   "title": "BETA-OPS-1: more than 30 reports an hour from one person is 54000",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
   },
   {
    "id": "API-169",
+   "title": "BETA-OPS-1: reports older than 30 days are purged; newer ones stay",
+   "area": "API contract",
+   "tickets": [],
+   "where": "backend/tests/api_test.sql"
+  },
+  {
+   "id": "API-170",
+   "title": "BETA-OPS-1: only the server can purge",
+   "area": "API contract",
+   "tickets": [],
+   "where": "backend/tests/api_test.sql"
+  },
+  {
+   "id": "API-171",
+   "title": "RLS: every policy uses (select auth.uid()), never a per-row auth.uid()",
+   "area": "API contract",
+   "tickets": [],
+   "where": "backend/tests/api_test.sql"
+  },
+  {
+   "id": "API-172",
+   "title": "RLS: membership helpers are wrapped as once-per-statement (select ...) arrays, not per-row calls",
+   "area": "API contract",
+   "tickets": [],
+   "where": "backend/tests/api_test.sql"
+  },
+  {
+   "id": "API-173",
+   "title": "Indexes: every foreign key has an index on its columns",
+   "area": "API contract",
+   "tickets": [],
+   "where": "backend/tests/api_test.sql"
+  },
+  {
+   "id": "API-174",
    "title": "RLS: rewritten posts policy returns exactly the rows can_view_post() allows, for every user",
    "area": "API contract",
    "tickets": [],
@@ -3775,517 +3810,510 @@
   },
   {
    "id": "GROUPS-095",
-   "title": "BETA-AUD-13: placing a person in a group is 23514 (people go only in households)",
+   "title": "BETA-AUD-13 / GRP-10: placing a person in Everyone is 23514 (Everyone comes from the invite)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
    "id": "GROUPS-096",
-   "title": "BETA-AUD-13: placing a person in an event is 23514",
-   "area": "Groups, households, events",
-   "tickets": [],
-   "where": "backend/tests/groups_test.sql"
-  },
-  {
-   "id": "GROUPS-097",
    "title": "BETA-AUD-13: linking across two families (spaces) is 23514, even for a parent of both",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-098",
+   "id": "GROUPS-097",
    "title": "BETA-AUD-13: a loop (a container under itself) is 23514",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-099",
+   "id": "GROUPS-098",
    "title": "BETA-AUD-13: a second Everyone is 23514",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-100",
+   "id": "GROUPS-099",
    "title": "BETA-AUD-13: an unknown kind is 23514",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-101",
+   "id": "GROUPS-100",
    "title": "privacy item 3: a direct cross-space circle_links insert (even as admin) is refused by trigger (23514)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-102",
+   "id": "GROUPS-101",
    "title": "privacy item 3: a direct group-under-group insert is refused by link_allowed in a trigger (23514)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-103",
-   "title": "privacy item 3: a direct circle_people insert into a group is refused (23514)",
+   "id": "GROUPS-102",
+   "title": "privacy item 3 / GRP-10: a direct circle_people insert into Everyone is refused (23514)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-104",
+   "id": "GROUPS-103",
    "title": "BETA-AUD-13: Gammy calling create_level is P0002",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-105",
+   "id": "GROUPS-104",
    "title": "BETA-AUD-13: Gammy calling link_level is P0002",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-106",
+   "id": "GROUPS-105",
    "title": "BETA-AUD-13: Gammy calling unlink_level is P0002",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-107",
+   "id": "GROUPS-106",
    "title": "BETA-AUD-13: Gammy calling place_person is P0002",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-108",
+   "id": "GROUPS-107",
    "title": "BETA-AUD-13: Gammy calling unplace_person is P0002",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-109",
+   "id": "GROUPS-108",
    "title": "BETA-AUD-13: after every refused call, links, placements, containers and derived members are unchanged",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-110",
+   "id": "GROUPS-109",
    "title": "BETA-AUD-19: link_level with no history is 23514",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-111",
+   "id": "GROUPS-110",
    "title": "BETA-AUD-19: link_level with a made-up history is 23514",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-112",
+   "id": "GROUPS-111",
    "title": "BETA-AUD-19: place_person with no history is 23514",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-113",
+   "id": "GROUPS-112",
    "title": "BETA-AUD-19: create_invite for a relative with no p_history is 23514",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-114",
+   "id": "GROUPS-113",
    "title": "BETA-AUD-19: create_invite with a made-up p_history is 23514",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-115",
-   "title": "BETA-AUD-19: an invite names one household, not a group (23514)",
+   "id": "GROUPS-114",
+   "title": "BETA-AUD-19 / GRP-12: an invite that names no group is 23514",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-116",
+   "id": "GROUPS-115",
    "title": "BETA-REPLY-12: set_group_replies_shared is dropped",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-117",
+   "id": "GROUPS-116",
    "title": "BETA-REPLY-12: circles.replies_shared is dropped",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-118",
+   "id": "GROUPS-117",
    "title": "BETA-REPLY-12 / API: my_circles returns kind and parent_ids, and no replies_shared",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-119",
+   "id": "GROUPS-118",
    "title": "privacy item 3: app users can't insert, update or delete circle_members (derived by trigger only)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-120",
+   "id": "GROUPS-119",
    "title": "privacy item 3: app users can't write circle_links or circle_people directly (only through the RPCs)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-121",
+   "id": "GROUPS-120",
    "title": "privacy item 5: after Memaw joins Pawpaw and Granny's house, they still don't read the comment she wrote before",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-122",
+   "id": "GROUPS-121",
    "title": "privacy item 5: ... and Memaw doesn't read Pawpaw's earlier comment or heart (written for Granny, the sister and the parents)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-123",
+   "id": "GROUPS-122",
    "title": "privacy item 5: a comment Memaw writes after the move reaches Pawpaw and Granny",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-124",
+   "id": "GROUPS-123",
    "title": "privacy item 5 / REPLY-11: Memaw's comment box now names the sister, Pawpaw, Granny, Chase and Mom",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-125",
+   "id": "GROUPS-124",
    "title": "BETA-AUD-20: Memaw's house added to the Charleston trip with \"Share all past photos\": Memaw sees the trip's earlier post",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-126",
+   "id": "GROUPS-125",
    "title": "privacy item 5: ... but not the trip comments written before her house was added (Granny's, and even the sister's, whose box never named Memaw)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-127",
+   "id": "GROUPS-126",
    "title": "privacy item 5: Granny's next comment on the trip reaches Memaw (event rule, now that she's in it)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-128",
+   "id": "GROUPS-127",
    "title": "BETA-AUD-20: Great-Grandma's house added to the trip with \"Only new photos\": she can't open its earlier post",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-129",
+   "id": "GROUPS-128",
    "title": "BETA-AUD-20: ... and does see the next trip post",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-130",
+   "id": "GROUPS-129",
    "title": "privacy item 5 narrowing: once the sister leaves Pawpaw and Granny's house, they stop reading her old comment; Memaw (still her house) keeps it",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-131",
+   "id": "GROUPS-130",
    "title": "BETA-AUD-15: Great-Grandma removed from her house loses the Mom's side post in the same transaction",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-132",
+   "id": "GROUPS-131",
    "title": "BETA-AUD-15: Gammy's house unlinked from Chase's side: Gammy loses its posts in the same transaction",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-133",
+   "id": "GROUPS-132",
    "title": "BETA-AUD-15: Pawpaw and Granny's house unlinked from the birthday event: Granny loses the event post at once",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-134",
+   "id": "GROUPS-133",
    "title": "BETA-AUD-15 allowed: everyone else keeps theirs (Grandaddy keeps Chase's side and the birthday; Gammy keeps Everyone)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-135",
+   "id": "GROUPS-134",
    "title": "BETA-AUD-15: Gammy can no longer read the media rows (sign-media refuses new URLs)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-136",
+   "id": "GROUPS-135",
    "title": "privacy item 10: removing Gigi from the family removes her placements and derived memberships",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-137",
+   "id": "GROUPS-136",
    "title": "privacy item 10: re-invited with \"Share all past photos\", Gigi now sees the posts from before her first invite",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-138",
+   "id": "GROUPS-137",
    "title": "S-0011-1 setup: the sister's comment box names only Chase and Mom",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-139",
+   "id": "GROUPS-138",
    "title": "S-0011-1 allowed: Memaw's house added to the post: Memaw sees the photo",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-140",
+   "id": "GROUPS-139",
    "title": "S-0011-1 excluded: ... but not the sister's comment or heart written before her house was added",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-141",
+   "id": "GROUPS-140",
    "title": "S-0011-1 counts: Memaw's feed counts leave them out too (0 hearts, 0 comments)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-142",
+   "id": "GROUPS-141",
    "title": "S-0011-1 allowed: the sister's next comment reaches Memaw; Chase still reads both",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-143",
+   "id": "GROUPS-142",
    "title": "S-0011-1: app users can't choose post_audiences.added_at (the time that fixes who reads replies)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-144",
+   "id": "GROUPS-143",
    "title": "S-0011-2 excluded: a relative (Memaw, her own house) and a parent of another family can't retire a container",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-145",
+   "id": "GROUPS-144",
    "title": "S-0011-2: Everyone can't be retired",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-146",
+   "id": "GROUPS-145",
    "title": "S-0011-2 allowed: Mom (parent) retires Pawpaw and Granny's house: they lose its posts at once",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-147",
+   "id": "GROUPS-146",
    "title": "S-0011-2: the house's posts stay with the parents and the author only (no one else picks them up)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-148",
+   "id": "GROUPS-147",
    "title": "S-0011-2: retiring widens nobody: no (person, post) pair is visible after that wasn't before",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-149",
+   "id": "GROUPS-148",
    "title": "S-0011-3 allowed: an invite to an old group with nothing under it still works until 0012 (Aunt Bea joins)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-150",
-   "title": "S-0011-3 excluded: once the old group has a household under it, its open invite is refused (Uncle Ray isn't placed straight into the group)",
+   "id": "GROUPS-149",
+   "title": "S-0011-3 / GRP-12: an invite to a live group that now has a household under it still works (Uncle Ray is placed in it, not in Everyone)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-151",
+   "id": "GROUPS-150",
    "title": "S-0011-3 excluded: an invite whose group was retired is refused (no member who is placed nowhere)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-152",
+   "id": "GROUPS-151",
    "title": "UX-G7: invite_preview refuses an invite to a retired group (22023), as redeem does",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-153",
-   "title": "UX-G7: invite_preview refuses an invite to an old group that now has households under it (22023)",
+   "id": "GROUPS-152",
+   "title": "UX-G7: invite_preview refuses an invite that was already used (22023)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-154",
+   "id": "GROUPS-153",
    "title": "UX-G7: invite_preview refuses an invite whose household was retired (22023)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-155",
+   "id": "GROUPS-154",
    "title": "UX-G7: over PostgREST the refusal names the inviter in details (\"Ask Chase for a new one.\")",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-156",
+   "id": "GROUPS-155",
    "title": "UX-G7 excluded: an unknown code still names no one (BETA-JOIN-3)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-157",
+   "id": "GROUPS-156",
    "title": "UX-G7 allowed: an invite to a live household still previews (\"Chase invited you\")",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-158",
+   "id": "GROUPS-157",
    "title": "UX-G7: redeem refuses the same retired-household invite (preview and redeem agree)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-159",
+   "id": "GROUPS-158",
    "title": "S-0011-6 setup: Lu (\"Only new photos\") can't see the older post; Jo (all past photos) can",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-160",
+   "id": "GROUPS-159",
    "title": "S-0011-6 allowed: placed again with \"Share all past photos\", Lu now sees the older post",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-161",
+   "id": "GROUPS-160",
    "title": "S-0011-6 excluded: ... but not Jo's comment or heart written while she couldn't see it",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-162",
+   "id": "GROUPS-161",
    "title": "S-0011-6 counts: Lu's feed counts leave them out too (0 hearts, 0 comments)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-163",
+   "id": "GROUPS-162",
    "title": "S-0011-6 allowed: Jo's next comment reaches Lu; Chase still reads both",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-164",
+   "id": "GROUPS-163",
    "title": "S-0011-7: a parent's direct update can't soft-delete Everyone (23514)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-165",
+   "id": "GROUPS-164",
    "title": "S-0011-7: Everyone (and everything else) is still live after the refused update",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-166",
+   "id": "GROUPS-165",
    "title": "S-0011-8: a parent's direct update can't un-retire a retired group or household (23514)",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-167",
+   "id": "GROUPS-166",
    "title": "S-0011-8: both stay retired after the refused updates",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
   },
   {
-   "id": "GROUPS-168",
+   "id": "GROUPS-167",
    "title": "S-0011-8 allowed: a live group is still updatable and stays live",
    "area": "Groups, households, events",
    "tickets": [],
@@ -4439,6 +4467,1322 @@
    "where": "backend/tests/privacy_audit_test.sql"
   },
   {
+   "id": "GROUPS-V2-001",
+   "title": "GRP-2 shape: circles.comment_mode exists",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-002",
+   "title": "GRP-7 shape: comment_mode_log exists",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-003",
+   "title": "GRP-9/11/14 FLAG-1 shape: set_comment_mode, add_people_from, private.feature_on, my_features, private.group_reply_ok exist",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-004",
+   "title": "GRP-10 shape: place_person takes p_group (any group, not only households)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-005",
+   "title": "FLAG shape: feature_flags and space_features exist",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-006",
+   "title": "GRP-9/11 shape: anon cannot call set_comment_mode or add_people_from",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-007",
+   "title": "FLAG shape: app users cannot call private.feature_on directly (they use my_features)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-008",
+   "title": "GRP-2 every seed circle (Everyone and groups) is Private after 0013",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-009",
+   "title": "GRP-2 comment_mode_log backfill: exactly one row per existing circle, set_at = circles.created_at, same mode",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-010",
+   "title": "GRP-11 a parent copies everyone in Chase's side into Chase's birthday",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-011",
+   "title": "GRP-11 ...and everyone in Mom's side (Auntie Rachel, in both, does not make it fail)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-012",
+   "title": "GRP-11 the birthday holds exactly Pop Joe, Auntie Rachel, Meemaw Sue and Aunt Linda, each once (no parent copied)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-013",
+   "title": "GRP-11 copied, not linked: no circle_links row for the birthday",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-014",
+   "title": "GRP-11 no share-history choice is refused",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-015",
+   "title": "GRP-11 a relative calling add_people_from gets \"not found\"",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-016",
+   "title": "GRP-11 Uncle Ray, added to Chase's side later, is not in Chase's birthday",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-017",
+   "title": "GRP-9 a group made with create_level starts Private",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-018",
+   "title": "GRP-9 an event made with create_level (by either parent) starts Shared on this group's posts",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-019",
+   "title": "GRP-9 a parent sets Meemaw's to Always shared with set_comment_mode",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-020",
+   "title": "GRP-9 comment_mode_log has a row for the new group (Private) and one for the change (Always shared, set by Chase)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-021",
+   "title": "GRP-9 set_comment_mode refuses a fourth value",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-022",
+   "title": "GRP-9 set_comment_mode refuses no value",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-023",
+   "title": "GRP-9 Everyone's setting can't be changed (the owner's AUD-10 switch is the one way to open it)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-024",
+   "title": "GRP-9 Everyone is still Private",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-025",
+   "title": "GRP-9 a relative calling set_comment_mode gets \"not found\"",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-026",
+   "title": "GRP-9 a relative calling create_level gets \"not found\"",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-027",
+   "title": "GRP-9 a parent can't change comment_mode with a direct UPDATE (only set_comment_mode)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-028",
+   "title": "GRP-9 app users can't write comment_mode_log",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-029",
+   "title": "GRP-9 Porch is still Private after the refused writes",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-030",
+   "title": "GRP-10 place_person put people in plain groups (Porch, Meemaw's), and they are members",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-031",
+   "title": "GRP-10 place_person into an event succeeds",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-032",
+   "title": "GRP-10 ...and Neighbor Ann is a member of Reunion",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-033",
+   "title": "GRP-10 placing someone in Everyone is still refused",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-034",
+   "title": "GRP-10 no share-history choice is refused",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-035",
+   "title": "GRP-10 an unknown share-history choice is refused",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-036",
+   "title": "GRP-10 a relative calling place_person gets \"not found\"",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-037",
+   "title": "GRP-10 the refused placements left Porch unchanged",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-038",
+   "title": "GRP-3 Chase, Mom and Auntie Rachel (Meemaw's, Always shared) read Meemaw's comment on the Everyone post",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-039",
+   "title": "GRP-3 ...and her heart",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-040",
+   "title": "GRP-3 everyone else who sees the post (Linda, Joe, Ann, Beth, Ray) does not read her comment",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-041",
+   "title": "GRP-3 ...nor her heart",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-042",
+   "title": "GRP-3 reply_readers for Meemaw names exactly Chase, Mom and Auntie Rachel (got {\"Auntie Rachel\",Chase,Mom})",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-043",
+   "title": "GRP-4 every birthday member reads Pop Joe's comment on a post sent to the birthday",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-044",
+   "title": "GRP-4 ...and Aunt Linda's",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-045",
+   "title": "GRP-4 people outside the birthday (who can't see the post) read nothing",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-046",
+   "title": "GRP-4 reply_readers for Pop Joe on the birthday post names the parents and every other member (got {\"Aunt Linda\",\"Auntie Rachel\",Chase,Mom,\"Meemaw Sue\"})",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-047",
+   "title": "GRP-5 birthday members Joe and Linda don't read Meemaw's comment on an Everyone-only post",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-048",
+   "title": "GRP-5 ...unless another rule allows it (Rachel shares the Always-shared Meemaw's)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-049",
+   "title": "GRP-5 same for a post sent to another group: Linda (birthday + Mom's side, both with Meemaw) doesn't read her comment on the Mom's side post",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-050",
+   "title": "GRP-5 reply_readers for Meemaw on the Mom's side post leaves out Aunt Linda (got {\"Auntie Rachel\",Chase,Mom})",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-051",
+   "title": "GRP-6 Rachel (Meemaw's, Always shared) reads Meemaw's comment on a post not sent to Meemaw's",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-052",
+   "title": "GRP-6 Great-aunt Opal (Meemaw's, can't see that post) reads nothing: get_comments says not found, RLS hides it",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-053",
+   "title": "GRP-6 ...and can't read Meemaw's heart on a post she can't see",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-054",
+   "title": "GRP-7 setup: Porch is Private, Linda doesn't read Joe's comment on the Everyone post",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-055",
+   "title": "GRP-7 setup: a parent switched Porch to Always shared",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-056",
+   "title": "GRP-7 the comment written while Porch was Private keeps its readers after the switch to Always shared",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-057",
+   "title": "GRP-7 a comment written after the switch follows Always shared (Linda reads it)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-058",
+   "title": "GRP-7 ...and reply_readers for Joe now names Aunt Linda",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-059",
+   "title": "GRP-7 switching Always shared -> Private hides the earlier comment from the group at once",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-060",
+   "title": "GRP-7 ...and reply_readers drops Aunt Linda",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-061",
+   "title": "GRP-8 setup: Cousin Beth is now in Meemaw's",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-062",
+   "title": "GRP-8 Beth, added to Meemaw's after Meemaw's comment, doesn't read it through the group",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-063",
+   "title": "GRP-8 ...nor Meemaw's earlier heart",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-064",
+   "title": "GRP-8 Beth does read Meemaw's next comment, written after Beth joined",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-065",
+   "title": "EVT-1 a birthday member's feed row for a post to the birthday carries the event's id and name",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-066",
+   "title": "EVT-1 ...and so does the timeline row",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-067",
+   "title": "EVT-1 a post sent only to the event carries it too",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-068",
+   "title": "EVT-1 Neighbor Ann (sees it only through Everyone) gets no event id or name, anywhere in the feed row",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-069",
+   "title": "EVT-1 ...nor in the timeline row",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-070",
+   "title": "GRP-12 a parent can name two groups (a group and an event) in one invite",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-071",
+   "title": "GRP-12 redeeming places Cousin Dee in each named group",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-072",
+   "title": "GRP-12 ...and NOT in Everyone, because Everyone wasn't named",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-073",
+   "title": "GRP-12 the legacy direct circle_members path is gone: every membership Dee got is derived from a placement",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-074",
+   "title": "GRP-12 an invite naming Everyone and Porch puts Cousin Eve in Everyone and in Porch",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-075",
+   "title": "GRP-12 setup: invite naming Old porch and Meemaw's made",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-076",
+   "title": "GRP-12 / UX-G7 preview refuses an invite naming a retired group (22023) with the inviter's name",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-077",
+   "title": "GRP-12 ...and redeem refuses it too (22023); Cousin Fay does not join",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-078",
+   "title": "GRP-13 my_circles gives a relative nothing (AUD-14)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-079",
+   "title": "GRP-13 reading circles, a relative sees only groups they are in",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-080",
+   "title": "GRP-13 a relative can't read any group's comment setting from circles",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-081",
+   "title": "GRP-13 a relative reads no comment_mode_log rows",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-082",
+   "title": "GRP-13 feed rows never carry a comment setting for a relative",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-083",
+   "title": "GRP-14 reply_ok, reply_scope and feed_rows all call private.group_reply_ok and none checks kind household/event",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-084",
+   "title": "GRP-14 for the 24-row family x post x writer x reader table, get_comments, RLS and reply_ok all give the expected answer (0 wrong)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-085",
+   "title": "GRP-14 every person x every comment: get_comments = table RLS = reply_ok (0 disagree)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-086",
+   "title": "GRP-14 feed_rows comment and heart counts equal what table RLS shows, for every person x post (0 differ)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-087",
+   "title": "GRP-14 reply_scope = 'parents' exactly when reply_readers names only parents and the poster (0 differ)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-088",
+   "title": "FLAG-1 with no rows, feature_on(space, 'video_posting') is false (default off)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-089",
+   "title": "FLAG-1 ...and my_features doesn't list it",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-090",
+   "title": "FLAG-2 global on + family on: a parent (owner or adult) gets true",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-091",
+   "title": "FLAG-2 ...a relative asking for the parents-only capability gets false",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-092",
+   "title": "FLAG-2 my_features lists video_posting for a parent, not for a relative",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-093",
+   "title": "FLAG-2 can(space, 'use_video') is true for a parent",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-094",
+   "title": "FLAG-2 can(space, 'use_video') is false for a relative",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-095",
+   "title": "FLAG-2 global switch off (family on, parent): false",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-096",
+   "title": "FLAG-2 family add-on off (global on, parent): false",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-097",
+   "title": "FLAG-3 the owner can't write the global table",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-098",
+   "title": "FLAG-3 ...nor switch the global video flag on",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-099",
+   "title": "FLAG-3 a relative can't write the global table",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-100",
+   "title": "FLAG-3 a relative can't write the family add-on",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-101",
+   "title": "FLAG-3 ...nor switch it on with an UPDATE (still off)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-102",
+   "title": "FLAG-3 setup: a parent may switch the family add-on",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-103",
+   "title": "FLAG-3 the parent's family add-on switch took effect",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-104",
+   "title": "FLAG-4 video_posting off: preparing a video upload is refused (42501 video_posting_off)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-105",
+   "title": "FLAG-4 ...photos still upload with the flag off",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-106",
+   "title": "FLAG-4 ...and no video row was created",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-107",
+   "title": "FLAG-4 with all three switches on, a parent can prepare a video upload",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-108",
+   "title": "PRIV-G1 Always -> Private -> Always: a comment hidden by the switch to Private stays hidden when the group is turned back up",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-109",
+   "title": "PRIV-G2 a new invite naming only a household places the person there and NOT in Everyone",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-110",
+   "title": "PRIV-G2 ...so Cousin Gus does not get Dad's Everyone post in his feed",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-111",
+   "title": "PRIV-G4 video_posting off: a direct table insert of a video row is refused (42501)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-112",
+   "title": "PRIV-G4 ...the same direct insert of a photo row is allowed (the refusal is the video switch, not RLS)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-113",
+   "title": "PRIV-G4 ...and no video row was created",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-114",
+   "title": "PRIV-G4 ...the refusal says video_posting_off",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-115",
+   "title": "PRIV-G5 an adult parent can't add a family add-on row (owner only)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-116",
+   "title": "PRIV-G5 ...nor switch video posting on with an UPDATE (still off)",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-117",
+   "title": "PRIV-G5 the owner still can",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUPS-V2-118",
+   "title": "PRIV-G5 ...and the owner's switch took effect",
+   "area": "Groups-V2",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-001",
+   "title": "MSG-1 a person publishes their phone's signing key and key packages",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-002",
+   "title": "MSG-1 ...and so does Grandpa",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-003",
+   "title": "MSG-1 an empty signing key is refused",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-004",
+   "title": "MSG-1 a key package that is not base64 is refused",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-005",
+   "title": "MSG-1 publishing needs a signed-in person",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-006",
+   "title": "MSG-2 Aunt Jo (not in the group) can't start its chat",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-007",
+   "title": "MSG-2 ...can't fetch it",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-008",
+   "title": "MSG-2 ...can't send to it",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-009",
+   "title": "MSG-2 ...can't read who is in it",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-010",
+   "title": "MSG-2 ...can't claim keys through it",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-011",
+   "title": "MSG-2 a group that doesn't exist looks the same",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-012",
+   "title": "MSG-2 households have no chat (groups and events first)",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-013",
+   "title": "MSG-2 ...not even to fetch",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-014",
+   "title": "MSG-1 Grandma's chats: Everyone, her group and her event (no household, nothing she isn't in)",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-015",
+   "title": "AUD-14 a relative sees a group chat titled by its people (the parent included), never the group's name",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-016",
+   "title": "MSG-7 an event chat keeps the event's name",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-017",
+   "title": "AUD-14 Blair never sees the grandparents' group",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-018",
+   "title": "MSG-2 a family you aren't in is \"not found\"",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-019",
+   "title": "REPLY-10 the parent is in every chat of the family (not households), by its real names",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-020",
+   "title": "MSG-1 the first member to open Messages starts the group (true)",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-021",
+   "title": "MSG-1 the next one finds it already started (false)",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-022",
+   "title": "MSG-1 the roster lists the group's two people plus the parent, with signing keys for those who have opened Messages",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-023",
+   "title": "MSG-2 ...and nobody outside it",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-024",
+   "title": "MSG-1 Grandma claims one of Grandpa's key packages; Aunt Jo (not in the group) is skipped silently",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-025",
+   "title": "MSG-1 a claimed key package is never handed out twice",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-026",
+   "title": "MSG-1 Grandpa tops up his key packages",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-027",
+   "title": "MSG-1 ...and the new ones are claimable",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-028",
+   "title": "MSG-5 Grandma's key change for epoch 0 is accepted",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-029",
+   "title": "MSG-5 Grandpa's key change for the same epoch loses (23505), so the group can't split",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-030",
+   "title": "MSG-6 a welcome addressed to Grandpa is accepted",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-031",
+   "title": "MSG-6 a welcome to someone outside the group is refused",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-032",
+   "title": "MSG-6 a welcome must name who it is for",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-033",
+   "title": "MSG-6 ...and only a welcome may name one",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-034",
+   "title": "MSG-1 unknown kinds are refused",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-035",
+   "title": "MSG-1 a body that is not base64 is refused",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-036",
+   "title": "MSG-1 a body over 64 KB is refused",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-037",
+   "title": "MSG-1 a sealed message is accepted",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-038",
+   "title": "MSG-6 Grandpa fetches the key change, his welcome and the message, in order",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-039",
+   "title": "MSG-1 fetching after a cursor returns only newer rows",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-040",
+   "title": "MSG-1 each row says who sent it",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-041",
+   "title": "MSG-6 Grandma (the sender) does not get Grandpa's welcome back",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-042",
+   "title": "PRIV app users can't read the message table directly",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-043",
+   "title": "PRIV ...nor the key packages",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-044",
+   "title": "PRIV ...nor write to it",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-045",
+   "title": "MSG-1 Aunt Jo, added now, fetches none of the older rows",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-046",
+   "title": "MSG-1 ...but does fetch what comes after",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-047",
+   "title": "MSG-3 Grandpa, removed from the group, fetches nothing (\"not found\")",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-048",
+   "title": "MSG-3 ...and can't send",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-049",
+   "title": "MSG-3 Grandpa leaves the roster, so the others' phones remove him at the next key change",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-050",
+   "title": "MSG-3 ...and his key packages can't be claimed through it",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-051",
+   "title": "MSG-7 an event's chat starts like a group's",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-052",
+   "title": "MSG-7 an event-mate sends",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-053",
+   "title": "MSG-7 ...and the other reads",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-054",
+   "title": "MSG-7 someone not at the event gets \"not found\"",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-055",
+   "title": "MSG-8 Grandma signs in on a new phone",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-056",
+   "title": "MSG-8 the roster shows her new signing key, so the others swap her phone at the next key change",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CHAT-057",
+   "title": "MSG-8 ...and only the new phone's key packages are handed out",
+   "area": "Chat",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "HELPERS-001",
+   "title": "HELP-R4 with no family rows, a parent gets both photo helpers (default on)",
+   "area": "Helpers",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "HELPERS-002",
+   "title": "HELP-R4 ...and video_posting stays off by default (FLAG-1 unchanged)",
+   "area": "Helpers",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "HELPERS-003",
+   "title": "HELP-R4 a viewer who can't post gets no photo helpers (never shown to viewers)",
+   "area": "Helpers",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "HELPERS-004",
+   "title": "HELP-R4 ...a relative the family lets post gets them",
+   "area": "Helpers",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "HELPERS-005",
+   "title": "HELP-R4 a family you aren't in lists nothing",
+   "area": "Helpers",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "HELPERS-006",
+   "title": "HELP-R4 the owner turns the look-alike helper off for the family",
+   "area": "Helpers",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "HELPERS-007",
+   "title": "HELP-R4 ...it's off; the screenshot helper stays on",
+   "area": "Helpers",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "HELPERS-008",
+   "title": "HELP-R4 ...and back on",
+   "area": "Helpers",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "HELPERS-009",
+   "title": "HELP-R4 ...both on again",
+   "area": "Helpers",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "HELPERS-010",
+   "title": "HELP-R4 a relative can't switch a family helper (FLAG-3)",
+   "area": "Helpers",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "HELPERS-011",
+   "title": "HELP-R4 the global switch off turns the screenshot helper off for every family",
+   "area": "Helpers",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "HELPERS-012",
+   "title": "HELP-R4 ...and an app user can't turn it back on",
+   "area": "Helpers",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "HELPERS-013",
+   "title": "HELP-R4 both helpers have a global row (the kill switch exists)",
+   "area": "Helpers",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
    "id": "AUD-16-001",
    "title": "BETA-AUD-16: migration 0011 was applied (circles.kind exists), so the diffs below compare before/after 0011",
    "area": "Groups, households, events",
@@ -4514,6 +5858,76 @@
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/aud16/"
+  },
+  {
+   "id": "GRP-1-001",
+   "title": "GRP-1: migration 0013 was applied (circles.comment_mode exists), so the diffs below compare before/after 0013",
+   "area": "Grp-1",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GRP-1-002",
+   "title": "GRP-1: can_view_post unchanged for every (member, post): 0 changes",
+   "area": "Grp-1",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GRP-1-003",
+   "title": "GRP-1: can_see_reply unchanged for every (member, comment or heart): 0 changes",
+   "area": "Grp-1",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GRP-1-004",
+   "title": "GRP-1: reply_ok at each comment's own time unchanged for every (member, comment): 0 changes",
+   "area": "Grp-1",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GRP-1-005",
+   "title": "GRP-1: reply_readers unchanged for every (member, post): 0 changes",
+   "area": "Grp-1",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GRP-1-006",
+   "title": "GRP-1 setup: the snapshot includes replies relatives read through a household or event (not only parents)",
+   "area": "Grp-1",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GRP-1-007",
+   "title": "GRP-2 backfill: household -> always, event -> on_group_posts, group and everyone -> private",
+   "area": "Grp-1",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GRP-1-008",
+   "title": "GRP-2 comment_mode_log backfill: one row per circle, set_at = circles.created_at",
+   "area": "Grp-1",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GRP-1-009",
+   "title": "PRIV-G2 0013 marked the invite made before it as \"a household means Everyone too\"",
+   "area": "Grp-1",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GRP-1-010",
+   "title": "GRP-12 an old-style invite made before 0013 naming a household still puts the person in Everyone too",
+   "area": "Grp-1",
+   "tickets": [],
+   "where": "backend/tests/"
   }
  ]
 }

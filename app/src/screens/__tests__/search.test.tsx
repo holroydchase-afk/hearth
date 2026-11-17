@@ -8,7 +8,8 @@ import React from 'react';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { seedPost } from '../../test/seed';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
-import { GalleryScreen } from '../../test/redesignScreens'; // RD-13: Search and By date live in Gallery's top bar
+import { GalleryScreen } from '../../test/redesignScreens';
+import { tapSearchField } from '../../test/galleryEntry';
 
 async function family() {
   const be = FakeBackend.withFixture();
@@ -21,7 +22,7 @@ async function family() {
 }
 
 async function openSearch() {
-  fireEvent.press(await screen.findByRole('button', { name: 'Search the photos' }));
+  await tapSearchField(); // RD-47 (Nov 17): the "Search photos" field under the greeting
   expect(await screen.findByRole('header', { name: 'Search photos' })).toBeTruthy();
 }
 
@@ -33,8 +34,9 @@ async function search(words: string) {
 describe('SEARCH-UI photo search', () => {
   it('SEARCH-UI-1 Photos has a labeled Search button; it opens a grandparent-safe search screen', async () => {
     await renderApp(<GalleryScreen />, { be: await family(), user: 'jo' });
-    const toolbar = await screen.findByTestId('top-bar');
-    expect(within(toolbar).getByText('Search')).toBeTruthy();
+    // RD-47 (Nov 17): a "Search photos" field under the greeting, showing its words (was the top bar's Search).
+    expect((await screen.findAllByLabelText('Search photos')).length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Search photos').length).toBeGreaterThan(0);
     await openSearch();
     expect(screen.getByText('Search looks at the words people wrote and who sent them. It never looks inside your photos.')).toBeTruthy();
     expectGrandparentSafe();
