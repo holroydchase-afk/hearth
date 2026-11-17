@@ -366,9 +366,9 @@ describe('RD-50 a small "⋯" (spoken "Post options") replaces the Options word'
     expect(within(menu).getByText('Who can see this')).toBeTruthy();
     expect(within(menu).getByRole('button', { name: 'Edit description' })).toBeTruthy();
     fireEvent.press(within(menu).getByRole('button', { name: 'Delete post' }));
-    expect(await screen.findByText(/for everyone\?$/)).toBeTruthy();
+    expect(await screen.findByText('Delete this post?')).toBeTruthy(); // UX-R24 (RD-67): the iOS-style alert
     expect(be.state.posts[id]!.deleted).toBe(false);
-    fireEvent.press(screen.getByRole('button', { name: /^Yes, delete/ }));
+    fireEvent.press(screen.getByRole('button', { name: 'Delete' }));
     await waitFor(() => expect(be.state.posts[id]!.deleted).toBe(true));
   });
 

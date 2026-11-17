@@ -11,7 +11,9 @@ export type OS = 'ios' | 'android' | 'web';
 export interface Colors {
   bg: string; surface: string; ink: string; muted: string; line: string;
   accent: string; accentInk: string; accentSoft: string; fill: string;
-  safe: string; safeSoft: string; danger: string; onDanger: string; scrim: string; photo: string;
+  safe: string; safeSoft: string; danger: string; onDanger: string;
+  /** RD-72 (UX-R29): red words on the page or a sheet (Delete post, the alert's Delete); iOS systemRed in dark. */
+  dangerText: string; scrim: string; photo: string;
 }
 
 // RD-1 (DEC-59, Chase Nov 14 2026: "black and white and an accent"): a white screen with near-black words in light
@@ -24,8 +26,8 @@ export const COLOR_NAMES: readonly ColorName[] = ['ember', 'forest', 'plum'];
 export const ColorContext = createContext<ColorName>('ember');
 
 const status = {
-  light: { safe: '#1C6E31', safeSoft: '#E3F3E7', danger: '#B3261E', onDanger: '#FFFFFF', scrim: 'rgba(0,0,0,0.4)' },
-  dark: { safe: '#7DD394', safeSoft: '#173322', danger: '#F2B8B5', onDanger: '#601410', scrim: 'rgba(0,0,0,0.6)' },
+  light: { safe: '#1C6E31', safeSoft: '#E3F3E7', danger: '#B3261E', dangerText: '#B3261E', onDanger: '#FFFFFF', scrim: 'rgba(0,0,0,0.4)' },
+  dark: { safe: '#7DD394', safeSoft: '#173322', danger: '#F2B8B5', dangerText: '#FF453A', onDanger: '#601410', scrim: 'rgba(0,0,0,0.6)' },
 };
 
 const NEUTRAL = {

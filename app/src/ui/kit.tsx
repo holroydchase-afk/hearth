@@ -335,6 +335,37 @@ export function Confirm({ visible, title, body, yes, no, onYes, onNo }: {
   );
 }
 
+/** RD-67 (UX-R24): an iOS-style alert over the screen: a short title, then two plain text buttons side by side with no
+ *  fill. The safe choice (`keep`) is Semibold, the default; the destructive one is red Regular words (RD-72). */
+export function AlertDialog({ title, body, keep, destroy, onKeep, onDestroy }: {
+  title: string; body?: string; keep: string; destroy: string; onKeep: () => void; onDestroy: () => void;
+}) {
+  const { c, t, os } = useTheme();
+  const words = (label: string, color: string, weight: '400' | '600', onPress: () => void, first: boolean) => (
+    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
+      style={({ pressed }) => [styles.alertBtn, first ? { borderRightWidth: StyleSheet.hairlineWidth, borderRightColor: c.line } : null,
+        { backgroundColor: pressed ? c.fill : 'transparent' }]}>
+      <Text style={{ color, fontWeight: weight, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{label}</Text>
+    </Pressable>
+  );
+  return (
+    <Modal transparent visible animationType="fade" onRequestClose={onKeep}>
+      <View style={[styles.scrim, { backgroundColor: c.scrim }]}>
+        <View accessibilityViewIsModal style={[styles.alert, { backgroundColor: c.surface, borderRadius: dialogRadius(os) }]}>
+          <View style={styles.alertWords}>
+            <Text accessibilityRole="header" style={{ color: c.ink, fontWeight: WEIGHT.semibold, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{title}</Text>
+            {body ? <Text style={{ color: c.ink, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{body}</Text> : null}
+          </View>
+          <View style={[styles.alertRow, { borderTopColor: c.line }]}>
+            {words(keep, c.ink, WEIGHT.semibold, onKeep, true)}
+            {words(destroy, c.dangerText, WEIGHT.regular, onDestroy, false)}
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
 /** HIG-10 / QA-R2: what a bottom sheet does with a drag: a clear downward drag, released far or fast enough, closes. */
 export function sheetPan(close: () => void): PanResponderCallbacks {
   return {
@@ -366,6 +397,10 @@ export function BottomSheet({ testID, onClose, children }: { testID: string; onC
 }
 
 const styles = StyleSheet.create({
+  alert: { alignSelf: 'center', width: '100%', maxWidth: 320, overflow: 'hidden' },
+  alertWords: { paddingHorizontal: 16, paddingTop: 20, paddingBottom: 16, gap: 4 },
+  alertRow: { flexDirection: 'row', borderTopWidth: StyleSheet.hairlineWidth },
+  alertBtn: { flex: 1, minHeight: MIN_TARGET, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 8, paddingVertical: 10 },
   sheetScrim: { flex: 1, justifyContent: 'flex-end' },
   menu: { padding: 20, paddingTop: 8, gap: 14 },
   grabber: { alignSelf: 'center', width: 36, height: 5, borderRadius: RADIUS.pill, opacity: 0.5 },

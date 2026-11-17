@@ -113,7 +113,7 @@ describe('Photos screen', () => {
     expect((await screen.findAllByText('Your comment goes to the same people.')).length).toBeGreaterThan(0);
     const words = screen.getAllByText(/ can see this\.$/)[0]!.props.children as string;
     expect(words).toMatch(/Alex/);
-    expect(words).toMatch(/Earl/); // a relative in the group now reads it too
+    expect(words).toMatch(/and 1 more/); // a relative in the group now reads it too (Earl; UX-R27 / RD-70 counts past two names)
   });
 
   it('B6: a half-typed comment survives incoming hearts', async () => {

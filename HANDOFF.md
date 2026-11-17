@@ -3,13 +3,18 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: review round 2 green 3x (r38); round 3 failing tests written (UX-R24..R30, RD-67..73), engineer next; push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
+now: review round 3 built (UX-R24..R30, RD-67..73), qa-tdd 3x next; push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
 next: redesign R46 1a..1c, polish GUX-R1..R10, RD-34 plain background, DEC-60 names, DEC-61 no demo steps built; qa-tdd 3x, then grandparent-ux recheck; stop date Nov 19
 waiting_on_chase:
   - Photos with no family faces or names for the demo (intake #83)
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 17: review round 3 fixes built (UX-R24..R30, RD-67..73; branch claude/project-thread-iyml94, local commit)
+- **Engineer, green (jest 1265 x3, typecheck, e2e:demo 20, e2e:web 5, e2e:site 14):** Delete post opens `AlertDialog` (kit): "Delete this post?", Semibold "Keep it" in ink, Regular red "Delete", no fills. New `c.dangerText` token (light #B3261E, dark #FF453A) for red words; `c.danger`/`onDanger` unchanged so the filled-button contrast pair holds. Month title has 12 pt under it. "Same people" line only while the field is focused or holds words. `namesLine`: two names then "and N more", one name when the line passes 44 characters. Title opens the description in Medium (`post-title-<id>` testID kept on it), name shown only when there's no title. Exactly 2 photos in a month are two squares.
+- **Test edits for qa-tdd to confirm:** old tests that still held the replaced behavior: changeWords CAP-6/7 (title header to text in `desc-`), photosStyle RD-50 (new Delete words), photos BETA-AUD-10 (/Earl/ to /and 1 more/, RD-70), plainBackground allowlists `AlertDialog`; tokens.json regenerated.
+- **Shots:** `/mnt/project-files/design/2026-11-17-r4-*.png`. **Next exact step:** qa-tdd all suites 3x, then ux-reviewer and grandparent-ux on the r4 shots. Not pushed.
 
 ## Nov 17: review round 2 gate green; round 3 failing tests (UX-R24..R30, RD-67..73; branch claude/project-thread-iyml94, local commit)
 - **QA green (r38):** all suites 3x green at 1ea6b4f (jest 1249, typecheck, e2e:demo 19, e2e:web 5, e2e:site 14, backend SQL 0 failed, agents.verify). Engineer test edits (MOMENT-1, BETA-AUD-1, core-loop via Post options; T20 waits) weaken no guarantee (`e2e/results/rd-56-green-3x-2026-11-17.txt`).

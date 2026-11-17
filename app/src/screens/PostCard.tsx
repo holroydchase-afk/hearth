@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { REACTIONS, type FeedPost, type Reaction } from '../api/HearthApi';
 import type { CommentView } from '../feed/store';
 import { useApp, useFeed } from '../state/AppContext';
-import { BottomSheet, Button, Card, Confirm, Field, Notice, SystemIcon, Txt } from '../ui/kit';
+import { AlertDialog, BottomSheet, Button, Card, Field, Notice, SystemIcon, Txt } from '../ui/kit';
 import { useTypingField } from '../ui/typing';
 import { haptic } from '../platform/haptics';
 import { andList, initialOf, people, relativeTime, shortDate } from '../ui/format';
@@ -45,8 +45,6 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   // REACT-2: my reaction and each kind's count, most first; hearts only until reaction_summary answers.
   const mineNow = post.my_reaction !== undefined ? post.my_reaction : post.i_hearted ? '❤️' : null;
   const counts = post.reaction_counts ?? (post.heart_count ? { '❤️': post.heart_count } : {});
-  const many = ready.length > 1;
-  const these = many ? `these ${ready.length} photos` : 'this photo';
   // WHO-6 / GUX-R6 (Chase, Nov 16, DEC-60): one line names who can see it, people only, never the group's name.
   const viewers = post.viewers?.length ? post.viewers : null;
   const [whoOpen, setWhoOpen] = useState(false);
@@ -102,8 +100,8 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
         })}
       </View>
       <View style={styles.words}>
-        {post.title ? <Txt variant="title" role="header" testID={`post-title-${post.post_id}`}>{post.title}</Txt> : null}
-        {post.caption ? <Caption testID={`desc-${post.post_id}`} name={post.author_name} text={post.caption} /> : null}
+        {/* RD-71 (UX-R28): no heading above the words; the title opens the description in Medium. */}
+        {post.title || post.caption ? <Caption testID={`desc-${post.post_id}`} titleID={`post-title-${post.post_id}`} name={post.author_name} title={post.title ?? null} text={post.caption ?? ''} /> : null}
         {/* RD-51: "Just now", "3 hours ago", "Yesterday", "Nov 3"; CAP-6's "· Edited" after it. */}
         <Txt variant="muted" testID={`when-${post.post_id}`}>{when}</Txt>
         {/* WHO-6 / DEC-60: the quiet privacy line stays on every post. */}
@@ -144,15 +142,17 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
       />
       {whoOpen && viewers ? <WhoSheet post={post} viewers={viewers} me={session?.userId} onClose={() => setWhoOpen(false)} /> : null}
       {sheet === 'words' ? <WordsSheet post={post} onClose={() => setSheet(null)} /> : null}
-      <Confirm
-        visible={sheet === 'delete'}
-        title={`Delete ${these} for everyone?`}
-        body={`${many ? 'They' : 'It'} will be gone from everyone's phone. This can't be undone.`}
-        yes={many ? 'Yes, delete them' : 'Yes, delete it'}
-        no={many ? 'No, keep them' : 'No, keep it'}
-        onNo={() => setSheet(null)}
-        onYes={() => { setSheet(null); void feed?.deletePost(post.post_id); }}
-      />
+      {/* RD-67 (UX-R24): the phone's own kind of alert, the same words for one photo or many. */}
+      {sheet === 'delete' ? (
+        <AlertDialog
+          title="Delete this post?"
+          body="It will be gone from everyone's phone."
+          keep="Keep it"
+          destroy="Delete"
+          onKeep={() => setSheet(null)}
+          onDestroy={() => { setSheet(null); void feed?.deletePost(post.post_id); }}
+        />
+      ) : null}
     </Card>
   );
 });
@@ -177,14 +177,23 @@ function ordered(viewers: Viewer[], me: string | undefined): { id: string; name:
 /** GUX-R1: two letters in a fixed 36 pt circle; past 1.3x they would clip. The name beside a chip carries full size. */
 const FACE_MAX_SCALE = 1.3;
 
-/** GUX-R6 (Chase, Nov 16: "Names", DEC-60): the others who can see it, in words. Up to three are all named;
- *  past that, two names and "N more". People only, never a group's title (DEC-49). */
+/** GUX-R6 (Chase, Nov 16: "Names", DEC-60): the others who can see it, in words. RD-70 (UX-R27): one line, so at
+ *  most two names, then "and N more"; when two long names would wrap at default size on a 390 pt phone, one name
+ *  and "N more". People only, never a group's title (DEC-49). The spoken label and the Who sheet keep everyone. */
 export function namesLine(viewers: Viewer[], me: string | undefined): string {
   const others = viewers.filter((v) => v.user_id !== me).map((v) => v.name);
   if (!others.length) return 'Only you can see this.';
-  const list = others.length <= 3 ? andList(others) : `${others.slice(0, 2).join(', ')} and ${others.length - 2} more`;
-  return `${list} can see this.`;
+  const line = (shown: number) => {
+    const rest = others.length - shown;
+    const list = rest <= 0 ? andList(others) : `${others.slice(0, shown).join(', ')} and ${rest} more`;
+    return `${list} can see this.`;
+  };
+  const two = line(Math.min(2, others.length));
+  return two.length <= ONE_LINE_CHARS || others.length < 2 ? two : line(1);
 }
+
+/** About how many characters of 17 pt body text fit one line across a 390 pt phone inside the 16 pt edges. */
+const ONE_LINE_CHARS = 44;
 
 /** GUX-R6: one 48 pt button with the names line; a tap shows everyone (the Who sheet). Replaces WHO-10's circles. */
 function WhoLine({ post, viewers, me, onPress }: { post: FeedPost; viewers: Viewer[]; me: string | undefined; onPress: () => void }) {
@@ -240,7 +249,7 @@ function MoreMenu({ visible, post, mine, onDelete, onChangeWords, onClose }: {
                   (UX-R14): plain rows like the phone's own menus; Delete post is red words, never a red pill. */}
               <SheetRow label="Edit description" icon={{ sf: 'pencil', md: 'edit' }} color={c.ink} onPress={onChangeWords} />
               <View style={[styles.rowLine, { backgroundColor: c.line }]} />
-              <SheetRow label="Delete post" icon={{ sf: 'trash', md: 'delete' }} color={c.danger} onPress={onDelete} />
+              <SheetRow label="Delete post" icon={{ sf: 'trash', md: 'delete' }} color={c.dangerText} onPress={onDelete} />
             </View>
           ) : null}
           <Button label="Close this menu" text="Close" variant="secondary" onPress={onClose} />
@@ -344,6 +353,7 @@ function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
   // UX-R5/R6 (DEC-63): the standard "Add a comment…" field; spoken with whose post it is.
   const spoken = mine ? 'Add a comment' : `Add a comment for ${post.author_name}`;
   const typing = useTypingField(); // UX-R1: the tab bar steps aside while typing
+  const [focused, setFocused] = useState(false);
   // UX-R10 (RD-42): when exactly the people who can see the post will read my comment, say so in one line
   // (the names are already on the "can see this" line above).
   const others = (post.viewers ?? []).filter((v) => v.user_id !== session?.userId).map((v) => v.name).sort();
@@ -354,7 +364,8 @@ function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
   // RD-58 (UX-R15): on my own post the names line already says who can see it, so no second line here.
   const readers = mine
     ? null
-    : same ? 'Your comment goes to the same people.'
+    // RD-69 (UX-R26): only while commenting; a narrower reader list (below) always shows.
+    : same ? (focused || draft.trim() ? 'Your comment goes to the same people.' : null)
     : names ? `${readerNames(names)} will read this.`
     : scope === 'parents' ? "Only the kids' parents can read this."
     : scope === 'group' ? "The kids' parents and your part of the family can read this."
@@ -384,8 +395,8 @@ function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
         <TextInput
           accessibilityLabel={spoken}
           placeholder="Add a comment…"
-          onFocus={typing.onFocus}
-          onBlur={typing.onBlur}
+          onFocus={() => { setFocused(true); typing.onFocus(); }}
+          onBlur={() => { setFocused(false); typing.onBlur(); }}
           placeholderTextColor={c.muted}
           value={draft}
           onChangeText={(v) => { setSent(false); feed?.setDraft(post.post_id, v); }}
@@ -408,14 +419,15 @@ function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
 const FOLD_LINES = 4;
 const foldable = (t: string) => t.split('\n').length > FOLD_LINES || t.length > 220;
 
-/** RD-48: the description is one line of text: the sender's name in Medium, then the words in their own Text. */
-function Caption({ name, text, testID }: { name: string; text: string; testID: string }) {
+/** RD-48: the description is one line of text: the sender's name in Medium, then the words in their own Text.
+ *  RD-71 (UX-R28): a post with a title opens with the title in Medium instead (the name is on the row above). */
+function Caption({ name, title, text, testID, titleID }: { name: string; title: string | null; text: string; testID: string; titleID: string }) {
   const [open, setOpen] = useState(false);
   const fold = foldable(text);
   return (
     <View style={styles.caption}>
       <Txt testID={testID} numberOfLines={fold && !open ? FOLD_LINES : undefined}>
-        <Txt style={{ fontWeight: WEIGHT.medium }}>{name}</Txt>{' '}<Txt>{text}</Txt>
+        <Txt testID={title ? titleID : undefined} style={{ fontWeight: WEIGHT.medium }}>{title || name}</Txt>{text ? ' ' : null}{text ? <Txt>{text}</Txt> : null}
       </Txt>
       {fold ? (
         <Button

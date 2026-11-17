@@ -207,6 +207,7 @@ const GREY_ALLOWED: Record<string, Record<string, string>> = {
     GroupedSection: 'Settings-style grouped list under More',
     Field: 'a text input field, like the reply field (Share caption; chief of staff, Nov 16)',
     Confirm: 'dialog layered on top',
+    AlertDialog: 'iOS-style alert layered on top (RD-67)',
     BottomSheet: 'sheet layered on top',
   },
   'screens/PostCard.tsx': {

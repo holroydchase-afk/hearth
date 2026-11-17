@@ -3,7 +3,7 @@
 // RD-18, RD-44, RD-56 (SPEC-REDESIGN; DEC-65, UX-R13): Gallery's months, like the newest Apple Photos. Every ready
 // photo by month, newest first, then by day within the month. A post sorts by the date its photos were taken when the
 // phone knew it, otherwise the date it was shared (QA-R2, like Apple Photos), so a bulk import of old photos lands in
-// its own months instead of on top. Each MONTH opens on one wide photo (the month's most-loved post's first photo,
+// its own months instead of on top. Each MONTH (of 1 or 3+ photos; 2 are two squares, RD-73) opens on one wide photo (the month's most-loved post's first photo,
 // else the newest), then squares. Days with fewer than 3 photos join the next older days into one group ("Nov 11–15");
 // a group never crosses a month, and no square is left alone in a row. Months and days are the phone's local time with
 // plain Date math (like feed/timeline.ts). Pure: the screen only draws what this returns.
@@ -78,6 +78,8 @@ function monthGroups(posts: FeedPost[]): GridTile[][] {
     if (last && last.length < FULL_GROUP) last.push(...d.tiles);
     else groups.push([...d.tiles]);
   }
+  // RD-73 (UX-R30): exactly 2 photos in a month are two squares side by side, with no wide photo.
+  if (groups.reduce((n, g) => n + g.length, 0) === 2) return [groups.flat()];
   // The most-loved post wins the month's wide tile (its first photo); a tie, or no love at all, goes to the newest.
   let best = posts[0]!;
   for (const p of posts) if (loveOf(p) > loveOf(best)) best = p;

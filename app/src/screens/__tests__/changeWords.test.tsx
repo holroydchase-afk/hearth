@@ -31,7 +31,7 @@ describe('CAP change the words', () => {
     fireEvent.changeText(title, 'Mia turns 5');
     fireEvent.changeText(caption, 'Cake, candles, a nap');
     fireEvent.press(within(sheet).getByRole('button', { name: 'Save the new words' }));
-    expect(await screen.findByRole('header', { name: 'Mia turns 5' })).toBeTruthy();
+    expect(await within(screen.getByTestId(`desc-${id}`)).findByText('Mia turns 5')).toBeTruthy(); // UX-R28 (RD-71): the title opens the description
     expect(screen.getByText('Cake, candles, a nap')).toBeTruthy();
     expect(screen.getByTestId(`when-${id}`).props.children).toMatch(/· Edited/);
     expect(screen.queryByTestId(/^words-/)).toBeNull();
@@ -48,7 +48,7 @@ describe('CAP change the words', () => {
     fireEvent.changeText(within(sheet).getByLabelText('Title (optional)'), 'Oops');
     fireEvent.press(within(sheet).getByRole('button', { name: 'Cancel, keep the words' }));
     await waitFor(() => expect(screen.queryByTestId(/^words-/)).toBeNull());
-    expect(screen.getByRole('header', { name: 'Party' })).toBeTruthy();
+    expect(within(screen.getByTestId(`desc-${id}`)).getByText('Party')).toBeTruthy(); // UX-R28 (RD-71)
     expect(screen.getByTestId(`when-${id}`).props.children).not.toMatch(/Edited/);
   });
 
@@ -63,7 +63,7 @@ describe('CAP change the words', () => {
 
   it('CAP-7 if the server refuses, the sheet says so in plain words and the card keeps the old words', async () => {
     const be = FakeBackend.withFixture({ joIsMember: true });
-    await seedPost(be, { title: 'Party', caption: 'Cake' });
+    const { id } = await seedPost(be, { title: 'Party', caption: 'Cake' });
     await renderApp(<PhotosScreen />, { be, user: 'chase' });
     jest.spyOn(be, 'editPostWords').mockImplementation(() => { throw new ApiError('42501', 'no'); });
     const sheet = await openChange();
@@ -72,6 +72,6 @@ describe('CAP change the words', () => {
     expect(await within(sheet).findByText("These words can't be changed now. Your old words are kept.")).toBeTruthy();
     fireEvent.press(within(sheet).getByRole('button', { name: 'Cancel, keep the words' }));
     await waitFor(() => expect(screen.queryByTestId(/^words-/)).toBeNull());
-    expect(screen.getByRole('header', { name: 'Party' })).toBeTruthy();
+    expect(within(screen.getByTestId(`desc-${id}`)).getByText('Party')).toBeTruthy(); // UX-R28 (RD-71)
   });
 });

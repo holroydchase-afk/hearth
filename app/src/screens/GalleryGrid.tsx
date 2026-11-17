@@ -104,8 +104,9 @@ function Month({ m, stick, relayout }: { m: GridMonth; stick: { scrollY: Animate
 }
 
 const styles = StyleSheet.create({
-  // Above the photos it slides over, on the screen's own color (DS-6).
-  head: { zIndex: 1, paddingBottom: SPACE.xs },
+  // Above the photos it slides over, on the screen's own color (DS-6); RD-68 (UX-R25): 12 pt under the words so
+  // photos sliding under it never touch them.
+  head: { zIndex: 1, paddingBottom: 12 },
   tile: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, borderRadius: RADIUS.photo, overflow: 'hidden' },
   wide: { width: '100%', aspectRatio: 1.5 },
   square: { flex: 1, aspectRatio: 1 },
