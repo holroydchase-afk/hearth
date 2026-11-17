@@ -247,7 +247,7 @@ describe('UX-R8 (P2) the walk has one 16 pt left edge', () => {
 
 // ---------------------------------------------------------------------------------------------------------------
 describe('UX-R9 (P2) in the walk the accent is only on Next photo (RD-4)', () => {
-  it('UX-R9 "‹ Gallery" and "Options" are ink; the only accent control is the forward button', async () => {
+  it('UX-R9 RD-50 "‹ Gallery" and "Post options" are ink; the only accent control is the forward button', async () => {
     const { walk } = await openWalk();
     const accent = light().accent;
     const owners = new Set<string>();

@@ -31,7 +31,7 @@ describe('WHO: who can see this post, by name', () => {
   it('WHO-7 "More" lists every name too, not only "Shared with you"', async () => {
     const { id, el } = await dadSidePost('earl');
     await within(el).findByTestId(`who-${id}`);
-    fireEvent.press(within(el).getByRole('button', { name: 'Options for this photo' }));
+    fireEvent.press(within(el).getByRole('button', { name: 'Post options' }));
     const menu = await screen.findByTestId(`more-${id}`);
     expect(within(menu).getByText('You, Alex, Chase and Grandma Jo can see this')).toBeTruthy();
     expect(within(menu).queryByText('Shared with you')).toBeNull();

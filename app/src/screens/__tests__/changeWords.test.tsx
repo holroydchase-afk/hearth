@@ -11,8 +11,8 @@ import { expectGrandparentSafe, renderApp } from '../../test/renderApp';
 import { PhotosScreen } from '../PhotosScreen';
 
 async function openChange() {
-  fireEvent.press(await screen.findByRole('button', { name: 'Options for this photo' }));
-  fireEvent.press(await screen.findByRole('button', { name: 'Change the words' }));
+  fireEvent.press(await screen.findByRole('button', { name: 'Post options' }));
+  fireEvent.press(await screen.findByRole('button', { name: 'Edit description' }));
   return screen.findByTestId(/^words-/);
 }
 
@@ -56,9 +56,9 @@ describe('CAP change the words', () => {
     const be = FakeBackend.withFixture({ joIsMember: true });
     await seedPost(be, { title: 'Party' });
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
-    fireEvent.press(await screen.findByRole('button', { name: 'Options for this photo' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Post options' }));
     await screen.findByText('Who can see this');
-    expect(screen.queryByRole('button', { name: 'Change the words' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Edit description' })).toBeNull();
   });
 
   it('CAP-7 if the server refuses, the sheet says so in plain words and the card keeps the old words', async () => {

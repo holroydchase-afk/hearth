@@ -279,21 +279,71 @@ test('UX-R12 the demo greets the parent as Chase and "Kai" appears nowhere', asy
   expect(await page.evaluate(() => /\bKai\b/.test(document.body.innerText))).toBe(false);
 });
 
-// UX-R7: All photos is Apple's grid: square tiles, 3 across, edge to edge (no side margins).
-test('UX-R7 Gallery grid tiles are square, three across, edge to edge at a 390 px phone', async ({ page }) => {
+// RD-44 (DEC-65, Nov 17; replaces UX-R7's edge-to-edge grid, RD-39): Gallery is Apple Photos' months mosaic. Each day
+// group opens on one wide 3:2 photo, then squares three across; 16 px corners, 8 px gaps, inside 16 px side margins.
+for (const width of [360, 390]) {
+  test(`RD-44 RD-45 months mosaic at a ${width} px phone: a wide first photo with its day number, then rounded squares, inset 16`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/');
+    await galleryLoaded(page);
+    const tiles = page.locator('[data-testid^="gallery-tile-"]');
+    await expect(tiles.first()).toBeAttached();
+    await tiles.first().scrollIntoViewIfNeeded();
+    const n = Math.min(await tiles.count(), 12);
+    const boxes = [];
+    for (let i = 0; i < n; i++) {
+      await tiles.nth(i).scrollIntoViewIfNeeded();
+      boxes.push(await tiles.nth(i).boundingBox());
+    }
+    const hero = boxes[0];
+    const inner = width - 32;
+    const square = (inner - 16) / 3;
+    expect({ left: Math.round(hero.x), right: Math.round(width - hero.x - hero.width), wide: Math.abs(hero.width / hero.height - 1.5) <= 0.03 })
+      .toEqual({ left: 16, right: 16, wide: true });
+    // Every tile is either a wide group opener (full inner width, 3:2) or a square a third of the row less two 8 px gaps.
+    for (const [i, t] of boxes.entries()) {
+      const isWide = Math.abs(t.width - inner) <= 1.5 && Math.abs(t.width / t.height - 1.5) <= 0.03;
+      const isSquare = Math.abs(t.width - square) <= 1.5 && Math.abs(t.width - t.height) <= 1.5;
+      expect({ i, ok: isWide || isSquare, insideMargins: t.x >= 15.5 && t.x + t.width <= width - 15.5 }).toEqual({ i, ok: true, insideMargins: true });
+    }
+    const radius = await tiles.first().evaluate((el) => {
+      const all = [el, ...el.querySelectorAll('*')];
+      return Math.max(...all.map((n) => parseFloat(getComputedStyle(n).borderTopLeftRadius) || 0));
+    });
+    expect(radius).toBe(16);
+    // RD-45: the day number on the wide tile, in its top-left corner.
+    const day = tiles.first().getByText(/^\d{1,2}$/);
+    await expect(day).toBeVisible();
+    const d = await day.boundingBox();
+    expect(d.x - hero.x).toBeLessThan(40);
+    expect(d.y - hero.y).toBeLessThan(40);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  });
+}
+
+// RD-47 (Chase: "Search- B but hide the months vs all toggle for now"): a "Search photos" field under the greeting; no
+// top-right Search or By date; no Months | All photos switch.
+test('RD-47 a "Search photos" field under the greeting opens Search; By date and the view switch are gone', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 740 });
   await page.goto('/');
   await galleryLoaded(page);
-  const tiles = page.locator('[data-testid^="gallery-tile-"]');
-  await expect(tiles.first()).toBeAttached();
-  const vw = page.viewportSize().width;
-  const boxes = [];
-  for (let i = 0; i < 3; i++) {
-    await tiles.nth(i).scrollIntoViewIfNeeded();
-    boxes.push(await tiles.nth(i).boundingBox());
-  }
-  for (const [i, b] of boxes.entries()) expect({ i, square: Math.abs(b.width - b.height) <= 1.5 }).toEqual({ i, square: true });
-  expect({ sameRow: Math.abs(boxes[0].y - boxes[2].y) <= 1, left: Math.round(boxes[0].x), right: Math.round(boxes[2].x + boxes[2].width) })
-    .toEqual({ sameRow: true, left: 0, right: vw });
+  const field = page.getByLabel('Search photos').first();
+  await expect(field).toBeVisible();
+  const g = await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ }).boundingBox();
+  const f = await field.boundingBox();
+  expect(f.y).toBeGreaterThan(g.y + g.height - 1);
+  expect(Math.round(f.height)).toBeGreaterThanOrEqual(48);
+  await expect(page.getByRole('button', { name: 'Show photos by the date they were taken' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Search the photos' })).toHaveCount(0);
+  await expect(page.getByText('By date', { exact: true })).toHaveCount(0);
+  await expect(page.getByText(/^(Months|All photos)$/)).toHaveCount(0);
+  // It pins under the bar when Gallery scrolls.
+  await page.mouse.move(180, 500);
+  await page.mouse.wheel(0, 1500);
+  await expect.poll(async () => (await page.getByLabel('Search photos').first().boundingBox())?.y ?? -1).toBeGreaterThanOrEqual(0);
+  await expect(page.getByLabel('Search photos').first()).toBeInViewport();
+  await page.getByLabel('Search photos').first().click();
+  await expect(page.getByRole('heading', { name: 'Search photos' })).toBeVisible();
 });
 
 // UX-R1 (P0): typing a comment in the walk. The tab bar goes away while the field is focused, and the field stays in

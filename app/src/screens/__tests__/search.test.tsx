@@ -8,7 +8,8 @@ import React from 'react';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { seedPost } from '../../test/seed';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
-import { GalleryScreen } from '../../test/redesignScreens'; // RD-13: Search and By date live in Gallery's top bar
+import { GalleryScreen } from '../../test/redesignScreens';
+import { tapSearchField } from '../../test/galleryEntry';
 
 async function family() {
   const be = FakeBackend.withFixture();
@@ -21,7 +22,7 @@ async function family() {
 }
 
 async function openSearch() {
-  fireEvent.press(await screen.findByRole('button', { name: 'Search the photos' }));
+  await tapSearchField(); // RD-47 (Nov 17): the "Search photos" field under the greeting
   expect(await screen.findByRole('header', { name: 'Search photos' })).toBeTruthy();
 }
 

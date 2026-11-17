@@ -55,9 +55,9 @@ describe('RD 1a source scans', () => {
     expect(find(/useFonts\s*\(/)).toEqual([]);
   });
 
-  it('RD-2 no Medium, Bold or heavier weights outside the large title (kit display)', () => {
-    expect(find(/FONT\.medium|fontWeight:\s*['"](500|700|800|900|bold)['"]/, sources(), (f) => f === 'ui/theme.ts')
-      .filter((hit) => !/^ui\/kit\.tsx:\d+ fontWeight: ['"](700|bold)['"]/.test(hit))).toEqual([]);
+  // Updated Nov 17 for RD-55 (DEC-65): no Bold anywhere, the large title included; Medium is allowed for names (RD-48).
+  it('RD-2 RD-55 no Bold or heavier weight anywhere (WEIGHT.bold, 700, 800, 900, "bold")', () => {
+    expect(find(/WEIGHT\.bold|fontWeight:\s*['"](700|800|900|bold)['"]/, sources(), (f) => f === 'ui/theme.ts')).toEqual([]);
   });
 
   it('RD-3 no component hard-codes an accent hex (old or new); theme.ts is the only home', () => {
@@ -118,13 +118,14 @@ describe('RD 1a source scans', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('RD-8 corners stay on the scale: 0, 4, 12, 14/28 dialogs, pills, or a true circle; no 10, 16 or 20', () => {
+  // Updated Nov 17 for RD-44/RD-54 (DEC-65): 16 joins the scale for photo tiles (Gallery mosaic, post photos).
+  it('RD-8 corners stay on the scale: 0, 4, 12, 16 photos, 14/28 dialogs, pills, or a true circle; no 10 or 20', () => {
     const offenders: string[] = [];
     for (const f of sources()) {
       const text = fs.readFileSync(f, 'utf8');
       for (const m of text.matchAll(/borderRadius:\s*(\d+)/g)) {
         const r = Number(m[1]);
-        if ([0, 4, 12, 14, 28, 999].includes(r)) continue;
+        if ([0, 4, 12, 14, 16, 28, 999].includes(r)) continue;
         const around = text.slice(Math.max(0, m.index! - 120), m.index! + 120);
         if (new RegExp(`width:\\s*${r * 2}\\b`).test(around)) continue; // a circle (avatar)
         offenders.push(`${rel(f)}:${lineOf(text, m.index!)} borderRadius: ${r}`);

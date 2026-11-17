@@ -55,7 +55,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await onFeed(page);
   await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
   await expect(page.getByText(/to Grandparents – Dad's side/)).toBeVisible(); // MOMENT-1: on the card
-  await page.getByRole('button', { name: 'Options for this photo' }).click(); // MOMENT-6: the full words are under More
+  await page.getByRole('button', { name: 'Post options' }).click(); // MOMENT-6: the full words are under More
   await expect(page.getByText("Shared with Grandparents – Dad's side · 2 people")).toBeVisible();
   await page.getByRole('button', { name: 'Close this menu' }).click();
 
@@ -76,7 +76,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await onFeed(page);
   await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: /^You, .+ can see this$/ })).toBeVisible(); // WHO-6/10: names, never the group
-  await page.getByRole('button', { name: 'Options for this photo' }).click();
+  await page.getByRole('button', { name: 'Post options' }).click();
   await expect(page.getByText('Who can see this')).toBeVisible();
   await page.getByRole('button', { name: 'Close this menu' }).click();
   await expect(page.getByRole('tab')).toHaveText([/Gallery/, /Feed/, /More/]); // RD-9: no Share tab for viewers
@@ -93,7 +93,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await signIn(page, 'jo@example.com');
   await onFeed(page);
   await page.getByRole('button', { name: 'Love it' }).click();
-  await expect(page.getByText('❤️ 1')).toBeVisible(); // REACT-11: the phone's own emoji
+  await expect(page.getByRole('button', { name: /^Love it/ }).first()).toHaveText(/❤️\s*1/); // RD-53 (B3): the count beside the emoji
   await page.getByLabel('Add a comment for Chase').fill('Look at those cheeks!');
   await page.getByRole('button', { name: 'Post' }).click();
   await expect(page.getByText(/^Sent\. .+ will read it\.$/)).toBeVisible(); // BETA-REPLY-6/11: names the readers (AUD-8 default: the parents)
@@ -107,11 +107,11 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   // 5. Chase sees the heart and the comment (no "Seen by" count), then deletes it.
   await signIn(page, 'chase@example.com');
   await onFeed(page);
-  await expect(page.getByText('❤️ 1')).toBeVisible(); // REACT-11: the phone's own emoji
+  await expect(page.getByRole('button', { name: /^Love it/ }).first()).toHaveText(/❤️\s*1/); // RD-53 (B3): the count beside the emoji
   await expect(page.getByText(/Look at those cheeks!/)).toBeVisible();
   await expect(page.getByText(/Seen by/)).toHaveCount(0); // RV-U1 (DEC-21): no "Seen by" count
-  await page.getByRole('button', { name: 'Options for this photo' }).click();
-  await page.getByRole('button', { name: 'Delete this photo' }).click();
+  await page.getByRole('button', { name: 'Post options' }).click();
+  await page.getByRole('button', { name: 'Delete post' }).click();
   await page.getByRole('button', { name: 'Yes, delete it' }).click();
   await expect(page.getByText('Pumpkin patch', { exact: true })).toHaveCount(0);
   const left = await page.evaluate(() => Object.values(globalThis.__hearthFake.state.posts).filter((p) => !p.deleted && p.status === 'published').length);

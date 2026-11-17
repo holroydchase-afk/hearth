@@ -21,32 +21,25 @@ async function withEvent() {
   return be;
 }
 
-describe('RD-13 Gallery top bar (replaces R11 RV-U3 and LIVE-2)', () => {
-  it('UI-26 RD-13 one top bar: Search and By date only, at the right; no Messages, Events or "Check for new photos" up top', async () => {
+// Updated Nov 17 for RD-47 (DEC-65): Search and By date leave the top bar; a "Search photos" field sits under the greeting.
+describe('RD-47 Gallery top (replaces RD-13, R11 RV-U3 and LIVE-2)', () => {
+  it('UI-26 RD-47 nothing tappable up top: no Search, By date, Messages, Events or "Check for new photos"', async () => {
     await renderApp(<GalleryScreen />, { be: await withEvent(), user: 'jo' });
-    const bar = await screen.findByTestId('top-bar');
-    expect(within(bar).getAllByRole('button').map((b) => b.props.accessibilityLabel)).toEqual(['Search the photos', 'Show photos by the date they were taken']);
-    expect(within(bar).getByText('By date')).toBeTruthy();
-    expect(screen.queryByRole('button', { name: 'See events' })).toBeNull(); // in More now (RD-15)
-    expect(screen.queryByRole('button', { name: 'Messages' })).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Check for new photos' })).toBeNull();
+    await screen.findByRole('header', { name: /^Good (morning|afternoon|evening)/ });
+    const bar = screen.queryByTestId('top-bar');
+    if (bar) expect(within(bar).queryAllByRole('button')).toHaveLength(0);
+    for (const name of ['Search the photos', 'Show photos by the date they were taken', 'See events', 'Messages', 'Check for new photos']) {
+      expect({ name, found: screen.queryAllByRole('button', { name }).length }).toEqual({ name, found: 0 });
+    }
     expect(screen.queryByTestId('photos-toolbar')).toBeNull();
   });
 
-  it('LIVE-2 RD-13 Search and By date are compact icon buttons above the large greeting, a word under each icon', async () => {
+  it('LIVE-2 RD-47 the greeting is the large title, then the "Search photos" field, 48 pt tall', async () => {
     await renderApp(<GalleryScreen />, { be: await withEvent(), user: 'jo' });
-    const bar = await screen.findByTestId('top-bar');
-    expect(within(bar).queryByRole('header')).toBeNull(); // at rest the large title sits under the bar
-    expect(screen.getByRole('header', { name: /^Good (morning|afternoon|evening)/ })).toBeTruthy();
-    for (const name of ['Search the photos', 'Show photos by the date they were taken']) {
-      const b = within(bar).getByRole('button', { name });
-      const s = StyleSheet.flatten(b.props.style);
-      expect(s).toMatchObject({ flexDirection: 'column', alignItems: 'center' }); // icon over word
-      expect(s.minHeight).toBeGreaterThanOrEqual(48);
-      expect(s.minWidth).toBeGreaterThanOrEqual(48);
-    }
-    expect(within(bar).getByText('Search')).toBeTruthy();
-    expect(within(bar).getByText('By date')).toBeTruthy();
+    expect(await screen.findByRole('header', { name: /^Good (morning|afternoon|evening)/ })).toBeTruthy();
+    const field = (await screen.findAllByLabelText('Search photos')).find((n) => typeof n.type === 'string')!;
+    const s = StyleSheet.flatten(field.props.style) ?? {};
+    expect(Number(s.minHeight ?? s.height ?? 0)).toBeGreaterThanOrEqual(48);
     expectGrandparentSafe();
   });
 });

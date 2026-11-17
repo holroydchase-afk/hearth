@@ -87,6 +87,23 @@ Tests: `app/src/screens/__tests__/reviewRound1.test.tsx` and `app/e2e-web/demo.s
 | RD-42 | UX-R10 (P2): when the people who will read my comment are exactly the people who can see the post, the line under the field reads "Your comment goes to the same people."; when fewer read it (the safe default), it still names them. | auto |
 | RD-43 | UX-R12 (Chase, Nov 17, DEC-64): the demo's parent is "Chase", so the greeting reads "Good morning/afternoon/evening, Chase"; "Kai" is gone from the demo. Kids stay Mia and Leo; Alex and Grandma Jo stay. | auto (jest + Playwright) |
 
+### 1f. Apple Photos months, a search field, Instagram-style posts (Chase's picks, Nov 17, DEC-65)
+Mockup: the Nov 17 "Gallery and Feed, the Apple Photos way" page, sections 1 to 3 (round 2). Persona check `decisions/2026-11-17-photos-style.md`. Tests (written first, red): `app/src/screens/__tests__/photosStyle.test.tsx`, `app/src/ui/__tests__/relativeTime.test.ts`, `app/e2e-web/demo.spec.js` (RD-44, RD-47). Supersedes: RD-2's Bold large title, RD-8's square Gallery corners, RD-13 (Search and By date top right), RD-34's hairline dividers between posts, RD-39 (edge to edge), GUX-R3's "Options" word, REACT-11's separate count chips.
+| ID | Given / When / Then | Type |
+|---|---|---|
+| RD-44 | Gallery is a months mosaic like the newest Apple Photos: the month's name ("November 2026", Semibold), then that month's photos grouped by day (or a day range). Each group's first tile is wide (3:2, full width; the most-loved photo, else the newest), then squares 3 across, newest first. Every tile has 16 pt corners and 8 pt gaps, inside the 16 pt side margins (not edge to edge). Tiles stay 48 pt+ buttons that open that photo. | auto (jest + Playwright 360 px) |
+| RD-45 | The day number ("4", "17") sits at the top left of each group's first tile, 20 pt Semibold white over a soft dark fade (the one DS-6 exception: decoration). The tile's spoken label carries the full date ("November 16"). | auto |
+| RD-46 | No sender lines on the months ("From Grandma Jo…" never shows over or under the grid). New for you stays above the months when there's something new (RD-19..22 unchanged). | auto |
+| RD-47 | Search is a "Search photos" field under the greeting, above New for you and the months; tapping it opens today's Search (SEARCH-*). When Gallery scrolls, it pins under the bar. The top-right Search and By date buttons are gone. The Months / All photos switch is hidden for now (Chase): Gallery shows months only. The timeline (BETA-TIME-2) stays, reached from Feed's Older photos card; its Back reads "Back to Feed". | auto (jest + Playwright) |
+| RD-48 | Feed post order, top to bottom: the sender's round face and name at left, a small "⋯" at far right; the photos; the reaction row; the description (the name in Medium, then the words: "Alex First snow!"); the relative time; the quiet "who can see this" line (DEC-60); then comments, "Add a comment…" and Post (DEC-63). | auto |
+| RD-49 | The face is the person's round profile photo, 36 pt; initials only until they add one. | auto (initials) + blocked (profile photos need a schema and storage call, architect) |
+| RD-50 | The "⋯" is icon only, spoken "Post options", 48 pt target; the "Options" word is gone. It opens the post's menu: "Who can see this" (heading and names, as today) for everyone; Edit description and Delete post (asks first) only on your own posts. | auto |
+| RD-51 | The time reads "Just now" (under a minute, or a clock ahead), "5 minutes ago", "3 hours ago" (under a day), "Yesterday", "2 days ago" up to "6 days ago", then "Nov 3", and "Nov 3, 2025" for another year. "· Edited" still follows when the words changed (CAP-6). | auto |
+| RD-52 | No divider lines between posts or inside a post: 32 pt of space between posts (A-1). | auto |
+| RD-53 | Reactions (B3): ❤️ 😂 👍 🎉 always in one row, each with its count beside it inside its own button; a zero shows no number. Your pick is highlighted; one tap reacts, the same tap takes it back (REACT-8). Emoji only, no words (REACT-7); each keeps its spoken name ("Love it") and reads its count as the value. No separate count chips. | auto |
+| RD-54 | More than one photo (C1): a rounded mosaic of at most 4 tiles (1 large, then up to 3 small), inset 16 pt with 16 pt corners like Gallery; with more than 4 photos the 4th tile shows "+N" on a solid chip (not a dark wash over the photo). Tapping any tile opens that photo. | auto |
+| RD-55 | Lighter type: no Bold anywhere, the large title included (greeting 34 pt Semibold, month 24 pt Semibold); names 17 pt Medium; everything else Regular. Outline icons only (RD-6). | auto (kit + source lint) |
+
 ### Phase 1 gate (manual)
 | ID | Given / When / Then | Type |
 |---|---|---|

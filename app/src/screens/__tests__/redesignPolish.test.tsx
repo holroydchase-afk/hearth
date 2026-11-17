@@ -21,6 +21,7 @@ import { saveLastAudience } from '../../share/audienceMemory';
 import { seedPost } from '../../test/seed';
 import { FeedScreen, GalleryScreen, MoreScreen } from '../../test/redesignScreens';
 import { renderApp, screenWords } from '../../test/renderApp';
+import { tapSearchField } from '../../test/galleryEntry';
 import { paletteFor } from '../../ui/theme';
 import { HelpScreen } from '../HelpScreen';
 import { ShareScreen } from '../ShareScreen';
@@ -109,17 +110,16 @@ describe('GUX-R1 a top-left "‹ More" / "‹ Gallery" back button', () => {
     }
   });
 
-  it('GUX-R1 Search and By date, opened from Gallery, show "‹ Gallery" the same way', async () => {
+  // Updated Nov 17 for RD-47 (DEC-65): Search opens from the "Search photos" field; By date is no longer on Gallery.
+  it('GUX-R1 RD-47 Search, opened from Gallery\'s field, shows "‹ Gallery" the same way', async () => {
     const be = FakeBackend.withFixture();
     await seedPost(be, { caption: 'Lake day' });
     await renderApp(<GalleryScreen />, { be, user: 'jo' });
-    fireEvent.press(await screen.findByRole('button', { name: 'Search the photos' }));
+    await tapSearchField();
     await screen.findByRole('header', { name: 'Search photos' });
     expectTopBack('Gallery');
     fireEvent.press(screen.getByRole('button', { name: 'Back to Gallery' }));
-    fireEvent.press(await screen.findByRole('button', { name: 'Show photos by the date they were taken' }));
-    await screen.findByRole('header', { name: 'Photos by date' });
-    expectTopBack('Gallery');
+    expect(await screen.findByRole('header', { name: /^Good (morning|afternoon|evening)/ })).toBeTruthy();
   });
 });
 
@@ -181,29 +181,30 @@ describe('GUX-R2 plain grouped rows, one level: no box inside a box', () => {
 });
 
 // ---------------------------------------------------------------------------------------------------------------
-// GUX-R3: the post's "··· More" is "Options".
+// GUX-R3: the post's "··· More" is "Options". Updated Nov 17 for RD-50 (DEC-65): the word goes; a small "⋯" spoken
+// "Post options" opens the same menu. Still no "More" on the card.
 // ---------------------------------------------------------------------------------------------------------------
 
-describe('GUX-R3 the post\'s menu button says Options, not More', () => {
-  it('GUX-R3 one photo: "Options" (spoken "Options for this photo") opens who can see it; no "More" on the card', async () => {
+describe('GUX-R3 RD-50 the post\'s menu button is "⋯" (Post options), not More', () => {
+  it('GUX-R3 RD-50 one photo: "⋯" (spoken "Post options") opens who can see it; no "More" on the card', async () => {
     const be = FakeBackend.withFixture();
     const { id } = await seedPost(be, { caption: 'Lake day' });
     await renderApp(<FeedScreen />, { be, user: 'jo' });
     const card = await screen.findByTestId(`post-${id}`);
-    const btn = within(card).getByRole('button', { name: 'Options for this photo' });
-    expect(wordsIn(btn)).toBe('Options');
+    const btn = within(card).getByRole('button', { name: 'Post options' });
+    expect(wordsIn(btn)).toMatch(/^[⋯…·\s]*$/);
     expect(within(card).queryByText('More')).toBeNull();
     expect(within(card).queryByRole('button', { name: /^More\b/ })).toBeNull();
     fireEvent.press(btn);
     expect(within(await screen.findByTestId(`more-${id}`)).getByText('Who can see this')).toBeTruthy();
   });
 
-  it('GUX-R3 several photos: "Options for these photos"', async () => {
+  it('GUX-R3 RD-50 several photos: the same "Post options"', async () => {
     const be = FakeBackend.withFixture();
     const { id } = await seedPost(be, { caption: 'Lake day', photos: 3 });
     await renderApp(<FeedScreen />, { be, user: 'jo' });
     const card = await screen.findByTestId(`post-${id}`);
-    expect(wordsIn(within(card).getByRole('button', { name: 'Options for these photos' }))).toBe('Options');
+    expect(wordsIn(within(card).getByRole('button', { name: 'Post options' }))).toMatch(/^[⋯…·\s]*$/);
   });
 });
 

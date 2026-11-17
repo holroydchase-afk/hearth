@@ -15,6 +15,7 @@ import { ChatClient, memoryStore } from '../../messenger/client';
 import { seedPost } from '../../test/seed';
 import { FeedScreen, GalleryScreen, MoreScreen, greeting, titleMotion } from '../../test/redesignScreens';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
+import { tapSearchField } from '../../test/galleryEntry';
 import { paletteFor } from '../../ui/theme';
 import { MeScreen } from '../MeScreen';
 import { HearthTabBar, TAB_ICONS, tabsFor } from '../TabBar';
@@ -144,29 +145,26 @@ describe('RD-12 the greeting folds into the top bar', () => {
   });
 });
 
-describe('RD-13 top bar', () => {
-  it('RD-13 the top bar\'s right side holds exactly Search and By date, each an icon with its word', async () => {
+// Updated Nov 17 for RD-47 (DEC-65, Chase: "Search- B"): RD-13's Search and By date leave the top right. Search is a
+// "Search photos" field under the greeting; By date goes (the months are the by-date view).
+describe('RD-13 top bar (superseded by RD-47)', () => {
+  it('RD-13 RD-47 the top bar holds no buttons; the old Search / By date pair and the toolbar are gone', async () => {
     await renderApp(<GalleryScreen />, { be: await withPosts(), user: 'jo' });
     await screen.findByRole('header', { name: GREETING });
-    const bar = screen.getByTestId('top-bar');
-    const buttons = within(bar).getAllByRole('button');
-    expect(buttons.map((b) => b.props.accessibilityLabel)).toEqual(['Search the photos', 'Show photos by the date they were taken']);
-    expect(within(buttons[0]!).getByText('Search')).toBeTruthy();
-    expect(within(buttons[1]!).getByText('By date')).toBeTruthy();
-    for (const b of buttons) expect(within(b).UNSAFE_getAllByType(SymbolView)).toHaveLength(1);
-    // The old five-button toolbar is gone: Messages and Events moved to More; nothing else up top.
+    const bar = screen.queryByTestId('top-bar');
+    if (bar) expect(within(bar).queryAllByRole('button')).toHaveLength(0);
+    expect(screen.queryByRole('button', { name: 'Search the photos' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Show photos by the date they were taken' })).toBeNull();
     expect(screen.queryByTestId('photos-toolbar')).toBeNull();
     for (const name of ['Messages', 'See events']) expect(screen.queryByRole('button', { name })).toBeNull();
     expectGrandparentSafe();
   });
 
-  it('RD-13 Search opens today\'s Search and By date opens today\'s By date', async () => {
+  it('RD-13 RD-47 the "Search photos" field opens today\'s Search; Back returns to Gallery', async () => {
     await renderApp(<GalleryScreen />, { be: await withPosts(), user: 'jo' });
-    fireEvent.press(await screen.findByRole('button', { name: 'Search the photos' }));
+    await screen.findByRole('header', { name: GREETING });
+    await tapSearchField();
     expect(await screen.findByRole('header', { name: 'Search photos' })).toBeTruthy();
-    fireEvent.press(screen.getByRole('button', { name: /^Back/ }));
-    fireEvent.press(await screen.findByRole('button', { name: 'Show photos by the date they were taken' }));
-    expect(await screen.findByRole('header', { name: 'Photos by date' })).toBeTruthy();
     fireEvent.press(screen.getByRole('button', { name: /^Back/ }));
     expect(await screen.findByRole('header', { name: GREETING })).toBeTruthy();
   });

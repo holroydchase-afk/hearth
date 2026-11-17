@@ -129,14 +129,8 @@ describe('HIG-3 / HIG-11 the biggest text sizes', () => {
     expect(tab.props.accessibilityLargeContentTitle).toBe('Gallery');
   });
 
-  it('HIG-3 RD-13 top bar words (IconButton) stop growing at 1.5x too', async () => {
-    const be = FakeBackend.withFixture();
-    await seedPost(be, { caption: 'At the lake' });
-    await renderApp(<GalleryScreen />, { be, user: 'chase' });
-    const word = within(await screen.findByTestId('top-bar')).getByText('Search');
-    expect(LABEL_SCALE_CAP).toBe(1.5);
-    expect(word.props.maxFontSizeMultiplier).toBe(LABEL_SCALE_CAP);
-  });
+  // Retired Nov 17 (RD-47, DEC-65): "HIG-3 RD-13 top bar words (IconButton) stop growing at 1.5x too". Gallery's top
+  // bar has no IconButtons any more; the "Search photos" field is body text, which has no cap (HIG-3).
 
   it('HIG-11 icons grow with the phone\'s text size, up to the same cap', () => {
     expect(iconSize(28, 1)).toBe(28);
@@ -205,7 +199,7 @@ describe('HIG-8 Reduce Motion', () => {
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     await screen.findByText('At the lake');
     await act(async () => { await Promise.resolve(); });
-    fireEvent.press(screen.getByRole('button', { name: 'Options for this photo' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Post options' }));
     await screen.findByText('Who can see this');
     const modals = screen.UNSAFE_getAllByType(Modal);
     expect(modals.map((m) => m.props.animationType)).toEqual(['fade']);
@@ -216,7 +210,7 @@ describe('HIG-8 Reduce Motion', () => {
     await seedPost(be, { caption: 'At the lake' });
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     await screen.findByText('At the lake');
-    fireEvent.press(screen.getByRole('button', { name: 'Options for this photo' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Post options' }));
     await screen.findByText('Who can see this');
     expect(screen.UNSAFE_getAllByType(Modal).map((m) => m.props.animationType)).toEqual(['slide']);
   });
@@ -238,7 +232,7 @@ describe('HIG-10 bottom sheets have a grabber and close with a swipe down', () =
     const p = await seedPost(be, { caption: 'At the lake' });
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     await screen.findByText('At the lake');
-    fireEvent.press(screen.getByRole('button', { name: 'Options for this photo' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Post options' }));
     expect(within(await screen.findByTestId(`more-${p.id}`)).getByTestId('sheet-grabber', { includeHiddenElements: true })).toBeTruthy();
     fireEvent.press(screen.getByRole('button', { name: 'Close this menu' }));
     fireEvent.press(await screen.findByTestId(`who-${p.id}`));
@@ -330,7 +324,7 @@ describe('QA-R4 HIG-8 turning Reduce Motion on while the app is open', () => {
     await screen.findByText('At the lake');
     expect(handlers.reduceMotionChanged).toBeDefined();
     await act(async () => { handlers.reduceMotionChanged!(true); });
-    fireEvent.press(screen.getByRole('button', { name: 'Options for this photo' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Post options' }));
     await screen.findByText('Who can see this');
     expect(screen.UNSAFE_getAllByType(Modal).map((m) => m.props.animationType)).toEqual(['fade']);
   });

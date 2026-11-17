@@ -69,7 +69,8 @@ describe('RD 1a the look: black and white with one accent', () => {
     }
   });
 
-  it('RD-2 Regular or Semibold only; Bold appears only in the large title', () => {
+  // Updated Nov 17 for RD-55 (DEC-65, Chase: "our fonts are very heavy"): no Bold anywhere, the large title included.
+  it('RD-2 RD-55 Regular or Semibold only; the large title is Semibold too (no Bold anywhere)', () => {
     render(<>
       <Txt>Body words</Txt><Txt variant="muted">Quiet words</Txt><Txt variant="strong">Grandma Jo</Txt>
       <Txt variant="title">A title</Txt><Txt variant="display">Large title</Txt>
@@ -78,7 +79,7 @@ describe('RD 1a the look: black and white with one accent', () => {
     const w = (t: string) => String(StyleSheet.flatten(screen.getByText(t).props.style).fontWeight ?? '400');
     expect({ body: w('Body words'), muted: w('Quiet words') }).toEqual({ body: expect.stringMatching(/^(400|normal)$/), muted: expect.stringMatching(/^(400|normal)$/) });
     for (const t of ['Grandma Jo', 'A title', 'Send']) expect({ t, weight: w(t) }).toEqual({ t, weight: '600' });
-    expect(['600', '700', 'bold']).toContain(w('Large title'));
+    expect(w('Large title')).toBe('600');
   });
 
   it('RD-3 one accent token per palette, from one setting: Ember (default), Forest and Plum, light and dark', () => {
@@ -131,18 +132,20 @@ describe('RD 1a the look: black and white with one accent', () => {
     expect(contrast(high.muted, high.bg)).toBeGreaterThanOrEqual(7);
   });
 
-  it('RD-4 Search and By date are ink, not accent (words and icons)', async () => {
+  // Updated Nov 17 for RD-47 (DEC-65): Search and By date left the top bar; the "Search photos" field takes Search's place.
+  it('RD-4 RD-47 the "Search photos" field is never the accent (words and icon)', async () => {
     const be = FakeBackend.withFixture();
     await seedPost(be, { caption: 'Sandcastle' });
-    await renderApp(<GalleryScreen />, { be, user: 'jo' }); // RD-13: they sit in Gallery's top bar
+    await renderApp(<GalleryScreen />, { be, user: 'jo' });
     const c = paletteFor(Platform.OS as 'ios', false);
-    for (const [name, word] of [['Search the photos', 'Search'], ['Show photos by the date they were taken', 'By date']] as const) {
-      const btn = await screen.findByRole('button', { name });
-      const color = StyleSheet.flatten(within(btn).getByText(word).props.style).color;
-      expect({ word, color }).toEqual({ word, color: c.ink });
-      const tint = (btn.findAll((n) => n.type === SymbolView)[0]?.props as { tintColor?: string } | undefined)?.tintColor;
-      expect({ word, tint }).toEqual({ word, tint: c.ink });
-    }
+    const field = (await screen.findAllByLabelText('Search photos')).find((n) => typeof n.type === 'string')!;
+    const colors = [field, ...field.findAll((n) => typeof n.type === 'string')].flatMap((n) => {
+      const s = StyleSheet.flatten(n.props.style) ?? {};
+      return [s.color, n.props.tintColor, n.props.placeholderTextColor].filter(Boolean);
+    });
+    for (const sym of field.findAll((n) => n.type === SymbolView)) colors.push((sym.props as { tintColor?: string }).tintColor);
+    expect(colors).not.toContain(c.accent);
+    expect(screen.queryByRole('button', { name: 'Show photos by the date they were taken' })).toBeNull();
   });
 
   it('RD-6 the picked tab changes color, not fill: the same outline symbol, picked or not', () => {
@@ -168,7 +171,7 @@ describe('RD 1a the look: black and white with one accent', () => {
     expect(dialogRadius('ios')).toBe(14);
     expect(dialogRadius('android')).toBe(28);
     // RD-8: the old 20 pt "large" corner (event card, reply box) is gone; rows use 12.
-    const allowed = new Set([0, 4, 12, 999]);
+    const allowed = new Set([0, 4, 12, 16, 999]); // RD-44/RD-54 (Nov 17): 16 for photo tiles, like Apple Photos
     for (const [k, v] of Object.entries(RADIUS)) expect({ k, v, ok: allowed.has(v) }).toEqual({ k, v, ok: true });
   });
 
