@@ -1,0 +1,22 @@
+FAIL src/screens/__tests__/pinnedBlock.test.tsx
+  ● RD-83 greeting, search bar and month title are one pinned block › RD-83 the month title's backing spans the full screen width in the page color
+  ● RD-83 greeting, search bar and month title are one pinned block › RD-83 RD-82 with a month pinned the shade sits under the month title, not between it and the bar; none at the top
+FAIL src/screens/__tests__/easyViewReview.test.tsx
+  ● GUX-R11 (RD-78) Easy view On / Off rows are Light or dark's radio rows › GUX-R11 the On and Off rows render through Choice kind="radio", like Light or dark
+  ● GUX-R11 (RD-78) Easy view On / Off rows are Light or dark's radio rows › GUX-R11 the checked row shows one accent check (c.accent); the other shows none
+  ● GUX-R11 (RD-78) Easy view On / Off rows are Light or dark's radio rows › GUX-R11 each row is 48 pt+ and carries aria-checked for the web build, both directions
+FAIL src/screens/__tests__/pinnedBlock.test.tsx
+  ● RD-83 greeting, search bar and month title are one pinned block › RD-83 the month title's backing spans the full screen width in the page color
+  ● RD-83 greeting, search bar and month title are one pinned block › RD-83 RD-82 with a month pinned the shade sits under the month title, not between it and the bar; none at the top
+FAIL src/screens/__tests__/easyViewReview.test.tsx
+  ● GUX-R11 (RD-78) Easy view On / Off rows are Light or dark's radio rows › GUX-R11 the On and Off rows render through Choice kind="radio", like Light or dark
+  ● GUX-R11 (RD-78) Easy view On / Off rows are Light or dark's radio rows › GUX-R11 the checked row shows one accent check (c.accent); the other shows none
+  ● GUX-R11 (RD-78) Easy view On / Off rows are Light or dark's radio rows › GUX-R11 each row is 48 pt+ and carries aria-checked for the web build, both directions
+Test Suites: 2 failed, 144 passed, 146 total
+Tests:       5 failed, 1 skipped, 1 todo, 1327 passed, 1334 total
+
+e2e:demo (dist-demo built from fcd87a1 + this branch's tests), -g "RD-83|R18 the current|RD-9 RD-10":
+  ok   RD-9 RD-10 RD-15 Gallery opens first (tab order check restored)
+  ok   R18 the current month title sticks (24 px slack)
+  FAIL RD-83 one pinned block at 393 px: gap between search backing bottom (148) and pinned "November 2026" top (165) = 17 px, expected <= 0.5
+earlier on the same build: RD-27 Family color recolor passed (flagged helper reads the tab glyph color).

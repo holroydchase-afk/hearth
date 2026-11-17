@@ -53,6 +53,7 @@ describe('Me tab (posters)', () => {
   it('Easy view is off by default for posters; sign out asks first', async () => {
     await renderApp(<MeScreen />, { user: 'chase' });
     expect((await screen.findByRole('radio', { name: 'Off' })).props.accessibilityState).toMatchObject({ checked: true });
+    expect(screen.getByRole('radio', { name: 'On' }).props.accessibilityState).toMatchObject({ checked: false }); // qa-tdd: both rows
     expect(screen.getByText('Signed in as chase@example.com')).toBeTruthy();
     fireEvent.press(screen.getByRole('button', { name: 'Sign out of Hearth' }));
     expect(screen.getByText('Sign out of Hearth?')).toBeTruthy();

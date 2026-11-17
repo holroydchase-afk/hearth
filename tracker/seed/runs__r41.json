@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-17T19:00:00-05:00",
+ "label": "Easy view review (GUX-R11, GUX-R12) and pinned block (RD-83): tests written first (red)",
+ "passed": 1327,
+ "failed": 5,
+ "results": {},
+ "note": "Red on purpose, 1 run each at fcd87a1 plus the new tests, typecheck clean. jest 1327 passed, 5 failed (1 skipped, 1 todo): new screens/__tests__/easyViewReview.test.tsx GUX-R11 x3 (On/Off rows not Choice kind=radio; check tinted ink #1C1C1E, not accent #B23A1E; no aria-checked); GUX-R12 x2 already pass (Me shows the Easy view block; Off there saves easyView=false and hides tab words). New screens/__tests__/pinnedBlock.test.tsx RD-83: offsets pass in jest (title top = backing height at 5 scroll points), red on the month title backing not full width (inset 16) and the shade under the search backing, not the pinned month. e2e:demo RD-83 at 393 px red: 17 px gap between search backing bottom and pinned month top. Reviewed engineer's flagged test edits in fcd87a1: searchBacking helper is a real fix (new helper red on pre-fix PhotosScreen for the right reason; old one picked the wrong node); restored RD-9's tab order check in demo.spec.js; help.test posters now checks both radios. T21: reviewRound2 R18 jest is vacuous (same helper bug). e2e:web, e2e:site, backend, Deno not run. e2e/results/easyview-gux-rd83-red-2026-11-17.txt"
+}

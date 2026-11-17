@@ -215,6 +215,8 @@ test('RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma 
   // engineer, flagged for qa-tdd: Chase's Easy view is Off (RD-76), so the tabs are read by their spoken names, not their words.
   for (const name of ['Gallery', 'Share', 'Feed', 'More']) await expect(page.getByRole('tab', { name, exact: true })).toBeVisible();
   await expect(page.getByRole('tab')).toHaveCount(4);
+  // qa-tdd: keep RD-9's order check (the words went with Easy view Off; the order must stay).
+  expect(await page.getByRole('tab').evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')))).toEqual(['Gallery', 'Share', 'Feed', 'More']);
   await expect(page.getByRole('tab', { name: 'Gallery' })).toHaveAttribute('aria-selected', 'true');
   await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible();
   await page.getByRole('tab', { name: /^More/ }).click();
@@ -411,6 +413,39 @@ test('R18 the current month title sticks under the pinned search field while Gal
   // Some month title sits just under the field (within 24 px), not scrolled away above it.
   const stuck = heads.filter((h) => h.top >= field.y + field.height - 1 && h.top <= field.y + field.height + 24);
   expect({ field: Math.round(field.y + field.height), stuck: stuck.length }).toEqual({ field: Math.round(field.y + field.height), stuck: 1 });
+});
+
+// RD-83 (Chase on iPhone, Nov 17): scrolling down, then back up, the pinned month title stays glued to the search
+// bar's backing: its top on the backing's bottom (±0.5 px), and no photo shows between them or past either side.
+test('RD-83 greeting, search bar and month title stay one pinned block after scrolling down and back at 393 px', async ({ page }) => {
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.mouse.move(196, 600);
+  await page.mouse.wheel(0, 1600); // mouse.wheel fires RN-web's onScroll; scrollTo does not
+  await page.waitForTimeout(400);
+  await page.mouse.wheel(0, -500);
+  await page.waitForTimeout(400);
+  const got = await page.getByLabel('Search photos').first().evaluate((field) => {
+    // The backing: the sticky wrapper's child that holds the field (RD-82's full-width bar).
+    let el = field;
+    while (el.parentElement && getComputedStyle(el.parentElement).position !== 'sticky') el = el.parentElement;
+    const backing = el.parentElement ? el : field;
+    const bottom = backing.getBoundingClientRect().bottom;
+    const re = /^(January|February|March|April|May|June|July|August|September|October|November|December) \d{4}$/;
+    const heads = [...document.querySelectorAll('[role="heading"]')].filter((h) => re.test(h.textContent.trim()))
+      .map((h) => ({ h, top: h.getBoundingClientRect().top })).filter((x) => x.top < 852);
+    const stuck = heads.sort((a, b) => Math.abs(a.top - bottom) - Math.abs(b.top - bottom))[0];
+    // What shows just under the bar at the left edge, middle and right edge: it must be the month title, not a photo.
+    const under = [2, 196, 391].map((x) => {
+      const hit = document.elementFromPoint(x, bottom + 1);
+      return { x, title: !!(hit && stuck && stuck.h.contains(hit)) || hit === stuck?.h, photo: !!hit?.closest('[data-testid^="gallery-tile-"]') };
+    });
+    return { gap: stuck ? Math.round((stuck.top - bottom) * 2) / 2 : null, under };
+  });
+  expect(got.gap).not.toBeNull();
+  expect(Math.abs(got.gap)).toBeLessThanOrEqual(0.5);
+  expect(got.under).toEqual([2, 196, 391].map((x) => ({ x, title: true, photo: false })));
 });
 
 // R23 (P2, G9 in scripts/ux-rules.mjs): every tab has exactly one h1, its title.
