@@ -3,12 +3,20 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: review rounds 4-6 built (UX-R31..R40), qa-tdd 3x next; push queue done Nov 13 (#106-#111 merged; 0024/0025 deployed, 0026 not; text sign-in, video and Start a family switched off). Stable public demo plan (TRACKER R45), step 1 live-site checks
-next: redesign R46 1a..1c, polish GUX-R1..R10, RD-34 plain background, DEC-60 names, DEC-61 no demo steps built; qa-tdd 3x, then grandparent-ux recheck; stop date Nov 19
+now: portfolio review done Nov 18 (docs/reviews/2026-11-18-portfolio-review.md); item 1, README and case study match the live demo, in a docs PR. Redesign round 2 merged Nov 17 (#118), live; Easy view (#119) open, waits on Chase's merge
+next: TRACKER R50 milestone 1 scorecard (needs Chase's 2-day demo), then R51 audience-leak eval, R52 CI gaps, R53 operations; the redesign thread's warmth and Share picks continue separately
 waiting_on_chase:
   - Paste the studio project-instructions block (pm-tools STUDIO-STATUS)
 blockers: []
 -->
+
+## Nov 18: portfolio review from three seats; item 1, the front door is true (TRACKER R49..R53; branch claude/project-thread-9m9i56, PR)
+- **Done:** a blunt review as a recruiter, a staff PM and an engineering manager: `docs/reviews/2026-11-18-portfolio-review.md` (full version with citations: https://claude.ai/artifact/NrhDHPJuKetHTXkGs5HYpZ). 15 ranked items; the top five are TRACKER R49..R53.
+- **Built (docs only):** README and case study now match the live demo. Totals rerun today: 1,291 app tests in 141 files, 1,199 database checks (`scripts/test-totals.sh`; jest and backend SQL each ran once, green). Three current screenshots in `docs/portfolio/screens/` (`iphone-gallery.jpg`, `iphone-feed-who-can-see.jpg`, `iphone-grandma-jo-feed.jpg`, from a local demo build of main; the old `iphone-0*.png` files stay because the portfolio site may link them). README: search listed as built, a Status table (proven, not proven yet, built but switched off, next), Lessons in "Start here". Case study: 65 decisions, "What went wrong", "What isn't proven yet". LESSONS: the Oct 29 real-names post mortem, written up from HANDOFF and TRACKER R26.
+- **Found on the way:** `app/e2e-web/demo-screens.spec.js` fails since the redesign (it waits for "Bridge walk on the trail" on the first screen), so the documented way to retake portfolio screenshots is broken; in R52. Local backend runs need a Postgres role for the shell user (`createuser -s root` in a cloud container).
+- **Not done:** no app, backend or workflow file changed. The demo guide's "the family here is made up" line (`app/src/demo/DemoFrame.tsx`) is review item 13, left for the redesign thread's files.
+- **Next exact step:** Chase runs the 2-day demo (TRACKER step 9) so R50's scorecard has numbers; meanwhile R51's failing test.
+- **Portfolio / public presence:** the repo's README changes when this merges. The portfolio page's Hearth counts (1,011 app / 1,199 database in intake #66) are now behind on app tests: 1,291.
 
 ## Nov 17: returning visitors see the current demo family (DEMO-FRESH-1..3, TRACKER R48; branch claude/project-thread-s1r7xd, PR)
 - **Done, test-first:** `freshenDemoStorage` in `app/src/demo/seed.ts` runs before `runtime.ts` reads the saved demo; a missing or different `hearth.demoSeed` clears Hearth's demo keys (as Start over) and saves the current version. Tests: `app/src/demo/__tests__/demoFreshen.test.ts`, e2e `DEMO-FRESH-1` in `app/e2e-web/demo.spec.js`.
