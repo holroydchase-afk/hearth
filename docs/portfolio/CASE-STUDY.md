@@ -40,10 +40,6 @@ Each of these has a written post mortem and a rule or guard added because of it 
 - **"It's live" wasn't true for returning visitors.** The demo kept an old saved family in the browser, and every check started with an empty browser. Saved data now carries the version that wrote it.
 - **Real family names reached a public repo.** The history was rewritten (cached views of old pull requests still wait on a purge by GitHub), and a rule now keeps real names, faces and places out of every public file. That rule is still held by review, not by a script.
 
-## What isn't proven yet
-
-Hearth has one user, its founder. Milestone 1's gate (10 posts over 2 days, none lost) hasn't been run to the end, no relative has used it, and its speed on an old phone is an estimate. The goals in [GOALS.md](../product/GOALS.md) each name a signal; none has been measured yet. That is the next piece of work, ahead of any new feature.
-
 ## What's next
 
-Passing milestone 1, then milestone 2, the founder's spouse. Built on the first night shift: Photos that open offline from encrypted copies on the phone, and no-AI photo helpers that leave out repeats, screenshots and look-alikes (each one button from coming back). Still to come: native encryption in the app's own build, and blur detection once it is tuned on real photos.
+Built on the first night shift: Photos that open offline from encrypted copies on the phone, and no-AI photo helpers that leave out repeats, screenshots and look-alikes (each one button from coming back). Still to come: native encryption in the app's own build, and blur detection once it is tuned on real photos.
