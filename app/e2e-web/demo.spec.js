@@ -194,7 +194,9 @@ test('RD-102 Paper by default; Chase picks Avocado then Pomegranate, it survives
     while (g && !opaque(getComputedStyle(g).backgroundColor)) g = g.parentElement;
     return g ? getComputedStyle(g).backgroundColor : 'rgb(255, 255, 255)';
   });
-  const moreBg = () => page.getByRole('heading', { name: 'More' }).evaluate((el) => {
+  // T22 (qa-tdd, Nov 18 green run): the pick happens on the Theme screen, which has no "More" heading, so read
+  // the Theme heading's backing (the old 'More' locator timed out with the page already recolored).
+  const themeBg = () => page.getByRole('heading', { name: 'Theme' }).evaluate((el) => {
     const opaque = (c) => c && c !== 'transparent' && !/rgba\(\s*\d+,\s*\d+,\s*\d+,\s*0\s*\)/.test(c);
     let n = el;
     while (n && !opaque(getComputedStyle(n).backgroundColor)) n = n.parentElement;
@@ -228,7 +230,7 @@ test('RD-102 Paper by default; Chase picks Avocado then Pomegranate, it survives
     await page.screenshot({ path: path.join(shots, `rd-102-paper-${look}.png`) });
     for (const theme of ['avocado', 'pomegranate']) {
       await pick(theme);
-      await expect.poll(moreBg).toBe(PAGE[theme][look]);
+      await expect.poll(themeBg).toBe(PAGE[theme][look]);
       await toGallery();
       expect.soft({ look, theme, gallery: await galleryBg() }).toEqual({ look, theme, gallery: PAGE[theme][look] });
       await page.screenshot({ path: path.join(shots, `rd-102-${theme}-${look}.png`) });
