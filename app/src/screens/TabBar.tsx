@@ -69,7 +69,7 @@ export function HearthTabBar({ role, current, onNavigate, newMessages = 0 }: {
   const typing = useTyping();
   if (typing) return null;
   return (
-    <View accessibilityRole="tablist" style={[styles.bar, { backgroundColor: c.surface, borderTopColor: c.line, paddingBottom: Math.max(insets.bottom, 6) }]}>
+    <View accessibilityRole="tablist" style={[styles.bar, { backgroundColor: c.surface, borderTopColor: c.tabLine, paddingBottom: Math.max(insets.bottom, 6) }]}>
       {tabsFor(role).map((tab) => {
         const on = tab.name === current;
         const color = on ? c.accent : c.muted;

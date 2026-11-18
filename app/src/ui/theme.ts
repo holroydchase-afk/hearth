@@ -16,6 +16,9 @@ export interface Colors {
   safe: string; safeSoft: string; danger: string; onDanger: string;
   /** RD-72 (UX-R29): red words on the page or a sheet (Delete post, the alert's Delete); iOS systemRed in dark. */
   dangerText: string; scrim: string; photo: string;
+  /** GUX-R18: the tab bar's top line, c.line nudged toward the ink by the least step that is 3:1 against both the
+   *  tab bar (surface) and the page (bg). Still a quiet grey; c.line itself stays subtle for other dividers. */
+  tabLine: string;
 }
 
 // RD-94..RD-96 (DEC-68, Chase Nov 18 2026): three themes with plain names, each its own page, grays and accent.
@@ -84,7 +87,17 @@ function build(b: Base, dark: boolean): Colors {
     accentInk: dark ? '#000000' : '#FFFFFF',
     accentSoft: mix(b.accent, b.bg, SOFT[mode]),
     accentPicked: picked(b.accent, b.bg, b.ink, PICKED[mode]),
+    tabLine: edge(b.line, b.ink, b.surface, b.bg),
   };
+}
+
+/** GUX-R18: the least nudge (0.01 steps) of `line` toward `ink` that is 3:1 against both `surface` and `page`. */
+function edge(line: string, ink: string, surface: string, page: string): string {
+  for (let i = 0; i <= 100; i++) {
+    const m = mix(line, ink, i / 100);
+    if (contrast(m, surface) >= 3 && contrast(m, page) >= 3) return m;
+  }
+  return ink;
 }
 
 let palettes: Record<ThemeName, { light: Colors; dark: Colors }> | null = null;
@@ -126,10 +139,12 @@ function highContrast(c: Colors): Colors {
   const mode = c.accentInk === '#000000' ? 'dark' : 'light';
   let accent = nudge(c.accent, c.ink, c.bg, 0, 0.3);
   for (let t = 0.3; contrast(c.accentInk, accent) < 7 && t < 1; t += 0.05) accent = mix(c.accent, c.ink, t);
+  const line = nudge(c.line, c.ink, c.surface, 4.5);
   const out: Colors = {
     ...c,
     muted: nudge(c.muted, c.ink, c.bg, 7),
-    line: nudge(c.line, c.ink, c.surface, 4.5),
+    line,
+    tabLine: edge(line, c.ink, c.surface, c.bg),
     accent,
     // RD-86: the soft tint follows the stronger accent, still mixed with the page.
     accentSoft: mix(accent, c.bg, SOFT[mode]),

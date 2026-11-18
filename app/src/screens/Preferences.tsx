@@ -76,8 +76,11 @@ export function ThemePicker({ heading = true }: { heading?: boolean }) {
             onPress={() => setPrefs({ theme: k.id })}
             style={({ pressed }) => [styles.row, { opacity: pressed ? 0.7 : 1 }]}
           >
-            <View style={[styles.swatch, { backgroundColor: swatch.bg, borderColor: c.line }]}>
-              <View style={[styles.dot, { backgroundColor: swatch.accent }]} />
+            {/* GUX-R19: a split swatch, the theme's page beside its accent, with a hairline edge so a light page
+                reads on a light row. */}
+            <View testID={`swatch-${k.id}`} style={[styles.swatch, { borderColor: c.tabLine }]}>
+              <View testID={`swatch-${k.id}-page`} style={[styles.half, { backgroundColor: swatch.bg }]} />
+              <View testID={`swatch-${k.id}-accent`} style={[styles.half, { backgroundColor: swatch.accent }]} />
             </View>
             <Txt style={{ flex: 1 }}>{k.title}</Txt>
             {on ? <SystemIcon icon={CHECK} color={c.ink} /> : null}
@@ -92,8 +95,8 @@ const CHECK = { sf: 'checkmark', md: 'check' };
 
 const styles = StyleSheet.create({
   row: { minHeight: MIN_TARGET + 4, minWidth: MIN_TARGET, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  swatch: { width: 36, height: 36, borderRadius: 18, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  dot: { width: 16, height: 16, borderRadius: 8 },
+  swatch: { width: MIN_TARGET, height: MIN_TARGET, borderRadius: 12, borderWidth: StyleSheet.hairlineWidth, flexDirection: 'row', overflow: 'hidden' },
+  half: { flex: 1 },
 });
 
 const CHOICES: { id: NotifyChoice; title: string; saved: string }[] = [
