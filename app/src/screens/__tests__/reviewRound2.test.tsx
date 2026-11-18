@@ -231,7 +231,7 @@ describe('UX-R16 (P1) comments: no heading; one rounded "Add a comment…" field
 
 // =================================================================================================================
 describe('R17 (P2) More: one outline icon style; separators inset from the left', () => {
-  const ROWS = /^(Messages|Groups|Events|Easy view|Light or dark|Family color|Me|Help)(,|$)/; // engineer, flagged for qa-tdd: RD-78
+  const ROWS = /^(Messages|Groups|Events|Easy view|Light or dark|Theme|Me|Help)(,|$)/; // engineer, flagged for qa-tdd: RD-78
   it('R17 every More row uses an outline symbol (no ".fill" / "filled" names)', async () => {
     await renderApp(<MoreScreen />, { user: 'chase' });
     await screen.findByRole('header', { name: 'More' }, slow);

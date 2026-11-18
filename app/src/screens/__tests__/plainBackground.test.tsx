@@ -5,10 +5,10 @@
 // (red), Nov 16.
 //
 // The engineer's contract:
-//   - Content (Gallery, Feed, post cards, New for you and its walk, Share, the top bar, the tab bar) draws on c.bg
-//     (warm paper #F1E9D2 light, #14100D dark since RD-87, DEC-67; was white and black; engineer, flagged for
-//     qa-tdd) with no c.surface / c.fill box. Posts are split by a hairline in c.line plus space.
-//   - Grey stays only on: Settings-style lists under More (Bigger text, Light or dark, Family color, Help, Me), the
+//   - Content (Gallery, Feed, post cards, New for you and its walk, Share, the top bar) draws on c.bg (the theme's
+//     page: Paper #FAF8F3 / #131210 by default since DEC-68) with no c.surface / c.fill box. The tab bar is c.surface
+//     with a c.line top border (RD-104). Posts are split by a hairline in c.line plus space.
+//   - Grey stays only on: Settings-style lists under More (Easy view, Light or dark, Theme, Help, Me), the
 //     text input fields (reply field, Share caption), and reaction / tinted capsules (buttons, chips, the "who can see" people, chat bubbles).
 //   - In source, c.surface / c.fill appear only inside the allowlisted components below. The Settings-style section
 //     lives in a kit component named `GroupedSection` (Card turns plain), used only by the More settings screens.
@@ -147,13 +147,15 @@ describe('RD-34 content screens sit on the plain background, no grey card fill',
       expect(greyBoxes(pal(dark))).toEqual([]);
     });
 
-    it(`RD-34 tab bar (${name}): the bar is the plain background`, () => {
+    // qa-tdd, Nov 18: RD-104 (DEC-68, Chase) sets the tab bar apart on c.surface with a c.line top border; it is no
+    // longer the plain page. The bar's own surface is allowed; nothing inside it is a grey box.
+    it(`RD-34 → RD-104 tab bar (${name}): the bar is c.surface, with no grey box inside it`, () => {
       const c = pal(dark);
       render(<LookContext.Provider value={dark ? 'dark' : 'light'}><HearthTabBar role="owner" current="gallery" onNavigate={() => {}} newMessages={1} /></LookContext.Provider>);
       const bar = (screen.UNSAFE_root.findAll(isHost) as Inst[]).find((n) => n.props.accessibilityRole === 'tablist')!; // not an accessible element itself
       expect(bar).toBeTruthy();
-      expect({ bar: bgOf(bar) }).toEqual({ bar: c.bg });
-      expect(greyBoxes(c)).toEqual([]);
+      expect({ bar: bgOf(bar) }).toEqual({ bar: c.surface });
+      expect((screen.UNSAFE_root.findAll(isHost) as Inst[]).filter((n) => n !== bar && grey(bgOf(n), c) && !allowedGrey(n)).map((n) => String(n.type))).toEqual([]);
     });
   }
 });

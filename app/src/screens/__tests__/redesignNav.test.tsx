@@ -3,7 +3,7 @@
 // Redesign 1b, getting around (docs/product/SPEC-REDESIGN.md RD-9..RD-17, DEC-59). Tabs Gallery, Share, Feed,
 // More (viewers: Gallery, Feed, More); Gallery opens first under a time-of-day greeting that folds into a solid
 // top bar; the top bar's right side is only Search and By date; Messages, Groups, Events, Easy view (was Bigger text), Light or
-// dark, Family color, Me and Help live in More. Members never see a group's name (DEC-49). Written first (Nov 15).
+// dark, Theme (RD-97, was Family color), Me and Help live in More. Members never see a group's name (DEC-49). Written first (Nov 15).
 // RD-10 (Gallery picked on open) is in redesignStart.test.tsx (it mocks expo-router). RD-12 on phones: RD-28 (manual).
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react-native';
 import { SymbolView } from 'expo-symbols';
@@ -207,12 +207,12 @@ describe('RD-14 new messages on More', () => {
 
 describe('RD-15 More', () => {
   // engineer, flagged for qa-tdd: RD-78 (DEC-66) renames Bigger text to Easy view in the same place.
-  const ALL = ['Messages', 'Groups', 'Events', 'Easy view', 'Light or dark', 'Family color', 'Me', 'Help'];
+  const ALL = ['Messages', 'Groups', 'Events', 'Easy view', 'Light or dark', 'Theme', 'Me', 'Help'];
 
   it.each([
     ['owner', 'chase', ALL],
-    ['adult', 'alex', ALL.filter((r) => r !== 'Family color')],
-    ['viewer', 'jo', ALL.filter((r) => r !== 'Groups' && r !== 'Family color')],
+    ['adult', 'alex', ALL.filter((r) => r !== 'Theme')],
+    ['viewer', 'jo', ALL.filter((r) => r !== 'Groups' && r !== 'Theme')],
   ] as const)('RD-15 / RD-16 the %s\'s More: big rows in the spec\'s order', async (_role, user, rows) => {
     await renderApp(<MoreScreen />, { user });
     expect(await screen.findByRole('header', { name: 'More' })).toBeTruthy();
@@ -233,7 +233,7 @@ describe('RD-15 More', () => {
     ['Events', { header: 'Events' }],
     ['Easy view', { header: 'Easy view' }], // engineer, flagged for qa-tdd: RD-78's page replaces the switch
     ['Light or dark', { header: 'Light or dark screen' }],
-    ['Family color', { header: 'Family color' }],
+    ['Theme', { header: 'Theme' }],
     ['Me', { header: 'Me' }],
     ['Help', { header: 'Help' }],
   ] as const)('RD-15 More → %s opens today\'s screen with a Back word button that returns to More', async (row, shows) => {
@@ -247,10 +247,10 @@ describe('RD-15 More', () => {
     expect(await screen.findByRole('header', { name: 'More' })).toBeTruthy();
   });
 
-  it('RD-15 / RD-24 Family color moved from Me into More: the owner\'s Me no longer has the picker', async () => {
+  it('RD-15 / RD-24 → RD-97 Theme (was Family color) lives in More: the owner\'s Me has no picker', async () => {
     await renderApp(<MeScreen />, { user: 'chase' });
     expect(await screen.findByRole('header', { name: 'Me' })).toBeTruthy();
-    expect(screen.queryByRole('header', { name: 'Family color' })).toBeNull();
+    expect(screen.queryByRole('header', { name: 'Theme' })).toBeNull();
     expect(screen.queryByRole('radio', { name: 'Forest' })).toBeNull();
   });
 });
@@ -264,12 +264,12 @@ describe('RD-16 no group names past More for anyone but parents', () => {
     return be;
   }
 
-  it('RD-16 Grandma Jo (viewer): More has no Groups or Family color, and no screen she reaches from it names a group', async () => {
+  it('RD-16 Grandma Jo (viewer): More has no Groups or Theme (RD-98), and no screen she reaches from it names a group', async () => {
     const be = await family();
     await renderApp(<MoreScreen />, { be, user: 'jo' });
     await screen.findByRole('header', { name: 'More' });
     expect(screen.queryByRole('button', { name: /^Groups/ })).toBeNull();
-    expect(screen.queryByRole('button', { name: /^Family color/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /^Theme(,|$)/ })).toBeNull();
     const rows = moreRows();
     for (const row of rows) {
       fireEvent.press(screen.getByRole('button', { name: new RegExp(`^${row}(,|$)`) }));

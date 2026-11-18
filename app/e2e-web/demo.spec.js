@@ -174,40 +174,87 @@ test('DEMO-BAR Reset asks first: Keep changes nothing; Reset restores and says s
   await expect(page.getByRole('button', { name: 'Demo details' })).toHaveAttribute('aria-expanded', 'false');
 });
 
-// RD-27 (SPEC-REDESIGN, DEC-59): Chase, the family's owner, can switch Family color and the demo recolors;
-// Grandma Jo's view stays Ember and has no picker. 1b: the picker is More → Family color (RD-15).
-test('RD-27 Chase switches Family color to Forest and the demo recolors; Grandma Jo stays Ember with no picker', async ({ page }) => {
-  // engineer, flagged for qa-tdd: Ember and Forest are a shade darker in light mode on paper (RD-86, DEC-67).
-  const EMBER = 'rgb(173, 55, 29)';
-  const FOREST = 'rgb(39, 107, 67)';
-  // engineer, flagged for qa-tdd: Chase's tabs are icons only (Easy view Off, RD-76), so read the tab's drawn glyph or word, whichever it shows.
-  const pickedTabColor = (name) => page.getByRole('tab', { name: new RegExp(`^${name}`) })
-    .evaluate((el) => getComputedStyle([...el.querySelectorAll('*')].find((d) => d.children.length === 0 && d.textContent.trim() !== '') ?? el).color);
+// RD-102 (SPEC-REDESIGN 1i, DEC-68, Chase Nov 18; replaces RD-27's Family color). Written first (red), Nov 18, by
+// qa-tdd. Paper is the default page (rgb(250, 248, 243) light, rgb(19, 18, 16) dark; never white or tan); as Chase,
+// More → Theme → Avocado and Pomegranate recolor the page and the pick survives a reload; Grandma Jo stays Paper with
+// no Theme row; the tab bar is c.surface with a c.line top border (RD-104). Photo shadows stay for now (Chase
+// deciding), so no shadow check here (RD-92 keeps it). Screenshots of all three themes, light and dark.
+test('RD-102 Paper by default; Chase picks Avocado then Pomegranate, it survives a reload; Grandma Jo stays Paper', async ({ page }) => {
+  const PAGE = {
+    paper: { light: 'rgb(250, 248, 243)', dark: 'rgb(19, 18, 16)' },
+    avocado: { light: 'rgb(238, 239, 211)', dark: 'rgb(16, 20, 12)' },
+    pomegranate: { light: 'rgb(245, 234, 223)', dark: 'rgb(23, 13, 16)' },
+  };
+  const WORD = { paper: 'Paper', avocado: 'Avocado', pomegranate: 'Pomegranate' };
+  const shots = path.join(__dirname, '..', 'test-results', 'rd-102');
+  // The Gallery backing: the first painted ancestor of the grid (the browser's white if none).
+  const galleryBg = () => page.evaluate(() => {
+    const opaque = (c) => c && c !== 'transparent' && !/rgba\(\s*\d+,\s*\d+,\s*\d+,\s*0\s*\)/.test(c);
+    let g = document.querySelector('[data-testid="gallery-grid"]');
+    while (g && !opaque(getComputedStyle(g).backgroundColor)) g = g.parentElement;
+    return g ? getComputedStyle(g).backgroundColor : 'rgb(255, 255, 255)';
+  });
+  const moreBg = () => page.getByRole('heading', { name: 'More' }).evaluate((el) => {
+    const opaque = (c) => c && c !== 'transparent' && !/rgba\(\s*\d+,\s*\d+,\s*\d+,\s*0\s*\)/.test(c);
+    let n = el;
+    while (n && !opaque(getComputedStyle(n).backgroundColor)) n = n.parentElement;
+    return n ? getComputedStyle(n).backgroundColor : 'rgb(255, 255, 255)';
+  });
+  const tabBar = () => page.getByRole('tablist').evaluate((el) => {
+    const s = getComputedStyle(el);
+    return { bg: s.backgroundColor, top: s.borderTopWidth, painted: s.backgroundColor !== 'rgba(0, 0, 0, 0)' };
+  });
+  const toGallery = async () => { await page.getByRole('tab', { name: /^Gallery/ }).click(); await galleryLoaded(page); };
+  const pick = async (theme) => {
+    await page.getByRole('tab', { name: /^More/ }).click();
+    await page.getByRole('button', { name: /^Theme(,|$)/ }).click();
+    await expect(page.getByRole('heading', { name: 'Theme' })).toBeVisible();
+    await page.getByRole('radio', { name: `${WORD[theme]} theme` }).click();
+    await expect(page.getByRole('radio', { name: `${WORD[theme]} theme` })).toBeChecked();
+  };
+
+  await page.setViewportSize({ width: 393, height: 852 });
+  for (const look of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme: look });
+    await page.goto('/');
+    await resetDemo(page);
+    await page.reload();
+    await galleryLoaded(page);
+    // Light starts from a fresh demo (the default); dark follows light's Pomegranate, so it picks Paper back first.
+    if (look === 'dark') { await pick('paper'); await toGallery(); }
+    expect.soft({ look, gallery: await galleryBg() }).toEqual({ look, gallery: PAGE.paper[look] });
+    const bar = await tabBar();
+    expect.soft({ look, painted: bar.painted, notPage: bar.bg !== PAGE.paper[look], top: bar.top }).toEqual({ look, painted: true, notPage: true, top: '1px' });
+    await page.screenshot({ path: path.join(shots, `rd-102-paper-${look}.png`) });
+    for (const theme of ['avocado', 'pomegranate']) {
+      await pick(theme);
+      await expect.poll(moreBg).toBe(PAGE[theme][look]);
+      await toGallery();
+      expect.soft({ look, theme, gallery: await galleryBg() }).toEqual({ look, theme, gallery: PAGE[theme][look] });
+      await page.screenshot({ path: path.join(shots, `rd-102-${theme}-${look}.png`) });
+    }
+    // The pick survives a reload.
+    await page.reload();
+    await galleryLoaded(page);
+    expect.soft({ look, afterReload: await galleryBg() }).toEqual({ look, afterReload: PAGE.pomegranate[look] });
+  }
+
+  // Grandma Jo stays Paper, with no Theme row.
   await page.emulateMedia({ colorScheme: 'light' });
-  await page.goto('/');
-  await galleryLoaded(page);
-  await page.getByRole('tab', { name: /^More/ }).click();
-  await page.getByRole('button', { name: 'Family color' }).click();
-  await expect(page.getByRole('heading', { name: 'Family color' })).toBeVisible();
-  await expect(page.getByRole('radio', { name: 'Ember' })).toBeChecked();
-  expect(await pickedTabColor('More')).toBe(EMBER);
-  await page.getByRole('radio', { name: 'Forest' }).click();
-  await expect(page.getByRole('radio', { name: 'Forest' })).toBeChecked();
-  await expect.poll(() => pickedTabColor('More')).toBe(FOREST);
   await details(page);
   await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
   await details(page);
   await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
+  await toGallery();
+  expect.soft({ jo: await galleryBg() }).toEqual({ jo: PAGE.paper.light });
   await page.getByRole('tab', { name: /^More/ }).click();
   await expect(page.getByRole('heading', { name: 'More' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Family color' })).toHaveCount(0);
-  await expect(page.getByRole('radio', { name: 'Forest' })).toHaveCount(0);
-  expect(await pickedTabColor('More')).toBe(EMBER);
+  await expect(page.getByRole('button', { name: /^(Theme|Family color)(,|$)/ })).toHaveCount(0);
 });
 
 // RD-9 / RD-10 / RD-15 (SPEC-REDESIGN 1b) on the demo build at a 360 px phone: Chase's tabs are Gallery, Share,
 // Feed, More with Gallery picked on open; More is a full-screen menu in the spec's order; Grandma Jo's view has
-// Gallery, Feed, More and no Groups or Family color.
+// Gallery, Feed, More and no Groups or Theme (RD-98).
 test('RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma Jo gets three tabs', async ({ page }) => {
   const before = errors.length; // `errors` spans the file; HARD-7's blocked storage logs one on purpose
   await page.setViewportSize({ width: 360, height: 740 });
@@ -222,9 +269,9 @@ test('RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma 
   await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible();
   await page.getByRole('tab', { name: /^More/ }).click();
   await expect(page.getByRole('heading', { name: 'More' })).toBeVisible();
-  const rows = ['Messages', 'Groups', 'Events', 'Easy view', 'Light or dark', 'Family color', 'Me', 'Help']; // engineer, flagged for qa-tdd: RD-78
+  const rows = ['Messages', 'Groups', 'Events', 'Easy view', 'Light or dark', 'Theme', 'Me', 'Help']; // engineer, flagged for qa-tdd: RD-78
   const labels = async () => (await page.getByRole('button').evaluateAll((els) => els.map((e) => e.getAttribute('aria-label') ?? e.textContent ?? '')))
-    .map((l) => l.split(',')[0]).filter((l) => /^(Messages|Groups|Events|Easy view|Light or dark|Family color|Me|Help)$/.test(l));
+    .map((l) => l.split(',')[0]).filter((l) => /^(Messages|Groups|Events|Easy view|Light or dark|Theme|Me|Help)$/.test(l));
   expect(await labels()).toEqual(rows);
   for (const r of rows) {
     const box = await page.getByRole('button', { name: new RegExp(`^${r}(,|$)`) }).boundingBox();
@@ -241,7 +288,7 @@ test('RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma 
   await expect(page.getByRole('tab')).toHaveText([/Gallery/, /Feed/, /More/]);
   await page.getByRole('tab', { name: /^More/ }).click();
   await expect(page.getByRole('heading', { name: 'More' })).toBeVisible(); // wait for the menu before reading its rows
-  expect(await labels()).toEqual(rows.filter((r) => r !== 'Groups' && r !== 'Family color'));
+  expect(await labels()).toEqual(rows.filter((r) => r !== 'Groups' && r !== 'Theme'));
   expect(errors.slice(before)).toEqual([]);
 });
 
@@ -567,11 +614,12 @@ test("RD-80 RD-78 each person's Easy view pick is kept separately: Chase turns i
 });
 
 // RD-92 (SPEC-REDESIGN 1h, DEC-67, Chase Nov 18): warm paper, soft photo shadows in light only, and the reaction pop
+// (retargeted Nov 18 by qa-tdd for DEC-68: the page is Paper #FAF8F3 / #131210, not tan; shadows and pop unchanged)
 // with its reduced-motion fallback, in the public demo at 393 px. Written first (red), Nov 18, by qa-tdd.
 // Soft expects, so one run shows every part of RD-92 that is still missing.
-test('RD-92 warm paper, photo shadows and the reaction pop in the demo, light and dark, with reduced motion', async ({ page }) => {
-  const PAPER = 'rgb(241, 233, 210)';
-  const WARM_BLACK = 'rgb(20, 16, 13)';
+test('RD-92 RD-94 Paper, photo shadows and the reaction pop in the demo, light and dark, with reduced motion', async ({ page }) => {
+  const PAPER = 'rgb(250, 248, 243)';
+  const WARM_BLACK = 'rgb(19, 18, 16)';
   const shots = path.join(__dirname, '..', 'test-results', 'rd-92');
   // The page behind the app (the demo frame, the app root, body, html; the browser's white if none) and the Gallery
   // backing (the first painted ancestor of the grid).

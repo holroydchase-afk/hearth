@@ -102,7 +102,7 @@ describe('RD-77 Easy view On: a word under every tab, bigger text', () => {
 
 describe('RD-78 More → Easy view', () => {
   it.each([
-    ['chase', 'Off', ['Messages', 'Groups', 'Events', 'Easy view', 'Light or dark', 'Family color', 'Me', 'Help']],
+    ['chase', 'Off', ['Messages', 'Groups', 'Events', 'Easy view', 'Light or dark', 'Theme', 'Me', 'Help']],
     ['alex', 'Off', ['Messages', 'Groups', 'Events', 'Easy view', 'Light or dark', 'Me', 'Help']],
     ['jo', 'On', ['Messages', 'Events', 'Easy view', 'Light or dark', 'Me', 'Help']],
   ] as const)('RD-78 %s\'s More has "Easy view" where Bigger text was, with %s in words', async (user, state, rows) => {

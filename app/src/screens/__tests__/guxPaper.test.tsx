@@ -19,7 +19,13 @@ import { memoryKV } from '../../platform/kv';
 import { seedPost } from '../../test/seed';
 import { FeedScreen } from '../../test/redesignScreens';
 import { renderApp } from '../../test/renderApp';
-import { COLOR_NAMES, contrast, paletteFor, type ColorName } from '../../ui/theme';
+import { contrast, paletteFor } from '../../ui/theme';
+
+// qa-tdd, Nov 18: GUX-R15 loops every theme (RD-95/96, DEC-68) and saves prefs.theme (RD-98) instead of the family
+// color. Only the owner can pick a theme (RD-98), so the reaction is Chase's, on a post by Alex.
+type ColorName = 'paper' | 'avocado' | 'pomegranate';
+const COLOR_NAMES: ColorName[] = ['paper', 'avocado', 'pomegranate'];
+const pfTheme = paletteFor as unknown as (o: string, d: boolean, n?: string, h?: boolean) => ReturnType<typeof paletteFor>;
 import { ShareScreen } from '../ShareScreen';
 
 const { dadSide } = FIXTURE.circles;
@@ -27,7 +33,7 @@ const { jo, chase } = FIXTURE.users;
 const slow = { timeout: 5000 };
 const HOUR = 3600e3;
 const lookName = (dark: boolean) => (dark ? 'dark' : 'light');
-const prefs = (id: string, dark: boolean, color: ColorName = 'ember') => ({ [`hearth.prefs.v1.${id}`]: JSON.stringify({ look: lookName(dark), bigText: false, notify: 'push', color }) });
+const prefs = (id: string, dark: boolean, theme: ColorName = 'paper') => ({ [`hearth.prefs.v1.${id}`]: JSON.stringify({ look: lookName(dark), bigText: false, notify: 'push', theme }) });
 
 type Inst = ReturnType<typeof screen.getByTestId>;
 const flat = (s: unknown) => (StyleSheet.flatten((typeof s === 'function' ? (s as (p: object) => unknown)({ pressed: false }) : s) as never) ?? {}) as Record<string, unknown>;
@@ -43,10 +49,10 @@ function borders(s: Record<string, unknown>) {
 const EMOJI_PLACE = /^(border.*Width|borderWidth|padding|margin|width|height|min|max|gap|alignItems|justifyContent|flex)/;
 const placeOf = (n: Inst) => Object.fromEntries(Object.entries(flat(n.props.style)).filter(([k]) => EMOJI_PLACE.test(k)).sort());
 
-async function feed(dark: boolean, color: ColorName = 'ember') {
+async function feed(dark: boolean, color: ColorName = 'paper') {
   const be = FakeBackend.withFixture();
-  const post = await seedPost(be, { caption: 'First snow!', photos: 1, circles: [dadSide.id] });
-  await renderApp(<FeedScreen />, { be, user: 'jo', kv: memoryKV({ [`hearth.lastSeen.v1.${jo.id}`]: new Date(Date.now() + HOUR).toISOString(), ...prefs(jo.id, dark, color) }) });
+  const post = await seedPost(be, { author: FIXTURE.users.alex.id, caption: 'First snow!', photos: 1, circles: [FIXTURE.circles.everyone.id] });
+  await renderApp(<FeedScreen />, { be, user: 'chase', kv: memoryKV({ [`hearth.lastSeen.v1.${chase.id}`]: new Date(Date.now() + HOUR).toISOString(), ...prefs(chase.id, dark, color) }) });
   const card = await screen.findByTestId(`post-${post.id}`, {}, slow);
   return card;
 }
@@ -61,7 +67,7 @@ describe('GUX-R15 (P1) a picked reaction shows a stronger tint on paper, with no
   for (const dark of [false, true]) {
     for (const color of COLOR_NAMES) {
       it(`GUX-R15 (${lookName(dark)}, ${color}) picked ❤️ tint is ≥ 3:1 against c.bg, its "1" ≥ 4.5:1 on the tint, no border`, async () => {
-        const c = paletteFor(Platform.OS as 'ios', dark, color);
+        const c = pfTheme(Platform.OS, dark, color);
         const card = await feed(dark, color);
         fireEvent.press(heart(card));
         await waitFor(() => expect(heart(card).props.accessibilityState?.selected).toBe(true), slow);

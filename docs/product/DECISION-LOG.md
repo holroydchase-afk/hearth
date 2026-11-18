@@ -480,11 +480,18 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Source:** `docs/product/SPEC-REDESIGN.md` 1g; persona check `decisions/2026-11-17-easy-view.md`
 
 ### DEC-67 · Warm paper, soft photo shadows, a reaction pop (RD-84..RD-93)
-- **When / status:** Nov 18 · Chase: "use the warm paper, the photo shadows, pop reactions"; tried paper `#F1E9D2` in a tester and kept it; "Leave out the Tuesday Nov 17 above the greeting" · Specced, failing tests next
+- **When / status:** Nov 18 · Chase: "use the warm paper, the photo shadows, pop reactions"; tried paper `#F1E9D2` in a tester and kept it; "Leave out the Tuesday Nov 17 above the greeting" · Built in #119; its tan page superseded by DEC-68 (Nov 18); shadows and pop stand
 - **Chose:** light pages in warm paper `#F1E9D2` with fields and capsules ~4.5% darker and hairlines ~9% darker, warm ink; dark pages warm near-black `#14100D` with warm ink. A soft shadow under Gallery tiles, New for you tiles and Feed photos in light mode only. A quick pop (1 → 1.25 → 1, ≤ 250 ms) when a reaction is turned on, none with Reduce Motion. No date line above the greeting.
 - **Over:** RD-1's white `#FFFFFF` and true black ("no warm off-white") and RD-34's plain white; mockup A's lighter paper `#FBF8F3` and its date line; option B (family moments); option C's accent band and Ember month titles (RD-4 keeps accent for "tap here").
 - **Because:** the white look read clinical; paper feels like a photo album and still keeps one plain page with no gray boxes. Shadows lift photos off the page without cards. The pop confirms a tap without words.
 - **Source:** `docs/product/SPEC-REDESIGN.md` 1h; persona check `decisions/2026-11-18-warm-paper.md`
 
+### DEC-68 · Three themes: Paper (default), Avocado, Pomegranate (RD-94..RD-104)
+- **When / status:** Nov 18 · Chase: "I do not like the warm theme"; then add color themes, plain names (he turned down "pit" and "rind"); 14:55Z: "I like Paper but the primary background needs to be the offwhite you provided in the pallette, and or we need something to separate the main nav bar from the rest"; 14:57Z: keep photo shadows and the reaction pop · Specced, failing tests next
+- **Chose:** Paper (default): off-white page `#FAF8F3`, white surface, warm ink `#1E1B17`, accent `#AD371D`; dark `#131210`, accent `#FF8A65` (RD-94). The tab bar sits on `c.surface` with a 1 px `c.line` top border in every theme (RD-104). More → Family color becomes "Theme" with three swatches: Paper, Avocado, Pomegranate. Each theme sets its own page, surface, ink, muted, line, fill, photo and accent, light and dark (values from the palette page, RD-95). Forest and Plum fold away; an old Ember, Forest, Plum or Sage pick opens as Paper. Per phone, owner only, no database change before the beta. DEC-67's photo shadows and reaction pop stay (RD-100, RD-101 dropped).
+- **Over:** DEC-67's tan paper `#F1E9D2`; plain white `#FFFFFF` / true black (Chase wanted the off-white, and the tab bar needs separating); dropping the shadows and pop; keeping Ember/Forest/Plum as accent-only colors; the names "skin", "seed", "pit", "rind"; a theme per person or saved for the whole family now (Phase 2, after the beta).
+- **Because:** the tan read as a misread of what Chase wanted; off-white keeps photos clean without glare and still gives ink 16:1. A white tab bar on the off-white page tells the nav from the content. A whole theme says more than an accent swap, and three plain words are easy to say over the phone.
+- **Source:** `docs/product/SPEC-REDESIGN.md` 1i; persona check `decisions/2026-11-18-themes.md`. Supersedes only DEC-67's page colors (its shadows, pop and "no date line" stay).
+
 ---
-Last updated: Nov 18, 2026 (DEC-67)
+Last updated: Nov 18, 2026 (DEC-68)

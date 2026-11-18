@@ -61,7 +61,7 @@ describe('RD 1a source scans', () => {
   });
 
   it('RD-3 no component hard-codes an accent hex (old or new); theme.ts is the only home', () => {
-    const accents = ['B23A1E', 'FF8A65', '2E7D4F', '6FCF97', '8E3A8F', 'D9A0E0', 'A4421F', 'F4A47F', '2D6A4E', '8FD1AE', '5A3EA6', 'C5B3F5', 'AD371D', '276B43']; // engineer, flagged for qa-tdd: RD-86's darker Ember and Forest
+    const accents = ['B23A1E', 'FF8A65', '2E7D4F', '6FCF97', '8E3A8F', 'D9A0E0', 'A4421F', 'F4A47F', '2D6A4E', '8FD1AE', '5A3EA6', 'C5B3F5', 'AD371D', '276B43', '3B6120', 'B4D16A', 'A3172F', 'FF8597']; // engineer, flagged for qa-tdd: RD-86's darker Ember and Forest; qa-tdd: RD-95's Avocado and Pomegranate
     expect(find(new RegExp(`#(${accents.join('|')})\\b`, 'i'), sources(), (f) => f === 'ui/theme.ts')).toEqual([]);
   });
 
