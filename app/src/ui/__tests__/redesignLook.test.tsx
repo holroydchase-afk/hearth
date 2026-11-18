@@ -28,8 +28,9 @@ const NEUTRAL_KEYS = ['bg', 'surface', 'ink', 'muted', 'line', 'fill', 'photo'] 
 const rgb = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 /** Black-and-white means no warm (or any) tint: channels within 8 of each other (Apple's own grays pass). */
 const neutral = (h: string) => { const v = rgb(h); return Math.max(...v) - Math.min(...v) <= 8; };
-/** RD-84/85: warm paper grays, red ≥ green ≥ blue. */
-const paperFamily = (h: string) => { const [r, g, b] = rgb(h); return r! >= g! && g! >= b!; };
+/** RD-84/85: warm paper grays, red ≥ green ≥ blue, and still a gray: channels within 40 of each other (paper itself
+ *  spreads 31). qa-tdd: the cap keeps an accent (Ember #AD371D is R ≥ G ≥ B too) from passing as a page gray. */
+const paperFamily = (h: string) => { const [r, g, b] = rgb(h); return r! >= g! && g! >= b! && r! - b! <= 40; };
 const MODES = [false, true] as const;
 /** RD-3 / RD-24: the three choices, fixed here so a missing one fails instead of being skipped. */
 const CHOICES = ['ember', 'forest', 'plum'] as ColorName[];
