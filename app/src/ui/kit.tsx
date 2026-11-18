@@ -260,11 +260,11 @@ export function Field(props: TextInputProps & { label: string }) {
   const { c, t, os } = useTheme();
   const { label, style, onFocus, onBlur, ...rest } = props;
   const typing = useTypingField(); // UX-R1: the tab bar steps aside while this field is focused
-  // iPhone: a rounded field like a grouped-list cell, with an edge so it shows on any background.
-  // Android: Material's outlined text field.
+  // iPhone and the web: a filled rounded box with no edge, like the Search field (GUX-R16; was a c.surface box with a
+  // c.line edge, which read as a form on paper). Android: Material's outlined text field.
   const box: TextStyle = os === 'android'
     ? { borderWidth: 1, borderColor: c.muted, backgroundColor: 'transparent', borderRadius: RADIUS.small }
-    : { borderWidth: 1, borderColor: c.line, backgroundColor: c.surface, borderRadius: RADIUS.medium };
+    : { borderWidth: 0, backgroundColor: c.fill, borderRadius: RADIUS.medium };
   return (
     <View style={{ gap: 6 }}>
       <Txt variant="strong">{label}</Txt>

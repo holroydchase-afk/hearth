@@ -26,20 +26,22 @@ export type ColorName = 'ember' | 'forest' | 'plum';
 export const COLOR_NAMES: readonly ColorName[] = ['ember', 'forest', 'plum'];
 export const ColorContext = createContext<ColorName>('ember');
 
-const status = {
-  light: { safe: '#1C6E31', safeSoft: '#E3F3E7', danger: '#B3261E', dangerText: '#B3261E', onDanger: '#FFFFFF', scrim: 'rgba(0,0,0,0.4)' },
-  dark: { safe: '#7DD394', safeSoft: '#173322', danger: '#F2B8B5', dangerText: '#FF453A', onDanger: '#601410', scrim: 'rgba(0,0,0,0.6)' },
-};
-
 /** RD-84 / RD-85: the paper page and its warm grays. surface (sheets, cards, menus) is the paper a shade lighter. */
 const PAPER = { light: '#F1E9D2', dark: '#14100D' } as const;
+
+/** How far a soft tint (accentSoft, a picked capsule; safeSoft, the "sent" tint) mixes its color into the page. */
+export const SOFT = { light: 0.93, dark: 0.82 } as const;
+
+/** GUX-R17: safeSoft is safe mixed into the paper page like accentSoft (was a tint of the old white/black page). */
+const SAFE = { light: '#1C6E31', dark: '#7DD394' } as const;
+const status = {
+  light: { safe: SAFE.light, safeSoft: mix(SAFE.light, PAPER.light, SOFT.light), danger: '#B3261E', dangerText: '#B3261E', onDanger: '#FFFFFF', scrim: 'rgba(0,0,0,0.4)' },
+  dark: { safe: SAFE.dark, safeSoft: mix(SAFE.dark, PAPER.dark, SOFT.dark), danger: '#F2B8B5', dangerText: '#FF453A', onDanger: '#601410', scrim: 'rgba(0,0,0,0.6)' },
+};
 const NEUTRAL = {
   light: { ...status.light, bg: PAPER.light, surface: '#F6F1E2', ink: '#1F1A14', muted: '#5E554A', line: '#DBD4BF', fill: '#E6DFC9', photo: '#E3DBC5' },
   dark: { ...status.dark, bg: PAPER.dark, surface: '#1F1A16', ink: '#F3EDE4', muted: '#B3AA9F', line: '#3A322B', fill: '#2A241F', photo: '#241F1A' },
 };
-
-/** How far accentSoft (a picked capsule's tint) mixes the accent into the page. */
-const SOFT = { light: 0.93, dark: 0.82 } as const;
 
 /** The family color: the one accent, light and dark, and the words that sit on it. RD-86: Ember and Forest are a
  *  shade darker in light mode so they keep 4.5:1 on paper and its fill (were #B23A1E and #2E7D4F on white). */
