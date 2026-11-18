@@ -184,7 +184,7 @@ Needs: architect (schema), privacy-security (low risk: a color word, no personal
 - More than three accents (mockup had six): Apple blue loses Hearth's look; Teal and Amber add choice without need.
 - A per-person color: Chase moved it to the admin.
 - Option B family moments, C's accent band, Ember month titles and A's date line above the greeting (Chase, Nov 18, DEC-67): only the paper, photo shadows and reaction pop were picked; RD-4's accent rule stands.
-- Avocado and pomegranate palettes (Chase, Nov 18): mockups only after 1h merges (TRACKER R51); not built until he picks one.
+- Avocado and pomegranate palettes (Chase, Nov 18): mockups only after 1h merges (TRACKER R56); not built until he picks one.
 - More comforts inside Easy view (simpler Feed, fewer rows in More): not before the beta; Easy view ships as tab words plus bigger text (DEC-66).
 - Tailwind or any new UI library.
 - Per-family email theming.

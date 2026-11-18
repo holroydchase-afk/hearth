@@ -26,11 +26,20 @@ Chase's family is "distributed": divorces, remarriages, step-grandparents, relat
 
 ## Results so far
 
-- The core flow works end to end on a phone. You sign in with a 6-digit code, pick photos and choose who sees them. Relatives heart and reply, and email notices arrive.
-- 734 app tests and 1,029 database checks (Nov 4, 2026; `bash scripts/test-totals.sh`), contract tests against both a fake and the real backend, and web end-to-end tests.
+- The core flow works end to end on a phone. You sign in with a 6-digit code, pick photos and choose who sees them. A second test account hearts and replies.
+- 1,291 app tests and 1,199 database checks (Nov 18, 2026; `bash scripts/test-totals.sh`), contract tests against both a fake and the real backend, and web end-to-end tests.
 - A [no-login demo](https://chaseholroyd.com/hearth/) with a made-up family shows the core idea in under two minutes: switch to Grandma Jo's view from the Demo bar's Details and see only what was shared with her.
-- Privacy built in from the start: location and camera data stripped on the phone and verified, photos encrypted on the phone, end-to-end encrypted group chat (MLS), and access rules enforced in the database.
+- Privacy built in from the start: location and camera data stripped on the phone and verified, photos encrypted on the phone, end-to-end encrypted group chat (MLS, not audited yet), and access rules enforced in the database.
+
+## What went wrong
+
+Each of these has a written post mortem and a rule or guard added because of it ([lessons](../eng/LESSONS.md)).
+
+- **The app wouldn't open on the founder's phone.** The Expo version was picked from the AI's memory and was three releases old. Every check had compared the app with itself, never with the phone. Now versions come from the vendor's live page, and CI fails on its own when Expo Go moves ahead.
+- **The proof against the real backend went quiet for two days.** A tooling change made 60 of 63 checks fail without anyone seeing, because that suite ran only by hand. Now a suite counts only if it runs in CI. Getting it running again exposed a query that took 1.5 to 2 seconds instead of 20 to 50 ms.
+- **"It's live" wasn't true for returning visitors.** The demo kept an old saved family in the browser, and every check started with an empty browser. Saved data now carries the version that wrote it.
+- **Real family names reached a public repo.** The history was rewritten (cached views of old pull requests still wait on a purge by GitHub), and a rule now keeps real names, faces and places out of every public file. That rule is still held by review, not by a script.
 
 ## What's next
 
-Milestone 2, the founder's spouse. Built on the first night shift: Photos that open instantly and offline from encrypted copies on the phone, and no-AI photo helpers that leave out repeats, screenshots and look-alikes (each one button from coming back). Still to come: native encryption in the app's own build, and blur detection once it is tuned on real photos.
+Built on the first night shift: Photos that open offline from encrypted copies on the phone, and no-AI photo helpers that leave out repeats, screenshots and look-alikes (each one button from coming back). Still to come: native encryption in the app's own build, and blur detection once it is tuned on real photos.

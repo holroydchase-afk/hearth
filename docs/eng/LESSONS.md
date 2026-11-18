@@ -12,6 +12,18 @@ One entry per post mortem, newest first. Each entry gives what happened, why, an
 1. **Saved data carries the version that wrote it.** The demo saves `hearth.demoSeed` (a hash of the sample posts and names); a different value clears Hearth's demo keys as Start over does (DEMO-FRESH-1..3).
 2. **"It's live" covers returning visitors.** A change to anything the demo saves gets a test that loads it over an older saved copy.
 
+## Oct 29, 2026: real family details in a public repo
+
+**What happened.** A scan before hosting the demo found no secrets, but it did find real family details (names, and stories that identify people) in docs, tests and commit messages, in a repo that was public at the time. Chase made the repo private that evening. The current files were scrubbed to the kids' nicknames (PR #77), the git history was rewritten on Oct 31 so no branch holds a real name, and the repo went public again. Cached views of old pull requests still need a purge request to GitHub Support (Chase).
+
+**Why.** Specs and personas were written from Chase's real family stories, because that made them accurate. Nothing separated "what the product needs to know" from "what the public repo may hold", and no check looked for names before a push.
+
+**Rules from now on.**
+1. **No real family names, surnames or private family details in the repo** (CLAUDE.md rule 2). Docs and tests use the nicknames in `docs/product/PERSONAS.md`. Chase's own first name on his public demo is the one exception (DEC-64).
+2. **Check before anything goes public**: a commit, a PR, a screenshot, a mockup or a shared page gets a look for real names, faces, places and emails first.
+
+**Gap.** This rule is held by review, not by a script: a list of real names can't sit in a public repo for CI to grep. A check against hashed names is a tracker item (R49).
+
 ## Oct 28, 2026: the real-API proof went quiet, and Photos got slow without anyone seeing
 
 **What happened.** Two things, found in the same night run. (1) Since the SDK 58 move, jest-expo swapped the global `fetch` for Expo's native-only one, so the app's contract against the real Postgres + PostgREST API got no answers: 60 of 63 checks failed as UNKNOWN. It didn't run in CI, so nobody saw it for two days (REAL-1). (2) Once that ran again, one timeline test timed out about 1 run in 3. The cause: once a family has a few dozen posts, Postgres's cost estimate for `feed_rows` (behind Photos and By date) passes `jit_above_cost`, and Postgres JIT-compiles the query before running it, which made each page take 1.5-2 s instead of 20-50 ms (HARD-17).
