@@ -479,5 +479,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** parents want the cleaner look of the apps they use; grandparents keep every word with nothing to set. One switch is one sentence over the phone.
 - **Source:** `docs/product/SPEC-REDESIGN.md` 1g; persona check `decisions/2026-11-17-easy-view.md`
 
+### DEC-67 · Warm paper, soft photo shadows, a reaction pop (RD-84..RD-93)
+- **When / status:** Nov 18 · Chase: "use the warm paper, the photo shadows, pop reactions"; tried paper `#F1E9D2` in a tester and kept it; "Leave out the Tuesday Nov 17 above the greeting" · Specced, failing tests next
+- **Chose:** light pages in warm paper `#F1E9D2` with fields and capsules ~4.5% darker and hairlines ~9% darker, warm ink; dark pages warm near-black `#14100D` with warm ink. A soft shadow under Gallery tiles, New for you tiles and Feed photos in light mode only. A quick pop (1 → 1.25 → 1, ≤ 250 ms) when a reaction is turned on, none with Reduce Motion. No date line above the greeting.
+- **Over:** RD-1's white `#FFFFFF` and true black ("no warm off-white") and RD-34's plain white; mockup A's lighter paper `#FBF8F3` and its date line; option B (family moments); option C's accent band and Ember month titles (RD-4 keeps accent for "tap here").
+- **Because:** the white look read clinical; paper feels like a photo album and still keeps one plain page with no gray boxes. Shadows lift photos off the page without cards. The pop confirms a tap without words.
+- **Source:** `docs/product/SPEC-REDESIGN.md` 1h; persona check `decisions/2026-11-18-warm-paper.md`
+
 ---
-Last updated: Nov 17, 2026 (DEC-66)
+Last updated: Nov 18, 2026 (DEC-67)
