@@ -177,10 +177,12 @@ test('DEMO-BAR Reset asks first: Keep changes nothing; Reset restores and says s
 // RD-27 (SPEC-REDESIGN, DEC-59): Chase, the family's owner, can switch Family color and the demo recolors;
 // Grandma Jo's view stays Ember and has no picker. 1b: the picker is More → Family color (RD-15).
 test('RD-27 Chase switches Family color to Forest and the demo recolors; Grandma Jo stays Ember with no picker', async ({ page }) => {
-  const EMBER = 'rgb(178, 58, 30)';
-  const FOREST = 'rgb(46, 125, 79)';
-  const pickedTabColor = (name) => page.getByRole('tab', { name: new RegExp(`^${name}`) }).getByText(name, { exact: true })
-    .evaluate((el) => getComputedStyle(el).color);
+  // engineer, flagged for qa-tdd: Ember and Forest are a shade darker in light mode on paper (RD-86, DEC-67).
+  const EMBER = 'rgb(173, 55, 29)';
+  const FOREST = 'rgb(39, 107, 67)';
+  // engineer, flagged for qa-tdd: Chase's tabs are icons only (Easy view Off, RD-76), so read the tab's drawn glyph or word, whichever it shows.
+  const pickedTabColor = (name) => page.getByRole('tab', { name: new RegExp(`^${name}`) })
+    .evaluate((el) => getComputedStyle([...el.querySelectorAll('*')].find((d) => d.children.length === 0 && d.textContent.trim() !== '') ?? el).color);
   await page.emulateMedia({ colorScheme: 'light' });
   await page.goto('/');
   await galleryLoaded(page);
@@ -211,14 +213,18 @@ test('RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma 
   await page.setViewportSize({ width: 360, height: 740 });
   await page.goto('/');
   await galleryLoaded(page);
-  await expect(page.getByRole('tab')).toHaveText([/Gallery/, /Share/, /Feed/, /More/]);
+  // engineer, flagged for qa-tdd: Chase's Easy view is Off (RD-76), so the tabs are read by their spoken names, not their words.
+  for (const name of ['Gallery', 'Share', 'Feed', 'More']) await expect(page.getByRole('tab', { name, exact: true })).toBeVisible();
+  await expect(page.getByRole('tab')).toHaveCount(4);
+  // qa-tdd: keep RD-9's order check (the words went with Easy view Off; the order must stay).
+  expect(await page.getByRole('tab').evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')))).toEqual(['Gallery', 'Share', 'Feed', 'More']);
   await expect(page.getByRole('tab', { name: 'Gallery' })).toHaveAttribute('aria-selected', 'true');
   await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible();
   await page.getByRole('tab', { name: /^More/ }).click();
   await expect(page.getByRole('heading', { name: 'More' })).toBeVisible();
-  const rows = ['Messages', 'Groups', 'Events', 'Bigger text', 'Light or dark', 'Family color', 'Me', 'Help'];
+  const rows = ['Messages', 'Groups', 'Events', 'Easy view', 'Light or dark', 'Family color', 'Me', 'Help']; // engineer, flagged for qa-tdd: RD-78
   const labels = async () => (await page.getByRole('button').evaluateAll((els) => els.map((e) => e.getAttribute('aria-label') ?? e.textContent ?? '')))
-    .map((l) => l.split(',')[0]).filter((l) => /^(Messages|Groups|Events|Bigger text|Light or dark|Family color|Me|Help)$/.test(l));
+    .map((l) => l.split(',')[0]).filter((l) => /^(Messages|Groups|Events|Easy view|Light or dark|Family color|Me|Help)$/.test(l));
   expect(await labels()).toEqual(rows);
   for (const r of rows) {
     const box = await page.getByRole('button', { name: new RegExp(`^${r}(,|$)`) }).boundingBox();
@@ -410,6 +416,48 @@ test('R18 the current month title sticks under the pinned search field while Gal
   expect({ field: Math.round(field.y + field.height), stuck: stuck.length }).toEqual({ field: Math.round(field.y + field.height), stuck: 1 });
 });
 
+// RD-83 (Chase on iPhone, Nov 17): scrolling down, then back up, the pinned month title stays glued to the search
+// bar's backing: its top on the backing's bottom (±0.5 px), and no photo shows between them or past either side.
+test('RD-83 greeting, search bar and month title stay one pinned block after scrolling down and back at 393 px', async ({ page }) => {
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.mouse.move(196, 600);
+  await page.mouse.wheel(0, 1600); // mouse.wheel fires RN-web's onScroll; scrollTo does not
+  await page.waitForTimeout(400);
+  // engineer, flagged for qa-tdd: back up 250, not 500. The demo's Gallery scrolls about 990 px in all, so 500 landed
+  // 17 px above where the first month reaches the bar (its title then scrolls with the page, as RD-83's jest allows),
+  // which measured that release point, not a pinned title. `reached` below proves the title is pinned here.
+  await page.mouse.wheel(0, -250);
+  await page.waitForTimeout(400);
+  const got = await page.getByLabel('Search photos').first().evaluate((field) => {
+    // The backing: the sticky wrapper's child that holds the field (RD-82's full-width bar).
+    let el = field;
+    while (el.parentElement && getComputedStyle(el.parentElement).position !== 'sticky') el = el.parentElement;
+    const backing = el.parentElement ? el : field;
+    const bottom = backing.getBoundingClientRect().bottom;
+    const re = /^(January|February|March|April|May|June|July|August|September|October|November|December) \d{4}$/;
+    const heads = [...document.querySelectorAll('[role="heading"]')].filter((h) => re.test(h.textContent.trim()))
+      .map((h) => ({ h, top: h.getBoundingClientRect().top })).filter((x) => x.top < 852);
+    const stuck = heads.sort((a, b) => Math.abs(a.top - bottom) - Math.abs(b.top - bottom))[0];
+    // What shows just under the bar at the left edge, middle and right edge: it must be the month title, not a photo.
+    const under = [2, 196, 391].map((x) => {
+      const hit = document.elementFromPoint(x, bottom + 1);
+      return { x, title: !!(hit && stuck && stuck.h.contains(hit)) || hit === stuck?.h, photo: !!hit?.closest('[data-testid^="gallery-tile-"]') };
+    });
+    // The month block has reached the bar (so its title should be pinned), and the title pins by the browser's own
+    // sticky at the backing's height, not by a per-scroll-event transform that can lag on iPhone Safari.
+    const cs = stuck ? getComputedStyle(stuck.h) : null;
+    const reached = !!stuck && stuck.h.parentElement.getBoundingClientRect().top <= bottom;
+    const native = !!cs && cs.position === 'sticky' && Math.abs(parseFloat(cs.top) - backing.getBoundingClientRect().height) <= 0.5 && cs.transform === 'none';
+    return { gap: stuck ? Math.round((stuck.top - bottom) * 2) / 2 : null, under, reached, native };
+  });
+  expect({ reached: got.reached, native: got.native }).toEqual({ reached: true, native: true });
+  expect(got.gap).not.toBeNull();
+  expect(Math.abs(got.gap)).toBeLessThanOrEqual(0.5);
+  expect(got.under).toEqual([2, 196, 391].map((x) => ({ x, title: true, photo: false })));
+});
+
 // R23 (P2, G9 in scripts/ux-rules.mjs): every tab has exactly one h1, its title.
 test('R23 Gallery, Share, Feed and More each have exactly one h1', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -441,4 +489,185 @@ test('UX-R27 every "can see this." line on Feed is one line at 390 px', async ({
     return { words: e.innerText, lines: Math.round(e.getBoundingClientRect().height / lh) };
   }));
   expect(got.filter((l) => l.lines > 1)).toEqual([]);
+});
+
+// RD-77 / RD-80 (SPEC-REDESIGN 1g, DEC-66): Easy view. Chase (owner) starts Off: icon-only tabs that keep their
+// spoken names. Grandma Jo (viewer) starts On: a word under each tab and bigger text. Each person's pick is kept
+// separately in the browser. Written first (Nov 17), red until Easy view exists.
+const tabWordsShown = (page) => page.getByRole('tab').evaluateAll((els) => els.map((e) => (e.innerText || '').replace(/[^A-Za-z ]/g, '').trim()));
+const captionSize = (page) => page.getByText('Life jackets on and in all afternoon', { exact: true }).filter({ visible: true }).first()
+  .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+const asJo = async (page) => {
+  await details(page);
+  await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+  await details(page);
+  await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
+};
+const asChase = async (page) => {
+  await details(page);
+  await page.getByRole('button', { name: "Back to Chase's view, the parent" }).click();
+  await details(page);
+  await expect(page.getByText(/You're Chase, a parent/)).toBeVisible();
+};
+
+test('RD-80 RD-76 RD-77 Chase has icon-only tabs; Grandma Jo has words under the tabs and bigger text; back to Chase restores Off', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 740 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await expect(page.getByRole('tab')).toHaveCount(4);
+  for (const name of ['Gallery', 'Share', 'Feed', 'More']) await expect(page.getByRole('tab', { name, exact: true })).toBeVisible();
+  expect(await tabWordsShown(page)).toEqual(['', '', '', '']); // RD-76: icons only, spoken names kept
+  await expect(page.getByRole('tab', { name: 'Gallery', exact: true })).toHaveAttribute('aria-selected', 'true');
+  for (const box of await page.getByRole('tab').evaluateAll((els) => els.map((e) => e.getBoundingClientRect()))) {
+    expect({ h: box.height >= 48, w: box.width >= 48 }).toEqual({ h: true, w: true });
+  }
+  await onFeed(page);
+  expect(await captionSize(page)).toBe(17);
+
+  await asJo(page);
+  await expect.poll(() => tabWordsShown(page)).toEqual(['Gallery', 'Feed', 'More']); // RD-77: a word under every tab
+  const words = await page.getByRole('tab').evaluateAll((els) => els.map((e) => {
+    const t = [...e.querySelectorAll('div')].find((d) => d.children.length === 0 && d.innerText.trim() !== '');
+    return { size: t ? parseFloat(getComputedStyle(t).fontSize) : 0, clipped: t ? t.scrollWidth > t.clientWidth + 1 : true };
+  }));
+  for (const w of words) expect(w).toEqual({ size: expect.any(Number), clipped: false });
+  expect(Math.min(...words.map((w) => w.size))).toBeGreaterThanOrEqual(17);
+  await onFeed(page);
+  expect(await captionSize(page)).toBe(21);
+
+  await asChase(page);
+  await expect.poll(() => tabWordsShown(page)).toEqual(['', '', '', '']);
+  await onFeed(page);
+  expect(await captionSize(page)).toBe(17);
+});
+
+test("RD-80 RD-78 each person's Easy view pick is kept separately: Chase turns it On, Jo turns hers Off, Chase's stays On", async ({ page }) => {
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: 'Easy view, Off' }).click();
+  await expect(page.getByRole('heading', { name: 'Easy view' })).toBeVisible();
+  await expect(page.getByText('Bigger words, and a word under each button at the bottom of the screen.')).toBeVisible();
+  await expect(page.getByRole('radio', { name: 'Off', exact: true })).toBeChecked();
+  await page.getByRole('radio', { name: 'On', exact: true }).click();
+  await expect(page.getByRole('radio', { name: 'On', exact: true })).toBeChecked();
+  await expect.poll(() => tabWordsShown(page)).toEqual(['Gallery', 'Share', 'Feed', 'More']); // at once, no reload
+
+  await asJo(page);
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: 'Easy view, On' }).click();
+  await page.getByRole('radio', { name: 'Off', exact: true }).click();
+  await expect.poll(() => tabWordsShown(page)).toEqual(['', '', '']);
+
+  await asChase(page);
+  await expect.poll(() => tabWordsShown(page)).toEqual(['Gallery', 'Share', 'Feed', 'More']);
+  await page.reload();
+  await galleryLoaded(page);
+  await expect.poll(() => tabWordsShown(page)).toEqual(['Gallery', 'Share', 'Feed', 'More']);
+});
+
+// RD-92 (SPEC-REDESIGN 1h, DEC-67, Chase Nov 18): warm paper, soft photo shadows in light only, and the reaction pop
+// with its reduced-motion fallback, in the public demo at 393 px. Written first (red), Nov 18, by qa-tdd.
+// Soft expects, so one run shows every part of RD-92 that is still missing.
+test('RD-92 warm paper, photo shadows and the reaction pop in the demo, light and dark, with reduced motion', async ({ page }) => {
+  const PAPER = 'rgb(241, 233, 210)';
+  const WARM_BLACK = 'rgb(20, 16, 13)';
+  const shots = path.join(__dirname, '..', 'test-results', 'rd-92');
+  // The page behind the app (the demo frame, the app root, body, html; the browser's white if none) and the Gallery
+  // backing (the first painted ancestor of the grid).
+  const backings = () => page.evaluate(() => {
+    const opaque = (c) => c && c !== 'transparent' && !/rgba\(\s*\d+,\s*\d+,\s*\d+,\s*0\s*\)/.test(c);
+    const bg = (el) => (el ? getComputedStyle(el).backgroundColor : null);
+    const pageEl = [document.querySelector('[data-testid="demo-frame"]'), document.getElementById('root'), document.body, document.documentElement].find((el) => el && opaque(bg(el)));
+    let g = document.querySelector('[data-testid="gallery-grid"]');
+    while (g && !opaque(bg(g))) g = g.parentElement;
+    return { page: pageEl ? bg(pageEl) : 'rgb(255, 255, 255)', gallery: g ? bg(g) : 'rgb(255, 255, 255)' };
+  });
+  // A photo tile's shadow: on the tile or one of its two wrappers.
+  const shadowNear = (loc) => loc.evaluate((el) => {
+    for (let n = el, i = 0; n && i < 3; n = n.parentElement, i++) {
+      const s = getComputedStyle(n).boxShadow;
+      if (s && s !== 'none') return s;
+    }
+    return 'none';
+  });
+  const galleryTile = () => page.locator('[data-testid^="gallery-tile-"]').filter({ visible: true }).first();
+  const feedPhoto = () => page.getByRole('button', { name: /^Open photo 1 of \d+/ }).filter({ visible: true }).first();
+  const love = () => page.getByRole('button', { name: 'Love it' }).filter({ visible: true }).first();
+  const loveOff = async () => {
+    if ((await love().getAttribute('aria-selected')) === 'true' || (await love().getAttribute('aria-pressed')) === 'true') {
+      await love().click();
+      await page.waitForTimeout(400);
+    }
+  };
+  // Sample for 400 ms from just before the tap: the biggest scale drawn inside the heart, when it first passed 1, and
+  // how far the heart and its neighbour (Haha) moved from where they started.
+  const tapAndSample = async () => {
+    await love().evaluate((btn) => {
+      const haha = btn.parentElement.querySelector('[aria-label="Haha"]');
+      const rect = (el) => el.getBoundingClientRect();
+      const scaleOf = (el) => {
+        const t = getComputedStyle(el).transform;
+        if (!t || t === 'none') return 1;
+        const m = /matrix\(([^)]+)\)/.exec(t);
+        return m ? Math.hypot(...m[1].split(',').slice(0, 2).map(Number)) : 1;
+      };
+      const start = { heart: rect(btn), haha: rect(haha) };
+      const t0 = performance.now();
+      window.__rd92 = new Promise((resolve) => {
+        const got = { maxScale: 1, firstAbove1: null, heartShift: 0, hahaShift: 0 };
+        const tick = () => {
+          const t = performance.now() - t0;
+          const s = Math.max(...[btn, ...btn.querySelectorAll('*')].map(scaleOf));
+          if (s > 1.001 && got.firstAbove1 === null) got.firstAbove1 = t;
+          got.maxScale = Math.max(got.maxScale, s);
+          const h = rect(btn); const n = rect(haha);
+          got.heartShift = Math.max(got.heartShift, Math.abs(h.x - start.heart.x), Math.abs(h.width - start.heart.width), Math.abs(h.y - start.heart.y));
+          got.hahaShift = Math.max(got.hahaShift, Math.abs(n.x - start.haha.x), Math.abs(n.y - start.haha.y));
+          if (t < 400) requestAnimationFrame(tick); else resolve(got);
+        };
+        requestAnimationFrame(tick);
+      });
+    });
+    await love().click();
+    return page.evaluate(() => window.__rd92);
+  };
+
+  // Light
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' });
+  await page.goto('/');
+  await galleryLoaded(page);
+  expect.soft(await backings()).toEqual({ page: PAPER, gallery: PAPER });
+  expect.soft(await shadowNear(galleryTile())).not.toBe('none');
+  await page.screenshot({ path: path.join(shots, 'rd-92-light-gallery.png') });
+  await onFeed(page);
+  expect.soft(await shadowNear(feedPhoto())).not.toBe('none');
+  await loveOff();
+  const pop = await tapAndSample();
+  expect.soft({ popped: pop.maxScale > 1, inTime: pop.firstAbove1 !== null && pop.firstAbove1 <= 250, heartShift: pop.heartShift <= 0.5, hahaShift: pop.hahaShift <= 0.5 })
+    .toEqual({ popped: true, inTime: true, heartShift: true, hahaShift: true });
+  await page.screenshot({ path: path.join(shots, 'rd-92-light-feed.png') });
+
+  // Reduced motion: no scale
+  await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
+  await page.goto('/');
+  await page.getByRole('tab', { name: /^Gallery/ }).click();
+  await galleryLoaded(page);
+  await onFeed(page);
+  await loveOff();
+  const calm = await tapAndSample();
+  expect.soft({ maxScale: calm.maxScale }).toEqual({ maxScale: 1 });
+
+  // Dark
+  await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'no-preference' });
+  await page.goto('/');
+  await page.getByRole('tab', { name: /^Gallery/ }).click();
+  await galleryLoaded(page);
+  expect.soft(await backings()).toEqual({ page: WARM_BLACK, gallery: WARM_BLACK });
+  expect.soft(await shadowNear(galleryTile())).toBe('none');
+  await page.screenshot({ path: path.join(shots, 'rd-92-dark-gallery.png') });
+  await onFeed(page);
+  expect.soft(await shadowNear(feedPhoto())).toBe('none');
+  await page.screenshot({ path: path.join(shots, 'rd-92-dark-feed.png') });
 });

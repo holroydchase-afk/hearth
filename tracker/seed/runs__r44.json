@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-18T06:45:00-05:00",
+ "label": "GUX-R15 reworked to a stronger picked tint, no outline (staff-pm call keeping LIVE-3): tests written first (red)",
+ "passed": 1404,
+ "failed": 12,
+ "results": {},
+ "note": "Red on purpose, 1 run at 3a0e5b2 plus the reworked screens/__tests__/guxPaper.test.tsx, typecheck clean. jest 1404 passed, 12 failed (1 skipped, 1 todo): GUX-R15 picked tint x6 (light/dark x ember/forest/plum; accentSoft is 1.10:1 on paper light, 1.35:1 dark, need 3:1), GUX-R15 unpicked no background/border x2 and no-move x1 (1.5 pt edge), plus LIVE-3, R21 and RD-4 failing on the engineer's 1.5 pt outline (the revert fixes those). e2e, backend, Deno not run (no change there). e2e/results/gux-r15-tint-red-2026-11-18.txt"
+}

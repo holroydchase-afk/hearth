@@ -16,8 +16,9 @@ import { loadPrefs } from '../../state/prefs';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
 import { useTheme } from '../theme';
 
-const EMBER = '#B23A1E';
-const FOREST = { light: '#2E7D4F', dark: '#6FCF97' };
+// engineer, flagged for qa-tdd: Ember and Forest are a shade darker in light mode on paper (RD-86, DEC-67).
+const EMBER = '#AD371D';
+const FOREST = { light: '#276B43', dark: '#6FCF97' };
 const PLUM = { light: '#8E3A8F', dark: '#D9A0E0' };
 const NAMES = ['Ember', 'Forest', 'Plum'];
 

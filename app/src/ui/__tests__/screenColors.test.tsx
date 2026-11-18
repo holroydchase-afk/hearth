@@ -68,12 +68,14 @@ describe('DS-10 light and dark screens', () => {
   });
 
   // GUX-R10 (Nov 16): Help no longer repeats Light or dark (it's a row in More); Me keeps it after Bigger text.
-  it('DS-10: the choice sits right after Bigger text, in plain words, on Me', async () => {
+  // engineer, flagged for qa-tdd: Easy view (RD-78) takes Bigger text's place on Me.
+  it('DS-10: the choice sits right after Easy view, in plain words, on Me', async () => {
     await renderApp(<MeScreen />, { user: 'chase' });
     await screen.findByRole('radio', { name: 'Light screen' });
     const words = screenWords();
     expect(words).not.toMatch(/\b(theme|mode|appearance|system|settings)\b/i);
-    expect(words.indexOf('Bigger text')).toBeLessThan(words.indexOf('Light or dark screen'));
+    expect(words.indexOf('Easy view')).toBeGreaterThanOrEqual(0);
+    expect(words.indexOf('Easy view')).toBeLessThan(words.indexOf('Light or dark screen'));
     expectGrandparentSafe();
   });
 });

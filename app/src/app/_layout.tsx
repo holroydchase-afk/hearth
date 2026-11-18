@@ -2,7 +2,8 @@
 // Copyright (C) 2026 Chase Holroyd
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
+import { Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { DemoChrome } from '../demo/DemoChrome';
 import { DEMO_MODE } from '../demo/flags';
@@ -27,9 +28,16 @@ const nav: Nav = {
   goJoin: (code) => router.push({ pathname: '/join/[code]', params: { code } }),
 };
 
-/** DS-10: clock and battery readable on the picked light or dark screen. */
+/** DS-10: clock and battery readable on the picked light or dark screen. RD-87 (DEC-67): on the web, the page
+ *  around the app is the paper too (html and body), so no browser white shows past the app's edges. */
 function ThemedStatusBar() {
-  return <StatusBar style={statusBarStyle(useTheme().dark)} />;
+  const { dark, c } = useTheme();
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+    document.documentElement.style.backgroundColor = c.bg;
+    document.body.style.backgroundColor = c.bg;
+  }, [c.bg]);
+  return <StatusBar style={statusBarStyle(dark)} />;
 }
 
 export default function RootLayout() {

@@ -138,7 +138,9 @@ describe('RD-44 Gallery is a months mosaic, like the newest Apple Photos', () =>
     }
     expect(gap).toBe(8);
     // UX-R7's negative side margins are gone: nothing in the grid steps outside the screen's 16 pt padding.
-    const negative = [grid, ...grid.findAll(isHost)].map((n) => flat(n.props.style))
+    // engineer, flagged for qa-tdd: RD-83's month title backing spans the full width on purpose (pinnedBlock.test),
+    // so the month headers are left out; the photos and rows still stay inside.
+    const negative = [grid, ...grid.findAll(isHost)].filter((n) => n.props.accessibilityRole !== 'header').map((n) => flat(n.props.style))
       .filter((s) => [s.marginHorizontal, s.marginLeft, s.marginRight, s.marginStart, s.marginEnd].some((m) => Number(m ?? 0) < 0));
     expect(negative).toEqual([]);
   });

@@ -9,7 +9,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { FeedPost } from '../api/HearthApi';
 import { useNav } from '../state/nav';
-import { MIN_TARGET, RADIUS, SPACE, WEIGHT, useTheme } from '../ui/theme';
+import { MIN_TARGET, RADIUS, SPACE, WEIGHT, photoShadow, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
 import { VideoPoster } from './VideoPoster';
 
@@ -42,44 +42,45 @@ export function collageTiles(n: number, single = 4 / 3): { aspect: number; wide:
 /** from: who sent it and the day ("Chase, Nov 3"), read out after each photo's place (HIG-9). */
 export function PhotoCollage({ postId, media, from }: { postId: string; media: CollageMedia[]; from?: string }) {
   const nav = useNav();
-  const { c } = useTheme();
+  const { c, dark } = useTheme();
   const n = media.length;
   const { big, small, more } = collageShape(n);
 
+  // RD-88: each tile sits in a wrapper with the same place and size that carries the light-mode shadow; the tile
+  // inside keeps its own corners and clips the photo.
   const tile = (i: number, style: object) => {
     const extra = more && i === big + small - 1 ? more : 0;
     const m = media[i]!;
     const pid = m.postId ?? postId;
     const at = m.index ?? i;
     const by = m.from ?? from;
-    if (m.kind === 'video' && !extra) {
-      // VID-18: the poster with its own Play button; the rest of the tile still opens the post screen.
-      return (
-        <VideoPoster
-          key={m.media_id}
-          postId={pid}
-          mediaId={m.media_id}
-          onOpen={() => nav.openViewer(pid, at)}
-          openLabel={`Open video ${i + 1} of ${n} full screen`}
-          style={[styles.tile, { backgroundColor: c.photo }, style]}
-        />
-      );
-    }
     return (
-      <Pressable
-        key={media[i]!.media_id}
-        accessibilityRole="button"
-        accessibilityLabel={`Open photo ${i + 1} of ${n} full screen${extra ? `, and ${extra} more` : ''}${by ? `, from ${by}` : ''}`}
-        onPress={() => nav.openViewer(pid, at)}
-        style={[styles.tile, { backgroundColor: c.photo }, style]}
-      >
-        <MediaImage postId={pid} mediaId={m.media_id} fit="cover" full={m.kind !== 'video'} compact={i >= big} style={{ flex: 1 }} />
-        {extra ? (
-          <View style={styles.more} pointerEvents="none">
-            <Text style={styles.moreText}>{`+${extra}`}</Text>
-          </View>
-        ) : null}
-      </Pressable>
+      <View key={m.media_id} style={[styles.shadowBox, style, photoShadow(dark)]}>
+        {m.kind === 'video' && !extra ? (
+          // VID-18: the poster with its own Play button; the rest of the tile still opens the post screen.
+          <VideoPoster
+            postId={pid}
+            mediaId={m.media_id}
+            onOpen={() => nav.openViewer(pid, at)}
+            openLabel={`Open video ${i + 1} of ${n} full screen`}
+            style={[styles.tile, { backgroundColor: c.photo }, style]}
+          />
+        ) : (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Open photo ${i + 1} of ${n} full screen${extra ? `, and ${extra} more` : ''}${by ? `, from ${by}` : ''}`}
+            onPress={() => nav.openViewer(pid, at)}
+            style={[styles.tile, { backgroundColor: c.photo }, style]}
+          >
+            <MediaImage postId={pid} mediaId={m.media_id} fit="cover" full={m.kind !== 'video'} compact={i >= big} style={{ flex: 1 }} />
+            {extra ? (
+              <View style={styles.more} pointerEvents="none">
+                <Text style={styles.moreText}>{`+${extra}`}</Text>
+              </View>
+            ) : null}
+          </Pressable>
+        )}
+      </View>
     );
   };
 
@@ -100,6 +101,7 @@ export function PhotoCollage({ postId, media, from }: { postId: string; media: C
 const styles = StyleSheet.create({
   gap: { gap: SPACE.sm },
   row: { flexDirection: 'row' },
+  shadowBox: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, borderRadius: RADIUS.photo },
   tile: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, overflow: 'hidden', borderRadius: RADIUS.photo },
   // RD-54: a solid dark chip in the corner, the same in light and dark (the photo stays clear around it).
   more: { position: 'absolute', right: SPACE.sm, bottom: SPACE.sm, backgroundColor: '#1C1C1E', borderRadius: RADIUS.medium, paddingHorizontal: 10, paddingVertical: 6 },

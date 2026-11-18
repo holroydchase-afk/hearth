@@ -6,7 +6,7 @@ import { COLOR_NAMES, MIN_TARGET, RADIUS, SPACE, paletteFor, typeScale } from '.
 
 export function portableTokens() {
   return {
-    $description: 'Hearth design tokens, generated from app/src/ui/theme.ts (DS-2, DS-13, RD-1..RD-8, RD-44, RD-55). Do not edit by hand.',
+    $description: 'Hearth design tokens, generated from app/src/ui/theme.ts (DS-2, DS-13, RD-1..RD-8, RD-44, RD-55, RD-84..RD-86). Do not edit by hand.',
     font: {
       family: 'system (SF Pro on iPhone, Roboto on Android, system-ui on the web)',
       weight: { regular: 400, medium: 500, semibold: 600 },

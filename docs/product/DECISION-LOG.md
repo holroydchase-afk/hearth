@@ -472,5 +472,19 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** Chase: "their monthly timeline looks much better", "the search and filters are in an odd place", "our fonts are very heavy". Every reaction and photo stays in sight with one tap (grandparents); a box that says Search is easy to explain over the phone.
 - **Source:** `app/src/screens/__tests__/photosStyle.test.tsx`, `app/src/ui/__tests__/relativeTime.test.ts`, `app/e2e-web/demo.spec.js`; persona check `decisions/2026-11-17-photos-style.md`
 
+### DEC-66 · Easy view: words under tabs and bigger text, on for grandparents, off for parents (RD-74..RD-81)
+- **When / status:** Nov 17 · Chase: "labels under tab icons should be off by default" behind a profile setting, "Easy view"; then "On for grandparents, off for parents" · Specced, failing tests next
+- **Chose:** one More setting, "Easy view" (On/Off in words), that replaces Bigger text and bundles words under the tab icons with the bigger text sizes. Default On for viewers (invited grandparents), Off for owners and adults. A saved Bigger text choice carries over. Parents see icon-only tabs that still speak their names and stay 48 pt.
+- **Over:** words under every tab for everyone (rule 3, DS-5 as written); a separate "Tab words" switch next to Bigger text; Off for everyone with grandparents told to turn it on.
+- **Because:** parents want the cleaner look of the apps they use; grandparents keep every word with nothing to set. One switch is one sentence over the phone.
+- **Source:** `docs/product/SPEC-REDESIGN.md` 1g; persona check `decisions/2026-11-17-easy-view.md`
+
+### DEC-67 · Warm paper, soft photo shadows, a reaction pop (RD-84..RD-93)
+- **When / status:** Nov 18 · Chase: "use the warm paper, the photo shadows, pop reactions"; tried paper `#F1E9D2` in a tester and kept it; "Leave out the Tuesday Nov 17 above the greeting" · Specced, failing tests next
+- **Chose:** light pages in warm paper `#F1E9D2` with fields and capsules ~4.5% darker and hairlines ~9% darker, warm ink; dark pages warm near-black `#14100D` with warm ink. A soft shadow under Gallery tiles, New for you tiles and Feed photos in light mode only. A quick pop (1 → 1.25 → 1, ≤ 250 ms) when a reaction is turned on, none with Reduce Motion. No date line above the greeting.
+- **Over:** RD-1's white `#FFFFFF` and true black ("no warm off-white") and RD-34's plain white; mockup A's lighter paper `#FBF8F3` and its date line; option B (family moments); option C's accent band and Ember month titles (RD-4 keeps accent for "tap here").
+- **Because:** the white look read clinical; paper feels like a photo album and still keeps one plain page with no gray boxes. Shadows lift photos off the page without cards. The pop confirms a tap without words.
+- **Source:** `docs/product/SPEC-REDESIGN.md` 1h; persona check `decisions/2026-11-18-warm-paper.md`
+
 ---
-Last updated: Nov 17, 2026 (DEC-65)
+Last updated: Nov 18, 2026 (DEC-67)

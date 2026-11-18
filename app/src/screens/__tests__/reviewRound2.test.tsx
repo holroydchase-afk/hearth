@@ -109,7 +109,10 @@ describe('UX-R13 (P1) Gallery: one wide photo per month; quiet days join into a 
     const grid = screen.getByTestId('gallery-grid');
     await waitFor(() => expect(within(grid).getAllByTestId(/^gallery-tile-/)).toHaveLength(5));
     const rows = within(grid).getAllByTestId('gallery-grid-row');
-    const shape = rows.map((r) => hostKids(r).map((k) => (/^gallery-tile-/.test(String(k.props.testID ?? '')) ? 'tile' : 'filler')));
+    // engineer, flagged for qa-tdd: RD-88 puts each tile in a shadow wrapper; a row's kid is a tile when it is one
+    // or holds exactly one.
+    const isTile = (k: Inst) => /^gallery-tile-/.test(String(k.props.testID ?? ''));
+    const shape = rows.map((r) => hostKids(r).map((k) => (isTile(k) || (hostKids(k).length === 1 && isTile(hostKids(k)[0]!)) ? 'tile' : 'filler')));
     expect({ bad: shape.filter((r) => r.length < 2 || r.length > 3 || r.some((k) => k !== 'tile')) }).toEqual({ bad: [] });
   });
 
@@ -228,7 +231,7 @@ describe('UX-R16 (P1) comments: no heading; one rounded "Add a comment…" field
 
 // =================================================================================================================
 describe('R17 (P2) More: one outline icon style; separators inset from the left', () => {
-  const ROWS = /^(Messages|Groups|Events|Bigger text|Light or dark|Family color|Me|Help)(,|$)/;
+  const ROWS = /^(Messages|Groups|Events|Easy view|Light or dark|Family color|Me|Help)(,|$)/; // engineer, flagged for qa-tdd: RD-78
   it('R17 every More row uses an outline symbol (no ".fill" / "filled" names)', async () => {
     await renderApp(<MoreScreen />, { user: 'chase' });
     await screen.findByRole('header', { name: 'More' }, slow);
@@ -269,22 +272,39 @@ describe('R17 (P2) More: one outline icon style; separators inset from the left'
 
 // =================================================================================================================
 describe('R18 (P2) Gallery: the month title sticks while scrolling', () => {
-  it('R18 each month title is a sticky header of the Gallery scroll (under the pinned search field)', async () => {
+  // engineer, flagged for qa-tdd (T21 / QA-R1): the old check passed whatever the titles did (they were never in the
+  // scroll's sticky child). RD-83 moved the titles to their own pinning: on a phone the title moves with the scroll
+  // offset (checked here, on a made-up layout), on the web it is CSS sticky (demo.spec.js R18 and RD-83).
+  const layout = (n: Inst, y: number, height: number) => act(async () => {
+    n.props.onLayout?.({ nativeEvent: { layout: { x: 0, y, width: 390, height } } });
+  });
+  const scrollTo = (scroll: Inst, y: number) => act(async () => {
+    fireEvent.scroll(scroll, { nativeEvent: { contentOffset: { x: 0, y }, contentSize: { width: 390, height: 3000 }, layoutMeasurement: { width: 390, height: 844 } } });
+  });
+  const shift = (h: Inst) => num(...((flat(h.props.style).transform as Record<string, unknown>[] | undefined) ?? []).map((x) => x.translateY));
+
+  it('R18 a month title stays under the pinned search field while its month scrolls by; the next one scrolls with its photos', async () => {
     const be = FakeBackend.withFixture();
     await seedPost(be, { caption: 'Hay ride', photos: 3, takenAt: new Date(2025, 9, 17, 15).toISOString() });
     await seedPost(be, { caption: 'Back to school', photos: 3, takenAt: new Date(2025, 8, 3, 9).toISOString() });
     await gallery(be);
     const scroll = screen.getByTestId('gallery-scroll');
-    await act(async () => {
-      fireEvent.scroll(scroll, { nativeEvent: { contentOffset: { x: 0, y: 600 }, contentSize: { width: 390, height: 3000 }, layoutMeasurement: { width: 390, height: 844 } } });
-    });
-    const months = ['October 2025', 'September 2025'].map((m) => screen.getByRole('header', { name: m }));
-    const sticky = (scroll.props.stickyHeaderIndices as number[] | undefined) ?? [];
-    const content = scroll.findAll(isHost)[0];
-    const kids = hostKids(content ?? scroll);
-    const isSticky = (h: Inst) => sticky.some((i) => kids[i] && (kids[i] === h || kids[i]!.findAll(isHost).includes(h)));
-    expect(months.map((h) => ({ month: h.props.accessibilityLabel, sticky: isSticky(h) })))
-      .toEqual([{ month: 'October 2025', sticky: true }, { month: 'September 2025', sticky: true }]);
+    let backing = screen.getAllByLabelText('Search photos').find(isHost)!.parent as Inst;
+    while (backing && !(isHost(backing) && backing.props.onLayout)) backing = backing.parent as Inst;
+    await layout(backing, 90, 60); // the bar ends 60 pt below the scroll's top once pinned
+    await layout(screen.getByTestId('gallery-grid'), 200, 1400);
+    const head = (m: string) => screen.getByRole('header', { name: m });
+    const block = (h: Inst) => { let p = h.parent as Inst; while (p && !(isHost(p) && p.props.onLayout)) p = p.parent as Inst; return p; };
+    await layout(block(head('October 2025')), 0, 600);
+    await layout(head('October 2025'), 0, 42);
+    await layout(block(head('September 2025')), 624, 600);
+    await layout(head('September 2025'), 0, 42);
+    for (const y of [0, 140, 400, 600]) {
+      await scrollTo(scroll, y);
+      const oct = 200 + shift(head('October 2025')) - y; // the title's top, from the scroll's top
+      const sep = 200 + 624 + shift(head('September 2025')) - y;
+      expect({ y, oct: Math.round(oct), sep: Math.round(sep) }).toEqual({ y, oct: Math.max(60, 200 - y), sep: 824 - y });
+    }
   });
 });
 

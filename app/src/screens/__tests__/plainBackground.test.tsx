@@ -6,7 +6,8 @@
 //
 // The engineer's contract:
 //   - Content (Gallery, Feed, post cards, New for you and its walk, Share, the top bar, the tab bar) draws on c.bg
-//     (white light, black dark) with no c.surface / c.fill box. Posts are split by a hairline in c.line plus space.
+//     (warm paper #F1E9D2 light, #14100D dark since RD-87, DEC-67; was white and black; engineer, flagged for
+//     qa-tdd) with no c.surface / c.fill box. Posts are split by a hairline in c.line plus space.
 //   - Grey stays only on: Settings-style lists under More (Bigger text, Light or dark, Family color, Help, Me), the
 //     text input fields (reply field, Share caption), and reaction / tinted capsules (buttons, chips, the "who can see" people, chat bubbles).
 //   - In source, c.surface / c.fill appear only inside the allowlisted components below. The Settings-style section
@@ -161,12 +162,13 @@ describe('RD-34 grey stays where Apple uses it (the other direction)', () => {
   for (const dark of LOOKS) {
     const name = lookName(dark);
 
-    it(`RD-34 More → Bigger text and Help (${name}) keep the grouped (grey) section`, async () => {
+    // engineer, flagged for qa-tdd: Easy view's page (RD-78) replaces Bigger text's.
+    it(`RD-34 More → Easy view and Help (${name}) keep the grouped (grey) section`, async () => {
       const c = pal(dark);
       const groupedOn = () => (screen.UNSAFE_root.findAll(isHost) as Inst[]).some((n) => grey(bgOf(n), c));
       const first = await renderApp(<MoreScreen />, { user: 'jo', kv: look(dark, jo.id) });
-      fireEvent.press(await screen.findByRole('button', { name: 'Bigger text' }));
-      await screen.findByRole('switch', { name: 'Bigger text' });
+      fireEvent.press(await screen.findByRole('button', { name: 'Easy view, On' }));
+      await screen.findByRole('radio', { name: 'On' });
       expect({ biggerText: groupedOn() }).toEqual({ biggerText: true });
       first.unmount();
       await renderApp(<HelpScreen />, { user: 'jo', kv: look(dark, jo.id) });

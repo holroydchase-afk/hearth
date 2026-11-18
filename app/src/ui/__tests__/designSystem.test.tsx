@@ -19,9 +19,10 @@ describe('DS native design system', () => {
     expect(big.title).toBeGreaterThan(big.base);
   });
 
-  it('DS-11 → RD-1: white and true black on every phone, light and dark, Ember by default (DEC-59 replaces the warm palette)', () => {
-    expect(paletteFor('ios', false)).toMatchObject({ bg: '#FFFFFF', accent: '#B23A1E' });
-    expect(paletteFor('ios', true)).toMatchObject({ bg: '#000000', accent: '#FF8A65' });
+  // engineer, flagged for qa-tdd: RD-84/85 (DEC-67) replaces white and true black with warm paper and warm near-black.
+  it('DS-11 → RD-84: warm paper and warm near-black on every phone, light and dark, Ember by default (DEC-67)', () => {
+    expect(paletteFor('ios', false)).toMatchObject({ bg: '#F1E9D2', accent: '#AD371D' });
+    expect(paletteFor('ios', true)).toMatchObject({ bg: '#14100D', accent: '#FF8A65' });
     expect(paletteFor('android', false)).toEqual(paletteFor('ios', false));
     expect(paletteFor('android', true)).toEqual(paletteFor('ios', true));
     expect(paletteFor('web', false)).toEqual(paletteFor('ios', false));

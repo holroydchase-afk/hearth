@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-18T01:30:00-05:00",
+ "label": "Warm paper, photo shadows, reaction pop (RD-84..RD-92, DEC-67): tests written first (red)",
+ "passed": 1376,
+ "failed": 22,
+ "results": {},
+ "note": "Red on purpose, 1 run each at 81d021d plus the new tests, typecheck clean. jest 1376 passed, 22 failed (1 skipped, 1 todo): 21 in the new ui/__tests__/warmPaper.test.ts (RD-84 paper palette and tokens.json, RD-85 warm dark, RD-86 Increase Contrast keeps paper) and screens/__tests__/warmPaper.test.tsx (RD-87 Gallery/Feed/More draw on paper, RD-88 tile and post photo shadows on a wrapper, RD-89 pop 1 to 1.25 to 1 by transform on the native driver, and the pop under way during the tap), plus 1 already failing before the new tests (B20 portfolioClaims). Already pass (guards): RD-86 contrast on today's palette x24, RD-87 source lint, RD-88 nothing-else and dark no-shadow, RD-89 off no pop, saved without the animation, no double count, RD-90 Reduce Motion no scale, RD-91 greeting first with no date above it. e2e:demo -g RD-92 red: page and Gallery white (dark: Gallery black, page white), no tile or Feed photo shadow, no pop; reduced motion and dark no-shadow pass. e2e:web, e2e:site, backend, Deno not run (no SQL or function change). e2e/results/warm-paper-red-2026-11-18.txt"
+}

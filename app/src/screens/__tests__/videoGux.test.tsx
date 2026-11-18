@@ -107,7 +107,8 @@ function Light({ color, children }: { color: ColorName; children: React.ReactNod
 }
 
 describe('GUX-R2 the player is always dark, on the palette\'s own background, and its words read', () => {
-  it.each(COLOR_NAMES)('GUX-R2 %s, phone in light mode: player background is the dark palette bg (true black since RD-1); every word >= 4.5:1', async (color) => {
+  // engineer, flagged for qa-tdd: title only; the dark bg is warm near-black #14100D since RD-85 (DEC-67).
+  it.each(COLOR_NAMES)('GUX-R2 %s, phone in light mode: player background is the dark palette bg (warm near-black since RD-85); every word >= 4.5:1', async (color) => {
     const dark = paletteFor('ios', true, color);
     const { be, v } = await family();
     await renderApp(<Light color={color}><ViewerScreen postId={v.id} index={0} /></Light>, { be, user: 'jo' });

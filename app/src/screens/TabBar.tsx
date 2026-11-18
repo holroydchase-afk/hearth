@@ -3,7 +3,8 @@
 // Tabs: the phone's own tab bar on Android (see app/(tabs)/_layout.tsx), this bar on iPhone and the web.
 // Every tab has a system symbol and a word (HIG Tab bars; DS-3), 17 pt labels (DS-2), labels that never
 // hide (DS-5) and 48 pt+ targets (DS-1). RD-9 (SPEC-REDESIGN 1b, DEC-59): parents Gallery, Share, Feed, More;
-// viewers Gallery, Feed, More. RD-14: a new message puts an accent dot on More.
+// viewers Gallery, Feed, More. RD-14: a new message puts an accent dot on More. RD-76 / RD-77 (DEC-66): the words
+// show only with Easy view On; Off, the tabs are icons only and keep their spoken names, role, state and 48 pt.
 import { SymbolView } from 'expo-symbols';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
@@ -36,6 +37,11 @@ export const NATIVE_TAB_OPTIONS = {
   labelStyle: { fontSize: 17 }, // DS-2: platform tab labels are 10–12 pt; RD-2 the phone's own font
 } as const;
 
+/** RD-76: Android's own bar shows its words only with Easy view On; the word stays the tab's spoken name. */
+export function nativeLabelMode(easyView: boolean): 'labeled' | 'unlabeled' {
+  return easyView ? 'labeled' : 'unlabeled';
+}
+
 const ALL: Record<TabName, TabDef> = {
   gallery: { name: 'gallery', label: 'Gallery' },
   share: { name: 'share', label: 'Share' },
@@ -55,8 +61,8 @@ export function tabSpoken(tab: TabDef, newMessages: number): string {
 export function HearthTabBar({ role, current, onNavigate, newMessages = 0 }: {
   role: Role; current: TabName; onNavigate: (t: TabName) => void; newMessages?: number;
 }) {
-  const { c, bigText } = useTheme();
-  const t = typeScale(bigText);
+  const { c, bigText: easyView } = useTheme(); // the theme's big-text flag is Easy view (RD-77)
+  const t = typeScale(easyView);
   const insets = useSafeAreaInsets();
   const { fontScale } = useWindowDimensions();
   // UX-R1 / RD-35: while a text field is focused the bar is not drawn, so the field can sit right above the keyboard.
@@ -92,7 +98,7 @@ export function HearthTabBar({ role, current, onNavigate, newMessages = 0 }: {
               {/* RD-14: the dot is spoken through the tab's name ("More, new message"), so it is only drawn. */}
               {dot ? <View testID="more-dot" accessible={false} style={[styles.dot, { backgroundColor: c.accent, borderColor: c.bg }]} /> : null}
             </View>
-            <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ fontSize: t.base, fontWeight: on ? WEIGHT.semibold : WEIGHT.regular, color }}>{tab.label}</Text>
+            {easyView ? <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ fontSize: t.base, fontWeight: on ? WEIGHT.semibold : WEIGHT.regular, color }}>{tab.label}</Text> : null}
           </Pressable>
         );
       })}

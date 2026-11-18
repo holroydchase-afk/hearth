@@ -65,8 +65,14 @@ function neutral(v: unknown): boolean {
     if (m) rgb = [m[1], m[2], m[3]].map(Number);
   }
   if (!rgb) return false;
-  return Math.max(...rgb) - Math.min(...rgb) <= 8;
+  // engineer, flagged for qa-tdd: since RD-84/85 (DEC-67) the page grays are warm (paper family), so a palette
+  // gray counts as neutral too; the family accent and its tint still don't.
+  return Math.max(...rgb) - Math.min(...rgb) <= 8 || PAGE_GRAYS.has(s.toUpperCase());
 }
+const PAGE_GRAYS = new Set([false, true].flatMap((d) => [false, true].flatMap((hi) => {
+  const p = paletteFor('ios', d, 'ember', hi);
+  return [p.bg, p.surface, p.ink, p.muted, p.line, p.fill, p.photo].map((v) => v.toUpperCase());
+})));
 
 // ---------------------------------------------------------------------------------------------------------------
 // GUX-R1: a top-left text back button "‹ More" / "‹ Gallery".
@@ -101,7 +107,8 @@ describe('GUX-R1 a top-left "‹ More" / "‹ Gallery" back button', () => {
   it('GUX-R1 every screen opened from More shows "‹ More" at the top left, a 48 pt text button, not a full-width capsule', async () => {
     await renderApp(<MoreScreen />, { user: 'chase' });
     await screen.findByRole('header', { name: 'More' });
-    for (const row of ['Messages', 'Groups', 'Events', 'Bigger text', 'Light or dark', 'Family color', 'Me', 'Help']) {
+    // engineer, flagged for qa-tdd: RD-78 Easy view takes Bigger text's row.
+    for (const row of ['Messages', 'Groups', 'Events', 'Easy view', 'Light or dark', 'Family color', 'Me', 'Help']) {
       fireEvent.press(screen.getByRole('button', { name: new RegExp(`^${row}(,|$)`) }));
       await screen.findByRole('button', { name: 'Back to More' }, slow);
       expectTopBack('More');
@@ -162,10 +169,11 @@ describe('GUX-R2 plain grouped rows, one level: no box inside a box', () => {
     expect(boxesInBoxes()).toEqual([]);
   });
 
-  it('GUX-R2 Bigger text (from More): the switch row is a plain row in one section', async () => {
+  // engineer, flagged for qa-tdd: RD-78 Easy view's On / Off rows replace the Bigger text switch.
+  it('GUX-R2 Easy view (from More): the On and Off rows are plain rows in one section', async () => {
     await renderApp(<MoreScreen />, { user: 'jo' });
-    fireEvent.press(await screen.findByRole('button', { name: 'Bigger text' }));
-    await screen.findByRole('switch', { name: 'Bigger text' });
+    fireEvent.press(await screen.findByRole('button', { name: 'Easy view, On' }));
+    await screen.findByRole('radio', { name: 'On' });
     expect(boxesInBoxes()).toEqual([]);
   });
 
@@ -411,15 +419,16 @@ describe('GUX-R9 neutral avatars and accent check marks', () => {
 // ---------------------------------------------------------------------------------------------------------------
 
 describe('GUX-R10 Help', () => {
-  it('GUX-R10 Help has no Bigger text or Light or dark (they are rows in More); More still has both', async () => {
+  // engineer, flagged for qa-tdd: Bigger text is Easy view now (RD-78).
+  it('GUX-R10 Help has no Easy view or Light or dark (they are rows in More); More still has both', async () => {
     const r = await renderApp(<HelpScreen />, { user: 'jo' });
     await screen.findByText('How should we tell you about new photos?');
-    expect(screen.queryByRole('switch', { name: 'Bigger text' })).toBeNull();
+    expect(screen.queryByText(/Easy view|Bigger text/)).toBeNull();
     for (const name of ['Light screen', 'Dark screen', 'Same as my phone (Recommended)']) expect(screen.queryByRole('radio', { name })).toBeNull();
     expect(screen.queryByText('Light or dark screen')).toBeNull();
     r.unmount();
     await renderApp(<MoreScreen />, { user: 'jo' });
-    expect(await screen.findByRole('button', { name: 'Bigger text' })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'Easy view, On' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Light or dark' })).toBeTruthy();
   });
 

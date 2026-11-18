@@ -20,7 +20,7 @@ import { useTheme } from '../ui/theme';
 import { AppGate } from './AppGate';
 import { EventCard, EventsScreen, EventUpdate, type EventsView } from './EventsScreen';
 import { FOLD_AT, GalleryTopBar, LargeGreeting, SearchField, greeting, useFamilyName } from './GalleryTop';
-import { GalleryGrid } from './GalleryGrid';
+import { GalleryGrid, shadeLine } from './GalleryGrid';
 import { NewForYouRow, OneAtATime } from './NewForYou';
 import { PostCard } from './PostCard';
 import { QueueStatus } from './QueueStatus';
@@ -81,10 +81,16 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   // month's title then sticks right under it (pinAt: the field's height with its 8 pt below).
   const [pinAt, setPinAt] = useState(0);
   const [relayout, setRelayout] = useState(0);
+  // RD-82: where the field sits in the scroll; once the list scrolls past it, content is under the pinned bar.
+  const fieldAt = useRef(0);
+  const [under, setUnder] = useState(false);
+  // RD-83: while a month title is pinned under the bar, the shade sits under the title instead (one pinned block).
+  const [monthPinned, setMonthPinned] = useState(false);
   const onScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
     scrollY.setValue(y);
     setFolded(y > FOLD_AT);
+    setUnder(y > Math.max(fieldAt.current, 0));
   }, [scrollY]);
   if (app.status !== 'ready' || !app.space || !app.feed) return <AppGate />;
   const feed = app.feed;
@@ -189,12 +195,19 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
         >
           {/* RD-11 / RD-55: the greeting is the large title; RD-47: the "Search photos" field right under it. */}
           <View style={words ? null : { marginBottom: -16 }}>{words ? <LargeGreeting words={words} scrollY={scrollY} /> : null}</View>
-          <View style={{ backgroundColor: c.bg, paddingBottom: 8, marginBottom: -8 }} onLayout={(e) => setPinAt(e.nativeEvent.layout.height)}>
+          {/* RD-82 (Chase, Nov 17): the pinned bar's backing spans the full screen width (it steps out of the scroll's
+              16 pt padding and puts it back inside), so nothing shows past its edges; a soft shade below it once
+              content is under it, none at the top. */}
+          <View
+            style={{ backgroundColor: c.bg, paddingBottom: 8, marginBottom: -8, marginHorizontal: -16, paddingHorizontal: 16 }}
+            onLayout={(e) => { setPinAt(e.nativeEvent.layout.height); fieldAt.current = e.nativeEvent.layout.y; }}
+          >
             <SearchField testID="search-field" onPress={() => setSearch(true)} />
+            {under && !monthPinned ? <View testID="search-bar-shade" pointerEvents="none" accessible={false} style={[shadeLine, { backgroundColor: c.line }]} /> : null}
           </View>
           {header}
           {empty}
-          {state.posts.length ? <GalleryGrid posts={state.posts} scrollY={scrollY} pinAt={pinAt} relayout={relayout} /> : null}
+          {state.posts.length ? <GalleryGrid posts={state.posts} scrollY={scrollY} pinAt={pinAt} relayout={relayout} onPinned={setMonthPinned} /> : null}
           {older}
         </ScrollView>
       </SafeAreaView>

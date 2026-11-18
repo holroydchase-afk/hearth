@@ -4,6 +4,7 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 import React from 'react';
 import { HearthTabBar, tabsFor, usesNativeTabs, type TabName } from '../TabBar';
 import { expectGrandparentSafe } from '../../test/renderApp';
+import { BigTextContext } from '../../ui/theme';
 
 describe('tabs', () => {
   // RD-9 (SPEC-REDESIGN 1b) replaced Photos/Help (viewers) and Photos/Share/Groups/Me (posters).
@@ -19,9 +20,10 @@ describe('tabs', () => {
     expect(tabsFor('adult').map((t) => t.label)).toEqual(['Gallery', 'Share', 'Feed', 'More']);
   });
 
-  it('words under icons, 48 pt, and it navigates', () => {
+  // engineer, flagged for qa-tdd: words under the icons only with Easy view On (RD-77, DEC-66); Off is easyView.test.tsx.
+  it('words under icons (Easy view On), 48 pt, and it navigates', () => {
     const go = jest.fn();
-    render(<HearthTabBar role="owner" current={'gallery' as string as TabName} onNavigate={go} />);
+    render(<BigTextContext.Provider value><HearthTabBar role="owner" current={'gallery' as string as TabName} onNavigate={go} /></BigTextContext.Provider>);
     expect(screen.getByText('Share')).toBeTruthy();
     fireEvent.press(screen.getByRole('tab', { name: 'Share' }));
     expect(go).toHaveBeenCalledWith('share');

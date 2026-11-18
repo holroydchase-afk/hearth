@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 // Redesign 1b, getting around (docs/product/SPEC-REDESIGN.md RD-9..RD-17, DEC-59). Tabs Gallery, Share, Feed,
 // More (viewers: Gallery, Feed, More); Gallery opens first under a time-of-day greeting that folds into a solid
-// top bar; the top bar's right side is only Search and By date; Messages, Groups, Events, Bigger text, Light or
+// top bar; the top bar's right side is only Search and By date; Messages, Groups, Events, Easy view (was Bigger text), Light or
 // dark, Family color, Me and Help live in More. Members never see a group's name (DEC-49). Written first (Nov 15).
 // RD-10 (Gallery picked on open) is in redesignStart.test.tsx (it mocks expo-router). RD-12 on phones: RD-28 (manual).
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react-native';
@@ -16,7 +16,7 @@ import { seedPost } from '../../test/seed';
 import { FeedScreen, GalleryScreen, MoreScreen, greeting, titleMotion } from '../../test/redesignScreens';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
 import { tapSearchField } from '../../test/galleryEntry';
-import { paletteFor } from '../../ui/theme';
+import { BigTextContext, paletteFor } from '../../ui/theme';
 import { MeScreen } from '../MeScreen';
 import { HearthTabBar, TAB_ICONS, tabsFor } from '../TabBar';
 
@@ -44,11 +44,13 @@ async function withPosts() {
 }
 
 describe('RD-9 tabs', () => {
-  it('RD-9 a parent\'s tabs read Gallery, Share, Feed, More, in that order, each with an icon and its word', () => {
+  // engineer, flagged for qa-tdd: the word under each icon shows with Easy view On (RD-77, DEC-66 supersedes RD-9's
+  // "each with its word"); Off (icons only) is covered in easyView.test.tsx.
+  it('RD-9 a parent\'s tabs read Gallery, Share, Feed, More, in that order, each with an icon and (Easy view On) its word', () => {
     for (const role of ['owner', 'adult'] as const) {
       expect({ role, tabs: tabsFor(role).map((t) => t.label) }).toEqual({ role, tabs: ['Gallery', 'Share', 'Feed', 'More'] });
     }
-    render(<TabBar role="owner" current="gallery" onNavigate={() => {}} />);
+    render(<BigTextContext.Provider value><TabBar role="owner" current="gallery" onNavigate={() => {}} /></BigTextContext.Provider>);
     const tabs = screen.getAllByRole('tab');
     expect(tabs.map((t) => t.props.accessibilityLabel)).toEqual(['Gallery', 'Share', 'Feed', 'More']);
     for (const [i, word] of ['Gallery', 'Share', 'Feed', 'More'].entries()) {
@@ -171,8 +173,9 @@ describe('RD-13 top bar (superseded by RD-47)', () => {
 });
 
 describe('RD-14 new messages on More', () => {
+  // engineer, flagged for qa-tdd: the viewer's default Easy view On shows the word (RD-77); RD-76 covers Off.
   it('RD-14 a new message puts an accent dot on More\'s tab, spoken "More, new message"; the word stays More', () => {
-    const r = render(<TabBar role="viewer" current="gallery" onNavigate={() => {}} newMessages={2} />);
+    const r = render(<BigTextContext.Provider value><TabBar role="viewer" current="gallery" onNavigate={() => {}} newMessages={2} /></BigTextContext.Provider>);
     const more = screen.getByRole('tab', { name: 'More, new message' });
     expect(within(more).getByText('More')).toBeTruthy();
     const dot = within(more).getByTestId('more-dot');
@@ -203,7 +206,8 @@ describe('RD-14 new messages on More', () => {
 });
 
 describe('RD-15 More', () => {
-  const ALL = ['Messages', 'Groups', 'Events', 'Bigger text', 'Light or dark', 'Family color', 'Me', 'Help'];
+  // engineer, flagged for qa-tdd: RD-78 (DEC-66) renames Bigger text to Easy view in the same place.
+  const ALL = ['Messages', 'Groups', 'Events', 'Easy view', 'Light or dark', 'Family color', 'Me', 'Help'];
 
   it.each([
     ['owner', 'chase', ALL],
@@ -227,7 +231,7 @@ describe('RD-15 More', () => {
     ['Messages', { header: 'Messages' }],
     ['Groups', { header: 'Your groups' }],
     ['Events', { header: 'Events' }],
-    ['Bigger text', { switch: 'Bigger text' }],
+    ['Easy view', { header: 'Easy view' }], // engineer, flagged for qa-tdd: RD-78's page replaces the switch
     ['Light or dark', { header: 'Light or dark screen' }],
     ['Family color', { header: 'Family color' }],
     ['Me', { header: 'Me' }],
@@ -235,8 +239,7 @@ describe('RD-15 More', () => {
   ] as const)('RD-15 More → %s opens today\'s screen with a Back word button that returns to More', async (row, shows) => {
     await renderApp(<MoreScreen />, { user: 'chase' });
     fireEvent.press(await screen.findByRole('button', { name: new RegExp(`^${row}(,|$)`) }));
-    if ('header' in shows) expect(await screen.findByRole('header', { name: shows.header }, slow)).toBeTruthy();
-    else expect(await screen.findByRole('switch', { name: shows.switch })).toBeTruthy();
+    expect(await screen.findByRole('header', { name: shows.header }, slow)).toBeTruthy();
     expect(screen.queryByRole('header', { name: 'More' })).toBeNull(); // fills the screen in place of the menu
     const back = screen.getByRole('button', { name: 'Back to More' });
     expect(within(back).getByText(/(^|‹ ?)More$/)).toBeTruthy(); // GUX-R1: shows "‹ More", spoken "Back to More"
