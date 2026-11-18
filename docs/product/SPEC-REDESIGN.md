@@ -162,6 +162,8 @@ Chase, Nov 18: "use the warm paper, the photo shadows, pop reactions." Mockup: t
 | RD-92 | In the public demo (light, 393 px): the page behind the app and Gallery's backing compute to `rgb(241, 233, 210)`; a Gallery tile and a Feed photo have a non-`none` box shadow; tapping ❤️ on a post shows a scale above 1 within 250 ms and the heart's box doesn't shift its neighbours; with reduced motion emulated, no scale. In dark, the page is `rgb(20, 16, 13)` and tiles have no box shadow. Screenshots light and dark saved for the review. | auto (Playwright) |
 | RD-93 | On Chase's iPhone (Expo Go) and one Android, light and dark, outdoors or in a bright room: paper reads warm, not dirty or yellow; shadows look soft, not muddy, and don't flicker while scrolling; the pop feels quick and stops with Reduce Motion on; every word is still easy to read. | manual |
 
+RD-89 / GUX-R15 (staff-pm, Nov 18, keeping Chase's Nov 5 "not a heavy outlined pill", LIVE-3): the picked reaction gets no outline; instead its capsule is an opaque tint with ≥ 3:1 against `c.bg` (light and dark, every family color), its count ≥ 4.5:1 on that tint, no background when unpicked, and the same size and padding either way (tests: `app/src/screens/__tests__/guxPaper.test.tsx`).
+
 ### Phase 1 gate (manual)
 | ID | Given / When / Then | Type |
 |---|---|---|
