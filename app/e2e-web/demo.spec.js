@@ -177,8 +177,9 @@ test('DEMO-BAR Reset asks first: Keep changes nothing; Reset restores and says s
 // RD-27 (SPEC-REDESIGN, DEC-59): Chase, the family's owner, can switch Family color and the demo recolors;
 // Grandma Jo's view stays Ember and has no picker. 1b: the picker is More → Family color (RD-15).
 test('RD-27 Chase switches Family color to Forest and the demo recolors; Grandma Jo stays Ember with no picker', async ({ page }) => {
-  const EMBER = 'rgb(178, 58, 30)';
-  const FOREST = 'rgb(46, 125, 79)';
+  // engineer, flagged for qa-tdd: Ember and Forest are a shade darker in light mode on paper (RD-86, DEC-67).
+  const EMBER = 'rgb(173, 55, 29)';
+  const FOREST = 'rgb(39, 107, 67)';
   // engineer, flagged for qa-tdd: Chase's tabs are icons only (Easy view Off, RD-76), so read the tab's drawn glyph or word, whichever it shows.
   const pickedTabColor = (name) => page.getByRole('tab', { name: new RegExp(`^${name}`) })
     .evaluate((el) => getComputedStyle([...el.querySelectorAll('*')].find((d) => d.children.length === 0 && d.textContent.trim() !== '') ?? el).color);

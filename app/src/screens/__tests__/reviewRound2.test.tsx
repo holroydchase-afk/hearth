@@ -109,7 +109,10 @@ describe('UX-R13 (P1) Gallery: one wide photo per month; quiet days join into a 
     const grid = screen.getByTestId('gallery-grid');
     await waitFor(() => expect(within(grid).getAllByTestId(/^gallery-tile-/)).toHaveLength(5));
     const rows = within(grid).getAllByTestId('gallery-grid-row');
-    const shape = rows.map((r) => hostKids(r).map((k) => (/^gallery-tile-/.test(String(k.props.testID ?? '')) ? 'tile' : 'filler')));
+    // engineer, flagged for qa-tdd: RD-88 puts each tile in a shadow wrapper; a row's kid is a tile when it is one
+    // or holds exactly one.
+    const isTile = (k: Inst) => /^gallery-tile-/.test(String(k.props.testID ?? ''));
+    const shape = rows.map((r) => hostKids(r).map((k) => (isTile(k) || (hostKids(k).length === 1 && isTile(hostKids(k)[0]!)) ? 'tile' : 'filler')));
     expect({ bad: shape.filter((r) => r.length < 2 || r.length > 3 || r.some((k) => k !== 'tile')) }).toEqual({ bad: [] });
   });
 

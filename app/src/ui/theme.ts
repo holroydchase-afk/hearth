@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Native first (docs/product/DESIGN-SYSTEM.md): each phone's own type ramp, font and controls, in black and white
-// with one family accent (RD-1..RD-8, DEC-59), plus Hearth's overrides (DS-1..DS-9). Nothing under 17 pt (DS-2).
+// Native first (docs/product/DESIGN-SYSTEM.md): each phone's own type ramp, font and controls, on warm paper
+// with one family accent (RD-1..RD-8, DEC-59; paper since RD-84, DEC-67), plus Hearth's overrides (DS-1..DS-9). Nothing under 17 pt (DS-2).
 // RN Text scales with the phone's text size (Dynamic Type / Android font scale): we never turn allowFontScaling off.
 import { createContext, useContext } from 'react';
 import { Platform, useColorScheme } from 'react-native';
@@ -16,11 +16,12 @@ export interface Colors {
   dangerText: string; scrim: string; photo: string;
 }
 
-// RD-1 (DEC-59, Chase Nov 14 2026: "black and white and an accent"): a white screen with near-black words in light
-// mode, true black with near-white words in dark mode, and neutral grays in between (Apple's own system grays).
+// RD-84 / RD-85 (DEC-67, Chase Nov 18 2026: "use the warm paper"): warm paper #F1E9D2 with warm near-black words in
+// light mode, a warm near-black #14100D with warm near-white words in dark mode, and warm grays in between (fill and
+// line are the page 4.5% and 9% darker). Was white and true black with Apple's cool grays (RD-1, DEC-59).
 // RD-3: one accent per palette, from one setting, the family color (RD-24): Ember (default), Forest or Plum.
-// Only the accent changes between them. Body text is 7:1 or better; the accent 4.5:1 on the screen, rows and
-// fills, light and dark (RD-5; redesignLook.test.tsx).
+// Only the accent changes between them. Body text is 7:1 or better; the accent 4.5:1 on the page, fills and its own
+// soft tint, light and dark (RD-5, RD-86; warmPaper.test.ts).
 export type ColorName = 'ember' | 'forest' | 'plum';
 export const COLOR_NAMES: readonly ColorName[] = ['ember', 'forest', 'plum'];
 export const ColorContext = createContext<ColorName>('ember');
@@ -30,23 +31,29 @@ const status = {
   dark: { safe: '#7DD394', safeSoft: '#173322', danger: '#F2B8B5', dangerText: '#FF453A', onDanger: '#601410', scrim: 'rgba(0,0,0,0.6)' },
 };
 
+/** RD-84 / RD-85: the paper page and its warm grays. surface (sheets, cards, menus) is the paper a shade lighter. */
+const PAPER = { light: '#F1E9D2', dark: '#14100D' } as const;
 const NEUTRAL = {
-  light: { ...status.light, bg: '#FFFFFF', surface: '#F7F7F9', ink: '#1C1C1E', muted: '#5F5F64', line: '#D1D1D6', fill: '#F2F2F7', photo: '#EFEFF4' },
-  dark: { ...status.dark, bg: '#000000', surface: '#1C1C1E', ink: '#F5F5F7', muted: '#AEAEB2', line: '#38383A', fill: '#2C2C2E', photo: '#1C1C1E' },
+  light: { ...status.light, bg: PAPER.light, surface: '#F6F1E2', ink: '#1F1A14', muted: '#5E554A', line: '#DBD4BF', fill: '#E6DFC9', photo: '#E3DBC5' },
+  dark: { ...status.dark, bg: PAPER.dark, surface: '#1F1A16', ink: '#F3EDE4', muted: '#B3AA9F', line: '#3A322B', fill: '#2A241F', photo: '#241F1A' },
 };
 
-/** The family color: the one accent, light and dark, and the words that sit on it. */
+/** How far accentSoft (a picked capsule's tint) mixes the accent into the page. */
+const SOFT = { light: 0.93, dark: 0.82 } as const;
+
+/** The family color: the one accent, light and dark, and the words that sit on it. RD-86: Ember and Forest are a
+ *  shade darker in light mode so they keep 4.5:1 on paper and its fill (were #B23A1E and #2E7D4F on white). */
 const ACCENTS: Record<ColorName, { light: string; dark: string }> = {
-  ember: { light: '#B23A1E', dark: '#FF8A65' },
-  forest: { light: '#2E7D4F', dark: '#6FCF97' },
+  ember: { light: '#AD371D', dark: '#FF8A65' },
+  forest: { light: '#276B43', dark: '#6FCF97' },
   plum: { light: '#8E3A8F', dark: '#D9A0E0' },
 };
 
 function build(name: ColorName): { light: Colors; dark: Colors } {
   const a = ACCENTS[name];
   return {
-    light: { ...NEUTRAL.light, accent: a.light, accentInk: '#FFFFFF', accentSoft: mix(a.light, '#FFFFFF', 0.93) },
-    dark: { ...NEUTRAL.dark, accent: a.dark, accentInk: '#000000', accentSoft: mix(a.dark, '#000000', 0.82) },
+    light: { ...NEUTRAL.light, accent: a.light, accentInk: '#FFFFFF', accentSoft: mix(a.light, PAPER.light, SOFT.light) },
+    dark: { ...NEUTRAL.dark, accent: a.dark, accentInk: '#000000', accentSoft: mix(a.dark, PAPER.dark, SOFT.dark) },
   };
 }
 
@@ -56,7 +63,7 @@ function allPalettes() {
   return palettes;
 }
 
-/** Same colors on iPhone, Android and the web (RD-1); os stays so a phone can differ later.
+/** Same colors on iPhone, Android and the web (RD-84); os stays so a phone can differ later.
  *  high: the phone's Increase Contrast (iPhone) or High contrast text (Android) is on (HIG-7). */
 export function paletteFor(_os: OS, dark: boolean, color: ColorName = 'ember', high = false): Colors {
   const all = allPalettes();
@@ -93,6 +100,8 @@ function highContrast(c: Colors): Colors {
     muted: nudge(c.muted, c.ink, c.bg, 7),
     line: nudge(c.line, c.ink, c.surface, 4.5),
     accent,
+    // RD-86: the soft tint follows the stronger accent, still mixed with the page.
+    accentSoft: mix(accent, c.bg, c.bg === PAPER.dark ? SOFT.dark : SOFT.light),
   };
   highCache.set(c, out);
   return out;
@@ -140,6 +149,13 @@ export const RADIUS = { small: 4, medium: 12, photo: 16, pill: 999 } as const;
 /** The one exception: dialogs keep each phone's own corner (HIG alert 14 pt, Material 3 dialog 28 dp). */
 export function dialogRadius(os: OS): number {
   return os === 'android' ? 28 : 14;
+}
+
+/** RD-88 (DEC-67): one soft warm shadow under a photo tile (Gallery, New for you, a post's photos), light mode only;
+ *  none in dark. Goes on a wrapper around the tile, so the tile's own corners still clip the photo and the shadow
+ *  isn't clipped with it. The warm ink at 10%, 2 pt down, 12 pt blur. boxShadow works on iPhone, Android and the web. */
+export function photoShadow(dark: boolean): { boxShadow: string } | null {
+  return dark ? null : { boxShadow: '0px 2px 12px rgba(31, 26, 20, 0.1)' };
 }
 
 /** HIG text styles at the default size (Body 17, Title 2 22, Title 1 28); Material's ramp raised to match (DS-2). */

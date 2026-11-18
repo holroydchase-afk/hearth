@@ -12,7 +12,7 @@ import { newSinceDay } from '../feed/newForYou';
 import { useFeed } from '../state/AppContext';
 import { BackButton, Button, Txt } from '../ui/kit';
 import { andList, shortDate } from '../ui/format';
-import { MIN_TARGET, SPACE, useTheme } from '../ui/theme';
+import { MIN_TARGET, RADIUS, SPACE, photoShadow, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
 import { PostCard } from './PostCard';
 
@@ -23,7 +23,7 @@ const tileSide = (screenWidth: number) => Math.max(140, Math.min(260, Math.round
  *  first carries a solid accent "N new" chip, N = photos), then the sender line "From Alex since
  *  Wednesday" (OPEN-2's day rules). Any tile or See all opens the walk at the oldest new post. No group names. */
 export function NewForYouRow({ posts, since, onSee }: { posts: FeedPost[]; since: string; onSee: () => void }) {
-  const { c } = useTheme();
+  const { c, dark } = useTheme();
   const { width } = useWindowDimensions();
   const side = tileSide(width);
   // GUX-R6 / OPEN-12: only photos that are ready make tiles; the words and See all stay either way.
@@ -38,24 +38,27 @@ export function NewForYouRow({ posts, since, onSee }: { posts: FeedPost[]; since
         <Button variant="quiet" label="See all the new photos, one at a time" text="See all" onPress={onSee} style={{ paddingHorizontal: SPACE.lg, marginRight: -SPACE.lg, minHeight: MIN_TARGET }} />
       </View>
       {tiles.length ? (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: SPACE.md }} style={{ marginHorizontal: -SPACE.lg }}>
+        // RD-88: 8 pt more room above and below inside the scroll (and 8 pt less margin outside it), so the photos'
+        // shadows aren't cut off and the tiles stay where they were.
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: SPACE.md, paddingVertical: SPACE.sm }} style={{ marginHorizontal: -SPACE.lg, marginVertical: -SPACE.sm }}>
           <View style={{ width: SPACE.lg - SPACE.md }} />
           {tiles.map((t, i) => (
-            <Pressable
-              key={t.mediaId}
-              testID={`new-tile-${t.mediaId}`}
-              accessibilityRole="button"
-              accessibilityLabel={`${i === 0 ? `${count}. ` : ''}New photo from ${t.from}. Start the new photos`}
-              onPress={onSee}
-              style={{ width: side, height: side, borderRadius: 12, overflow: 'hidden', backgroundColor: c.photo }}
-            >
-              <MediaImage postId={t.postId} mediaId={t.mediaId} fit="cover" full={false} style={{ flex: 1 }} />
-              {i === 0 ? (
-                <View style={{ position: 'absolute', top: SPACE.sm, left: SPACE.sm, backgroundColor: c.accent, borderRadius: 12, paddingHorizontal: SPACE.md, paddingVertical: SPACE.xs }}>
-                  <Txt variant="strong" style={{ color: c.accentInk }}>{count}</Txt>
-                </View>
-              ) : null}
-            </Pressable>
+            <View key={t.mediaId} style={[{ width: side, height: side, borderRadius: RADIUS.medium }, photoShadow(dark)]}>
+              <Pressable
+                testID={`new-tile-${t.mediaId}`}
+                accessibilityRole="button"
+                accessibilityLabel={`${i === 0 ? `${count}. ` : ''}New photo from ${t.from}. Start the new photos`}
+                onPress={onSee}
+                style={{ width: side, height: side, borderRadius: RADIUS.medium, overflow: 'hidden', backgroundColor: c.photo }}
+              >
+                <MediaImage postId={t.postId} mediaId={t.mediaId} fit="cover" full={false} style={{ flex: 1 }} />
+                {i === 0 ? (
+                  <View style={{ position: 'absolute', top: SPACE.sm, left: SPACE.sm, backgroundColor: c.accent, borderRadius: 12, paddingHorizontal: SPACE.md, paddingVertical: SPACE.xs }}>
+                    <Txt variant="strong" style={{ color: c.accentInk }}>{count}</Txt>
+                  </View>
+                ) : null}
+              </Pressable>
+            </View>
           ))}
           <View style={{ width: SPACE.lg - SPACE.md }} />
         </ScrollView>

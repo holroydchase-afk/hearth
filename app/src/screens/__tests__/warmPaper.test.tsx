@@ -93,7 +93,9 @@ const warmColor = (v: string) => {
 const softShadow = (sh: Shadow) => warmColor(sh.color) && sh.opacity > 0 && sh.opacity <= 0.12 && sh.y >= 1 && sh.y <= 2 && sh.radius >= 4 && sh.radius <= 8 && sh.elevation <= 2;
 
 const isPhotoTile = (n: Inst) => isHost(n) && (/^(gallery-tile|new-tile)-/.test(String(n.props.testID ?? '')) || /^Open photo \d+ of \d+/.test(String(n.props.accessibilityLabel ?? '')));
-const tilesIn = (n: Inst) => (isPhotoTile(n) ? 1 : 0) + (n.findAll(isPhotoTile) as Inst[]).length;
+// engineer, flagged for qa-tdd: findAll already includes the node itself, so a tile counted itself twice (2) and
+// no wrapper could ever be reached; count once.
+const tilesIn = (n: Inst) => (n.findAll(isPhotoTile) as Inst[]).length;
 const shadowed = () => (screen.UNSAFE_root.findAll(isHost) as Inst[]).filter((n) => shadowOf(n) && n.props.testID !== 'search-bar-shade');
 
 /** RD-88 for one tile: its shadow is on a wrapper (the tile, or up to 2 host levels up, holding only this tile). */

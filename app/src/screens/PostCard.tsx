@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-import React, { memo, useEffect, useState } from 'react';
-import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { memo, useEffect, useRef, useState } from 'react';
+import { Animated, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { REACTIONS, type FeedPost, type Reaction } from '../api/HearthApi';
 import type { CommentView } from '../feed/store';
@@ -80,24 +80,16 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
         <PhotoCollage postId={post.post_id} media={ready} from={`${post.author_name}, ${shortDate(post.published_at)}`} />
       </View>
       <View testID={`actions-${post.post_id}`} style={styles.actions}>
-        {REACTIONS.map((e) => {
-          const n = counts[e] ?? 0;
-          const on = mineNow === e;
-          return (
-            <Pressable
-              key={e}
-              accessibilityRole="button"
-              accessibilityLabel={LABEL[e]}
-              accessibilityState={{ selected: on }}
-              accessibilityValue={n ? { text: String(n) } : undefined}
-              onPress={() => { haptic('tap'); void feed?.react(post.post_id, e); }}
-              style={({ pressed }) => [styles.react, e === REACTIONS[0] ? styles.firstReact : null, { backgroundColor: on ? c.accentSoft : 'transparent', opacity: pressed ? 0.7 : 1 }]}
-            >
-              <Text style={styles.emoji}>{e}</Text>
-              {n ? <Text style={[styles.count, { color: c.ink, fontSize: t.base }]}>{String(n)}</Text> : null}
-            </Pressable>
-          );
-        })}
+        {REACTIONS.map((e) => (
+          <ReactionButton
+            key={e}
+            emoji={e}
+            n={counts[e] ?? 0}
+            on={mineNow === e}
+            first={e === REACTIONS[0]}
+            onPress={() => { haptic('tap'); void feed?.react(post.post_id, e); }}
+          />
+        ))}
       </View>
       <View style={styles.words}>
         {/* RD-71 (UX-R28): no heading above the words; the title opens the description in Medium. */}
@@ -450,6 +442,52 @@ function Caption({ title, text, testID, titleID }: { title: string | null; text:
         />
       ) : null}
     </View>
+  );
+}
+
+/** RD-89 (DEC-67, Chase Nov 18: "pop reactions"): turning a reaction on pops its emoji 1 → 1.25 → 1 in 220 ms, by
+ *  transform only, so nothing around it moves; turning it off doesn't pop. The save never waits for the pop.
+ *  RD-90: with Reduce Motion on, no pop; the picked tint just appears. Chase, Nov 18: the count's width is kept even
+ *  at 0, so the first "1" doesn't widen the button. */
+const POP = { up: 100, down: 120 } as const;
+function ReactionButton({ emoji, n, on, first, onPress }: { emoji: Reaction; n: number; on: boolean; first: boolean; onPress: () => void }) {
+  const { c, t, reduceMotion } = useTheme();
+  const { fontScale } = useWindowDimensions();
+  // One tabular digit is about 0.6 of the text size on every phone font; 0.7 leaves room.
+  const slot = Math.ceil(t.base * 0.7 * Math.max(fontScale || 1, 1));
+  const scale = useRef(new Animated.Value(1)).current;
+  const press = () => {
+    if (!on && !reduceMotion) {
+      const native = Platform.OS !== 'web';
+      scale.stopAnimation();
+      scale.setValue(1);
+      Animated.sequence([
+        Animated.timing(scale, { toValue: 1.25, duration: POP.up, useNativeDriver: native }),
+        Animated.timing(scale, { toValue: 1, duration: POP.down, useNativeDriver: native }),
+      ]).start();
+    }
+    onPress();
+  };
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={LABEL[emoji]}
+      accessibilityState={{ selected: on }}
+      accessibilityValue={n ? { text: String(n) } : undefined}
+      onPress={press}
+      style={({ pressed }) => [styles.react, first ? styles.firstReact : null, { backgroundColor: on ? c.accentSoft : 'transparent', opacity: pressed ? 0.7 : 1 }]}
+    >
+      <Animated.View style={{ transform: [{ scale }] }}>
+        <Text style={styles.emoji}>{emoji}</Text>
+      </Animated.View>
+      {/* Chase, Nov 18: the count's slot keeps its width at 0 (an empty space as wide as one digit), so the first
+          "1" doesn't widen the button or move its neighbours. */}
+      {n ? (
+        <Text style={[styles.count, { color: c.ink, fontSize: t.base, minWidth: slot }]}>{String(n)}</Text>
+      ) : (
+        <View testID="count-slot" style={{ width: slot }} />
+      )}
+    </Pressable>
   );
 }
 

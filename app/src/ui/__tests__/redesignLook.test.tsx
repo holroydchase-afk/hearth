@@ -19,36 +19,43 @@ import { Button, GroupedSection, Txt } from '../kit';
 import { COLOR_NAMES, ColorContext, RADIUS, contrast, dialogRadius, paletteFor, useTheme, type ColorName } from '../theme';
 
 const ACCENTS: Record<string, { light: string; dark: string }> = {
-  ember: { light: '#B23A1E', dark: '#FF8A65' },
-  forest: { light: '#2E7D4F', dark: '#6FCF97' },
+  // engineer, flagged for qa-tdd: Ember and Forest a shade darker in light mode on paper (RD-86, DEC-67).
+  ember: { light: '#AD371D', dark: '#FF8A65' },
+  forest: { light: '#276B43', dark: '#6FCF97' },
   plum: { light: '#8E3A8F', dark: '#D9A0E0' },
 };
 const NEUTRAL_KEYS = ['bg', 'surface', 'ink', 'muted', 'line', 'fill', 'photo'] as const;
 const rgb = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 /** Black-and-white means no warm (or any) tint: channels within 8 of each other (Apple's own grays pass). */
 const neutral = (h: string) => { const v = rgb(h); return Math.max(...v) - Math.min(...v) <= 8; };
+/** RD-84/85: warm paper grays, red ≥ green ≥ blue. */
+const paperFamily = (h: string) => { const [r, g, b] = rgb(h); return r! >= g! && g! >= b!; };
 const MODES = [false, true] as const;
 /** RD-3 / RD-24: the three choices, fixed here so a missing one fails instead of being skipped. */
 const CHOICES = ['ember', 'forest', 'plum'] as ColorName[];
 
 describe('RD 1a the look: black and white with one accent', () => {
-  it('RD-1 light mode is a white #FFFFFF screen with near-black words; dark mode is true black #000000 with near-white words', () => {
+  // engineer, flagged for qa-tdd: RD-1's white and true black are superseded by RD-84/85 (warm paper, DEC-67).
+  it('RD-1 → RD-84/85 light mode is paper #F1E9D2 with near-black words; dark mode is warm near-black #14100D with near-white words', () => {
     for (const os of ['ios', 'android', 'web'] as const) {
       const light = paletteFor(os, false);
       const dark = paletteFor(os, true);
-      expect({ os, bg: light.bg }).toEqual({ os, bg: '#FFFFFF' });
-      expect({ os, bg: dark.bg }).toEqual({ os, bg: '#000000' });
-      expect(contrast(light.ink, light.bg)).toBeGreaterThanOrEqual(15);
+      expect({ os, bg: light.bg }).toEqual({ os, bg: '#F1E9D2' });
+      expect({ os, bg: dark.bg }).toEqual({ os, bg: '#14100D' });
+      // engineer, flagged for qa-tdd: paper tops out near 16:1 even for pure black; RD-86 asks 7:1, we keep 14.
+      expect(contrast(light.ink, light.bg)).toBeGreaterThanOrEqual(14);
       expect(contrast(dark.ink, dark.bg)).toBeGreaterThanOrEqual(15);
     }
   });
 
-  it.each(MODES)('RD-1 no warm off-white or charcoal remains in paletteFor (dark %s): every non-accent color is a neutral gray', (dark) => {
+  // engineer, flagged for qa-tdd: since RD-84/85 the grays are the paper family (R ≥ G ≥ B), not neutral; the old
+  // (pre-DEC-59) warm palette still must not come back.
+  it.each(MODES)('RD-1 → RD-84/85 the old warm palette does not return (dark %s): every non-accent color is paper-family', (dark) => {
     const OLD_WARM = ['#FAF6F1', '#171311', '#241E1B', '#1F1A17', '#F6EFE9', '#EFE8E1', '#352C27', '#DDD3C9', '#40362F', '#5E5650', '#BDB2A9'];
     for (const n of CHOICES) {
       const c = paletteFor('ios', dark, n);
       for (const k of NEUTRAL_KEYS) {
-        expect({ n, k, v: c[k], neutral: neutral(c[k]) }).toEqual({ n, k, v: c[k], neutral: true });
+        expect({ n, k, v: c[k], paper: paperFamily(c[k]) }).toEqual({ n, k, v: c[k], paper: true });
         expect(OLD_WARM).not.toContain(c[k].toUpperCase());
       }
     }

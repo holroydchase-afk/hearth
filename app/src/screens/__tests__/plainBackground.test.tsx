@@ -6,7 +6,8 @@
 //
 // The engineer's contract:
 //   - Content (Gallery, Feed, post cards, New for you and its walk, Share, the top bar, the tab bar) draws on c.bg
-//     (white light, black dark) with no c.surface / c.fill box. Posts are split by a hairline in c.line plus space.
+//     (warm paper #F1E9D2 light, #14100D dark since RD-87, DEC-67; was white and black; engineer, flagged for
+//     qa-tdd) with no c.surface / c.fill box. Posts are split by a hairline in c.line plus space.
 //   - Grey stays only on: Settings-style lists under More (Bigger text, Light or dark, Family color, Help, Me), the
 //     text input fields (reply field, Share caption), and reaction / tinted capsules (buttons, chips, the "who can see" people, chat bubbles).
 //   - In source, c.surface / c.fill appear only inside the allowlisted components below. The Settings-style section

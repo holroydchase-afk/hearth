@@ -65,8 +65,14 @@ function neutral(v: unknown): boolean {
     if (m) rgb = [m[1], m[2], m[3]].map(Number);
   }
   if (!rgb) return false;
-  return Math.max(...rgb) - Math.min(...rgb) <= 8;
+  // engineer, flagged for qa-tdd: since RD-84/85 (DEC-67) the page grays are warm (paper family), so a palette
+  // gray counts as neutral too; the family accent and its tint still don't.
+  return Math.max(...rgb) - Math.min(...rgb) <= 8 || PAGE_GRAYS.has(s.toUpperCase());
 }
+const PAGE_GRAYS = new Set([false, true].flatMap((d) => [false, true].flatMap((hi) => {
+  const p = paletteFor('ios', d, 'ember', hi);
+  return [p.bg, p.surface, p.ink, p.muted, p.line, p.fill, p.photo].map((v) => v.toUpperCase());
+})));
 
 // ---------------------------------------------------------------------------------------------------------------
 // GUX-R1: a top-left text back button "‹ More" / "‹ Gallery".

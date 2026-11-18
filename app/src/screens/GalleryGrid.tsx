@@ -16,7 +16,7 @@ import { Animated, Platform, Pressable, StyleSheet, Text, View, type LayoutChang
 import type { FeedPost } from '../api/HearthApi';
 import { galleryMonths, mosaicRows, type GridMonth, type GridTile } from '../feed/gallery';
 import { useNav } from '../state/nav';
-import { GALLERY_TYPE, MIN_TARGET, RADIUS, SPACE, WEIGHT, useTheme } from '../ui/theme';
+import { GALLERY_TYPE, MIN_TARGET, RADIUS, SPACE, WEIGHT, photoShadow, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
 
 const GAP = SPACE.sm;
@@ -70,7 +70,7 @@ function Month({ m, stick, relayout, pinAt, onPin }: {
   m: GridMonth; stick: { scrollY: Animated.Value; gridY: number; pinAt: number } | null; relayout: number; pinAt: number;
   onPin: (key: string, on: boolean) => void;
 }) {
-  const { c, t } = useTheme();
+  const { c, t, dark } = useTheme();
   const nav = useNav();
   const { ref, place: box, onLayout } = usePlace(relayout);
   const [headH, setHeadH] = useState(0);
@@ -93,17 +93,20 @@ function Month({ m, stick, relayout, pinAt, onPin }: {
     shift = scrollY.interpolate({ inputRange: [from, from + span], outputRange: [0, span], extrapolate: 'clamp' });
   }
   const sticky = WEB ? ({ position: 'sticky', top: pinAt } as unknown as ViewStyle) : null;
+  // RD-88: the wrapper takes the tile's place and size (the same sizing as the tile) and carries the light-mode
+  // shadow; the tile inside keeps its own corners and clips the photo.
   const tile = (x: GridTile) => (
-    <Pressable
-      key={x.mediaId}
-      testID={`gallery-tile-${x.mediaId}`}
-      accessibilityRole="button"
-      accessibilityLabel={x.label}
-      onPress={() => nav.openViewer(x.postId, x.index)}
-      style={[styles.tile, { backgroundColor: c.photo }, x.wide ? styles.wide : styles.square]}
-    >
-      <MediaImage postId={x.postId} mediaId={x.mediaId} fit="cover" full={x.wide} compact={!x.wide} style={{ flex: 1 }} />
-    </Pressable>
+    <View key={x.mediaId} style={[styles.shadowBox, x.wide ? styles.wide : styles.square, photoShadow(dark)]}>
+      <Pressable
+        testID={`gallery-tile-${x.mediaId}`}
+        accessibilityRole="button"
+        accessibilityLabel={x.label}
+        onPress={() => nav.openViewer(x.postId, x.index)}
+        style={[styles.tile, { backgroundColor: c.photo }, x.wide ? styles.wide : styles.square]}
+      >
+        <MediaImage postId={x.postId} mediaId={x.mediaId} fit="cover" full={x.wide} compact={!x.wide} style={{ flex: 1 }} />
+      </Pressable>
+    </View>
   );
   return (
     <View ref={ref} style={{ gap: SPACE.sm }} onLayout={onLayout}>
@@ -143,6 +146,7 @@ const styles = StyleSheet.create({
   // RD-83: the title's backing steps out of the scroll's 16 pt padding so it spans the full width; the words keep
   // their 16 pt inside.
   head: { zIndex: 1, paddingBottom: 12, marginHorizontal: -SPACE.lg, paddingHorizontal: SPACE.lg },
+  shadowBox: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, borderRadius: RADIUS.photo },
   tile: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, borderRadius: RADIUS.photo, overflow: 'hidden' },
   wide: { width: '100%', aspectRatio: 1.5 },
   square: { flex: 1, aspectRatio: 1 },
