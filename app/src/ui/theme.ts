@@ -11,6 +11,8 @@ export type OS = 'ios' | 'android' | 'web';
 export interface Colors {
   bg: string; surface: string; ink: string; muted: string; line: string;
   accent: string; accentInk: string; accentSoft: string; fill: string;
+  /** GUX-R15: a picked reaction's capsule, the accent mixed into the page, 3:1 against it with ink words 4.5:1 on it. */
+  accentPicked: string;
   safe: string; safeSoft: string; danger: string; onDanger: string;
   /** RD-72 (UX-R29): red words on the page or a sheet (Delete post, the alert's Delete); iOS systemRed in dark. */
   dangerText: string; scrim: string; photo: string;
@@ -31,6 +33,23 @@ const PAPER = { light: '#F1E9D2', dark: '#14100D' } as const;
 
 /** How far a soft tint (accentSoft, a picked capsule; safeSoft, the "sent" tint) mixes its color into the page. */
 export const SOFT = { light: 0.93, dark: 0.82 } as const;
+
+/** GUX-R15: how far a picked capsule mixes the page into the accent (about 30% page in light, 47% in dark). */
+export const PICKED = { light: 0.3, dark: 0.47 } as const;
+
+/** GUX-R15: the accent mixed into the page at about `t`, nudged by the least step (0.01) that keeps the capsule
+ *  3:1 against the page (non-text contrast) and the ink count 4.5:1 on it, so every family color passes. */
+function picked(accent: string, page: string, ink: string, t: number): string {
+  const ok = (m: string) => contrast(m, page) >= 3 && contrast(ink, m) >= 4.5;
+  for (let step = 0; step <= 100; step++) {
+    for (const u of step ? [t - step / 100, t + step / 100] : [t]) {
+      if (u < 0 || u > 1) continue;
+      const m = mix(accent, page, u);
+      if (ok(m)) return m;
+    }
+  }
+  return mix(accent, page, t);
+}
 
 /** GUX-R17: safeSoft is safe mixed into the paper page like accentSoft (was a tint of the old white/black page). */
 const SAFE = { light: '#1C6E31', dark: '#7DD394' } as const;
@@ -54,8 +73,8 @@ const ACCENTS: Record<ColorName, { light: string; dark: string }> = {
 function build(name: ColorName): { light: Colors; dark: Colors } {
   const a = ACCENTS[name];
   return {
-    light: { ...NEUTRAL.light, accent: a.light, accentInk: '#FFFFFF', accentSoft: mix(a.light, PAPER.light, SOFT.light) },
-    dark: { ...NEUTRAL.dark, accent: a.dark, accentInk: '#000000', accentSoft: mix(a.dark, PAPER.dark, SOFT.dark) },
+    light: { ...NEUTRAL.light, accent: a.light, accentInk: '#FFFFFF', accentSoft: mix(a.light, PAPER.light, SOFT.light), accentPicked: picked(a.light, PAPER.light, NEUTRAL.light.ink, PICKED.light) },
+    dark: { ...NEUTRAL.dark, accent: a.dark, accentInk: '#000000', accentSoft: mix(a.dark, PAPER.dark, SOFT.dark), accentPicked: picked(a.dark, PAPER.dark, NEUTRAL.dark.ink, PICKED.dark) },
   };
 }
 
@@ -104,6 +123,8 @@ function highContrast(c: Colors): Colors {
     accent,
     // RD-86: the soft tint follows the stronger accent, still mixed with the page.
     accentSoft: mix(accent, c.bg, c.bg === PAPER.dark ? SOFT.dark : SOFT.light),
+    // GUX-R15: the picked capsule follows the stronger accent too, still 3:1 on the page with the ink 4.5:1 on it.
+    accentPicked: picked(accent, c.bg, c.ink, c.bg === PAPER.dark ? PICKED.dark : PICKED.light),
   };
   highCache.set(c, out);
   return out;

@@ -475,9 +475,9 @@ function ReactionButton({ emoji, n, on, first, onPress }: { emoji: Reaction; n: 
       accessibilityState={{ selected: on }}
       accessibilityValue={n ? { text: String(n) } : undefined}
       onPress={press}
-      // GUX-R15: on paper the soft tint alone is too faint, so a picked capsule gets a 1.5 pt accent edge; an
-      // unpicked one keeps the same edge, clear, so turning a reaction on or off never moves the emoji.
-      style={({ pressed }) => [styles.react, first ? styles.firstReact : null, { backgroundColor: on ? c.accentSoft : 'transparent', borderColor: on ? c.accent : 'transparent', opacity: pressed ? 0.7 : 1 }]}
+      // GUX-R15: on paper the soft tint was too faint, so a picked capsule is the stronger accentPicked tint, with no
+      // outline (LIVE-3, Chase Nov 5); same size and padding either way, so the emoji never moves.
+      style={({ pressed }) => [styles.react, first ? styles.firstReact : null, { backgroundColor: on ? c.accentPicked : 'transparent', opacity: pressed ? 0.7 : 1 }]}
     >
       <Animated.View style={{ transform: [{ scale }] }}>
         <Text style={styles.emoji}>{emoji}</Text>
@@ -508,8 +508,8 @@ const styles = StyleSheet.create({
   fold: { alignSelf: 'flex-start', paddingHorizontal: 0 },
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.xs, paddingHorizontal: SPACE.lg },
   // RD-64 (R21): the first emoji's glyph sits on the 16 pt edge; its tap area and highlight reach 8 pt past it.
-  firstReact: { marginLeft: -SPACE.sm - 1.5 }, // GUX-R15: the clear 1.5 pt edge too, so the first emoji still sits 16 pt in (R21)
-  react: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingHorizontal: SPACE.sm, borderRadius: RADIUS.pill, borderWidth: 1.5 },
+  firstReact: { marginLeft: -SPACE.sm },
+  react: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingHorizontal: SPACE.sm, borderRadius: RADIUS.pill },
   count: { fontVariant: ['tabular-nums'] },
   words: { gap: SPACE.xs, paddingHorizontal: SPACE.lg },
   // UX-R35: 12 pt above the words in both views (the 4 pt gap plus 8 pt here); the 48 pt target grows below them.
