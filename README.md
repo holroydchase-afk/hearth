@@ -21,7 +21,7 @@ Built by Chase Holroyd, a product manager, as a working proof of concept: one pe
 | How it works and what it protects | [Architecture](docs/architecture/) (system overview, data flow, encryption and keys, threat model) |
 | Why each call was made | [Decision log](docs/product/DECISION-LOG.md): every decision, what it beat, and why |
 | How it's tested | [Testing](docs/eng/TESTING.md), plus `bash scripts/test-totals.sh` for the real totals |
-| What's built and what's next | [Tracker](docs/product/TRACKER.md) and [Beta spec](docs/product/BETA-SPEC.md) |
+| What's in scope | [Beta spec](docs/product/BETA-SPEC.md): the acceptance criteria each feature is tested against |
 | What went wrong and what changed | [Lessons](docs/eng/LESSONS.md): six post mortems, each with the rule or guard it added |
 
 ## The problem
@@ -79,13 +79,12 @@ bash scripts/test-totals.sh             # app test and database check totals
 
 ## Status
 
-Hearth is a proof of concept with one user so far: its founder. Here is what is proven and what isn't, as of Nov 18, 2026.
+Hearth is a working proof of concept, built in the open.
 
 | | |
 |---|---|
-| Proven | The core flow runs end to end on the founder's iPhone and a second test account: sign in with a code, post photos to a chosen group, see, react and comment. Every suite that runs in CI passes, and the public demo is checked before and after each publish |
-| Not proven yet | Milestone 1's own gate: 10 posts over 2 days with none lost ([tracker](docs/product/TRACKER.md), step 9). No relative has used it. Speed on a phone hasn't been measured ([performance](docs/eng/PERFORMANCE.md)). No outside security review ([threat model](docs/architecture/04-threat-model.md)) |
-| Built, switched off | Text message sign-in, video, and starting a family from the app. Each waits on a named check in the tracker |
-| Next | Pass milestone 1, then milestone 2 (the founder's spouse), then relatives in order of how comfortable they are with tech. Beta target: about 12 grandparents in West Virginia |
+| Works today | Sign in with a code, post photos to a chosen group, see, react and comment, on iPhone and the web. Every suite that runs in CI passes, and the public demo is checked before and after each publish |
+| Built, switched off | Text message sign-in, video, and starting a family from the app |
+| Known limits | Speed on a phone hasn't been measured ([performance](docs/eng/PERFORMANCE.md)). No outside security review ([threat model](docs/architecture/04-threat-model.md)). Hearth's server holds the photo keys ([encryption and keys](docs/architecture/03-encryption-and-keys.md)) |
 
 License: AGPL-3.0 ([LICENSE](LICENSE)). The repo is public.
