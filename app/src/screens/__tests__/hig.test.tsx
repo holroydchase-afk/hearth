@@ -12,7 +12,12 @@ import { haptic } from '../../platform/haptics';
 import { seedPost } from '../../test/seed';
 import { renderApp } from '../../test/renderApp';
 import { sheetPan } from '../../ui/kit';
-import { BigTextContext, contrast, iconSize, LABEL_SCALE_CAP, paletteFor, COLOR_NAMES, pinchZoom, sheetShouldClose } from '../../ui/theme';
+import * as themeMod from '../../ui/theme';
+import { BigTextContext, contrast, iconSize, LABEL_SCALE_CAP, paletteFor, pinchZoom, sheetShouldClose } from '../../ui/theme';
+
+// qa-tdd, Nov 18: HIG-7 loops every theme (RD-96, DEC-68) instead of every family color; the splash is the default Paper.
+const THEME_NAMES = (((themeMod as Record<string, unknown>).THEME_NAMES ?? []) as string[]);
+const pfTheme = paletteFor as unknown as (o: string, d: boolean, n?: string, h?: boolean) => ReturnType<typeof paletteFor>;
 import { GalleryScreen } from '../../test/redesignScreens';
 import { HearthTabBar, type TabName } from '../TabBar';
 import { PhotosScreen } from '../PhotosScreen';
@@ -145,9 +150,9 @@ describe('HIG-4 / HIG-5 app.json', () => {
   const splash = expo.plugins.find((p) => Array.isArray(p) && p[0] === 'expo-splash-screen') as [string, { backgroundColor: string; dark?: { backgroundColor: string } }];
 
   it('HIG-4 the launch screen is Ember\'s own background, light and dark', () => {
-    expect(splash[1].backgroundColor).toBe(paletteFor('ios', false, 'ember').bg);
-    expect(splash[1].dark?.backgroundColor).toBe(paletteFor('ios', true, 'ember').bg);
-    expect(expo.android.adaptiveIcon.backgroundColor).toBe(paletteFor('android', false, 'ember').bg);
+    expect(splash[1].backgroundColor).toBe(paletteFor('ios', false).bg);
+    expect(splash[1].dark?.backgroundColor).toBe(paletteFor('ios', true).bg);
+    expect(expo.android.adaptiveIcon.backgroundColor).toBe(paletteFor('android', false).bg);
   });
 
   it('HIG-5 iPad turns every way; iPhone stays upright', () => {
@@ -163,10 +168,11 @@ describe('HIG-4 / HIG-5 app.json', () => {
 
 describe('HIG-7 Increase Contrast', () => {
   it('HIG-7 every color has a high-contrast set: secondary words 7:1 and edges 4.5:1', () => {
-    for (const color of COLOR_NAMES) {
+    expect(THEME_NAMES).toEqual(['paper', 'avocado', 'pomegranate']);
+    for (const color of THEME_NAMES) {
       for (const dark of [false, true]) {
-        const c = paletteFor('ios', dark, color, true);
-        const normal = paletteFor('ios', dark, color);
+        const c = pfTheme('ios', dark, color, true);
+        const normal = pfTheme('ios', dark, color);
         expect({ color, dark, muted: contrast(c.muted, c.bg) >= 7 }).toEqual({ color, dark, muted: true });
         expect({ color, dark, line: contrast(c.line, c.surface) >= 4.5 }).toEqual({ color, dark, line: true });
         expect({ color, dark, accent: contrast(c.accent, c.bg) > contrast(normal.accent, normal.bg) }).toEqual({ color, dark, accent: true });
@@ -181,8 +187,8 @@ describe('HIG-7 Increase Contrast', () => {
     const be = FakeBackend.withFixture();
     await seedPost(be, { caption: 'At the lake' });
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
-    const high = paletteFor('ios', false, 'ember', true);
-    const normal = paletteFor('ios', false, 'ember');
+    const high = paletteFor('ios', false, undefined, true);
+    const normal = paletteFor('ios', false);
     expect(high.muted).not.toBe(normal.muted);
     const colors = () => screen.UNSAFE_getAllByType(Text).map((t) =>
       ([t.props.style].flat(5).filter(Boolean).reduce((a: object, b: object) => ({ ...a, ...b }), {}) as { color?: string }).color);

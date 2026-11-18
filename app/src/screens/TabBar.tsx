@@ -69,7 +69,7 @@ export function HearthTabBar({ role, current, onNavigate, newMessages = 0 }: {
   const typing = useTyping();
   if (typing) return null;
   return (
-    <View accessibilityRole="tablist" style={[styles.bar, { backgroundColor: c.bg, borderTopColor: c.line, paddingBottom: Math.max(insets.bottom, 6) }]}>
+    <View accessibilityRole="tablist" style={[styles.bar, { backgroundColor: c.surface, borderTopColor: c.tabLine, paddingBottom: Math.max(insets.bottom, 6) }]}>
       {tabsFor(role).map((tab) => {
         const on = tab.name === current;
         const color = on ? c.accent : c.muted;
@@ -107,7 +107,7 @@ export function HearthTabBar({ role, current, onNavigate, newMessages = 0 }: {
 }
 
 const styles = StyleSheet.create({
-  bar: { flexDirection: 'row', borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 6, paddingHorizontal: 8, gap: 6 },
+  bar: { flexDirection: 'row', borderTopWidth: 1, paddingTop: 6, paddingHorizontal: 8, gap: 6 },
   dot: { position: 'absolute', top: -2, right: -6, width: 12, height: 12, borderRadius: 6, borderWidth: 2 },
   tab: { flex: 1, minHeight: MIN_TARGET + 12, minWidth: MIN_TARGET, alignItems: 'center', justifyContent: 'center', paddingVertical: 4, gap: 2 },
 });

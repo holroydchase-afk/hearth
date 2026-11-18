@@ -15,7 +15,14 @@ import { MediaCache } from '../../media/cache';
 import { useApp } from '../../state/AppContext';
 import { renderApp } from '../../test/renderApp';
 import { seedVideoPost } from '../../test/seed';
-import { COLOR_NAMES, ColorContext, LookContext, contrast, paletteFor, type ColorName } from '../../ui/theme';
+import * as themeMod from '../../ui/theme';
+import { LookContext, contrast, paletteFor } from '../../ui/theme';
+
+// qa-tdd, Nov 18: loops every theme through ThemeContext (RD-95/97, DEC-68) instead of the family color.
+type ColorName = 'paper' | 'avocado' | 'pomegranate';
+const COLOR_NAMES: ColorName[] = ['paper', 'avocado', 'pomegranate'];
+const ThemeCtx = ((themeMod as Record<string, unknown>).ThemeContext ?? React.createContext('paper')) as React.Context<string>;
+const pfTheme = paletteFor as unknown as (o: string, d: boolean, n?: string) => ReturnType<typeof paletteFor>;
 import { PhotosScreen } from '../PhotosScreen';
 import { TimelineScreen } from '../TimelineScreen';
 import { ViewerScreen } from '../ViewerScreen';
@@ -103,13 +110,13 @@ function playerTextPairs(): { text: string; fg: unknown; bg: string | null }[] {
 }
 
 function Light({ color, children }: { color: ColorName; children: React.ReactNode }) {
-  return <LookContext.Provider value="light"><ColorContext.Provider value={color}>{children}</ColorContext.Provider></LookContext.Provider>;
+  return <LookContext.Provider value="light"><ThemeCtx.Provider value={color}>{children}</ThemeCtx.Provider></LookContext.Provider>;
 }
 
 describe('GUX-R2 the player is always dark, on the palette\'s own background, and its words read', () => {
   // engineer, flagged for qa-tdd: title only; the dark bg is warm near-black #14100D since RD-85 (DEC-67).
-  it.each(COLOR_NAMES)('GUX-R2 %s, phone in light mode: player background is the dark palette bg (warm near-black since RD-85); every word >= 4.5:1', async (color) => {
-    const dark = paletteFor('ios', true, color);
+  it.each(COLOR_NAMES)('GUX-R2 %s, phone in light mode: player background is the dark palette bg (the theme\'s own dark page, RD-95); every word >= 4.5:1', async (color) => {
+    const dark = pfTheme('ios', true, color);
     const { be, v } = await family();
     await renderApp(<Light color={color}><ViewerScreen postId={v.id} index={0} /></Light>, { be, user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: 'Play video' }));
@@ -130,7 +137,7 @@ describe('GUX-R2 the player is always dark, on the palette\'s own background, an
     await renderApp(<Light color={color}><ViewerScreen postId={v.id} index={0} /></Light>, { be, user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: 'Play video' }));
     await screen.findByRole('button', { name: 'Try again' });
-    expect(flat(playerRoot().props.style).backgroundColor).toBe(paletteFor('ios', true, color).bg);
+    expect(flat(playerRoot().props.style).backgroundColor).toBe(pfTheme('ios', true, color).bg);
     for (const p of playerTextPairs()) {
       const ok = typeof p.fg === 'string' && HEX.test(p.fg) && typeof p.bg === 'string' && HEX.test(p.bg) && contrast(p.fg, p.bg) >= 4.5;
       expect({ ...p, ok }).toEqual({ ...p, ok: true });

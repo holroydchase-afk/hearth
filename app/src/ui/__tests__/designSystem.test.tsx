@@ -19,10 +19,10 @@ describe('DS native design system', () => {
     expect(big.title).toBeGreaterThan(big.base);
   });
 
-  // engineer, flagged for qa-tdd: RD-84/85 (DEC-67) replaces white and true black with warm paper and warm near-black.
-  it('DS-11 → RD-84: warm paper and warm near-black on every phone, light and dark, Ember by default (DEC-67)', () => {
-    expect(paletteFor('ios', false)).toMatchObject({ bg: '#F1E9D2', accent: '#AD371D' });
-    expect(paletteFor('ios', true)).toMatchObject({ bg: '#14100D', accent: '#FF8A65' });
+  // qa-tdd, Nov 18: RD-94 (DEC-68, Chase 14:55Z) replaces the tan paper with Paper, an off-white page, the default theme.
+  it('DS-11 → RD-94: Paper on every phone, light and dark, by default (DEC-68)', () => {
+    expect(paletteFor('ios', false)).toMatchObject({ bg: '#FAF8F3', accent: '#AD371D' });
+    expect(paletteFor('ios', true)).toMatchObject({ bg: '#131210', accent: '#FF8A65' });
     expect(paletteFor('android', false)).toEqual(paletteFor('ios', false));
     expect(paletteFor('android', true)).toEqual(paletteFor('ios', true));
     expect(paletteFor('web', false)).toEqual(paletteFor('ios', false));

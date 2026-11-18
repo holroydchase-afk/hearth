@@ -2,10 +2,13 @@
 // Copyright (C) 2026 Chase Holroyd
 // SPEC-REDESIGN 1h (DEC-67, Chase Nov 18): warm paper backings, soft photo shadows (light only), the reaction pop
 // with its Reduce Motion fallback, and no date line above the greeting. Written first (red), Nov 18, by qa-tdd.
-// The palette itself: src/ui/__tests__/warmPaper.test.ts. The web demo: e2e-web/demo.spec.js (RD-92).
+// Retargeted Nov 18 (DEC-68, Chase 14:55Z): the tan paper #F1E9D2 / #14100D is replaced by Paper #FAF8F3 / #131210
+// (RD-94; palettes in src/ui/__tests__/themes.test.ts, which replaces warmPaper.test.ts). Shadows and the pop stay
+// for now (Chase deciding), so RD-88..RD-90 are unchanged. Paper's surface is white, so RD-87's render check now bars
+// white only in dark mode; black is barred in both. The web demo: e2e-web/demo.spec.js (RD-92, RD-102).
 //
 // The engineer's contract:
-//   - RD-87: screens draw on c.bg (now paper); no screen, kit or demo file hard-codes #FFFFFF / #000000 / white /
+//   - RD-87: screens draw on c.bg (Paper by default); no screen, kit or demo file hard-codes #FFFFFF / #000000 / white /
 //     black as a background (the photo viewer, swipe and video player keep black: they show a photo).
 //   - RD-88: light mode, each Gallery tile, New for you tile and Feed post photo sits in its own wrapper that carries
 //     one soft warm shadow (opacity ≤ 0.12, offset y 1..2, radius 4..8, elevation ≤ 2, or the same as a boxShadow);
@@ -140,9 +143,9 @@ async function feedWithPhotos(dark: boolean, photos = 2) {
 }
 
 // ---------- RD-87 ----------
-describe('RD-87 every page backing is paper (c.bg)', () => {
+describe('RD-87 every page backing is Paper (c.bg)', () => {
   for (const dark of [false, true]) {
-    const want = dark ? '#14100D' : '#F1E9D2';
+    const want = dark ? '#131210' : '#FAF8F3';
     const screens: Array<[string, () => Promise<void>]> = [
       ['Gallery', async () => { await galleryWithNew(dark); }],
       ['Feed', async () => { await feedWithPhotos(dark); }],
@@ -152,12 +155,14 @@ describe('RD-87 every page backing is paper (c.bg)', () => {
       }],
     ];
     for (const [label, open] of screens) {
-      it(`RD-87 ${label} (${lookName(dark)}): the page draws on ${want}, with no white or black backing anywhere`, async () => {
+      it(`RD-87 RD-94 ${label} (${lookName(dark)}): the page draws on ${want}, with no ${dark ? 'white or black' : 'black or tan'} backing anywhere`, async () => {
         await open();
         const hosts = screen.UNSAFE_root.findAll(isHost) as Inst[];
         const bgs = hosts.map((n) => String(flat(n.props.style).backgroundColor ?? '').toUpperCase());
         expect({ pageColor: bgs.includes(want) }).toEqual({ pageColor: true });
-        const BW = /^(#FFF|#FFFFFF|#000|#000000|WHITE|BLACK|RGB\(255, ?255, ?255\)|RGB\(0, ?0, ?0\))$/;
+        const BW = dark
+          ? /^(#FFF|#FFFFFF|#000|#000000|WHITE|BLACK|RGB\(255, ?255, ?255\)|RGB\(0, ?0, ?0\)|#14100D)$/
+          : /^(#000|#000000|BLACK|RGB\(0, ?0, ?0\)|#F1E9D2)$/;
         expect(hosts.filter((n) => BW.test(String(flat(n.props.style).backgroundColor ?? '').toUpperCase())).map(name)).toEqual([]);
       }, 20000);
     }

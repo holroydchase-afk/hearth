@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Native first (docs/product/DESIGN-SYSTEM.md): each phone's own type ramp, font and controls, on warm paper
-// with one family accent (RD-1..RD-8, DEC-59; paper since RD-84, DEC-67), plus Hearth's overrides (DS-1..DS-9). Nothing under 17 pt (DS-2).
+// Native first (docs/product/DESIGN-SYSTEM.md): each phone's own type ramp, font and controls, on the owner's theme
+// (Paper by default; RD-94..RD-99, DEC-68), plus Hearth's overrides (DS-1..DS-9). Nothing under 17 pt (DS-2).
 // RN Text scales with the phone's text size (Dynamic Type / Android font scale): we never turn allowFontScaling off.
 import { createContext, useContext } from 'react';
 import { Platform, useColorScheme } from 'react-native';
@@ -16,20 +16,19 @@ export interface Colors {
   safe: string; safeSoft: string; danger: string; onDanger: string;
   /** RD-72 (UX-R29): red words on the page or a sheet (Delete post, the alert's Delete); iOS systemRed in dark. */
   dangerText: string; scrim: string; photo: string;
+  /** GUX-R18: the tab bar's top line, c.line nudged toward the ink by the least step that is 3:1 against both the
+   *  tab bar (surface) and the page (bg). Still a quiet grey; c.line itself stays subtle for other dividers. */
+  tabLine: string;
 }
 
-// RD-84 / RD-85 (DEC-67, Chase Nov 18 2026: "use the warm paper"): warm paper #F1E9D2 with warm near-black words in
-// light mode, a warm near-black #14100D with warm near-white words in dark mode, and warm grays in between (fill and
-// line are the page 4.5% and 9% darker). Was white and true black with Apple's cool grays (RD-1, DEC-59).
-// RD-3: one accent per palette, from one setting, the family color (RD-24): Ember (default), Forest or Plum.
-// Only the accent changes between them. Body text is 7:1 or better; the accent 4.5:1 on the page, fills and its own
-// soft tint, light and dark (RD-5, RD-86; warmPaper.test.ts).
-export type ColorName = 'ember' | 'forest' | 'plum';
-export const COLOR_NAMES: readonly ColorName[] = ['ember', 'forest', 'plum'];
-export const ColorContext = createContext<ColorName>('ember');
-
-/** RD-84 / RD-85: the paper page and its warm grays. surface (sheets, cards, menus) is the paper a shade lighter. */
-const PAPER = { light: '#F1E9D2', dark: '#14100D' } as const;
+// RD-94..RD-96 (DEC-68, Chase Nov 18 2026): three themes with plain names, each its own page, grays and accent.
+// Paper (the default) is an off-white page with white sheets and warm grays; Avocado a soft green page; Pomegranate
+// a soft blush page. Was one tan paper with three accent-only family colors (RD-84..RD-86, DEC-67). Body text is 7:1
+// or better; muted 4.5:1 on the page and fill; the accent 4.5:1 on the page, fills and its own soft tint, light
+// and dark (RD-96; themes.test.ts). Status colors (safe, danger) are shared by every theme.
+export type ThemeName = 'paper' | 'avocado' | 'pomegranate';
+export const THEME_NAMES: readonly ThemeName[] = ['paper', 'avocado', 'pomegranate'];
+export const ThemeContext = createContext<ThemeName>('paper');
 
 /** How far a soft tint (accentSoft, a picked capsule; safeSoft, the "sent" tint) mixes its color into the page. */
 export const SOFT = { light: 0.93, dark: 0.82 } as const;
@@ -38,7 +37,7 @@ export const SOFT = { light: 0.93, dark: 0.82 } as const;
 export const PICKED = { light: 0.3, dark: 0.47 } as const;
 
 /** GUX-R15: the accent mixed into the page at about `t`, nudged by the least step (0.01) that keeps the capsule
- *  3:1 against the page (non-text contrast) and the ink count 4.5:1 on it, so every family color passes. */
+ *  3:1 against the page (non-text contrast) and the ink count 4.5:1 on it, so every theme passes. */
 function picked(accent: string, page: string, ink: string, t: number): string {
   const ok = (m: string) => contrast(m, page) >= 3 && contrast(ink, m) >= 4.5;
   for (let step = 0; step <= 100; step++) {
@@ -51,44 +50,67 @@ function picked(accent: string, page: string, ink: string, t: number): string {
   return mix(accent, page, t);
 }
 
-/** GUX-R17: safeSoft is safe mixed into the paper page like accentSoft (was a tint of the old white/black page). */
+/** GUX-R17: safeSoft is safe mixed into the theme's page like accentSoft. */
 const SAFE = { light: '#1C6E31', dark: '#7DD394' } as const;
-const status = {
-  light: { safe: SAFE.light, safeSoft: mix(SAFE.light, PAPER.light, SOFT.light), danger: '#B3261E', dangerText: '#B3261E', onDanger: '#FFFFFF', scrim: 'rgba(0,0,0,0.4)' },
-  dark: { safe: SAFE.dark, safeSoft: mix(SAFE.dark, PAPER.dark, SOFT.dark), danger: '#F2B8B5', dangerText: '#FF453A', onDanger: '#601410', scrim: 'rgba(0,0,0,0.6)' },
-};
-const NEUTRAL = {
-  light: { ...status.light, bg: PAPER.light, surface: '#F6F1E2', ink: '#1F1A14', muted: '#5E554A', line: '#DBD4BF', fill: '#E6DFC9', photo: '#E3DBC5' },
-  dark: { ...status.dark, bg: PAPER.dark, surface: '#1F1A16', ink: '#F3EDE4', muted: '#B3AA9F', line: '#3A322B', fill: '#2A241F', photo: '#241F1A' },
+const STATUS = {
+  light: { safe: SAFE.light, danger: '#B3261E', dangerText: '#B3261E', onDanger: '#FFFFFF', scrim: 'rgba(0,0,0,0.4)' },
+  dark: { safe: SAFE.dark, danger: '#F2B8B5', dangerText: '#FF453A', onDanger: '#601410', scrim: 'rgba(0,0,0,0.6)' },
 };
 
-/** The family color: the one accent, light and dark, and the words that sit on it. RD-86: Ember and Forest are a
- *  shade darker in light mode so they keep 4.5:1 on paper and its fill (were #B23A1E and #2E7D4F on white). */
-const ACCENTS: Record<ColorName, { light: string; dark: string }> = {
-  ember: { light: '#AD371D', dark: '#FF8A65' },
-  forest: { light: '#276B43', dark: '#6FCF97' },
-  plum: { light: '#8E3A8F', dark: '#D9A0E0' },
+/** A theme's own colors: page (bg), sheets (surface), words (ink, muted), hairlines (line), fills and the accent.
+ *  photo (the empty photo tile) is the fill. */
+interface Base { bg: string; surface: string; ink: string; muted: string; line: string; fill: string; accent: string }
+
+/** RD-94 / RD-95: the given values. Paper's surface is white; the others' sits halfway between page and fill. */
+const BASES: Record<ThemeName, { light: Base; dark: Base }> = {
+  paper: {
+    light: { bg: '#FAF8F3', surface: '#FFFFFF', ink: '#1E1B17', muted: '#5C564E', line: '#E3DED4', fill: '#EFECE5', accent: '#AD371D' },
+    dark: { bg: '#131210', surface: '#1C1A17', ink: '#F1EEE8', muted: '#B2ACA2', line: '#2E2B27', fill: '#24221E', accent: '#FF8A65' },
+  },
+  avocado: {
+    light: { bg: '#EEEFD3', surface: mix('#EEEFD3', '#E2E4C4', 0.5), ink: '#1B2113', muted: '#525A40', line: '#D2D5B1', fill: '#E2E4C4', accent: '#3B6120' },
+    dark: { bg: '#10140C', surface: mix('#10140C', '#1B2015', 0.5), ink: '#EEF0DE', muted: '#ADB599', line: '#2E3524', fill: '#1B2015', accent: '#B4D16A' },
+  },
+  pomegranate: {
+    light: { bg: '#F5EADF', surface: mix('#F5EADF', '#EBDDD0', 0.5), ink: '#22161A', muted: '#62504F', line: '#DDCDBE', fill: '#EBDDD0', accent: '#A3172F' },
+    dark: { bg: '#170D10', surface: mix('#170D10', '#24171A', 0.5), ink: '#F5E9E6', muted: '#BBA7A6', line: '#3A272B', fill: '#24171A', accent: '#FF8597' },
+  },
 };
 
-function build(name: ColorName): { light: Colors; dark: Colors } {
-  const a = ACCENTS[name];
+function build(b: Base, dark: boolean): Colors {
+  const mode = dark ? 'dark' : 'light';
   return {
-    light: { ...NEUTRAL.light, accent: a.light, accentInk: '#FFFFFF', accentSoft: mix(a.light, PAPER.light, SOFT.light), accentPicked: picked(a.light, PAPER.light, NEUTRAL.light.ink, PICKED.light) },
-    dark: { ...NEUTRAL.dark, accent: a.dark, accentInk: '#000000', accentSoft: mix(a.dark, PAPER.dark, SOFT.dark), accentPicked: picked(a.dark, PAPER.dark, NEUTRAL.dark.ink, PICKED.dark) },
+    ...STATUS[mode],
+    ...b,
+    photo: b.fill,
+    safeSoft: mix(SAFE[mode], b.bg, SOFT[mode]),
+    accentInk: dark ? '#000000' : '#FFFFFF',
+    accentSoft: mix(b.accent, b.bg, SOFT[mode]),
+    accentPicked: picked(b.accent, b.bg, b.ink, PICKED[mode]),
+    tabLine: edge(b.line, b.ink, b.surface, b.bg),
   };
 }
 
-let palettes: Record<ColorName, { light: Colors; dark: Colors }> | null = null;
+/** GUX-R18: the least nudge (0.01 steps) of `line` toward `ink` that is 3:1 against both `surface` and `page`. */
+function edge(line: string, ink: string, surface: string, page: string): string {
+  for (let i = 0; i <= 100; i++) {
+    const m = mix(line, ink, i / 100);
+    if (contrast(m, surface) >= 3 && contrast(m, page) >= 3) return m;
+  }
+  return ink;
+}
+
+let palettes: Record<ThemeName, { light: Colors; dark: Colors }> | null = null;
 function allPalettes() {
-  palettes ??= { ember: build('ember'), forest: build('forest'), plum: build('plum') };
+  palettes ??= Object.fromEntries(THEME_NAMES.map((n) => [n, { light: build(BASES[n].light, false), dark: build(BASES[n].dark, true) }])) as Record<ThemeName, { light: Colors; dark: Colors }>;
   return palettes;
 }
 
 /** Same colors on iPhone, Android and the web (RD-84); os stays so a phone can differ later.
  *  high: the phone's Increase Contrast (iPhone) or High contrast text (Android) is on (HIG-7). */
-export function paletteFor(_os: OS, dark: boolean, color: ColorName = 'ember', high = false): Colors {
+export function paletteFor(_os: OS, dark: boolean, theme: ThemeName = 'paper', high = false): Colors {
   const all = allPalettes();
-  const p = all[color] ?? all.ember;
+  const p = (Object.prototype.hasOwnProperty.call(all, theme) ? all[theme] : undefined) ?? all.paper;
   const base = dark ? p.dark : p.light;
   return high ? highContrast(base) : base;
 }
@@ -114,17 +136,20 @@ const highCache = new Map<Colors, Colors>();
 function highContrast(c: Colors): Colors {
   const hit = highCache.get(c);
   if (hit) return hit;
+  const mode = c.accentInk === '#000000' ? 'dark' : 'light';
   let accent = nudge(c.accent, c.ink, c.bg, 0, 0.3);
   for (let t = 0.3; contrast(c.accentInk, accent) < 7 && t < 1; t += 0.05) accent = mix(c.accent, c.ink, t);
+  const line = nudge(c.line, c.ink, c.surface, 4.5);
   const out: Colors = {
     ...c,
     muted: nudge(c.muted, c.ink, c.bg, 7),
-    line: nudge(c.line, c.ink, c.surface, 4.5),
+    line,
+    tabLine: edge(line, c.ink, c.surface, c.bg),
     accent,
     // RD-86: the soft tint follows the stronger accent, still mixed with the page.
-    accentSoft: mix(accent, c.bg, c.bg === PAPER.dark ? SOFT.dark : SOFT.light),
+    accentSoft: mix(accent, c.bg, SOFT[mode]),
     // GUX-R15: the picked capsule follows the stronger accent too, still 3:1 on the page with the ink 4.5:1 on it.
-    accentPicked: picked(accent, c.bg, c.ink, c.bg === PAPER.dark ? PICKED.dark : PICKED.light),
+    accentPicked: picked(accent, c.bg, c.ink, PICKED[mode]),
   };
   highCache.set(c, out);
   return out;
@@ -174,11 +199,11 @@ export function dialogRadius(os: OS): number {
   return os === 'android' ? 28 : 14;
 }
 
-/** RD-88 (DEC-67): one soft warm shadow under a photo tile (Gallery, New for you, a post's photos), light mode only;
- *  none in dark. Goes on a wrapper around the tile, so the tile's own corners still clip the photo and the shadow
- *  isn't clipped with it. The warm ink at 10%, 2 pt down, 12 pt blur. boxShadow works on iPhone, Android and the web. */
+/** RD-88 (DEC-67, kept by DEC-68): one soft warm shadow under a photo tile (Gallery, New for you, a post's photos),
+ *  light mode only; none in dark. Goes on a wrapper around the tile, so the tile's own corners still clip the photo and the shadow
+ *  isn't clipped with it. Paper's ink at 10% (RD-94), 2 pt down, 12 pt blur. boxShadow works on iPhone, Android and the web. */
 export function photoShadow(dark: boolean): { boxShadow: string } | null {
-  return dark ? null : { boxShadow: '0px 2px 12px rgba(31, 26, 20, 0.1)' };
+  return dark ? null : { boxShadow: '0px 2px 12px rgba(30, 27, 23, 0.1)' };
 }
 
 /** HIG text styles at the default size (Body 17, Title 2 22, Title 1 28); Material's ramp raised to match (DS-2). */
@@ -236,9 +261,9 @@ export function useTheme(): Theme {
   const scheme = useColorScheme();
   const bigText = useContext(BigTextContext);
   const look = useContext(LookContext);
-  const color = useContext(ColorContext);
+  const theme = useContext(ThemeContext);
   const { highContrast, reduceMotion } = useContext(PhoneA11yContext);
   const dark = isDark(look, scheme);
   const os = Platform.OS as OS;
-  return { c: paletteFor(os, dark, color, highContrast), t: typeScale(bigText), bigText, dark, os, highContrast, reduceMotion };
+  return { c: paletteFor(os, dark, theme, highContrast), t: typeScale(bigText), bigText, dark, os, highContrast, reduceMotion };
 }

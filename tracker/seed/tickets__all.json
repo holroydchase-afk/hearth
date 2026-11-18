@@ -1119,6 +1119,19 @@
    "fixed": "2026-11-17"
   },
   {
+   "id": "T22",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "QA-R1 (themes green run, Nov 18): app/e2e-web/demo.spec.js RD-102 polled the backing of a 'More' heading after picking a theme, but the pick happens on the Theme screen, which has no More heading, so it timed out 3/3 while the page had already recolored (probe: Avocado light rgb(238, 239, 211)). Fixed (r46): read the Theme heading's backing (themeBg); e2e:demo 25 passed x3",
+   "tests": [
+    "app/e2e-web/demo.spec.js"
+   ],
+   "found": "2026-11-18",
+   "fixed": "2026-11-18"
+  },
+  {
    "id": "B20",
    "kind": "bug",
    "layer": "app",

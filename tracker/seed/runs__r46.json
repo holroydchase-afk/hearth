@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-18T14:30:00-05:00",
+ "label": "Themes Paper, Avocado, Pomegranate (RD-94..RD-104, DEC-68): all app suites 3x (green after test fix T22)",
+ "passed": 1476,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs each at 7c7c004 (engineer): jest 1476 passed (1 skipped, 1 todo) x3, typecheck clean x3, e2e:web 5 passed (11 skipped) x3. e2e:demo 24 passed, 1 failed x3: RD-102 polled a 'More' heading that the Theme screen does not have (test bug T22; the app had recolored). After the test-only fix: e2e:demo 25 passed (5 skipped) x3. test-all.sh 1 run: 15 suites passed, 4 skipped (backend SQL and starter scripts: no Postgres; starter invites: no template; Deno: not installed). e2e:site, CI and phones not run. Review shots of all three themes light/dark plus a returning visitor with an old color 'forest' (opens Paper, no errors): /mnt/project-files/design/2026-11-18-themes/. e2e/results/themes-green-3x-2026-11-18.txt"
+}

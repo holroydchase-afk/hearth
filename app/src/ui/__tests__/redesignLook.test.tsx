@@ -16,14 +16,19 @@ import { HearthTabBar, tabsFor } from '../../screens/TabBar';
 import { renderApp } from '../../test/renderApp';
 import { seedPost } from '../../test/seed';
 import { Button, GroupedSection, Txt } from '../kit';
-import { COLOR_NAMES, ColorContext, RADIUS, contrast, dialogRadius, paletteFor, useTheme, type ColorName } from '../theme';
+import * as themeMod from '../theme';
+import { RADIUS, contrast, dialogRadius, paletteFor, useTheme } from '../theme';
 
+// qa-tdd, Nov 18: RD-3 / RD-24's Ember / Forest / Plum are superseded by RD-94 / RD-95's themes (DEC-68): Paper
+// (default), Avocado, Pomegranate. A theme now changes the page as well as the accent.
+type ColorName = 'paper' | 'avocado' | 'pomegranate';
 const ACCENTS: Record<string, { light: string; dark: string }> = {
-  // engineer, flagged for qa-tdd: Ember and Forest a shade darker in light mode on paper (RD-86, DEC-67).
-  ember: { light: '#AD371D', dark: '#FF8A65' },
-  forest: { light: '#276B43', dark: '#6FCF97' },
-  plum: { light: '#8E3A8F', dark: '#D9A0E0' },
+  paper: { light: '#AD371D', dark: '#FF8A65' },
+  avocado: { light: '#3B6120', dark: '#B4D16A' },
+  pomegranate: { light: '#A3172F', dark: '#FF8597' },
 };
+const pf = paletteFor as unknown as (os: string, dark: boolean, n?: string, high?: boolean) => ReturnType<typeof paletteFor>;
+const ThemeCtx = ((themeMod as Record<string, unknown>).ThemeContext ?? React.createContext('paper')) as React.Context<string>;
 const NEUTRAL_KEYS = ['bg', 'surface', 'ink', 'muted', 'line', 'fill', 'photo'] as const;
 const rgb = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 /** Black-and-white means no warm (or any) tint: channels within 8 of each other (Apple's own grays pass). */
@@ -33,16 +38,16 @@ const neutral = (h: string) => { const v = rgb(h); return Math.max(...v) - Math.
 const paperFamily = (h: string) => { const [r, g, b] = rgb(h); return r! >= g! && g! >= b! && r! - b! <= 40; };
 const MODES = [false, true] as const;
 /** RD-3 / RD-24: the three choices, fixed here so a missing one fails instead of being skipped. */
-const CHOICES = ['ember', 'forest', 'plum'] as ColorName[];
+const CHOICES = ['paper', 'avocado', 'pomegranate'] as ColorName[];
 
 describe('RD 1a the look: black and white with one accent', () => {
-  // engineer, flagged for qa-tdd: RD-1's white and true black are superseded by RD-84/85 (warm paper, DEC-67).
-  it('RD-1 → RD-84/85 light mode is paper #F1E9D2 with near-black words; dark mode is warm near-black #14100D with near-white words', () => {
+  // RD-1's white / true black → RD-84/85's tan paper → RD-94 Paper (DEC-68, Chase Nov 18 14:55Z): off-white #FAF8F3, dark #131210.
+  it('RD-1 → RD-94 light mode is Paper #FAF8F3 with near-black words; dark mode is #131210 with near-white words', () => {
     for (const os of ['ios', 'android', 'web'] as const) {
       const light = paletteFor(os, false);
       const dark = paletteFor(os, true);
-      expect({ os, bg: light.bg }).toEqual({ os, bg: '#F1E9D2' });
-      expect({ os, bg: dark.bg }).toEqual({ os, bg: '#14100D' });
+      expect({ os, bg: light.bg }).toEqual({ os, bg: '#FAF8F3' });
+      expect({ os, bg: dark.bg }).toEqual({ os, bg: '#131210' });
       // engineer, flagged for qa-tdd: paper tops out near 16:1 even for pure black; RD-86 asks 7:1, we keep 14.
       expect(contrast(light.ink, light.bg)).toBeGreaterThanOrEqual(14);
       expect(contrast(dark.ink, dark.bg)).toBeGreaterThanOrEqual(15);
@@ -51,10 +56,10 @@ describe('RD 1a the look: black and white with one accent', () => {
 
   // engineer, flagged for qa-tdd: since RD-84/85 the grays are the paper family (R ≥ G ≥ B), not neutral; the old
   // (pre-DEC-59) warm palette still must not come back.
-  it.each(MODES)('RD-1 → RD-84/85 the old warm palette does not return (dark %s): every non-accent color is paper-family', (dark) => {
-    const OLD_WARM = ['#FAF6F1', '#171311', '#241E1B', '#1F1A17', '#F6EFE9', '#EFE8E1', '#352C27', '#DDD3C9', '#40362F', '#5E5650', '#BDB2A9'];
-    for (const n of CHOICES) {
-      const c = paletteFor('ios', dark, n);
+  it.each(MODES)('RD-1 → RD-94 Paper is a soft warm gray family (dark %s), and neither the old warm palette nor the tan paper returns', (dark) => {
+    const OLD_WARM = ['#FAF6F1', '#171311', '#241E1B', '#1F1A17', '#F6EFE9', '#EFE8E1', '#352C27', '#DDD3C9', '#40362F', '#5E5650', '#BDB2A9', '#F1E9D2', '#14100D', '#E6DFC9', '#DBD4BF'];
+    for (const n of ['paper'] as ColorName[]) {
+      const c = pf('ios', dark, n);
       for (const k of NEUTRAL_KEYS) {
         expect({ n, k, v: c[k], paper: paperFamily(c[k]) }).toEqual({ n, k, v: c[k], paper: true });
         expect(OLD_WARM).not.toContain(c[k].toUpperCase());
@@ -90,33 +95,34 @@ describe('RD 1a the look: black and white with one accent', () => {
     expect(w('Large title')).toBe('600');
   });
 
-  it('RD-3 one accent token per palette, from one setting: Ember (default), Forest and Plum, light and dark', () => {
-    expect([...COLOR_NAMES]).toEqual(['ember', 'forest', 'plum']);
-    expect(paletteFor('ios', false)).toEqual(paletteFor('ios', false, 'ember'));
+  it('RD-3 → RD-94/95 one accent per theme, from one setting: Paper (default), Avocado and Pomegranate, light and dark', () => {
+    expect((themeMod as Record<string, unknown>).THEME_NAMES).toEqual(['paper', 'avocado', 'pomegranate']);
+    expect(paletteFor('ios', false)).toEqual(pf('ios', false, 'paper'));
     for (const n of CHOICES) {
-      expect({ n, light: paletteFor('ios', false, n).accent, dark: paletteFor('ios', true, n).accent }).toEqual({ n, ...ACCENTS[n] });
+      expect({ n, light: pf('ios', false, n).accent, dark: pf('ios', true, n).accent }).toEqual({ n, ...ACCENTS[n] });
       for (const dark of MODES) {
-        expect(paletteFor('android', dark, n)).toEqual(paletteFor('ios', dark, n));
-        expect(paletteFor('web', dark, n)).toEqual(paletteFor('ios', dark, n));
+        expect(pf('android', dark, n)).toEqual(pf('ios', dark, n));
+        expect(pf('web', dark, n)).toEqual(pf('ios', dark, n));
       }
     }
   });
 
-  it('RD-3 the family color changes only the accent: black, white and grays are the same for every choice', () => {
+  it('RD-3 → RD-95 status colors are shared by every theme (only page colors and the accent change)', () => {
     for (const dark of MODES) {
-      const base = paletteFor('ios', dark, 'ember');
+      const base = pf('ios', dark, 'paper');
       for (const n of CHOICES) {
-        const c = paletteFor('ios', dark, n);
-        for (const k of [...NEUTRAL_KEYS, 'safe', 'safeSoft', 'danger', 'onDanger', 'scrim'] as const) expect({ n, dark, k, v: c[k] }).toEqual({ n, dark, k, v: base[k] });
+        const c = pf('ios', dark, n);
+        for (const k of ['safe', 'danger', 'onDanger', 'scrim'] as const) expect({ n, dark, k, v: c[k] }).toEqual({ n, dark, k, v: base[k] });
       }
     }
   });
 
-  it('RD-3 useTheme resolves the accent from the one ColorContext setting', () => {
-    function Probe() { const { c } = useTheme(); return <Text testID="probe">{c.accent}</Text>; }
+  it('RD-3 → RD-97 useTheme resolves the palette from the one ThemeContext setting', () => {
+    function Probe() { const { c } = useTheme(); return <Text testID="probe">{`${c.bg} ${c.accent}`}</Text>; }
     for (const n of CHOICES) {
-      const r = render(<ColorContext.Provider value={n}><Probe /></ColorContext.Provider>);
-      expect({ n, accent: screen.getByTestId('probe').props.children }).toEqual({ n, accent: paletteFor(Platform.OS as 'ios', false, n).accent });
+      const r = render(<ThemeCtx.Provider value={n}><Probe /></ThemeCtx.Provider>);
+      const p = pf(Platform.OS, false, n);
+      expect({ n, probe: screen.getByTestId('probe').props.children }).toEqual({ n, probe: `${p.bg} ${p.accent}` });
       r.unmount();
     }
   });
@@ -124,7 +130,7 @@ describe('RD 1a the look: black and white with one accent', () => {
   it.each(CHOICES.flatMap((n) => MODES.flatMap((dark) => [[n, dark, false], [n, dark, true]] as const)))(
     'RD-5 %s (dark %s, Increase Contrast %s): the accent reads 4.5:1 on the screen and on rows, and words on it read',
     (n, dark, high) => {
-      const c = paletteFor('ios', dark, n, high);
+      const c = pf('ios', dark, n, high);
       expect({ onBg: contrast(c.accent, c.bg) >= 4.5 }).toEqual({ onBg: true });
       expect({ onSurface: contrast(c.accent, c.surface) >= 4.5 }).toEqual({ onSurface: true });
       expect({ onFill: contrast(c.accent, c.fill) >= 4.5 }).toEqual({ onFill: true });
@@ -134,8 +140,8 @@ describe('RD 1a the look: black and white with one accent', () => {
   );
 
   it.each(CHOICES.flatMap((n) => MODES.map((dark) => [n, dark] as const)))('RD-5 %s (dark %s): Increase Contrast still gives its own, stronger set', (n, dark) => {
-    const normal = paletteFor('ios', dark, n);
-    const high = paletteFor('ios', dark, n, true);
+    const normal = pf('ios', dark, n);
+    const high = pf('ios', dark, n, true);
     expect(contrast(high.accent, high.bg)).toBeGreaterThan(contrast(normal.accent, normal.bg));
     expect(contrast(high.muted, high.bg)).toBeGreaterThanOrEqual(7);
   });

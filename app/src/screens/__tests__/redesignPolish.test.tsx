@@ -70,7 +70,7 @@ function neutral(v: unknown): boolean {
   return Math.max(...rgb) - Math.min(...rgb) <= 8 || PAGE_GRAYS.has(s.toUpperCase());
 }
 const PAGE_GRAYS = new Set([false, true].flatMap((d) => [false, true].flatMap((hi) => {
-  const p = paletteFor('ios', d, 'ember', hi);
+  const p = paletteFor('ios', d, 'paper', hi);
   return [p.bg, p.surface, p.ink, p.muted, p.line, p.fill, p.photo].map((v) => v.toUpperCase());
 })));
 
@@ -108,7 +108,7 @@ describe('GUX-R1 a top-left "‹ More" / "‹ Gallery" back button', () => {
     await renderApp(<MoreScreen />, { user: 'chase' });
     await screen.findByRole('header', { name: 'More' });
     // engineer, flagged for qa-tdd: RD-78 Easy view takes Bigger text's row.
-    for (const row of ['Messages', 'Groups', 'Events', 'Easy view', 'Light or dark', 'Family color', 'Me', 'Help']) {
+    for (const row of ['Messages', 'Groups', 'Events', 'Easy view', 'Light or dark', 'Theme', 'Me', 'Help']) {
       fireEvent.press(screen.getByRole('button', { name: new RegExp(`^${row}(,|$)`) }));
       await screen.findByRole('button', { name: 'Back to More' }, slow);
       expectTopBack('More');

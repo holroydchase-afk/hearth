@@ -5,12 +5,12 @@
 import type { Role } from '../api/HearthApi';
 import type { NotificationPrefs } from '../api/types';
 import type { KV } from '../platform/kv';
-import { COLOR_NAMES, SCREEN_LOOKS, type ColorName, type ScreenLook } from '../ui/theme';
+import { SCREEN_LOOKS, THEME_NAMES, type ScreenLook, type ThemeName } from '../ui/theme';
 
 export type NotifyChoice = 'push' | 'evening' | 'sunday';
-/** look (DS-10): light or dark screen; 'system' follows the phone. color (RD-25): the family color, Ember, Forest or
- *  Plum, picked by the family's owner and saved on the owner's phone only (phase 1). */
-export interface Prefs { easyView: boolean; notify: NotifyChoice; look: ScreenLook; color: ColorName }
+/** look (DS-10): light or dark screen; 'system' follows the phone. theme (RD-97, RD-98): Paper, Avocado or
+ *  Pomegranate, picked by the family's owner and saved on the owner's phone only (phase 1). */
+export interface Prefs { easyView: boolean; notify: NotifyChoice; look: ScreenLook; theme: ThemeName }
 
 /** What the server needs for each Help choice (AE-2, set_notification_prefs). */
 export function serverPrefs(choice: NotifyChoice): NotificationPrefs {
@@ -22,14 +22,13 @@ export function serverPrefs(choice: NotifyChoice): NotificationPrefs {
 const key = (u: string) => `hearth.prefs.v1.${u}`;
 
 export function defaultPrefs(role: Role): Prefs {
-  return { easyView: role === 'viewer', notify: 'push', look: 'system', color: 'ember' };
+  return { easyView: role === 'viewer', notify: 'push', look: 'system', theme: 'paper' };
 }
 
-/** RD-25: only the owner's saved pick counts; COLOR-1's old Sage is now Forest; anything else is Ember. */
-function familyColor(saved: unknown, role: Role): ColorName {
-  if (role !== 'owner') return 'ember';
-  const v = saved === 'sage' ? 'forest' : saved;
-  return COLOR_NAMES.includes(v as ColorName) ? (v as ColorName) : 'ember';
+/** RD-98: only the owner's saved theme counts; anything else (and the old `color` key, no longer read) is Paper. */
+function savedTheme(saved: unknown, role: Role): ThemeName {
+  if (role !== 'owner') return 'paper';
+  return THEME_NAMES.includes(saved as ThemeName) ? (saved as ThemeName) : 'paper';
 }
 
 export async function loadPrefs(kv: KV, userId: string, role: Role): Promise<Prefs> {
@@ -42,7 +41,7 @@ export async function loadPrefs(kv: KV, userId: string, role: Role): Promise<Pre
       easyView: typeof p.easyView === 'boolean' ? p.easyView : typeof p.bigText === 'boolean' ? p.bigText : d.easyView,
       notify: p.notify === 'evening' || p.notify === 'sunday' || p.notify === 'push' ? p.notify : d.notify,
       look: SCREEN_LOOKS.includes(p.look as ScreenLook) ? (p.look as ScreenLook) : d.look,
-      color: familyColor(p.color, role),
+      theme: savedTheme(p.theme, role),
     };
   } catch {
     return d;
@@ -50,6 +49,6 @@ export async function loadPrefs(kv: KV, userId: string, role: Role): Promise<Pre
 }
 
 export async function savePrefs(kv: KV, userId: string, p: Prefs): Promise<void> {
-  const { easyView, notify, look, color } = p; // only today's fields: an old bigText is never written back (RD-75)
-  try { await kv.setItem(key(userId), JSON.stringify({ easyView, notify, look, color })); } catch { /* ignore */ }
+  const { easyView, notify, look, theme } = p; // only today's fields: an old bigText or color is never written back (RD-75, RD-98)
+  try { await kv.setItem(key(userId), JSON.stringify({ easyView, notify, look, theme })); } catch { /* ignore */ }
 }
