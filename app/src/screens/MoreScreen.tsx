@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 // RD-15, RD-16, RD-14 (SPEC-REDESIGN 1b, DEC-59), RD-60 (outline icons, inset lines): More fills the screen with big rows (icon, word, chevron,
-// 48 pt+) in this order: Messages, Groups (owner and adult), Events, Easy view (RD-78, was Bigger text), Light or dark, Family color
-// (owner), Me, Help. Each opens today's screen in place with "Back to More". Viewers never get Groups or Family
-// color, so no screen reached from here shows them a group's name (DEC-49). Messages says "N new" (a count from
+// 48 pt+) in this order: Messages, Groups (owner and adult), Events, Easy view (RD-78, was Bigger text), Light or dark, Theme
+// (owner, RD-97), Me, Help. Each opens today's screen in place with "Back to More". Viewers never get Groups or Theme
+// (RD-98), so no screen reached from here shows them a group's name (DEC-49). Messages says "N new" (a count from
 // this phone, never the words). Tapping the More tab again goes back to the menu, like the phone's own tabs.
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
@@ -16,9 +16,9 @@ import { GroupsScreen } from './GroupsScreen';
 import { HelpScreen } from './HelpScreen';
 import { MeScreen } from './MeScreen';
 import { MessagesScreen } from './MessagesScreen';
-import { EasyView, FamilyColor, LightOrDark } from './Preferences';
+import { EasyView, LightOrDark, ThemePicker } from './Preferences';
 
-type RowId = 'messages' | 'groups' | 'events' | 'easyView' | 'look' | 'color' | 'me' | 'help';
+type RowId = 'messages' | 'groups' | 'events' | 'easyView' | 'look' | 'theme' | 'me' | 'help';
 interface Row { id: RowId; text: string; icon: Icon }
 
 const ROWS: Row[] = [
@@ -27,15 +27,15 @@ const ROWS: Row[] = [
   { id: 'events', text: 'Events', icon: { sf: 'calendar', md: 'event' } },
   { id: 'easyView', text: 'Easy view', icon: { sf: 'textformat.size', md: 'format_size' } },
   { id: 'look', text: 'Light or dark', icon: { sf: 'sun.max', md: 'contrast' } },
-  { id: 'color', text: 'Family color', icon: { sf: 'paintpalette', md: 'palette' } },
+  { id: 'theme', text: 'Theme', icon: { sf: 'paintpalette', md: 'palette' } },
   { id: 'me', text: 'Me', icon: { sf: 'person.crop.circle', md: 'account_circle' } },
   { id: 'help', text: 'Help', icon: { sf: 'questionmark.circle', md: 'help' } },
 ];
 
-/** RD-15 / RD-16: which rows a role gets. Groups for parents only; Family color for the owner only (RD-26). */
+/** RD-15 / RD-16: which rows a role gets. Groups for parents only; Theme for the owner only (RD-98). */
 export function moreRowsFor(role: string): Row[] {
   const parent = role === 'owner' || role === 'adult';
-  return ROWS.filter((r) => (r.id !== 'groups' || parent) && (r.id !== 'color' || role === 'owner'));
+  return ROWS.filter((r) => (r.id !== 'groups' || parent) && (r.id !== 'theme' || role === 'owner'));
 }
 
 const resets = new Set<() => void>();
@@ -88,14 +88,14 @@ export function MoreScreen({ initialOpen }: { initialOpen?: string } = {}) {
       />
     );
   }
-  if (open === 'easyView' || open === 'look' || open === 'color') {
-    const title = open === 'easyView' ? 'Easy view' : open === 'look' ? 'Light or dark screen' : 'Family color';
+  if (open === 'easyView' || open === 'look' || open === 'theme') {
+    const title = open === 'easyView' ? 'Easy view' : open === 'look' ? 'Light or dark screen' : 'Theme';
     return (
       <Screen>
         <BackButton to="More" onPress={back} />
         <Txt variant="display" role="header">{title}</Txt>
-        {open === 'easyView' ? <EasyView /> : open === 'look' ? <LightOrDark heading={false} /> : <FamilyColor heading={false} />}
-        {open === 'color' ? <Txt variant="muted">It colors the picked tab and links. For now it changes this phone only.</Txt> : null}
+        {open === 'easyView' ? <EasyView /> : open === 'look' ? <LightOrDark heading={false} /> : <ThemePicker heading={false} />}
+        {open === 'theme' ? <Txt variant="muted">It colors the page, the picked tab and links. For now it changes this phone only.</Txt> : null}
       </Screen>
     );
   }

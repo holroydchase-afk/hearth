@@ -70,7 +70,7 @@ function neutral(v: unknown): boolean {
   return Math.max(...rgb) - Math.min(...rgb) <= 8 || PAGE_GRAYS.has(s.toUpperCase());
 }
 const PAGE_GRAYS = new Set([false, true].flatMap((d) => [false, true].flatMap((hi) => {
-  const p = paletteFor('ios', d, 'ember', hi);
+  const p = paletteFor('ios', d, 'paper', hi);
   return [p.bg, p.surface, p.ink, p.muted, p.line, p.fill, p.photo].map((v) => v.toUpperCase());
 })));
 

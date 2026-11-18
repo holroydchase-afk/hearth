@@ -220,6 +220,7 @@ const GREY_ALLOWED: Record<string, Record<string, string>> = {
   },
   'screens/MessagesScreen.tsx': { Line: 'chat bubble capsule' },
   'screens/GalleryTop.tsx': { SearchField: 'the "Search photos" field (RD-47), a field like the reply field' },
+  'screens/TabBar.tsx': { HearthTabBar: 'the tab bar, set apart from the page on c.surface (RD-104)' },
   'demo/DemoBar.tsx': { DemoBar: 'demo chrome, outside the app' },
   'demo/DemoFrame.tsx': { DemoFrame: 'demo chrome, outside the app' },
 };

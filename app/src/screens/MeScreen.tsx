@@ -43,7 +43,7 @@ function MeReady({ onBack }: { onBack?: () => void }) {
       </GroupedSection>
       <EasyView heading />
       <LightOrDark />
-      {/* RD-15 / RD-24: Family color moved to More (owner only). */}
+      {/* RD-15 / RD-97: Theme lives in More (owner only). */}
       <HowToTell />
       <ReplyAudience />
       <PhotoHelpers />

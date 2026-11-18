@@ -290,7 +290,7 @@ export function Card({ children, style, testID }: { children: ReactNode; style?:
 }
 
 /** RD-34: the Settings-style grouped section (iPhone inset grouped list; Android outlined card), only for the
- *  settings lists under More (Easy view, Light or dark, Family color, Help, Me). */
+ *  settings lists under More (Easy view, Light or dark, Theme, Help, Me). */
 export function GroupedSection({ children, style, testID }: { children: ReactNode; style?: StyleProp<ViewStyle>; testID?: string }) {
   const { c, os } = useTheme();
   const look = os === 'android' ? { borderWidth: 1, borderColor: c.line, borderRadius: RADIUS.medium } : { borderWidth: 0, borderRadius: RADIUS.medium };

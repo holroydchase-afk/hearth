@@ -11,7 +11,7 @@ import { clearArrivals, recordArrival } from '../notify/latency';
 import { listenForArrivals, pushStatus, registerForPush } from '../notify/push';
 import type { KV } from '../platform/kv';
 import type { PickedAsset } from '../share/bulk';
-import { BigTextContext, ColorContext, LookContext, PhoneA11yContext, nativeScheme, type PhoneA11y } from '../ui/theme';
+import { BigTextContext, LookContext, PhoneA11yContext, ThemeContext, nativeScheme, type PhoneA11y } from '../ui/theme';
 import { UploadQueue, type Job, type Prepared, type QueueItem } from '../upload/queue';
 import { defaultPrefs, loadPrefs, savePrefs, serverPrefs, type NotifyChoice, type Prefs } from './prefs';
 
@@ -281,11 +281,11 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
   return (
     <Ctx.Provider value={value}>
       <LookContext.Provider value={s.prefs.look}>
-        <ColorContext.Provider value={s.space?.role === 'owner' ? s.prefs.color : 'ember'}>
+        <ThemeContext.Provider value={s.space?.role === 'owner' ? s.prefs.theme : 'paper'}>
           <BigTextContext.Provider value={s.prefs.easyView}>
             <PhoneA11yContext.Provider value={a11y}>{children}</PhoneA11yContext.Provider>
           </BigTextContext.Provider>
-        </ColorContext.Provider>
+        </ThemeContext.Provider>
       </LookContext.Provider>
     </Ctx.Provider>
   );

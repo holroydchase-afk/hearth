@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Blocks shared by Help, Me and More (RD-15): Easy view, light or dark, Family color, notice choice, privacy, sign out.
+// Blocks shared by Help, Me and More (RD-15): Easy view, light or dark, Theme, notice choice, privacy, sign out.
 import React, { useState } from 'react';
 import { isPhoneOnly } from '../api/phone';
 import { useApp } from '../state/AppContext';
 import { HELPER_FEATURES } from '../share/helpers';
 import type { NotifyChoice } from '../state/prefs';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { MIN_TARGET, paletteFor, useTheme, type ColorName, type ScreenLook } from '../ui/theme';
+import { MIN_TARGET, paletteFor, useTheme, type ScreenLook, type ThemeName } from '../ui/theme';
 import { Button, GroupedSection, Choice, Confirm, Notice, SystemIcon, Txt } from '../ui/kit';
 
 const EASY: { id: 'on' | 'off'; title: string }[] = [{ id: 'on', title: 'On' }, { id: 'off', title: 'Off' }];
@@ -47,35 +47,38 @@ export function LightOrDark({ heading = true }: { heading?: boolean }) {
   );
 }
 
-const COLORS: { id: ColorName; title: string }[] = [
-  { id: 'ember', title: 'Ember' },
-  { id: 'forest', title: 'Forest' },
-  { id: 'plum', title: 'Plum' },
+const THEMES: { id: ThemeName; title: string }[] = [
+  { id: 'paper', title: 'Paper' },
+  { id: 'avocado', title: 'Avocado' },
+  { id: 'pomegranate', title: 'Pomegranate' },
 ];
 
-/** RD-24..RD-26: the family's owner picks the family color: Ember (default), Forest or Plum. Each row shows the
- *  color itself, its name and a check on the picked one. Phase 1: saved on this phone only (prefs.color). */
-export function FamilyColor({ heading = true }: { heading?: boolean }) {
+/** RD-97 / RD-98: the family's owner picks a theme: Paper (default), Avocado or Pomegranate. Each row shows a swatch
+ *  (the theme's page with its accent, light or dark as now), its name and a check on the picked one. A tap
+ *  recolors at once. Phase 1: saved on this phone only (prefs.theme). */
+export function ThemePicker({ heading = true }: { heading?: boolean }) {
   const { prefs, setPrefs, space } = useApp();
   const { c, dark } = useTheme();
   if (!space || space.role !== 'owner') return null;
   return (
     <GroupedSection>
-      {heading ? <Txt variant="title" role="header">Family color</Txt> : null}
-      {COLORS.map((k) => {
-        const on = prefs.color === k.id;
-        const swatch = paletteFor('ios', dark, k.id).accent;
+      {heading ? <Txt variant="title" role="header">Theme</Txt> : null}
+      {THEMES.map((k) => {
+        const on = prefs.theme === k.id;
+        const swatch = paletteFor('ios', dark, k.id);
         return (
           <Pressable
             key={k.id}
             accessibilityRole="radio"
-            accessibilityLabel={k.title}
+            accessibilityLabel={`${k.title} theme`}
             accessibilityState={{ checked: on }}
             aria-checked={on} // the web build reads aria-checked, not accessibilityState
-            onPress={() => setPrefs({ color: k.id })}
+            onPress={() => setPrefs({ theme: k.id })}
             style={({ pressed }) => [styles.row, { opacity: pressed ? 0.7 : 1 }]}
           >
-            <View style={[styles.swatch, { backgroundColor: swatch }]} />
+            <View style={[styles.swatch, { backgroundColor: swatch.bg, borderColor: c.line }]}>
+              <View style={[styles.dot, { backgroundColor: swatch.accent }]} />
+            </View>
             <Txt style={{ flex: 1 }}>{k.title}</Txt>
             {on ? <SystemIcon icon={CHECK} color={c.ink} /> : null}
           </Pressable>
@@ -89,7 +92,8 @@ const CHECK = { sf: 'checkmark', md: 'check' };
 
 const styles = StyleSheet.create({
   row: { minHeight: MIN_TARGET + 4, minWidth: MIN_TARGET, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  swatch: { width: 28, height: 28, borderRadius: 14 },
+  swatch: { width: 36, height: 36, borderRadius: 18, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  dot: { width: 16, height: 16, borderRadius: 8 },
 });
 
 const CHOICES: { id: NotifyChoice; title: string; saved: string }[] = [
