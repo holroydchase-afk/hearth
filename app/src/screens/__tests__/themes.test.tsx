@@ -16,7 +16,7 @@
 //     Adults and viewers have no Theme row and always see Paper, whatever their phone saved.
 //   - RD-99: every page backing is c.bg of the current theme; no tan #F1E9D2 / #14100D page; no hard-coded white or
 //     black page under Avocado or Pomegranate (Paper's surface is white, so white is allowed there).
-//   - RD-104: the tab bar (accessibilityRole tablist) is c.surface with a 1 px c.line top border, every theme.
+//   - RD-104: the tab bar (accessibilityRole tablist) is c.surface with a 1 px c.tabLine top border (GUX-R18), every theme.
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react-native';
 import React from 'react';
 import { Platform, StyleSheet, Text } from 'react-native';
@@ -208,7 +208,7 @@ describe('RD-99 every page backing is the theme\'s c.bg', () => {
 describe('RD-104 the tab bar is set apart from the page', () => {
   for (const theme of THEMES) {
     for (const dark of [false, true]) {
-      it(`RD-104 (${theme}, ${lookName(dark)}) the tab bar is c.surface with a 1 px c.line top border`, () => {
+      it(`RD-104 (${theme}, ${lookName(dark)}) the tab bar is c.surface with a 1 px c.tabLine top border (GUX-R18)`, () => {
         const c = pal(dark, theme);
         render(
           <LookContext.Provider value={dark ? 'dark' : 'light'}>
@@ -222,7 +222,7 @@ describe('RD-104 the tab bar is set apart from the page', () => {
           bg: String(st.backgroundColor ?? '').toUpperCase(),
           topWidth: Number(st.borderTopWidth ?? st.borderWidth ?? 0),
           topColor: String(st.borderTopColor ?? st.borderColor ?? '').toUpperCase(),
-        }).toEqual({ bg: c.surface.toUpperCase(), topWidth: 1, topColor: c.line.toUpperCase() });
+        }).toEqual({ bg: c.surface.toUpperCase(), topWidth: 1, topColor: String((c as unknown as Record<string, string | undefined>).tabLine ?? "c.tabLine missing").toUpperCase() });
       });
     }
   }
