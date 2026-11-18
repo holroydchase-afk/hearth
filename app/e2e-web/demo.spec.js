@@ -564,3 +564,109 @@ test("RD-80 RD-78 each person's Easy view pick is kept separately: Chase turns i
   await galleryLoaded(page);
   await expect.poll(() => tabWordsShown(page)).toEqual(['Gallery', 'Share', 'Feed', 'More']);
 });
+
+// RD-92 (SPEC-REDESIGN 1h, DEC-67, Chase Nov 18): warm paper, soft photo shadows in light only, and the reaction pop
+// with its reduced-motion fallback, in the public demo at 393 px. Written first (red), Nov 18, by qa-tdd.
+// Soft expects, so one run shows every part of RD-92 that is still missing.
+test('RD-92 warm paper, photo shadows and the reaction pop in the demo, light and dark, with reduced motion', async ({ page }) => {
+  const PAPER = 'rgb(241, 233, 210)';
+  const WARM_BLACK = 'rgb(20, 16, 13)';
+  const shots = path.join(__dirname, '..', 'test-results', 'rd-92');
+  // The page behind the app (the demo frame, the app root, body, html; the browser's white if none) and the Gallery
+  // backing (the first painted ancestor of the grid).
+  const backings = () => page.evaluate(() => {
+    const opaque = (c) => c && c !== 'transparent' && !/rgba\(\s*\d+,\s*\d+,\s*\d+,\s*0\s*\)/.test(c);
+    const bg = (el) => (el ? getComputedStyle(el).backgroundColor : null);
+    const pageEl = [document.querySelector('[data-testid="demo-frame"]'), document.getElementById('root'), document.body, document.documentElement].find((el) => el && opaque(bg(el)));
+    let g = document.querySelector('[data-testid="gallery-grid"]');
+    while (g && !opaque(bg(g))) g = g.parentElement;
+    return { page: pageEl ? bg(pageEl) : 'rgb(255, 255, 255)', gallery: g ? bg(g) : 'rgb(255, 255, 255)' };
+  });
+  // A photo tile's shadow: on the tile or one of its two wrappers.
+  const shadowNear = (loc) => loc.evaluate((el) => {
+    for (let n = el, i = 0; n && i < 3; n = n.parentElement, i++) {
+      const s = getComputedStyle(n).boxShadow;
+      if (s && s !== 'none') return s;
+    }
+    return 'none';
+  });
+  const galleryTile = () => page.locator('[data-testid^="gallery-tile-"]').filter({ visible: true }).first();
+  const feedPhoto = () => page.getByRole('button', { name: /^Open photo 1 of \d+/ }).filter({ visible: true }).first();
+  const love = () => page.getByRole('button', { name: 'Love it' }).filter({ visible: true }).first();
+  const loveOff = async () => {
+    if ((await love().getAttribute('aria-selected')) === 'true' || (await love().getAttribute('aria-pressed')) === 'true') {
+      await love().click();
+      await page.waitForTimeout(400);
+    }
+  };
+  // Sample for 400 ms from just before the tap: the biggest scale drawn inside the heart, when it first passed 1, and
+  // how far the heart and its neighbour (Haha) moved from where they started.
+  const tapAndSample = async () => {
+    await love().evaluate((btn) => {
+      const haha = btn.parentElement.querySelector('[aria-label="Haha"]');
+      const rect = (el) => el.getBoundingClientRect();
+      const scaleOf = (el) => {
+        const t = getComputedStyle(el).transform;
+        if (!t || t === 'none') return 1;
+        const m = /matrix\(([^)]+)\)/.exec(t);
+        return m ? Math.hypot(...m[1].split(',').slice(0, 2).map(Number)) : 1;
+      };
+      const start = { heart: rect(btn), haha: rect(haha) };
+      const t0 = performance.now();
+      window.__rd92 = new Promise((resolve) => {
+        const got = { maxScale: 1, firstAbove1: null, heartShift: 0, hahaShift: 0 };
+        const tick = () => {
+          const t = performance.now() - t0;
+          const s = Math.max(...[btn, ...btn.querySelectorAll('*')].map(scaleOf));
+          if (s > 1.001 && got.firstAbove1 === null) got.firstAbove1 = t;
+          got.maxScale = Math.max(got.maxScale, s);
+          const h = rect(btn); const n = rect(haha);
+          got.heartShift = Math.max(got.heartShift, Math.abs(h.x - start.heart.x), Math.abs(h.width - start.heart.width), Math.abs(h.y - start.heart.y));
+          got.hahaShift = Math.max(got.hahaShift, Math.abs(n.x - start.haha.x), Math.abs(n.y - start.haha.y));
+          if (t < 400) requestAnimationFrame(tick); else resolve(got);
+        };
+        requestAnimationFrame(tick);
+      });
+    });
+    await love().click();
+    return page.evaluate(() => window.__rd92);
+  };
+
+  // Light
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' });
+  await page.goto('/');
+  await galleryLoaded(page);
+  expect.soft(await backings()).toEqual({ page: PAPER, gallery: PAPER });
+  expect.soft(await shadowNear(galleryTile())).not.toBe('none');
+  await page.screenshot({ path: path.join(shots, 'rd-92-light-gallery.png') });
+  await onFeed(page);
+  expect.soft(await shadowNear(feedPhoto())).not.toBe('none');
+  await loveOff();
+  const pop = await tapAndSample();
+  expect.soft({ popped: pop.maxScale > 1, inTime: pop.firstAbove1 !== null && pop.firstAbove1 <= 250, heartShift: pop.heartShift <= 0.5, hahaShift: pop.hahaShift <= 0.5 })
+    .toEqual({ popped: true, inTime: true, heartShift: true, hahaShift: true });
+  await page.screenshot({ path: path.join(shots, 'rd-92-light-feed.png') });
+
+  // Reduced motion: no scale
+  await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
+  await page.goto('/');
+  await page.getByRole('tab', { name: /^Gallery/ }).click();
+  await galleryLoaded(page);
+  await onFeed(page);
+  await loveOff();
+  const calm = await tapAndSample();
+  expect.soft({ maxScale: calm.maxScale }).toEqual({ maxScale: 1 });
+
+  // Dark
+  await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'no-preference' });
+  await page.goto('/');
+  await page.getByRole('tab', { name: /^Gallery/ }).click();
+  await galleryLoaded(page);
+  expect.soft(await backings()).toEqual({ page: WARM_BLACK, gallery: WARM_BLACK });
+  expect.soft(await shadowNear(galleryTile())).toBe('none');
+  await page.screenshot({ path: path.join(shots, 'rd-92-dark-gallery.png') });
+  await onFeed(page);
+  expect.soft(await shadowNear(feedPhoto())).toBe('none');
+  await page.screenshot({ path: path.join(shots, 'rd-92-dark-feed.png') });
+});

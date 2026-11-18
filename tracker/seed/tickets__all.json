@@ -1119,6 +1119,17 @@
    "fixed": "2026-11-17"
   },
   {
+   "id": "B20",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (warm paper red run, Nov 18): app/src/__tests__/portfolioClaims.test.ts RD-1 fails at 81d021d before any new test: docs/portfolio/CASE-STUDY.md says 57 decisions, the log has 67 (DEC-67), more than 10 behind. Fix: update the case study count. Test: app/src/__tests__/portfolioClaims.test.ts",
+   "tests": [],
+   "found": "2026-10-15",
+   "fixed": null
+  },
+  {
    "id": "B15",
    "kind": "bug",
    "layer": "backend",
