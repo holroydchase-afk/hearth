@@ -152,6 +152,7 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
   const load = useCallback(async () => {
     live.current.queue?.stop();
     // PRIV-R1: wipe any decrypted video a crash left behind before anything else, whoever is (or isn't) signed in.
+    // load() runs again only from signed-out, sign-in or the offline screen, where no player is open (privacy review PRIV-R2).
     deps.videoFiles?.clear?.().catch(() => {});
     const session = await deps.api.getSession().catch(() => null);
     if (!session) {

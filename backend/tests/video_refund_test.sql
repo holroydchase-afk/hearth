@@ -189,6 +189,13 @@ select tests.throws_code(format('select private.videos_this_month(%L)', :alex),
 select tests.ok_sql(format($$select (public.space_upload_quota(%L)->>'videos_this_month')::int = 10$$, :space_a),
                     'SEC-R7 Alex still sees his own count through space_upload_quota');
 
+-- ---------- PRIV-R1 (privacy-security, 0028 review): no app role touches the refund table ----------
+:as_admin
+select tests.ok_sql($$select not has_table_privilege('authenticated', 'private.video_refundable', 'SELECT,INSERT,UPDATE,DELETE')$$,
+                    'PRIV-R1 authenticated has no privilege on private.video_refundable');
+select tests.ok_sql($$select not has_table_privilege('anon', 'private.video_refundable', 'SELECT,INSERT,UPDATE,DELETE')$$,
+                    'PRIV-R1 anon has no privilege on private.video_refundable');
+
 -- ---------- report ----------
 \o
 \pset format aligned
