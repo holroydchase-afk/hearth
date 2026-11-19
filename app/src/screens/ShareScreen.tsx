@@ -4,18 +4,18 @@
 // the big photo, a note, and "To:" face tiles on one card, with a pinned "Send to <names>" button. Nothing is
 // picked to start (SHARE-PC-7; was BETA-AUD-2's preselect). Parents can still pick lots of photos (bulk review).
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Image, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { Circle } from '../api/HearthApi';
 import { messageFor } from '../errors/messages';
 import { saveLastAudience } from '../share/audienceMemory';
 import { planBatch, type PickedAsset } from '../share/bulk';
 import { applyHelpers, findLookAlikes, helperLines, helperSwitches, type LookResult } from '../share/helpers';
-import { othersIn, recipientsLine, tileName } from '../share/postcard';
+import { othersIn, recipientsLine, tileColumns, tileName } from '../share/postcard';
 import { loadSent, recordSent } from '../share/sentBefore';
 import { useApp } from '../state/AppContext';
 import { useNav } from '../state/nav';
-import { Button, FaceTile, Field, Loading, Notice, Screen, SystemIcon, Txt } from '../ui/kit';
+import { AddTile, Button, FaceTile, Field, Loading, Notice, Screen, SystemIcon, Txt } from '../ui/kit';
 import { photos } from '../ui/format';
 import { LABEL_SCALE_CAP, RADIUS, WEIGHT, photoShadow, useTheme } from '../ui/theme';
 import type { QueueItem } from '../upload/queue';
@@ -41,6 +41,8 @@ export function ShareScreen() {
   const [chosen, setChosen] = useState<string[]>([]);
   const [items, setItems] = useState<QueueItem[]>([]);
   const [note, setNote] = useState('');
+  const win = useWindowDimensions();
+  const [gridW, setGridW] = useState<number | null>(null); // GUX-R1: the tile row's drawn width, once laid out
   // CAP-9 / QA-R3: bulk review keeps its one Title box for now; new single posts have no title (DEC-72).
   const [title, setTitle] = useState('');
   // SHARE-PC-2: which picked photo is the big one.
@@ -217,7 +219,12 @@ export function ShareScreen() {
   const shown = Math.min(cur, items.length - 1);
   const big = items[shown]!;
   const removeShown = () => { setItems((all) => all.filter((_, j) => j !== shown)); setCur((i) => Math.max(0, Math.min(i, items.length - 2))); };
-  const across = bigText ? 2 : 3;
+  // GUX-R1: no name ever spills out of its tile. Until the row is laid out, its width comes from the window
+  // (page padding 16 + grid padding 10, each side).
+  const across = tileColumns({
+    names: list.map((g) => tileName(g, myName, isParent)), rowWidth: gridW ?? win.width - 52,
+    fontSize: t.base, fontScale: win.fontScale ?? 1, bigText,
+  });
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
@@ -250,11 +257,7 @@ export function ShareScreen() {
                   </Pressable>
                 )) : null}
                 {items.length < MAX ? (
-                  <Pressable accessibilityRole="button" accessibilityLabel={videos ? 'Add photos or videos' : 'Add photos'} onPress={() => void pick()}
-                    style={({ pressed }) => [styles.add, { backgroundColor: c.fill, opacity: pressed ? 0.7 : 1 }]}>
-                    <SystemIcon icon={{ sf: 'plus', md: 'add' }} color={c.ink} />
-                    <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.ink, fontSize: t.base, fontWeight: WEIGHT.semibold }}>Add</Text>
-                  </Pressable>
+                  <AddTile label={videos ? 'Add photos or videos' : 'Add photos'} onPress={() => void pick()} />
                 ) : null}
               </ScrollView>
               {items.length > 1 ? (
@@ -267,7 +270,7 @@ export function ShareScreen() {
 
               {/* SHARE-PC-3: one note, its label always shown; no title on new posts (DEC-72 amends DEC-39). */}
               <View style={styles.words}>
-                <Field label="Add a note (optional)" placeholder="Like: Pumpkin patch day" value={note} onChangeText={setNote} multiline maxLength={2000} />
+                <Field underline label="Add a note (optional)" placeholder="Like: Pumpkin patch day" value={note} onChangeText={setNote} multiline maxLength={2000} />
               </View>
 
               <View style={styles.dashClip}>
@@ -286,7 +289,7 @@ export function ShareScreen() {
                     <Txt variant="strong">{isParent ? 'There is no group to send to yet. Make one on the Groups tab.' : `There is no group to send to yet. Ask ${app.helper ?? 'a parent'} to add you to one.`}</Txt>
                   </View>
                 ) : null}
-                <View style={styles.grid}>
+                <View style={styles.grid} onLayout={(e) => setGridW(Math.max(0, e.nativeEvent.layout.width - 20))}>
                   {list.map((g) => (
                     <FaceTile key={g.circle_id} name={tileName(g, myName, isParent)} count={g.member_count} faces={othersIn(g, myName)}
                       picked={chosen.includes(g.circle_id)} onPress={() => toggle(g.circle_id)} across={across} />
@@ -315,7 +318,6 @@ const styles = StyleSheet.create({
   thumbs: { flexDirection: 'row', gap: 10, paddingHorizontal: 14, paddingTop: 12, paddingBottom: 4 },
   thumb: { width: 64, height: 64, borderRadius: RADIUS.medium, borderWidth: 3, overflow: 'hidden' },
   thumbImg: { width: '100%', height: '100%' },
-  add: { minWidth: 64, minHeight: 64, borderRadius: RADIUS.medium, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 },
   inset: { paddingHorizontal: 16 },
   words: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 16 },
   // A dashed line on one side only isn't drawn the same on every phone, so a dashed box is clipped to its top edge.

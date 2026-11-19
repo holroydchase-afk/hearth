@@ -375,12 +375,16 @@ describe('GUX-R8 Previous left and Done right, on one row', () => {
 // GUX-R9: neutral avatars; picked rows get an accent check mark, not a pink fill.
 // ---------------------------------------------------------------------------------------------------------------
 
-/** An accent check mark inside `row`: a check symbol tinted accent, or a "✓" in the accent color. */
+/** An accent check mark inside `row`: a check symbol tinted accent, or a "✓" in the accent color.
+ *  Widened Nov 19 by engineer for GUX-R4, flagged for qa-tdd: also a filled accent disc holding an accentInk check
+ *  (Share's picked face tile). */
 function accentCheck(row: Inst): boolean {
-  const accent = light().accent;
+  const { accent, accentInk } = light();
   const symbols = row.findAll((n: Inst) => n.type === SymbolView && /check/.test(JSON.stringify(n.props.name)) && n.props.tintColor === accent);
   const ticks = row.findAll((n: Inst) => n.type === Text && /[✓✔]/.test(String(n.props.children)) && flat(n.props.style).color === accent);
-  return symbols.length + ticks.length > 0;
+  const discs = row.findAll((n: Inst) => typeof n.type === 'string' && flat(n.props.style).backgroundColor === accent
+    && n.findAll((m: Inst) => m.type === SymbolView && /check/.test(JSON.stringify(m.props.name)) && m.props.tintColor === accentInk).length > 0);
+  return symbols.length + ticks.length + discs.length > 0;
 }
 
 describe('GUX-R9 neutral avatars and accent check marks', () => {

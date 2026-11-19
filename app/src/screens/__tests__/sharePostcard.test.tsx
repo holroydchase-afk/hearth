@@ -117,7 +117,9 @@ describe('SHARE-PC-1 one "New post" page holding a card', () => {
     const at = (n: Inst) => order.indexOf(n);
     const big = screen.getByText('1 of 3');
     const note = screen.getByLabelText('Add a note (optional)');
-    const divider = (card.findAll((n: Inst) => isHost(n) && flat(n.props.style).borderStyle === 'dashed') as Inst[])[0];
+    // Nov 19, engineer for GUX-R2 (flagged for qa-tdd): the Add tile is dashed too now, so the divider is the dashed
+    // host that isn't a button.
+    const divider = (card.findAll((n: Inst) => isHost(n) && flat(n.props.style).borderStyle === 'dashed' && n.props.accessibilityRole !== 'button') as Inst[])[0];
     const to = screen.getByTestId('share-to');
     expect({ divider: !!divider, dividerColor: divider && (flat(divider.props.style).borderColor ?? flat(divider.props.style).borderTopColor) })
       .toEqual({ divider: true, dividerColor: c.line });
@@ -224,14 +226,16 @@ describe('SHARE-PC-5 face tiles inside the card (parents)', () => {
     return null;
   };
 
-  it('SHARE-PC-5 Everyone and 5 groups: 6 tiles in the card, Everyone first, each "<name>, N people, not picked", 3 across, no sideways scroll', async () => {
+  it('SHARE-PC-5 Everyone and 5 groups: 6 tiles in the card, Everyone first, each "<name>, N people, not picked", 2 across here (GUX-R1), no sideways scroll', async () => {
     await six();
     const card = screen.getByTestId('share-card');
     const all = tiles();
     expect(all.every((t) => inside(t, card))).toBe(true);
     expect(String(all[0]!.props.accessibilityLabel)).toMatch(/^Everyone, \d+ people, not picked$/);
     expect(all.map((t) => String(t.props.accessibilityLabel).split(',')[0])).toEqual(['Everyone', DAD, MOM, 'Our house', 'Aunts and uncles', 'Cousins']);
-    expect(all.map(across)).toEqual(Array(6).fill(3));
+    // Retargeted Nov 19 by engineer for GUX-R1, flagged for qa-tdd: "Grandparents" is wider than a 3-across tile on
+    // this 375 pt test phone, so these tiles go 2 across (the column rule is in shareGux.test.tsx).
+    expect(all.map(across)).toEqual(Array(6).fill(2));
     const to = screen.getByTestId('share-to');
     expect((to.findAll((n: Inst) => n.type === ScrollView && n.props.horizontal) as Inst[]).length).toBe(0);
     expect(wordsIn(all[1]!)).toMatch(/3 people/);
@@ -301,7 +305,9 @@ describe('SHARE-PC-8 tapping a tile picks it', () => {
     const picked = screen.getByLabelText(new RegExp(`^${esc(DAD)}, \\d+ people, picked$`));
     const c = light();
     const borders = [picked, ...(picked.findAll((n: Inst) => isHost(n)) as Inst[])].map((n) => flat(n.props.style)).filter((s) => Number(s.borderWidth ?? 0) > 0 && s.borderColor === c.accent);
-    const checks = picked.findAll((n: Inst) => (/check/.test(JSON.stringify(n.props.name ?? '')) && n.props.tintColor === c.accent) || (n.type === Text && /[✓✔]/.test(String(n.props.children)) && flat(n.props.style).color === c.accent));
+    // Widened Nov 19 by engineer for GUX-R4, flagged for qa-tdd: the check may sit in accentInk on a filled accent disc.
+    const checks = picked.findAll((n: Inst) => (/check/.test(JSON.stringify(n.props.name ?? '')) && n.props.tintColor === c.accent) || (n.type === Text && /[✓✔]/.test(String(n.props.children)) && flat(n.props.style).color === c.accent)
+      || (isHost(n) && flat(n.props.style).backgroundColor === c.accent && n.findAll((m: Inst) => /check/.test(JSON.stringify(m.props.name ?? '')) && m.props.tintColor === c.accentInk).length > 0));
     expect({ border: borders.length > 0, check: checks.length > 0 }).toEqual({ border: true, check: true });
     fireEvent.press(picked);
     expect(screen.getByLabelText(new RegExp(`^${esc(DAD)}, \\d+ people, not picked$`))).toBeTruthy();

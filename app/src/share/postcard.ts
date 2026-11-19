@@ -32,3 +32,28 @@ export function recipientsLine(circles: Circle[], chosen: string[], me: string |
   for (const g of picked) for (const n of othersIn(g, me)) if (!names.includes(n)) names.push(n);
   return namesLine(names);
 }
+
+/** GUX-R1: a rough width of one word in the phone's semibold system font, in em, on the wide side so a word that
+ *  might not fit counts as not fitting. React Native can't measure text before drawing it, so this stands in. */
+export function wordEm(word: string): number {
+  let em = 0;
+  for (const ch of word) {
+    if (/[ijlI.,'’!|:;]/.test(ch)) em += 0.3;
+    else if (/[frt\-–()]/.test(ch)) em += 0.42;
+    else if (/[mwMW]/.test(ch)) em += 0.9;
+    else if (/[A-Z]/.test(ch)) em += 0.7;
+    else em += 0.6;
+  }
+  return em;
+}
+
+/** GUX-R1: how many face tiles across. 3, or 2 when Easy view is on, the phone's text is 130% or more, or the
+ *  longest word of any tile's name would be wider than a 3-across tile (names are never shortened or cut). */
+export function tileColumns(o: { names: string[]; rowWidth: number; fontSize: number; fontScale: number; bigText: boolean }): 2 | 3 {
+  if (o.bigText || o.fontScale >= 1.3) return 2;
+  const room = o.rowWidth / 3 - TILE_INSET; // the tile's own side padding
+  const widest = Math.max(0, ...o.names.flatMap((n) => n.split(/\s+/)).map(wordEm));
+  return widest * o.fontSize * Math.max(1, o.fontScale) > room ? 2 : 3;
+}
+/** A face tile's padding on both sides together (kit's `face` style). */
+export const TILE_INSET = 8;

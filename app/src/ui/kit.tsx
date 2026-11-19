@@ -240,7 +240,7 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
 
 /** SHARE-PC-5 / SHARE-PC-8 (DEC-72): one "To:" face tile on Share's postcard: a pill of up to 3 faces (initials on a
  *  neutral circle), the name under it and "N people", the whole tile one 48 pt+ target. Picked shows an accent edge
- *  and an accent check (never color alone) and reads "picked". `across` (3, or 2 with Easy view) sets its width. */
+ *  a soft accent tint and a filled accent check (never color alone, GUX-R4) and reads "picked". `across` (3, or 2: see tileColumns, GUX-R1) sets its width. */
 export function FaceTile({ name, count, faces, picked, onPress, across }: {
   name: string; count: number; faces: string[]; picked: boolean; onPress: () => void; across: number;
 }) {
@@ -256,7 +256,7 @@ export function FaceTile({ name, count, faces, picked, onPress, across }: {
       android_ripple={{ color: c.line }}
       style={({ pressed }) => [styles.face, { width: `${(100 / across).toFixed(3)}%` as `${number}%`, opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
     >
-      <View style={[styles.faceRing, { borderWidth: edge, borderColor: picked ? c.accent : c.line, backgroundColor: c.bg, paddingVertical: 12 - edge }]}>
+      <View style={[styles.faceRing, { borderWidth: edge, borderColor: picked ? c.accent : c.line, backgroundColor: picked ? c.accentSoft : c.bg, paddingVertical: 12 - edge }]}>
         <View style={styles.faceStack}>
           {faces.slice(0, 3).map((f, i) => (
             <View key={`${f}-${i}`} style={[styles.faceDot, { backgroundColor: c.line, borderColor: c.bg, marginLeft: i ? -10 : 0 }]}>
@@ -265,16 +265,32 @@ export function FaceTile({ name, count, faces, picked, onPress, across }: {
           ))}
         </View>
         {picked ? (
-          <View style={[styles.faceTick, { backgroundColor: c.bg }]}>
-            <SystemIcon icon={{ sf: 'checkmark.circle', md: 'check_circle' }} color={c.accent} size={26} />
+          // GUX-R4: a filled accent disc with the check in accentInk, ringed in the page color so it lifts off the edge.
+          <View style={[styles.faceTick, { backgroundColor: c.accent, borderColor: c.bg }]}>
+            <SystemIcon icon={{ sf: 'checkmark', md: 'check' }} color={c.accentInk} size={16} />
           </View>
         ) : null}
       </View>
-      <Text style={{ color: c.ink, fontSize: t.base, lineHeight: t.line, fontWeight: WEIGHT.semibold, textAlign: 'center' }}>{name}</Text>
+      {/* GUX-R1: the whole name, never cut; a word too long for even a 2-across tile breaks rather than spill out. */}
+      <Text style={[{ alignSelf: 'stretch', color: c.ink, fontSize: t.base, lineHeight: t.line, fontWeight: WEIGHT.semibold, textAlign: 'center' }, breakLongWords]}>{name}</Text>
       <Text style={{ color: c.muted, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{`${count} ${count === 1 ? 'person' : 'people'}`}</Text>
     </Pressable>
   );
 }
+/** SHARE-PC-2 / GUX-R2: Share's "Add" photos tile beside the small photos: an outline, not a grey box (a dashed
+ *  c.line edge, no fill), with "Add" and its plus in the accent. */
+export function AddTile({ label, onPress }: { label: string; onPress: () => void }) {
+  const { c, t } = useTheme();
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
+      style={({ pressed }) => [styles.addTile, { borderColor: c.line, opacity: pressed ? 0.7 : 1 }]}>
+      <SystemIcon icon={{ sf: 'plus', md: 'add' }} color={c.accent} />
+      <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.accent, fontSize: t.base, fontWeight: WEIGHT.semibold }}>Add</Text>
+    </Pressable>
+  );
+}
+/** GUX-R1: on the web a word wider than its box would spill out; phones already break it. */
+const breakLongWords = (Platform.OS === 'web' ? { overflowWrap: 'anywhere' } : {}) as TextStyle;
 /** The first letter of the last word: "Grandma Jo" is J, "Chase" is C. */
 const initial = (name: string) => (name.trim().split(/\s+/).pop() ?? '?').charAt(0).toUpperCase() || '?';
 
@@ -296,13 +312,16 @@ export function noWebOutline(): TextStyle {
   return (Platform.OS === 'web' ? { outlineStyle: 'none' } : {}) as TextStyle;
 }
 
-export function Field(props: TextInputProps & { label: string }) {
+export function Field(props: TextInputProps & { label: string; underline?: boolean }) {
   const { c, t, os } = useTheme();
-  const { label, style, onFocus, onBlur, ...rest } = props;
+  const { label, style, onFocus, onBlur, underline, ...rest } = props;
   const typing = useTypingField(); // UX-R1: the tab bar steps aside while this field is focused
   // iPhone and the web: a filled rounded box with no edge, like the Search field (GUX-R16; was a c.surface box with a
   // c.line edge, which read as a form on paper). Android: Material's outlined text field.
-  const box: TextStyle = os === 'android'
+  // GUX-R3: `underline` writes on the card itself (Share's note): no fill, a hairline c.line rule under the words.
+  const box: TextStyle = underline
+    ? { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: c.line, paddingHorizontal: 0, paddingTop: 4, paddingBottom: 8 }
+    : os === 'android'
     ? { borderWidth: 1, borderColor: c.muted, backgroundColor: 'transparent', borderRadius: RADIUS.small }
     : { borderWidth: 0, backgroundColor: c.fill, borderRadius: RADIUS.medium };
   return (
@@ -472,7 +491,8 @@ const styles = StyleSheet.create({
   faceRing: { alignSelf: 'stretch', minHeight: 64, borderRadius: RADIUS.pill, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 },
   faceStack: { flexDirection: 'row', justifyContent: 'center' },
   faceDot: { width: 36, height: 36, borderRadius: RADIUS.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
-  faceTick: { position: 'absolute', top: -8, right: -4, borderRadius: RADIUS.pill, width: 28, height: 28, alignItems: 'center', justifyContent: 'center' },
+  addTile: { minWidth: 64, minHeight: 64, borderRadius: RADIUS.medium, borderWidth: 2, borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 },
+  faceTick: { position: 'absolute', top: -6, right: -4, borderRadius: RADIUS.pill, borderWidth: 2, width: 28, height: 28, alignItems: 'center', justifyContent: 'center' },
   card: { padding: 14, gap: 12 },
   screen: { padding: 16, gap: 16, paddingBottom: 32 },
   loading: { alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 },
