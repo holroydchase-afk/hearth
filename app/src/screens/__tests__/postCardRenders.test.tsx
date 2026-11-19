@@ -3,12 +3,12 @@
 // ENG-R3 (Nov 19 tech-debt review): typing in one post's comment box must not redraw every other post. Each card
 // listens only to its own comments and draft, not the whole feed.
 import { act, waitFor } from '@testing-library/react-native';
-import React, { Profiler } from 'react';
+import React, { Profiler, useEffect, useState } from 'react';
 import { Text } from 'react-native';
 import { FakeBackend } from '../../api/fake/FakeBackend';
 import { seedPost } from '../../test/seed';
 import { renderApp } from '../../test/renderApp';
-import { useApp, useFeed } from '../../state/AppContext';
+import { useApp } from '../../state/AppContext';
 import type { FeedStore } from '../../feed/store';
 import { PostCard } from '../PostCard';
 
@@ -22,7 +22,14 @@ describe('ENG-R3 a post card redraws only for its own post', () => {
     function Cards() {
       const app = useApp();
       feed = app.feed;
-      const { posts } = useFeed();
+      // The list redraws only when the posts change, so any redraw of card A comes from the card itself.
+      const [posts, setPosts] = useState(app.feed?.getState().posts ?? []);
+      useEffect(() => {
+        if (!app.feed) return;
+        const f = app.feed;
+        setPosts(f.getState().posts);
+        return f.subscribe(() => setPosts(f.getState().posts));
+      }, [app.feed]);
       if (posts.length < 2) return <Text>loading</Text>;
       return (
         <>
