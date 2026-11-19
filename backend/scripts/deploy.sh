@@ -104,6 +104,7 @@ print(json.dumps({
   "mailer_templates_confirmation_content": (t / "confirmation.html").read_text(),
   "mailer_otp_length": 6,
   "mailer_otp_exp": 3600,
+  "mailer_autoconfirm": False,  # "Confirm email" on: no session from /signup {email, password} (TS-SEC-R1)
 }))
 PY
 )

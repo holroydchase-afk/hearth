@@ -528,5 +528,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** a postcard reads as one thing going to named people, so who sees it is never in doubt (PA, A1); faces are easier for a grandparent than group words; one field is one fewer question; a blank To: means a post never goes to last week's group by accident.
 - **Source:** `docs/product/SPEC-REDESIGN.md` 1j; persona check `decisions/2026-11-19-share-postcard.md`. Amends DEC-39 (CAP-D1, CAP-D4: one note, no title on new posts) and BETA-BULK-3's "default: the last group used" (now nothing picked).
 
+### DEC-74 · Keep text sign-in, switched off, and finish it (answers PM-R5)
+- **When / status:** Nov 19 · Chase, after the tech-debt review recommended parking it: "We need to keep the switched off features. Start a thread for each" · Thread "Get text sign-in ready to turn on" (TRACKER R43)
+- **Chose:** keep the text sign-in code and migration 0026 in the public repo with the switch off, and finish what's left before it can go on: the TD-UX-R7 words, the privacy and wording reviews, Twilio's custom message, then Chase's Twilio sign-up, "deploy" and a real-phone test.
+- **Over:** parking it on an archive branch until a relative asks (staff-pm's PM-R5 recommendation).
+- **Because:** texts are Chase's chosen default sign-in (DEC-57), the code is built and tested, and Twilio Verify needs no carrier registration (Twilio docs, read through search Nov 19), so the remaining steps are small.
+- **Source:** persona check `decisions/2026-11-19-keep-text-sign-in.md`; `docs/eng/SMS-PROVIDER.md`
+
 ---
-Last updated: Nov 19, 2026 (DEC-72)
+Last updated: Nov 19, 2026 (DEC-74)

@@ -1,6 +1,6 @@
 # SMS provider pick (answers SPEC-SMS-SIGN-IN §6)
 
-Owner: architect. Nov 10, 2026. DEC-57, TRACKER R43. Status: **pick made; vendor facts partly unverified** (see "What was checked").
+Owner: architect. Nov 10, 2026. DEC-57, TRACKER R43. Status: **pick made; the deciding facts confirmed through search Nov 19** (see "Nov 19 check"); data region, retention and the `auth.users.phone` form are still unverified.
 
 ## The pick: Twilio Verify, through Supabase Auth's built-in `twilio_verify` provider
 
@@ -36,6 +36,19 @@ The provider list (`twilio`, `twilio_verify`, `messagebird`, `textlocal`, `vonag
 - **The text's words.** With Verify, Supabase's `[auth.sms] template` is not used; Twilio sends its own template ("Your Hearth verification code is: 123456" style, using the Verify service's friendly name) (**unverified**). §3.5's "Never read this code to anyone..." line needs a Twilio custom template, which Twilio reviews (**unverified**). BETA-SMS-7 should test the Verify template once known, or accept Twilio's default for the beta. If the safety line is a must-have and Twilio won't allow it, the Send SMS hook becomes the route (more code, plus registration).
 - **Code expiry and length** come from Verify's service settings (6 digits; expiry Twilio's default, believed 10 minutes, **unverified**), not Supabase's `otp_expiry`.
 
+## Nov 19 check (DEC-74, thread "Get text sign-in ready to turn on")
+twilio.com and supabase.com are still blocked from cloud sessions, so these come from web search results quoting Twilio's and Supabase's own pages, not pages loaded here.
+- **No registration for Verify: confirmed.** Twilio's 10DLC Direct Standard guide says Verify does not require A2P registration or sender provisioning; the 10DLC page says Verify can replace registration when you only send verification texts. Error 30034's page lists Verify as a non-10DLC route. ([guide](https://www.twilio.com/docs/messaging/compliance/a2p-10dlc/direct-standard-onboarding), [10DLC](https://www.twilio.com/docs/messaging/compliance/a2p-10dlc))
+- **Price: confirmed.** US SMS: $0.05 per successful verification plus $0.0083 per text sent (charged even if not delivered), plus small carrier fees (AT&T $0.0035, T-Mobile $0.0045 per text). Failed or expired codes don't pay the $0.05. ([Verify pricing](https://www.twilio.com/en-us/verify/pricing))
+- **Supabase ignores its own SMS template with Verify: confirmed.** Supabase's Twilio guide says with Verify the code and the message come from Twilio, and expiry and message aren't set in Supabase. ([Supabase](https://supabase.com/docs/guides/auth/phone-login/twilio))
+- **Default words:** "Your {friendly name} verification code is: {code}." Friendly name up to 32 characters. The old `customMessage` field is deprecated; **custom templates are requested from Twilio Support** with the Account SID, Verify Service SID and the body. ([templates](https://www.twilio.com/docs/verify/verification-templates), [customize](https://support.twilio.com/hc/en-us/articles/9960174409627-How-to-Customize-the-Verification-Message-for-Twilio-Verify))
+- **Plan:** once the account exists, Claude files the template request below (Chase pastes it only if Support needs the account owner). The switch stays off until the custom text is live or Chase accepts Twilio's default (BETA-SMS-7, persona FA).
+
+Template request body (one GSM-7 segment, 114 characters with a 6-digit code; same words as `config.toml` and the email, TS-GUX-R1):
+```
+Hearth code: {{code}}. Only type it into Hearth. Never read this code to anyone who calls or texts you, even family.
+```
+
 ## Chase's one step
 Sign up at **https://www.twilio.com/try-twilio** (choose: product "Verify", use "Two-factor authentication / sign-in codes", language "No code"), upgrade with a **$20** card top-up and auto-recharge **off**, then paste the Account SID and Auth Token into the Claude environment "Hearth" as two secrets. Claude does the rest (Verify service named "Hearth", SMS only, Geo Permissions US only, Fraud Guard on, Supabase config). Recommendation: do it after the GitHub hold lifts and only once staff-pm confirms texts still target Nov 22.
 
@@ -50,4 +63,4 @@ Sign up at **https://www.twilio.com/try-twilio** (choose: product "Verify", use 
 - **Verified locally:** Supabase provider list and the `[auth.sms.twilio_verify]` key shape (CLI-generated `config.toml`); `deploy.sh` only patches email templates.
 - **Could not load live:** supabase.com and twilio.com did not resolve in this session (network allow-list). Search-result snippets only for Twilio Verify pricing and Fraud Guard. Everything marked **unverified** must be checked on the vendor pages before texts go on. That includes the no-registration claim for Verify, which the pick depends on.
 
-Last checked against code: 2026-11-10, backend/supabase/config.toml, backend/scripts/deploy.sh
+Last checked against code: 2026-11-19, backend/supabase/config.toml, backend/scripts/deploy.sh

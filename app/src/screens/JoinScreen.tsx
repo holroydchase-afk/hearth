@@ -19,6 +19,8 @@ export function JoinScreen({ code }: { code: string }) {
   const [preview, setPreview] = useState<InvitePreview | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [triedEmail, setTriedEmail] = useState<string | null>(null);
+  // TS-GUX-R6: the last 4 digits of the number a phone invite didn't open for (never the full number).
+  const [triedNumber, setTriedNumber] = useState<string | null>(null);
   const started = useRef(false);
   // HARD-10: with no signal nothing retries on its own, so say so and offer Try again.
   const [retry, setRetry] = useState<(() => void) | null>(null);
@@ -33,7 +35,7 @@ export function JoinScreen({ code }: { code: string }) {
   const inviterOf = (c: string): Promise<string | null> =>
     app.deps.api.invitePreview(c).then((p) => p.inviter_name || null, (e: unknown) => (isApiError(e) ? e.inviter ?? null : null));
 
-  const redeem = async (inviter: string | null, email: string | null = null) => {
+  const redeem = async (inviter: string | null, email: string | null = null, numberEnding: string | null = null) => {
     setStep('joining');
     setRetry(null);
     try {
@@ -41,7 +43,7 @@ export function JoinScreen({ code }: { code: string }) {
       await app.reload();
       nav.goPhotos();
     } catch (e) {
-      if (offline(e, () => void redeem(inviter, email))) return;
+      if (offline(e, () => void redeem(inviter, email, numberEnding))) return;
       // Already in the family (tapped the link twice): just show the photos.
       const spaces = await app.deps.api.mySpaces().catch(() => []);
       if (isApiError(e) && e.code === '22023' && spaces.length > 0) {
@@ -55,6 +57,7 @@ export function JoinScreen({ code }: { code: string }) {
       setMsg(messageFor(e, { inviter: who, action: 'join' }));
       // BETA-JOIN-3 keeps "wrong email" and "old invite" identical on the server, so say both here.
       setTriedEmail(isApiError(e) && e.code === '22023' ? email : null);
+      setTriedNumber(isApiError(e) && e.code === '22023' && !email ? numberEnding : null);
       setStep('bad');
     }
   };
@@ -99,7 +102,7 @@ export function JoinScreen({ code }: { code: string }) {
           <Txt variant="title">{`Photos from ${who ?? 'your family'}`}</Txt>
           <Txt>{textsOn() ? "We'll send you a 6-number code." : "Type your email. We'll send you a 6-number code."}</Txt>
           {/* BETA-SMS-9: ask the way the invite was made (texts on); texts off, today's email flow */}
-          <SignInFlow inviter={who} start={preview?.sign_in_with ?? 'either'} only onSignedIn={(email) => redeem(who, email)} />
+          <SignInFlow inviter={who} start={preview?.sign_in_with ?? 'either'} only onSignedIn={(email, end) => redeem(who, email, end ?? null)} />
         </Card>
       ) : null}
       {step === 'bad' && triedEmail ? (
@@ -109,7 +112,14 @@ export function JoinScreen({ code }: { code: string }) {
           <Button label="Try a different email" onPress={() => { void app.signOut().then(() => { setTriedEmail(null); setStep('signin'); }); }} />
         </Card>
       ) : null}
-      {step === 'bad' && msg && !triedEmail ? (
+      {step === 'bad' && triedNumber ? (
+        <Card>
+          <Txt variant="title">{`This invite didn't open for the number ending in ${triedNumber}.`}</Txt>
+          <Txt>{`It may be old or already used, or ${who ?? 'your family'} sent it to a different number. Try your other number, or ask ${who ?? 'the person who invited you'} for a new invite.`}</Txt>
+          <Button label="Try a different number" onPress={() => { void app.signOut().then(() => { setTriedNumber(null); setStep('signin'); }); }} />
+        </Card>
+      ) : null}
+      {step === 'bad' && msg && !triedEmail && !triedNumber ? (
         <Card>
           <Txt variant="title">{msg}</Txt>
           {retry ? <Button label="Try again" onPress={retry} /> : <Txt>That's okay, it happens.</Txt>}
