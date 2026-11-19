@@ -64,4 +64,5 @@ test('START-ON-5 a parent with no family starts one with Two sides, makes the fi
   await page.getByRole('button', { name: /^Help(,|$)/ }).click();
   await expect(page.getByText('Something wrong?')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Email Hearth' })).toBeVisible();
+  await expect(page.getByText(/^Our address is .+@.+\.$/)).toBeVisible();
 });

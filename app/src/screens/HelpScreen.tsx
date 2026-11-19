@@ -45,6 +45,9 @@ export function HelpScreen({ onBack }: { onBack?: () => void } = {}) {
           <Button variant="quiet" label="Email Hearth" icon={{ sf: 'envelope', md: 'mail' }}
             onPress={() => void app.deps.openUrl(`mailto:${app.deps.helpEmail}?subject=${encodeURIComponent('Something wrong on Hearth')}`)}
             style={{ alignSelf: 'flex-start' }} />
+          {/* GUX-R1: the address in words too, for a phone with no mail app (the tap would do nothing) and for
+              Bebar writing from her computer or reading it aloud over the phone. */}
+          <Txt selectable>{`Our address is ${app.deps.helpEmail}.`}</Txt>
         </GroupedSection>
       ) : null}
       <ProblemDetailsCard />

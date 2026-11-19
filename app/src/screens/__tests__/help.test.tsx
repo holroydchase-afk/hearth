@@ -71,6 +71,8 @@ describe('START-ON-1 Help has a "Something wrong?" section with Email Hearth', (
     it(`START-ON-1 ${user === 'chase' ? 'the owner' : 'a viewer'} sees "Something wrong?" and Email Hearth opens mailto: the help address`, async () => {
       const { deps } = await renderApp(<HelpScreen />, { user, deps: { helpEmail: EMAIL } });
       expect(await screen.findByText('Something wrong?')).toBeTruthy();
+      // GUX-R1: the address is in words too, so it works with no mail app and can be read aloud.
+      expect(screen.getByText('Our address is help@example.test.')).toBeTruthy();
       const btn = screen.getByRole('button', { name: 'Email Hearth' });
       fireEvent.press(btn);
       await waitFor(() => expect(deps.openUrl).toHaveBeenCalledWith(expect.stringMatching(/^mailto:help@example\.test(\?|$)/)));
