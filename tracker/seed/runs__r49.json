@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-19T07:55:00-05:00",
+ "label": "VID fixes ENG-R2, ENG-R11, SEC-R7, PRIV-R1: all suites 3x (flaky, T23)",
+ "passed": 1525,
+ "failed": 1,
+ "results": {},
+ "note": "3 runs each at b3d8f98 (engineer) on the red tests 08ab3be; test files unchanged by the fix. Backend SQL 1231 passed, 0 failed x3 (VIDEO REFUND 28, VIDEO CAP 14). jest 1526 passed x2, then run 3: 1525 passed, 1 failed (signin.test.tsx BETA-JOIN-2 countdown, real-clock test bug T23, unrelated). typecheck clean x3, check-agents and check-persona-checks OK x3, e2e:web 5 passed (6 skipped) x1. Deno (sign-media HF002 branch) not run: deno not installed, owed to CI. e2e/results/vid-fixes-green-3x-2026-11-19.txt"
+}

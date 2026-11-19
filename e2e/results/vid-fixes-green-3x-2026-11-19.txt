@@ -1,0 +1,121 @@
+VID fixes (ENG-R2, ENG-R11, SEC-R7, PRIV-R1): all suites 3x at b3d8f98 (fix) on red tests 08ab3be. Verdict: FLAKY (T23).
+Test files unchanged between 08ab3be and b3d8f98 (git diff -- '*test*' '*__tests__*' empty).
+tg_media_before_insert 0028 vs 0024: only errcode P0001->HF002 and the video_refundable insert differ.
+
+== backend run 1
+RESULT: 120 passed, 0 failed
+API RESULT: 174 passed, 0 failed
+NOTIFY RESULT: 60 passed, 0 failed
+SETUP RESULT: 5 passed, 0 failed
+REPLY RESULT: 47 passed, 0 failed
+TIMELINE RESULT: 39 passed, 0 failed
+GROUPS RESULT: 167 passed, 0 failed
+TIMELINE-FUTURE RESULT: 6 passed, 0 failed
+PRIVACY-AUDIT RESULT: 15 passed, 0 failed
+GROUPS-V2 RESULT: 118 passed, 0 failed
+CHAT RESULT: 57 passed, 0 failed
+HELPERS RESULT: 13 passed, 0 failed
+REACTIONS RESULT: 22 passed, 0 failed
+CAPTIONS RESULT: 32 passed, 0 failed
+VIDEO CAP RESULT: 14 passed, 0 failed
+VIDEO REFUND RESULT: 28 passed, 0 failed
+WHO RESULT: 7 passed, 0 failed
+START FAMILY RESULT: 88 passed, 0 failed
+SEARCH RESULT: 34 passed, 0 failed
+SMS RESULT: 35 passed, 0 failed
+GROUP NAMES RESULT: 4 passed, 0 failed
+AUD-16 RESULT: 11 passed, 0 failed
+GRP-1 RESULT: 10 passed, 0 failed
+SETUP V2 RESULT: 15 passed, 0 failed
+SETUP API RESULT: 34 passed, 0 failed
+        | RESULT: sent 12, received 11, lost 1
+SENT-RECEIVED RESULT: 20 passed, 0 failed
+        | SMOKE RESULT: 9 ok, 0 failed
+ok      D1 smoke: ends with "SMOKE RESULT: N ok, 0 failed"
+SMOKE CHECK TEST RESULT: 28 passed, 0 failed
+AUTH CONFIG TEST RESULT: 4 passed, 0 failed
+psql:../packages/messenger/relay/test.sql:123: NOTICE:  RELAY RESULT: 24 passed, 0 failed
+== backend run 2
+RESULT: 120 passed, 0 failed
+API RESULT: 174 passed, 0 failed
+NOTIFY RESULT: 60 passed, 0 failed
+SETUP RESULT: 5 passed, 0 failed
+REPLY RESULT: 47 passed, 0 failed
+TIMELINE RESULT: 39 passed, 0 failed
+GROUPS RESULT: 167 passed, 0 failed
+TIMELINE-FUTURE RESULT: 6 passed, 0 failed
+PRIVACY-AUDIT RESULT: 15 passed, 0 failed
+GROUPS-V2 RESULT: 118 passed, 0 failed
+CHAT RESULT: 57 passed, 0 failed
+HELPERS RESULT: 13 passed, 0 failed
+REACTIONS RESULT: 22 passed, 0 failed
+CAPTIONS RESULT: 32 passed, 0 failed
+VIDEO CAP RESULT: 14 passed, 0 failed
+VIDEO REFUND RESULT: 28 passed, 0 failed
+WHO RESULT: 7 passed, 0 failed
+START FAMILY RESULT: 88 passed, 0 failed
+SEARCH RESULT: 34 passed, 0 failed
+SMS RESULT: 35 passed, 0 failed
+GROUP NAMES RESULT: 4 passed, 0 failed
+AUD-16 RESULT: 11 passed, 0 failed
+GRP-1 RESULT: 10 passed, 0 failed
+SETUP V2 RESULT: 15 passed, 0 failed
+SETUP API RESULT: 34 passed, 0 failed
+        | RESULT: sent 12, received 11, lost 1
+SENT-RECEIVED RESULT: 20 passed, 0 failed
+        | SMOKE RESULT: 9 ok, 0 failed
+ok      D1 smoke: ends with "SMOKE RESULT: N ok, 0 failed"
+SMOKE CHECK TEST RESULT: 28 passed, 0 failed
+AUTH CONFIG TEST RESULT: 4 passed, 0 failed
+psql:../packages/messenger/relay/test.sql:123: NOTICE:  RELAY RESULT: 24 passed, 0 failed
+== backend run 3
+RESULT: 120 passed, 0 failed
+API RESULT: 174 passed, 0 failed
+NOTIFY RESULT: 60 passed, 0 failed
+SETUP RESULT: 5 passed, 0 failed
+REPLY RESULT: 47 passed, 0 failed
+TIMELINE RESULT: 39 passed, 0 failed
+GROUPS RESULT: 167 passed, 0 failed
+TIMELINE-FUTURE RESULT: 6 passed, 0 failed
+PRIVACY-AUDIT RESULT: 15 passed, 0 failed
+GROUPS-V2 RESULT: 118 passed, 0 failed
+CHAT RESULT: 57 passed, 0 failed
+HELPERS RESULT: 13 passed, 0 failed
+REACTIONS RESULT: 22 passed, 0 failed
+CAPTIONS RESULT: 32 passed, 0 failed
+VIDEO CAP RESULT: 14 passed, 0 failed
+VIDEO REFUND RESULT: 28 passed, 0 failed
+WHO RESULT: 7 passed, 0 failed
+START FAMILY RESULT: 88 passed, 0 failed
+SEARCH RESULT: 34 passed, 0 failed
+SMS RESULT: 35 passed, 0 failed
+GROUP NAMES RESULT: 4 passed, 0 failed
+AUD-16 RESULT: 11 passed, 0 failed
+GRP-1 RESULT: 10 passed, 0 failed
+SETUP V2 RESULT: 15 passed, 0 failed
+SETUP API RESULT: 34 passed, 0 failed
+        | RESULT: sent 12, received 11, lost 1
+SENT-RECEIVED RESULT: 20 passed, 0 failed
+        | SMOKE RESULT: 9 ok, 0 failed
+ok      D1 smoke: ends with "SMOKE RESULT: N ok, 0 failed"
+SMOKE CHECK TEST RESULT: 28 passed, 0 failed
+AUTH CONFIG TEST RESULT: 4 passed, 0 failed
+psql:../packages/messenger/relay/test.sql:123: NOTICE:  RELAY RESULT: 24 passed, 0 failed
+== jest run 1
+Test Suites: 159 passed, 159 total
+Tests:       1 skipped, 1 todo, 1526 passed, 1528 total
+== jest run 2
+Test Suites: 159 passed, 159 total
+Tests:       1 skipped, 1 todo, 1526 passed, 1528 total
+== jest run 3
+Test Suites: 1 failed, 158 passed, 159 total
+Tests:       1 failed, 1 skipped, 1 todo, 1525 passed, 1528 total
+== jest run 3 failure
+FAIL src/screens/__tests__/signin.test.tsx
+  ● sign in: waiting for the code (BETA-JOIN-2) › BETA-JOIN-2: says where to look, and asks her to wait a minute before a new code
+
+== typecheck x3: exit 0 x3; check-agents x3: exit 0; check-persona-checks x3: exit 0
+== e2e:web run 1
+  6 skipped
+  5 passed (35.5s)
+Not run: Deno (sign-media HF002 branch) - deno not installed, owed to CI.

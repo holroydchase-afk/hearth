@@ -1132,6 +1132,19 @@
    "fixed": "2026-11-18"
   },
   {
+   "id": "T23",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "open",
+   "title": "QA-R1 (VID fixes green run, Nov 19): flaky. app/src/screens/__tests__/signin.test.tsx 'BETA-JOIN-2: says where to look, and asks her to wait a minute before a new code' failed in jest run 3 of 3 (passed runs 1-2): it reads the resend countdown on the real clock and accepts only 60 or 59, so a slow worker under full-suite load sees 58. Untouched by the VID fixes. Use fake timers (as the 'after the minute' test does) or accept a wider window",
+   "tests": [
+    "app/src/screens/__tests__/signin.test.tsx"
+   ],
+   "found": "2026-10-15",
+   "fixed": null
+  },
+  {
    "id": "B20",
    "kind": "bug",
    "layer": "app",
