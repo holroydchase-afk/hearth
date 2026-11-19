@@ -5,7 +5,8 @@
 import { render, screen } from '@testing-library/react-native';
 import React from 'react';
 import { StyleSheet, Text } from 'react-native';
-import { HearthTabBar, floatingTabBar, type TabName } from '../TabBar';
+import { HearthTabBar, floatingTabBar, nextMinimized, type TabName } from '../TabBar';
+import { fireEvent } from '@testing-library/react-native';
 import { Screen } from '../../ui/kit';
 import { TabBarSpaceContext, TAB_BAR_FLOAT_SPACE } from '../../ui/tabBarSpace';
 
@@ -53,4 +54,31 @@ describe('RD-108 web lookalike of the floating glass tab bar', () => {
     render(<Screen><Text>x</Text></Screen>);
     expect(pad()).toBeLessThan(TAB_BAR_FLOAT_SPACE);
   });
+
+  // RD-110 (Chase, Nov 19, DEC-75): "the full iOS glass oval interaction on scroll".
+  it('RD-110 scrolling down past the top shrinks the bar; scrolling up or reaching the top brings it back; small moves change nothing', () => {
+    expect(nextMinimized(false, 100, 140)).toBe(true); // down
+    expect(nextMinimized(true, 300, 260)).toBe(false); // up
+    expect(nextMinimized(false, 0, 30)).toBe(false); // still near the top
+    expect(nextMinimized(true, 200, 10)).toBe(false); // back at the top
+    expect(nextMinimized(true, 200, 204)).toBe(true); // jitter
+    expect(nextMinimized(false, 200, 196)).toBe(false);
+  });
+
+  it('RD-110 shrunk, the bar is a small glass oval holding only the picked tab; tapping it brings the full bar back', () => {
+    const expand = jest.fn();
+    const go = jest.fn();
+    render(<HearthTabBar role="owner" current={'feed' as string as TabName} onNavigate={go} floating minimized onExpand={expand} />);
+    const s = flat(tablist().props.style);
+    expect(s.width).toBe(64);
+    expect(s.right).toBeUndefined();
+    expect(String(s.backdropFilter)).toMatch(/blur\(/);
+    const tabs = screen.getAllByRole('tab');
+    expect(tabs).toHaveLength(1);
+    expect(tabs[0]!.props.accessibilityLabel).toBe('Feed, show all tabs');
+    fireEvent.press(tabs[0]!);
+    expect(expand).toHaveBeenCalled();
+    expect(go).not.toHaveBeenCalled();
+  });
 });
+

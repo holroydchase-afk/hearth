@@ -31,7 +31,7 @@ export default function TabsLayout() {
     const look = nativeTabLook(Platform.OS, easyView);
     return (
       <NativeTabs
-        minimizeBehavior={NATIVE_TAB_OPTIONS.minimizeBehavior}
+        minimizeBehavior={look.minimize}
         labelVisibilityMode={nativeLabelMode(easyView)}
         labelStyle={{ default: { ...NATIVE_TAB_OPTIONS.labelStyle, color: c.muted }, selected: { ...NATIVE_TAB_OPTIONS.labelStyle, color: c.accent } }}
         tintColor={c.accent}
