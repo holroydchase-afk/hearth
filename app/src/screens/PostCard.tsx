@@ -330,14 +330,14 @@ function CommentList({ post, list }: { post: FeedPost; list: CommentView[] }) {
 function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
   const { feed, session, deps } = useApp();
   const { c, t, os } = useTheme();
-  // REPLY-11 (0011): the server names exactly who will read my reply; until it answers (or on an older
-  // server) the box falls back to the reply_scope words.
+  // REPLY-11 (0011): the server names exactly who will read my reply; until it answers (or if the call fails)
+  // the box falls back to the reply_scope words.
   const [names, setNames] = useState<string[] | null>(null);
   useEffect(() => {
     if (mine) return undefined;
     let alive = true;
-    Promise.resolve(deps.api.replyReaders?.(post.post_id))
-      .then((n) => { if (alive && Array.isArray(n) && n.length) setNames(n); })
+    deps.api.replyReaders(post.post_id)
+      .then((n) => { if (alive && n?.length) setNames(n); })
       .catch(() => {});
     return () => { alive = false; };
   }, [deps.api, post.post_id, mine]);
