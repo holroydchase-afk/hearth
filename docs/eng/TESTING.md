@@ -9,6 +9,8 @@
 5. Run the **whole** suite. Confirm it's green 3 times (no flaky tests).
 6. Push the runs to the Hearth Test Log.
 
+**Changing an existing test (QA-R5, Nov 19 review).** When a change makes an old test fail because the old behavior was replaced on purpose, the test edit goes in its own commit, titled `test: <ID> ...`, before the code commit, and qa-tdd reads it before the PR merges. A PR that rewrites tests in the same commit as the code it tests reads as "made the tests agree", whatever the reason.
+
 ## Suites
 
 | Suite | What it covers | Command |

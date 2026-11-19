@@ -50,6 +50,18 @@ export function AppGate() {
       </Screen>
     );
   }
+  // ENG-R1: signed in, but the family couldn't be read (no signal) and this phone has none saved.
+  if (app.status === 'offline') {
+    return (
+      <Screen>
+        <Card>
+          <Txt variant="title" role="header">Can't reach Hearth</Txt>
+          <Txt>Check that your phone has Wi-Fi or a signal, then try again.</Txt>
+          <Button label="Try again" onPress={() => void app.reload()} />
+        </Card>
+      </Screen>
+    );
+  }
   if (starting && canStart) return <StartFamily onUseCode={() => setStarting(false)} />;
   return (
     <Screen>
