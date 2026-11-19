@@ -8,7 +8,7 @@ import { HELPER_FEATURES } from '../share/helpers';
 import type { NotifyChoice } from '../state/prefs';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { MIN_TARGET, paletteFor, useTheme, type ScreenLook, type ThemeName } from '../ui/theme';
-import { Button, GroupedSection, Choice, Confirm, Notice, SystemIcon, Txt } from '../ui/kit';
+import { AlertDialog, Button, GroupedSection, Choice, Notice, SystemIcon, Txt } from '../ui/kit';
 
 const EASY: { id: 'on' | 'off'; title: string }[] = [{ id: 'on', title: 'On' }, { id: 'off', title: 'Off' }];
 
@@ -195,15 +195,17 @@ export function SignOut() {
   return (
     <>
       <Button label="Sign out of Hearth" variant="secondary" onPress={() => setAsk(true)} />
-      <Confirm
-        visible={ask}
-        title="Sign out of Hearth?"
-        body="To come back, you'll need a new code from your email."
-        yes="Yes, sign out"
-        no="No, stay signed in"
-        onNo={() => setAsk(false)}
-        onYes={() => { setAsk(false); void signOut(); }}
-      />
+      {/* TD-UX-R6: the one confirm dialog (RD-67): the safe choice first and Semibold, the other in red words. */}
+      {ask ? (
+        <AlertDialog
+          title="Sign out of Hearth?"
+          body="To come back, you'll need a new code from your email."
+          keep="Stay signed in"
+          destroy="Sign out"
+          onKeep={() => setAsk(false)}
+          onDestroy={() => { setAsk(false); void signOut(); }}
+        />
+      ) : null}
     </>
   );
 }
@@ -227,15 +229,16 @@ export function DeleteAccount() {
     <>
       <Button label="Take me off Hearth" variant="secondary" onPress={() => setAsk(true)} />
       {msg ? <Txt>{msg}</Txt> : null}
-      <Confirm
-        visible={ask}
-        title="Take you off Hearth?"
-        body="This takes you off Hearth for good. Your comments and hearts are removed. This can't be undone."
-        yes="Yes, take me off Hearth"
-        no="No, stay on Hearth"
-        onNo={() => setAsk(false)}
-        onYes={() => void yes()}
-      />
+      {ask ? (
+        <AlertDialog
+          title="Take you off Hearth?"
+          body="This takes you off Hearth for good. Your comments and hearts are removed. This can't be undone."
+          keep="Stay on Hearth"
+          destroy="Take me off"
+          onKeep={() => setAsk(false)}
+          onDestroy={() => void yes()}
+        />
+      ) : null}
     </>
   );
 }

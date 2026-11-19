@@ -21,7 +21,7 @@ async function signOut(page, row) {
   await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Me and Help are rows in More
   await page.getByRole('button', { name: new RegExp(`^${row}(,|$)`) }).click(); // the row's own word: a bare 'Me' also matches "Write a comment"
   await page.getByRole('button', { name: 'Sign out of Hearth' }).click();
-  await page.getByRole('button', { name: 'Yes, sign out' }).click();
+  await page.getByRole('button', { name: 'Sign out', exact: true }).click();
   await expect(page.getByText('Welcome to Hearth')).toBeVisible();
 }
 

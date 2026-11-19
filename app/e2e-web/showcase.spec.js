@@ -68,7 +68,7 @@ for (const size of SIZES) {
       await shot('me');
       await page.getByRole('button', { name: 'Sign out of Hearth' }).click();
       await shot('sign-out-confirm');
-      await page.getByRole('button', { name: 'Yes, sign out' }).click();
+      await page.getByRole('button', { name: 'Sign out', exact: true }).click();
       await page.goto('/join/GRANDMAJ23');
       await expect(page.getByText('Chase invited you to see the family photos.')).toBeVisible();
       await shot('invite');

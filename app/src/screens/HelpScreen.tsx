@@ -3,6 +3,7 @@
 // Help (UX-REVIEW #11-#15): Call Chase first. RD-15: a row in More for everyone. GUX-R10: Bigger text and Light or
 // dark are More's own rows, so Help doesn't repeat them.
 import React from 'react';
+import { DEMO_MODE } from '../demo/flags';
 import { useApp } from '../state/AppContext';
 import { BackButton, Button, GroupedSection, Screen, Txt } from '../ui/kit';
 import { AppGate } from './AppGate';
@@ -35,12 +36,14 @@ export function HelpScreen({ onBack }: { onBack?: () => void } = {}) {
       )}
       <HowToTell />
       <Privacy who={who} />
-      <GroupedSection>
-        <Txt>You can look at photos and write back.</Txt>
-      </GroupedSection>
       <ProblemDetailsCard />
-      <SignOut />
-      <DeleteAccount />
+      {/* TD-UX-R5: like Me (DEMO-8), the no-login demo has no way back in after signing out. */}
+      {DEMO_MODE ? null : (
+        <>
+          <SignOut />
+          <DeleteAccount />
+        </>
+      )}
     </Screen>
   );
 }
