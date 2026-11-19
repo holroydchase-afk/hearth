@@ -167,3 +167,30 @@ jobs:
         run: bash scripts/tests/eas_test.sh
       - run: npm test
       - run: npm run typecheck
+
+  # QA-R2 (Nov 19 review, TRACKER R52): the browser tests run on every pull request, not only on a laptop:
+  # the public demo build (e2e:demo) and the core loop on the fake backend (e2e:web).
+  app-e2e:
+    name: App in a browser (demo + core loop)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            app/package-lock.json
+            e2e/package-lock.json
+      - run: npm ci
+      - name: Playwright and Chromium
+        working-directory: e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - run: npm run e2e:demo -- --trace off
+      - run: npm run e2e:web -- --trace off
