@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Tabs: the phone's own tab bar on Android (see app/(tabs)/_layout.tsx), this bar on iPhone and the web.
+// Tabs: the phone's own tab bar on Android and on iPhone with Easy view Off (see app/(tabs)/_layout.tsx);
+// this bar on iPhone with Easy view On and on the web.
 // Every tab has a system symbol and a word (HIG Tab bars; DS-3), 17 pt labels (DS-2), labels that never
 // hide (DS-5) and 48 pt+ targets (DS-1). RD-9 (SPEC-REDESIGN 1b, DEC-59): parents Gallery, Share, Feed, More;
 // viewers Gallery, Feed, More. RD-14: a new message puts an accent dot on More. RD-76 / RD-77 (DEC-66): the words
@@ -24,10 +25,19 @@ export const TAB_ICONS: Record<TabName, { sf: string; md: string }> = {
   more: { sf: 'ellipsis.circle', md: 'more_horiz' },
 };
 
-/** LIVE-1 (Chase, Nov 5): the iPhone's glass tab bar has no room for 17 pt words (DS-2) and drew them over
- *  the icons, so iPhone uses this bar too. Android's bar keeps its own. */
-export function usesNativeTabs(os: string): boolean {
-  return os === 'android';
+/** RD-106 (Chase, Nov 19, DEC-70): the phone's own tab bar on Android, and on iPhone while Easy view is Off, so
+ *  iOS 26 draws its floating glass bar and older iPhones keep the classic one. LIVE-1 (Nov 5): that bar has no room
+ *  for 17 pt words (DS-2), so with Easy view On (words under icons) iPhone keeps this fixed bar. The web keeps it too. */
+export function usesNativeTabs(os: string, easyView: boolean): boolean {
+  if (os === 'android') return true;
+  if (os === 'ios') return !easyView;
+  return false;
+}
+
+/** RD-107: on iPhone the own bar is icons only (DEC-66) with spoken names, on the system's glass, so no Hearth
+ *  color behind it. Android shows words per nativeLabelMode and sits on the page color. */
+export function nativeTabLook(os: string, _easyView: boolean): { labelHidden: boolean; themedBackground: boolean } {
+  return os === 'ios' ? { labelHidden: true, themedBackground: false } : { labelHidden: false, themedBackground: true };
 }
 
 /** Options for the native tab bar (expo-router NativeTabs). */

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// The phone's own tab bar on Android (DESIGN-SYSTEM.md), Hearth's bar on iPhone (LIVE-1) and the web.
+// The phone's own tab bar on Android and on iPhone with Easy view Off (RD-106: glass on iOS 26, classic before);
+// Hearth's fixed bar with words on iPhone with Easy view On (LIVE-1) and on the web.
 import { Redirect, Tabs } from 'expo-router';
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import React from 'react';
@@ -8,7 +9,7 @@ import { Platform } from 'react-native';
 import { AppGate } from '../../screens/AppGate';
 import { useNewMessages } from '../../messenger/newMessages';
 import { resetMore } from '../../screens/MoreScreen';
-import { HearthTabBar, NATIVE_TAB_OPTIONS, TAB_ICONS, nativeLabelMode, tabsFor, usesNativeTabs, type TabName } from '../../screens/TabBar';
+import { HearthTabBar, NATIVE_TAB_OPTIONS, TAB_ICONS, nativeLabelMode, nativeTabLook, tabsFor, usesNativeTabs, type TabName } from '../../screens/TabBar';
 import { useApp } from '../../state/AppContext';
 import { useTheme } from '../../ui/theme';
 
@@ -25,23 +26,24 @@ export default function TabsLayout() {
   const tabs = tabsFor(role);
   const allowed = new Set(tabs.map((t) => t.name));
 
-  if (usesNativeTabs(Platform.OS)) {
+  if (usesNativeTabs(Platform.OS, easyView)) {
+    const look = nativeTabLook(Platform.OS, easyView);
     return (
       <NativeTabs
         minimizeBehavior={NATIVE_TAB_OPTIONS.minimizeBehavior}
         labelVisibilityMode={nativeLabelMode(easyView)}
         labelStyle={{ default: { ...NATIVE_TAB_OPTIONS.labelStyle, color: c.muted }, selected: { ...NATIVE_TAB_OPTIONS.labelStyle, color: c.accent } }}
         tintColor={c.accent}
-        backgroundColor={c.bg}
+        backgroundColor={look.themedBackground ? c.bg : undefined}
       >
         {ALL.map((name) => {
           const tab = tabs.find((t) => t.name === name);
           return (
             <NativeTabs.Trigger key={name} name={name} hidden={!allowed.has(name)}
               listeners={name === 'more' ? { tabPress: resetMore } : undefined}
-              accessibilityLabel={name === 'more' && newMessages > 0 ? 'More, new message' : undefined}>
+              accessibilityLabel={name === 'more' && newMessages > 0 ? 'More, new message' : look.labelHidden ? (tab?.label ?? name) : undefined}>
               <NativeTabs.Trigger.Icon sf={TAB_ICONS[name].sf as never} md={TAB_ICONS[name].md as never} />
-              <NativeTabs.Trigger.Label>{tab?.label ?? name}</NativeTabs.Trigger.Label>
+              <NativeTabs.Trigger.Label hidden={look.labelHidden}>{tab?.label ?? name}</NativeTabs.Trigger.Label>
               {/* RD-14: an empty badge is the phone's own dot. */}
               {name === 'more' ? <NativeTabs.Trigger.Badge hidden={newMessages === 0} selectedBackgroundColor={c.accent}>{' '}</NativeTabs.Trigger.Badge> : null}
             </NativeTabs.Trigger>

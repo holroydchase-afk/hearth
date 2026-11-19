@@ -175,13 +175,13 @@ test('DEMO-BAR Reset asks first: Keep changes nothing; Reset restores and says s
 });
 
 // RD-102 (SPEC-REDESIGN 1i, DEC-68, Chase Nov 18; replaces RD-27's Family color). Written first (red), Nov 18, by
-// qa-tdd. Paper is the default page (rgb(250, 248, 243) light, rgb(19, 18, 16) dark; never white or tan); as Chase,
+// qa-tdd. Paper is the default page (rgb(247, 247, 244) light, rgb(19, 18, 16) dark; never white or tan); as Chase,
 // More → Theme → Avocado and Pomegranate recolor the page and the pick survives a reload; Grandma Jo stays Paper with
 // no Theme row; the tab bar is c.surface with a c.line top border (RD-104). Photo shadows stay for now (Chase
 // deciding), so no shadow check here (RD-92 keeps it). Screenshots of all three themes, light and dark.
 test('RD-102 Paper by default; Chase picks Avocado then Pomegranate, it survives a reload; Grandma Jo stays Paper', async ({ page }) => {
   const PAGE = {
-    paper: { light: 'rgb(250, 248, 243)', dark: 'rgb(19, 18, 16)' },
+    paper: { light: 'rgb(247, 247, 244)', dark: 'rgb(19, 18, 16)' },
     avocado: { light: 'rgb(238, 239, 211)', dark: 'rgb(16, 20, 12)' },
     pomegranate: { light: 'rgb(245, 234, 223)', dark: 'rgb(23, 13, 16)' },
   };
@@ -616,11 +616,11 @@ test("RD-80 RD-78 each person's Easy view pick is kept separately: Chase turns i
 });
 
 // RD-92 (SPEC-REDESIGN 1h, DEC-67, Chase Nov 18): warm paper, soft photo shadows in light only, and the reaction pop
-// (retargeted Nov 18 by qa-tdd for DEC-68: the page is Paper #FAF8F3 / #131210, not tan; shadows and pop unchanged)
+// (retargeted Nov 18 by qa-tdd for DEC-68: the page is Paper #F7F7F4 / #131210, not tan; shadows and pop unchanged)
 // with its reduced-motion fallback, in the public demo at 393 px. Written first (red), Nov 18, by qa-tdd.
 // Soft expects, so one run shows every part of RD-92 that is still missing.
 test('RD-92 RD-94 Paper, photo shadows and the reaction pop in the demo, light and dark, with reduced motion', async ({ page }) => {
-  const PAPER = 'rgb(250, 248, 243)';
+  const PAPER = 'rgb(247, 247, 244)';
   const WARM_BLACK = 'rgb(19, 18, 16)';
   const shots = path.join(__dirname, '..', 'test-results', 'rd-92');
   // The page behind the app (the demo frame, the app root, body, html; the browser's white if none) and the Gallery

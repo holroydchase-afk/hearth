@@ -21,7 +21,7 @@ describe('DS native design system', () => {
 
   // qa-tdd, Nov 18: RD-94 (DEC-68, Chase 14:55Z) replaces the tan paper with Paper, an off-white page, the default theme.
   it('DS-11 → RD-94: Paper on every phone, light and dark, by default (DEC-68)', () => {
-    expect(paletteFor('ios', false)).toMatchObject({ bg: '#FAF8F3', accent: '#AD371D' });
+    expect(paletteFor('ios', false)).toMatchObject({ bg: '#F7F7F4', accent: '#AD371D' });
     expect(paletteFor('ios', true)).toMatchObject({ bg: '#131210', accent: '#FF8A65' });
     expect(paletteFor('android', false)).toEqual(paletteFor('ios', false));
     expect(paletteFor('android', true)).toEqual(paletteFor('ios', true));

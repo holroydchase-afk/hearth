@@ -6,7 +6,7 @@
 //
 // The engineer's contract:
 //   - Content (Gallery, Feed, post cards, New for you and its walk, Share, the top bar) draws on c.bg (the theme's
-//     page: Paper #FAF8F3 / #131210 by default since DEC-68) with no c.surface / c.fill box. The tab bar is c.surface
+//     page: Paper #F7F7F4 / #131210 by default since DEC-68) with no c.surface / c.fill box. The tab bar is c.surface
 //     with a c.line top border (RD-104). Posts are split by a hairline in c.line plus space.
 //   - Grey stays only on: Settings-style lists under More (Easy view, Light or dark, Theme, Help, Me), the
 //     text input fields (reply field, Share caption), and reaction / tinted capsules (buttons, chips, the "who can see" people, chat bubbles).

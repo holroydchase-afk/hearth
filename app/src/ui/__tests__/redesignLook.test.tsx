@@ -41,12 +41,12 @@ const MODES = [false, true] as const;
 const CHOICES = ['paper', 'avocado', 'pomegranate'] as ColorName[];
 
 describe('RD 1a the look: black and white with one accent', () => {
-  // RD-1's white / true black → RD-84/85's tan paper → RD-94 Paper (DEC-68, Chase Nov 18 14:55Z): off-white #FAF8F3, dark #131210.
-  it('RD-1 → RD-94 light mode is Paper #FAF8F3 with near-black words; dark mode is #131210 with near-white words', () => {
+  // RD-1's white / true black → RD-84/85's tan paper → RD-94 Paper (DEC-68, Chase Nov 18 14:55Z): off-white #F7F7F4, dark #131210.
+  it('RD-1 → RD-94 light mode is Paper #F7F7F4 with near-black words; dark mode is #131210 with near-white words', () => {
     for (const os of ['ios', 'android', 'web'] as const) {
       const light = paletteFor(os, false);
       const dark = paletteFor(os, true);
-      expect({ os, bg: light.bg }).toEqual({ os, bg: '#FAF8F3' });
+      expect({ os, bg: light.bg }).toEqual({ os, bg: '#F7F7F4' });
       expect({ os, bg: dark.bg }).toEqual({ os, bg: '#131210' });
       // engineer, flagged for qa-tdd: paper tops out near 16:1 even for pure black; RD-86 asks 7:1, we keep 14.
       expect(contrast(light.ink, light.bg)).toBeGreaterThanOrEqual(14);

@@ -25,7 +25,7 @@
     },
     "android": {
       "package": "family.hearth.app",
-      "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#FAF8F3" },
+      "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#F7F7F4" },
       "predictiveBackGestureEnabled": false,
       "intentFilters": [
         {
@@ -45,7 +45,7 @@
       ["expo-media-library", { "photosPermission": "Hearth saves family photos to your phone.", "savePhotosPermission": "Hearth saves family photos to your phone.", "isAccessMediaLocationEnabled": false }],
       "expo-notifications",
       "expo-status-bar",
-      ["expo-splash-screen", { "image": "./assets/splash-icon.png", "resizeMode": "contain", "backgroundColor": "#FAF8F3", "dark": { "image": "./assets/splash-icon.png", "backgroundColor": "#131210" } }]
+      ["expo-splash-screen", { "image": "./assets/splash-icon.png", "resizeMode": "contain", "backgroundColor": "#F7F7F4", "dark": { "image": "./assets/splash-icon.png", "backgroundColor": "#131210" } }]
     ],
     "experiments": { "typedRoutes": false },
     "owner": "thefreighttrains-team",
