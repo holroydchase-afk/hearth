@@ -6,7 +6,7 @@ Chase asked for a full review "as the review team": is there tech debt, or thing
 
 ## Ranked: P0 and P1
 
-Status is kept in `docs/product/TRACKER.md` row R61.
+Status is kept in `docs/product/TRACKER.md` row R62.
 
 | ID | Pri | Where | Problem | Plan |
 |---|---|---|---|---|

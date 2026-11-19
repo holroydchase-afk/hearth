@@ -3,15 +3,15 @@
 stage: building
 goal: hearth-beta
 milestone: HRT-M1
-now: tech-debt review Nov 19 (docs/reviews/2026-11-19-tech-debt/): fixing the P0s and P1s in small PRs (TRACKER R61). Main has everything through #124 (demo bar), live
-next: R61 fixes in order (offline family load, demo panel, privacy, UX, perf, CI); then R51 audience-leak eval, R53 operations. Share redo and PR 125 continue in their own threads
+now: tech-debt review Nov 19 (docs/reviews/2026-11-19-tech-debt/): fixing the P0s and P1s in small PRs (TRACKER R62). Main has everything through #124 (demo bar), live
+next: R62 fixes in order (offline family load, demo panel, privacy, UX, perf, CI); then R51 audience-leak eval, R53 operations. Share redo and PR 125 continue in their own threads
 waiting_on_chase:
   - Merge PR 125 (web glass tab bar)
   - Say "deploy 0027" once the group-name migration (SEC-R1) is merged
 blockers: []
 -->
 
-## Nov 19: tech-debt review from five seats; fixes start (TRACKER R61; branch claude/project-thread-av5ejj)
+## Nov 19: tech-debt review from five seats; fixes start (TRACKER R62; branch claude/project-thread-av5ejj)
 - **Chase:** "run a full review of hearth as the review team... I'm concerned there's tech debt or we have done some things oddly. Needs to pass the sniff test." Go-ahead to merge the P0/P1 fixes on green, app code included; migrations still deploy only on his word.
 - **Done:** architect, qa-tdd, privacy-security, ux-reviewer and staff-pm reviewed main at eceac67: `docs/reviews/2026-11-19-tech-debt/` (ranked table in its README). 2 P0s (offline open shows "no family"; demo story panel cut on a laptop), about 20 P1s. Jest 1507 green 3x, typecheck clean.
 - **This PR (docs):** README's Easy view and chat claims made true (PM-R1, PM-R2), CLAUDE.md layout and Ring wording (PM-R6), TRACKER status sweep R40-R60 (PM-R3), `docs/eng/DEPLOYS.md` ledger (PM-R4), test-edit rule in TESTING.md (QA-R5), the old "repo stays private" note corrected (SEC-R5).
