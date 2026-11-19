@@ -35,7 +35,7 @@ describe('Groups (posters only)', () => {
     await waitFor(() => expect(deps.openUrl).toHaveBeenCalledWith(expect.stringMatching(/^sms:.*body=Hi.*thefreighttrains-team-hearth\.expo\.app%2Fjoin%2F/)));
     const sms = decodeURIComponent((deps.openUrl as jest.Mock).mock.calls[0][0]);
     expect(sms).not.toContain('hearth.family'); // ONB-3: not a domain we own
-    expect(sms).toMatch(/Your code is [A-Z0-9]{5} [A-Z0-9]{5}\.$/); // BETA-JOIN-8
+    expect(sms).toMatch(/Your invite code is [A-Z0-9]{5} [A-Z0-9]{5}\.$/); // BETA-JOIN-8, TS-GUX-R2 (names it the invite code)
     expect(sms).toContain("Hi, it's Chase."); // NOTIFY-7: names the real sender, never "it's me"
     expect(sms).not.toContain("it's me");
     expect(sms).toContain("If that doesn't open, call me and I'll help.");

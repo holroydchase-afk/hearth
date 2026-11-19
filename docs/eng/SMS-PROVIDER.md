@@ -44,9 +44,9 @@ twilio.com and supabase.com are still blocked from cloud sessions, so these come
 - **Default words:** "Your {friendly name} verification code is: {code}." Friendly name up to 32 characters. The old `customMessage` field is deprecated; **custom templates are requested from Twilio Support** with the Account SID, Verify Service SID and the body. ([templates](https://www.twilio.com/docs/verify/verification-templates), [customize](https://support.twilio.com/hc/en-us/articles/9960174409627-How-to-Customize-the-Verification-Message-for-Twilio-Verify))
 - **Plan:** once the account exists, Claude files the template request below (Chase pastes it only if Support needs the account owner). The switch stays off until the custom text is live or Chase accepts Twilio's default (BETA-SMS-7, persona FA).
 
-Template request body (one GSM-7 segment, 107 characters with a 6-digit code; same words as `config.toml`):
+Template request body (one GSM-7 segment, 114 characters with a 6-digit code; same words as `config.toml` and the email, TS-GUX-R1):
 ```
-Hearth code: {{code}}. Never read this code to anyone, even family. Hearth will never call you for it.
+Hearth code: {{code}}. Only type it into Hearth. Never read this code to anyone who calls or texts you, even family.
 ```
 
 ## Chase's one step

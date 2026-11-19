@@ -30,7 +30,8 @@ type TextApi = { sendTextCode(phone: string): Promise<void>; verifyTextCode(phon
 const asText = (api: unknown) => api as TextApi;
 
 const BAD_NUMBER = 'Please type a US mobile number, like 304-555-0100.';
-const TEXTS_OFF = "Texts aren't working right now. Use your email instead.";
+// TS-GUX-R4: an email only if she has used one with Hearth before.
+const TEXTS_OFF = "Texts aren't working right now. If you've used your email with Hearth before, type it below. If you always use a text, try again in an hour, or call the person who invited you.";
 const PHONE_HELP = 'You sign in with a text, so Hearth tells you about new photos on this phone, not by email.';
 const EMAIL_CHOICES = ["An email every evening with the day's new photos", 'An email every Sunday morning'];
 
@@ -326,7 +327,7 @@ describe('TS-SEC-R2 the shared text cap offers email, not "too many tries"', () 
   it.each([
     ['the project-wide cap (over_sms_send_rate_limit)', { status: 429, code: 'over_sms_send_rate_limit', message: 'SMS rate limit exceeded' }],
     ['the provider refusing for load (sms_send_failed, 429)', { status: 429, code: 'sms_send_failed', message: 'Error sending sms: Too Many Requests' }],
-  ] as const)('TS-SEC-R2 %s: "Texts aren\'t working right now. Use your email instead." and the email field', async (_what, error) => {
+  ] as const)('TS-SEC-R2 %s: the TS-GUX-R4 texts-down words and the email field', async (_what, error) => {
     const { api } = await renderApp(<SignInScreen />, { user: null });
     await screen.findByLabelText('Your mobile number');
     supabaseSendFails(api, { ...error });

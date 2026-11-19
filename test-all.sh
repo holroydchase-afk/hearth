@@ -15,6 +15,7 @@ suite "Expo Go SDK" bash scripts/check-expo-go.sh
 suite "Expo Go check test" quiet e2e/results/expo-go.txt bash scripts/tests/check_expo_go_test.sh
 suite "log check" quiet e2e/results/priv2-logs.txt bash scripts/tests/check_logs_test.sh
 suite "license headers" quiet e2e/results/spdx.txt bash scripts/tests/check_spdx_test.sh
+suite "grandparent guide" quiet e2e/results/grandparent-guide.txt bash scripts/tests/grandparent_guide_test.sh
 suite "test-all helper" quiet e2e/results/test-all.txt bash scripts/tests/test_all_test.sh
 suite "test totals" quiet e2e/results/test-totals.txt bash scripts/tests/test_totals_test.sh
 suite "EAS script" quiet e2e/results/app-eas.txt bash app/scripts/tests/eas_test.sh

@@ -277,8 +277,8 @@ enable_signup = false
 # which beats the phone-bound invite. Set "Enable phone confirmations" on hosted too (tests/auth_config_test.sh).
 enable_confirmations = true
 # Template for sending OTP to users (BETA-SMS-7: code first for autofill, one GSM-7 segment, no curly quotes).
-# With Twilio Verify (SMS-PROVIDER.md) Twilio's own template sends the text; keep its words the same.
-template = "Hearth code: {{ .Code }}. Never read this code to anyone, even family. Hearth will never call you for it."
+# With Twilio Verify (SMS-PROVIDER.md) Twilio's own template sends the text; keep its words the same (TS-GUX-R1).
+template = "Hearth code: {{ .Code }}. Only type it into Hearth. Never read this code to anyone who calls or texts you, even family."
 # Controls the minimum amount of time that must pass before sending another sms otp.
 # Hearth: 60s, matching the app's "Send a new code" wait (SPEC-SMS-SIGN-IN §3.4) and
 # limiting SMS pumping. Set the same on hosted when texts go on.
