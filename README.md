@@ -31,8 +31,8 @@ Families with divorces, remarriages and step-relatives don't fit one group chat.
 ## What Hearth does
 
 - **Pick the audience by name, every time.** Groups are plain named lists ("Grandparents, Dad's side"). A photo you can't see behaves as if it doesn't exist.
-- **Built for the least tech-savvy relative.** Text is 17 pt or larger, tap targets are 48 pt, every icon has a word under it, and no action needs a gesture. Sign-in uses a 6-digit email code, so there's no password.
-- **Private by construction.** Location and camera data are stripped on the phone and checked before upload. Photos are encrypted on the phone (AES-256-GCM); Hearth's server holds the photo keys today. Group chat is end-to-end encrypted with MLS (RFC 9420); it hasn't had an outside audit, and key verification isn't built. Access rules live in the database, with row-level security.
+- **Built for the least tech-savvy relative.** Text is 17 pt or larger, tap targets are 48 pt, and no action needs a gesture. Easy view, on by default for grandparents, puts a word under every icon and makes text bigger; with it off, the tab icons keep their spoken names. Sign-in uses a 6-digit email code, so there's no password.
+- **Private by construction.** Location and camera data are stripped on the phone and checked before upload. Photos are encrypted on the phone (AES-256-GCM); Hearth's server holds the photo keys today. Group chat is built on MLS (RFC 9420) end-to-end encryption; it hasn't been tested by hand on two phones or audited, and key verification isn't built. Access rules live in the database, with row-level security.
 - **Guilt-free.** There's no "Seen by 3 of 8" count. A returned heart shows the photo arrived without counting who didn't look.
 
 ## How it was built
