@@ -521,5 +521,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** most people only see Hearth through the web demo; it should show the bar iPhone users get. Text stays off the glass (icons only, DS-6).
 - **Source:** `docs/product/SPEC-REDESIGN.md` RD-108, RD-109, DEMO-EASY-1; persona check `decisions/2026-11-19-web-glass-bar.md`
 
+### DEC-75 · Keep video, built and switched off, and get it ready to turn on (PM-R5)
+- **When / status:** Nov 19 · Chase: "We need to keep the switched off features. Start a thread for each" · Thread "Get video ready to turn on"; the switch stays off until his word
+- **Chose:** video (VID-1..22, migration 0020, `video_posting` off) stays on main. Before turning on: ENG-R2 (a retried upload no longer spends another free video), ENG-R11 (the cap has its own error code), SEC-R7, PRIV-R1, then VID-19 on an iPhone and an Android phone and the FLAG-7 check (VID-22) on Chase's iPhone.
+- **Over:** parking video on an archive branch until a relative asks for it (PM-R5's recommendation for the other dark features).
+- **Because:** Chase asked for video (Oct 29), it is the most finished of the three dark features, and family video is a reason grandparents open the app. Keeping it costs a few small fixes, not a rebuild.
+- **Source:** `docs/reviews/2026-11-19-tech-debt/pm.md` PM-R5; `docs/product/SPEC-MEDIA.md` section 4; persona check `decisions/2026-11-19-keep-video.md`
+
 ---
-Last updated: Nov 19, 2026 (DEC-72)
+Last updated: Nov 19, 2026 (DEC-75)
