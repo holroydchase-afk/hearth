@@ -15,7 +15,8 @@ blockers: []
 - **Chase:** "run a full review of hearth as the review team... I'm concerned there's tech debt or we have done some things oddly. Needs to pass the sniff test." Go-ahead to merge the P0/P1 fixes on green, app code included; migrations still deploy only on his word.
 - **Done:** architect, qa-tdd, privacy-security, ux-reviewer and staff-pm reviewed main at eceac67: `docs/reviews/2026-11-19-tech-debt/` (ranked table in its README). 2 P0s (offline open shows "no family"; demo story panel cut on a laptop), about 20 P1s. Jest 1507 green 3x, typecheck clean.
 - **This PR (docs):** README's Easy view and chat claims made true (PM-R1, PM-R2), CLAUDE.md layout and Ring wording (PM-R6), TRACKER status sweep R40-R60 (PM-R3), `docs/eng/DEPLOYS.md` ledger (PM-R4), test-edit rule in TESTING.md (QA-R5), the old "repo stays private" note corrected (SEC-R5).
-- **Next exact step:** ENG-R1 test-first, then TD-UX-R1, each its own PR.
+- **P0 PR (ENG-R1 + TD-UX-R1):** opening offline keeps the family saved on this phone (feed cache shows), or says "Can't reach Hearth" with Try again; the laptop demo's story panel scrolls instead of being cut. qa-tdd green 3x (jest 1510, typecheck, e2e:demo 27). Open P2s from qa-tdd: coming back to the front doesn't re-read the family (role changes wait for a relaunch); the offline screen has no Sign out.
+- **Next exact step:** UX P1s (TD-UX-R2/R3/R5/R6), then SEC-R2 + ENG-R3/R7, CI (QA-R1..R3, ENG-R8), SEC-R1 migration 0027 (deploy needs Chase).
 
 ## Nov 19: demo bar review, no bar on a laptop (Chase, DEC-71, R60; branch claude/project-thread-mmmmnh, PR)
 - **Chase:** "do we need the demo bar?" and its portfolio link went to an old page. Picked "Laptop off, phone stays slim".
