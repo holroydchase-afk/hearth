@@ -11,7 +11,8 @@ import type { FakeBackend } from '../api/fake/FakeBackend';
 import { MIN_TARGET, useTheme } from '../ui/theme';
 import { demoViewer, setDemoViewer } from './seed';
 
-export const PORTFOLIO_URL = 'https://chaseholroyd.com/family-photos.html';
+// DEMO-LINK-1: the portfolio's own Hearth case study (index.html opens it from #p-hearth); family-photos.html is the old page.
+export const PORTFOLIO_URL = 'https://chaseholroyd.com/#p-hearth';
 const DRAWER_ID = 'demo-details';
 const COPY = 'This is the real Hearth, running on made-up sample data. Anything you change is saved only in this browser and is never sent anywhere. Reset demo puts the sample data back.';
 
@@ -80,7 +81,7 @@ export function DemoBar({ be, reload, startOver, open, restored = false }: {
           style={styles.toggle}
         >
           <View testID="demo-badge" style={[styles.badge, { borderColor: c.ink, backgroundColor: 'transparent' }]}>
-            <Txt variant="strong" style={styles.badgeText}>Demo</Txt>
+            <Txt variant="strong" style={styles.badgeText}>DEMO</Txt>
           </View>
           {note && <Txt variant="muted" numberOfLines={1} style={styles.note}>{note}</Txt>}
           <View style={styles.details}>
@@ -135,7 +136,8 @@ const styles = StyleSheet.create({
   back: { minHeight: MIN_TARGET, justifyContent: 'center', paddingHorizontal: 12, borderRightWidth: StyleSheet.hairlineWidth },
   toggle: { flex: 1, minHeight: MIN_TARGET, flexDirection: 'row', alignItems: 'center', gap: 10, paddingLeft: 10, paddingRight: 12 },
   badge: { borderWidth: 1, borderRadius: 999, paddingHorizontal: 8 },
-  badgeText: { fontVariant: ['small-caps'], letterSpacing: 0.5 },
+  // DEMO-LINK-2: real capitals; small caps in Atkinson Hyperlegible rendered as "DEмо".
+  badgeText: { letterSpacing: 0.8 },
   note: { flexShrink: 1 },
   details: { marginLeft: 'auto', flexDirection: 'row', alignItems: 'center', gap: 4 },
   chevronOpen: { transform: [{ rotate: '180deg' }] },
