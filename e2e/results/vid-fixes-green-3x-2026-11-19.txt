@@ -119,3 +119,9 @@ FAIL src/screens/__tests__/signin.test.tsx
   6 skipped
   5 passed (35.5s)
 Not run: Deno (sign-media HF002 branch) - deno not installed, owed to CI.
+== e2e:web run 2
+  6 skipped
+  5 passed (32.7s)
+== e2e:web run 3
+  6 skipped
+  5 passed (33.5s)
