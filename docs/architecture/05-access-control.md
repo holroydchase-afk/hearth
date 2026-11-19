@@ -42,7 +42,7 @@ One permission check, `public.can(space, capability)`, decides `post`, `send_to_
 
 ## Who can see a post, shown by name (Built, migration 0022)
 
-Every card tells everyone who can see it which people can see it, by name ("You, Alex, Chase and 2 others can see this"), through `public.post_viewers`. The list is computed from the same rule as the post itself: the members of the family for whom `private.sees_post` is true, so it can't name someone who can't see the post or leave out someone who can. It carries a name and an id only. A group's name stays with the parents (the author's `audience` column), because a relative never needs to know a group exists. A post the caller can't see is left out, like any other read.
+Every card tells everyone who can see it which people can see it, by name ("You, Alex, Chase and 2 others can see this"), through `public.post_viewers`. The list is computed from the same rule as the post itself: the members of the family for whom `private.sees_post` is true, so it can't name someone who can't see the post or leave out someone who can. It carries a name and an id only. A group's name stays with the parents (the author's `audience` column), because a relative never needs to know a group exists. Since migration 0027 (SEC-R1, Nov 19) that holds for the raw table too: a relative's select on `circles` returns only the Everyone and event groups they are in, and their data export leaves other group names out; before it, the app hid the names but the API didn't. A post the caller can't see is left out, like any other read.
 
 ## Who reads a reply (Built, migration 0013)
 
@@ -107,4 +107,4 @@ RLS limits what each family member's app can read. It does not limit Hearth's se
 - **Planned:** event dates (`starts_on`, `ends_on`) exist in the schema but the app doesn't use them yet.
 
 ---
-Last checked against code: 2026-11-10, migration 0025 (search_posts reads through visible_posts and feed_rows; no group names); also 2026-11-10, migration 0026 (a phone invite opens only for that number; invite_preview adds sign_in_with, never the target; no access changes); earlier 2026-11-07, migration 0024 (start_family, revoked create_household/create_space); earlier 2026-11-05, migration 0023 (🎉 joins the reaction list in set_reaction and the table check); earlier 2026-11-04, migration 0022 (post_viewers names who can see a post, from sees_post); earlier 2026-10-31, HELP-R6 (the owner's photo helpers switch writes `space_features` under RLS; no migration); earlier 2026-10-29, migration 0021 (words change only through edit_post_words); earlier 2026-10-28, migration 0018 (reactions only through RPCs); earlier 2026-10-22, 10001df (plus migrations 0013, 0015, 0016)
+Last checked against code: 2026-11-19, migration 0027 (circles_select and export_my_data keep group names with the parents).
