@@ -4,7 +4,7 @@ One table of what runs on the hosted project, so nobody has to guess from chat o
 
 | Piece | Live | On main, not live | Last deploy |
 |---|---|---|---|
-| Database migrations | 0001–0025 (smoke check 9/9) | 0026 text sign-in (switched off; needs "deploy 0026"); 0027 group names for parents only (needs "deploy 0027"). `deploy.sh` applies every migration not yet applied, so the next deploy ships 0026 and 0027 together | Nov 11, 2026 (0024, 0025) |
+| Database migrations | 0001–0025 (smoke check 9/9) | 0026 text sign-in (switched off; needs "deploy 0026"); 0027 group names for parents only (needs "deploy 0027"); 0028 no passwords in Auth (TS-SEC-R1, PR #134 once merged; the same deploy also turns "Confirm email" on). `deploy.sh` applies every migration not yet applied, so the next deploy ships 0026, 0027 and 0028 together | Nov 11, 2026 (0024, 0025) |
 | `start_family_open` switch | off | | Nov 11, 2026 |
 | Edge function `notify` | yes (1-minute cron `hearth-notify`) | | Oct 28, 2026 (unchanged since Oct 18) |
 | Edge function `sign-media` | yes | | Oct 28, 2026 |

@@ -197,9 +197,33 @@ describe('SupabaseApi auth: 6-number text code (BETA-SMS)', () => {
     await expect(make(c).verifyCode('a@b.c', '000000')).rejects.toMatchObject({ code: want });
   });
 
-  it('BETA-SMS-5 too many sends (429) is 54000, like email', async () => {
+  // TS-SEC-R2 moved the project-wide cap (over_sms_send_rate_limit) to SMS_OFF; the per-number wait stays 54000.
+  it('BETA-SMS-5 too many sends from this number (over_request_rate_limit) is 54000, like email', async () => {
     const c = mockClient();
-    c.auth.signInWithOtp.mockResolvedValue({ error: { status: 429, code: 'over_sms_send_rate_limit', message: 'rate limit' } } as never);
+    c.auth.signInWithOtp.mockResolvedValue({ error: { status: 429, code: 'over_request_rate_limit', message: 'rate limit' } } as never);
+    await expect(textApi(c).sendTextCode('+13045550100')).rejects.toMatchObject({ code: '54000' });
+  });
+
+  // TS-SEC-R2 (docs/reviews/2026-11-19-text-sign-in/sec.md, P1): Supabase's hourly SMS cap is project-wide, so one
+  // stranger can use it up for every relative. Then "Too many tries" is wrong and offers no way in; SMS_OFF offers
+  // email (BETA-SMS-6 words). Branch on error.code, never the HTTP status (CLAUDE.md rule 7). Written first.
+  it.each([
+    ['the project-wide cap (over_sms_send_rate_limit)', { status: 429, code: 'over_sms_send_rate_limit', message: 'SMS rate limit exceeded' }],
+    ['the provider refusing for load (sms_send_failed, 429)', { status: 429, code: 'sms_send_failed', message: 'Error sending sms: Too Many Requests' }],
+  ] as const)('TS-SEC-R2 sendTextCode: %s becomes SMS_OFF, so the screen offers email', async (_what, error) => {
+    const c = mockClient();
+    c.auth.signInWithOtp.mockResolvedValue({ error } as never);
+    const e = await textApi(c).sendTextCode('+13045550100').catch((x: unknown) => x);
+    expect(e).toBeInstanceOf(ApiError);
+    expect(e).toMatchObject({ code: 'SMS_OFF' });
+    expect(String((e as Error).message)).not.toMatch(/3045550100/); // BETA-SMS-15
+  });
+
+  // GoTrue (supabase/auth internal/api/phone.go:73-92) sends the per-number wait with the same code as the cap; only
+  // the message tells them apart.
+  it('TS-SEC-R2 sendTextCode: the per-number wait (over_sms_send_rate_limit, "only request this after") still says too many tries (54000)', async () => {
+    const c = mockClient();
+    c.auth.signInWithOtp.mockResolvedValue({ error: { status: 429, code: 'over_sms_send_rate_limit', message: 'For security purposes, you can only request this after 47 seconds.' } } as never);
     await expect(textApi(c).sendTextCode('+13045550100')).rejects.toMatchObject({ code: '54000' });
   });
 

@@ -117,12 +117,20 @@ export class SupabaseApi implements HearthApi {
       throw new ApiError(toApiError(e).code === 'NETWORK' ? 'NETWORK' : 'UNKNOWN');
     }
     if (!error) return;
-    if (error.status === 429) throw new ApiError('54000');
+    // TS-SEC-R2: branch on error.code (rule 7). GoTrue (supabase/auth internal/api/phone.go:73-92) returns
+    // over_sms_send_rate_limit (429) for both the per-number wait ("...you can only request this after N seconds.")
+    // and the project-wide hourly cap ("SMS rate limit exceeded"). Only the per-number wait, or the per-IP
+    // over_request_rate_limit, is "too many tries"; the shared cap and provider failures offer email (SMS_OFF).
+    if (error.code === 'over_request_rate_limit') throw new ApiError('54000');
+    if (error.code === 'over_sms_send_rate_limit') {
+      throw new ApiError(/only request this after/i.test(error.message ?? '') ? '54000' : 'SMS_OFF');
+    }
     if (/fetch|network/i.test(error.message ?? '')) throw new ApiError('NETWORK');
     // Texts switched off, no provider, or the provider failing: the screen offers email (BETA-SMS-6).
     if (/phone_provider_disabled|sms_provider|sms_send_failed|signup_disabled/.test(error.code ?? '') || (error.status ?? 0) >= 500) {
       throw new ApiError('SMS_OFF');
     }
+    if (error.status === 429) throw new ApiError('54000'); // any other limit, e.g. an older Auth with no code
     throw new ApiError(error.status === 400 || error.status === 422 ? '23514' : 'UNKNOWN');
   }
   async verifyTextCode(phone: string, code: string): Promise<Session> {

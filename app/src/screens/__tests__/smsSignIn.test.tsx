@@ -22,6 +22,7 @@ const { HelpScreen } = require('../HelpScreen') as typeof import('../HelpScreen'
 const { JoinScreen } = require('../JoinScreen') as typeof import('../JoinScreen');
 const { HowToTell } = require('../Preferences') as typeof import('../Preferences');
 const { SignInScreen } = require('../SignInScreen') as typeof import('../SignInScreen');
+const { SupabaseApi } = require('../../api/SupabaseApi') as typeof import('../../api/SupabaseApi');
 
 type FakeBe = InstanceType<typeof FakeBackend>;
 /** The methods the spec adds to HearthApi (cast so this file stays type-clean until they exist). */
@@ -308,5 +309,42 @@ describe('BETA-SMS-14 phone-only accounts hear about photos on the phone, not by
     await renderApp(<HelpScreen />, { user: 'jo' });
     for (const c of EMAIL_CHOICES) expect(await screen.findByRole('radio', { name: c })).toBeTruthy();
     expect(screen.queryByText(PHONE_HELP)).toBeNull();
+  });
+});
+
+// TS-SEC-R2 (docs/reviews/2026-11-19-text-sign-in/sec.md, P1): when Supabase answers a send with an Auth error,
+// the screen shows what SupabaseApi maps it to. The project-wide cap (one stranger can use it up for everyone) and a
+// provider 429 must offer email; only the per-number wait keeps "too many tries". Written first.
+describe('TS-SEC-R2 the shared text cap offers email, not "too many tries"', () => {
+  /** Routes the Fake's sendTextCode through SupabaseApi's real mapping of this Auth error. */
+  function supabaseSendFails(api: unknown, error: { status: number; code: string; message: string }) {
+    const auth = { signInWithOtp: jest.fn(async () => ({ error })) };
+    const supa = new SupabaseApi({ url: 'https://x.supabase.co', anonKey: 'anon', client: { auth } as never });
+    jest.spyOn(asText(api), 'sendTextCode').mockImplementation((p: string) => asText(supa).sendTextCode(p));
+  }
+
+  it.each([
+    ['the project-wide cap (over_sms_send_rate_limit)', { status: 429, code: 'over_sms_send_rate_limit', message: 'SMS rate limit exceeded' }],
+    ['the provider refusing for load (sms_send_failed, 429)', { status: 429, code: 'sms_send_failed', message: 'Error sending sms: Too Many Requests' }],
+  ] as const)('TS-SEC-R2 %s: "Texts aren\'t working right now. Use your email instead." and the email field', async (_what, error) => {
+    const { api } = await renderApp(<SignInScreen />, { user: null });
+    await screen.findByLabelText('Your mobile number');
+    supabaseSendFails(api, { ...error });
+    await sendTo('304-555-0100');
+    expect(await screen.findByText(TEXTS_OFF)).toBeTruthy();
+    expect(screen.getByLabelText('Your email')).toBeTruthy();
+    expect(screen.queryByText(messageFor(new ApiError('54000')))).toBeNull();
+  });
+
+  // GoTrue (supabase/auth internal/api/phone.go:73-92): same code as the cap, told apart by the message.
+  it('TS-SEC-R2 the per-number wait (over_sms_send_rate_limit, "only request this after") still says the too-many-tries words', async () => {
+    const { api } = await renderApp(<SignInScreen />, { user: null });
+    await screen.findByLabelText('Your mobile number');
+    supabaseSendFails(api, { status: 429, code: 'over_sms_send_rate_limit', message: 'For security purposes, you can only request this after 47 seconds.' });
+    const before = screenWords();
+    await sendTo('304-555-0100');
+    await waitFor(() => expect(screenWords()).not.toBe(before));
+    expect(screenWords()).toContain(messageFor(new ApiError('54000')));
+    expect(screen.queryByText(TEXTS_OFF)).toBeNull();
   });
 });
