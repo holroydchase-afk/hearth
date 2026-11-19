@@ -139,12 +139,14 @@ describe('RD-34 content screens sit on the plain background, no grey card fill',
       expect(greyBoxes(pal(dark))).toEqual([]);
     });
 
-    it(`RD-34 Share (${name}): the share screen has no grey cards (its text input fields may keep their fill)`, async () => {
+    // Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-1), flagged for qa-tdd: the postcard is the one c.surface
+    // card on Share by design (Chase's direction B); nothing else on the page is a grey box.
+    it(`RD-34 DEC-73 Share (${name}): the only grey on the page is the postcard itself (fields and buttons may keep their fill)`, async () => {
       await renderApp(<ShareScreen />, { user: 'chase', kv: look(dark, chase.id) });
-      await screen.findByRole('checkbox', { name: "Grandparents – Dad's side, 3 people" });
-      fireEvent.press(screen.getByRole('button', { name: 'Pick photos from your phone' }));
-      await screen.findByText('1 photo picked');
-      expect(greyBoxes(pal(dark))).toEqual([]);
+      fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }, slow));
+      await screen.findByRole('header', { name: 'New post' }, slow);
+      await screen.findByLabelText(/^Grandparents – Dad's side, 3 people, not picked$/, {}, slow);
+      expect(greyBoxes(pal(dark))).toEqual([`View#share-card bg ${pal(dark).surface}`]);
     });
 
     // qa-tdd, Nov 18: RD-104 (DEC-68, Chase) sets the tab bar apart on c.surface with a c.line top border; it is no
@@ -221,6 +223,7 @@ const GREY_ALLOWED: Record<string, Record<string, string>> = {
   'screens/MessagesScreen.tsx': { Line: 'chat bubble capsule' },
   'screens/GalleryTop.tsx': { SearchField: 'the "Search photos" field (RD-47), a field like the reply field' },
   'screens/TabBar.tsx': { HearthTabBar: 'the tab bar, set apart from the page on c.surface (RD-104)' },
+  'screens/ShareScreen.tsx': { ShareScreen: 'the postcard (DEC-73, SHARE-PC-1; engineer, flagged for qa-tdd) and its Add tile, a button' },
   'demo/DemoBar.tsx': { DemoBar: 'demo chrome, outside the app' },
   'demo/DemoFrame.tsx': { DemoFrame: 'demo chrome, outside the app' },
 };

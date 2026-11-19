@@ -1,6 +1,6 @@
 # Text sign-in: grandparent-ux review before turn-on (Nov 19, 2026)
 
-Reviewer: `grandparent-ux`. Branch `claude/project-thread-df9051` at 579b440, read only. Scope: every word a relative or parent sees in text (SMS) sign-in (DEC-57, DEC-73, `docs/product/SPEC-SMS-SIGN-IN.md`). The Nov 10 GUX-R3..R6 text is lost; this list is rebuilt from scratch and replaces it (its "Text me a code" and "Never tell this code" ideas are re-judged below as R8 and R1).
+Reviewer: `grandparent-ux`. Branch `claude/project-thread-df9051` at 579b440, read only. Scope: every word a relative or parent sees in text (SMS) sign-in (DEC-57, DEC-74, `docs/product/SPEC-SMS-SIGN-IN.md`). The Nov 10 GUX-R3..R6 text is lost; this list is rebuilt from scratch and replaces it (its "Text me a code" and "Never tell this code" ideas are re-judged below as R8 and R1).
 
 **Measured vs inferred.** Words and line numbers are read from the code. Sizes are inferred from `ui/kit.tsx`: every `Txt`, `Button` and `Field` uses `t.base` (17 pt+), buttons including `quiet` keep 48 pt (`MIN_TARGET`), fields are 56 pt, and nothing sets `allowFontScaling={false}`. No Playwright run at 360x740 this pass (texts are off in the web build). Real-phone behaviour (autofill, Twilio sender, how a scam-wary relative reads an unknown number) is **confirm with a relative** at BETA-SMS-16/17.
 

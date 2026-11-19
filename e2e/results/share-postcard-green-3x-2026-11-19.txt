@@ -1,0 +1,35 @@
+DEC-73 postcard Share pre-PR gate (qa-tdd), Nov 19, branch claude/project-thread-4ulu9i at 4c9da8b (clean tree except agent-runs log). 3 runs each.
+--- run 1
+jest: Tests:       1 skipped, 1 todo, 1537 passed, 1539 total
+typecheck: rc=0
+e2e:web:   11 skipped   5 passed (28.9s) 
+e2e:demo:   5 skipped   28 passed (1.4m) 
+test-all.sh: SUITES: 15 passed, 0 failed, 4 skipped
+SKIPPED: backend SQL (no local Postgres running)
+SKIPPED: Supabase starter scripts (no local Postgres running)
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SKIPPED: Deno functions (Deno isn't installed; CI runs them)
+--- run 2
+jest: Tests:       1 skipped, 1 todo, 1537 passed, 1539 total
+typecheck: rc=0
+e2e:web:   11 skipped   5 passed (30.1s) 
+e2e:demo:   5 skipped   28 passed (1.4m) 
+test-all.sh: SUITES: 15 passed, 0 failed, 4 skipped
+SKIPPED: backend SQL (no local Postgres running)
+SKIPPED: Supabase starter scripts (no local Postgres running)
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SKIPPED: Deno functions (Deno isn't installed; CI runs them)
+--- run 3
+jest: Tests:       1 skipped, 1 todo, 1537 passed, 1539 total
+typecheck: rc=0
+e2e:web:   11 skipped   5 passed (29.8s) 
+e2e:demo:   5 skipped   28 passed (1.5m) 
+test-all.sh: SUITES: 15 passed, 0 failed, 4 skipped
+SKIPPED: backend SQL (no local Postgres running)
+SKIPPED: Supabase starter scripts (no local Postgres running)
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SKIPPED: Deno functions (Deno isn't installed; CI runs them)
+--- env-gated screenshot specs, 1 run with SNAPSHOT_DIR/SHOWCASE_DIR set (normally skipped)
+showcase x4, snapshot x2: Share steps (New post, note, tile, Send to, caption on Feed) pass; then fail at the grandparent step: getByText('Pumpkin patch') on Jo's Gallery (Gallery shows no captions; photo label is now 'Open photo from Chase, November 19'). Stale before this branch (T24).
+demo-screens x1, demo-showcase x4: fail at the first step, getByText('Bridge walk on the trail') on Gallery, before Share is reached (T24).
+Backend SQL, Supabase starter: no local Postgres (no backend files changed). Deno: not installed.

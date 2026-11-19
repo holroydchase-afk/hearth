@@ -1,5 +1,5 @@
 # Decision: keep text sign-in in the repo, switched off, and finish it
-Date: Nov 19, 2026 · Status: Chase's ("We need to keep the switched off features. Start a thread for each") · DEC-73 · Answers PM-R5 (docs/reviews/2026-11-19-tech-debt/pm.md) for text sign-in · Spec: `docs/product/SPEC-SMS-SIGN-IN.md`
+Date: Nov 19, 2026 · Status: Chase's ("We need to keep the switched off features. Start a thread for each") · DEC-74 · Answers PM-R5 (docs/reviews/2026-11-19-tech-debt/pm.md) for text sign-in · Spec: `docs/product/SPEC-SMS-SIGN-IN.md`
 
 | Persona | Green/Red | Why |
 |---|---|---|

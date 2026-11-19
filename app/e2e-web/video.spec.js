@@ -52,9 +52,9 @@ test('VID-18 a video post shows its poster with a Play word button on Photos and
   const chooser = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: 'Pick photos or videos from your phone' }).click();
   await (await chooser).setFiles(VIDEO);
-  await page.getByLabel("What's happening?").fill('Leo on the slide');
-  await page.getByRole('checkbox', { name: "Grandparents – Dad's side, 2 people" }).click();
-  await page.getByRole('button', { name: 'Post', exact: true }).click();
+  await page.getByLabel('Add a note (optional)').fill('Leo on the slide');
+  await page.getByLabel(/^Grandparents – Dad's side, 2 people, not picked$/).click();
+  await page.getByRole('button', { name: /^Send to / }).click();
   await page.getByRole('tab', { name: /^Feed/ }).click(); // RD-18: the post card (and its Play button) is on Feed
   await expect(page.getByText('Leo on the slide', { exact: true })).toBeVisible();
 

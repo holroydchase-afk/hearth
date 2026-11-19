@@ -1,6 +1,6 @@
 # Text sign-in: privacy-security review before turn-on (Nov 19, 2026)
 
-Reviewer: `privacy-security`. Branch `claude/project-thread-df9051`, read only (nothing fixed here; each fix gets its own failing test first). Scope: migration 0026, `config.toml` `[auth]`/`[auth.sms*]`, `app/src/api/phone.ts`, `SupabaseApi` text methods and `Session.phone`, `SignInFlow`/`TextCodeFlow`, `JoinScreen`, the invite card phone field (`GroupsScreen`), `notify`'s push-only path, log scrubbing (BETA-SMS-15), `docs/architecture` text sign-in sections, ACCOUNTS Twilio row. DEC-57, DEC-73, `docs/product/SPEC-SMS-SIGN-IN.md`, `docs/eng/SMS-PROVIDER.md` (incl. "Nov 19 check").
+Reviewer: `privacy-security`. Branch `claude/project-thread-df9051`, read only (nothing fixed here; each fix gets its own failing test first). Scope: migration 0026, `config.toml` `[auth]`/`[auth.sms*]`, `app/src/api/phone.ts`, `SupabaseApi` text methods and `Session.phone`, `SignInFlow`/`TextCodeFlow`, `JoinScreen`, the invite card phone field (`GroupsScreen`), `notify`'s push-only path, log scrubbing (BETA-SMS-15), `docs/architecture` text sign-in sections, ACCOUNTS Twilio row. DEC-57, DEC-74, `docs/product/SPEC-SMS-SIGN-IN.md`, `docs/eng/SMS-PROVIDER.md` (incl. "Nov 19 check").
 
 The Nov 10 list's text (PRIV-R2..R6) is lost; this list is rebuilt from scratch and replaces it. PRIV-R1 (phone confirmations on) is still fixed: `config.toml:277` and `backend/tests/auth_config_test.sh` pass.
 
