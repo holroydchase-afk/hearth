@@ -1,14 +1,12 @@
 {
-  "name": "e2e",
+  "name": "hearth-e2e",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "description": "Playwright for Hearth's browser tests: the clickable prototype (here) and the app's web, demo and site suites (app/e2e-web), which load @playwright/test from this folder.",
+  "license": "AGPL-3.0-or-later",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "playwright test"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.56.1"
   }
