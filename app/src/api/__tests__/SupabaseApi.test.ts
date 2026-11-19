@@ -76,51 +76,20 @@ describe('SupabaseApi RPC wiring (API.md names and args)', () => {
     expect(await make(c).toggleHeart('P')).toEqual({ i_hearted: true, heart_count: 3 });
   });
 
-  it('REACT-1 set_reaction and reaction_summary use API.md names; a server before 0017 falls back to a heart', async () => {
+  // ENG-R7 (Nov 19): the pre-0017 heart fallback is gone (0017 has been live since Oct); a missing RPC is an error.
+  it('REACT-1 set_reaction and reaction_summary use API.md names; a missing set_reaction is an error, not a heart', async () => {
     const c = mockClient({ data: [{ my_reaction: '😂', heart_count: 2, counts: { '😂': 2 } }], error: null });
     expect(await make(c).setReaction('P', '😂')).toEqual({ my_reaction: '😂', heart_count: 2, counts: { '😂': 2 } });
     expect(c.rpc).toHaveBeenLastCalledWith('set_reaction', { p_post: 'P', p_emoji: '😂' });
     await make(c).reactionSummary(['P']);
     expect(c.rpc).toHaveBeenLastCalledWith('reaction_summary', { p_posts: ['P'] });
 
-    const old = mockClient();
-    old.rpc.mockImplementation(async (name: string) =>
-      name === 'set_reaction' ? { data: null, error: { code: 'PGRST202', message: 'not found' } } : { data: { i_hearted: true, heart_count: 1 }, error: null });
-    expect(await make(old).setReaction('P', '😂')).toEqual({ my_reaction: '❤️', heart_count: 1, counts: { '❤️': 1 } });
-    expect(old.rpc).toHaveBeenLastCalledWith('toggle_heart', { p_post: 'P' });
+    const old = mockClient({ data: null, error: { code: 'PGRST202', message: 'not found' } });
+    await expect(make(old).setReaction('P', '😂')).rejects.toMatchObject({ code: 'PGRST202' });
+    expect(old.rpc).toHaveBeenCalledTimes(1);
 
     const denied = mockClient({ data: null, error: { code: '42501', message: 'no' } });
     await expect(make(denied).setReaction('P', '❤️')).rejects.toMatchObject({ code: '42501' });
-  });
-});
-
-describe('HARD-16 (B12) a server before 0017 knows only hearts', () => {
-  /** A pre-0017 server: no set_reaction; toggle_heart flips a stored heart. */
-  function oldServer(hearted: boolean) {
-    const c = mockClient();
-    let on = hearted;
-    c.rpc.mockImplementation(async (name: string) => {
-      if (name === 'set_reaction') return { data: null, error: { code: 'PGRST202', message: 'not found' } };
-      on = !on;
-      return { data: { i_hearted: on, heart_count: on ? 1 : 0 }, error: null };
-    });
-    return { c, hearted: () => on };
-  }
-
-  it('HARD-16 Haha or Like on a post you already hearted keeps the heart', async () => {
-    for (const emoji of ['😂', '👍'] as const) {
-      const s = oldServer(true);
-      expect(await make(s.c).setReaction('P', emoji)).toEqual({ my_reaction: '❤️', heart_count: 1, counts: { '❤️': 1 } });
-      expect(s.hearted()).toBe(true);
-    }
-  });
-
-  it('HARD-16 Haha on a post without a heart adds one; Love still takes a heart back', async () => {
-    const s = oldServer(false);
-    expect((await make(s.c).setReaction('P', '😂')).my_reaction).toBe('❤️');
-    expect(s.hearted()).toBe(true);
-    expect((await make(s.c).setReaction('P', '❤️')).my_reaction).toBeNull();
-    expect(s.hearted()).toBe(false);
   });
 });
 
