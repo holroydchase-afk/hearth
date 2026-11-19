@@ -65,7 +65,7 @@ describe('RD-108 web lookalike of the floating glass tab bar', () => {
     expect(nextMinimized(false, 200, 196)).toBe(false);
   });
 
-  it('RD-110 shrunk, the bar is a small glass oval holding only the picked tab; tapping it brings the full bar back', () => {
+  it('RD-110 shrunk, the bar is a small glass oval holding only the picked tab; tapping it brings the full bar back and acts as a tap on that tab', () => {
     const expand = jest.fn();
     const go = jest.fn();
     render(<HearthTabBar role="owner" current={'feed' as string as TabName} onNavigate={go} floating minimized onExpand={expand} />);
@@ -76,9 +76,10 @@ describe('RD-108 web lookalike of the floating glass tab bar', () => {
     const tabs = screen.getAllByRole('tab');
     expect(tabs).toHaveLength(1);
     expect(tabs[0]!.props.accessibilityLabel).toBe('Feed, show all tabs');
+    // Like the phone's own bar, the tap also does what tapping the picked tab does (More goes back to its menu).
     fireEvent.press(tabs[0]!);
     expect(expand).toHaveBeenCalled();
-    expect(go).not.toHaveBeenCalled();
+    expect(go).toHaveBeenCalledWith('feed');
   });
 });
 

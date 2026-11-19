@@ -152,7 +152,7 @@ export function HearthTabBar({ role, current, onNavigate, newMessages = 0, float
             // HIG-3: at the largest text sizes a long press shows the tab's name big, as Apple's own tab bars do.
             accessibilityShowsLargeContentViewer
             accessibilityLargeContentTitle={tab.label}
-            onPress={() => (small ? expand() : onNavigate(tab.name))}
+            onPress={() => { if (small) expand(); onNavigate(tab.name); }}
             style={({ pressed }) => [styles.tab, floating ? styles.floatTab : null, floating && on ? { backgroundColor: c.accentSoft } : null, { opacity: pressed ? 0.7 : 1 }]}
           >
             <View>
