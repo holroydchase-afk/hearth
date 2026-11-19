@@ -1147,9 +1147,25 @@
    "kind": "test fix",
    "layer": "app",
    "severity": "Medium",
-   "status": "open",
-   "title": "QA-R1 (share postcard red run, Nov 19): 16 more test files drive the old Share page (Pick photos from your phone, What's happening?, Title (optional), Post) and will go red when DEC-72 lands: jest features, wordsPass, captions, problemDetails, uploadFailure, plainBackground, guxPaper (GUX-R16 fields), reviewRound2 (Share insets), familyShape; e2e-web core-loop, demo-screens, video, showcase, perf, demo-showcase, snapshot. Retarget them to the postcard (note, face tile, Send to) with the engineer's build. Tests: those files",
+   "status": "fixed",
+   "title": "QA-R1 (share postcard red run, Nov 19): 16 more test files drive the old Share page (Pick photos from your phone, What's happening?, Title (optional), Post) and will go red when DEC-72 lands: jest features, wordsPass, captions, problemDetails, uploadFailure, plainBackground, guxPaper (GUX-R16 fields), reviewRound2 (Share insets), familyShape; e2e-web core-loop, demo-screens, video, showcase, perf, demo-showcase, snapshot. Retarget them to the postcard (note, face tile, Send to) with the engineer's build. Tests: those files. Fixed (r50): retargeted in the build commit and reviewed by qa-tdd (no weakening found); jest, e2e:web and e2e:demo green x3",
    "tests": [],
+   "found": "2026-11-19",
+   "fixed": "2026-11-19"
+  },
+  {
+   "id": "T24",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (share postcard green run, Nov 19): the screenshot specs only run with SNAPSHOT_DIR / SHOWCASE_DIR set, so they rot unseen. With them set: app/e2e-web/showcase.spec.js (4) and snapshot.spec.js (2) pass the DEC-72 Share steps, then fail waiting for the caption 'Pumpkin patch' on Grandma Jo's Gallery (Gallery shows no captions; photo labels are now 'Open photo from Chase, <date>'); demo-screens.spec.js and demo-showcase.spec.js (4) fail at their first step, 'Bridge walk on the trail' on Gallery, before Share. Gallery is unchanged on this branch, so stale from an earlier Gallery redesign. Fix: wait on Feed or the photo button instead of caption text on Gallery; consider a CI job that runs them. Tests: those files",
+   "tests": [
+    "app/e2e-web/demo-screens.spec.js",
+    "app/e2e-web/demo-showcase.spec.js",
+    "app/e2e-web/showcase.spec.js",
+    "app/e2e-web/snapshot.spec.js"
+   ],
    "found": "2026-11-19",
    "fixed": null
   },
