@@ -85,6 +85,14 @@ export function useFeed(): FeedState {
   );
 }
 
+/** ENG-R3: one slice of the feed. The component redraws only when that slice changes (by reference), so a post
+ *  card follows its own comments and draft instead of every change to the whole feed. */
+export function useFeedSelect<T>(select: (s: FeedState) => T): T {
+  const { feed } = useApp();
+  const get = feed ? () => select(feed.getState()) : () => select(EMPTY_FEED);
+  return useSyncExternalStore(feed ? feed.subscribe : noopSubscribe, get, get);
+}
+
 const noopSubscribe = () => () => {};
 const NO_JOBS: Job[] = [];
 
