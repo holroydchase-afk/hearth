@@ -92,7 +92,8 @@ ok $rc "START-ON-3 the dry run runs without error"
 echo "$out" | sed 's/^/        | /'
 [ "$(deleted)" = f ]; ok $? "START-ON-3 without --apply nothing changes (dry run is the default)"
 grep -qi "dry run" <<< "$out" && grep -q -- "--apply" <<< "$out"; ok $? "START-ON-3 the dry run says it is a dry run and to add --apply"
-grep -q "purge_soft_deleted" <<< "$out" && grep -q "30 days" <<< "$out"; ok $? "START-ON-3 the dry run says purge_soft_deleted removes it for good after 30 days"
+grep -q "purge_soft_deleted" <<< "$out" && grep -q "30 days" <<< "$out"; ok $? "START-ON-3 the dry run names purge_soft_deleted and 30 days"
+grep -q "not scheduled" <<< "$out" && ! grep -q "removes a suspended family for good after 30 days" <<< "$out"; ok $? "SEC-R1 the dry run says the purge is not scheduled, never that it runs on its own"
 grep -q "$SPACE" <<< "$out"; ok $? "START-ON-3 the dry run names the space id"
 private_free "$out"; ok $? "START-ON-3 the dry run prints no family, side or member name and no email"
 
@@ -101,7 +102,8 @@ out=$(run suspend-family.sh --space "$SPACE" --apply); rc=$?
 ok $rc "START-ON-3 --apply runs without error"
 echo "$out" | sed 's/^/        | /'
 [ "$(deleted)" = t ]; ok $? "START-ON-3 --apply suspends the family (spaces.deleted_at set)"
-grep -q "purge_soft_deleted" <<< "$out" && grep -q "30 days" <<< "$out"; ok $? "START-ON-3 --apply says purge_soft_deleted removes it for good after 30 days"
+grep -q "purge_soft_deleted" <<< "$out" && grep -q "30 days" <<< "$out"; ok $? "START-ON-3 --apply names purge_soft_deleted and 30 days"
+grep -q "not scheduled" <<< "$out"; ok $? "SEC-R1 --apply says the purge is not scheduled"
 grep -q -- "--undo" <<< "$out"; ok $? "START-ON-3 --apply says how to undo"
 private_free "$out"; ok $? "START-ON-3 --apply prints no family, side or member name and no email"
 [ "$(sent)" = 1 ]; ok $? "START-ON-3 one Management API request (got $(sent))"

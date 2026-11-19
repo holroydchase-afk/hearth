@@ -4,8 +4,8 @@
 # family-setup.sh: no psql, no database password or URL. The SQL is scripts/suspend-family.sql.
 #   bash scripts/suspend-family.sh --space <space id> [--undo | --known] [--apply] [--print-sql]
 # Dry run by default: without --apply nothing changes and it says what would. Suspending hides the family from every
-# member (not found) and refuses uploads; purge_soft_deleted removes it for good after 30 days, and --undo before
-# then brings it back unchanged. Output carries only the space id. Needs SUPABASE_ACCESS_TOKEN (an environment
+# member (not found) and refuses uploads; --undo brings it back unchanged. purge_soft_deleted can remove families
+# suspended over 30 days ago, but it is not scheduled on the hosted project (SEC-R1), so nothing is deleted on its own. Output carries only the space id. Needs SUPABASE_ACCESS_TOKEN (an environment
 # secret, never in chat or git). --print-sql prints the request instead of sending it (no token needed).
 # Runbook: docs/eng/RUNBOOK-START-FAMILY.md.
 set -euo pipefail

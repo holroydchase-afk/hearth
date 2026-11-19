@@ -47,8 +47,9 @@ uploads to it are refused. Nothing else changes, so it can be undone:
 bash scripts/suspend-family.sh --space <space id> --undo --apply
 ```
 
-Undo works for 30 days. After that the daily `purge_soft_deleted` removes the family for good (members, groups,
-posts, media rows), and undo says there is no such family. An unknown space id fails and changes nothing.
+Undo brings it back unchanged. `purge_soft_deleted` can remove families suspended more than 30 days ago (members,
+groups, posts, media rows), but it is **not scheduled** on the hosted project and nothing deletes the photos in B2
+(threat model gap 3, SEC-R1). So a suspended family and its photos stay until Chase deletes them by hand. An unknown space id fails and changes nothing.
 
 ## Mark a family known (lift its cap)
 
@@ -63,9 +64,9 @@ never capped.
 
 ## Ban an account
 
-Suspending a family doesn't stop the person signing in and starting another. To stop the person: Supabase
-dashboard → **Authentication → Users** → find the account → **Ban user** (pick a long duration). Do this as well as
-suspending their family. Banning keeps their data until the family is purged or the account deleted.
+Suspending a family doesn't stop its members signing in and starting another (each can start one, 3 a day). To
+stop them: Supabase dashboard → **Authentication → Users** → find each account → **Ban user** (pick a long
+duration). Ban the owner and every other parent in that family who took part (SEC-R2), as well as suspending it. Banning keeps their data until the family is purged or the account deleted.
 
 ## Go-live checklist (all before "on")
 

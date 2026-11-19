@@ -5,8 +5,8 @@
 --   action    suspend | undo | known
 --   apply     yes | no  (no = dry run: nothing changes)
 -- Suspending sets spaces.deleted_at (no new migration): every member then finds nothing (rule 2: not found) and
--- uploads are refused. purge_soft_deleted() removes a suspended family for good after 30 days; until then undo
--- clears deleted_at and the family comes back unchanged. Known sets private.started_families.known_at.
+-- uploads are refused. Undo clears deleted_at and the family comes back unchanged. purge_soft_deleted() can remove
+-- families suspended over 30 days ago, but it is not scheduled on the hosted project (SEC-R1). Known sets private.started_families.known_at.
 -- An unknown space id raises an error and changes nothing. Every line printed carries only the space id: no family,
 -- group or member name, no email.
 create or replace function pg_temp.hearth_suspend_family(p_space text, p_action text, p_apply text)
@@ -17,7 +17,7 @@ declare
   v_deleted timestamptz;
   v_known   timestamptz;
   v_started boolean;
-  v_purge   constant text := 'purge_soft_deleted removes a suspended family for good after 30 days; until then --undo brings it back unchanged.';
+  v_purge   constant text := '--undo brings it back unchanged. purge_soft_deleted can remove families suspended over 30 days ago, but it is not scheduled, so nothing (photos included) is deleted on its own.';
 begin
   if p_action is null or p_action not in ('suspend', 'undo', 'known') then
     raise exception 'action must be suspend, undo or known';
