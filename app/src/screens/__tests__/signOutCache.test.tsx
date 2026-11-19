@@ -29,7 +29,7 @@ describe('HARD-13 sign out', () => {
     first.unmount();
     await renderApp(<MeScreen />, { be, kv, user: 'chase' });
     fireEvent.press(await screen.findByRole('button', { name: 'Sign out of Hearth' }));
-    fireEvent.press(screen.getByRole('button', { name: 'Yes, sign out' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Sign out' }));
     await waitFor(() => expect([...live].filter((k) => k.startsWith('hearth.feedCache'))).toEqual([]));
   });
 });

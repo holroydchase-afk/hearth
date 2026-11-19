@@ -50,7 +50,7 @@ describe('notification sync (AE-2)', () => {
 
   it('AE-2: no token (push not allowed or not set up) saves nothing and shows no error', async () => {
     const { be } = await renderApp(<HelpScreen />, { user: 'jo' });
-    expect(await screen.findByText('You can look at photos and write back.')).toBeTruthy();
+    expect(await screen.findByText('No computer program learns from your photos.')).toBeTruthy(); // TD-UX-R3: Help loaded
     expect(be.state.pushTokens ?? {}).toEqual({});
   });
 });

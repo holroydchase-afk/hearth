@@ -34,10 +34,10 @@ describe('Help tab (viewers) — UXG-14', () => {
     expect(await screen.findByText("Saved. We'll email you every evening when there are new photos.")).toBeTruthy();
   });
 
-  it('says what she can do, and what privacy means, without scary words', async () => {
+  // TD-UX-R3 (Nov 19): what she can do is said on Me, by role; Help keeps help and privacy.
+  it('says what privacy means, without scary words', async () => {
     await renderApp(<HelpScreen />, { user: 'jo' });
-    expect(await screen.findByText('You can look at photos and write back.')).toBeTruthy();
-    expect(screen.getByText('No computer program learns from your photos.')).toBeTruthy();
+    expect(await screen.findByText('No computer program learns from your photos.')).toBeTruthy();
     expect(screenWords()).not.toMatch(/\b(feed|circles?|audience|sync|upload|notifications?|expired|account|settings|digest|servers?|encrypted|AI)\b/i);
   });
 

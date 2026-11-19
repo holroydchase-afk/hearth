@@ -29,7 +29,7 @@ test('ONB-4 a link from "Make the invite" opens the "invited you" preview in the
   await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Me is a row in More
   await page.getByRole('button', { name: /^Me(,|$)/ }).click();
   await page.getByRole('button', { name: 'Sign out of Hearth' }).click();
-  await page.getByRole('button', { name: 'Yes, sign out' }).click();
+  await page.getByRole('button', { name: 'Sign out', exact: true }).click();
   await expect(page.getByText('Welcome to Hearth')).toBeVisible();
 
   await page.goto(new URL(link).pathname);

@@ -15,17 +15,17 @@ describe('Delete my account (BETA-JOIN-7)', () => {
     fireEvent.press(await screen.findByRole('button', { name: 'Take me off Hearth' }));
     expect(screen.getByText("This takes you off Hearth for good. Your comments and hearts are removed. This can't be undone.")).toBeTruthy();
     expectGrandparentSafe();
-    fireEvent.press(screen.getByRole('button', { name: 'Yes, take me off Hearth' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Take me off' }));
     await waitFor(() => expect(be.state.members.some((m) => m.user === FIXTURE.users.jo.id)).toBe(false));
     await waitFor(() => expect(be.state.appSession).toBeNull());
     expect(nav).toBeTruthy();
   });
 
-  it('BETA-JOIN-7: "No, stay on Hearth" changes nothing', async () => {
+  it('BETA-JOIN-7: "Stay on Hearth" changes nothing (TD-UX-R6: the alert\'s safe choice)', async () => {
     const be = FakeBackend.withFixture();
     await renderApp(<HelpScreen />, { be, user: 'jo' });
     fireEvent.press(await screen.findByRole('button', { name: 'Take me off Hearth' }));
-    fireEvent.press(screen.getByRole('button', { name: 'No, stay on Hearth' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Stay on Hearth' }));
     expect(be.state.members.some((m) => m.user === FIXTURE.users.jo.id)).toBe(true);
     expect(screen.getByRole('button', { name: 'Take me off Hearth' })).toBeTruthy();
   });

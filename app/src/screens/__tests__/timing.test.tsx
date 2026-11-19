@@ -10,6 +10,10 @@ import { seedPost } from '../../test/seed';
 import { expectGrandparentSafe, renderApp } from '../../test/renderApp';
 import { MeScreen } from '../MeScreen';
 
+// TD-UX-R2 (Nov 19): the card is a test tool, shown only in debug builds (EXPO_PUBLIC_HEARTH_DEBUG=1).
+beforeEach(() => { process.env.EXPO_PUBLIC_HEARTH_DEBUG = '1'; });
+afterEach(() => { delete process.env.EXPO_PUBLIC_HEARTH_DEBUG; });
+
 describe('notice timing (AE-10)', () => {
   it('AE-10: the Me screen shows the timing report from this phone only', async () => {
     const be = FakeBackend.withFixture();
@@ -37,7 +41,7 @@ describe('notice timing (AE-10)', () => {
     await kv.setItem(k, JSON.stringify([{ post_id: 'p', arrived_at: 1 }]));
     await renderApp(<MeScreen />, { kv, user: 'chase' });
     fireEvent.press(await screen.findByRole('button', { name: 'Sign out of Hearth' }));
-    fireEvent.press(screen.getByRole('button', { name: 'Yes, sign out' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Sign out' }));
     await waitFor(() => expect(stop).toHaveBeenCalled());
     await waitFor(async () => expect(await kv.getItem(k)).toBeNull());
   });
