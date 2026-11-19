@@ -117,37 +117,33 @@ describe('GUX-R15 (P1) a picked reaction shows a stronger tint on paper, with no
   }, 20000);
 });
 
-describe('GUX-R16 Share fields are filled, not outlined, on iPhone and the web (like Search)', () => {
-  const FIELDS = ['Title (optional)', "What's happening?"];
+// Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-3), flagged for qa-tdd: the postcard has one field, the note.
+// Retargeted again Nov 19 by engineer for GUX-R3, flagged for qa-tdd: the note writes on the card, with no fill and a
+// hairline c.line underline, on every phone (the other fields keep GUX-R16's filled box).
+describe("GUX-R16 → GUX-R3 Share's note writes on the card: no fill, a hairline c.line underline", () => {
+  const FIELDS = ['Add a note (optional)'];
   const fieldStyle = (label: string) => flat(screen.getByLabelText(label).props.style);
+  const openNote = async () => {
+    fireEvent.press(await screen.findByRole('button', { name: /^Pick photos/ }, slow));
+    await screen.findByLabelText(FIELDS[0]!, {}, slow);
+  };
 
-  for (const os of ['ios', 'web'] as const) {
+  for (const os of ['ios', 'web', 'android'] as const) {
     for (const dark of [false, true]) {
-      it(`GUX-R16 ${os} (${lookName(dark)}): Title and caption fields have background c.fill and no border`, async () => {
+      it(`GUX-R3 ${os} (${lookName(dark)}): the note field has no fill and only a hairline c.line underline`, async () => {
         jest.replaceProperty(Platform, 'OS', os);
         const c = paletteFor(os, dark);
         await renderApp(<ShareScreen />, { user: 'chase', kv: memoryKV(prefs(chase.id, dark)) });
-        await screen.findByLabelText(FIELDS[0]!, {}, slow);
+        await openNote();
         for (const label of FIELDS) {
           const s = fieldStyle(label);
-          expect({ label, bg: s.backgroundColor, borders: borders(s).map((x) => x.width) })
-            .toEqual({ label, bg: c.fill, borders: [0, 0, 0, 0] });
+          const [top, right, bottom, left] = borders(s);
+          expect({ label, fill: s.backgroundColor === undefined || TRANSPARENT.test(String(s.backgroundColor)), sides: [top!.width, right!.width, left!.width], bottom: bottom })
+            .toEqual({ label, fill: true, sides: [0, 0, 0], bottom: { width: StyleSheet.hairlineWidth, color: c.line } });
         }
       }, 20000);
     }
   }
-
-  it('GUX-R16 android: Title and caption keep the outlined field (1 pt c.muted border, no fill)', async () => {
-    jest.replaceProperty(Platform, 'OS', 'android');
-    const c = paletteFor('android', false);
-    await renderApp(<ShareScreen />, { user: 'chase', kv: memoryKV(prefs(chase.id, false)) });
-    await screen.findByLabelText(FIELDS[0]!, {}, slow);
-    for (const label of FIELDS) {
-      const s = fieldStyle(label);
-      expect({ label, borders: borders(s), fill: s.backgroundColor === undefined || TRANSPARENT.test(String(s.backgroundColor)) })
-        .toEqual({ label, borders: Array(4).fill({ width: 1, color: c.muted }), fill: true });
-    }
-  }, 20000);
 });
 
 afterEach(() => jest.restoreAllMocks());

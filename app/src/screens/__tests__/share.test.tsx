@@ -4,67 +4,88 @@ import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { ApiError } from '../../api/HearthApi';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
-import { memoryKV } from '../../platform/kv';
+import { memoryKV, type KV } from '../../platform/kv';
 import { saveLastAudience } from '../../share/audienceMemory';
-import { expectGrandparentSafe, renderApp } from '../../test/renderApp';
+import { expectGrandparentSafe, renderApp, type FixtureUser } from '../../test/renderApp';
+import type { AppDeps } from '../../state/AppContext';
 import { ShareScreen } from '../ShareScreen';
 
 const DAD = "Grandparents – Dad's side";
+const MOM = "Grandparents – Mom's side";
+const slow = { timeout: 5000 };
+
+// Retargeted Nov 19 by qa-tdd for DEC-73 (SHARE-PC, SPEC-REDESIGN 1j): Share is a "New post" postcard; nothing is
+// pre-picked (the old BETA-AUD-2 preselect is gone), one "Add a note (optional)" field, face tiles spoken
+// "<name>, N people, (not) picked", a pinned "Pick who gets it" / "Send to <names>" button, and Send lands on Feed.
+/** Get to the "New post" page: Share may open the picker itself or show a "Pick photos" button first. */
+async function newPost(opts: { user?: FixtureUser; kv?: KV; be?: FakeBackend; deps?: Partial<AppDeps> } = {}) {
+  const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: opts.deps });
+  const pick = r.deps.pickPhotos as jest.Mock;
+  await waitFor(() => {
+    const btn = screen.queryAllByRole('button', { name: /^Pick photos/ })[0];
+    if (btn && !pick.mock.calls.length) fireEvent.press(btn);
+    expect(pick.mock.calls.length).toBeGreaterThan(0);
+  }, slow);
+  await screen.findByRole('header', { name: 'New post' }, slow);
+  return r;
+}
+const tileFor = (name: string, picked = false) => screen.getByLabelText(new RegExp(`^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}, \\d+ people, ${picked ? '' : 'not '}picked$`));
 
 describe('Share screen', () => {
-  it('BETA-AUD-2 / B8: preselects THIS user\'s last group, in words', async () => {
+  it('DEC-73 SHARE-PC-7 (was BETA-AUD-2 / B8 preselect): THIS user\'s last group is not ticked any more', async () => {
     const kv = memoryKV();
     await saveLastAudience(kv, FIXTURE.users.chase.id, [FIXTURE.circles.dadSide.id]);
-    await renderApp(<ShareScreen />, { user: 'chase', kv });
-    const dad = await screen.findByRole('checkbox', { name: `${DAD}, 3 people` });
-    expect(dad.props.accessibilityState).toMatchObject({ checked: true });
-    expect(screen.getByRole('checkbox', { name: "Grandparents – Mom's side, 3 people" }).props.accessibilityState).toMatchObject({ checked: false });
+    await newPost({ user: 'chase', kv });
+    expect(tileFor(DAD)).toBeTruthy();
+    expect(tileFor(MOM)).toBeTruthy();
+    expect(screen.queryByLabelText(/, picked$/)).toBeNull();
   });
 
-  it("B8: never another user's default on a shared phone; Post stays off with no group", async () => {
+  it("B8 never another user's default on a shared phone; Send stays off with no group", async () => {
     const kv = memoryKV();
     await saveLastAudience(kv, FIXTURE.users.chase.id, [FIXTURE.circles.dadSide.id]);
-    await renderApp(<ShareScreen />, { user: 'alex', kv });
-    const boxes = await screen.findAllByRole('checkbox');
-    for (const b of boxes) expect(b.props.accessibilityState).toMatchObject({ checked: false });
-    fireEvent.press(screen.getByRole('button', { name: 'Pick photos from your phone' }));
-    await screen.findByText('1 photo picked');
-    expect(screen.getByRole('button', { name: 'Post' }).props.accessibilityState).toMatchObject({ disabled: true });
-    expect(screen.getByText('Pick who should see it.')).toBeTruthy();
+    await newPost({ user: 'alex', kv });
+    expect(screen.queryByLabelText(/, picked$/)).toBeNull();
+    expect(screen.getByRole('button', { name: 'Pick who gets it' }).props.accessibilityState).toMatchObject({ disabled: true });
   });
 
-  it('BETA-SHARE-1: pick → caption → Post, then it sends and remembers the choice', async () => {
+  it('BETA-SHARE-1 DEC-73 pick → note → tap a group → Send: it sends to that group only and lands on Feed', async () => {
     const be = FakeBackend.withFixture();
-    const kv = memoryKV();
-    const { nav } = await renderApp(<ShareScreen />, { be, user: 'chase', kv });
-    fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }));
-    await screen.findByText('1 photo picked');
-    fireEvent.changeText(screen.getByLabelText("What's happening?"), 'First snow!');
-    fireEvent.press(screen.getByRole('checkbox', { name: `${DAD}, 3 people` }));
-    fireEvent.press(screen.getByRole('button', { name: 'Post' }));
-    await waitFor(() => expect(nav.goPhotos).toHaveBeenCalled());
+    const { nav } = await newPost({ be, user: 'chase' });
+    fireEvent.changeText(screen.getByLabelText('Add a note (optional)'), 'First snow!');
+    fireEvent.press(tileFor(DAD));
+    fireEvent.press(screen.getByRole('button', { name: /^Send to / }));
+    await waitFor(() => expect((nav as unknown as { goFeed: jest.Mock }).goFeed).toHaveBeenCalled());
+    expect(nav.goPhotos).not.toHaveBeenCalled();
     await waitFor(async () => expect(await be.clientFor(FIXTURE.users.jo.id).getFeed({ space: FIXTURE.space.id })).toHaveLength(1));
     expect(await be.clientFor(FIXTURE.users.ruth.id).getFeed({ space: FIXTURE.space.id })).toHaveLength(0);
-    expect(JSON.parse((await kv.getItem(`hearth.lastAudience.v1.${FIXTURE.users.chase.id}`))!)).toEqual([FIXTURE.circles.dadSide.id]);
   });
 
   it('BETA-SHARE-4: shows "Waiting to send" when there is no signal', async () => {
     const be = FakeBackend.withFixture();
     const api = be.clientFor(null, { trackAppSession: true });
     jest.spyOn(api, 'createPost').mockRejectedValue(new ApiError('NETWORK'));
-    await renderApp(<ShareScreen />, { be, user: 'chase', deps: { api } });
-    fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }));
-    await screen.findByText('1 photo picked');
-    fireEvent.press(screen.getByRole('checkbox', { name: `${DAD}, 3 people` }));
-    fireEvent.press(screen.getByRole('button', { name: 'Post' }));
+    await newPost({ be, user: 'chase', deps: { api } });
+    fireEvent.press(tileFor(DAD));
+    fireEvent.press(screen.getByRole('button', { name: /^Send to / }));
     expect(await screen.findByText(/Waiting to send/)).toBeTruthy();
   });
 
-  it('a picked photo can be removed with a labeled button', async () => {
-    await renderApp(<ShareScreen />, { user: 'chase' });
-    fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }));
-    fireEvent.press(await screen.findByRole('button', { name: 'Remove photo 1' }));
-    expect(screen.queryByText('1 photo picked')).toBeNull();
+  // QA-R2 (staff-pm, Nov 19): the postcard keeps a labelled Remove for the photo showing, when there is more than one.
+  it('DEC-73 QA-R2 the photo showing can be removed with a labeled button; with one photo there is none', async () => {
+    const three = Array.from({ length: 3 }, (_, i) => ({ uri: `file:///pick/r${i}.jpg`, kind: 'photo' as const, width: 4032, height: 3024 }));
+    await newPost({ user: 'chase', deps: { pickPhotos: jest.fn(async () => ({ items: three })) } });
+    expect(screen.getByText('1 of 3')).toBeTruthy();
+    fireEvent.press(screen.getByRole('button', { name: 'Show photo 2' }));
+    const remove = screen.getByRole('button', { name: 'Remove photo 2' });
+    expect(screen.getAllByText('Remove').length).toBeGreaterThan(0);
+    fireEvent.press(remove);
+    expect(await screen.findByText(/^\d of 2$/)).toBeTruthy();
+    fireEvent.press(screen.getByRole('button', { name: /^Remove photo / }));
+    await waitFor(() => expect(screen.queryByText(/ of \d$/)).toBeNull());
+    expect(screen.queryByRole('button', { name: /^Remove photo / })).toBeNull();
+    expect(screen.getByRole('header', { name: 'New post' })).toBeTruthy();
+    expectGrandparentSafe();
   });
 
   it('viewers who land here are told plainly', async () => {
@@ -74,9 +95,8 @@ describe('Share screen', () => {
 
   it('HARD-2 picking more than 10 says plainly how many were left out', async () => {
     const many = Array.from({ length: 12 }, (_, i) => ({ uri: `file:///pick/${i}.jpg`, kind: 'photo' as const, width: 4032, height: 3024 }));
-    await renderApp(<ShareScreen />, { user: 'chase', deps: { pickPhotos: jest.fn(async () => ({ items: many })) } });
-    fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }));
-    expect(await screen.findByText('10 photos picked')).toBeTruthy();
+    await newPost({ user: 'chase', deps: { pickPhotos: jest.fn(async () => ({ items: many })) } });
+    expect(await screen.findByText('1 of 10')).toBeTruthy();
     expect(screen.getByText(/10 at a time.*2 photos were left out/)).toBeTruthy();
   });
 
@@ -84,16 +104,14 @@ describe('Share screen', () => {
     const be = FakeBackend.withFixture();
     const api = be.clientFor(null, { trackAppSession: true });
     jest.spyOn(api, 'myCircles').mockResolvedValue([]);
-    await renderApp(<ShareScreen />, { be, user: 'chase', deps: { api } });
+    await newPost({ be, user: 'chase', deps: { api } });
     expect(await screen.findByText(/no group to send to yet/i)).toBeTruthy();
-    expect(screen.queryByText('Pick who should see it.')).toBeNull();
     expectGrandparentSafe();
   });
 
   it('is grandparent-safe', async () => {
-    await renderApp(<ShareScreen />, { user: 'chase' });
-    fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }));
-    await screen.findByText('1 photo picked');
+    await newPost({ user: 'chase' });
+    await waitFor(() => expect(tileFor(DAD)).toBeTruthy());
     expectGrandparentSafe();
   });
 });

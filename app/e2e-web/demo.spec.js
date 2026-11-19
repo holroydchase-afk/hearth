@@ -26,6 +26,18 @@ const onFeed = async (page) => {
 };
 
 const FIXTURE = path.join(__dirname, 'fixtures', 'park-gps.jpg');
+
+// DEC-73: tapping Share may open the file chooser itself, or show a "Pick photos" button first; either way, set the
+// files and wait for the "New post" page.
+const openNewPost = async (page, files) => {
+  const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
+  await page.getByRole('tab', { name: /^Share/ }).click();
+  const pick = page.getByRole('button', { name: /^Pick photos/ }).filter({ visible: true }).first();
+  const first = await Promise.race([chooser.then(() => 'chooser'), pick.waitFor({ timeout: 15_000 }).then(() => 'button')]);
+  if (first === 'button') await pick.click();
+  await (await chooser).setFiles(files);
+  await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
+};
 const errors = [];
 
 test.beforeEach(async ({ page }) => {
@@ -67,13 +79,11 @@ test("DEMO-10 RD-17 Grandma Jo's view hides the Mom's-side posts; the parent's v
 test('RR-14 add a photo, reload keeps it, Start over brings back the sample family', async ({ page }) => {
   await page.goto('/');
   await galleryLoaded(page);
-  await page.getByRole('tab', { name: 'Share' }).click();
-  const chooser = page.waitForEvent('filechooser');
-  await page.getByRole('button', { name: 'Pick photos from your phone' }).click();
-  await (await chooser).setFiles(FIXTURE);
-  await page.getByLabel("What's happening?").fill('Leaf pile');
-  await page.getByRole('checkbox', { name: /Grandparents – Dad's side/ }).click();
-  await page.getByRole('button', { name: 'Post', exact: true }).click();
+  // Retargeted Nov 19 by qa-tdd for DEC-73 (SHARE-PC): the postcard's note, a face tile and "Send to ...".
+  await openNewPost(page, [FIXTURE]);
+  await page.getByLabel('Add a note (optional)').fill('Leaf pile');
+  await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
+  await page.getByRole('button', { name: /^Send to / }).click();
   await onFeed(page); // RD-18: captions live on Feed (Gallery may stay mounted behind it, so only what shows counts)
   await expect(page.getByText('Leaf pile', { exact: true }).filter({ visible: true })).toBeVisible();
   await page.reload();
@@ -800,3 +810,83 @@ test('DEMO-EASY-1 on a laptop, Grandma Jo\'s Easy view leaves the story panel th
   await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
   expect(await panel()).toEqual(before);
 });
+// SHARE-PC-13 (SPEC-REDESIGN 1j, DEC-73, Chase Nov 19): the postcard Share in the public demo at 393 px. Written first
+// (red), Nov 19, by qa-tdd. Soft expects after the page opens, so one run shows every part still missing.
+test('SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to ...", Feed says "Shared with ..."; Jo sees names only', async ({ page }) => {
+  const shots = path.join(__dirname, '..', 'test-results', 'share-pc-13');
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await openNewPost(page, [FIXTURE, FIXTURE, FIXTURE]);
+  await expect(page.getByText('1 of 3', { exact: true })).toBeVisible();
+  const tiles = page.getByLabel(/, \d+ people, (not )?picked$/).filter({ visible: true });
+  expect.soft(await tiles.count()).toBeGreaterThan(1);
+  expect.soft(await page.getByLabel(/, \d+ people, picked$/).count()).toBe(0);
+  const off = page.getByRole('button', { name: 'Pick who gets it' });
+  await expect.soft(off).toBeVisible();
+  await expect.soft(off).toBeDisabled();
+  expect.soft(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: path.join(shots, 'share-pc-13-light.png') });
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.screenshot({ path: path.join(shots, 'share-pc-13-dark.png') });
+  await page.emulateMedia({ colorScheme: 'light' });
+
+  await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
+  await page.getByLabel(/^Grandparents – Mom's side, \d+ people, not picked$/).click();
+  const send = page.getByRole('button', { name: /^Send to .+/ });
+  await expect(send).toBeEnabled();
+  const names = String(await send.getAttribute('aria-label') ?? await send.innerText()).replace(/^Send to /, '');
+  await send.click();
+  await expect(page.getByText(`Shared with ${names}.`).filter({ visible: true })).toBeVisible();
+  const first = page.locator('[data-testid^="post-"]').filter({ visible: true }).first();
+  await expect.soft(first.getByRole('button', { name: /^Open photo 1 of 3/ })).toBeVisible();
+
+  // Grandma Jo (Easy view on for her): her Share, if she can post, names people only; never a group's title.
+  await details(page);
+  await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+  await details(page);
+  const joShare = page.getByRole('tab', { name: /^Share/ });
+  if (await joShare.count()) {
+    await openNewPost(page, [FIXTURE]);
+    const labels = await page.getByLabel(/, \d+ people, (not )?picked$/).evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')));
+    expect.soft(labels.filter((l) => /Grandparents|Dad's side|Mom's side|^Everyone/.test(l))).toEqual([]);
+  }
+  await page.screenshot({ path: path.join(shots, 'share-pc-13-easy-view.png') });
+});
+
+// GUX-R1 (grandparent-ux, Nov 19): a face tile's name never spills out of its tile. "Grandparents" is about 113 px
+// and a 3-across tile 103 px at 360 (112 px at 390), so those phones show 2 across; names are never shortened.
+// Written first (red), Nov 19, by qa-tdd. The column rule's other cases are in src/screens/__tests__/shareGux.test.tsx.
+for (const width of [360, 390]) {
+  test(`GUX-R1 ${width} px: every face-tile name stays inside its own tile; 2 across; full names`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.emulateMedia({ colorScheme: 'light' });
+    await page.goto('/');
+    await galleryLoaded(page);
+    await openNewPost(page, [FIXTURE]);
+    const tiles = page.getByLabel(/, \d+ people, (not )?picked$/).filter({ visible: true });
+    await expect(tiles.first()).toBeVisible();
+    const found = await tiles.evaluateAll((els) => els.map((el) => {
+      const name = String(el.getAttribute('aria-label')).replace(/, \d+ people, (not )?picked$/, '');
+      const box = el.getBoundingClientRect();
+      // The words of the name: the text node(s) whose text is the name, measured where they are drawn.
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      let left = Infinity; let right = -Infinity; let shown = '';
+      for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+        if (n.textContent.trim() !== name) continue;
+        shown += n.textContent;
+        const r = document.createRange(); r.selectNodeContents(n);
+        for (const q of r.getClientRects()) { left = Math.min(left, q.left); right = Math.max(right, q.right); }
+      }
+      return { name, shown: shown.trim(), top: Math.round(box.top), spill: Math.max(0, Math.round(box.left - left), Math.round(right - box.right)) };
+    }));
+    const spills = found.filter((f) => f.spill > 0).map((f) => `${f.name}: ${f.spill}px out`);
+    expect.soft(spills).toEqual([]);
+    expect.soft(found.filter((f) => f.shown !== f.name).map((f) => f.name)).toEqual([]);
+    const firstRow = found.filter((f) => f.top === found[0].top).length;
+    expect.soft(firstRow).toBe(2);
+    expect.soft(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await page.screenshot({ path: path.join(__dirname, '..', 'test-results', 'gux-r1', `gux-r1-${width}.png`) });
+  });
+}

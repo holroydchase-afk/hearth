@@ -11,6 +11,10 @@ waiting_on_chase:
 blockers: []
 -->
 
+## Nov 19: Share is a postcard (Chase, DEC-73, R63, SHARE-PC-1..14; branch claude/project-thread-4ulu9i, PR)
+- **Chase:** "This all looks great to me. proceed with the build" (00:27 ET) on direction B of the Share tester (https://claude.ai/artifact/71YN9yYWMt1KYZsqfsXCT4); no autoselect of the audience; one "Add a note (optional)" replaces Title + What's happening (amends DEC-39). Spec `SPEC-REDESIGN.md` 1j, persona check `decisions/2026-11-19-share-postcard.md`.
+- **Done, test-first:** qa-tdd red (SHARE-PC-1..13), engineer build, grandparent-ux review (GUX-R1 P1 long group names spill out of tiles; R2..R4 P2 grey Add/note fills, picked mark), red tests then fixes (tiles go 2 across for long names, Easy view or big text). qa-tdd all suites 3x green (r50): jest 1537, typecheck, e2e:web 5, e2e:demo 28, test-all 15. Bulk review keeps its Title for now (QA-R3). Open: T24/QA-R1 env-gated screenshot specs stale on Gallery (pre-existing).
+- **Next exact step:** Chase says "merge N"; then SHARE-PC-14 on his iPhone (Expo preview republish on his word).
 ## Nov 19: web glass tab bar lookalike, Grandma Jo no longer enlarges the laptop page (Chase, DEC-72, RD-108, RD-109, DEMO-EASY-1, R61; branch claude/project-thread-ox4dz4, PR)
 - **Chase:** "i do not see it in the demo" → picked a web lookalike; "its a poor experience that clicking grandma jo makes the screen much larger".
 - **Done, test-first:** `HearthTabBar floating` (web + Easy view Off): capsule 16 pt in, 64 pt, `c.surface` at 60%, `backdropFilter` blur, `c.accentSoft` pill. `ui/tabBarSpace.tsx` context gives screens 96 pt of room (kit `Screen`, Photos, Timeline, Events, Search, the walk's bar). `DemoFrame` panel and the phone's `DemoBar` sit in `BigTextContext` false. RD-44's e2e now measures tile rows from the grid's top (scroll-independent).
