@@ -18,7 +18,9 @@ blockers: []
 - **P0 PR (ENG-R1 + TD-UX-R1):** opening offline keeps the family saved on this phone (feed cache shows), or says "Can't reach Hearth" with Try again; the laptop demo's story panel scrolls instead of being cut. qa-tdd green 3x (jest 1510, typecheck, e2e:demo 27). Open P2s from qa-tdd: coming back to the front doesn't re-read the family (role changes wait for a relaunch); the offline screen has no Sign out.
 - **P0 PR #127 merged** (b25d19a).
 - **UX PR (TD-UX-R2/R3/R5/R6):** the Notice timing card shows only in debug builds; Help drops the wrong "You can look at photos and write back." line; the demo's Help hides Sign out and Take me off; Sign out and Take me off use one confirm dialog (Stay signed in / Sign out, Stay on Hearth / Take me off) and the old `Confirm` component is gone.
-- **Next exact step:** SEC-R2 + ENG-R3/R7, CI (QA-R1..R3, ENG-R8), SEC-R1 migration 0027 (deploy needs Chase).
+- **UX PR #128 merged** (1a20756), with QA-R1 (the fake web e2e config now ignores every demo-only spec).
+- **Privacy and speed PR (SEC-R2, ENG-R7, ENG-R3):** the app no longer records who looked at a post (A2; threat model and API notes updated; the server's `mark_seen` stays until a migration removes it); `setReaction` drops the pre-0017 fallback (0017 is live); post cards follow only their own comments and draft, so typing in one comment box no longer redraws every card.
+- **Next exact step (after that):** CI runs the app e2e suites (QA-R2, QA-R3, ENG-R8) with sign-media tests (QA-R4), SEC-R1 migration 0027 (deploy needs Chase), ENG-R5 (demo code out of real builds).
 
 ## Nov 19: demo bar review, no bar on a laptop (Chase, DEC-71, R60; branch claude/project-thread-mmmmnh, PR)
 - **Chase:** "do we need the demo bar?" and its portfolio link went to an old page. Picked "Laptop off, phone stays slim".
