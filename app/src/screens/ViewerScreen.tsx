@@ -60,7 +60,6 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
   const back = cur !== null && cur > 0 ? cur - 1 : null;
 
   useEffect(() => {
-    if (entry) app.feed?.markSeen(entry.post);
     const n = next !== null ? entries[next] : undefined;
     if (n) app.media?.prefetch(n.post.post_id, [n.media.media_id]);
   }, [entry?.media.media_id]); // eslint-disable-line react-hooks/exhaustive-deps

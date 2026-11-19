@@ -32,10 +32,6 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   const [sheet, setSheet] = useState<'comments' | 'more' | 'delete' | 'words' | null>(null);
 
   useEffect(() => {
-    feed?.markSeen(post);
-  }, [feed, post.post_id]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
     if (post.comment_count > 0) void feed?.loadComments(post.post_id);
   }, [feed, post.post_id, post.comment_count > 0]); // eslint-disable-line react-hooks/exhaustive-deps
 
