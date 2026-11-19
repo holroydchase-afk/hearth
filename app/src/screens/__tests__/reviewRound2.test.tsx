@@ -310,21 +310,30 @@ describe('R18 (P2) Gallery: the month title sticks while scrolling', () => {
 
 // =================================================================================================================
 describe('R19 (P2) Share: one 16 pt left edge for all content', () => {
-  it('R19 the title, Pick photos, the boxes\' labels, "Who can see it" and the group rows all start 16 pt in', async () => {
-    await renderApp(<ShareScreen />, { user: 'chase' });
+  // Retargeted Nov 19 by engineer for DEC-72 (SHARE-PC-1), flagged for qa-tdd: Share is a start page (title, Pick
+  // photos) and then the "New post" postcard. The title, Cancel and the card start 16 pt in; inside the card the
+  // note's label and the To: line start 16 pt in from the card's edge (32 from the screen).
+  it('R19 DEC-72 Share: the title, Pick photos, Cancel and the card start 16 pt in; the note label and To: 16 pt inside the card', async () => {
+    const r = await renderApp(<ShareScreen />, { user: 'chase' });
     const title = await screen.findByRole('header', { name: 'Share photos' }, slow);
-    await screen.findAllByRole('checkbox', {}, slow);
     let root: Inst = title;
     while (root.parent) root = root.parent;
-    const pick = screen.getByRole('button', { name: /^Pick photos/ });
+    const start = { title: inset(title, root, false), pick: inset(screen.getByRole('button', { name: /^Pick photos/ }), root, true) };
+    expect(start).toEqual({ title: 16, pick: 16 });
+    fireEvent.press(screen.getByRole('button', { name: /^Pick photos/ }));
+    expect(r.deps.pickPhotos).toHaveBeenCalled();
+    const header = await screen.findByRole('header', { name: 'New post' }, slow);
+    root = header;
+    while (root.parent) root = root.parent;
+    const toWord = screen.getByText('To:');
     const got = {
-      title: inset(title, root, false),
-      pick: inset(pick, root, true),
-      titleLabel: inset(screen.getByText('Title (optional)'), root, false),
-      whoCanSee: inset(screen.getByRole('header', { name: 'Who can see it' }), root, false),
-      firstGroup: inset(screen.getAllByRole('checkbox')[0]!, root, true),
+      title: inset(header, root, false),
+      cancel: inset(screen.getByRole('button', { name: 'Cancel this post' }), root, true),
+      card: inset(screen.getByTestId('share-card'), root, false),
+      noteLabel: inset(screen.getByText('Add a note (optional)'), root, false),
+      to: inset(toWord, root, false),
     };
-    expect(got).toEqual({ title: 16, pick: 16, titleLabel: 16, whoCanSee: 16, firstGroup: 16 });
+    expect(got).toEqual({ title: 16, cancel: 16, card: 16, noteLabel: 32, to: 32 });
   });
 });
 

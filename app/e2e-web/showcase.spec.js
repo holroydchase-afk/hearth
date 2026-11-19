@@ -53,11 +53,11 @@ for (const size of SIZES) {
       const chooser = page.waitForEvent('filechooser');
       await page.getByRole('button', { name: 'Pick photos from your phone' }).click();
       await (await chooser).setFiles(FIXTURE);
-      await expect(page.getByText('1 photo picked')).toBeVisible();
-      await page.getByLabel("What's happening?").fill('Pumpkin patch');
-      await page.getByRole('checkbox', { name: "Grandparents – Dad's side, 2 people" }).click();
+      await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible(); // DEC-72 postcard
+      await page.getByLabel('Add a note (optional)').fill('Pumpkin patch');
+      await page.getByLabel(/^Grandparents – Dad's side, 2 people, not picked$/).click();
       await shot('share-filled');
-      await page.getByRole('button', { name: 'Post', exact: true }).click();
+      await page.getByRole('button', { name: /^Send to / }).click();
       await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
       await shot('photos-poster');
       await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Groups is a row in More

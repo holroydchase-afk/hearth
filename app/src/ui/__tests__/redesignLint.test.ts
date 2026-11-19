@@ -82,7 +82,7 @@ describe('RD 1a source scans', () => {
     expect(find(/<SymbolView[^>]*weight=\{?['"](medium|semibold|bold|heavy|black)['"]/)).toEqual([]);
   });
 
-  it('RD-7 no large filled button except Delete and Leave confirms, sign-in, Start a family, and Post on Share', () => {
+  it('RD-7 no large filled button except Delete and Leave confirms, sign-in, Start a family, and Send (was Post) on Share', () => {
     const SIGN_IN = new Set(['screens/AppGate.tsx', 'screens/SignInScreen.tsx', 'screens/SignInFlow.tsx', 'screens/EmailCodeFlow.tsx', 'screens/TextCodeFlow.tsx',
       'screens/InviteCodeEntry.tsx', 'screens/JoinScreen.tsx', 'screens/StartFamily.tsx']);
     const offenders: string[] = [];
@@ -95,7 +95,8 @@ describe('RD 1a source scans', () => {
       const label = /(?:label|text)=(?:"([^"]*)"|\{([^}]*)\})/.exec(b.props);
       const words = label ? (label[1] ?? label[2]!) : '';
       if (SIGN_IN.has(file)) continue;
-      if (file === 'screens/ShareScreen.tsx' && /\bPost\b/.test(words) && /primary/.test(variant)) continue;
+      // DEC-72 (SHARE-PC-10; engineer, flagged for qa-tdd): the postcard's pinned "Send to <names>" replaces Post.
+      if (file === 'screens/ShareScreen.tsx' && /\bPost\b|Send to|Pick who gets it/.test(words) && /primary/.test(variant)) continue;
       if (file === 'ui/kit.tsx' && /\{yes\}/.test(b.props)) continue; // Confirm's yes: checked for Delete/Leave below
       if (/danger/.test(variant) && /\b(Delete|Leave)\b/.test(words)) continue;
       if (file === 'demo/DemoBar.tsx' && /danger/.test(variant) && words === 'Reset') continue; // the demo's delete-everything confirm

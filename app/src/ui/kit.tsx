@@ -238,6 +238,46 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
   );
 }
 
+/** SHARE-PC-5 / SHARE-PC-8 (DEC-72): one "To:" face tile on Share's postcard: a pill of up to 3 faces (initials on a
+ *  neutral circle), the name under it and "N people", the whole tile one 48 pt+ target. Picked shows an accent edge
+ *  and an accent check (never color alone) and reads "picked". `across` (3, or 2 with Easy view) sets its width. */
+export function FaceTile({ name, count, faces, picked, onPress, across }: {
+  name: string; count: number; faces: string[]; picked: boolean; onPress: () => void; across: number;
+}) {
+  const { c, t, os } = useTheme();
+  const edge = picked ? 3 : 2;
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${name}, ${count} ${count === 1 ? 'person' : 'people'}, ${picked ? 'picked' : 'not picked'}`}
+      accessibilityState={{ selected: picked }}
+      aria-pressed={picked}
+      onPress={onPress}
+      android_ripple={{ color: c.line }}
+      style={({ pressed }) => [styles.face, { width: `${(100 / across).toFixed(3)}%` as `${number}%`, opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
+    >
+      <View style={[styles.faceRing, { borderWidth: edge, borderColor: picked ? c.accent : c.line, backgroundColor: c.bg, paddingVertical: 12 - edge }]}>
+        <View style={styles.faceStack}>
+          {faces.slice(0, 3).map((f, i) => (
+            <View key={`${f}-${i}`} style={[styles.faceDot, { backgroundColor: c.line, borderColor: c.bg, marginLeft: i ? -10 : 0 }]}>
+              <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.ink, fontSize: t.base, fontWeight: WEIGHT.semibold }}>{initial(f)}</Text>
+            </View>
+          ))}
+        </View>
+        {picked ? (
+          <View style={[styles.faceTick, { backgroundColor: c.bg }]}>
+            <SystemIcon icon={{ sf: 'checkmark.circle', md: 'check_circle' }} color={c.accent} size={26} />
+          </View>
+        ) : null}
+      </View>
+      <Text style={{ color: c.ink, fontSize: t.base, lineHeight: t.line, fontWeight: WEIGHT.semibold, textAlign: 'center' }}>{name}</Text>
+      <Text style={{ color: c.muted, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{`${count} ${count === 1 ? 'person' : 'people'}`}</Text>
+    </Pressable>
+  );
+}
+/** The first letter of the last word: "Grandma Jo" is J, "Chase" is C. */
+const initial = (name: string) => (name.trim().split(/\s+/).pop() ?? '?').charAt(0).toUpperCase() || '?';
+
 function SwitchWord({ on }: { on: boolean }) {
   const { c, t } = useTheme();
   return <Text style={{ color: c.ink, fontSize: t.base, fontWeight: WEIGHT.semibold }}>{on ? 'On' : 'Off'}</Text>;
@@ -428,6 +468,11 @@ const styles = StyleSheet.create({
   btn: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, borderRadius: RADIUS.pill, borderWidth: 1, paddingHorizontal: 18, paddingVertical: 10, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 },
   choice: { minHeight: MIN_TARGET + 8, minWidth: MIN_TARGET, paddingVertical: 8, flexDirection: 'row', alignItems: 'center', gap: 12 },
   switchBox: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  face: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, alignItems: 'center', gap: 4, paddingHorizontal: 4, paddingVertical: 6 },
+  faceRing: { alignSelf: 'stretch', minHeight: 64, borderRadius: RADIUS.pill, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 },
+  faceStack: { flexDirection: 'row', justifyContent: 'center' },
+  faceDot: { width: 36, height: 36, borderRadius: RADIUS.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+  faceTick: { position: 'absolute', top: -8, right: -4, borderRadius: RADIUS.pill, width: 28, height: 28, alignItems: 'center', justifyContent: 'center' },
   card: { padding: 14, gap: 12 },
   screen: { padding: 16, gap: 16, paddingBottom: 32 },
   loading: { alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 },

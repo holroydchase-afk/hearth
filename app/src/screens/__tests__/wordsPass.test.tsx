@@ -16,12 +16,16 @@ import { ShareScreen } from '../ShareScreen';
 const DAD = "Grandparents – Dad's side";
 
 describe('WORDS grandparent-ux words pass', () => {
-  it('WORDS-1 the caption box never promises "Grandma will see this": it names the groups you pick', async () => {
+  // Retargeted Nov 19 by engineer for DEC-72 (SHARE-PC-3/9), flagged for qa-tdd: the one note field promises no one;
+  // the To: line names who gets it, by name, once picked.
+  it('WORDS-1 DEC-72 the note never promises "Grandma will see this": the To: line names the people picked', async () => {
     await renderApp(<ShareScreen />, { user: 'chase' });
     fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }));
-    await screen.findByText('1 photo picked');
-    const caption = screen.getByLabelText("What's happening?");
-    expect(caption.props.placeholder).toBe("Say what's happening. The groups you pick will see it.");
+    await screen.findByRole('header', { name: 'New post' });
+    const note = screen.getByLabelText('Add a note (optional)');
+    expect(String(note.props.placeholder ?? '')).not.toMatch(/will see|Grandma|Gammy/);
+    fireEvent.press(await screen.findByLabelText(`${DAD}, 3 people, not picked`));
+    expect(screen.getByText('Grandma Jo and Grandpa Earl')).toBeTruthy();
   });
 
   it('WORDS-2 if changing the words is refused, the sheet says the old words are kept', async () => {
@@ -44,13 +48,14 @@ describe('WORDS grandparent-ux words pass', () => {
     )).toBeTruthy();
   });
 
-  it('WORDS-4 a group on Share shows its name alone, with the count starting the line of names', async () => {
+  // Retargeted Nov 19 by engineer for DEC-72 (SHARE-PC-5), flagged for qa-tdd: a face tile shows the group's name
+  // alone and "3 people" on its own line, never "name · 3 people".
+  it('WORDS-4 DEC-72 a group tile on Share shows its name alone, with "3 people" under it', async () => {
     await renderApp(<ShareScreen />, { user: 'chase' });
     fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }));
-    await screen.findByText('1 photo picked');
-    const choice = screen.getByRole('checkbox', { name: `${DAD}, 3 people` });
-    expect(within(choice).getByText(DAD)).toBeTruthy();
-    expect(within(choice).getByText(/^3 people: /)).toBeTruthy();
-    expect(within(choice).queryByText(`${DAD} · 3 people`)).toBeNull();
+    const tile = await screen.findByLabelText(`${DAD}, 3 people, not picked`);
+    expect(within(tile).getByText(DAD)).toBeTruthy();
+    expect(within(tile).getByText('3 people')).toBeTruthy();
+    expect(within(tile).queryByText(`${DAD} · 3 people`)).toBeNull();
   });
 });

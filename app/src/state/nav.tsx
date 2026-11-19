@@ -7,6 +7,8 @@ export interface Nav {
   openViewer(postId: string, mediaIndex: number): void;
   close(): void;
   goPhotos(): void;
+  /** SHARE-PC-11 (DEC-72): after a Send, land on Feed with the new post on top. */
+  goFeed(): void;
   /** `with: 'email'` opens the email field instead of the number (BETA-SMS-12). */
   goSignIn(opts?: { with?: 'email' }): void;
   /** Open an invite by its code (BETA-JOIN-8). */

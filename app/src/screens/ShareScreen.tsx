@@ -1,18 +1,23 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Share: pick → caption → "Who can see it" → Post (BETA-SHARE-1, BETA-AUD-1/2).
-import React, { useEffect, useMemo, useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+// Share (BETA-SHARE-1, BETA-AUD-1): pick photos, then one "New post" postcard (DEC-72, SPEC-REDESIGN 1j, SHARE-PC-1..14):
+// the big photo, a note, and "To:" face tiles on one card, with a pinned "Send to <names>" button. Nothing is
+// picked to start (SHARE-PC-7; was BETA-AUD-2's preselect). Parents can still pick lots of photos (bulk review).
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Image, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import type { Circle } from '../api/HearthApi';
 import { messageFor } from '../errors/messages';
-import { loadLastAudience, saveLastAudience } from '../share/audienceMemory';
+import { saveLastAudience } from '../share/audienceMemory';
 import { planBatch, type PickedAsset } from '../share/bulk';
 import { applyHelpers, findLookAlikes, helperLines, helperSwitches, type LookResult } from '../share/helpers';
+import { othersIn, recipientsLine, tileName } from '../share/postcard';
 import { loadSent, recordSent } from '../share/sentBefore';
 import { useApp } from '../state/AppContext';
 import { useNav } from '../state/nav';
-import { Button, Choice, Field, Loading, Notice, Screen, Txt } from '../ui/kit';
-import { people, photos } from '../ui/format';
+import { Button, FaceTile, Field, Loading, Notice, Screen, SystemIcon, Txt } from '../ui/kit';
+import { photos } from '../ui/format';
+import { LABEL_SCALE_CAP, RADIUS, WEIGHT, photoShadow, useTheme } from '../ui/theme';
 import type { QueueItem } from '../upload/queue';
 import { AppGate } from './AppGate';
 import { BatchReview } from './BatchReview';
@@ -35,8 +40,15 @@ export function ShareScreen() {
   const [circles, setCircles] = useState<Circle[] | null>(null);
   const [chosen, setChosen] = useState<string[]>([]);
   const [items, setItems] = useState<QueueItem[]>([]);
-  const [caption, setCaption] = useState('');
+  const [note, setNote] = useState('');
+  // CAP-9 / QA-R3: bulk review keeps its one Title box for now; new single posts have no title (DEC-72).
   const [title, setTitle] = useState('');
+  // SHARE-PC-2: which picked photo is the big one.
+  const [cur, setCur] = useState(0);
+  // SHARE-PC-9: my own name, so the To: line names the others, not me.
+  const [myName, setMyName] = useState<string | null>(null);
+  const scroller = useRef<React.ComponentRef<typeof ScrollView>>(null);
+  const { c, t, os, dark, bigText } = useTheme();
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const userId = app.session?.userId;
@@ -76,11 +88,15 @@ export function ShareScreen() {
     (async () => {
       try {
         // BETA-AUD-21 (grandparent-ux UX-G3): only parents send to Everyone, so a relative is never offered it.
-        const list = shareOrder(await app.deps.api.myCircles(spaceId)).filter((x) => isParent || x.kind !== 'everyone');
-        const last = await loadLastAudience(app.deps.kv, userId, list.map((x) => x.circle_id));
+        // SHARE-PC-7 (DEC-72): nothing is picked to start, even when a last audience is saved.
+        const [all, me] = await Promise.all([
+          app.deps.api.myCircles(spaceId),
+          app.deps.api.myProfile().then((p) => p.display_name).catch(() => null),
+        ]);
+        const list = shareOrder(all).filter((x) => isParent || x.kind !== 'everyone');
         if (!alive) return;
+        setMyName(me);
         setCircles(list);
-        setChosen(last);
       } catch (e) {
         if (alive) { setCircles([]); setNotice(messageFor(e, { inviter: app.helper })); }
       }
@@ -99,7 +115,7 @@ export function ShareScreen() {
       // HARD-2: never drop photos silently; say how many were left out.
       const left = items.length + r.items.length - MAX;
       setItems((cur) => [...cur, ...r.items].slice(0, MAX));
-      if (left > 0) setNotice(`You can send ${MAX} at a time, so ${photos(left)} ${left === 1 ? 'was' : 'were'} left out.${isParent && app.deps.pickBulk ? ' For more, use "Pick lots of photos".' : ''}`);
+      if (left > 0) setNotice(`You can send ${MAX} at a time, so ${photos(left)} ${left === 1 ? 'was' : 'were'} left out.${isParent && app.deps.pickBulk ? ' For more, tap Cancel, then "Pick lots of photos".' : ''}`);
     }
   };
 
@@ -133,18 +149,26 @@ export function ShareScreen() {
 
   const toggle = (id: string) => setChosen((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));
 
-  const post = async () => {
-    if (!items.length || !chosen.length || !app.queue || !userId) return;
+  const list = circles ?? [];
+  const toLine = recipientsLine(list, chosen, myName);
+  const ready = items.length > 0 && chosen.length > 0 && !!toLine;
+
+  const reset = () => { setItems([]); setNote(''); setChosen([]); setCur(0); setNotice(null); };
+
+  // SHARE-PC-11: Send goes through today's upload queue, then Feed shows the post on top and "Shared with <names>."
+  const send = async () => {
+    if (!ready || !app.queue || !userId) return;
     setBusy(true);
     try {
       await saveLastAudience(app.deps.kv, userId, chosen);
-      await app.queue.enqueue({ space: app.space!.space_id, caption: caption.trim() || null, title: title.trim() || null, circleIds: chosen, items });
-      setItems([]);
-      setCaption('');
-      setTitle('');
-      nav.goPhotos();
+      await app.queue.enqueue({ space: app.space!.space_id, caption: note.trim() || null, title: null, circleIds: chosen, items });
+      app.setShared(`Shared with ${toLine}.`);
+      reset();
+      nav.goFeed();
     } catch (e) {
+      // SHARE-PC-12: say what went wrong at the top of the page; the photos, note and picks stay.
       setNotice(messageFor(e, { inviter: app.helper, action: 'post' }));
+      scroller.current?.scrollTo({ y: 0, animated: true });
     } finally {
       setBusy(false);
     }
@@ -164,84 +188,143 @@ export function ShareScreen() {
     );
   }
 
-  const chosenCircles = (circles ?? []).filter((x) => chosen.includes(x.circle_id));
-  const ready = items.length > 0 && chosen.length > 0;
+  if (!items.length) {
+    // Before any photo is picked: one main tap word (the phone's own picker opens from it; a browser won't open a
+    // file chooser by itself), and for parents the bulk pick.
+    return (
+      <Screen>
+        <Txt variant="display" role="header">Share photos</Txt>
+        <QueueStatus />
+        {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
+        <View style={styles.section}>
+          <Txt>{videos ? 'Pick photos or videos, add a note, then pick who gets them.' : 'Pick photos, add a note, then pick who gets them.'}</Txt>
+          {/* GUX-R2 / R19: a plain accent text button on the 16 pt edge, never a box inside a box. */}
+          <Button variant="quiet" style={styles.flush} icon={{ sf: 'photo.on.rectangle', md: 'add_photo_alternate' }}
+            label={videos ? 'Pick photos or videos from your phone' : 'Pick photos from your phone'}
+            text={videos ? 'Pick photos or videos' : 'Pick photos'} onPress={() => void pick()} />
+        </View>
+        {app.deps.pickBulk && isParent ? (
+          <View style={styles.section}>
+            <Txt variant="title" role="header">Lots of photos?</Txt>
+            <Txt>Pick up to 100. Hearth puts them in order by the day they were taken.</Txt>
+            <Button label="Pick up to 100 photos at once" text="Pick lots of photos" variant="quiet" style={styles.flush} onPress={() => void pickMany()} />
+          </View>
+        ) : null}
+      </Screen>
+    );
+  }
+
+  const shown = Math.min(cur, items.length - 1);
+  const big = items[shown]!;
+  const removeShown = () => { setItems((all) => all.filter((_, j) => j !== shown)); setCur((i) => Math.max(0, Math.min(i, items.length - 2))); };
+  const across = bigText ? 2 : 3;
 
   return (
-    <Screen>
-      <Txt variant="display" role="header">Share photos</Txt>
-      <QueueStatus />
-      {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
+    <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={os === 'ios' ? 'padding' : undefined}>
+        <ScrollView ref={scroller} contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
+          <Button variant="quiet" label="Cancel this post" text="Cancel" style={styles.flush} onPress={reset} />
+          <Txt variant="display" role="header">New post</Txt>
+          <QueueStatus />
+          {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
 
-      {/* RD-62 (R19): one 16 pt left edge for everything on Share, so the sections are plain blocks, not boxes. */}
-      <View style={styles.section}>
-        {/* GUX-R2: plain accent text buttons inside the section, never a box inside a box. */}
-        <Button variant="quiet" icon={{ sf: 'photo.on.rectangle', md: 'add_photo_alternate' }} style={styles.flush}
-          label={videos ? 'Pick photos or videos from your phone' : 'Pick photos from your phone'}
-          text={videos ? (items.length ? 'Pick more photos or videos' : 'Pick photos or videos') : (items.length ? 'Pick more photos' : 'Pick photos')} onPress={() => void pick()} disabled={items.length >= MAX} />
-        {items.length ? <Txt variant="strong">{`${photos(items.length)} picked`}</Txt> : null}
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-          {items.map((it, i) => (
-            <View key={`${it.uri}-${i}`} style={{ width: 120, gap: 6 }}>
-              <Image source={{ uri: it.uri }} style={{ width: 120, height: 120, borderRadius: 12 }} accessibilityIgnoresInvertColors />
-              <Button label={`Remove photo ${i + 1}`} text="Remove" variant="quiet" onPress={() => setItems((cur) => cur.filter((_, j) => j !== i))} />
-            </View>
-          ))}
+          {/* SHARE-PC-1: one card holds the post as the family will see it, and who it goes to. */}
+          <View testID="share-card" style={[styles.card, { backgroundColor: c.surface }, photoShadow(dark)]}>
+              <View>
+                <Image source={{ uri: big.uri }} style={styles.big} resizeMode="cover"
+                  accessibilityLabel={items.length > 1 ? `Photo ${shown + 1} of ${items.length}` : 'Your photo'} accessibilityIgnoresInvertColors />
+                {items.length > 1 ? (
+                  <View style={styles.count} pointerEvents="none">
+                    <Text style={{ color: '#FFFFFF', fontSize: t.base, fontWeight: WEIGHT.semibold }}>{`${shown + 1} of ${items.length}`}</Text>
+                  </View>
+                ) : null}
+              </View>
+
+              {/* SHARE-PC-2: small photos to pick the big one, then Add (the phone's picker again, 10 at most). */}
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.thumbs} keyboardShouldPersistTaps="handled">
+                {items.length > 1 ? items.map((it, i) => (
+                  <Pressable key={`${it.uri}-${i}`} accessibilityRole="button" accessibilityLabel={`Show photo ${i + 1}`}
+                    accessibilityState={{ selected: i === shown }} onPress={() => setCur(i)}
+                    style={[styles.thumb, { borderColor: i === shown ? c.ink : 'transparent' }]}>
+                    <Image source={{ uri: it.uri }} style={styles.thumbImg} accessibilityIgnoresInvertColors />
+                  </Pressable>
+                )) : null}
+                {items.length < MAX ? (
+                  <Pressable accessibilityRole="button" accessibilityLabel={videos ? 'Add photos or videos' : 'Add photos'} onPress={() => void pick()}
+                    style={({ pressed }) => [styles.add, { backgroundColor: c.fill, opacity: pressed ? 0.7 : 1 }]}>
+                    <SystemIcon icon={{ sf: 'plus', md: 'add' }} color={c.ink} />
+                    <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.ink, fontSize: t.base, fontWeight: WEIGHT.semibold }}>Add</Text>
+                  </Pressable>
+                ) : null}
+              </ScrollView>
+              {items.length > 1 ? (
+                <View style={styles.inset}>
+                  {/* QA-R2 (staff-pm): the photo showing can be taken out, with a labelled button. */}
+                  <Button variant="quiet" ink label={`Remove photo ${shown + 1}`} text="Remove" style={styles.flush}
+                    icon={{ sf: 'trash', md: 'delete' }} onPress={removeShown} />
+                </View>
+              ) : null}
+
+              {/* SHARE-PC-3: one note, its label always shown; no title on new posts (DEC-72 amends DEC-39). */}
+              <View style={styles.words}>
+                <Field label="Add a note (optional)" placeholder="Like: Pumpkin patch day" value={note} onChangeText={setNote} multiline maxLength={2000} />
+              </View>
+
+              <View style={styles.dashClip}>
+                <View style={[styles.dash, { borderColor: c.line }]} />
+              </View>
+
+              {/* SHARE-PC-5..9: To: names the people; the tiles fill it in. Nothing is picked to start (SHARE-PC-7). */}
+              <View testID="share-to" style={styles.to}>
+                <View style={styles.toLine}>
+                  <Text style={{ color: c.muted, fontSize: t.base, lineHeight: t.line }}>To:</Text>
+                  {toLine ? <Text style={{ flexShrink: 1, color: c.ink, fontSize: t.base, lineHeight: t.line, fontWeight: WEIGHT.semibold }}>{toLine}</Text> : null}
+                </View>
+                {circles === null ? <Loading words="Loading your groups…" /> : null}
+                {circles?.length === 0 && !notice ? (
+                  <View style={styles.inset}>
+                    <Txt variant="strong">{isParent ? 'There is no group to send to yet. Make one on the Groups tab.' : `There is no group to send to yet. Ask ${app.helper ?? 'a parent'} to add you to one.`}</Txt>
+                  </View>
+                ) : null}
+                <View style={styles.grid}>
+                  {list.map((g) => (
+                    <FaceTile key={g.circle_id} name={tileName(g, myName, isParent)} count={g.member_count} faces={othersIn(g, myName)}
+                      picked={chosen.includes(g.circle_id)} onPress={() => toggle(g.circle_id)} across={across} />
+                  ))}
+                </View>
+              </View>
+          </View>
+        </ScrollView>
+
+        {/* SHARE-PC-10: pinned under the page, above the keyboard and the tab bar. */}
+        <View style={[styles.dock, { backgroundColor: c.bg, borderTopColor: c.line }]}>
+          <Button label={ready ? `Send to ${toLine}` : 'Pick who gets it'} onPress={() => void send()} disabled={!ready} busy={busy} />
         </View>
-      </View>
-
-      {/* CAP-1: optional, shown (CAP-D4), 80 characters; nothing asks for it (CAP-R1). */}
-      <Field label="Title (optional)" placeholder="Give it a name, like Lily's 5th birthday" value={title} onChangeText={setTitle} maxLength={80} />
-      <Field label="What's happening?" placeholder="Say what's happening. The groups you pick will see it." value={caption} onChangeText={setCaption} multiline maxLength={2000} />
-
-      <View style={styles.section}>
-        <Txt variant="title" role="header">Who can see it</Txt>
-        {circles === null ? <Loading words="Loading your groups…" /> : null}
-        {(circles ?? []).map((g, i, all) => (
-          <React.Fragment key={g.circle_id}>
-          {g.kind !== 'everyone' && g.kind !== 'event' && (i === 0 || all[i - 1]?.kind === 'everyone') ? (
-            <Txt variant="strong" role="header">Groups</Txt>
-          ) : null}
-          {g.kind === 'event' && all[i - 1]?.kind !== 'event' ? (
-            <>
-              <Txt variant="strong" role="header">Events</Txt>
-              <Txt variant="muted">Everyone in an event reads each other's comments on its photos.</Txt>
-            </>
-          ) : null}
-          <Choice
-            kind="checkbox"
-            label={`${g.name}, ${people(g.member_count)}`}
-            title={g.name}
-            detail={`${people(g.member_count)}: ${g.member_names.join(', ')}`}
-            checked={chosen.includes(g.circle_id)}
-            onPress={() => toggle(g.circle_id)}
-          />
-          </React.Fragment>
-        ))}
-        {circles?.length === 0 && !notice ? (
-          <Txt variant="strong">{isParent ? 'There is no group to send to yet. Make one on the Groups tab.' : `There is no group to send to yet. Ask ${app.helper ?? 'a parent'} to add you to one.`}</Txt>
-        ) : chosen.length === 0 ? <Txt variant="strong">Pick who should see it.</Txt> : (
-          <Txt>{chosenCircles.some((g) => g.kind === 'everyone')
-            ? 'Everyone in the family will see these.'
-            : `Only ${chosenCircles.map((g) => g.name).join(' and ')} will see these.`}</Txt>
-        )}
-      </View>
-
-      <Button label="Post" onPress={() => void post()} disabled={!ready} busy={busy} />
-
-      {app.deps.pickBulk && isParent ? (
-        <View style={styles.section}>
-          <Txt variant="title" role="header">Lots of photos?</Txt>
-          <Txt>Pick up to 100. Hearth puts them in order by the day they were taken.</Txt>
-          <Button label="Pick up to 100 photos at once" text="Pick lots of photos" variant="quiet" style={styles.flush} onPress={() => void pickMany()} />
-        </View>
-      ) : null}
-    </Screen>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   section: { gap: 12 },
+  page: { padding: 16, gap: 16, paddingBottom: 24 },
+  // No overflow clip on the card, so its shadow is never cut; the big photo rounds its own top corners.
+  card: { borderRadius: RADIUS.photo },
+  big: { width: '100%', aspectRatio: 4 / 3, borderTopLeftRadius: RADIUS.photo, borderTopRightRadius: RADIUS.photo },
+  count: { position: 'absolute', right: 10, bottom: 10, borderRadius: RADIUS.pill, paddingHorizontal: 12, paddingVertical: 2, backgroundColor: 'rgba(0,0,0,0.6)' },
+  thumbs: { flexDirection: 'row', gap: 10, paddingHorizontal: 14, paddingTop: 12, paddingBottom: 4 },
+  thumb: { width: 64, height: 64, borderRadius: RADIUS.medium, borderWidth: 3, overflow: 'hidden' },
+  thumbImg: { width: '100%', height: '100%' },
+  add: { minWidth: 64, minHeight: 64, borderRadius: RADIUS.medium, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 },
+  inset: { paddingHorizontal: 16 },
+  words: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 16 },
+  // A dashed line on one side only isn't drawn the same on every phone, so a dashed box is clipped to its top edge.
+  dashClip: { height: 2, overflow: 'hidden' },
+  dash: { height: 6, borderWidth: 2, borderStyle: 'dashed', marginHorizontal: -2 },
+  to: { paddingTop: 12, paddingBottom: 10, gap: 4 },
+  toLine: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline', gap: 8, paddingHorizontal: 16, minHeight: 32 },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 10 },
+  dock: { paddingHorizontal: 16, paddingTop: 10, paddingBottom: 12, borderTopWidth: StyleSheet.hairlineWidth },
   // A text button whose words start on the 16 pt edge, like the title above it.
   flush: { alignSelf: 'flex-start', paddingHorizontal: 0 },
 });

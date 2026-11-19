@@ -71,8 +71,22 @@ describe('Share screen', () => {
     expect(await screen.findByText(/Waiting to send/)).toBeTruthy();
   });
 
-  // DEC-72's postcard (direction B) has no Remove on a picked photo; staff-pm to say whether it stays (QA-R2).
-  it.todo('DEC-72 a picked photo can be removed with a labeled button (was on the old Share page; not in SHARE-PC)');
+  // QA-R2 (staff-pm, Nov 19): the postcard keeps a labelled Remove for the photo showing, when there is more than one.
+  it('DEC-72 QA-R2 the photo showing can be removed with a labeled button; with one photo there is none', async () => {
+    const three = Array.from({ length: 3 }, (_, i) => ({ uri: `file:///pick/r${i}.jpg`, kind: 'photo' as const, width: 4032, height: 3024 }));
+    await newPost({ user: 'chase', deps: { pickPhotos: jest.fn(async () => ({ items: three })) } });
+    expect(screen.getByText('1 of 3')).toBeTruthy();
+    fireEvent.press(screen.getByRole('button', { name: 'Show photo 2' }));
+    const remove = screen.getByRole('button', { name: 'Remove photo 2' });
+    expect(screen.getAllByText('Remove').length).toBeGreaterThan(0);
+    fireEvent.press(remove);
+    expect(await screen.findByText(/^\d of 2$/)).toBeTruthy();
+    fireEvent.press(screen.getByRole('button', { name: /^Remove photo / }));
+    await waitFor(() => expect(screen.queryByText(/ of \d$/)).toBeNull());
+    expect(screen.queryByRole('button', { name: /^Remove photo / })).toBeNull();
+    expect(screen.getByRole('header', { name: 'New post' })).toBeTruthy();
+    expectGrandparentSafe();
+  });
 
   it('viewers who land here are told plainly', async () => {
     await renderApp(<ShareScreen />, { user: 'jo' });

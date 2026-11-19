@@ -21,10 +21,11 @@ describe('upload that fails in the prepare step', () => {
       deps: { prepare: jest.fn(async () => { throw new ApiError(code as ApiErrorCode, 'file:///pick/1.jpg "First snow!"'); }) },
     });
     fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }));
-    await screen.findByText('1 photo picked');
-    fireEvent.changeText(screen.getByLabelText("What's happening?"), 'First snow!');
-    fireEvent.press(screen.getByRole('checkbox', { name: `${DAD}, 3 people` }));
-    fireEvent.press(screen.getByRole('button', { name: 'Post' }));
+    // Retargeted Nov 19 by engineer for DEC-72 (SHARE-PC), flagged for qa-tdd: the postcard's note, a tile, Send.
+    await screen.findByRole('header', { name: 'New post' });
+    fireEvent.changeText(screen.getByLabelText('Add a note (optional)'), 'First snow!');
+    fireEvent.press(await screen.findByLabelText(`${DAD}, 3 people, not picked`));
+    fireEvent.press(screen.getByRole('button', { name: /^Send to / }));
 
     expect(await screen.findByText(/Didn't send/)).toBeTruthy();
     expect(screen.getByText(REASON)).toBeTruthy();
