@@ -232,6 +232,8 @@ export interface Session {
   userId: string;
   /** '' for a phone-only account (text sign-in, BETA-SMS). */
   email: string;
+  /** E.164 (+1XXXXXXXXXX) for a text sign-in account (TD-UX-R7b). Personal data: never log it. */
+  phone?: string;
 }
 
 // ---- sign-media (shapes from backend/supabase/functions/sign-media/index.ts) ----

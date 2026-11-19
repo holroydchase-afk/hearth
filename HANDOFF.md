@@ -11,6 +11,11 @@ waiting_on_chase:
 blockers: []
 -->
 
+## Nov 19: text sign-in kept and readied to turn on (Chase, DEC-73, TRACKER R43; branch claude/project-thread-df9051, PR)
+- **Why:** the tech-debt review (PM-R5) suggested parking it; Chase: "We need to keep the switched off features."
+- **Done:** TD-UX-R7 test-first (sign-out words no longer say "from your email"; Me says "Signed in with the mobile number ending 0100" for text accounts, from a new optional `Session.phone`). `docs/eng/SMS-PROVIDER.md` "Nov 19 check": Verify needs no carrier registration and costs $0.05 + $0.0083 per text (via search; twilio.com is blocked here); Supabase ignores its SMS template under Verify, so Hearth's words go to Twilio Support as a custom template (request body in the doc).
+- **Next exact step:** privacy-security and grandparent-ux re-review text sign-in; then Chase's Twilio sign-up, "deploy" (0026+0027), Verify service + custom text, BETA-SMS-16 on an iPhone and an Android.
+
 ## Nov 19: web glass tab bar lookalike, Grandma Jo no longer enlarges the laptop page (Chase, DEC-72, RD-108, RD-109, DEMO-EASY-1, R61; branch claude/project-thread-ox4dz4, PR)
 - **Chase:** "i do not see it in the demo" → picked a web lookalike; "its a poor experience that clicking grandma jo makes the screen much larger".
 - **Done, test-first:** `HearthTabBar floating` (web + Easy view Off): capsule 16 pt in, 64 pt, `c.surface` at 60%, `backdropFilter` blur, `c.accentSoft` pill. `ui/tabBarSpace.tsx` context gives screens 96 pt of room (kit `Screen`, Photos, Timeline, Events, Search, the walk's bar). `DemoFrame` panel and the phone's `DemoBar` sit in `BigTextContext` false. RD-44's e2e now measures tile rows from the grid's top (scroll-independent).

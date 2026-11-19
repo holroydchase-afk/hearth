@@ -1103,7 +1103,7 @@ export class FakeApi implements HearthApi {
   async getSession(): Promise<Session | null> {
     return this.run(() => {
       const u = this.userId ? this.be.state.users[this.userId] : undefined;
-      return u ? { userId: u.id, email: u.email } : null;
+      return u ? { userId: u.id, email: u.email, ...(u.phone ? { phone: u.phone } : {}) } : null;
     });
   }
   sendCode(email: string): Promise<void> {
@@ -1139,7 +1139,7 @@ export class FakeApi implements HearthApi {
         this.be.state.appSession = u.id;
         this.be.changed();
       }
-      return { userId: u.id, email: '' };
+      return { userId: u.id, email: '', phone: e164 };
     });
   }
   signOut(): Promise<void> {

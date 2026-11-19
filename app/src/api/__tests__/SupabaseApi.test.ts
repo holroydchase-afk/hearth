@@ -215,3 +215,20 @@ describe('SupabaseApi auth: 6-number text code (BETA-SMS)', () => {
     expect(String((e as Error).message)).not.toMatch(/3045550100/); // BETA-SMS-15: the number never rides along
   });
 });
+
+// TD-UX-R7b (docs/reviews/2026-11-19-tech-debt/ux.md): Me names a phone-only person by the last 4 of their number,
+// so the session carries the phone. Supabase stores it as digits without '+'; the app keeps E.164. Written first.
+describe('TD-UX-R7b SupabaseApi session carries the phone (E.164)', () => {
+  it("TD-UX-R7b verifyTextCode returns phone '+13045550100' when the auth user's phone is '13045550100'", async () => {
+    const c = mockClient();
+    c.auth.verifyOtp.mockResolvedValueOnce({ data: { session: { access_token: 't', user: { id: 'u9', email: '', phone: '13045550100' } } }, error: null } as never);
+    const s = await textApi(c).verifyTextCode('+13045550100', '123456');
+    expect(s).toMatchObject({ userId: 'u9', email: '', phone: '+13045550100' });
+  });
+
+  it("TD-UX-R7b getSession (restore) returns phone '+13045550100' for a phone-only auth user", async () => {
+    const c = mockClient();
+    c.auth.getSession.mockResolvedValueOnce({ data: { session: { access_token: 't', user: { id: 'u9', email: '', phone: '13045550100' } } } } as never);
+    expect(await make(c).getSession()).toMatchObject({ userId: 'u9', email: '', phone: '+13045550100' });
+  });
+});

@@ -521,5 +521,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** most people only see Hearth through the web demo; it should show the bar iPhone users get. Text stays off the glass (icons only, DS-6).
 - **Source:** `docs/product/SPEC-REDESIGN.md` RD-108, RD-109, DEMO-EASY-1; persona check `decisions/2026-11-19-web-glass-bar.md`
 
+### DEC-73 · Keep text sign-in, switched off, and finish it (answers PM-R5)
+- **When / status:** Nov 19 · Chase, after the tech-debt review recommended parking it: "We need to keep the switched off features. Start a thread for each" · Thread "Get text sign-in ready to turn on" (TRACKER R43)
+- **Chose:** keep the text sign-in code and migration 0026 in the public repo with the switch off, and finish what's left before it can go on: the TD-UX-R7 words, the privacy and wording reviews, Twilio's custom message, then Chase's Twilio sign-up, "deploy" and a real-phone test.
+- **Over:** parking it on an archive branch until a relative asks (staff-pm's PM-R5 recommendation).
+- **Because:** texts are Chase's chosen default sign-in (DEC-57), the code is built and tested, and Twilio Verify needs no carrier registration (Twilio docs, read through search Nov 19), so the remaining steps are small.
+- **Source:** persona check `decisions/2026-11-19-keep-text-sign-in.md`; `docs/eng/SMS-PROVIDER.md`
+
 ---
-Last updated: Nov 19, 2026 (DEC-72)
+Last updated: Nov 19, 2026 (DEC-73)

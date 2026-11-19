@@ -18,6 +18,14 @@ import type {
 } from './types';
 import { toApiError } from '../errors/messages';
 import { JOIN_LINK_BASE } from './links';
+import { usE164 } from './phone';
+
+/** TD-UX-R7b: Supabase keeps the auth phone as digits without '+'; the app keeps E.164. Never log it. */
+function phoneOf(u: { phone?: string | null }): { phone?: string } {
+  const raw = u.phone?.trim();
+  if (!raw) return {};
+  return { phone: usE164(raw) ?? `+${raw.replace(/\D/g, '')}` };
+}
 
 export { JOIN_LINK_BASE };
 
@@ -80,7 +88,7 @@ export class SupabaseApi implements HearthApi {
   async getSession(): Promise<Session | null> {
     const { data } = await this.o.client.auth.getSession();
     const u = data.session?.user;
-    return u ? { userId: u.id, email: u.email ?? '' } : null;
+    return u ? { userId: u.id, email: u.email ?? '', ...phoneOf(u) } : null;
   }
   async sendCode(email: string): Promise<void> {
     // With the Supabase email template set to {{ .Token }}, this sends a 6-digit code (no link).
@@ -125,7 +133,7 @@ export class SupabaseApi implements HearthApi {
       if (error && /fetch|network/i.test(error.message)) throw new ApiError('NETWORK');
       throw new ApiError('BAD_OTP');
     }
-    return { userId: data.session.user.id, email: data.session.user.email ?? '' };
+    return { userId: data.session.user.id, email: data.session.user.email ?? '', ...phoneOf(data.session.user) };
   }
   async signOut(): Promise<void> {
     await this.o.client.auth.signOut();
