@@ -10,6 +10,12 @@ waiting_on_chase:
 blockers: []
 -->
 
+## Nov 19: demo bar review, no bar on a laptop (Chase, DEC-71, R60; branch claude/project-thread-mmmmnh, PR)
+- **Chase:** "do we need the demo bar?" and its portfolio link went to an old page. Picked "Laptop off, phone stays slim".
+- **Done, test-first:** DEMO-LINK-1 (`PORTFOLIO_URL` = `https://chaseholroyd.com/#p-hearth`, the portfolio's case study dialog; `family-photos.html` is orphaned, old nav), DEMO-LINK-2 (badge reads DEMO; small caps drew "DEмо"), DEMO-BAR-LAPTOP-1 (`DemoChrome`: at `WIDE` no bar, `DemoActions` in the `DemoFrame` panel under Try this; Try this step 2 says "below"). Phone unchanged apart from the link and badge.
+- **Next exact step:** Chase says "merge 1NN"; the demo rebuilds; live check fresh and returning at 390 and 1280.
+- **Portfolio / public presence:** the public demo loses its bar on laptops and its ways back open the current Hearth case study. Product Studio: redirect the orphaned `family-photos.html` (intake holroydchase-afk.github.io#75).
+
 ## Nov 19: Paper's light page is Linen #F7F7F4 and iPhone's own tab bar (Chase, DEC-69, DEC-70, RD-105..107, R58, R59; branch claude/project-thread-ox4dz4, PR)
 - **Chase:** picked Linen `#F7F7F4` from six near-whites ("Remember barely warm. But go with linen for now"); Barely warm `#F9F9F7` is the runner-up. Dark `#131210` and the other themes unchanged.
 - **Done, test-first:** tests retargeted to `#F7F7F4` (7 red), then `theme.ts` Paper light `bg`, `app.json` splash and adaptive icon, `docs/design/tokens.json` regenerated (the soft tints mixed into the page move with it). Persona check `decisions/2026-11-19-paper-linen.md` all Green.

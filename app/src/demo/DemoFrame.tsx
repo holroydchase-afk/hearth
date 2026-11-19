@@ -15,12 +15,16 @@ export const WIDE = 900;
 // DEMO-NEW-6: the newest features first (New for you, DEC-58; Search, DEC-56).
 const TRY = [
   'Tap a photo under New for you. You get what the family sent since your last visit, one post at a time.',
-  'Open Details at the top and tap See it as Grandma Jo. She sees only what was shared with her side of the family.',
+  'Tap See it as Grandma Jo below. She sees only what was shared with her side of the family.',
   'Tap Search and type lake. It looks at the words people wrote, never inside the photos.',
 ];
 const PROOF = ['Private by name', 'Stored in the US', 'No ads, no AI training'];
 
-export function DemoFrame({ width, children, open = () => {} }: { width: number; children: ReactNode; open?: (url: string) => void }) {
+export function DemoFrame({ width, children, open = () => {}, controls }: {
+  width: number; children: ReactNode; open?: (url: string) => void;
+  /** DEMO-BAR-LAPTOP-1: Grandma Jo's view and Reset, shown under Try this (the laptop has no demo bar). */
+  controls?: ReactNode;
+}) {
   const { c } = useTheme();
   if (width < WIDE) return <>{children}</>;
   return (
@@ -36,6 +40,7 @@ export function DemoFrame({ width, children, open = () => {} }: { width: number;
         </View>
         <Txt variant="title" role="header">Try this</Txt>
         {TRY.map((t, i) => <Txt key={t}>{`${i + 1}. ${t}`}</Txt>)}
+        {controls}
         <Button variant="quiet" role="link" label="Read the case study on chaseholroyd.com" text="Read the case study" onPress={() => open(PORTFOLIO_URL)} style={styles.cta} />
         <Txt variant="muted">Built test-first by Chase Holroyd, a product manager, with a team of AI agents. The family here is made up and stays in this browser.</Txt>
       </View>

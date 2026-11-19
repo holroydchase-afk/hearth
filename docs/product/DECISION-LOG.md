@@ -507,5 +507,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** the native bar matches what parents see in Apple's own apps and Instagram and costs nothing on older phones; LIVE-1's problem was 17 pt words, which only Easy view shows. Grandparents keep big words on a bar that never floats or blurs. Partly reverses Chase's Nov 16 "no glass before the beta" call, by his word.
 - **Source:** `docs/product/SPEC-REDESIGN.md` RD-106, RD-107; persona check `decisions/2026-11-19-native-tab-bar.md`; picker https://claude.ai/artifact/Yb4PXNBTHA8ytzmUGXHXV1
 
+### DEC-71 · No demo bar on a laptop; the phone keeps it slim (DEMO-BAR-LAPTOP-1)
+- **When / status:** Nov 19 · Chase asked "do we need the demo bar?" and said its portfolio link went to an old page; picked "Laptop off, phone stays slim" on a decision card · Small PR, waits on Chase's "merge"
+- **Chose:** at 900 px and wider the bar goes and Grandma Jo's view and Reset demo sit in the story panel under Try this; phones keep the 48 pt bar. Every way back opens `chaseholroyd.com/#p-hearth` (the portfolio's current Hearth case study). The badge reads DEMO in real capitals (small caps drew as "DEмо").
+- **Over:** no bar anywhere (on a phone Grandma Jo's view would hide under More); keep the bar and only fix the link.
+- **Because:** on a laptop the story panel already says demo, explains the sample family and links back, so the bar only pushed the app down. On a phone the bar is the only sign the family is made up and the only route to Grandma Jo's view. Deviates from the studio demo bar standard (pm-tools DEMO-BANNER.md) on wide screens.
+- **Source:** persona check `decisions/2026-11-19-demo-bar-laptop.md`; screenshots `/mnt/project-files/demo/demo-bar-2026-11-19/` (project files)
+
 ---
-Last updated: Nov 19, 2026 (DEC-70)
+Last updated: Nov 19, 2026 (DEC-71)

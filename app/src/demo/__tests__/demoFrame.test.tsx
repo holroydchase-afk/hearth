@@ -32,4 +32,12 @@ describe('DEMO-6 laptop frame', () => {
     expect(screen.getByText(/^2\. .*See it as Grandma Jo/)).toBeTruthy();
     expect(screen.getByText(/^3\. .*Search.*lake/)).toBeTruthy();
   });
+
+  it('DEMO-BAR-LAPTOP-1 (Chase, Nov 19) at 1280 px the panel holds the demo controls, under Try this; at 390 px it does not', () => {
+    const { rerender } = render(<DemoFrame width={1280} controls={<Text>the controls</Text>}><Text>the app</Text></DemoFrame>);
+    expect(screen.getByText('the controls')).toBeTruthy();
+    expect(screen.getByText(/^2\. Tap See it as Grandma Jo below/)).toBeTruthy();
+    rerender(<DemoFrame width={390} controls={<Text>the controls</Text>}><Text>the app</Text></DemoFrame>);
+    expect(screen.queryByText('the controls')).toBeNull();
+  });
 });

@@ -30,13 +30,23 @@ describe('DEMO-BAR studio demo bar', () => {
   it('DEMO-BAR collapsed on load: back link, Demo badge, Sample data, Details; no drawer', async () => {
     const { open } = await setup();
     expect(toggle(false)).toBeTruthy();
-    expect(screen.getByText('Demo')).toBeTruthy();
+    expect(screen.getByText('DEMO')).toBeTruthy();
     expect(screen.getByText(/^Sample data/)).toBeTruthy();
     expect(screen.getByText('Details')).toBeTruthy();
     expect(screen.queryByText(COPY)).toBeNull();
     fireEvent.press(screen.getByRole('link', { name: 'Back to the portfolio' }));
     expect(open).toHaveBeenCalledWith(PORTFOLIO_URL);
-    expect(PORTFOLIO_URL).toBe('https://chaseholroyd.com/family-photos.html');
+  });
+
+  it('DEMO-LINK-1 every way back opens the Hearth case study on the current portfolio, not the old family-photos page', () => {
+    expect(PORTFOLIO_URL).toBe('https://chaseholroyd.com/#p-hearth');
+  });
+
+  it('DEMO-LINK-2 the Demo badge reads DEMO, not small caps that render as DEмо', async () => {
+    await setup();
+    const t = screen.getByText(/^demo$/i);
+    const flat = Object.assign({}, ...[t.props.style].flat(Infinity).filter(Boolean));
+    expect(flat.fontVariant ?? []).not.toContain('small-caps');
   });
 
   it('DEMO-BAR is a named region, at most 48 px tall, on the card surface', async () => {
