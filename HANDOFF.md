@@ -11,10 +11,11 @@ waiting_on_chase:
 blockers: []
 -->
 
-## Nov 19: start a family ready to turn on, still off (START-ON-1..7, DEC-74; branch claude/project-thread-mvyrnq, local commit)
+## Nov 19: start a family ready to turn on, still off (START-ON-1..7, DEC-74; branch claude/project-thread-mvyrnq, PR)
 - **Chase:** keep the switched-off features (DEC-74). This makes start a family safe to turn on; the switch stays off.
 - **Done, test-first (qa-tdd red, engineer green):** Help's "Something wrong?" with **Email Hearth** (`mailto:` the help address, fixed subject only) for everyone incl. the owner, only when `EXPO_PUBLIC_HEARTH_HELP_EMAIL` is set (`deps.helpEmail`; the fake build uses help@example.test); the no-family start button hides without it (START-ON-1, -2). `backend/scripts/suspend-family.sh` (+ `.sql`: suspend, `--undo`, `--known`) and `start-family-switch.sh` (+ `.sql`: on, off, status), Management API, dry run by default, space id only in output (START-ON-3, -4). Playwright walk of the whole start flow (START-ON-5). The real PostgREST harness has a `starter_01..30` pool (`backend/tests/integration/starters.sql`) and flips the switch through `HEARTH_DB_URL`, so the 8 BETA-START contract cases run instead of skipping (START-ON-6); `contract-real.sh -t X` now merges into the SupabaseApi filter (QA-R1). `docs/eng/RUNBOOK-START-FAMILY.md` (START-ON-7); threat model gap 6 updated. No migration, no API change.
-- **Next exact step:** qa-tdd runs all suites 3x, then grandparent-ux on the Help words and privacy-security on the scripts; then PR.
+- **Reviews:** qa-tdd 3x green; privacy-security ready on the code side, SEC-R1 (the purge isn't scheduled, so wording no longer claims it) and SEC-R2 (ban every parent who took part) fixed test-first, SEC-R3 P2 open; grandparent-ux GUX-R1 fixed (the address shows under Email Hearth for phones with no mail app).
+- **Next exact step:** Chase says "merge" on the PR. Nothing deploys; the switch stays off.
 - **Still Chase's (runbook go-live checklist):** the help email in the EAS preview env + republish, PRIV-R5 legal review, BETA-START-9 cold test, and the words "turn on start a family".
 
 ## Nov 19: web glass tab bar lookalike, Grandma Jo no longer enlarges the laptop page (Chase, DEC-72, RD-108, RD-109, DEMO-EASY-1, R61; branch claude/project-thread-ox4dz4, PR)
