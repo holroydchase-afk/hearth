@@ -7,7 +7,8 @@
 #   {"url": "http://127.0.0.1:3001",            PostgREST root (= <supabase url>/rest/v1)
 #    "anonKey": "<jwt role=anon>",
 #    "serviceRoleKey": "<jwt role=service_role>", for test setup only (e.g. marking uploads ready)
-#    "users": {"alex": {"id": "<uuid>", "jwt": "<jwt role=authenticated>"}, ...}}
+#    "users": {"alex": {"id": "<uuid>", "jwt": "<jwt role=authenticated>", "email": "..."}, ...}}
+#   users include starter_01, starter_02, ... (starters.sql): accounts in no family for the 0024 contract cases.
 # With supabase-js: createClient(url.replace(/\/rest\/v1$/, ''), anonKey) needs a gateway that
 # serves /rest/v1; against this harness use @supabase/postgrest-js: new PostgrestClient(url, {headers}).
 #
@@ -48,7 +49,7 @@ dropdb --if-exists "$DB" >&2
 createdb "$DB" >&2
 files=(-f "$BACKEND/tests/supabase_stub.sql")
 for m in "$BACKEND"/supabase/migrations/*.sql; do files+=(-f "$m"); done
-files+=(-f "$BACKEND/supabase/seed.sql")
+files+=(-f "$BACKEND/supabase/seed.sql" -f "$HERE/starters.sql")   # START-ON-6: starter_01.. in no family
 psql -d "$DB" -X -v ON_ERROR_STOP=1 -q "${files[@]}" >&2
 # PostgREST logs in as `authenticator` and switches to anon/authenticated/service_role per request (as on Supabase).
 psql -d "$DB" -X -v ON_ERROR_STOP=1 -q >&2 <<SQL
@@ -84,7 +85,7 @@ curl -sf -o /dev/null "http://127.0.0.1:$PORT/" || { log "PostgREST did not star
 
 # 4. Keys for the seed users, signed with the JWT secret (HS256, like Supabase)
 URL="http://127.0.0.1:$PORT"
-users=$(psql -d "$DB" -X -At -F ' ' -c "select id, split_part(email, '@', 1) from auth.users order by email")
+users=$(psql -d "$DB" -X -At -F ' ' -c "select id, email from auth.users order by email")
 URL="$URL" JWT_SECRET="$JWT_SECRET" USERS="$users" python3 -I "$HERE/mint_keys.py" > "$STATE/harness.json"
 log "ready: $URL (state in $STATE)"
 cat "$STATE/harness.json"
