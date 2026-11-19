@@ -17,9 +17,9 @@ test('PERF-FEED-1 cold start to the first photo on screen is under 2 s', async (
   const chooser = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: 'Pick photos from your phone' }).click();
   await (await chooser).setFiles(FIXTURE);
-  await page.getByLabel("What's happening?").fill('Cold start');
-  await page.getByRole('checkbox', { name: "Grandparents – Dad's side, 2 people" }).click();
-  await page.getByRole('button', { name: 'Post', exact: true }).click();
+  await page.getByLabel('Add a note (optional)').fill('Cold start');
+  await page.getByLabel(/^Grandparents – Dad's side, 2 people, not picked$/).click();
+  await page.getByRole('button', { name: /^Send to / }).click();
   await page.getByRole('tab', { name: /^Feed/ }).click(); // RD-18: captions are on Feed; Gallery is the photo grid
   await expect(page.getByText('Cold start', { exact: true })).toBeVisible();
   await page.getByRole('tab', { name: /^Gallery/ }).click(); // time the start screen, as before

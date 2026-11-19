@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-19T09:30:00-05:00",
- "label": "Start a family ready to turn on (START-ON-1..7): all suites 3x (green)",
- "passed": 2793,
- "failed": 0,
+ "at": "2026-11-19T00:45:00-05:00",
+ "label": "Share is a postcard (SHARE-PC-1..SHARE-PC-13, DEC-73): tests written first (red)",
+ "passed": 38,
+ "failed": 41,
  "results": {},
- "note": "3 runs each at 011a712 (engineer) on the red tests 7849580: backend SQL 1171 passed 0 failed (30 result lines, incl. START FAMILY 88, START-ON SCRIPTS 48, suspend/switch SQL) x3 as PGUSER=root, jest 1534 passed (1 skipped, 1 todo, 160 suites) x3, typecheck clean x3, e2e:web 6 passed (6 skipped: showcase/snapshot opt-in) x3 incl. START-ON-5 start-family.spec.js, real contract (contract-real.sh) 88 passed x3 with BETA-START-1,3..8 now running against PostgREST (START-ON-6). Fix commit changes no test files (harness infra only). check-agents, check-persona-checks and the other test-all.sh script checks, deploy_test and starter scripts 3 runs each, 16/0 every run. Deno, e2e:demo, e2e:site, CI, hosted Supabase and phones not run. backend/tests/results/start_on_green_2026-11-19.txt"
+ "note": "Red on purpose, 1 run at eceac67 plus the new and retargeted tests, typecheck clean. Only the new and touched files run. jest: new screens/__tests__/sharePostcard.test.tsx 19 failed (18 stop at no 'New post' page, SHARE-PC-9 unit has no share/postcard.ts; SHARE-PC-7 bulk sees the last group pre-ticked); retargeted share.test.tsx 7 failed (no 'New post'), bulk.test.tsx 13 failed (last group pre-ticked, list closed), redesignPolish.test.tsx 2 failed (GUX-R2, GUX-R9 Share); video.test.tsx 8 passed (VID-21 tap works on today's code). e2e:demo -g SHARE-PC-13 and retargeted RR-14: 2 failed, files set, no 'New post' heading. Full suites, e2e:web, backend, Deno not run. e2e/results/share-postcard-red-2026-11-19.txt"
 }

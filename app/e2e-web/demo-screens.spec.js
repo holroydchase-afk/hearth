@@ -34,11 +34,11 @@ test('portfolio screenshots from the demo', async ({ page }) => {
   const chooser = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: 'Pick photos from your phone' }).click();
   await (await chooser).setFiles(PICTURE);
-  await expect(page.getByText('1 photo picked')).toBeVisible();
-  await page.getByLabel("What's happening?").fill('First snow!');
-  await page.getByRole('checkbox', { name: /Grandparents – Dad's side/ }).click();
+  await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible(); // DEC-73 postcard
+  await page.getByLabel('Add a note (optional)').fill('First snow!');
+  await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
   await shot('iphone-02-share');
-  await page.getByRole('button', { name: 'Post', exact: true }).click();
+  await page.getByRole('button', { name: /^Send to / }).click();
   await expect(page.getByText('First snow!', { exact: true })).toBeVisible();
   await shot('iphone-03-posted');
 
