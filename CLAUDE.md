@@ -20,8 +20,8 @@ Studio standard: follow holroydchase-afk/studio-agents docs/studio-standard.md; 
 - `docs/product/ANCHORS.md`: milestones, anchors (A1–A3), ideas log. Add new anchors and ideas there as Chase names them; never delete built features to satisfy one.
 - `HANDOFF.md`: current state and what's next. Start here every session.
 - `docs/product/MILESTONE-1.md`: Chase's setup steps and the 2-day demo for milestone 1 (incl. the $99 Apple answer).
-- `docs/product/REMAINING.md`: the critical path to the Ring 0 gate (Oct 29) and the beta.
-- `docs/product/BETA-SPEC.md`: 35 acceptance criteria (BETA-*), the scope source of truth.
+- `docs/product/REMAINING.md`: the Oct 16 critical path, mostly superseded by TRACKER (kept for history; its Ring wording is out of date).
+- `docs/product/BETA-SPEC.md`: the original BETA-* acceptance criteria. Later scope lives in the feature specs (`docs/product/SPEC-*.md`).
 - `docs/product/DESIGN-SYSTEM.md`: native first (Apple HIG on iPhone, Material 3 on Android) plus Hearth's stricter overrides (DS-1..DS-9). Check it before designing any screen.
 - `docs/product/SPEC-MEDIA.md`: media policy (what is stripped, kept or extracted from photos; compression), rules for location ideas, Live Photos plan (MEDIA-*, LIVE-*).
 - `docs/eng/AGENT-NOTES.md`: the source of each studio agent's "Hearth notes" (staff-pm's beta jobs, qa-tdd's test homes, the engineer's stack, privacy-security's threat list, positioning's claims). Edit there, then `scripts/sync-agents.sh`.
@@ -36,7 +36,7 @@ Studio standard: follow holroydchase-afk/studio-agents docs/studio-standard.md; 
 
 ## Layout
 - `backend/`: Supabase.
-  - `migrations/0001`–`0011`: RLS, RPCs, triggers, notification outbox (0003), AUD-7 (0004), S12 (0005), error reports (0006), real names (0007), rename_circle (0008), who reads replies (0009), timeline + bulk (0010), family shape (0011).
+  - `supabase/migrations/0001`–`0026`: RLS, RPCs, triggers, notification outbox (0003), error reports (0006), family shape (0011), groups v2 (0013), messenger relay (0015), video (0020), start a family (0024), search (0025), text sign-in (0026). What is live on the hosted project: `docs/eng/DEPLOYS.md`.
   - `scripts/`: `deploy.sh` (one-command deploy, `--dry-run`), `family-setup.sh` (fresh family in the 0011 shape + invites, through the Management API, token only), `family-setup.sql` (v1, psql; superseded for fresh setups), `family-setup-v2.sql` (re-seed into the family shape; dry run by default).
   - `functions/notify/`: Deno TS; Expo Push + Resend sender, run by a 1-minute cron.
   - `functions/sign-media/`: Deno TS; presigned Backblaze B2 URLs and per-item keys.
