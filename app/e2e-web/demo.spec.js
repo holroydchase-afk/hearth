@@ -798,3 +798,39 @@ test('SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to
   }
   await page.screenshot({ path: path.join(shots, 'share-pc-13-easy-view.png') });
 });
+
+// GUX-R1 (grandparent-ux, Nov 19): a face tile's name never spills out of its tile. "Grandparents" is about 113 px
+// and a 3-across tile 103 px at 360 (112 px at 390), so those phones show 2 across; names are never shortened.
+// Written first (red), Nov 19, by qa-tdd. The column rule's other cases are in src/screens/__tests__/shareGux.test.tsx.
+for (const width of [360, 390]) {
+  test(`GUX-R1 ${width} px: every face-tile name stays inside its own tile; 2 across; full names`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.emulateMedia({ colorScheme: 'light' });
+    await page.goto('/');
+    await galleryLoaded(page);
+    await openNewPost(page, [FIXTURE]);
+    const tiles = page.getByLabel(/, \d+ people, (not )?picked$/).filter({ visible: true });
+    await expect(tiles.first()).toBeVisible();
+    const found = await tiles.evaluateAll((els) => els.map((el) => {
+      const name = String(el.getAttribute('aria-label')).replace(/, \d+ people, (not )?picked$/, '');
+      const box = el.getBoundingClientRect();
+      // The words of the name: the text node(s) whose text is the name, measured where they are drawn.
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      let left = Infinity; let right = -Infinity; let shown = '';
+      for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+        if (n.textContent.trim() !== name) continue;
+        shown += n.textContent;
+        const r = document.createRange(); r.selectNodeContents(n);
+        for (const q of r.getClientRects()) { left = Math.min(left, q.left); right = Math.max(right, q.right); }
+      }
+      return { name, shown: shown.trim(), top: Math.round(box.top), spill: Math.max(0, Math.round(box.left - left), Math.round(right - box.right)) };
+    }));
+    const spills = found.filter((f) => f.spill > 0).map((f) => `${f.name}: ${f.spill}px out`);
+    expect.soft(spills).toEqual([]);
+    expect.soft(found.filter((f) => f.shown !== f.name).map((f) => f.name)).toEqual([]);
+    const firstRow = found.filter((f) => f.top === found[0].top).length;
+    expect.soft(firstRow).toBe(2);
+    expect.soft(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await page.screenshot({ path: path.join(__dirname, '..', 'test-results', 'gux-r1', `gux-r1-${width}.png`) });
+  });
+}
