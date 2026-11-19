@@ -85,7 +85,7 @@ describe('SupabaseApi RPC wiring (API.md names and args)', () => {
     expect(c.rpc).toHaveBeenLastCalledWith('reaction_summary', { p_posts: ['P'] });
 
     const old = mockClient({ data: null, error: { code: 'PGRST202', message: 'not found' } });
-    await expect(make(old).setReaction('P', '😂')).rejects.toBeTruthy();
+    await expect(make(old).setReaction('P', '😂')).rejects.toMatchObject({ code: 'UNKNOWN' });
     expect(old.rpc).toHaveBeenCalledTimes(1);
 
     const denied = mockClient({ data: null, error: { code: '42501', message: 'no' } });
