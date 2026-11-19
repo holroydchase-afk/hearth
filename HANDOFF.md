@@ -24,7 +24,9 @@ blockers: []
 - **CI PR (QA-R1..R4 of the review, ENG-R8):** `test-all.sh` runs app Jest, typecheck and both browser suites; a new CI job runs e2e:demo and e2e:web on every PR; the CI 3x rerun includes app Jest; e2e scripts find the browser without a hard-coded path; e2e/package.json carries the repo's license; sign-media gets a handler test for every branch (bounds, 402 cap, 403/400, PGRST301, no message text in logs, finalize sizes, CORS). Still open from QA-R4: serving the real function on edge-runtime in CI (P2).
 - **CI PR #131 merged** (96729ff); e2e Playwright pinned to ~1.63.0 so CI's browser matches the sandbox (VID-18 failed on 1.56).
 - **SEC-R1 PR:** migration 0027 keeps group titles with the parents (managers) in the raw API and the data export; relatives see only Everyone and event groups they're in. Merged as a file only: NOT deployed. `deploy.sh` applies every unapplied migration, so Chase's next "deploy" ships 0026 and 0027 together.
-- **Next exact step (after that):** ENG-R5 (demo code out of real builds), then the summary for Chase.
+- **SEC-R1 PR #132 merged** (73f541f), migration file only.
+- **ENG-R5 PR:** the Fake backend, the sample family and the laptop demo frame now ship only in fake and demo builds. Metro swaps `fakeRuntime` and `demo/DemoChrome` for `.off` stand-ins unless `EXPO_PUBLIC_HEARTH_FAKE` or `EXPO_PUBLIC_HEARTH_DEMO` is set; a real web export has no FakeBackend, sample family or demo strings.
+- **Next exact step (after that):** the summary for Chase; open P2s are in `docs/reviews/2026-11-19-tech-debt/README.md`.
 
 ## Nov 19: demo bar review, no bar on a laptop (Chase, DEC-71, R60; branch claude/project-thread-mmmmnh, PR)
 - **Chase:** "do we need the demo bar?" and its portfolio link went to an old page. Picked "Laptop off, phone stays slim".
