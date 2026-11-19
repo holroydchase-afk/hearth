@@ -10,6 +10,10 @@ waiting_on_chase:
 blockers: []
 -->
 
+## Nov 19: Share is a postcard, specced (Chase, DEC-72, R61, SHARE-PC-1..14; branch claude/project-thread-4ulu9i)
+- **Chase:** "This all looks great to me. proceed with the build" (00:27 ET) on direction B of the Share tester; no autoselect of the audience. Spec `SPEC-REDESIGN.md` 1j, persona check `decisions/2026-11-19-share-postcard.md` (LG Red, mitigated). Amends DEC-39 (one note, no new titles) and BETA-BULK-3 (nothing pre-picked).
+- **Next exact step:** qa-tdd writes SHARE-PC-1..13 red (`sharePostcard.test.tsx`, demo e2e); old tests that expect a pre-ticked audience or the Title field (`share`, `bulk`, `video`, `redesignPolish`) get retargeted, not deleted. Needs a `nav.goFeed`.
+
 ## Nov 19: demo bar review, no bar on a laptop (Chase, DEC-71, R60; branch claude/project-thread-mmmmnh, PR)
 - **Chase:** "do we need the demo bar?" and its portfolio link went to an old page. Picked "Laptop off, phone stays slim".
 - **Done, test-first:** DEMO-LINK-1 (`PORTFOLIO_URL` = `https://chaseholroyd.com/#p-hearth`, the portfolio's case study dialog; `family-photos.html` is orphaned, old nav), DEMO-LINK-2 (badge reads DEMO; small caps drew "DEмо"), DEMO-BAR-LAPTOP-1 (`DemoChrome`: at `WIDE` no bar, `DemoActions` in the `DemoFrame` panel under Try this; Try this step 2 says "below"). Phone unchanged apart from the link and badge.

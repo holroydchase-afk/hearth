@@ -136,7 +136,20 @@ describe('GUX-R1 a top-left "‹ More" / "‹ Gallery" back button', () => {
 
 /** Every boxed thing (its own border, or a fill unlike the box around it) that holds words and sits inside another
  *  box. The screen's own background is not a box. The few filled accent / red buttons (RD-7) are allowed. */
-function boxesInBoxes(): string[] {
+/** DEC-72: Share opens the picker itself or shows a "Pick photos" button; either way, get to "New post". */
+async function openNewPost(kv?: ReturnType<typeof memoryKV>) {
+  const r = await renderApp(<ShareScreen />, { user: 'chase', kv });
+  const pick = r.deps.pickPhotos as jest.Mock;
+  await waitFor(() => {
+    const btn = screen.queryAllByRole('button', { name: /^Pick photos/ })[0];
+    if (btn && !pick.mock.calls.length) fireEvent.press(btn);
+    expect(pick.mock.calls.length).toBeGreaterThan(0);
+  }, slow);
+  await screen.findByRole('header', { name: 'New post' }, slow);
+  return r;
+}
+
+function boxesInBoxes(skip?: Inst): string[] {
   const c = light();
   const allowed = new Set([c.accent, c.danger]);
   const fillOf = (n: Inst) => {
@@ -153,6 +166,7 @@ function boxesInBoxes(): string[] {
   const out: string[] = [];
   for (const n of screen.UNSAFE_root.findAll((x: Inst) => isView(x)) as Inst[]) {
     if (!n.findAll((x: Inst) => x.type === Text).length) continue;
+    if (skip) { let inSkip = false; for (let p: Inst | null = n; p; p = p.parent) if (p === skip) { inSkip = true; break; } if (inSkip) continue; }
     if (allowed.has(String(flat(n.props.style).backgroundColor))) continue;
     let outer: Inst | null = null;
     for (let p = n.parent; p; p = p.parent) if (isView(p) && isBox(p, null)) { outer = p; break; }
@@ -177,14 +191,11 @@ describe('GUX-R2 plain grouped rows, one level: no box inside a box', () => {
     expect(boxesInBoxes()).toEqual([]);
   });
 
-  it('GUX-R2 Share: "Who can see it" rows and the Pick photos section have no boxes inside them', async () => {
-    const kv = memoryKV();
-    await saveLastAudience(kv, FIXTURE.users.chase.id, [dadSide.id]);
-    await renderApp(<ShareScreen />, { user: 'chase', kv });
-    await screen.findByRole('checkbox', { name: "Grandparents – Dad's side, 3 people" });
-    fireEvent.press(screen.getByRole('button', { name: 'Pick photos from your phone' }));
-    await screen.findByText('1 photo picked');
-    expect(boxesInBoxes()).toEqual([]);
+  // Retargeted Nov 19 by qa-tdd for DEC-72 (SHARE-PC-1): the postcard is the one box on Share by design; nothing
+  // outside it is a box inside a box.
+  it('GUX-R2 DEC-72 Share: the postcard is the only box; nothing outside it nests boxes', async () => {
+    await openNewPost();
+    expect(boxesInBoxes(screen.getByTestId('share-card'))).toEqual([]);
   });
 });
 
@@ -403,14 +414,16 @@ describe('GUX-R9 neutral avatars and accent check marks', () => {
     for (const name of ['Light screen', 'Dark screen']) expect({ name, check: accentCheck(screen.getByRole('radio', { name })) }).toEqual({ name, check: false });
   });
 
-  it('GUX-R9 Share: a picked group has no tinted fill and shows an accent check mark', async () => {
+  // Retargeted Nov 19 by qa-tdd for DEC-72 (SHARE-PC-7/8): nothing is pre-picked, so the tile is tapped first.
+  it('GUX-R9 DEC-72 Share: a tapped face tile has no tinted fill and shows an accent check mark', async () => {
     const kv = memoryKV();
     await saveLastAudience(kv, FIXTURE.users.chase.id, [dadSide.id]);
-    await renderApp(<ShareScreen />, { user: 'chase', kv });
-    const picked = await screen.findByRole('checkbox', { name: "Grandparents – Dad's side, 3 people" });
+    await openNewPost(kv);
+    fireEvent.press(screen.getByLabelText(/^Grandparents – Dad's side, \d+ people, not picked$/));
+    const picked = screen.getByLabelText(/^Grandparents – Dad's side, \d+ people, picked$/);
     expect(neutral(flat(picked.props.style).backgroundColor)).toBe(true);
     expect(accentCheck(picked)).toBe(true);
-    expect(accentCheck(screen.getByRole('checkbox', { name: "Grandparents – Mom's side, 3 people" }))).toBe(false);
+    expect(accentCheck(screen.getByLabelText(/^Grandparents – Mom's side, \d+ people, not picked$/))).toBe(false);
   });
 });
 

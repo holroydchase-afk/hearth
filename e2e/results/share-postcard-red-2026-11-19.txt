@@ -1,0 +1,62 @@
+SHARE-PC-1..13 (DEC-72) red run, qa-tdd, Nov 19 2026, at eceac67 plus the new and retargeted tests (1 run, red on purpose). typecheck: clean.
+
+== jest (5 files) ==
+FAIL src/screens/__tests__/bulk.test.tsx (19.872 s)
+  ● BETA-BULK-3 batch review screen › BETA-BULK-3 DEC-72 "48 photos from 3 days"; the group tapped shows as "Send to: <group>"; one Send for the whole batch
+  ● BETA-BULK-3 batch review screen › BETA-BULK-5 says plainly that videos were skipped
+  ● BETA-BULK-3 batch review screen › BETA-BULK-3/4/6 Send makes 5 posts with their dates and one batch, to the chosen group only
+  ● BETA-BULK-3 batch review screen › CAP-9 one optional Title box on the review: every post in the batch carries it, captions stay empty
+  ● BETA-BULK-3 batch review screen › CAP-9 / CAP-R1 no title is fine: the batch sends untitled, nothing asks for one
+  ● BETA-BULK-3 batch review screen › BETA-BULK-3 "Don't send" goes back without sending anything
+  ● R15 photo helpers on the review screen (SPEC-PHOTO-HELPERS) › HELP-SHOT-1 screenshots are left out with a line, and "Send them too" brings them back
+  ● R15 photo helpers on the review screen (SPEC-PHOTO-HELPERS) › HELP-ALL-1 "Show what we left out" lists them, each with "Put back"; grandparent-safe
+  ● R15 photo helpers on the review screen (SPEC-PHOTO-HELPERS) › HELP-DUP-1 the same photo picked twice is sent once, said in a plain line
+  ● R15 photo helpers on the review screen (SPEC-PHOTO-HELPERS) › HELP-DUP-3/4 a look-alike is left out once the previews are read; "Send it too" puts it back and the count updates
+  ● R15 photo helpers on the review screen (SPEC-PHOTO-HELPERS) › HELP-R4 the family turned both helpers off: nothing is left out and no preview is read
+  ● R15 photo helpers on the review screen (SPEC-PHOTO-HELPERS) › HELP-R4 Hearth turned the screenshot helper off: screenshots go with the rest, repeats are still sent once
+  ● R15 photo helpers on the review screen (SPEC-PHOTO-HELPERS) › HELP-DUP-2 photos sent from this phone show as "already sent" on the next pick, with "Send them again"
+FAIL src/screens/__tests__/redesignPolish.test.tsx (22.958 s)
+  ● GUX-R2 plain grouped rows, one level: no box inside a box › GUX-R2 DEC-72 Share: the postcard is the only box; nothing outside it nests boxes
+  ● GUX-R9 neutral avatars and accent check marks › GUX-R9 DEC-72 Share: a tapped face tile has no tinted fill and shows an accent check mark
+FAIL src/screens/__tests__/share.test.tsx (37.225 s)
+  ● Share screen › DEC-72 SHARE-PC-7 (was BETA-AUD-2 / B8 preselect): THIS user's last group is not ticked any more
+  ● Share screen › B8 never another user's default on a shared phone; Send stays off with no group
+  ● Share screen › BETA-SHARE-1 DEC-72 pick → note → tap a group → Send: it sends to that group only and lands on Feed
+  ● Share screen › BETA-SHARE-4: shows "Waiting to send" when there is no signal
+  ● Share screen › HARD-2 picking more than 10 says plainly how many were left out
+  ● Share screen › HARD-3 no group to send to is said in words, not a dead end
+  ● Share screen › is grandparent-safe
+FAIL src/screens/__tests__/sharePostcard.test.tsx (91.331 s)
+  ● SHARE-PC-1 one "New post" page holding a card › SHARE-PC-1 the card (c.surface, photo shadow) holds the big photo, the note, a dashed c.line divider and To:, in that order; nothing but the pinned button below it
+  ● SHARE-PC-2 the big photo, thumbnails and Add › SHARE-PC-2 3 photos: "1 of 3", thumbnails, tapping one makes it "2 of 3"; Add (48 pt, word under the icon) reopens the picker
+  ● SHARE-PC-2 the big photo, thumbnails and Add › SHARE-PC-2 HARD-2 Add keeps the 10 max and says how many were left out
+  ● SHARE-PC-2 the big photo, thumbnails and Add › SHARE-PC-2 one photo: no "1 of 1"
+  ● SHARE-PC-3 one note field, no title › SHARE-PC-3 exactly one text field, "Add a note (optional)" with its label always shown; no Title, no "What's happening?"
+  ● SHARE-PC-3 one note field, no title › SHARE-PC-3 Send saves the note as the caption and title null; an empty note sends caption null
+  ● SHARE-PC-4 old titles still show; new posts have none › SHARE-PC-4 an old post's title shows on Feed; a post sent from the postcard shows no title line
+  ● SHARE-PC-5 face tiles inside the card (parents) › SHARE-PC-5 Everyone and 5 groups: 6 tiles in the card, Everyone first, each "<name>, N people, not picked", 3 across, no sideways scroll
+  ● SHARE-PC-5 face tiles inside the card (parents) › SHARE-PC-5 Easy view On: 2 across
+  ● SHARE-PC-6 a relative who can post sees people, never group names › SHARE-PC-6 tiles and the To: line name people (≤2, then "and N more"); no group name anywhere; no Everyone (BETA-AUD-21)
+  ● SHARE-PC-7 nothing is picked at the start › SHARE-PC-7 a saved last audience ticks nothing: every tile "not picked", the To: line is just "To:"
+  ● SHARE-PC-7 nothing is picked at the start › SHARE-PC-7 bulk: a saved last audience ticks nothing on the review either; Send waits
+  ● SHARE-PC-8 tapping a tile picks it › SHARE-PC-8 tap: "picked", accent check and accent border (not color alone); tap again: "not picked"
+  ● SHARE-PC-9 the To: line names the people › SHARE-PC-9 unit: ≤2 names, then "and N more"
+  ● SHARE-PC-9 the To: line names the people › SHARE-PC-9 Everyone gives "Everyone in the family"; two groups give the union of their people (not me), each once
+  ● SHARE-PC-10 the pinned button › SHARE-PC-10 nothing picked: "Pick who gets it", off; a pick: "Send to <names>", on
+  ● SHARE-PC-10 the pinned button › SHARE-PC-10 the button sits outside the scrolling page (pinned above the keyboard and tab bar)
+  ● SHARE-PC-11 Send lands on Feed › SHARE-PC-11 Send queues the post to the picked groups, goes to Feed (not Gallery) and says "Shared with <names>."
+  ● SHARE-PC-12 a send error keeps everything › SHARE-PC-12 the notice shows on the page; photos, note and picks stay; no Feed
+Tests:       41 failed, 1 todo, 38 passed, 80 total
+Snapshots:   0 total
+
+== jest video.test.tsx ==
+Tests: 8 passed, 8 total
+
+== e2e:demo -g 'SHARE-PC-13|RR-14' ==
+  ✘  1 e2e-web/demo.spec.js:79:1 › RR-14 add a photo, reload keeps it, Start over brings back the sample family (16.7s)
+  ✘  2 e2e-web/demo.spec.js:759:1 › SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to ...", Feed says "Shared with ..."; Jo sees names only (16.6s)
+    Error: expect(locator).toBeVisible() failed
+      - waiting for getByRole('heading', { name: 'New post' })
+    Error: expect(locator).toBeVisible() failed
+      - waiting for getByRole('heading', { name: 'New post' })
+  2 failed

@@ -1,6 +1,6 @@
 # Hearth tracker: what's next, what's missing, what's pending
 
-The one list of everything open between Chase and Claude. Updated Nov 18, 2026.
+The one list of everything open between Chase and Claude. Updated Nov 19, 2026.
 
 **How it works**
 - Work the **Sequence** top to bottom. One step at a time; nothing new gets built until milestone 1 passes (Chase, Oct 17).
@@ -78,6 +78,7 @@ The freeze is lifted (DEC-28). Ranked by staff-pm from `docs/product/reviews/202
 | R58 | Paper light page Linen `#F7F7F4` (Chase Nov 19, DEC-69, RD-105), from a picker of six near-whites; Barely warm `#F9F9F7` kept as runner-up | P2 | XS | ☐ Nov 19: tests retargeted (red), built, jest 3x and typecheck; PR open, waits on Chase's "merge" |
 | R59 | iPhone tab bar (Chase Nov 19, DEC-70, RD-106/107): the phone's own bar with Easy view Off (glass on iOS 26, classic before; icons only, spoken names), Hearth's fixed bar with words with Easy view On | P2 | S | ☐ Nov 19: tests red, built, jest 3x and typecheck; in the R58 PR. Next: Chase checks on his iPhone (Expo Go) after merge; switching Easy view resets to Gallery |
 | R60 | Demo bar review (Chase Nov 19, DEC-71): laptop has no bar, Grandma Jo and Reset in the story panel; phone keeps the slim bar; ways back open `chaseholroyd.com/#p-hearth` (was the old `family-photos.html`); DEMO badge in real capitals | P2 | XS | ☐ Nov 19: tests red, built, demo e2e green; PR open, waits on Chase's "merge", then live check fresh and returning. Portfolio still serves the orphaned `family-photos.html` (Product Studio intake holroydchase-afk.github.io#75) |
+| R61 | Share is a postcard (Chase Nov 19, DEC-72; `SPEC-REDESIGN.md` 1j, SHARE-PC-1..14): one "New post" card with big photo, "1 of N", thumbnails + Add, one "Add a note (optional)" field, To: face tiles inside the card (3 across, 2 in Easy view; names only for non-parents), nothing pre-picked, pinned "Send to <names>", lands on Feed with "Shared with <names>." Order: qa-tdd red, engineer, grandparent-ux on shots, privacy-security on the names-only rule, SHARE-PC-14 on phones. Stop: not merged and phone-checked by Sat Nov 21, the beta ships today's Share with no pre-tick (SHARE-PC-7 alone) | P1 | M | ☐ Nov 19: specced, persona check done (LG Red, mitigated). Next: qa-tdd red |
 | R14 | npm audit: recheck the Expo CLI build-tool findings after the next Expo patch (RV-X4) | P2 | S | ☑ Oct 21: still 62 from 5 advisories on expo 57.0.30 (newest SDK 57 patch). One ships: decode-uri-component in expo-router (a crafted link could freeze the app; no data exposed). No forced override; recheck at the SDK 58 move (Oct 26: moved to SDK 58; recheck in the next PR) |
 
 ## Sequence to milestone 1

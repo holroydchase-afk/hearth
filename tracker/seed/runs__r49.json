@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-19T00:45:00-05:00",
+ "label": "Share is a postcard (SHARE-PC-1..SHARE-PC-13, DEC-72): tests written first (red)",
+ "passed": 38,
+ "failed": 41,
+ "results": {},
+ "note": "Red on purpose, 1 run at eceac67 plus the new and retargeted tests, typecheck clean. Only the new and touched files run. jest: new screens/__tests__/sharePostcard.test.tsx 19 failed (18 stop at no 'New post' page, SHARE-PC-9 unit has no share/postcard.ts; SHARE-PC-7 bulk sees the last group pre-ticked); retargeted share.test.tsx 7 failed (no 'New post'), bulk.test.tsx 13 failed (last group pre-ticked, list closed), redesignPolish.test.tsx 2 failed (GUX-R2, GUX-R9 Share); video.test.tsx 8 passed (VID-21 tap works on today's code). e2e:demo -g SHARE-PC-13 and retargeted RR-14: 2 failed, files set, no 'New post' heading. Full suites, e2e:web, backend, Deno not run. e2e/results/share-postcard-red-2026-11-19.txt"
+}

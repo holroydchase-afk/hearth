@@ -28,7 +28,8 @@ export async function renderApp(ui: ReactElement, opts: { user?: FixtureUser | n
   be.state.appSession = opts.userId ?? (user ? FIXTURE.users[user as FixtureUser].id : null);
   const api = be.clientFor(null, { trackAppSession: true });
   const kv = opts.kv ?? memoryKV();
-  const nav: jest.Mocked<Nav> = { openViewer: jest.fn(), close: jest.fn(), goPhotos: jest.fn(), goSignIn: jest.fn(), goJoin: jest.fn() };
+  // SHARE-PC-11 (DEC-72): Send lands on Feed through nav.goFeed(); typed loosely until Nav gains it.
+  const nav: jest.Mocked<Nav & { goFeed(): void }> = { openViewer: jest.fn(), close: jest.fn(), goPhotos: jest.fn(), goFeed: jest.fn(), goSignIn: jest.fn(), goJoin: jest.fn() };
   const deps: AppDeps = {
     api, kv, helpPhone: '+1 304 555 0100',
     prepare: jest.fn(async () => preparedFixture()),

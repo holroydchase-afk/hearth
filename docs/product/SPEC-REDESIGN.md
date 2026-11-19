@@ -183,6 +183,25 @@ Chase, Nov 18: "I do not like the warm theme" (DEC-67's tan was a misread); then
 | RD-107 | Given the iPhone's own bar, then labels are hidden (icons only, DEC-66), each tab's spoken name is its word ("More, new message" with the dot), no Hearth background color is set so the system glass shows, and it never shrinks on scroll (DS-5). | auto (jest unit) + manual VoiceOver |
 | RD-104 | Given any theme, light or dark, then the tab bar is set apart from the page: its background is `c.surface` (not `c.bg`) and it has a 1 px top border in `c.line`. Easy view and icon-only tab bars both (DEC-66). RD-87's tab bar line is replaced by this. | auto (jest style check + Playwright in RD-102) |
 
+### 1j. Share is a postcard (Chase, Nov 19, DEC-72)
+Chase, Nov 19 00:27 ET, on direction B of `/mnt/project-files/design/share-redo-2026-11-19/share-tester.html`: "This all looks great to me. proceed with the build"; no autoselect of the audience. Persona check `decisions/2026-11-19-share-postcard.md`. Amends DEC-39 (one note, no title on new posts) and BETA-BULK-3 (nothing pre-picked). Unchanged: upload queue and progress, bulk review (parents), photo helpers, error notices (`messageFor`), HARD-2's 10-photo max and its notice, BETA-AUD-21 (only parents get Everyone). `audienceMemory` may stay but never ticks anything. Tests (written first, red): `app/src/screens/__tests__/sharePostcard.test.tsx`, `app/e2e-web/demo.spec.js` (SHARE-PC-13).
+| ID | Given / When / Then | Type |
+|---|---|---|
+| SHARE-PC-1 | Given photos picked in the phone's picker, then one page titled "New post" shows a card (`c.surface`, the photo shadow) holding, top to bottom: the big photo, the note field, a dashed `c.line` divider and the "To:" section. No other section sits below the card except the pinned button. | auto (jest) |
+| SHARE-PC-2 | Given 3 photos, then the big photo reads "1 of 3"; a row of small thumbnails follows with an "Add" tile (48 pt, word under the icon); tapping a thumbnail makes it the big photo ("2 of 3"); Add reopens the picker and keeps the 10 max with HARD-2's notice. With 1 photo there is no "1 of 1". | auto (jest) |
+| SHARE-PC-3 | Given the page, then there is exactly one text field, labelled "Add a note (optional)" (label always visible, 17 pt+); no "Title" and no "What's happening?" field. Sending saves the note as the caption and `title` as null; an empty note sends `caption: null`. | auto (jest) |
+| SHARE-PC-4 | Given an old post with a title, then Feed and the viewer still show it, and Change words still edits it; a post made after this change shows no title line. | auto (jest) |
+| SHARE-PC-5 | Given a parent with Everyone and 5 groups, then the To: section shows 6 face tiles inside the card, Everyone first, in a grid 3 across (2 across with Easy view On); each tile has a face stack (≤3 faces), its name and "N people", is ≥48 pt, and reads aloud "<name>, N people, not picked". All fit without sideways scroll at 393 pt and at the largest text. | auto (jest) |
+| SHARE-PC-6 | Given a relative who can post (viewer or anyone not owner/adult), then each tile's name is its people (≤2 names, then "and N more"), never a group's name, in the tile, its spoken label or the To: line; Everyone is not offered (BETA-AUD-21). | auto (jest) |
+| SHARE-PC-7 | Given a saved last audience in `audienceMemory`, when the page opens (single or bulk), then no tile is picked and the To: line reads "To:" with nothing after it. | auto (jest) |
+| SHARE-PC-8 | When a tile is tapped, then it shows picked (accent check and border, not color alone) and reads "picked"; tapping again un-picks. | auto (jest) |
+| SHARE-PC-9 | Given picks, then the To: line names the people: Everyone gives "Everyone in the family"; otherwise the union of names, ≤2 then "and N more" (e.g. "Gammy, Pawpaw and 3 more"). | auto (jest unit) |
+| SHARE-PC-10 | Given nothing picked, then the pinned button reads "Pick who gets it" and is off; given a pick and at least one photo, it reads "Send to <names>" (same wording as SHARE-PC-9) and is on. It stays above the keyboard and the tab bar. | auto (jest) |
+| SHARE-PC-11 | When Send is tapped, then the post goes through today's upload queue (`queue.enqueue`, same audience ids), the app lands on Feed with the new post on top (its progress showing as today), and a line reads "Shared with <names>." | auto (jest) |
+| SHARE-PC-12 | Given a send error, then today's notice shows on the page, the photos, note and picks are kept, and nothing lands on Feed. | auto (jest) |
+| SHARE-PC-13 | Public demo (393 px) as Chase: pick 3 photos, see "1 of 3", no tile picked, button off; tap two groups, button reads "Send to ..."; send; Feed shows the post first with "Shared with ...". Grandma Jo's view shows names only. Screenshots light, dark and Easy view saved. | auto (Playwright) |
+| SHARE-PC-14 | On Chase's iPhone (Expo Go) and one Android: send to one group with a note in under 60 s without help; tiles and button readable in Easy view; the keyboard never hides the button. | manual |
+
 ### Phase 1 gate (manual)
 | ID | Given / When / Then | Type |
 |---|---|---|
