@@ -20,7 +20,9 @@ blockers: []
 - **UX PR (TD-UX-R2/R3/R5/R6):** the Notice timing card shows only in debug builds; Help drops the wrong "You can look at photos and write back." line; the demo's Help hides Sign out and Take me off; Sign out and Take me off use one confirm dialog (Stay signed in / Sign out, Stay on Hearth / Take me off) and the old `Confirm` component is gone.
 - **UX PR #128 merged** (1a20756), with QA-R1 (the fake web e2e config now ignores every demo-only spec).
 - **Privacy and speed PR (SEC-R2, ENG-R7, ENG-R3):** the app no longer records who looked at a post (A2; threat model and API notes updated; the server's `mark_seen` stays until a migration removes it); `setReaction` drops the pre-0017 fallback (0017 is live); post cards follow only their own comments and draft, so typing in one comment box no longer redraws every card.
-- **Next exact step (after that):** CI runs the app e2e suites (QA-R2, QA-R3, ENG-R8) with sign-media tests (QA-R4), SEC-R1 migration 0027 (deploy needs Chase), ENG-R5 (demo code out of real builds).
+- **Privacy and speed PR #130 merged** (c61f1be).
+- **CI PR (QA-R1..R4 of the review, ENG-R8):** `test-all.sh` runs app Jest, typecheck and both browser suites; a new CI job runs e2e:demo and e2e:web on every PR; the CI 3x rerun includes app Jest; e2e scripts find the browser without a hard-coded path; e2e/package.json carries the repo's license; sign-media gets a handler test for every branch (bounds, 402 cap, 403/400, PGRST301, no message text in logs, finalize sizes, CORS). Still open from QA-R4: serving the real function on edge-runtime in CI (P2).
+- **Next exact step (after that):** SEC-R1 migration 0027 (deploy needs Chase), ENG-R5 (demo code out of real builds).
 
 ## Nov 19: demo bar review, no bar on a laptop (Chase, DEC-71, R60; branch claude/project-thread-mmmmnh, PR)
 - **Chase:** "do we need the demo bar?" and its portfolio link went to an old page. Picked "Laptop off, phone stays slim".
