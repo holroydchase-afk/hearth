@@ -4,7 +4,7 @@
 // hiring manager: what Hearth is, who it's for, what to try. On a phone it's just the app.
 // UI-2: the phone sits centred with a soft shadow, and the panel ends in proof points and one link.
 import React, { type ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Txt } from '../ui/kit';
 import { BigTextContext, useTheme } from '../ui/theme';
 import { PORTFOLIO_URL } from './DemoBar';
@@ -31,7 +31,7 @@ export function DemoFrame({ width, children, open = () => {}, controls }: {
     <View testID="demo-frame" style={[styles.row, { backgroundColor: c.bg }]}>
       {/* DEMO-EASY-1: Easy view (Grandma Jo) enlarges only the app in the phone column, never this panel. */}
       <BigTextContext.Provider value={false}>
-      <View style={styles.panel}>
+      <ScrollView style={styles.panel} contentContainerStyle={styles.panelWords}>
         <Txt variant="muted">Hearth (working name) · demo</Txt>
         <Txt variant="display" role="header">A private photo app for split families</Txt>
         <Txt>Every photo goes only to the people you pick, by name. Built for grandparents who stay off social media: big text, words under every icon, no passwords.</Txt>
@@ -45,7 +45,7 @@ export function DemoFrame({ width, children, open = () => {}, controls }: {
         {controls}
         <Button variant="quiet" role="link" label="Read the case study on chaseholroyd.com" text="Read the case study" onPress={() => open(PORTFOLIO_URL)} style={styles.cta} />
         <Txt variant="muted">Built test-first by Chase Holroyd, a product manager, with a team of AI agents. The family here is made up and stays in this browser.</Txt>
-      </View>
+      </ScrollView>
       </BigTextContext.Provider>
       <View
         testID="demo-app-column"
@@ -59,7 +59,10 @@ export function DemoFrame({ width, children, open = () => {}, controls }: {
 
 const styles = StyleSheet.create({
   row: { flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 56, padding: 24 },
-  panel: { width: 420, gap: 16, justifyContent: 'center' },
+  // TD-UX-R1: on a short laptop screen the panel scrolls inside its own column instead of being cut top and bottom.
+  // The row centers it; maxHeight keeps it inside the row, so its top line is never above the screen.
+  panel: { width: 420, maxHeight: '100%', flexGrow: 0 },
+  panelWords: { gap: 16 },
   proof: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   pill: { borderWidth: StyleSheet.hairlineWidth, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
   cta: { alignSelf: 'flex-start' },

@@ -35,7 +35,8 @@ export interface AppDeps {
   videoFiles?: VideoFiles | null;
 }
 
-export type AppStatus = 'loading' | 'signedOut' | 'noSpace' | 'ready';
+/** offline (ENG-R1): signed in, but the family couldn't be read and this phone has none saved. */
+export type AppStatus = 'loading' | 'signedOut' | 'noSpace' | 'offline' | 'ready';
 
 export interface AppValue {
   status: AppStatus;
@@ -82,6 +83,14 @@ export function useFeed(): FeedState {
     feed ? feed.getState : () => EMPTY_FEED,
     feed ? feed.getState : () => EMPTY_FEED,
   );
+}
+
+/** ENG-R3: one slice of the feed. The component redraws only when that slice changes (by reference), so a post
+ *  card follows its own comments and draft instead of every change to the whole feed. */
+export function useFeedSelect<T>(select: (s: FeedState) => T): T {
+  const { feed } = useApp();
+  const get = feed ? () => select(feed.getState()) : () => select(EMPTY_FEED);
+  return useSyncExternalStore(feed ? feed.subscribe : noopSubscribe, get, get);
 }
 
 const noopSubscribe = () => () => {};
@@ -147,13 +156,21 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
       setS(SIGNED_OUT);
       return;
     }
-    let spaces: Space[] = [];
+    // ENG-R1: only an empty, successful answer means "no family". A failed read (no signal, a server error)
+    // opens the family this phone opened last, so the saved feed shows; with none saved, say so and retry.
+    const savedKey = lastSpaceKey(session.userId);
+    let space: Space | null;
     try {
-      spaces = await deps.api.mySpaces();
+      space = (await deps.api.mySpaces())[0] ?? null;
+      if (space) void deps.kv.setItem(savedKey, JSON.stringify(space)).catch(() => {});
+      else void deps.kv.removeItem(savedKey).catch(() => {});
     } catch {
-      spaces = [];
+      space = await deps.kv.getItem(savedKey).then((v) => (v ? (JSON.parse(v) as Space) : null)).catch(() => null);
+      if (!space) {
+        setS({ ...SIGNED_OUT, status: 'offline', session });
+        return;
+      }
     }
-    const space = spaces[0] ?? null;
     if (!space) {
       setS({ ...SIGNED_OUT, status: 'noSpace', session });
       return;
@@ -208,11 +225,12 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
   useEffect(() => {
     const sub = AppState.addEventListener('change', (st) => {
       if (st !== 'active') return;
+      if (live.current.status === 'offline') { void load(); return; }
       live.current.queue?.kick();
       void live.current.feed?.refresh();
     });
     return () => sub.remove();
-  }, []);
+  }, [load]);
 
   const setPrefs = useCallback((p: Partial<Prefs>) => {
     setS((cur) => {
@@ -259,6 +277,7 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
     if (who) await clearArrivals(deps.kv, who);
     const space = live.current.space?.space_id;
     if (who && space) await clearFeedCache(deps.kv, who, space);
+    if (who) await deps.kv.removeItem(lastSpaceKey(who)).catch(() => {});
     await live.current.media?.clearDisk().catch(() => {});
     await deps.api.signOut().catch(() => {});
     setS(SIGNED_OUT);
@@ -292,6 +311,7 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
 }
 
 const pushSkipKey = (userId: string) => `hearth.pushAsk.skipped.${userId}`;
+const lastSpaceKey = (userId: string) => `hearth.lastSpace.${userId}`;
 
 /** HIG-7 / HIG-8: follow the phone's Increase Contrast (iPhone: darker system colors; Android: high contrast
  *  text) and Reduce Motion, live, so Hearth's own colors and sheets change with the phone. */

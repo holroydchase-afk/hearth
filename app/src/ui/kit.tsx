@@ -334,27 +334,6 @@ export function Notice({ text, onClose, tone = 'info' }: { text: string; onClose
   );
 }
 
-/** In-app confirm in the shape of the phone's own alert (iPhone) or dialog (Material), not Alert.alert:
- *  the system ones use 13–14 pt buttons on Android (DS-2), don't work on the web, and can't be tested. */
-export function Confirm({ visible, title, body, yes, no, onYes, onNo }: {
-  visible: boolean; title: string; body?: string; yes: string; no: string; onYes: () => void; onNo: () => void;
-}) {
-  const { c, os } = useTheme();
-  if (!visible) return null;
-  return (
-    <Modal transparent visible animationType="fade" onRequestClose={onNo}>
-      <View style={[styles.scrim, { backgroundColor: c.scrim }]}>
-        <View accessibilityViewIsModal style={[styles.sheet, { backgroundColor: c.surface, borderRadius: dialogRadius(os) }]}>
-          <Txt variant="title" role="header">{title}</Txt>
-          {body ? <Txt>{body}</Txt> : null}
-          <Button label={yes} variant="danger" onPress={onYes} />
-          <Button label={no} variant="secondary" onPress={onNo} />
-        </View>
-      </View>
-    </Modal>
-  );
-}
-
 /** RD-67 (UX-R24): an iOS-style alert over the screen: a short title, then two plain text buttons side by side with no
  *  fill. The safe choice (`keep`) is Semibold, the default; the destructive one is red Regular words (RD-72). */
 export function AlertDialog({ title, body, keep, destroy, onKeep, onDestroy }: {

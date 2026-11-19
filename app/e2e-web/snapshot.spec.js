@@ -53,7 +53,7 @@ for (const phone of PHONES) {
     await page.getByRole('button', { name: 'Sign out of Hearth' }).click();
     await page.waitForTimeout(300);
     await shot('06-confirm');
-    await page.getByRole('button', { name: 'Yes, sign out' }).click();
+    await page.getByRole('button', { name: 'Sign out', exact: true }).click();
 
     await page.goto('/join/GRANDMAJ23');
     await expect(page.getByText('Chase invited you to see the family photos.')).toBeVisible();

@@ -4,11 +4,17 @@
 // Read from this phone only; "Copy the report" is the only way it leaves, and only by choice.
 import React, { useState } from 'react';
 import { Share } from 'react-native';
+import { debugEnabled } from '../errors/problemLog';
 import { loadArrivals, timingReport } from '../notify/latency';
 import { useApp } from '../state/AppContext';
 import { Button, GroupedSection, Txt } from '../ui/kit';
 
+/** TD-UX-R2: a test tool, so only in debug builds (EXPO_PUBLIC_HEARTH_DEBUG=1), like Problem details. */
 export function NoticeTiming() {
+  return debugEnabled() ? <NoticeTimingCard /> : null;
+}
+
+function NoticeTimingCard() {
   const app = useApp();
   const [text, setText] = useState<string | null>(null);
   const show = async () => {
