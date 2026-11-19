@@ -111,8 +111,30 @@ test('HARD-7 storage blocked (private window, strict cookie settings): the demo 
   expect(mine).toEqual([]);
 });
 
-// DEMO-BAR (intake #82, pm-tools docs/DEMO-BANNER.md "Done when").
-for (const width of [390, 1280]) {
+// DEMO-BAR-LAPTOP-1 (Chase, Nov 19): on a laptop the story panel already says "demo", so the bar is gone and
+// Grandma Jo's view and Reset sit in the panel under Try this. The phone keeps the slim bar.
+test('DEMO-BAR-LAPTOP-1 at 1280 px: no demo bar; Grandma Jo and Reset work from the story panel', async ({ page }) => {
+  const mine = []; // its own list: the shared one already holds HARD-7's deliberate storage errors
+  page.on('pageerror', (e) => mine.push(String(e)));
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await expect(page.getByRole('region', { name: 'Demo' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Demo details' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: /, Chase$/ })).toBeVisible();
+  await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+  await expect(page.getByRole('heading', { name: /, Grandma Jo$/ })).toBeVisible();
+  await page.getByRole('button', { name: "Back to Chase's view, the parent" }).click();
+  await expect(page.getByRole('heading', { name: /, Chase$/ })).toBeVisible();
+  await page.getByRole('button', { name: 'Reset demo' }).click();
+  await page.getByRole('button', { name: 'Reset', exact: true }).click();
+  await galleryLoaded(page);
+  await expect(page.getByText('Sample data restored.')).toBeVisible();
+  expect(mine).toEqual([]);
+});
+
+// DEMO-BAR (intake #82, pm-tools docs/DEMO-BANNER.md "Done when"). Phone only since DEMO-BAR-LAPTOP-1.
+for (const width of [390]) {
   test(`DEMO-BAR at ${width} px: collapsed and slim, pushes the app down, Esc closes, Hearth's font and no accent badge`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('/');

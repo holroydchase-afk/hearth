@@ -29,13 +29,7 @@ export function DemoBar({ be, reload, startOver, open, restored = false }: {
   // The bar's own width: on a laptop it sits in the phone-wide app column, not the whole window.
   const [width, setWidth] = useState(useWindowDimensions().width);
   const [expanded, setExpanded] = useState(restored);
-  const [asking, setAsking] = useState(false);
   const toggleRef = useRef<React.ComponentRef<typeof Pressable>>(null);
-  const viewer = demoViewer(be);
-  const swap = () => {
-    setDemoViewer(be, viewer === 'parent' ? 'grandma' : 'parent');
-    reload();
-  };
 
   // Esc closes the drawer and puts focus back on Details (WAI-ARIA disclosure).
   useEffect(() => {
@@ -43,7 +37,6 @@ export function DemoBar({ be, reload, startOver, open, restored = false }: {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
       setExpanded(false);
-      setAsking(false);
       (toggleRef.current as unknown as { focus?: () => void } | null)?.focus?.();
     };
     document.addEventListener('keydown', onKey);
@@ -77,7 +70,7 @@ export function DemoBar({ be, reload, startOver, open, restored = false }: {
           aria-expanded={expanded}
           aria-controls={DRAWER_ID}
           accessibilityState={{ expanded }}
-          onPress={() => { setExpanded(!expanded); setAsking(false); }}
+          onPress={() => setExpanded(!expanded)}
           style={styles.toggle}
         >
           <View testID="demo-badge" style={[styles.badge, { borderColor: c.ink, backgroundColor: 'transparent' }]}>
@@ -94,37 +87,54 @@ export function DemoBar({ be, reload, startOver, open, restored = false }: {
         <View nativeID={DRAWER_ID} testID="demo-drawer" style={[styles.drawer, { borderTopColor: c.line }]}>
           {restored && <Txt variant="strong">Sample data restored.</Txt>}
           <Txt style={styles.copy}>{COPY}</Txt>
-          <Txt>{viewer === 'parent' ? "You're Chase, a parent." : "You're Grandma Jo, a grandparent."}</Txt>
+          <DemoActions be={be} reload={reload} startOver={startOver} />
           <View style={styles.actions}>
-            <Button
-              variant="secondary"
-              label={viewer === 'parent' ? 'See the photos as Grandma Jo sees them' : "Back to Chase's view, the parent"}
-              text={viewer === 'parent' ? 'See it as Grandma Jo' : "Back to Chase's view"}
-              onPress={swap}
-            />
-            {asking ? (
-              <View style={[styles.ask, { borderColor: c.line }]}>
-                <Txt>Put the sample data back? Your changes will be lost.</Txt>
-                <View style={styles.askRow}>
-                  <Button style={styles.grow} variant="danger" label="Reset" onPress={startOver} />
-                  <Button style={styles.grow} variant="secondary" label="Keep" onPress={() => setAsking(false)} />
-                </View>
-              </View>
-            ) : (
-              <Pressable
-                role="button"
-                aria-label="Reset demo"
-                onPress={() => setAsking(true)}
-                style={[styles.outline, { borderColor: c.line }]}
-              >
-                <Txt style={{ color: c.ink }}>Reset demo</Txt>
-              </Pressable>
-            )}
             <Pressable role="link" aria-label="Back to the Hearth case study" onPress={() => open(PORTFOLIO_URL)} style={styles.link}>
               <Txt style={{ color: c.accent }}>← Back to the Hearth case study</Txt>
             </Pressable>
           </View>
         </View>
+      )}
+    </View>
+  );
+}
+
+/** Who you are, Grandma Jo's view (DEMO-10) and Reset demo (asks first). In the phone's Details drawer, and in the
+ * laptop's story panel since DEMO-BAR-LAPTOP-1 (Chase, Nov 19: no bar on a laptop). */
+export function DemoActions({ be, reload, startOver }: { be: FakeBackend; reload: () => void; startOver: () => void }) {
+  const { c } = useTheme();
+  const [asking, setAsking] = useState(false);
+  const viewer = demoViewer(be);
+  const swap = () => {
+    setDemoViewer(be, viewer === 'parent' ? 'grandma' : 'parent');
+    reload();
+  };
+  return (
+    <View style={styles.actions}>
+      <Txt>{viewer === 'parent' ? "You're Chase, a parent." : "You're Grandma Jo, a grandparent."}</Txt>
+      <Button
+        variant="secondary"
+        label={viewer === 'parent' ? 'See the photos as Grandma Jo sees them' : "Back to Chase's view, the parent"}
+        text={viewer === 'parent' ? 'See it as Grandma Jo' : "Back to Chase's view"}
+        onPress={swap}
+      />
+      {asking ? (
+        <View style={[styles.ask, { borderColor: c.line }]}>
+          <Txt>Put the sample data back? Your changes will be lost.</Txt>
+          <View style={styles.askRow}>
+            <Button style={styles.grow} variant="danger" label="Reset" onPress={startOver} />
+            <Button style={styles.grow} variant="secondary" label="Keep" onPress={() => setAsking(false)} />
+          </View>
+        </View>
+      ) : (
+        <Pressable
+          role="button"
+          aria-label="Reset demo"
+          onPress={() => setAsking(true)}
+          style={[styles.outline, { borderColor: c.line }]}
+        >
+          <Txt style={{ color: c.ink }}>Reset demo</Txt>
+        </Pressable>
       )}
     </View>
   );

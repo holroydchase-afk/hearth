@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-18T22:30:00-05:00",
+ "label": "DEC-71 R60 no demo bar on a laptop (DEMO-BAR-LAPTOP-1) and DEMO-LINK-1/2: all app suites 3x (green)",
+ "passed": 1507,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs each on branch claude/project-thread-mmmmnh (aa11e5d plus uncommitted demo changes), dist-demo rebuilt first: jest 1507 passed (1 skipped, 1 todo) x3, typecheck clean x3, e2e:demo 25 passed x3. Unit tests DEMO-LINK-1/2 and DEMO-BAR-LAPTOP-1 were red before the fix (engineer's run). check-persona-checks and check-agents OK. Backend SQL, Deno, e2e:web, e2e:site, CI and phones not run (demo-only change). e2e/results/demo-bar-laptop-green-3x-2026-11-19.txt"
+}
