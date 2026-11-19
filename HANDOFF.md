@@ -6,9 +6,9 @@ milestone: HRT-M1
 now: tech-debt review Nov 19 (docs/reviews/2026-11-19-tech-debt/): fixing the P0s and P1s in small PRs (TRACKER R62). Main has everything through #124 (demo bar), live
 next: R62 fixes in order (offline family load, demo panel, privacy, UX, perf, CI); then R51 audience-leak eval, R53 operations. Share redo and PR 125 continue in their own threads
 waiting_on_chase:
-  - Merge PR 125 (web glass tab bar)
-  - Say "deploy 0027" once the group-name migration (SEC-R1) is merged
-blockers: []
+  - New Supabase access token in the Hearth cloud environment (SUPABASE_ACCESS_TOKEN); Chase already said "deploy" (Nov 19), so the next session deploys 0026+0027+0028 and Confirm email
+blockers:
+  - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
 ## Nov 19: glass tab bar shrinks on scroll (Chase, DEC-75, RD-110, R64; branch claude/project-thread-ox4dz4, PR)
@@ -23,7 +23,8 @@ blockers: []
 - **privacy-security re-review** (`docs/reviews/2026-11-19-text-sign-in/sec.md`, replaces the lost PRIV-R2..R6): TS-SEC-R1 P1 password sign-up left open (pre-account takeover, phone and maybe email today) fixed by migration 0028 (trigger blanks `auth.users.encrypted_password`) + "Confirm email" on (`config.toml`, `deploy.sh` `mailer_autoconfirm: false`), design `docs/eng/AUTH-NO-PASSWORDS.md` (architect); TS-SEC-R2 P1 project-wide text cap now falls back to email (GoTrue phone.go:73-92: same code, message tells per-number wait apart). TS-SEC-R3..R9 P2 open. QA-R2 open: real-stack (Docker) sign-up tests for R1.
 - **grandparent-ux re-review** (`docs/reviews/2026-11-19-text-sign-in/gux.md`, replaces lost GUX-R3..R6): 6 P1 (TS-GUX-R1 safety line in the text, R2 invite text warns of an unknown-number code, R3 guide sign-in step = BETA-SMS-17, R4 text-cap fallback words, R5 'we will email you' for text accounts, R6 wrong-number phone invite dead end), 11 P2.
 - **TS-GUX-R1..R6 fixed test-first** (text wording in config.toml + Twilio request body, invite text warns of the code and says "invite code", guide Step 1 'type the code yourself' = BETA-SMS-17 doc side, text-cap fallback words, sign-in-again words name no channel unless known, wrong-number phone invite card). TS-GUX-R7..R17 P2 open.
-- **Next exact step:** Chase merges PR #134; then Chase's Twilio sign-up, "deploy" (0026+0027+0028); Claude sets up Verify service, custom text (SMS-PROVIDER request body), per-number rate limits, hosted phone confirmations; BETA-SMS-16 on an iPhone and an Android; Chase's word flips the switch. Then Chase's Twilio sign-up, "deploy" (0026+0027+0028), Verify service + custom text + Verify per-number rate limits, BETA-SMS-16 on an iPhone and an Android.
+- **Nov 19 14:20Z:** PR #134 merged (05cad43) on Chase's "Merge 134 on green then deploy". Deploy dry run listed 0026-0028; the real run stopped at step 1: "Invalid access token" (nothing applied).
+- **Next exact step:** after Chase replaces SUPABASE_ACCESS_TOKEN, a fresh session runs `deploy.sh` (comment-only functions/.env), smoke check, checks hosted `mailer_autoconfirm` is false (PATCH may 403: then Chase toggles Confirm email), and an email sign-in; then Chase's Twilio sign-up, "deploy" (0026+0027+0028); Claude sets up Verify service, custom text (SMS-PROVIDER request body), per-number rate limits, hosted phone confirmations; BETA-SMS-16 on an iPhone and an Android; Chase's word flips the switch. Then Chase's Twilio sign-up, "deploy" (0026+0027+0028), Verify service + custom text + Verify per-number rate limits, BETA-SMS-16 on an iPhone and an Android.
 
 ## Nov 19: Share is a postcard (Chase, DEC-73, R63, SHARE-PC-1..14; branch claude/project-thread-4ulu9i, PR)
 - **Chase:** "This all looks great to me. proceed with the build" (00:27 ET) on direction B of the Share tester (https://claude.ai/artifact/71YN9yYWMt1KYZsqfsXCT4); no autoselect of the audience; one "Add a note (optional)" replaces Title + What's happening (amends DEC-39). Spec `SPEC-REDESIGN.md` 1j, persona check `decisions/2026-11-19-share-postcard.md`.
