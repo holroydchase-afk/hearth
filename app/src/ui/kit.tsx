@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LABEL_SCALE_CAP, MIN_TARGET, RADIUS, WEIGHT, dialogRadius, iconSize, sheetShouldClose, useTheme } from './theme';
 import { useTypingField } from './typing';
+import { useTabBarSpace } from './tabBarSpace';
 
 /** A system symbol: SF Symbol name on iPhone, Material Symbol name on Android and the web. */
 export interface Icon { sf: string; md: string }
@@ -299,12 +300,14 @@ export function GroupedSection({ children, style, testID }: { children: ReactNod
 
 export function Screen({ children, scroll = true, testID }: { children: ReactNode; scroll?: boolean; testID?: string }) {
   const { c } = useTheme();
+  const under = useTabBarSpace(); // RD-109: room under a floating tab bar
+  const room = under ? { paddingBottom: 32 + under } : null;
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }} testID={testID}>
       {scroll ? (
-        <ScrollView contentContainerStyle={styles.screen} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>{children}</ScrollView>
+        <ScrollView contentContainerStyle={[styles.screen, room]} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>{children}</ScrollView>
       ) : (
-        <View style={[styles.screen, { flex: 1 }]}>{children}</View>
+        <View style={[styles.screen, { flex: 1 }, room]}>{children}</View>
       )}
     </SafeAreaView>
   );

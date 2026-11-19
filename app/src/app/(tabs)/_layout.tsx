@@ -9,8 +9,9 @@ import { Platform } from 'react-native';
 import { AppGate } from '../../screens/AppGate';
 import { useNewMessages } from '../../messenger/newMessages';
 import { resetMore } from '../../screens/MoreScreen';
-import { HearthTabBar, NATIVE_TAB_OPTIONS, TAB_ICONS, nativeLabelMode, nativeTabLook, tabsFor, usesNativeTabs, type TabName } from '../../screens/TabBar';
+import { HearthTabBar, NATIVE_TAB_OPTIONS, TAB_ICONS, floatingTabBar, nativeLabelMode, nativeTabLook, tabsFor, usesNativeTabs, type TabName } from '../../screens/TabBar';
 import { useApp } from '../../state/AppContext';
+import { TabBarSpaceContext, TAB_BAR_FLOAT_SPACE } from '../../ui/tabBarSpace';
 import { useTheme } from '../../ui/theme';
 
 // RD-9: Gallery first (RD-10), Share in the middle for parents, then Feed and More.
@@ -53,7 +54,10 @@ export default function TabsLayout() {
     );
   }
 
+  // RD-108 / RD-109: the web's lookalike of iOS 26's floating glass bar (Easy view Off); screens leave room under it.
+  const floating = floatingTabBar(Platform.OS, easyView);
   return (
+    <TabBarSpaceContext.Provider value={floating ? TAB_BAR_FLOAT_SPACE : 0}>
     <Tabs
       screenOptions={{ headerShown: false }}
       tabBar={(props) => (
@@ -61,6 +65,7 @@ export default function TabsLayout() {
           role={role}
           current={props.state.routes[props.state.index]!.name as TabName}
           newMessages={newMessages}
+          floating={floating}
           onNavigate={(t) => {
             if (t === 'more') resetMore(); // tapping More again shows the menu, like the phone's own tabs
             // SDK 58: the tab bar gets navigateToTab(routeKey) instead of navigation.
@@ -74,5 +79,6 @@ export default function TabsLayout() {
         <Tabs.Screen key={name} name={name} options={{ href: allowed.has(name) ? undefined : null }} />
       ))}
     </Tabs>
+    </TabBarSpaceContext.Provider>
   );
 }
