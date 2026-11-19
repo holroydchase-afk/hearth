@@ -36,7 +36,7 @@ Studio standard: follow holroydchase-afk/studio-agents docs/studio-standard.md; 
 
 ## Layout
 - `backend/`: Supabase.
-  - `supabase/migrations/0001`–`0026`: RLS, RPCs, triggers, notification outbox (0003), error reports (0006), family shape (0011), groups v2 (0013), messenger relay (0015), video (0020), start a family (0024), search (0025), text sign-in (0026). What is live on the hosted project: `docs/eng/DEPLOYS.md`.
+  - `supabase/migrations/0001`–`0028`: RLS, RPCs, triggers, notification outbox (0003), error reports (0006), family shape (0011), groups v2 (0013), messenger relay (0015), video (0020), start a family (0024), search (0025), text sign-in (0026), video fixes (0028). What is live on the hosted project: `docs/eng/DEPLOYS.md`.
   - `scripts/`: `deploy.sh` (one-command deploy, `--dry-run`), `family-setup.sh` (fresh family in the 0011 shape + invites, through the Management API, token only), `family-setup.sql` (v1, psql; superseded for fresh setups), `family-setup-v2.sql` (re-seed into the family shape; dry run by default).
   - `functions/notify/`: Deno TS; Expo Push + Resend sender, run by a 1-minute cron.
   - `functions/sign-media/`: Deno TS; presigned Backblaze B2 URLs and per-item keys.

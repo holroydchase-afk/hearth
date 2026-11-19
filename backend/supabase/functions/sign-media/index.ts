@@ -206,13 +206,14 @@ async function handleUpload(req: Request, user: Auth, postId: string, items: Upl
   }
 
   // One SQL call creates the rows. That call does the permission checks
-  // (author + can_post_in_space) and the free-tier video cap (trigger, row lock on space).
+  // (author + can_post_in_space) and the free-tier video cap (trigger, row lock on the uploader's usage row, HF002).
   let prepared: { media_id: string; item_index: number; kind: string; display_key: string; thumb_key: string }[];
   try {
     prepared = await rpc(user, "prepare_media_upload", { p_post: postId, p_items: items });
   } catch (e) {
     if (e instanceof DbError) {
-      if (e.message.includes("free_video_cap_reached")) {
+      // ENG-R11: the cap has its own SQLSTATE (0028); branch on the code, never the message (rule 7).
+      if (e.code === "HF002") {
         return json(req, 402, { error: "free_video_cap_reached", message: "Free spaces can upload 10 videos per month." });
       }
       // FLAG-4: the family's video_posting switch is off (0013, private.feature_on). Signs nothing.
