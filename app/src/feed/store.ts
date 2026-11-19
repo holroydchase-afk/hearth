@@ -53,7 +53,6 @@ export class FeedStore {
   private heartSeq = new Map<string, number>();
   private heartQueue = new Map<string, Promise<void>>();
   private deleting = new Set<string>();
-  private seen = new Set<string>();
   private readonly pageSize: number;
   private readonly newId: () => string;
 
@@ -322,12 +321,5 @@ export class FeedStore {
     } catch (e) {
       return messageFor(e, { inviter: this.o.inviter, action: 'edit' });
     }
-  }
-
-  /** Record that this person looked at a post (feeds "Seen by"). Never for the author. */
-  markSeen(p: FeedPost): void {
-    if (p.author_id === this.o.userId || this.seen.has(p.post_id)) return;
-    this.seen.add(p.post_id);
-    this.o.api.markSeen(p.post_id).catch(() => this.seen.delete(p.post_id));
   }
 }

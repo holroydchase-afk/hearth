@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// DEC-72 (Chase, Nov 19): Share is a postcard (SPEC-REDESIGN 1j). The words that name who a post goes to: the To:
+// DEC-73 (Chase, Nov 19): Share is a postcard (SPEC-REDESIGN 1j). The words that name who a post goes to: the To:
 // line, the Send button and Feed's "Shared with ..." line (SHARE-PC-9), and each face tile's name (SHARE-PC-6).
 import type { Circle } from '../api/types';
 

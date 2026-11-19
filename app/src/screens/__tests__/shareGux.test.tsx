@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// GUX-R1..GUX-R4 (grandparent-ux on the DEC-72 postcard Share, Nov 19). Reference look: direction B of
+// GUX-R1..GUX-R4 (grandparent-ux on the DEC-73 postcard Share, Nov 19). Reference look: direction B of
 // /mnt/project-files/design/share-redo-2026-11-19/share-tester.html. Written first (red), Nov 19, by qa-tdd.
 // GUX-R1's "no name ever spills out of its tile" is measured in a real browser in app/e2e-web/demo.spec.js; here
 // the column rule (2 across for Easy view, text 130%+, or a word wider than the tile) and "names are never cut".

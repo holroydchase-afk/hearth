@@ -14,10 +14,10 @@ import { ShareScreen } from '../ShareScreen';
 const DAD = "Grandparents – Dad's side";
 
 describe('CAP post titles', () => {
-  // Retargeted Nov 19 by engineer for DEC-72 (amends DEC-39 / CAP-1; SHARE-PC-3), flagged for qa-tdd: a new post
+  // Retargeted Nov 19 by engineer for DEC-73 (amends DEC-39 / CAP-1; SHARE-PC-3), flagged for qa-tdd: a new post
   // has one note and no Title box; the note goes out as the caption and the title stays empty. Old titles still show
   // (CAP-3 below, SHARE-PC-4).
-  it('CAP-1 DEC-72 Share has no Title box any more: the note goes out as the caption, with no title', async () => {
+  it('CAP-1 DEC-73 Share has no Title box any more: the note goes out as the caption, with no title', async () => {
     const be = FakeBackend.withFixture();
     const { nav } = await renderApp(<ShareScreen />, { be, user: 'chase' });
     fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }));

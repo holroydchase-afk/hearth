@@ -11,6 +11,7 @@ import { DemoFrame, WIDE } from './DemoFrame';
 import { DEMO_MODE } from './flags';
 import { webStorage } from '../platform/webStorage';
 import { demoKeysToClear } from './seed';
+import { BigTextContext } from '../ui/theme';
 
 const BASE = (process.env.EXPO_BASE_URL ?? '').replace(/\/$/, '');
 const goPhotos = () => window.location.assign(`${BASE}/gallery`);
@@ -62,7 +63,10 @@ export function DemoChrome({ children }: { children: ReactNode }) {
   }
   return (
     <View style={{ flex: 1 }}>
-      <DemoBar be={be} reload={goPhotos} startOver={startOver} open={open} restored={restored} />
+      {/* DEMO-EASY-1: the demo bar is the demo's, not the app's, so Easy view doesn't enlarge it. */}
+      <BigTextContext.Provider value={false}>
+        <DemoBar be={be} reload={goPhotos} startOver={startOver} open={open} restored={restored} />
+      </BigTextContext.Provider>
       <View style={{ flex: 1 }}>{children}</View>
     </View>
   );

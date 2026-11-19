@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// DEC-72 (Chase, Nov 19): Share is a postcard. docs/product/SPEC-REDESIGN.md 1j, SHARE-PC-1..SHARE-PC-12 (SHARE-PC-13 is
+// DEC-73 (Chase, Nov 19): Share is a postcard. docs/product/SPEC-REDESIGN.md 1j, SHARE-PC-1..SHARE-PC-12 (SHARE-PC-13 is
 // Playwright in app/e2e-web/demo.spec.js; SHARE-PC-14 is a manual phone check). Reference look: direction B of
 // /mnt/project-files/design/share-redo-2026-11-19/share-tester.html. Written first (red), Nov 19, by qa-tdd.
 //

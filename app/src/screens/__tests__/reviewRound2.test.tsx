@@ -310,10 +310,10 @@ describe('R18 (P2) Gallery: the month title sticks while scrolling', () => {
 
 // =================================================================================================================
 describe('R19 (P2) Share: one 16 pt left edge for all content', () => {
-  // Retargeted Nov 19 by engineer for DEC-72 (SHARE-PC-1), flagged for qa-tdd: Share is a start page (title, Pick
+  // Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-1), flagged for qa-tdd: Share is a start page (title, Pick
   // photos) and then the "New post" postcard. The title, Cancel and the card start 16 pt in; inside the card the
   // note's label and the To: line start 16 pt in from the card's edge (32 from the screen).
-  it('R19 DEC-72 Share: the title, Pick photos, Cancel and the card start 16 pt in; the note label and To: 16 pt inside the card', async () => {
+  it('R19 DEC-73 Share: the title, Pick photos, Cancel and the card start 16 pt in; the note label and To: 16 pt inside the card', async () => {
     const r = await renderApp(<ShareScreen />, { user: 'chase' });
     const title = await screen.findByRole('header', { name: 'Share photos' }, slow);
     let root: Inst = title;

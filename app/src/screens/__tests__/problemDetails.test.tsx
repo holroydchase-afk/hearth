@@ -30,7 +30,7 @@ async function failedShare(code: string) {
     deps: { prepare: jest.fn(async () => { throw new ApiError(code as ApiErrorCode, `file:///pick/1.jpg "${CAPTION}"`); }) },
   });
   fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }));
-  // Retargeted Nov 19 by engineer for DEC-72 (SHARE-PC), flagged for qa-tdd: the postcard's note, a tile, Send.
+  // Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC), flagged for qa-tdd: the postcard's note, a tile, Send.
   await screen.findByRole('header', { name: 'New post' });
   fireEvent.changeText(screen.getByLabelText('Add a note (optional)'), CAPTION);
   fireEvent.press(await screen.findByLabelText(`${DAD}, 3 people, not picked`));

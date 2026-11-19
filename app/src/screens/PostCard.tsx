@@ -5,7 +5,7 @@ import { Animated, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, Tex
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { REACTIONS, type FeedPost, type Reaction } from '../api/HearthApi';
 import type { CommentView } from '../feed/store';
-import { useApp, useFeed } from '../state/AppContext';
+import { useApp, useFeedSelect } from '../state/AppContext';
 import { AlertDialog, BottomSheet, Button, Card, Field, Notice, SystemIcon, Txt, noWebOutline, useWebFocusRing } from '../ui/kit';
 import { useTypingField } from '../ui/typing';
 import { haptic } from '../platform/haptics';
@@ -23,23 +23,21 @@ const WORD: Record<Reaction, string> = { '❤️': 'love', '😂': 'haha', '👍
 // REACT-11 (Chase, Nov 5: "the standard, not 3D emojis, not line icons"): the phone's own emoji, the same
 // ones on its keyboard. This replaces REACT-10's flat line icons.
 
+const NO_COMMENTS: CommentView[] = [];
+
 export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   const { feed, session } = useApp();
-  const state = useFeed();
+  const comments = useFeedSelect((s) => s.comments[post.post_id]); // ENG-R3: this post's comments only
   const { c, t, reduceMotion } = useTheme();
   const ready = post.media.filter((m) => m.status === 'ready');
   const mine = post.author_id === session?.userId;
   const [sheet, setSheet] = useState<'comments' | 'more' | 'delete' | 'words' | null>(null);
 
   useEffect(() => {
-    feed?.markSeen(post);
-  }, [feed, post.post_id]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
     if (post.comment_count > 0) void feed?.loadComments(post.post_id);
   }, [feed, post.post_id, post.comment_count > 0]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const list: CommentView[] = state.comments[post.post_id] ?? [];
+  const list: CommentView[] = comments ?? NO_COMMENTS;
   const newest = list[list.length - 1];
   const nComments = Math.max(list.length, post.comment_count);
   // REACT-2: my reaction and each kind's count, most first; hearts only until reaction_summary answers.
@@ -332,19 +330,18 @@ function CommentList({ post, list }: { post: FeedPost; list: CommentView[] }) {
 function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
   const { feed, session, deps } = useApp();
   const { c, t, os } = useTheme();
-  // REPLY-11 (0011): the server names exactly who will read my reply; until it answers (or on an older
-  // server) the box falls back to the reply_scope words.
+  // REPLY-11 (0011): the server names exactly who will read my reply; until it answers (or if the call fails)
+  // the box falls back to the reply_scope words.
   const [names, setNames] = useState<string[] | null>(null);
   useEffect(() => {
     if (mine) return undefined;
     let alive = true;
-    Promise.resolve(deps.api.replyReaders?.(post.post_id))
-      .then((n) => { if (alive && Array.isArray(n) && n.length) setNames(n); })
+    deps.api.replyReaders(post.post_id)
+      .then((n) => { if (alive && n?.length) setNames(n); })
       .catch(() => {});
     return () => { alive = false; };
   }, [deps.api, post.post_id, mine]);
-  const state = useFeed();
-  const draft = state.drafts[post.post_id] ?? '';
+  const draft = useFeedSelect((s) => s.drafts[post.post_id]) ?? ''; // ENG-R3: this post's draft only
   const [sent, setSent] = useState(false);
   // UX-R5/R6 (DEC-63): the standard "Add a comment…" field; spoken with whose post it is.
   const spoken = mine ? 'Add a comment' : `Add a comment for ${post.author_name}`;

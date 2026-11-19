@@ -6,6 +6,7 @@ import { render, screen } from '@testing-library/react-native';
 import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { APP_COLUMN, DemoFrame } from '../DemoFrame';
+import { BigTextContext, useTheme } from '../../ui/theme';
 
 describe('DEMO-6 laptop frame', () => {
   it('DEMO-6 at 1280 px: a story panel and the app in a 430 px column', () => {
@@ -40,4 +41,22 @@ describe('DEMO-6 laptop frame', () => {
     rerender(<DemoFrame width={390} controls={<Text>the controls</Text>}><Text>the app</Text></DemoFrame>);
     expect(screen.queryByText('the controls')).toBeNull();
   });
+
+  // DEMO-EASY-1 (Chase, Nov 19): "its a poor experience that clicking grandma jo makes the screen much larger".
+  // Easy view enlarges only the app inside the phone column, never the story panel around it.
+  it('DEMO-EASY-1 Easy view (Grandma Jo) leaves the laptop panel at its normal size; the app inside still gets it', () => {
+    let inside: boolean | undefined;
+    const Probe = () => { inside = useTheme().bigText; return <Text>the app</Text>; };
+    const size = (big: boolean) => {
+      const r = render(<BigTextContext.Provider value={big}><DemoFrame width={1280} controls={<Text>controls</Text>}><Probe /></DemoFrame></BigTextContext.Provider>);
+      const fs = StyleSheet.flatten(screen.getByRole('header', { name: 'A private photo app for split families' }).props.style).fontSize;
+      const body = StyleSheet.flatten(screen.getByText(/^1\. /).props.style).fontSize;
+      r.unmount();
+      return { fs, body };
+    };
+    const normal = size(false);
+    expect(size(true)).toEqual(normal);
+    expect(inside).toBe(true);
+  });
 });
+

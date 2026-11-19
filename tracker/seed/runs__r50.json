@@ -1,7 +1,7 @@
 {
  "suite": "app",
  "at": "2026-11-19T12:00:00-05:00",
- "label": "Share is a postcard (DEC-72, SHARE-PC-1..13, GUX-R1..R4): all app suites 3x (green)",
+ "label": "Share is a postcard (DEC-73, SHARE-PC-1..13, GUX-R1..R4): all app suites 3x (green)",
  "passed": 1570,
  "failed": 0,
  "results": {},

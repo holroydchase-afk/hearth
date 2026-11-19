@@ -25,13 +25,13 @@ function shapedApi() {
   return { be, api };
 }
 
-// Retargeted Nov 19 by engineer for DEC-72 (SHARE-PC-5/6/9), flagged for qa-tdd: the share sheet is the postcard's
+// Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-5/6/9), flagged for qa-tdd: the share sheet is the postcard's
 // face tiles, spoken "<name>, N people, (not) picked"; there are no Groups / Events headings any more.
 const tileLabels = () => screen.UNSAFE_root.findAll((n: { type: unknown; props: Record<string, unknown> }) => typeof n.type === 'string' && /, \d+ (person|people), (not )?picked$/.test(String(n.props.accessibilityLabel ?? '')))
   .map((n: { props: Record<string, unknown> }) => String(n.props.accessibilityLabel));
 
 describe('UX-G share sheet words (BETA-AUD-17)', () => {
-  it('UX-G1 BETA-AUD-17 DEC-72 picking Everyone says "To: Everyone in the family" (never "Only Everyone")', async () => {
+  it('UX-G1 BETA-AUD-17 DEC-73 picking Everyone says "To: Everyone in the family" (never "Only Everyone")', async () => {
     const { be, api } = shapedApi();
     await renderApp(<ShareScreen />, { be, user: 'chase', deps: { api } });
     fireEvent.press(await screen.findByRole('button', { name: /^Pick photos/ }));
@@ -41,7 +41,7 @@ describe('UX-G share sheet words (BETA-AUD-17)', () => {
     expect(screen.queryByText(/Only Everyone/)).toBeNull();
   });
 
-  it('UX-G2 BETA-AUD-17 DEC-72 Everyone first, then the groups and households, events last', async () => {
+  it('UX-G2 BETA-AUD-17 DEC-73 Everyone first, then the groups and households, events last', async () => {
     const { be, api } = shapedApi();
     await renderApp(<ShareScreen />, { be, user: 'chase', deps: { api } });
     fireEvent.press(await screen.findByRole('button', { name: /^Pick photos/ }));
@@ -50,7 +50,7 @@ describe('UX-G share sheet words (BETA-AUD-17)', () => {
     expectGrandparentSafe();
   });
 
-  it('UX-G3 BETA-AUD-21 DEC-72 a relative allowed to post is never offered Everyone, and sees people, not group names', async () => {
+  it('UX-G3 BETA-AUD-21 DEC-73 a relative allowed to post is never offered Everyone, and sees people, not group names', async () => {
     const { be, api } = shapedApi();
     const real = be.mySpaces.bind(be);
     jest.spyOn(be, 'mySpaces').mockImplementation((u) => real(u).map((s) => ({ ...s, can_post: true })));

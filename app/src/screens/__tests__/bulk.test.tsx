@@ -26,7 +26,7 @@ const video = (): PickedAsset => ({ uri: `file:///picked/MOV_${++n}.mov`, type: 
 /** 48 photos from 3 days (20, 18, 10) and 3 videos. */
 const pick48 = () => [...day('2024:07:04', 20), video(), ...day('2024:07:05', 18), video(), video(), ...day('2024:07:06', 10)];
 
-// Retargeted Nov 19 by qa-tdd for DEC-72 (SHARE-PC-7): a saved last group no longer ticks anything on the review, so
+// Retargeted Nov 19 by qa-tdd for DEC-73 (SHARE-PC-7): a saved last group no longer ticks anything on the review, so
 // `last` is still saved (to prove it is ignored) and then tapped by hand, as a parent would.
 const nameOf = (id: string) => Object.values(FIXTURE.circles).find((c) => c.id === id)!.name;
 async function openReview(opts: { last?: string[]; assets?: PickedAsset[]; be?: FakeBackend; previewBytes?: (uri: string) => Promise<Uint8Array | null>; header?: string } = {}) {
@@ -41,8 +41,8 @@ async function openReview(opts: { last?: string[]; assets?: PickedAsset[]; be?: 
 }
 
 describe('BETA-BULK-3 batch review screen', () => {
-  // Retargeted for DEC-72: "Send to: <last group>" is no longer filled in; the parent taps the group.
-  it('BETA-BULK-3 DEC-72 "48 photos from 3 days"; the group tapped shows as "Send to: <group>"; one Send for the whole batch', async () => {
+  // Retargeted for DEC-73: "Send to: <last group>" is no longer filled in; the parent taps the group.
+  it('BETA-BULK-3 DEC-73 "48 photos from 3 days"; the group tapped shows as "Send to: <group>"; one Send for the whole batch', async () => {
     await openReview({ last: [FIXTURE.circles.dadSide.id] });
     expect(screen.getByRole('header', { name: '48 photos from 3 days' })).toBeTruthy();
     expect(screen.getByText(`Send to: ${DAD}`)).toBeTruthy();
@@ -66,7 +66,7 @@ describe('BETA-BULK-3 batch review screen', () => {
     expect(screen.getByRole('button', { name: 'Send 48 photos' }).props.accessibilityState).toMatchObject({ disabled: false });
   });
 
-  it('BETA-BULK-3 DEC-72 the open group list shows Everyone first, then the groups', async () => {
+  it('BETA-BULK-3 DEC-73 the open group list shows Everyone first, then the groups', async () => {
     await openReview();
     const boxes = await screen.findAllByRole('checkbox');
     expect(boxes[0]!.props.accessibilityLabel).toMatch(new RegExp(`^${EVERYONE.name},`));
@@ -167,7 +167,7 @@ describe('BETA-BULK-4 batch progress', () => {
     const pickBulk = jest.fn(async () => ({ assets: pick48() }));
     await renderApp(<ShareScreen />, { user: 'chase', kv, be, deps: { pickBulk, api } });
     fireEvent.press(await screen.findByRole('button', { name: 'Pick up to 100 photos at once' }));
-    fireEvent.press(await screen.findByRole('checkbox', { name: new RegExp(`^${DAD},`) })); // DEC-72: nothing pre-picked
+    fireEvent.press(await screen.findByRole('checkbox', { name: new RegExp(`^${DAD},`) })); // DEC-73: nothing pre-picked
     fireEvent.press(await screen.findByRole('button', { name: 'Send 48 photos' }));
     expect(await screen.findByText('Sending 1 of 48 photos…')).toBeTruthy();
     expect(screen.queryAllByText(/Getting ready/)).toHaveLength(0);

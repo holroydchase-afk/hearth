@@ -139,9 +139,9 @@ describe('RD-34 content screens sit on the plain background, no grey card fill',
       expect(greyBoxes(pal(dark))).toEqual([]);
     });
 
-    // Retargeted Nov 19 by engineer for DEC-72 (SHARE-PC-1), flagged for qa-tdd: the postcard is the one c.surface
+    // Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-1), flagged for qa-tdd: the postcard is the one c.surface
     // card on Share by design (Chase's direction B); nothing else on the page is a grey box.
-    it(`RD-34 DEC-72 Share (${name}): the only grey on the page is the postcard itself (fields and buttons may keep their fill)`, async () => {
+    it(`RD-34 DEC-73 Share (${name}): the only grey on the page is the postcard itself (fields and buttons may keep their fill)`, async () => {
       await renderApp(<ShareScreen />, { user: 'chase', kv: look(dark, chase.id) });
       fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }, slow));
       await screen.findByRole('header', { name: 'New post' }, slow);
@@ -223,7 +223,7 @@ const GREY_ALLOWED: Record<string, Record<string, string>> = {
   'screens/MessagesScreen.tsx': { Line: 'chat bubble capsule' },
   'screens/GalleryTop.tsx': { SearchField: 'the "Search photos" field (RD-47), a field like the reply field' },
   'screens/TabBar.tsx': { HearthTabBar: 'the tab bar, set apart from the page on c.surface (RD-104)' },
-  'screens/ShareScreen.tsx': { ShareScreen: 'the postcard (DEC-72, SHARE-PC-1; engineer, flagged for qa-tdd) and its Add tile, a button' },
+  'screens/ShareScreen.tsx': { ShareScreen: 'the postcard (DEC-73, SHARE-PC-1; engineer, flagged for qa-tdd) and its Add tile, a button' },
   'demo/DemoBar.tsx': { DemoBar: 'demo chrome, outside the app' },
   'demo/DemoFrame.tsx': { DemoFrame: 'demo chrome, outside the app' },
 };

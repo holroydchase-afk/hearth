@@ -13,6 +13,7 @@ import { BackButton, Button, Card, Txt } from '../ui/kit';
 import { RADIUS, useTheme } from '../ui/theme';
 import { PhotoSwipe } from './PhotoSwipe';
 import { PostCard } from './PostCard';
+import { useTabBarSpace } from '../ui/tabBarSpace';
 
 /** EVT-2: the first post of an event, bigger, under the event's name. */
 export function EventCard({ eventId, eventName, post, onOpen }: { eventId: string; eventName: string; post: FeedPost; onOpen: () => void }) {
@@ -56,6 +57,7 @@ export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, on
   backTo?: string;
 }) {
   const { c } = useTheme();
+  const under = useTabBarSpace(); // RD-109: room under the web's floating tab bar
   const more = hasMore ? <Button label="Show older photos" variant="secondary" busy={loadingMore} onPress={onLoadMore} /> : null;
 
   if (view.eventId) {
@@ -83,7 +85,7 @@ export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, on
         }
         ListEmptyComponent={<Txt variant="muted">No events yet.</Txt>}
         ListFooterComponent={more ?? undefined}
-        contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 }}
+        contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 + under }}
         removeClippedSubviews={false}
       />
     </SafeAreaView>
@@ -129,6 +131,7 @@ function EventTimeline({ posts, fromList, more, onOpen, onClose }: {
   backTo?: string;
 }) {
   const { c } = useTheme();
+  const under = useTabBarSpace(); // RD-109: room under the web's floating tab bar
   const [person, setPerson] = useState<string | null>(null);
   const name = posts[0]?.event_name ?? '';
   const people = eventContributors(posts);
@@ -163,7 +166,7 @@ function EventTimeline({ posts, fromList, more, onOpen, onClose }: {
         }
         ListEmptyComponent={<Txt variant="muted">No photos here yet.</Txt>}
         ListFooterComponent={(more as React.ReactElement | null) ?? undefined}
-        contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 }}
+        contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 + under }}
         removeClippedSubviews={false}
       />
     </SafeAreaView>

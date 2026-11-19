@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Share (BETA-SHARE-1, BETA-AUD-1): pick photos, then one "New post" postcard (DEC-72, SPEC-REDESIGN 1j, SHARE-PC-1..14):
+// Share (BETA-SHARE-1, BETA-AUD-1): pick photos, then one "New post" postcard (DEC-73, SPEC-REDESIGN 1j, SHARE-PC-1..14):
 // the big photo, a note, and "To:" face tiles on one card, with a pinned "Send to <names>" button. Nothing is
 // picked to start (SHARE-PC-7; was BETA-AUD-2's preselect). Parents can still pick lots of photos (bulk review).
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -19,6 +19,7 @@ import { AddTile, Button, FaceTile, Field, Loading, Notice, Screen, SystemIcon, 
 import { photos } from '../ui/format';
 import { LABEL_SCALE_CAP, RADIUS, WEIGHT, photoShadow, useTheme } from '../ui/theme';
 import type { QueueItem } from '../upload/queue';
+import { useTabBarSpace } from '../ui/tabBarSpace';
 import { AppGate } from './AppGate';
 import { BatchReview } from './BatchReview';
 import { QueueStatus } from './QueueStatus';
@@ -35,6 +36,7 @@ export function shareOrder(list: Circle[]): Circle[] {
 }
 
 export function ShareScreen() {
+  const under = useTabBarSpace(); // RD-109: the pinned Send sits above the web's floating tab bar
   const app = useApp();
   const nav = useNav();
   const [circles, setCircles] = useState<Circle[] | null>(null);
@@ -43,7 +45,7 @@ export function ShareScreen() {
   const [note, setNote] = useState('');
   const win = useWindowDimensions();
   const [gridW, setGridW] = useState<number | null>(null); // GUX-R1: the tile row's drawn width, once laid out
-  // CAP-9 / QA-R3: bulk review keeps its one Title box for now; new single posts have no title (DEC-72).
+  // CAP-9 / QA-R3: bulk review keeps its one Title box for now; new single posts have no title (DEC-73).
   const [title, setTitle] = useState('');
   // SHARE-PC-2: which picked photo is the big one.
   const [cur, setCur] = useState(0);
@@ -90,7 +92,7 @@ export function ShareScreen() {
     (async () => {
       try {
         // BETA-AUD-21 (grandparent-ux UX-G3): only parents send to Everyone, so a relative is never offered it.
-        // SHARE-PC-7 (DEC-72): nothing is picked to start, even when a last audience is saved.
+        // SHARE-PC-7 (DEC-73): nothing is picked to start, even when a last audience is saved.
         const [all, me] = await Promise.all([
           app.deps.api.myCircles(spaceId),
           app.deps.api.myProfile().then((p) => p.display_name).catch(() => null),
@@ -268,7 +270,7 @@ export function ShareScreen() {
                 </View>
               ) : null}
 
-              {/* SHARE-PC-3: one note, its label always shown; no title on new posts (DEC-72 amends DEC-39). */}
+              {/* SHARE-PC-3: one note, its label always shown; no title on new posts (DEC-73 amends DEC-39). */}
               <View style={styles.words}>
                 <Field underline label="Add a note (optional)" placeholder="Like: Pumpkin patch day" value={note} onChangeText={setNote} multiline maxLength={2000} />
               </View>
@@ -300,7 +302,7 @@ export function ShareScreen() {
         </ScrollView>
 
         {/* SHARE-PC-10: pinned under the page, above the keyboard and the tab bar. */}
-        <View style={[styles.dock, { backgroundColor: c.bg, borderTopColor: c.line }]}>
+        <View style={[styles.dock, { backgroundColor: c.bg, borderTopColor: c.line, paddingBottom: 12 + under }]}>
           <Button label={ready ? `Send to ${toLine}` : 'Pick who gets it'} onPress={() => void send()} disabled={!ready} busy={busy} />
         </View>
       </KeyboardAvoidingView>

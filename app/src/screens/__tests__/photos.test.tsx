@@ -165,11 +165,12 @@ describe('Photos screen', () => {
     expect(nav.openViewer).toHaveBeenCalledWith(expect.any(String), 0);
   });
 
-  it('marks what Grandma Jo looked at as seen (for "Seen by")', async () => {
+  // SEC-R2 (Nov 19, anchor A2): replaced "marks what Grandma Jo looked at as seen"; nothing records views now.
+  it('SEC-R2 records nothing about what Grandma Jo looked at', async () => {
     const be = await twoPosts();
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     await screen.findByText('Shared with Dad side');
-    await waitFor(() => expect(be.state.seen).toHaveLength(1));
+    expect(be.state.seen).toHaveLength(0);
   });
 
   it('empty family: says what will happen, in plain words', async () => {

@@ -11,10 +11,16 @@ waiting_on_chase:
 blockers: []
 -->
 
-## Nov 19: Share is a postcard (Chase, DEC-72, R63, SHARE-PC-1..14; branch claude/project-thread-4ulu9i, PR)
+## Nov 19: Share is a postcard (Chase, DEC-73, R63, SHARE-PC-1..14; branch claude/project-thread-4ulu9i, PR)
 - **Chase:** "This all looks great to me. proceed with the build" (00:27 ET) on direction B of the Share tester (https://claude.ai/artifact/71YN9yYWMt1KYZsqfsXCT4); no autoselect of the audience; one "Add a note (optional)" replaces Title + What's happening (amends DEC-39). Spec `SPEC-REDESIGN.md` 1j, persona check `decisions/2026-11-19-share-postcard.md`.
 - **Done, test-first:** qa-tdd red (SHARE-PC-1..13), engineer build, grandparent-ux review (GUX-R1 P1 long group names spill out of tiles; R2..R4 P2 grey Add/note fills, picked mark), red tests then fixes (tiles go 2 across for long names, Easy view or big text). qa-tdd all suites 3x green (r50): jest 1537, typecheck, e2e:web 5, e2e:demo 28, test-all 15. Bulk review keeps its Title for now (QA-R3). Open: T24/QA-R1 env-gated screenshot specs stale on Gallery (pre-existing).
 - **Next exact step:** Chase says "merge N"; then SHARE-PC-14 on his iPhone (Expo preview republish on his word).
+## Nov 19: web glass tab bar lookalike, Grandma Jo no longer enlarges the laptop page (Chase, DEC-72, RD-108, RD-109, DEMO-EASY-1, R61; branch claude/project-thread-ox4dz4, PR)
+- **Chase:** "i do not see it in the demo" → picked a web lookalike; "its a poor experience that clicking grandma jo makes the screen much larger".
+- **Done, test-first:** `HearthTabBar floating` (web + Easy view Off): capsule 16 pt in, 64 pt, `c.surface` at 60%, `backdropFilter` blur, `c.accentSoft` pill. `ui/tabBarSpace.tsx` context gives screens 96 pt of room (kit `Screen`, Photos, Timeline, Events, Search, the walk's bar). `DemoFrame` panel and the phone's `DemoBar` sit in `BigTextContext` false. RD-44's e2e now measures tile rows from the grid's top (scroll-independent).
+- **Expo preview republished Nov 19** from main eceac67 (group 96e510bb, iOS 01a1f21c-d8b4-79f2-a861-c4e8140f43e0); standing link serves it. Chase checks the iPhone tab bar.
+- **Next exact step:** Chase says "merge"; demo rebuilds; live check of the floating bar (fresh and returning).
+- **Portfolio / public presence:** the public demo's tab bar floats as glass for Chase's view once this merges.
 
 ## Nov 19: tech-debt review from five seats; fixes start (TRACKER R62; branch claude/project-thread-av5ejj)
 - **Chase:** "run a full review of hearth as the review team... I'm concerned there's tech debt or we have done some things oddly. Needs to pass the sniff test." Go-ahead to merge the P0/P1 fixes on green, app code included; migrations still deploy only on his word.
@@ -23,7 +29,15 @@ blockers: []
 - **P0 PR (ENG-R1 + TD-UX-R1):** opening offline keeps the family saved on this phone (feed cache shows), or says "Can't reach Hearth" with Try again; the laptop demo's story panel scrolls instead of being cut. qa-tdd green 3x (jest 1510, typecheck, e2e:demo 27). Open P2s from qa-tdd: coming back to the front doesn't re-read the family (role changes wait for a relaunch); the offline screen has no Sign out.
 - **P0 PR #127 merged** (b25d19a).
 - **UX PR (TD-UX-R2/R3/R5/R6):** the Notice timing card shows only in debug builds; Help drops the wrong "You can look at photos and write back." line; the demo's Help hides Sign out and Take me off; Sign out and Take me off use one confirm dialog (Stay signed in / Sign out, Stay on Hearth / Take me off) and the old `Confirm` component is gone.
-- **Next exact step:** SEC-R2 + ENG-R3/R7, CI (QA-R1..R3, ENG-R8), SEC-R1 migration 0027 (deploy needs Chase).
+- **UX PR #128 merged** (1a20756), with QA-R1 (the fake web e2e config now ignores every demo-only spec).
+- **Privacy and speed PR (SEC-R2, ENG-R7, ENG-R3):** the app no longer records who looked at a post (A2; threat model and API notes updated; the server's `mark_seen` stays until a migration removes it); `setReaction` drops the pre-0017 fallback (0017 is live); post cards follow only their own comments and draft, so typing in one comment box no longer redraws every card.
+- **Privacy and speed PR #130 merged** (c61f1be).
+- **CI PR (QA-R1..R4 of the review, ENG-R8):** `test-all.sh` runs app Jest, typecheck and both browser suites; a new CI job runs e2e:demo and e2e:web on every PR; the CI 3x rerun includes app Jest; e2e scripts find the browser without a hard-coded path; e2e/package.json carries the repo's license; sign-media gets a handler test for every branch (bounds, 402 cap, 403/400, PGRST301, no message text in logs, finalize sizes, CORS). Still open from QA-R4: serving the real function on edge-runtime in CI (P2).
+- **CI PR #131 merged** (96729ff); e2e Playwright pinned to ~1.63.0 so CI's browser matches the sandbox (VID-18 failed on 1.56).
+- **SEC-R1 PR:** migration 0027 keeps group titles with the parents (managers) in the raw API and the data export; relatives see only Everyone and event groups they're in. Merged as a file only: NOT deployed. `deploy.sh` applies every unapplied migration, so Chase's next "deploy" ships 0026 and 0027 together.
+- **SEC-R1 PR #132 merged** (73f541f), migration file only.
+- **ENG-R5 PR:** the Fake backend, the sample family and the laptop demo frame now ship only in fake and demo builds. Metro swaps `fakeRuntime` and `demo/DemoChrome` for `.off` stand-ins unless `EXPO_PUBLIC_HEARTH_FAKE` or `EXPO_PUBLIC_HEARTH_DEMO` is set; a real web export has no FakeBackend, sample family or demo strings.
+- **Next exact step (after that):** the summary for Chase; open P2s are in `docs/reviews/2026-11-19-tech-debt/README.md`.
 
 ## Nov 19: demo bar review, no bar on a laptop (Chase, DEC-71, R60; branch claude/project-thread-mmmmnh, PR)
 - **Chase:** "do we need the demo bar?" and its portfolio link went to an old page. Picked "Laptop off, phone stays slim".
@@ -525,6 +539,7 @@ blockers: []
 - Chase pasted the demo INTAKE into Product Studio (Oct 22). Next: messenger test MS3.
 
 ## Portfolio / public presence
+- **Nov 19:** the demo's tab bar floats as a glass capsule (Easy view Off) and Grandma Jo's view no longer enlarges the laptop panel, once the R61 PR merges (DEC-72).
 - **Nov 19:** the demo's Paper light page becomes Linen `#F7F7F4` when the R58 PR merges (DEC-69).
 - **Oct 30, demo parent renamed (Product Studio INTAKE):** Hearth is featured on the portfolio homepage (portfolio PR #38), and the site credits Chase's real brother Sam, so the demo's made-up parent "Sam" is now "Kai" (no family member has that name; three letters keeps the demo bar on one line). Changed `app/src/demo/seed.ts`, `DemoBar.tsx`, their tests and the web e2e specs; re-shot `docs/portfolio/screens/` (the old shots said "Sam"). Rebuilt the demo from main: `portfolio/hearth-demo-site-2026-10-30.tgz` in the project files. Checks: 677 app tests, 993 database checks, demo + showcase sweep green. Reply to Product Studio: `docs/portfolio/INTAKE-2026-10-30-demo-rename.md`. Backend SQL fixtures still use a child named Sam; they are never shown publicly. **Next:** Product Studio re-copies demo/hearth/ and the screenshots.
 - **Oct 22, shipped (portfolio PR #15, merged and deploying):** Product Studio hosts the no-login demo at chaseholroyd.com/demo/hearth/ (copied from `app/dist-demo-site/`, built from main 10001df) and refreshed family-photos.html per `INTAKE-2026-10-22-demo.md`. The page now has "Try the demo", named groups, AES-256-GCM and MLS, no "Seen by" count, eight agents, 600+ app tests and 800+ database checks, a laptop shot and three phone shots. The placeholder name is kept, and neither expo.app nor the repo is linked. To update the hosted demo later, rebuild here and send Product Studio an intake to re-copy `dist-demo-site/`. Note: the demo bundle's Expo config includes the Expo owner slug (not a link or a secret). **Next:** open chaseholroyd.com/demo/hearth/ on a phone and a laptop and re-run the review against the live URL.

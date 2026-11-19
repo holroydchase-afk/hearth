@@ -152,7 +152,7 @@ describe('VID-21 bulk pick with videos', () => {
     const pickBulk = jest.fn(async () => ({ assets: assets() }));
     const r = await renderApp(<ShareScreen />, { user: 'chase', be, kv, deps: { pickBulk } });
     fireEvent.press(await screen.findByRole('button', { name: /^Pick up to 100/ }));
-    // Retargeted Nov 19 by qa-tdd for DEC-72 (SHARE-PC-7): the saved group is no longer ticked; tap it.
+    // Retargeted Nov 19 by qa-tdd for DEC-73 (SHARE-PC-7): the saved group is no longer ticked; tap it.
     fireEvent.press(await screen.findByRole('checkbox', { name: /^Grandparents – Dad's side,/ }));
     await screen.findByText(`Send to: ${"Grandparents – Dad's side"}`);
     return r;

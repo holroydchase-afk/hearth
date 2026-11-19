@@ -15,6 +15,7 @@ import { andList, shortDate } from '../ui/format';
 import { MIN_TARGET, RADIUS, SPACE, photoShadow, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
 import { PostCard } from './PostCard';
+import { useTabBarSpace } from '../ui/tabBarSpace';
 
 /** Tile size for the sideways row: large (about 60% of the screen), never under 140 or over 260. */
 const tileSide = (screenWidth: number) => Math.max(140, Math.min(260, Math.round(screenWidth * 0.6)));
@@ -85,6 +86,7 @@ export function OneAtATime({ postIds, onClose, onDone }: {
 }) {
   const state = useFeed();
   const { c } = useTheme();
+  const under = useTabBarSpace(); // RD-109: the walk's bar sits above the web's floating tab bar
   const [at, setAt] = useState(0);
   const posts = postIds.map((id) => state.posts.find((p) => p.post_id === id)).filter((p): p is FeedPost => !!p);
   const step = Math.min(at, posts.length - 1);
@@ -115,7 +117,7 @@ export function OneAtATime({ postIds, onClose, onDone }: {
           </View>
           <PostCard key={post.post_id} post={post} />
         </ScrollView>
-        <View testID="walk-bar" style={{ flexDirection: 'row', alignItems: 'center', gap: SPACE.md, paddingHorizontal: SPACE.lg, paddingVertical: SPACE.sm, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.line, backgroundColor: c.bg }}>
+        <View testID="walk-bar" style={{ flexDirection: 'row', alignItems: 'center', gap: SPACE.md, paddingHorizontal: SPACE.lg, paddingVertical: SPACE.sm, paddingBottom: SPACE.sm + under, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.line, backgroundColor: c.bg }}>
           <Button label="Previous new photo" text="Previous" variant="secondary" disabled={step === 0} onPress={() => setAt(Math.max(0, step - 1))} />
           <View style={{ flex: 1 }} />
           <Button variant="tinted" label={last ? 'Done, back to Gallery' : 'Next new photo'} text={last ? 'Done' : 'Next photo'} style={{ alignSelf: 'center' }} onPress={() => (last ? (onDone ?? onClose)() : setAt(step + 1))} />

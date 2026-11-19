@@ -64,7 +64,7 @@ export interface AppValue {
   askPush: () => Promise<void>;
   /** HIG-1: Not now. Hidden for good on this phone; How should we tell you (Help or Me) still works. */
   skipPushAsk: () => void;
-  /** SHARE-PC-11 (DEC-72): "Shared with <names>." after a Send, shown on Feed until closed or the next Send. */
+  /** SHARE-PC-11 (DEC-73): "Shared with <names>." after a Send, shown on Feed until closed or the next Send. */
   shared: string | null;
   setShared: (line: string | null) => void;
 }
@@ -86,6 +86,14 @@ export function useFeed(): FeedState {
     feed ? feed.getState : () => EMPTY_FEED,
     feed ? feed.getState : () => EMPTY_FEED,
   );
+}
+
+/** ENG-R3: one slice of the feed. The component redraws only when that slice changes (by reference), so a post
+ *  card follows its own comments and draft instead of every change to the whole feed. */
+export function useFeedSelect<T>(select: (s: FeedState) => T): T {
+  const { feed } = useApp();
+  const get = feed ? () => select(feed.getState()) : () => select(EMPTY_FEED);
+  return useSyncExternalStore(feed ? feed.subscribe : noopSubscribe, get, get);
 }
 
 const noopSubscribe = () => () => {};

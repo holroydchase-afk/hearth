@@ -15,6 +15,7 @@ import { MIN_TARGET, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
 import { VideoPoster } from './VideoPoster';
 import { PostCard } from './PostCard';
+import { useTabBarSpace } from '../ui/tabBarSpace';
 
 const SHOW_INLINE = 4;
 
@@ -22,6 +23,7 @@ const SHOW_INLINE = 4;
 export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { startAt: string | null; onClose: () => void; backTo?: string }) {
   const app = useApp();
   const { c } = useTheme();
+  const under = useTabBarSpace(); // RD-109: room under the web's floating tab bar
   const store = useMemo(
     () => new TimelineStore({ api: app.deps.api, space: app.space!.space_id, inviter: app.helper }),
     [app.deps.api, app.space?.space_id], // eslint-disable-line react-hooks/exhaustive-deps
@@ -64,7 +66,7 @@ export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { start
             </View>
           }
           renderItem={({ item }) => <PostCard post={item} />}
-          contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 }}
+          contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 + under }}
           keyboardShouldPersistTaps="handled"
           removeClippedSubviews={false}
         />
@@ -115,7 +117,7 @@ export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { start
             />
           )}
           ListEmptyComponent={state.years === null ? <Loading words="Loading the years…" /> : <Txt variant="muted">No photos yet.</Txt>}
-          contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 32 }}
+          contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 32 + under }}
         />
       </SafeAreaView>
     );
@@ -142,7 +144,7 @@ export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { start
         }
         onEndReached={() => void store.loadMore()}
         onEndReachedThreshold={0.5}
-        contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 }}
+        contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 + under }}
         removeClippedSubviews={false}
       />
     </SafeAreaView>

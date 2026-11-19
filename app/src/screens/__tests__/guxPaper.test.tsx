@@ -117,7 +117,7 @@ describe('GUX-R15 (P1) a picked reaction shows a stronger tint on paper, with no
   }, 20000);
 });
 
-// Retargeted Nov 19 by engineer for DEC-72 (SHARE-PC-3), flagged for qa-tdd: the postcard has one field, the note.
+// Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-3), flagged for qa-tdd: the postcard has one field, the note.
 // Retargeted again Nov 19 by engineer for GUX-R3, flagged for qa-tdd: the note writes on the card, with no fill and a
 // hairline c.line underline, on every phone (the other fields keep GUX-R16's filled box).
 describe("GUX-R16 → GUX-R3 Share's note writes on the card: no fill, a hairline c.line underline", () => {

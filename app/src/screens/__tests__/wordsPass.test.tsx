@@ -16,9 +16,9 @@ import { ShareScreen } from '../ShareScreen';
 const DAD = "Grandparents – Dad's side";
 
 describe('WORDS grandparent-ux words pass', () => {
-  // Retargeted Nov 19 by engineer for DEC-72 (SHARE-PC-3/9), flagged for qa-tdd: the one note field promises no one;
+  // Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-3/9), flagged for qa-tdd: the one note field promises no one;
   // the To: line names who gets it, by name, once picked.
-  it('WORDS-1 DEC-72 the note never promises "Grandma will see this": the To: line names the people picked', async () => {
+  it('WORDS-1 DEC-73 the note never promises "Grandma will see this": the To: line names the people picked', async () => {
     await renderApp(<ShareScreen />, { user: 'chase' });
     fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }));
     await screen.findByRole('header', { name: 'New post' });
@@ -48,9 +48,9 @@ describe('WORDS grandparent-ux words pass', () => {
     )).toBeTruthy();
   });
 
-  // Retargeted Nov 19 by engineer for DEC-72 (SHARE-PC-5), flagged for qa-tdd: a face tile shows the group's name
+  // Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-5), flagged for qa-tdd: a face tile shows the group's name
   // alone and "3 people" on its own line, never "name · 3 people".
-  it('WORDS-4 DEC-72 a group tile on Share shows its name alone, with "3 people" under it', async () => {
+  it('WORDS-4 DEC-73 a group tile on Share shows its name alone, with "3 people" under it', async () => {
     await renderApp(<ShareScreen />, { user: 'chase' });
     fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }));
     const tile = await screen.findByLabelText(`${DAD}, 3 people, not picked`);

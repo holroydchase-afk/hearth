@@ -267,23 +267,4 @@ describe('BETA-AUD-5 delete', () => {
   });
 });
 
-describe('seen', () => {
-  it('marks a post seen once per session, and never for the author', async () => {
-    const be = FakeBackend.withFixture();
-    const [id] = await seed(be, 1);
-    const api = be.clientFor(jo.id);
-    const spy = jest.spyOn(api, 'markSeen');
-    const s = make(api);
-    await s.refresh();
-    s.markSeen(s.getState().posts[0]!);
-    s.markSeen(s.getState().posts[0]!);
-    expect(spy).toHaveBeenCalledTimes(1);
-    const capi = be.clientFor(chase.id);
-    const cspy = jest.spyOn(capi, 'markSeen');
-    const cs = make(capi, memoryKV(), chase.id);
-    await cs.refresh();
-    cs.markSeen(cs.getState().posts[0]!);
-    expect(cspy).not.toHaveBeenCalled();
-    void id;
-  });
-});
+// SEC-R2 (Nov 19): the store no longer records views (see screens/__tests__/noViewRecords.test.tsx).

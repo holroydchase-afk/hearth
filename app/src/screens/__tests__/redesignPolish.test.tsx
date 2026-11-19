@@ -136,7 +136,7 @@ describe('GUX-R1 a top-left "‹ More" / "‹ Gallery" back button', () => {
 
 /** Every boxed thing (its own border, or a fill unlike the box around it) that holds words and sits inside another
  *  box. The screen's own background is not a box. The few filled accent / red buttons (RD-7) are allowed. */
-/** DEC-72: Share opens the picker itself or shows a "Pick photos" button; either way, get to "New post". */
+/** DEC-73: Share opens the picker itself or shows a "Pick photos" button; either way, get to "New post". */
 async function openNewPost(kv?: ReturnType<typeof memoryKV>) {
   const r = await renderApp(<ShareScreen />, { user: 'chase', kv });
   const pick = r.deps.pickPhotos as jest.Mock;
@@ -191,9 +191,9 @@ describe('GUX-R2 plain grouped rows, one level: no box inside a box', () => {
     expect(boxesInBoxes()).toEqual([]);
   });
 
-  // Retargeted Nov 19 by qa-tdd for DEC-72 (SHARE-PC-1): the postcard is the one box on Share by design; nothing
+  // Retargeted Nov 19 by qa-tdd for DEC-73 (SHARE-PC-1): the postcard is the one box on Share by design; nothing
   // outside it is a box inside a box.
-  it('GUX-R2 DEC-72 Share: the postcard is the only box; nothing outside it nests boxes', async () => {
+  it('GUX-R2 DEC-73 Share: the postcard is the only box; nothing outside it nests boxes', async () => {
     await openNewPost();
     expect(boxesInBoxes(screen.getByTestId('share-card'))).toEqual([]);
   });
@@ -418,8 +418,8 @@ describe('GUX-R9 neutral avatars and accent check marks', () => {
     for (const name of ['Light screen', 'Dark screen']) expect({ name, check: accentCheck(screen.getByRole('radio', { name })) }).toEqual({ name, check: false });
   });
 
-  // Retargeted Nov 19 by qa-tdd for DEC-72 (SHARE-PC-7/8): nothing is pre-picked, so the tile is tapped first.
-  it('GUX-R9 DEC-72 Share: a tapped face tile has no tinted fill and shows an accent check mark', async () => {
+  // Retargeted Nov 19 by qa-tdd for DEC-73 (SHARE-PC-7/8): nothing is pre-picked, so the tile is tapped first.
+  it('GUX-R9 DEC-73 Share: a tapped face tile has no tinted fill and shows an accent check mark', async () => {
     const kv = memoryKV();
     await saveLastAudience(kv, FIXTURE.users.chase.id, [dadSide.id]);
     await openNewPost(kv);

@@ -1,8 +1,8 @@
-SHARE-PC-1..13 (DEC-72) red run, qa-tdd, Nov 19 2026, at eceac67 plus the new and retargeted tests (1 run, red on purpose). typecheck: clean.
+SHARE-PC-1..13 (DEC-73) red run, qa-tdd, Nov 19 2026, at eceac67 plus the new and retargeted tests (1 run, red on purpose). typecheck: clean.
 
 == jest (5 files) ==
 FAIL src/screens/__tests__/bulk.test.tsx (19.872 s)
-  ● BETA-BULK-3 batch review screen › BETA-BULK-3 DEC-72 "48 photos from 3 days"; the group tapped shows as "Send to: <group>"; one Send for the whole batch
+  ● BETA-BULK-3 batch review screen › BETA-BULK-3 DEC-73 "48 photos from 3 days"; the group tapped shows as "Send to: <group>"; one Send for the whole batch
   ● BETA-BULK-3 batch review screen › BETA-BULK-5 says plainly that videos were skipped
   ● BETA-BULK-3 batch review screen › BETA-BULK-3/4/6 Send makes 5 posts with their dates and one batch, to the chosen group only
   ● BETA-BULK-3 batch review screen › CAP-9 one optional Title box on the review: every post in the batch carries it, captions stay empty
@@ -16,12 +16,12 @@ FAIL src/screens/__tests__/bulk.test.tsx (19.872 s)
   ● R15 photo helpers on the review screen (SPEC-PHOTO-HELPERS) › HELP-R4 Hearth turned the screenshot helper off: screenshots go with the rest, repeats are still sent once
   ● R15 photo helpers on the review screen (SPEC-PHOTO-HELPERS) › HELP-DUP-2 photos sent from this phone show as "already sent" on the next pick, with "Send them again"
 FAIL src/screens/__tests__/redesignPolish.test.tsx (22.958 s)
-  ● GUX-R2 plain grouped rows, one level: no box inside a box › GUX-R2 DEC-72 Share: the postcard is the only box; nothing outside it nests boxes
-  ● GUX-R9 neutral avatars and accent check marks › GUX-R9 DEC-72 Share: a tapped face tile has no tinted fill and shows an accent check mark
+  ● GUX-R2 plain grouped rows, one level: no box inside a box › GUX-R2 DEC-73 Share: the postcard is the only box; nothing outside it nests boxes
+  ● GUX-R9 neutral avatars and accent check marks › GUX-R9 DEC-73 Share: a tapped face tile has no tinted fill and shows an accent check mark
 FAIL src/screens/__tests__/share.test.tsx (37.225 s)
-  ● Share screen › DEC-72 SHARE-PC-7 (was BETA-AUD-2 / B8 preselect): THIS user's last group is not ticked any more
+  ● Share screen › DEC-73 SHARE-PC-7 (was BETA-AUD-2 / B8 preselect): THIS user's last group is not ticked any more
   ● Share screen › B8 never another user's default on a shared phone; Send stays off with no group
-  ● Share screen › BETA-SHARE-1 DEC-72 pick → note → tap a group → Send: it sends to that group only and lands on Feed
+  ● Share screen › BETA-SHARE-1 DEC-73 pick → note → tap a group → Send: it sends to that group only and lands on Feed
   ● Share screen › BETA-SHARE-4: shows "Waiting to send" when there is no signal
   ● Share screen › HARD-2 picking more than 10 says plainly how many were left out
   ● Share screen › HARD-3 no group to send to is said in words, not a dead end

@@ -514,7 +514,14 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** on a laptop the story panel already says demo, explains the sample family and links back, so the bar only pushed the app down. On a phone the bar is the only sign the family is made up and the only route to Grandma Jo's view. Deviates from the studio demo bar standard (pm-tools DEMO-BANNER.md) on wide screens.
 - **Source:** persona check `decisions/2026-11-19-demo-bar-laptop.md`; screenshots `/mnt/project-files/demo/demo-bar-2026-11-19/` (project files)
 
-### DEC-72 · Share is a postcard: photo, note and "To:" faces in one card, nothing pre-picked (SHARE-PC-1..SHARE-PC-14)
+### DEC-72 · The web demo shows a lookalike of the floating glass tab bar (RD-108, RD-109)
+- **When / status:** Nov 19 · Chase: "i do not see it in the demo", then picked "Yes, build a web lookalike" on the card · Built, waits on Chase's "merge"
+- **Chose:** on the web with Easy view Off, a floating, see-through, blurred capsule with a tinted pill on the picked tab; screens leave room under it. Easy view On keeps the fixed bar with words. Same PR: Easy view no longer enlarges the laptop panel or the demo bar (DEMO-EASY-1).
+- **Over:** keeping the fixed bar on the web (iPhone only shows the real glass, so the demo wouldn't match what parents get).
+- **Because:** most people only see Hearth through the web demo; it should show the bar iPhone users get. Text stays off the glass (icons only, DS-6).
+- **Source:** `docs/product/SPEC-REDESIGN.md` RD-108, RD-109, DEMO-EASY-1; persona check `decisions/2026-11-19-web-glass-bar.md`
+
+### DEC-73 · Share is a postcard: photo, note and "To:" faces in one card, nothing pre-picked (SHARE-PC-1..SHARE-PC-14)
 - **When / status:** Nov 19 · Chase, after the live tester (`/mnt/project-files/design/share-redo-2026-11-19/share-tester.html`), thread "Redo the Share screen", 00:27 ET: "This all looks great to me. proceed with the build"; he picked direction B "Postcard" and confirmed no autoselect of the audience · Specced, failing tests next
 - **Chose:** after the phone's photo picker, one "New post" page with a card: the big photo ("1 of N", small thumbnails and an Add tile), one optional field "Add a note (optional)", then a dashed-line "To:" section inside the card where face tiles (face stack, name, "N people"; 3 across, 2 in Easy view) are tapped to pick who gets it. Parents see group names; everyone else sees people's names, never a group name (DEC-49). Nothing is picked at the start. The pinned button reads "Pick who gets it" (off) until someone is picked, then "Send to <names>". After Send, Feed with the new post on top and "Shared with <names>." New posts get no title; old titles still show. Upload queue, bulk review, helpers, error notices and the 10-photo max stay.
 - **Over:** A One page (photos, fields and a checkbox list stacked on a plain page); C One question at a time (photos, then words, then who, each its own step); keeping Title plus "What's happening?" (DEC-39's two fields); the last audience pre-ticked (a misread of an earlier call, reverted: Chase wants no autoselect).

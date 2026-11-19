@@ -95,7 +95,7 @@ describe('RD 1a source scans', () => {
       const label = /(?:label|text)=(?:"([^"]*)"|\{([^}]*)\})/.exec(b.props);
       const words = label ? (label[1] ?? label[2]!) : '';
       if (SIGN_IN.has(file)) continue;
-      // DEC-72 (SHARE-PC-10; engineer, flagged for qa-tdd): the postcard's pinned "Send to <names>" replaces Post.
+      // DEC-73 (SHARE-PC-10; engineer, flagged for qa-tdd): the postcard's pinned "Send to <names>" replaces Post.
       if (file === 'screens/ShareScreen.tsx' && /\bPost\b|Send to|Pick who gets it/.test(words) && /primary/.test(variant)) continue;
       if (file === 'ui/kit.tsx' && /\{yes\}/.test(b.props)) continue; // Confirm's yes: checked for Delete/Leave below
       if (/danger/.test(variant) && /\b(Delete|Leave)\b/.test(words)) continue;

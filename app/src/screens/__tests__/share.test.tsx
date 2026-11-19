@@ -14,7 +14,7 @@ const DAD = "Grandparents – Dad's side";
 const MOM = "Grandparents – Mom's side";
 const slow = { timeout: 5000 };
 
-// Retargeted Nov 19 by qa-tdd for DEC-72 (SHARE-PC, SPEC-REDESIGN 1j): Share is a "New post" postcard; nothing is
+// Retargeted Nov 19 by qa-tdd for DEC-73 (SHARE-PC, SPEC-REDESIGN 1j): Share is a "New post" postcard; nothing is
 // pre-picked (the old BETA-AUD-2 preselect is gone), one "Add a note (optional)" field, face tiles spoken
 // "<name>, N people, (not) picked", a pinned "Pick who gets it" / "Send to <names>" button, and Send lands on Feed.
 /** Get to the "New post" page: Share may open the picker itself or show a "Pick photos" button first. */
@@ -32,7 +32,7 @@ async function newPost(opts: { user?: FixtureUser; kv?: KV; be?: FakeBackend; de
 const tileFor = (name: string, picked = false) => screen.getByLabelText(new RegExp(`^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}, \\d+ people, ${picked ? '' : 'not '}picked$`));
 
 describe('Share screen', () => {
-  it('DEC-72 SHARE-PC-7 (was BETA-AUD-2 / B8 preselect): THIS user\'s last group is not ticked any more', async () => {
+  it('DEC-73 SHARE-PC-7 (was BETA-AUD-2 / B8 preselect): THIS user\'s last group is not ticked any more', async () => {
     const kv = memoryKV();
     await saveLastAudience(kv, FIXTURE.users.chase.id, [FIXTURE.circles.dadSide.id]);
     await newPost({ user: 'chase', kv });
@@ -49,7 +49,7 @@ describe('Share screen', () => {
     expect(screen.getByRole('button', { name: 'Pick who gets it' }).props.accessibilityState).toMatchObject({ disabled: true });
   });
 
-  it('BETA-SHARE-1 DEC-72 pick → note → tap a group → Send: it sends to that group only and lands on Feed', async () => {
+  it('BETA-SHARE-1 DEC-73 pick → note → tap a group → Send: it sends to that group only and lands on Feed', async () => {
     const be = FakeBackend.withFixture();
     const { nav } = await newPost({ be, user: 'chase' });
     fireEvent.changeText(screen.getByLabelText('Add a note (optional)'), 'First snow!');
@@ -72,7 +72,7 @@ describe('Share screen', () => {
   });
 
   // QA-R2 (staff-pm, Nov 19): the postcard keeps a labelled Remove for the photo showing, when there is more than one.
-  it('DEC-72 QA-R2 the photo showing can be removed with a labeled button; with one photo there is none', async () => {
+  it('DEC-73 QA-R2 the photo showing can be removed with a labeled button; with one photo there is none', async () => {
     const three = Array.from({ length: 3 }, (_, i) => ({ uri: `file:///pick/r${i}.jpg`, kind: 'photo' as const, width: 4032, height: 3024 }));
     await newPost({ user: 'chase', deps: { pickPhotos: jest.fn(async () => ({ items: three })) } });
     expect(screen.getByText('1 of 3')).toBeTruthy();

@@ -48,7 +48,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   const chooser = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: 'Pick photos from your phone' }).click();
   await (await chooser).setFiles(FIXTURE);
-  await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible(); // DEC-72 postcard
+  await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible(); // DEC-73 postcard
   await page.getByLabel('Add a note (optional)').fill('Pumpkin patch');
   await page.getByLabel(/^Grandparents – Dad's side, 2 people, not picked$/).click(); // Jo hasn't joined yet
   await page.getByRole('button', { name: /^Send to / }).click();

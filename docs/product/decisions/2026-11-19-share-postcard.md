@@ -1,5 +1,5 @@
 # Decision: Share is a postcard; photo, note and "To:" face tiles in one card, nothing pre-picked
-Date: Nov 19, 2026 · Status: Chase's ("This all looks great to me. proceed with the build", 00:27 ET; direction B Postcard; no autoselect of the audience) · DEC-72 · Spec: `docs/product/SPEC-REDESIGN.md` 1j (SHARE-PC-1..14)
+Date: Nov 19, 2026 · Status: Chase's ("This all looks great to me. proceed with the build", 00:27 ET; direction B Postcard; no autoselect of the audience) · DEC-73 · Spec: `docs/product/SPEC-REDESIGN.md` 1j (SHARE-PC-1..14)
 
 What changes: after the photo picker, one "New post" card: big photo with "1 of N" and thumbnails, one "Add a note (optional)" field, then To: face tiles inside the card. Nothing is picked at the start; the button says "Pick who gets it" until it says "Send to <names>". Parents see group names, others see people's names only. After Send, Feed with "Shared with <names>." New posts have no title.
 Over: A One page; C One question at a time; Title plus "What's happening?"; the last audience pre-ticked.
