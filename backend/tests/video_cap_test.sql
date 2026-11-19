@@ -42,9 +42,9 @@ select tests.ok(tests.v('space_x') is not null and tests.v('post_x') is not null
 select tests.lives(tests.videos(tests.v('post_a'), 4), 'S14-1 Alex sends 4 more videos in space A (5 of 10 this month)');
 select tests.lives(tests.videos(tests.v('post_x'), 5), 'S14-1 and 5 in his new space (10 of 10)');
 select tests.throws_code(tests.videos(tests.v('post_x'), 1),
-                         'S14-1 the 11th video is refused even in a brand-new space', 'P0001');
+                         'S14-1 the 11th video is refused even in a brand-new space (ENG-R11: HF002)', 'HF002');
 select tests.throws_code(tests.videos(tests.v('post_a'), 1),
-                         'S14-1 and in the first space too', 'P0001');
+                         'S14-1 and in the first space too (ENG-R11: HF002)', 'HF002');
 select tests.ok_sql(format($$select (public.space_upload_quota(%L)->>'videos_this_month')::int = 10$$, tests.v('space_x')),
                     'S14-2 the new space''s quota shows Alex''s own 10 of 10, not a fresh 0');
 select tests.ok_sql(format($$select (public.space_upload_quota(%L)->>'videos_this_month')::int = 10$$, :space_a),
