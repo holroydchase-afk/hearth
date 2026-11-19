@@ -68,7 +68,8 @@ select tests.ok(not exists (select 1 from posts where id = :p_a_co),           '
 select tests.ok(exists (select 1 from posts where id = :p_a_all),              'Mom-side grandma CAN see Dad''s "Everyone" post (she is in that circle)');
 select tests.ok(exists (select 1 from posts where id = :p_b_gp),               'Mom-side grandma sees Mom-side grandparents post');
 select tests.ok(not exists (select 1 from posts where id = :p_b_co),           'Mom-side grandma cannot see Mom''s co-parent post');
-select tests.ok((select count(*) from circles where space_id = :space_a) = 1,  'Mom-side grandma sees only 1 circle in Dad''s space (Everyone)');
+-- SEC-R1 (Nov 19, 0027): was "sees only 1 circle (Everyone)"; a relative reads no group rows, so no names (seed's Everyone has kind 'group').
+select tests.ok((select count(*) from circles where space_id = :space_a) = 0,  'Mom-side grandma reads no group names in Dad''s space (SEC-R1)');
 select tests.throws(format('insert into comments (post_id, author_id, body) values (%L, %L, %L)', :p_a_gp, :gma_chen, 'hi'),
                     'Mom-side grandma cannot comment on a post she cannot see', 'row-level security');
 select tests.throws(format('insert into reactions (post_id, user_id, emoji) values (%L, %L, %L)', :p_a_gp, :gma_chen, '👍'),
@@ -111,8 +112,9 @@ set role authenticated;
 select set_config('request.jwt.claim.sub', :blair, false);
 select tests.ok((select array_agg(id::text) from posts where space_id = :space_a) = array[:p_a_co],
                 'Co-parent sees exactly the co-parent post in the other household''s space');
-select tests.ok((select array_agg(name) from circles where space_id = :space_a) = array['Co-parent'],
-                'Co-parent sees only the Co-parent circle (cannot see Dad''s family circles)');
+-- SEC-R1 (Nov 19, 0027): was "sees only the Co-parent circle"; in Dad's space she isn't a parent of that space, so no names.
+select tests.ok(not exists (select 1 from circles where space_id = :space_a),
+                'Co-parent reads no group names in Dad''s space, including Dad''s family circles (SEC-R1)');
 select tests.ok(not exists (select 1 from circle_members cm join circles c on c.id = cm.circle_id
                             where c.space_id = :space_a and cm.user_id <> auth.uid()),
                 'Co-parent cannot list other members of Dad''s circles');
@@ -143,8 +145,9 @@ select set_config('request.jwt.claim.sub', :alex, false);
 select tests.ok((select count(*) from posts where space_id = :space_a) = 3,    'Author sees all own posts');
 select tests.ok(exists (select 1 from posts where id = :p_b_co),               'Alex sees Blair''s co-parent post');
 select tests.ok(not exists (select 1 from posts where id = :p_b_gp),           'Alex cannot see Blair''s Mom-side grandparents post');
-select tests.ok((select array_agg(name) from circles where space_id = :space_b) = array['Co-parent'],
-                'Alex sees only the Co-parent circle in Blair''s space');
+-- SEC-R1 (Nov 19, 0027): was "sees only the Co-parent circle"; Blair's space's group names stay with Blair.
+select tests.ok(not exists (select 1 from circles where space_id = :space_b),
+                'Alex reads no group names in Blair''s space (SEC-R1)');
 select tests.ok(not exists (select 1 from post_views where post_id = :p_a_gp and user_id <> auth.uid()),
                 'Free-plan author cannot read "seen by" receipts (paid feature)');
 select tests.throws(format('update spaces set plan = %L where id = %L', 'family', :space_a),
