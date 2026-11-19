@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 // SPEC-REDESIGN 1h (DEC-67, Chase Nov 18): warm paper backings, soft photo shadows (light only), the reaction pop
 // with its Reduce Motion fallback, and no date line above the greeting. Written first (red), Nov 18, by qa-tdd.
-// Retargeted Nov 18 (DEC-68, Chase 14:55Z): the tan paper #F1E9D2 / #14100D is replaced by Paper #FAF8F3 / #131210
+// Retargeted Nov 18 (DEC-68, Chase 14:55Z): the tan paper #F1E9D2 / #14100D is replaced by Paper #F7F7F4 / #131210
 // (RD-94; palettes in src/ui/__tests__/themes.test.ts, which replaces warmPaper.test.ts). Shadows and the pop stay
 // for now (Chase deciding), so RD-88..RD-90 are unchanged. Paper's surface is white, so RD-87's render check now bars
 // white only in dark mode; black is barred in both. The web demo: e2e-web/demo.spec.js (RD-92, RD-102).
@@ -145,7 +145,7 @@ async function feedWithPhotos(dark: boolean, photos = 2) {
 // ---------- RD-87 ----------
 describe('RD-87 every page backing is Paper (c.bg)', () => {
   for (const dark of [false, true]) {
-    const want = dark ? '#131210' : '#FAF8F3';
+    const want = dark ? '#131210' : '#F7F7F4';
     const screens: Array<[string, () => Promise<void>]> = [
       ['Gallery', async () => { await galleryWithNew(dark); }],
       ['Feed', async () => { await feedWithPhotos(dark); }],

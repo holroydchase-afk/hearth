@@ -29,8 +29,8 @@ const walk = (dir: string): string[] => fs.readdirSync(dir, { withFileTypes: tru
   return /\.(ts|tsx)$/.test(d.name) ? [p] : [];
 });
 
-describe('RD-94 Paper (the default) is an off-white page, not white and not tan', () => {
-  const LIGHT = { bg: '#FAF8F3', surface: '#FFFFFF', ink: '#1E1B17', muted: '#5C564E', line: '#E3DED4', fill: '#EFECE5', photo: '#EFECE5', accent: '#AD371D', accentInk: '#FFFFFF' };
+describe('RD-94 RD-105 Paper (the default) is Linen #F7F7F4, not white and not tan', () => {
+  const LIGHT = { bg: '#F7F7F4', surface: '#FFFFFF', ink: '#1E1B17', muted: '#5C564E', line: '#E3DED4', fill: '#EFECE5', photo: '#EFECE5', accent: '#AD371D', accentInk: '#FFFFFF' };
   const DARK = { bg: '#131210', surface: '#1C1A17', ink: '#F1EEE8', muted: '#B2ACA2', line: '#2E2B27', fill: '#24221E', photo: '#24221E', accent: '#FF8A65', accentInk: '#000000' };
 
   it('RD-94 THEME_NAMES is Paper, Avocado, Pomegranate, and Paper is the default', () => {
@@ -70,7 +70,7 @@ describe('RD-94 Paper (the default) is an off-white page, not white and not tan'
     const file = path.join(SRC, '..', '..', 'docs', 'design', 'tokens.json');
     const t = JSON.parse(fs.readFileSync(file, 'utf8')) as { color: { light: Colors; dark: Colors } };
     expect({ light: t.color.light, dark: t.color.dark }).toEqual({ light: { ...pal(false, 'paper') }, dark: { ...pal(true, 'paper') } });
-    expect({ light: t.color.light.bg, dark: t.color.dark.bg }).toEqual({ light: '#FAF8F3', dark: '#131210' });
+    expect({ light: t.color.light.bg, dark: t.color.dark.bg }).toEqual({ light: '#F7F7F4', dark: '#131210' });
   });
 
   it('RD-94 an unknown theme name gives Paper', () => {

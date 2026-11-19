@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import React from 'react';
-import { HearthTabBar, tabsFor, usesNativeTabs, type TabName } from '../TabBar';
+import { HearthTabBar, nativeTabLook, tabsFor, usesNativeTabs, type TabName } from '../TabBar';
 import { expectGrandparentSafe } from '../../test/renderApp';
 import { BigTextContext } from '../../ui/theme';
 
@@ -31,9 +31,18 @@ describe('tabs', () => {
     expectGrandparentSafe();
   });
 
-  it('LIVE-1 iPhone uses Hearth\'s own bar: the glass tab bar drew 17 pt words over the icons (Chase, Nov 5)', () => {
-    expect(usesNativeTabs('ios')).toBe(false);
-    expect(usesNativeTabs('web')).toBe(false);
-    expect(usesNativeTabs('android')).toBe(true);
+  it('RD-106 iPhone with Easy view Off uses the phone\'s own tab bar (glass on iOS 26, classic before); Easy view On keeps Hearth\'s fixed bar with words (Chase, Nov 19, DEC-70)', () => {
+    expect(usesNativeTabs('ios', false)).toBe(true);
+    expect(usesNativeTabs('ios', true)).toBe(false);
+    expect(usesNativeTabs('android', false)).toBe(true);
+    expect(usesNativeTabs('android', true)).toBe(true);
+    expect(usesNativeTabs('web', false)).toBe(false);
+    expect(usesNativeTabs('web', true)).toBe(false);
+  });
+
+  it('RD-107 the iPhone\'s own bar is icons only with spoken names and the system\'s glass (no Hearth color behind it); Android keeps its words rule and page color', () => {
+    expect(nativeTabLook('ios', false)).toEqual({ labelHidden: true, themedBackground: false });
+    expect(nativeTabLook('android', false)).toEqual({ labelHidden: false, themedBackground: true });
+    expect(nativeTabLook('android', true)).toEqual({ labelHidden: false, themedBackground: true });
   });
 });

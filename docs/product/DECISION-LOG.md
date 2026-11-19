@@ -493,5 +493,19 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** the tan read as a misread of what Chase wanted; off-white keeps photos clean without glare and still gives ink 16:1. A white tab bar on the off-white page tells the nav from the content. A whole theme says more than an accent swap, and three plain words are easy to say over the phone.
 - **Source:** `docs/product/SPEC-REDESIGN.md` 1i; persona check `decisions/2026-11-18-themes.md`. Supersedes only DEC-67's page colors (its shadows, pop and "no date line" stay).
 
+### DEC-69 · Paper's light page is Linen #F7F7F4 (RD-105)
+- **When / status:** Nov 19 · Chase, after a picker of six near-whites on the Gallery screen: "Remember barely warm. But go with linen for now" · Built in a small PR, waits on Chase's "merge"
+- **Chose:** Paper light page `#F7F7F4` (Linen). Surface, ink, accent, dark mode and the other themes stay as DEC-68 set them.
+- **Over:** `#FAF8F3` (live, read as papyrus); `#F9F9F7` Barely warm (Chase's own suggestion, kept as the runner-up to revisit); `#FAFAFA` Neutral; `#FBFAF8` Soft.
+- **Because:** Linen reads white next to the photos with no yellow cast, yet keeps a trace of warmth, and the white tab bar still stands apart from it.
+- **Source:** `docs/product/SPEC-REDESIGN.md` RD-105; persona check `decisions/2026-11-19-paper-linen.md`; picker https://claude.ai/artifact/Yb4PXNBTHA8ytzmUGXHXV1
+
+### DEC-70 · iPhone's own tab bar with Easy view Off, Hearth's fixed bar with Easy view On (RD-106, RD-107)
+- **When / status:** Nov 19 · Chase, on how Apple's glass capsule works on older iOS: "That's the route I want", "But maybe the fixed bar for grandparents", "Build them now", "We will look back, re org work based on what we accomplished" · Built, waits on Chase's "merge" and an iPhone check
+- **Chose:** on iPhone with Easy view Off (parents, icons only) the system tab bar: iOS 26 gives the floating glass capsule for free, older iPhones keep the classic bar. Easy view On (grandparents) keeps Hearth's fixed, solid bar with words. Android and the web unchanged. No custom glass of ours.
+- **Over:** Hearth's bar everywhere on iPhone (LIVE-1, Nov 5); a custom glass capsule (`expo-glass-effect`, iOS 26 only, needs a fallback everywhere else); a solid floating capsule; the bar shrinking on scroll (DS-5).
+- **Because:** the native bar matches what parents see in Apple's own apps and Instagram and costs nothing on older phones; LIVE-1's problem was 17 pt words, which only Easy view shows. Grandparents keep big words on a bar that never floats or blurs. Partly reverses Chase's Nov 16 "no glass before the beta" call, by his word.
+- **Source:** `docs/product/SPEC-REDESIGN.md` RD-106, RD-107; persona check `decisions/2026-11-19-native-tab-bar.md`; picker https://claude.ai/artifact/Yb4PXNBTHA8ytzmUGXHXV1
+
 ---
-Last updated: Nov 18, 2026 (DEC-68)
+Last updated: Nov 19, 2026 (DEC-70)

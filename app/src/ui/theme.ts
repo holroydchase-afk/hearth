@@ -61,10 +61,10 @@ const STATUS = {
  *  photo (the empty photo tile) is the fill. */
 interface Base { bg: string; surface: string; ink: string; muted: string; line: string; fill: string; accent: string }
 
-/** RD-94 / RD-95: the given values. Paper's surface is white; the others' sits halfway between page and fill. */
+/** RD-94 / RD-95: the given values (RD-105: Paper light page is Linen #F7F7F4, Chase Nov 19). Paper's surface is white; the others' sits halfway between page and fill. */
 const BASES: Record<ThemeName, { light: Base; dark: Base }> = {
   paper: {
-    light: { bg: '#FAF8F3', surface: '#FFFFFF', ink: '#1E1B17', muted: '#5C564E', line: '#E3DED4', fill: '#EFECE5', accent: '#AD371D' },
+    light: { bg: '#F7F7F4', surface: '#FFFFFF', ink: '#1E1B17', muted: '#5C564E', line: '#E3DED4', fill: '#EFECE5', accent: '#AD371D' },
     dark: { bg: '#131210', surface: '#1C1A17', ink: '#F1EEE8', muted: '#B2ACA2', line: '#2E2B27', fill: '#24221E', accent: '#FF8A65' },
   },
   avocado: {
