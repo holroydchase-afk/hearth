@@ -49,7 +49,7 @@ describe('Opening Hearth offline (ENG-R1)', () => {
     const api = signedInApi(be);
     const spy = jest.spyOn(api, 'mySpaces').mockRejectedValueOnce(offline());
     await renderApp(<Both />, { be, deps: { api }, waitReady: false });
-    expect(await screen.findByText(/can't reach Hearth/i)).toBeTruthy();
+    expect(await screen.findByText("Can't reach Hearth")).toBeTruthy();
     expect(screen.queryByText(/not part of a family/)).toBeNull();
     expect(screen.queryByRole('button', { name: /Sign out/ })).toBeNull();
     fireEvent.press(screen.getByRole('button', { name: 'Try again' }));
