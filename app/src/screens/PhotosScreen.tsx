@@ -27,6 +27,7 @@ import { QueueStatus } from './QueueStatus';
 import { SearchScreen } from './SearchScreen';
 import { TimelineScreen } from './TimelineScreen';
 import { YourName } from './YourName';
+import { useTabBarSpace } from '../ui/tabBarSpace';
 
 /** BETA-TIME-1: "Older photos. Chase added 48 older photos from July 2024. See them" (opens the timeline at that month). */
 function EarlierCard({ g, onOpen }: { g: EarlierGroup; onOpen: () => void }) {
@@ -46,6 +47,7 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   const app = useApp();
   const state = useFeed();
   const { c } = useTheme();
+  const tabRoom = useTabBarSpace(); // RD-109: room under the web's floating tab bar
   // BETA-TIME-2: the timeline opens in place; "Back to Gallery" returns here.
   const [timeline, setTimeline] = useState<{ startAt: string | null } | null>(null);
   // EVT-3/4: the Events list or one event, opened in place; Back returns here.
@@ -190,7 +192,7 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
           // RD-47: child 1 (the field) is sticky. Children 0 and 1 are never null, so the index holds.
           stickyHeaderIndices={[1]}
           onContentSizeChange={() => setRelayout((n) => n + 1)}
-          contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 }}
+          contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 + tabRoom }}
           keyboardShouldPersistTaps="handled"
         >
           {/* RD-11 / RD-55: the greeting is the large title; RD-47: the "Search photos" field right under it. */}
@@ -229,7 +231,7 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
         refreshControl={refresh}
         // RD-52: 32 pt between posts, no lines: this 16 pt gap plus each post's own 16 pt below it. No side padding:
         // a post keeps its own 16 pt edge (UX-R8), and the rest get theirs above.
-        contentContainerStyle={{ paddingTop: 16, gap: 16, paddingBottom: 32 }}
+        contentContainerStyle={{ paddingTop: 16, gap: 16, paddingBottom: 32 + tabRoom }}
         keyboardShouldPersistTaps="handled"
         automaticallyAdjustKeyboardInsets // UX-R1: on iPhone the comment field scrolls up above the keyboard
         removeClippedSubviews={false}

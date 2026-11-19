@@ -11,6 +11,13 @@ waiting_on_chase:
 blockers: []
 -->
 
+## Nov 19: web glass tab bar lookalike, Grandma Jo no longer enlarges the laptop page (Chase, DEC-72, RD-108, RD-109, DEMO-EASY-1, R61; branch claude/project-thread-ox4dz4, PR)
+- **Chase:** "i do not see it in the demo" → picked a web lookalike; "its a poor experience that clicking grandma jo makes the screen much larger".
+- **Done, test-first:** `HearthTabBar floating` (web + Easy view Off): capsule 16 pt in, 64 pt, `c.surface` at 60%, `backdropFilter` blur, `c.accentSoft` pill. `ui/tabBarSpace.tsx` context gives screens 96 pt of room (kit `Screen`, Photos, Timeline, Events, Search, the walk's bar). `DemoFrame` panel and the phone's `DemoBar` sit in `BigTextContext` false. RD-44's e2e now measures tile rows from the grid's top (scroll-independent).
+- **Expo preview republished Nov 19** from main eceac67 (group 96e510bb, iOS 01a1f21c-d8b4-79f2-a861-c4e8140f43e0); standing link serves it. Chase checks the iPhone tab bar.
+- **Next exact step:** Chase says "merge"; demo rebuilds; live check of the floating bar (fresh and returning).
+- **Portfolio / public presence:** the public demo's tab bar floats as glass for Chase's view once this merges.
+
 ## Nov 19: tech-debt review from five seats; fixes start (TRACKER R62; branch claude/project-thread-av5ejj)
 - **Chase:** "run a full review of hearth as the review team... I'm concerned there's tech debt or we have done some things oddly. Needs to pass the sniff test." Go-ahead to merge the P0/P1 fixes on green, app code included; migrations still deploy only on his word.
 - **Done:** architect, qa-tdd, privacy-security, ux-reviewer and staff-pm reviewed main at eceac67: `docs/reviews/2026-11-19-tech-debt/` (ranked table in its README). 2 P0s (offline open shows "no family"; demo story panel cut on a laptop), about 20 P1s. Jest 1507 green 3x, typecheck clean.
@@ -528,6 +535,7 @@ blockers: []
 - Chase pasted the demo INTAKE into Product Studio (Oct 22). Next: messenger test MS3.
 
 ## Portfolio / public presence
+- **Nov 19:** the demo's tab bar floats as a glass capsule (Easy view Off) and Grandma Jo's view no longer enlarges the laptop panel, once the R61 PR merges (DEC-72).
 - **Nov 19:** the demo's Paper light page becomes Linen `#F7F7F4` when the R58 PR merges (DEC-69).
 - **Oct 30, demo parent renamed (Product Studio INTAKE):** Hearth is featured on the portfolio homepage (portfolio PR #38), and the site credits Chase's real brother Sam, so the demo's made-up parent "Sam" is now "Kai" (no family member has that name; three letters keeps the demo bar on one line). Changed `app/src/demo/seed.ts`, `DemoBar.tsx`, their tests and the web e2e specs; re-shot `docs/portfolio/screens/` (the old shots said "Sam"). Rebuilt the demo from main: `portfolio/hearth-demo-site-2026-10-30.tgz` in the project files. Checks: 677 app tests, 993 database checks, demo + showcase sweep green. Reply to Product Studio: `docs/portfolio/INTAKE-2026-10-30-demo-rename.md`. Backend SQL fixtures still use a child named Sam; they are never shown publicly. **Next:** Product Studio re-copies demo/hearth/ and the screenshots.
 - **Oct 22, shipped (portfolio PR #15, merged and deploying):** Product Studio hosts the no-login demo at chaseholroyd.com/demo/hearth/ (copied from `app/dist-demo-site/`, built from main 10001df) and refreshed family-photos.html per `INTAKE-2026-10-22-demo.md`. The page now has "Try the demo", named groups, AES-256-GCM and MLS, no "Seen by" count, eight agents, 600+ app tests and 800+ database checks, a laptop shot and three phone shots. The placeholder name is kept, and neither expo.app nor the repo is linked. To update the hosted demo later, rebuild here and send Product Studio an intake to re-copy `dist-demo-site/`. Note: the demo bundle's Expo config includes the Expo owner slug (not a link or a secret). **Next:** open chaseholroyd.com/demo/hearth/ on a phone and a laptop and re-run the review against the live URL.

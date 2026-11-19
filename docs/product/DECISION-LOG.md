@@ -514,5 +514,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** on a laptop the story panel already says demo, explains the sample family and links back, so the bar only pushed the app down. On a phone the bar is the only sign the family is made up and the only route to Grandma Jo's view. Deviates from the studio demo bar standard (pm-tools DEMO-BANNER.md) on wide screens.
 - **Source:** persona check `decisions/2026-11-19-demo-bar-laptop.md`; screenshots `/mnt/project-files/demo/demo-bar-2026-11-19/` (project files)
 
+### DEC-72 · The web demo shows a lookalike of the floating glass tab bar (RD-108, RD-109)
+- **When / status:** Nov 19 · Chase: "i do not see it in the demo", then picked "Yes, build a web lookalike" on the card · Built, waits on Chase's "merge"
+- **Chose:** on the web with Easy view Off, a floating, see-through, blurred capsule with a tinted pill on the picked tab; screens leave room under it. Easy view On keeps the fixed bar with words. Same PR: Easy view no longer enlarges the laptop panel or the demo bar (DEMO-EASY-1).
+- **Over:** keeping the fixed bar on the web (iPhone only shows the real glass, so the demo wouldn't match what parents get).
+- **Because:** most people only see Hearth through the web demo; it should show the bar iPhone users get. Text stays off the glass (icons only, DS-6).
+- **Source:** `docs/product/SPEC-REDESIGN.md` RD-108, RD-109, DEMO-EASY-1; persona check `decisions/2026-11-19-web-glass-bar.md`
+
 ---
-Last updated: Nov 19, 2026 (DEC-71)
+Last updated: Nov 19, 2026 (DEC-72)

@@ -372,7 +372,12 @@ for (const width of [360, 390]) {
     const boxes = [];
     for (let i = 0; i < n; i++) {
       await tiles.nth(i).scrollIntoViewIfNeeded();
-      boxes.push(await tiles.nth(i).boundingBox());
+      // RD-109: y is measured from the grid's top, not the viewport, so rows don't depend on where the scroll stopped.
+      boxes.push(await tiles.nth(i).evaluate((el) => {
+        const r = el.getBoundingClientRect();
+        const g = (el.closest('[data-testid="gallery-grid"]') || document.body).getBoundingClientRect();
+        return { x: r.x, y: r.y - g.y, width: r.width, height: r.height };
+      }));
     }
     const hero = boxes[0];
     const inner = width - 32;
@@ -742,4 +747,56 @@ test('RD-92 RD-94 Paper, photo shadows and the reaction pop in the demo, light a
   await onFeed(page);
   expect.soft(await shadowNear(feedPhoto())).toBe('none');
   await page.screenshot({ path: path.join(shots, 'rd-92-dark-feed.png') });
+});
+
+// RD-108 / RD-109 (Chase, Nov 19, DEC-72): with Easy view Off (Chase) the web shows a lookalike of iOS 26's floating
+// glass tab bar, and the bottom of Gallery scrolls clear of it; Grandma Jo (Easy view On) keeps the fixed bar.
+test('RD-108 RD-109 Chase gets the floating glass tab bar and Gallery clears it; Grandma Jo keeps the fixed bar', async ({ page }) => {
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/');
+  await resetDemo(page);
+  await page.reload();
+  await galleryLoaded(page);
+  const bar = () => page.getByRole('tablist').evaluate((el) => {
+    const s = getComputedStyle(el); const r = el.getBoundingClientRect();
+    return { position: s.position, radius: parseFloat(s.borderTopLeftRadius), blur: /blur\(/.test(s.backdropFilter || s.webkitBackdropFilter || ''), left: r.left, top: r.top, width: r.width };
+  });
+  const chase = await bar();
+  expect({ position: chase.position, round: chase.radius >= 28, blur: chase.blur, inset: Math.round(chase.left) }).toEqual({ position: 'absolute', round: true, blur: true, inset: 16 });
+  // RD-109: at the very bottom of Gallery, the last photo ends above the bar.
+  const lastBottom = await page.evaluate(async () => {
+    const scrollers = [...document.querySelectorAll('div')].filter((d) => d.scrollHeight > d.clientHeight + 10 && /(auto|scroll)/.test(getComputedStyle(d).overflowY));
+    for (const s of scrollers) s.scrollTop = s.scrollHeight;
+    await new Promise((r) => setTimeout(r, 400));
+    const imgs = [...document.querySelectorAll('[data-testid="gallery-grid"] img, [data-testid="gallery-grid"] [role="img"], [data-testid="gallery-grid"] [role="button"]')];
+    return Math.max(...imgs.map((i) => i.getBoundingClientRect().bottom));
+  });
+  expect(lastBottom).toBeLessThanOrEqual(chase.top + 1);
+  await page.screenshot({ path: path.join(__dirname, '..', 'test-results', 'rd-108', 'chase-glass-bar.png') });
+
+  await details(page);
+  await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+  await details(page);
+  await page.getByRole('tab', { name: /^Gallery/ }).click();
+  await galleryLoaded(page);
+  const jo = await bar();
+  expect({ position: jo.position, blur: jo.blur, fullWidth: Math.round(jo.width) }).toEqual({ position: 'relative', blur: false, fullWidth: 393 });
+  await page.screenshot({ path: path.join(__dirname, '..', 'test-results', 'rd-108', 'jo-fixed-bar.png') });
+});
+
+// DEMO-EASY-1 (Chase, Nov 19): "its a poor experience that clicking grandma jo makes the screen much larger".
+// On a laptop, switching to Grandma Jo (Easy view On) enlarges the app in the phone column only, not the panel.
+test('DEMO-EASY-1 on a laptop, Grandma Jo\'s Easy view leaves the story panel the same size', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 860 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  const panel = () => page.getByRole('heading', { name: 'A private photo app for split families' }).evaluate((el) => {
+    const r = el.closest('[data-testid="demo-frame"]').firstElementChild.getBoundingClientRect();
+    return { font: getComputedStyle(el).fontSize, width: Math.round(r.width) };
+  });
+  const before = await panel();
+  await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+  await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
+  expect(await panel()).toEqual(before);
 });

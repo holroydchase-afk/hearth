@@ -14,6 +14,7 @@ import { BackButton, Button, Field, Loading, Notice, Txt } from '../ui/kit';
 import { useTheme } from '../ui/theme';
 import { PostCard } from './PostCard';
 import { TimelineCard } from './TimelineScreen';
+import { useTabBarSpace } from '../ui/tabBarSpace';
 
 const PAGE = 20;
 const ROW = { flexDirection: 'row', flexWrap: 'wrap', gap: 8 } as const;
@@ -29,6 +30,7 @@ export function SearchScreen({ onClose }: { onClose: () => void }) {
   const app = useApp();
   const feedState = useFeed();
   const { c } = useTheme();
+  const under = useTabBarSpace(); // RD-109: room under the web's floating tab bar
   const api = app.deps.api;
   const space = app.space!.space_id;
   const [words, setWords] = useState('');
@@ -99,7 +101,7 @@ export function SearchScreen({ onClose }: { onClose: () => void }) {
           keyExtractor={(p) => p.post_id}
           ListHeaderComponent={<Button label="Back to the search" text="Back to search" variant="secondary" onPress={() => setOpenId(null)} />}
           renderItem={({ item }) => <PostCard post={item} />}
-          contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 }}
+          contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 + under }}
           keyboardShouldPersistTaps="handled"
           removeClippedSubviews={false}
         />
@@ -175,7 +177,7 @@ export function SearchScreen({ onClose }: { onClose: () => void }) {
             <Button label="Show more of what was found" text="Show more" variant="secondary" busy={busy} onPress={() => void run(results.query, true)} />
           ) : undefined
         }
-        contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 }}
+        contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 + under }}
         keyboardShouldPersistTaps="handled"
         removeClippedSubviews={false}
       />

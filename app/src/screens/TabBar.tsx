@@ -40,6 +40,18 @@ export function nativeTabLook(os: string, _easyView: boolean): { labelHidden: bo
   return os === 'ios' ? { labelHidden: true, themedBackground: false } : { labelHidden: false, themedBackground: true };
 }
 
+/** RD-108 (Chase, Nov 19, DEC-72): the web can't use iOS 26's own glass bar, so with Easy view Off the web draws a
+ *  lookalike: a floating, see-through, blurred capsule. Easy view On keeps the fixed bar with words. */
+export function floatingTabBar(os: string, easyView: boolean): boolean {
+  return os === 'web' && !easyView;
+}
+
+/** '#RRGGBB' at an alpha, for the glass capsule. */
+function alpha(hex: string, a: number): string {
+  const n = parseInt(hex.slice(1, 7), 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+}
+
 /** Options for the native tab bar (expo-router NativeTabs). */
 export const NATIVE_TAB_OPTIONS = {
   minimizeBehavior: 'never', // DS-5: iOS 26 can shrink the bar on scroll; the way back stays visible
@@ -68,10 +80,10 @@ export function tabSpoken(tab: TabDef, newMessages: number): string {
   return tab.name === 'more' && newMessages > 0 ? 'More, new message' : tab.label;
 }
 
-export function HearthTabBar({ role, current, onNavigate, newMessages = 0 }: {
-  role: Role; current: TabName; onNavigate: (t: TabName) => void; newMessages?: number;
+export function HearthTabBar({ role, current, onNavigate, newMessages = 0, floating = false }: {
+  role: Role; current: TabName; onNavigate: (t: TabName) => void; newMessages?: number; floating?: boolean;
 }) {
-  const { c, bigText: easyView } = useTheme(); // the theme's big-text flag is Easy view (RD-77)
+  const { c, dark, bigText: easyView } = useTheme(); // the theme's big-text flag is Easy view (RD-77)
   const t = typeScale(easyView);
   const insets = useSafeAreaInsets();
   const { fontScale } = useWindowDimensions();
@@ -79,7 +91,15 @@ export function HearthTabBar({ role, current, onNavigate, newMessages = 0 }: {
   const typing = useTyping();
   if (typing) return null;
   return (
-    <View accessibilityRole="tablist" style={[styles.bar, { backgroundColor: c.surface, borderTopColor: c.tabLine, paddingBottom: Math.max(insets.bottom, 6) }]}>
+    <View accessibilityRole="tablist" style={floating
+      ? [styles.float, {
+        bottom: Math.max(insets.bottom, 16),
+        backgroundColor: alpha(c.surface, dark ? 0.62 : 0.6),
+        borderColor: dark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(255, 255, 255, 0.7)',
+        backdropFilter: 'blur(18px) saturate(1.6)',
+        boxShadow: dark ? '0 6px 24px rgba(0, 0, 0, 0.5)' : '0 6px 24px rgba(0, 0, 0, 0.14)',
+      } as object]
+      : [styles.bar, { backgroundColor: c.surface, borderTopColor: c.tabLine, paddingBottom: Math.max(insets.bottom, 6) }]}>
       {tabsFor(role).map((tab) => {
         const on = tab.name === current;
         const color = on ? c.accent : c.muted;
@@ -95,7 +115,7 @@ export function HearthTabBar({ role, current, onNavigate, newMessages = 0 }: {
             accessibilityShowsLargeContentViewer
             accessibilityLargeContentTitle={tab.label}
             onPress={() => onNavigate(tab.name)}
-            style={({ pressed }) => [styles.tab, { opacity: pressed ? 0.7 : 1 }]}
+            style={({ pressed }) => [styles.tab, floating ? styles.floatTab : null, floating && on ? { backgroundColor: c.accentSoft } : null, { opacity: pressed ? 0.7 : 1 }]}
           >
             <View>
               <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
@@ -118,6 +138,9 @@ export function HearthTabBar({ role, current, onNavigate, newMessages = 0 }: {
 
 const styles = StyleSheet.create({
   bar: { flexDirection: 'row', borderTopWidth: 1, paddingTop: 6, paddingHorizontal: 8, gap: 6 },
+  // RD-108: 64 pt tall, 16 pt in from each edge; the screens leave TAB_BAR_FLOAT_SPACE under it (RD-109).
+  float: { position: 'absolute', left: 16, right: 16, height: 64, borderRadius: 999, borderWidth: 1, flexDirection: 'row', alignItems: 'center', padding: 4, gap: 4 },
+  floatTab: { minHeight: 56, borderRadius: 999 },
   dot: { position: 'absolute', top: -2, right: -6, width: 12, height: 12, borderRadius: 6, borderWidth: 2 },
   tab: { flex: 1, minHeight: MIN_TARGET + 12, minWidth: MIN_TARGET, alignItems: 'center', justifyContent: 'center', paddingVertical: 4, gap: 2 },
 });
