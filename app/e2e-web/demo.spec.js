@@ -403,9 +403,12 @@ for (const width of [360, 390]) {
       if (isWide) wides += 1;
       expect({ i, ok: isWide || isSquare, insideMargins: t.x >= 15.5 && t.x + t.width <= width - 15.5 }).toEqual({ i, ok: true, insideMargins: true });
     }
-    // UX-R13: one wide photo per month, not per day.
+    // UX-R13: one wide photo per month, not per day; RD-73: a month of exactly 2 photos is two squares, no wide one.
+    // (Fixed Nov 20: the sample photos' dates move with today, so some days a month holds exactly 2.)
     const months = await page.getByText(MONTH).count();
-    expect({ wides, months }).toEqual({ wides: months, months });
+    const twoPhotoMonths = await page.getByTestId('gallery-grid').evaluate((g) =>
+      [...g.children].filter((m) => m.querySelectorAll('[data-testid^="gallery-tile-"]').length === 2).length);
+    expect({ wides, months }).toEqual({ wides: months - twoPhotoMonths, months });
     // UX-R13: no square alone on its row.
     const rows = new Map();
     for (const t of boxes) if (Math.abs(t.width - inner) > 1.5) rows.set(Math.round(t.y), (rows.get(Math.round(t.y)) ?? 0) + 1);
