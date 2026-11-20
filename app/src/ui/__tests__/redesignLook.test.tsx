@@ -24,7 +24,7 @@ import { RADIUS, contrast, dialogRadius, paletteFor, useTheme } from '../theme';
 type ColorName = 'paper' | 'avocado' | 'pomegranate';
 const ACCENTS: Record<string, { light: string; dark: string }> = {
   paper: { light: '#AD371D', dark: '#FF8A65' },
-  avocado: { light: '#3B6120', dark: '#B4D16A' },
+  avocado: { light: '#2F5419', dark: '#7ED69B' }, // qa-tdd Nov 20: RD-111 / RD-112 (Hass avocado, DEC-76)
   pomegranate: { light: '#A3172F', dark: '#FF8597' },
 };
 const pf = paletteFor as unknown as (os: string, dark: boolean, n?: string, high?: boolean) => ReturnType<typeof paletteFor>;

@@ -211,10 +211,11 @@ test('DEMO-BAR Reset asks first: Keep changes nothing; Reset restores and says s
 // More → Theme → Avocado and Pomegranate recolor the page and the pick survives a reload; Grandma Jo stays Paper with
 // no Theme row; the tab bar is c.surface with a c.line top border (RD-104). Photo shadows stay for now (Chase
 // deciding), so no shadow check here (RD-92 keeps it). Screenshots of all three themes, light and dark.
-test('RD-102 Paper by default; Chase picks Avocado then Pomegranate, it survives a reload; Grandma Jo stays Paper', async ({ page }) => {
+test('RD-102 RD-117 Paper by default; Chase picks Avocado then Pomegranate, it survives a reload; Grandma Jo stays Paper', async ({ page }) => {
   const PAGE = {
     paper: { light: 'rgb(247, 247, 244)', dark: 'rgb(19, 18, 16)' },
-    avocado: { light: 'rgb(238, 239, 211)', dark: 'rgb(16, 20, 12)' },
+    // qa-tdd, Nov 20: RD-117 (Hass avocado, DEC-76) replaces rgb(238, 239, 211) / rgb(16, 20, 12).
+    avocado: { light: 'rgb(246, 245, 228)', dark: 'rgb(42, 36, 38)' },
     pomegranate: { light: 'rgb(245, 234, 223)', dark: 'rgb(23, 13, 16)' },
   };
   const WORD = { paper: 'Paper', avocado: 'Avocado', pomegranate: 'Pomegranate' };
@@ -760,6 +761,104 @@ test('RD-92 RD-94 Paper, photo shadows and the reaction pop in the demo, light a
   await onFeed(page);
   expect.soft(await shadowNear(feedPhoto())).toBe('none');
   await page.screenshot({ path: path.join(shots, 'rd-92-dark-feed.png') });
+});
+
+// RD-117 (SPEC-REDESIGN 1k, Chase Nov 20, DEC-76): Avocado is a Hass avocado (page rgb(246, 245, 228) light,
+// rgb(42, 36, 38) dark) and a picked reaction is a 2 px accent outline with the count in the accent, no fill; an
+// unpicked one has a 1 px border; tapping never moves the heart's box or its neighbour (RD-116). Written first (red),
+// Nov 20, by qa-tdd. Soft expects so one run shows every miss. Screenshots: Avocado light and dark, and a picked
+// reaction in all three themes.
+test('RD-117 RD-116 Avocado (Hass) light and dark; a picked ❤️ is a 2 px accent outline with an accent count, no fill, in every theme', async ({ page }) => {
+  const PAGE = {
+    paper: { light: 'rgb(247, 247, 244)' },
+    avocado: { light: 'rgb(246, 245, 228)', dark: 'rgb(42, 36, 38)' },
+    pomegranate: { light: 'rgb(245, 234, 223)' },
+  };
+  // Accent per theme, light (RD-94, RD-111, RD-95); Avocado dark is Fresh leaf #7ED69B (RD-112).
+  const ACCENT = { paper: 'rgb(173, 55, 29)', avocado: 'rgb(47, 84, 25)', pomegranate: 'rgb(163, 23, 47)', avocadoDark: 'rgb(126, 214, 155)' };
+  const WORD = { paper: 'Paper', avocado: 'Avocado', pomegranate: 'Pomegranate' };
+  const shots = path.join(__dirname, '..', 'test-results', 'rd-117');
+  const pick = async (theme) => {
+    await page.getByRole('tab', { name: /^More/ }).click();
+    await page.getByRole('button', { name: /^Theme(,|$)/ }).click();
+    await page.getByRole('radio', { name: `${WORD[theme]} theme` }).click();
+    await expect(page.getByRole('radio', { name: `${WORD[theme]} theme` })).toBeChecked();
+  };
+  const themeBg = () => page.getByRole('heading', { name: 'Theme' }).evaluate((el) => {
+    const opaque = (c) => c && c !== 'transparent' && !/rgba\(\s*\d+,\s*\d+,\s*\d+,\s*0\s*\)/.test(c);
+    let n = el;
+    while (n && !opaque(getComputedStyle(n).backgroundColor)) n = n.parentElement;
+    return n ? getComputedStyle(n).backgroundColor : 'rgb(255, 255, 255)';
+  });
+  const love = () => page.getByRole('button', { name: 'Love it' }).filter({ visible: true }).first();
+  // RN-web renders no aria-selected / aria-pressed on the reaction (QA-R1), so "picked" is read from the count:
+  // tapping on raises it by one. turnOn() leaves the heart picked whatever the demo started with.
+  const countOf = async () => Number((await love().innerText()).replace(/\D/g, '') || 0);
+  const turnOn = async () => {
+    const before = await countOf();
+    await love().click();
+    await expect.poll(countOf).not.toBe(before);
+    if ((await countOf()) < before) { await page.waitForTimeout(300); await love().click(); await expect.poll(countOf).toBe(before); }
+  };
+  const turnOff = async () => { await turnOn(); const n = await countOf(); await page.waitForTimeout(300); await love().click(); await expect.poll(countOf).toBe(n - 1); };
+  const look = () => love().evaluate((btn) => {
+    const s = getComputedStyle(btn);
+    const count = [...btn.querySelectorAll('*')].find((n) => n.children.length === 0 && /^\d+$/.test((n.textContent || '').trim()));
+    const r = btn.getBoundingClientRect();
+    const haha = btn.parentElement.querySelector('[aria-label="Haha"]');
+    return {
+      bg: s.backgroundColor,
+      widths: [s.borderTopWidth, s.borderRightWidth, s.borderBottomWidth, s.borderLeftWidth],
+      color: s.borderTopColor,
+      count: count ? getComputedStyle(count).color : 'no count',
+      box: { x: r.x, y: r.y, w: r.width, h: r.height },
+      haha: haha ? haha.getBoundingClientRect().x : null,
+    };
+  });
+  const clear = (c) => c === 'transparent' || c === 'rgba(0, 0, 0, 0)';
+  const near = (a, b) => Math.abs(a - b) <= 0.5;
+
+  await page.setViewportSize({ width: 393, height: 852 });
+  for (const mode of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme: mode, reducedMotion: 'reduce' });
+    await page.goto('/');
+    await resetDemo(page);
+    await page.reload();
+    await galleryLoaded(page);
+    await pick('avocado');
+    await page.waitForTimeout(300); // soft, so one red run also shows the reaction checks below
+    expect.soft({ mode, page: await themeBg() }).toEqual({ mode, page: PAGE.avocado[mode] });
+    await page.screenshot({ path: path.join(shots, `rd-117-avocado-${mode}.png`) });
+    if (mode === 'dark') {
+      await onFeed(page);
+      await turnOn();
+      const on = await look();
+      expect.soft({ mode, clear: clear(on.bg), widths: on.widths, color: on.color, count: on.count })
+        .toEqual({ mode, clear: true, widths: ['2px', '2px', '2px', '2px'], color: ACCENT.avocadoDark, count: ACCENT.avocadoDark });
+    }
+  }
+
+  // Light: a picked heart in every theme; Paper and Pomegranate pages unchanged.
+  await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
+  for (const theme of ['paper', 'avocado', 'pomegranate']) {
+    await pick(theme);
+    await page.waitForTimeout(300);
+    expect.soft({ theme, page: await themeBg() }).toEqual({ theme, page: PAGE[theme].light });
+    await onFeed(page);
+    await turnOff();
+    await page.waitForTimeout(300);
+    const off = await look();
+    expect.soft({ theme, offClear: clear(off.bg), offWidths: off.widths }).toEqual({ theme, offClear: true, offWidths: ['1px', '1px', '1px', '1px'] });
+    await love().click();
+    await page.waitForTimeout(300);
+    const on = await look();
+    expect.soft({ theme, clear: clear(on.bg), bg: clear(on.bg) ? 'clear' : on.bg, widths: on.widths, color: on.color, count: on.count })
+      .toEqual({ theme, clear: true, bg: 'clear', widths: ['2px', '2px', '2px', '2px'], color: ACCENT[theme], count: ACCENT[theme] });
+    // RD-116: the heart's outer box and its neighbour stay put (±0.5 px).
+    expect.soft({ theme, same: near(on.box.x, off.box.x) && near(on.box.y, off.box.y) && near(on.box.w, off.box.w) && near(on.box.h, off.box.h), haha: off.haha !== null && near(on.haha, off.haha) })
+      .toEqual({ theme, same: true, haha: true });
+    await love().screenshot({ path: path.join(shots, `rd-117-picked-${theme}-light.png`) });
+  }
 });
 
 // RD-108 / RD-109 (Chase, Nov 19, DEC-72): with Easy view Off (Chase) the web shows a lookalike of iOS 26's floating
