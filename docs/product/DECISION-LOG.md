@@ -549,5 +549,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** a theme drawn from the real fruit is consistent, layer by layer; the pale flesh keeps photos the star. The filled oval looked heavy behind the emoji; an outline marks the pick with width and color, not a blob.
 - **Source:** `docs/product/SPEC-REDESIGN.md` 1k; persona check `decisions/2026-11-20-avocado-hass.md` (LG Red, mitigated); tester https://claude.ai/artifact/6UJSk4FvbyCVMjUrRWaeYz, saved `/mnt/project-files/design/avocado-hass-tester-2026-11-20.html`. Supersedes DEC-68's Avocado values (RD-95) and GUX-R15's filled capsule.
 
+### DEC-77 · Funding research leaves the public repo (PM-R10)
+- **When / status:** Nov 20 · Chase, thread on the tech-debt review: "Is it OK to move FUNDING-RESEARCH.md out of the public repo? yes." · Done
+- **Chose:** remove `docs/product/FUNDING-RESEARCH.md` from the repo; the private copy lives in the project's own files.
+- **Over:** keeping it public; moving it to `docs/archive/` (still public).
+- **Because:** it holds personal plans that don't belong in a public portfolio repo and contradicts the proof-of-concept framing.
+- **Source:** `docs/reviews/2026-11-19-tech-debt/pm.md` PM-R10. Not a product decision, so no persona check. Older commits still hold the file.
+
 ---
-Last updated: Nov 20, 2026 (DEC-76)
+Last updated: Nov 20, 2026 (DEC-77)

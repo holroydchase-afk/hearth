@@ -11,6 +11,10 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 20: funding research out of the public repo (Chase, DEC-77, PM-R10)
+- Done: `docs/product/FUNDING-RESEARCH.md` removed; private copy in the project files (`private/`). Older commits still hold it.
+- Next: Chase wants the planning docs (REMAINING, MILESTONE-1, PLAN, PM-REVIEW, TRACKER, BETA-SPEC) rewritten before they stay public; scope waits on his note. Deploy of 0026-0028 still waits on a new Supabase token.
+
 ## Nov 20: ENG-R6 navigation is real stacks (tech-debt review, TRACKER R62; branch claude/project-thread-av5ejj, PR)
 - **Done, test-first** (red `navStacks.test.tsx`, then old tests moved off the in-place swaps, then the code): Gallery, Feed and More are each a stack (`app/(tabs)/{gallery,feed,more}/_layout.tsx`, shared `screens/TabStack.tsx`, `anchor: 'index'`). Routes: `/gallery/search`, `/feed/timeline?startAt=`, `/more/{messages,groups,events,easy-view,look,theme,me,help}`. `MoreRowGate` keeps the role rules (a viewer at `/more/groups` or `/more/theme` gets the menu, DEC-49). Old links `/groups`, `/me`, `/help` and `/more?open=` redirect with the menu under them. Deleted `resetMore`/`resets` and the BackHandler fallbacks (Search and the timeline only handle their inner steps now). Re-tapping a tab on Hearth's own bar sends `tabPress`, so its stack goes back to its first screen; leaving More pops it (as before); the phone's own bar pops natively. `build-demo.sh` copies the new addresses. Tests render the real routes through `test/appRoutes.tsx`; jest now transforms `standard-navigation`.
 - **Still in place (not stack screens):** Feed's Events list/event and Gallery's New for you walk (keeps its BackHandler); More → Events → one event pops straight to More on the phone's Back.
