@@ -373,7 +373,8 @@ describe('R21 (P2) the reaction row starts at the 16 pt content edge', () => {
     const row = within(card).getByTestId(`actions-${id}`);
     const first = within(row).getAllByRole('button')[0]!;
     const s = flat(first.props.style);
-    expect(inset(first, card, true) - num(s.borderLeftWidth, s.borderWidth)).toBe(16);
+    // Fixed Nov 20 (test bug, DEC-76): the emoji starts after margin + border + padding, so the border adds, not subtracts.
+    expect(inset(first, card, true) + num(s.borderLeftWidth, s.borderWidth)).toBe(16);
   });
 });
 

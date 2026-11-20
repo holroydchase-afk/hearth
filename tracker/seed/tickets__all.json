@@ -1170,6 +1170,34 @@
    "fixed": null
   },
   {
+   "id": "T25",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "QA-R1 (Hass Avocado run, Nov 20): 3 tests still assumed GUX-R15's filled picked capsule, superseded by DEC-76 / SPEC-REDESIGN 1k. Retargeted: moments.test.tsx LIVE-3 now expects a 2 pt outline and no fill (RD-114); warmPaper.test.tsx RD-89 compares padding + border per side, since RD-116 absorbs the 1 to 2 pt border change in padding; reviewRound2.test.tsx R21 had the border sign wrong (the emoji starts after margin + border + padding), so it read 14 instead of 16. jest green x3 on those",
+   "tests": [
+    "app/src/screens/__tests__/moments.test.tsx",
+    "app/src/screens/__tests__/reviewRound2.test.tsx",
+    "app/src/screens/__tests__/warmPaper.test.tsx"
+   ],
+   "found": "2026-11-20",
+   "fixed": "2026-11-20"
+  },
+  {
+   "id": "T26",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "open",
+   "title": "QA-R2 (Hass Avocado run, Nov 20): flaky, unrelated to DEC-76. app/src/screens/__tests__/smsSignIn.test.tsx BETA-SMS-4 'names only the last 4 digits...' failed in jest run 2 of 3: it reads 'You can ask for a new code in (60|59) seconds.' on real timers, and under full-suite load more than a second passes, so it shows 58 or less. Fix: fake timers before sending the code (as the 61 s check below it does), or accept 5x. Test: that file",
+   "tests": [
+    "app/src/screens/__tests__/smsSignIn.test.tsx"
+   ],
+   "found": "2026-11-20",
+   "fixed": null
+  },
+  {
    "id": "B15",
    "kind": "bug",
    "layer": "backend",
