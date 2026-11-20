@@ -11,6 +11,11 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 20: ENG-R6 navigation is real stacks (tech-debt review, TRACKER R62; branch claude/project-thread-av5ejj, PR)
+- **Done, test-first** (red `navStacks.test.tsx`, then old tests moved off the in-place swaps, then the code): Gallery, Feed and More are each a stack (`app/(tabs)/{gallery,feed,more}/_layout.tsx`, shared `screens/TabStack.tsx`, `anchor: 'index'`). Routes: `/gallery/search`, `/feed/timeline?startAt=`, `/more/{messages,groups,events,easy-view,look,theme,me,help}`. `MoreRowGate` keeps the role rules (a viewer at `/more/groups` or `/more/theme` gets the menu, DEC-49). Old links `/groups`, `/me`, `/help` and `/more?open=` redirect with the menu under them. Deleted `resetMore`/`resets` and the BackHandler fallbacks (Search and the timeline only handle their inner steps now). Re-tapping a tab on Hearth's own bar sends `tabPress`, so its stack goes back to its first screen; leaving More pops it (as before); the phone's own bar pops natively. `build-demo.sh` copies the new addresses. Tests render the real routes through `test/appRoutes.tsx`; jest now transforms `standard-navigation`.
+- **Still in place (not stack screens):** Feed's Events list/event and Gallery's New for you walk (keeps its BackHandler); More → Events → one event pops straight to More on the phone's Back.
+- **Next exact step:** qa-tdd 3x; ux-reviewer/grandparent-ux check iPhone swipe-back and Android Back on More's rows in the Expo preview; Chase says "merge".
+
 ## Nov 19: glass tab bar shrinks on scroll (Chase, DEC-75, RD-110, R64; branch claude/project-thread-ox4dz4, PR)
 - **Chase:** "I also want the full iOS glass oval interaction on scroll".
 - **Done, test-first:** `nativeTabLook('ios')` gives `minimize: 'onScrollDown'` (the layout passes it to `NativeTabs`); Android stays `never`. Web: `HearthTabBar` follows any scrolling area (`nextMinimized`, capture-phase scroll listener) and narrows to a 64 pt oval with only the picked tab; tap it, scroll up or reach the top to bring the bar back. Easy view On never shrinks. DS-5 wording updated.
