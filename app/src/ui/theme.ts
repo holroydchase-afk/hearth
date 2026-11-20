@@ -11,8 +11,6 @@ export type OS = 'ios' | 'android' | 'web';
 export interface Colors {
   bg: string; surface: string; ink: string; muted: string; line: string;
   accent: string; accentInk: string; accentSoft: string; fill: string;
-  /** GUX-R15: a picked reaction's capsule, the accent mixed into the page, 3:1 against it with ink words 4.5:1 on it. */
-  accentPicked: string;
   safe: string; safeSoft: string; danger: string; onDanger: string;
   /** RD-72 (UX-R29): red words on the page or a sheet (Delete post, the alert's Delete); iOS systemRed in dark. */
   dangerText: string; scrim: string; photo: string;
@@ -30,25 +28,11 @@ export type ThemeName = 'paper' | 'avocado' | 'pomegranate';
 export const THEME_NAMES: readonly ThemeName[] = ['paper', 'avocado', 'pomegranate'];
 export const ThemeContext = createContext<ThemeName>('paper');
 
-/** How far a soft tint (accentSoft, a picked capsule; safeSoft, the "sent" tint) mixes its color into the page. */
+/** How far a soft tint (accentSoft; safeSoft, the "sent" tint) mixes its color into the page. */
 export const SOFT = { light: 0.93, dark: 0.82 } as const;
 
-/** GUX-R15: how far a picked capsule mixes the page into the accent (about 30% page in light, 47% in dark). */
-export const PICKED = { light: 0.3, dark: 0.47 } as const;
-
-/** GUX-R15: the accent mixed into the page at about `t`, nudged by the least step (0.01) that keeps the capsule
- *  3:1 against the page (non-text contrast) and the ink count 4.5:1 on it, so every theme passes. */
-function picked(accent: string, page: string, ink: string, t: number): string {
-  const ok = (m: string) => contrast(m, page) >= 3 && contrast(ink, m) >= 4.5;
-  for (let step = 0; step <= 100; step++) {
-    for (const u of step ? [t - step / 100, t + step / 100] : [t]) {
-      if (u < 0 || u > 1) continue;
-      const m = mix(accent, page, u);
-      if (ok(m)) return m;
-    }
-  }
-  return mix(accent, page, t);
-}
+// RD-114 / RD-115 (DEC-76, Chase Nov 20): a picked reaction is a 2 pt accent outline with an accent count, no fill,
+// so GUX-R15's accentPicked capsule tint is gone.
 
 /** GUX-R17: safeSoft is safe mixed into the theme's page like accentSoft. */
 const SAFE = { light: '#1C6E31', dark: '#7DD394' } as const;
@@ -67,9 +51,12 @@ const BASES: Record<ThemeName, { light: Base; dark: Base }> = {
     light: { bg: '#F7F7F4', surface: '#FFFFFF', ink: '#1E1B17', muted: '#5C564E', line: '#E3DED4', fill: '#EFECE5', accent: '#AD371D' },
     dark: { bg: '#131210', surface: '#1C1A17', ink: '#F1EEE8', muted: '#B2ACA2', line: '#2E2B27', fill: '#24221E', accent: '#FF8A65' },
   },
+  // RD-111 / RD-112 (DEC-76, Chase Nov 20): a Hass avocado, layer by layer. Ripe skin → light ink and the dark page
+  // (a dark skin brown); just under the skin → light accent; middle flesh → fill; inner flesh → light page. Dark accent
+  // is "Fresh leaf". line is the page mixed toward the ink (12% light, 16% dark).
   avocado: {
-    light: { bg: '#EEEFD3', surface: mix('#EEEFD3', '#E2E4C4', 0.5), ink: '#1B2113', muted: '#525A40', line: '#D2D5B1', fill: '#E2E4C4', accent: '#3B6120' },
-    dark: { bg: '#10140C', surface: mix('#10140C', '#1B2015', 0.5), ink: '#EEF0DE', muted: '#ADB599', line: '#2E3524', fill: '#1B2015', accent: '#B4D16A' },
+    light: { bg: '#F6F5E4', surface: mix('#F6F5E4', '#E7ECC6', 0.5), ink: '#1F1A1B', muted: '#4F4A42', line: '#DCDBCC', fill: '#E7ECC6', accent: '#2F5419' },
+    dark: { bg: '#2A2426', surface: mix('#2A2426', '#3A3335', 0.5), ink: '#F3F1DA', muted: '#C2BDA8', line: '#4A4543', fill: '#3A3335', accent: '#7ED69B' },
   },
   pomegranate: {
     light: { bg: '#F5EADF', surface: mix('#F5EADF', '#EBDDD0', 0.5), ink: '#22161A', muted: '#62504F', line: '#DDCDBE', fill: '#EBDDD0', accent: '#A3172F' },
@@ -86,7 +73,6 @@ function build(b: Base, dark: boolean): Colors {
     safeSoft: mix(SAFE[mode], b.bg, SOFT[mode]),
     accentInk: dark ? '#000000' : '#FFFFFF',
     accentSoft: mix(b.accent, b.bg, SOFT[mode]),
-    accentPicked: picked(b.accent, b.bg, b.ink, PICKED[mode]),
     tabLine: edge(b.line, b.ink, b.surface, b.bg),
   };
 }
@@ -148,8 +134,6 @@ function highContrast(c: Colors): Colors {
     accent,
     // RD-86: the soft tint follows the stronger accent, still mixed with the page.
     accentSoft: mix(accent, c.bg, SOFT[mode]),
-    // GUX-R15: the picked capsule follows the stronger accent too, still 3:1 on the page with the ink 4.5:1 on it.
-    accentPicked: picked(accent, c.bg, c.ink, PICKED[mode]),
   };
   highCache.set(c, out);
   return out;
