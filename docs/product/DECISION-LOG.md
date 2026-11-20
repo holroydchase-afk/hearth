@@ -542,5 +542,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** parents expect Apple's own behavior and it gives photos the whole screen; grandparents keep the fixed bar with words, so the way back stays visible for them.
 - **Source:** `docs/product/SPEC-REDESIGN.md` RD-110; persona check `decisions/2026-11-19-glass-bar-shrink.md`
 
+### DEC-76 · Avocado from a Hass avocado's layers; a picked reaction is an outline, not a filled oval (RD-111..RD-118)
+- **When / status:** Nov 20 · Chase, thread "Add Paper, Avocado and Pomegranate themes": "Haas avacado", "Break down the avacado its multiple layers including the skin", "I love the light mode"; dark: "It's too dark", the accent "looks like green baby poop or mush peas", picked "Fresh leaf"; "I don't like the background on the emojis (the lighter oval)" · Specced, failing tests next
+- **Chose:** Avocado light: page `#F6F5E4` (inner flesh), fill `#E7ECC6` (middle flesh), ink `#1F1A1B` (ripe skin), muted `#4F4A42`, accent `#2F5419` (the green under the skin). Dark: page `#2A2426` (a softer charcoal-plum skin), fill `#3A3335`, ink `#F3F1DA`, muted `#C2BDA8`, accent `#7ED69B` (Fresh leaf). Surface and line follow the existing rules. In every theme a picked reaction has no fill: a 2 pt accent outline and its count in the accent (≥ 3:1 and ≥ 4.5:1 on the page); unpicked keeps a 1 pt line border. Paper and Pomegranate unchanged.
+- **Over:** the Nov 18 Avocado (`#EEEFD3` page, near-black green `#10140C` dark); a ripe-skin dark page (too dark); dark accents `#B3D25B` (mushy), `#EFEBB8`, `#C8EB7E`; the seed brown as an accent (reads as a second theme); GUX-R15's filled `accentPicked` oval and LIVE-3's "no outline".
+- **Because:** a theme drawn from the real fruit is consistent, layer by layer; the pale flesh keeps photos the star. The filled oval looked heavy behind the emoji; an outline marks the pick with width and color, not a blob.
+- **Source:** `docs/product/SPEC-REDESIGN.md` 1k; persona check `decisions/2026-11-20-avocado-hass.md` (LG Red, mitigated); tester https://claude.ai/artifact/6UJSk4FvbyCVMjUrRWaeYz, saved `/mnt/project-files/design/avocado-hass-tester-2026-11-20.html`. Supersedes DEC-68's Avocado values (RD-95) and GUX-R15's filled capsule.
+
 ---
-Last updated: Nov 19, 2026 (DEC-75)
+Last updated: Nov 20, 2026 (DEC-76)
