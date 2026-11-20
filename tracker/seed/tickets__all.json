@@ -1189,10 +1189,23 @@
    "kind": "test fix",
    "layer": "app",
    "severity": "Medium",
-   "status": "open",
-   "title": "QA-R2 (Hass Avocado run, Nov 20): flaky, unrelated to DEC-76. app/src/screens/__tests__/smsSignIn.test.tsx BETA-SMS-4 'names only the last 4 digits...' failed in jest run 2 of 3: it reads 'You can ask for a new code in (60|59) seconds.' on real timers, and under full-suite load more than a second passes, so it shows 58 or less. Fix: fake timers before sending the code (as the 61 s check below it does), or accept 5x. Test: that file",
+   "status": "fixed",
+   "title": "QA-R2 (Hass Avocado run, Nov 20): flaky, unrelated to DEC-76. app/src/screens/__tests__/smsSignIn.test.tsx BETA-SMS-4 'names only the last 4 digits...' failed in jest run 2 of 3: it reads 'You can ask for a new code in (60|59) seconds.' on real timers, and under full-suite load more than a second passes, so it shows 58 or less. Fix: fake timers before sending the code (as the 61 s check below it does), or accept 5x. Fixed Nov 20 (qa-tdd): the test now runs on jest fake timers, reads exactly 60, advances 1 s and reads 59 (proves the countdown). Red shown with 2.1 s of simulated load (58 seconds): e2e/results/t26-sms4-red-2026-11-20.txt. Test: that file",
    "tests": [
     "app/src/screens/__tests__/smsSignIn.test.tsx"
+   ],
+   "found": "2026-11-20",
+   "fixed": "2026-11-20"
+  },
+  {
+   "id": "T27",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (T26 fix run, Nov 20): under 3x CPU oversubscription (8 busy loops on 4 cores) the full jest run failed app/src/screens/__tests__/oldTabLinks.test.tsx B19 '/me opens More -> Me for a parent and a viewer' once: a queryByRole header that should be null found a View. Not seen in 3 normal runs. Likely cause: the loop renders twice (chase then jo) and the second render is read before the first unmount settles, or More opens a row after a load. Check under load before calling it fixed. Test: that file",
+   "tests": [
+    "app/src/screens/__tests__/oldTabLinks.test.tsx"
    ],
    "found": "2026-11-20",
    "fixed": null
