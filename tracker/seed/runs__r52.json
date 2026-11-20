@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-20T09:00:00-05:00",
+ "label": "T26 fix: BETA-SMS-4 countdown on fake timers; app jest 3x (green)",
+ "passed": 4845,
+ "failed": 0,
+ "results": {},
+ "note": "Test-only change at 1486b58 (no product file changed). Red first: BETA-SMS-4 with 2.1 s of simulated load read 58 seconds and failed (e2e/results/t26-sms4-red-2026-11-20.txt). Fixed on jest fake timers: reads 60, advances 1 s, reads 59. jest 1615 passed (1 skipped, 1 todo) x3. typecheck, e2e:web, e2e:demo reused from r51 at 1486b58 (green x3, no product change). One stress run (8 busy loops on 4 cores) failed B19 oldTabLinks once: T27. e2e/results/t26-sms4-green-3x-2026-11-20.txt"
+}

@@ -70,7 +70,7 @@
   {
    "id": "SQL-010",
    "title": "Mom-side grandma sees only 1 circle in Dad's space (Everyone)",
-   "area": "Grandparent separation",
+   "area": "Other",
    "tickets": [],
    "where": "backend/tests/rls_test.sql"
   },
@@ -203,7 +203,7 @@
   {
    "id": "SQL-029",
    "title": "Co-parent sees only the Co-parent circle (cannot see Dad's family circles)",
-   "area": "Co-parent separation",
+   "area": "Other",
    "tickets": [],
    "where": "backend/tests/rls_test.sql"
   },
@@ -301,7 +301,7 @@
   {
    "id": "SQL-043",
    "title": "Alex sees only the Co-parent circle in Blair's space",
-   "area": "Owner access",
+   "area": "Other",
    "tickets": [],
    "where": "backend/tests/rls_test.sql"
   },

@@ -11,6 +11,10 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 20: Hass Avocado and outlined picked reactions built (Chase, DEC-76, RD-111..RD-117; branch claude/project-thread-253q4i, local commit)
+- Built: Avocado's new light/dark values in `app/src/ui/theme.ts`; `accentPicked` removed; a picked reaction in `PostCard.tsx` is a 2 pt `c.accent` outline with an accent count, unpicked a 1 pt `c.line` outline, padding absorbs the border so nothing moves; `docs/design/tokens.json` regenerated. RD-111..RD-116 jest green, typecheck green.
+- Next: qa-tdd retargets 3 older tests that still expect the superseded no-outline capsule (moments LIVE-3, warmPaper RD-89 layout keeps padding, reviewRound2 R21 subtracts the border), then runs all suites 3x and the RD-117 Playwright run; RD-118 on phones.
+
 ## Nov 19: glass tab bar shrinks on scroll (Chase, DEC-75, RD-110, R64; branch claude/project-thread-ox4dz4, PR)
 - **Chase:** "I also want the full iOS glass oval interaction on scroll".
 - **Done, test-first:** `nativeTabLook('ios')` gives `minimize: 'onScrollDown'` (the layout passes it to `NativeTabs`); Android stays `never`. Web: `HearthTabBar` follows any scrolling area (`nextMinimized`, capture-phase scroll listener) and narrows to a 64 pt oval with only the picked tab; tap it, scroll up or reach the top to bring the bar back. Easy view On never shrinks. DS-5 wording updated.

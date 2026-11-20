@@ -61,13 +61,14 @@ describe('RD 1a source scans', () => {
   });
 
   it('RD-3 no component hard-codes an accent hex (old or new); theme.ts is the only home', () => {
-    const accents = ['B23A1E', 'FF8A65', '2E7D4F', '6FCF97', '8E3A8F', 'D9A0E0', 'A4421F', 'F4A47F', '2D6A4E', '8FD1AE', '5A3EA6', 'C5B3F5', 'AD371D', '276B43', '3B6120', 'B4D16A', 'A3172F', 'FF8597']; // engineer, flagged for qa-tdd: RD-86's darker Ember and Forest; qa-tdd: RD-95's Avocado and Pomegranate
+    const accents = ['B23A1E', 'FF8A65', '2E7D4F', '6FCF97', '8E3A8F', 'D9A0E0', 'A4421F', 'F4A47F', '2D6A4E', '8FD1AE', '5A3EA6', 'C5B3F5', 'AD371D', '276B43', '3B6120', 'B4D16A', 'A3172F', 'FF8597', '2F5419', '7ED69B', 'B3D25B']; // qa-tdd Nov 20: RD-111/RD-112's Hass Avocado (and the rejected #B3D25B); engineer, flagged for qa-tdd: RD-86's darker Ember and Forest; qa-tdd: RD-95's Avocado and Pomegranate
     expect(find(new RegExp(`#(${accents.join('|')})\\b`, 'i'), sources(), (f) => f === 'ui/theme.ts')).toEqual([]);
   });
 
-  it('RD-4 the accent is used only by the tab bar, the kit (switch On, link words, main tap word or chip), New for you and the new-message dot', () => {
+  it('RD-4 RD-114 the accent is used only by the tab bar, the kit (switch On, link words, main tap word or chip), New for you, the new-message dot and the picked reaction (PostCard)', () => {
     // Allowed homes for c.accent. Anything else (avatar letters, event card borders, video pills, spinners) is ink.
-    const allowed = new Set(['ui/theme.ts', 'ui/kit.tsx', 'screens/TabBar.tsx', 'app/(tabs)/_layout.tsx', 'screens/NewForYou.tsx', 'demo/DemoBar.tsx']);
+    // qa-tdd, Nov 20: RD-114 (DEC-76) adds the picked reaction's outline and count in PostCard.tsx.
+    const allowed = new Set(['ui/theme.ts', 'ui/kit.tsx', 'screens/TabBar.tsx', 'app/(tabs)/_layout.tsx', 'screens/NewForYou.tsx', 'demo/DemoBar.tsx', 'screens/PostCard.tsx']);
     expect(find(/\bc\.accent\b(?!Ink|Soft)/, sources(), (f) => allowed.has(f))).toEqual([]);
   });
 

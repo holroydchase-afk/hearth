@@ -444,7 +444,7 @@ function Caption({ title, text, testID, titleID }: { title: string | null; text:
 
 /** RD-89 (DEC-67, Chase Nov 18: "pop reactions"): turning a reaction on pops its emoji 1 → 1.25 → 1 in 220 ms, by
  *  transform only, so nothing around it moves; turning it off doesn't pop. The save never waits for the pop.
- *  RD-90: with Reduce Motion on, no pop; the picked tint just appears. Chase, Nov 18: the count's width is kept even
+ *  RD-90: with Reduce Motion on, no pop; the picked outline just appears. Chase, Nov 18: the count's width is kept even
  *  at 0, so the first "1" doesn't widen the button. */
 const POP = { up: 100, down: 120 } as const;
 function ReactionButton({ emoji, n, on, first, onPress }: { emoji: Reaction; n: number; on: boolean; first: boolean; onPress: () => void }) {
@@ -472,9 +472,9 @@ function ReactionButton({ emoji, n, on, first, onPress }: { emoji: Reaction; n: 
       accessibilityState={{ selected: on }}
       accessibilityValue={n ? { text: String(n) } : undefined}
       onPress={press}
-      // GUX-R15: on paper the soft tint was too faint, so a picked capsule is the stronger accentPicked tint, with no
-      // outline (LIVE-3, Chase Nov 5); same size and padding either way, so the emoji never moves.
-      style={({ pressed }) => [styles.react, first ? styles.firstReact : null, { backgroundColor: on ? c.accentPicked : 'transparent', opacity: pressed ? 0.7 : 1 }]}
+      // RD-114 (DEC-76, Chase Nov 20: no "lighter oval"): picked is a 2 pt accent outline with an accent count, no
+      // fill; unpicked a 1 pt c.line outline. RD-116: padding gives back the extra 1 pt, so the box never changes size.
+      style={({ pressed }) => [styles.react, first ? styles.firstReact : null, on ? styles.reactOn : styles.reactOff, { borderColor: on ? c.accent : c.line, opacity: pressed ? 0.7 : 1 }]}
     >
       <Animated.View style={{ transform: [{ scale }] }}>
         <Text style={styles.emoji}>{emoji}</Text>
@@ -482,7 +482,7 @@ function ReactionButton({ emoji, n, on, first, onPress }: { emoji: Reaction; n: 
       {/* Chase, Nov 18: the count's slot keeps its width at 0 (an empty space as wide as one digit), so the first
           "1" doesn't widen the button or move its neighbours. */}
       {n ? (
-        <Text style={[styles.count, { color: c.ink, fontSize: t.base, minWidth: slot }]}>{String(n)}</Text>
+        <Text style={[styles.count, { color: on ? c.accent : c.ink, fontSize: t.base, minWidth: slot }]}>{String(n)}</Text>
       ) : (
         <View testID="count-slot" style={{ width: slot }} />
       )}
@@ -506,7 +506,11 @@ const styles = StyleSheet.create({
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.xs, paddingHorizontal: SPACE.lg },
   // RD-64 (R21): the first emoji's glyph sits on the 16 pt edge; its tap area and highlight reach 8 pt past it.
   firstReact: { marginLeft: -SPACE.sm },
-  react: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingHorizontal: SPACE.sm, borderRadius: RADIUS.pill },
+  react: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, borderRadius: RADIUS.pill, backgroundColor: 'transparent' },
+  // RD-116: border + padding is 8 pt a side either way (1 + 7 unpicked, 2 + 6 picked), so the box never changes
+  // size and, with firstReact's -8, the first emoji still sits on the 16 pt edge (RD-64).
+  reactOff: { borderWidth: 1, paddingHorizontal: SPACE.sm - 1, paddingVertical: 1 },
+  reactOn: { borderWidth: 2, paddingHorizontal: SPACE.sm - 2, paddingVertical: 0 },
   count: { fontVariant: ['tabular-nums'] },
   words: { gap: SPACE.xs, paddingHorizontal: SPACE.lg },
   // UX-R35: 12 pt above the words in both views (the 4 pt gap plus 8 pt here); the 48 pt target grows below them.

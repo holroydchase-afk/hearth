@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-20T06:00:00-05:00",
+ "label": "Hass Avocado + outlined picked reactions (RD-111..RD-117, DEC-76): all app suites 3x (flaky, T26 unrelated)",
+ "passed": 1656,
+ "failed": 1,
+ "results": {},
+ "note": "3 runs each at 34b7a77 (engineer) plus qa-tdd's T25 retargets (LIVE-3, RD-89, R21 moved to DEC-76's outline per spec 1k): jest 1615 passed (1 skipped, 1 todo) in runs 1 and 3, run 2 1614 passed 1 failed (BETA-SMS-4 countdown read under 59 s on real timers, T26, unrelated); typecheck clean x3; e2e:web 5 passed (6 skipped) x3; e2e:demo 36 passed (5 skipped) x3 incl. RD-102/RD-117 and RD-117/RD-116. Screenshots at 393 px dsf 2 in /mnt/project-files/design/2026-11-20-avocado-hass/: Avocado Gallery and Feed with a picked heart light and dark, Paper Feed light picked, returning visitor lands on Avocado (Gallery rgb(246, 245, 228)). e2e:site, backend SQL, Deno not run (no backend change); phones not run (RD-118 manual). e2e/results/avocado-hass-green-3x-2026-11-20.txt"
+}

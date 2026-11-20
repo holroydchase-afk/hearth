@@ -79,11 +79,13 @@ describe('RD-94 RD-105 Paper (the default) is Linen #F7F7F4, not white and not t
   });
 });
 
-describe('RD-95 Avocado and Pomegranate', () => {
+describe('RD-95 RD-111 RD-112 Avocado and Pomegranate', () => {
   const WANT: Record<'avocado' | 'pomegranate', { light: Partial<Colors>; dark: Partial<Colors> }> = {
+    // qa-tdd, Nov 20: Avocado's values moved to RD-111 / RD-112 (Hass avocado, DEC-76); these are the new ones, the
+    // exact full set is checked below. Pomegranate's are unchanged (RD-95).
     avocado: {
-      light: { bg: '#EEEFD3', fill: '#E2E4C4', line: '#D2D5B1', ink: '#1B2113', muted: '#525A40', accent: '#3B6120' },
-      dark: { bg: '#10140C', fill: '#1B2015', line: '#2E3524', ink: '#EEF0DE', muted: '#ADB599', accent: '#B4D16A' },
+      light: { bg: '#F6F5E4', fill: '#E7ECC6', line: '#DCDBCC', ink: '#1F1A1B', muted: '#4F4A42', accent: '#2F5419' },
+      dark: { bg: '#2A2426', fill: '#3A3335', line: '#4A4543', ink: '#F3F1DA', muted: '#C2BDA8', accent: '#7ED69B' },
     },
     pomegranate: {
       light: { bg: '#F5EADF', fill: '#EBDDD0', line: '#DDCDBE', ink: '#22161A', muted: '#62504F', accent: '#A3172F' },
@@ -93,7 +95,7 @@ describe('RD-95 Avocado and Pomegranate', () => {
   for (const name of ['avocado', 'pomegranate'] as const) {
     for (const dark of [false, true]) {
       const mode = dark ? 'dark' : 'light';
-      it(`RD-95 ${name} ${mode} gives the spec's page, fill, line, ink, muted and accent`, () => {
+      it(`${name === 'avocado' ? (dark ? 'RD-112' : 'RD-111') : 'RD-95'} ${name} ${mode} gives the spec's page, fill, line, ink, muted and accent`, () => {
         expect(pal(dark, name)).toMatchObject(WANT[name][mode]);
       });
 
@@ -138,10 +140,17 @@ describe('RD-96 contrast in every theme x light/dark x normal/high (18 sets)', (
           expect(pal(dark, name, high).accentInk).toBe(dark ? '#000000' : '#FFFFFF');
         });
 
-        it(`RD-96 ${label}: GUX-R15 picked capsule is opaque, ≥ 3:1 against bg, with ink ≥ 4.5:1 on it`, () => {
+        // qa-tdd, Nov 20: GUX-R15's filled-capsule clause (accentPicked ≥ 3:1 on bg, ink ≥ 4.5:1 on it) is replaced by
+        // RD-115 (DEC-76): the picked reaction is a 2 pt c.accent outline with a c.accent count, no fill.
+        it(`RD-115 ${label}: picked outline (accent) ≥ 3:1 and its count (accent) ≥ 4.5:1 on bg and on surface`, () => {
           const c = pal(dark, name, high);
-          expect(c.accentPicked).toMatch(/^#[0-9A-F]{6}$/i);
-          expect({ tint: +contrast(c.accentPicked, c.bg).toFixed(2) >= 3, count: contrast(c.ink, c.accentPicked) >= 4.5 }).toEqual({ tint: true, count: true });
+          const r = { bg: +contrast(c.accent, c.bg).toFixed(2), surface: +contrast(c.accent, c.surface).toFixed(2) };
+          expect({ r, outline: r.bg >= 3 && r.surface >= 3, count: r.bg >= 4.5 && r.surface >= 4.5 }).toEqual({ r, outline: true, count: true });
+        });
+
+        it(`RD-113 ${label}: accent ≥ 4.5:1 on surface too (the card a post sits on)`, () => {
+          const c = pal(dark, name, high);
+          expect({ ratio: +contrast(c.accent, c.surface).toFixed(2), ok: contrast(c.accent, c.surface) >= 4.5 }).toEqual(expect.objectContaining({ ok: true }));
         });
 
         it(`RD-96 ${label}: accentSoft is the accent mixed with this theme's bg`, () => {
@@ -180,4 +189,85 @@ describe('RD-99 source checks', () => {
     expect(hits).toEqual([]);
   });
 
+});
+
+// SPEC-REDESIGN 1k (Chase, Nov 20, DEC-76): Avocado from a Hass avocado. Written first (red), Nov 20, by qa-tdd.
+// Layers: ripe skin #2B2426 → light ink #1F1A1B and the dark page #2A2426; just under the skin → accent #2F5419;
+// middle flesh → fill; inner flesh → light page. Dark accent is "Fresh leaf" #7ED69B (not #B3D25B, "mush peas").
+describe('RD-111 RD-112 Avocado is a Hass avocado (exact values)', () => {
+  const LIGHT = { bg: '#F6F5E4', surface: '#EFF1D5', fill: '#E7ECC6', photo: '#E7ECC6', line: '#DCDBCC', ink: '#1F1A1B', muted: '#4F4A42', accent: '#2F5419', accentInk: '#FFFFFF' };
+  const DARK = { bg: '#2A2426', surface: '#322C2E', fill: '#3A3335', photo: '#3A3335', line: '#4A4543', ink: '#F3F1DA', muted: '#C2BDA8', accent: '#7ED69B', accentInk: '#000000' };
+
+  it('RD-111 Avocado light gives exactly bg #F6F5E4, surface #EFF1D5, fill/photo #E7ECC6, line #DCDBCC, ink #1F1A1B, muted #4F4A42, accent #2F5419, accentInk white', () => {
+    expect(pal(false, 'avocado')).toMatchObject(LIGHT);
+  });
+
+  it('RD-111 Avocado light: surface is bg and fill mixed 50/50; accentSoft follows the mix rule on the new page', () => {
+    const c = pal(false, 'avocado');
+    expect({ surface: c.surface }).toEqual({ surface: mix(c.bg, c.fill, 0.5) });
+    const p = pal(false, 'paper');
+    // Same soft-mix weight as Paper (whatever SOFT[light] is): derive it from Paper and apply it to Avocado.
+    const [pa, pb, ps] = [rgb(p.accent), rgb(p.bg), rgb(p.accentSoft)];
+    const t = (ps[0]! - pa[0]!) / (pb[0]! - pa[0]!);
+    const want = rgb(mix(c.accent, c.bg, t));
+    expect({ within2: rgb(c.accentSoft).every((v, i) => Math.abs(v - want[i]!) <= 2) }).toEqual({ within2: true });
+  });
+
+  it('RD-112 Avocado dark gives exactly bg #2A2426 (plum-charcoal skin), surface #322C2E, fill/photo #3A3335, line #4A4543, ink #F3F1DA, muted #C2BDA8, accent #7ED69B (Fresh leaf), accentInk black', () => {
+    expect(pal(true, 'avocado')).toMatchObject(DARK);
+  });
+
+  it('RD-112 none of the old Avocado values nor #B3D25B remains in app/src or docs/design/tokens.json', () => {
+    const OLD = /#(EEEFD3|E2E4C4|D2D5B1|1B2113|525A40|3B6120|10140C|1B2015|2E3524|EEF0DE|ADB599|B4D16A|B3D25B)\b/i;
+    const tokens = path.join(SRC, '..', '..', 'docs', 'design', 'tokens.json');
+    const hits = [...walk(SRC), tokens].flatMap((f) => fs.readFileSync(f, 'utf8').split('\n').flatMap((l, i) => (OLD.test(l) ? [`${path.relative(SRC, f)}:${i + 1}`] : [])));
+    expect(hits).toEqual([]);
+  });
+
+  it('RD-112 docs/design/tokens.json carries the new Avocado, light and dark', () => {
+    const file = path.join(SRC, '..', '..', 'docs', 'design', 'tokens.json');
+    const t = JSON.parse(fs.readFileSync(file, 'utf8')) as { themes: Record<string, { light: Colors; dark: Colors }> };
+    expect({ light: t.themes.avocado?.light, dark: t.themes.avocado?.dark }).toMatchObject({ light: LIGHT, dark: DARK });
+  });
+
+  it('RD-112 Paper and Pomegranate are byte-for-byte unchanged', () => {
+    expect({ light: pal(false, 'pomegranate'), dark: pal(true, 'pomegranate') }).toMatchObject({
+      light: { bg: '#F5EADF', fill: '#EBDDD0', line: '#DDCDBE', ink: '#22161A', muted: '#62504F', accent: '#A3172F', surface: mix('#F5EADF', '#EBDDD0', 0.5) },
+      dark: { bg: '#170D10', fill: '#24171A', line: '#3A272B', ink: '#F5E9E6', muted: '#BBA7A6', accent: '#FF8597', surface: mix('#170D10', '#24171A', 0.5) },
+    });
+    expect({ light: pal(false, 'paper'), dark: pal(true, 'paper') }).toMatchObject({
+      light: { bg: '#F7F7F4', surface: '#FFFFFF', ink: '#1E1B17', muted: '#5C564E', line: '#E3DED4', fill: '#EFECE5', accent: '#AD371D' },
+      dark: { bg: '#131210', surface: '#1C1A17', ink: '#F1EEE8', muted: '#B2ACA2', line: '#2E2B27', fill: '#24221E', accent: '#FF8A65' },
+    });
+  });
+});
+
+describe('RD-113 Avocado contrast, light/dark x normal/high (on top of RD-96 / RD-115 for all 18 sets)', () => {
+  for (const dark of [false, true]) {
+    for (const high of [false, true]) {
+      const label = `avocado ${dark ? 'dark' : 'light'}${high ? ' high' : ''}`;
+      it(`RD-113 ${label}: ink ≥ 7; muted ≥ 4.5 on bg and fill (high ≥ 7 on bg); accent ≥ 4.5 on bg, surface, fill, accentSoft; accentInk ≥ 4.5 on accent; safe, danger ≥ 4.5 on bg`, () => {
+        const c = pal(dark, 'avocado', high);
+        const fails: string[] = [];
+        const need = (fg: keyof Colors, on: keyof Colors, r: number) => {
+          const v = contrast(c[fg], c[on]);
+          if (!(v >= r)) fails.push(`${fg} ${c[fg]} on ${on} ${c[on]}: ${v.toFixed(2)} < ${r}`);
+        };
+        need('ink', 'bg', 7);
+        need('muted', 'bg', high ? 7 : 4.5); need('muted', 'fill', 4.5);
+        for (const on of ['bg', 'surface', 'fill', 'accentSoft'] as const) need('accent', on, 4.5);
+        need('accentInk', 'accent', 4.5);
+        need('safe', 'bg', 4.5); need('danger', 'bg', 4.5);
+        expect(fails).toEqual([]);
+      });
+    }
+  }
+
+  it('RD-113 staff-pm\'s checked ratios hold on the given values (light ink 15.6, accent on bg 7.9; dark ink 13.4, accent on bg 8.7), ±0.15', () => {
+    const l = pal(false, 'avocado'); const d = pal(true, 'avocado');
+    const got = { lInk: contrast(l.ink, l.bg), lAcc: contrast(l.accent, l.bg), dInk: contrast(d.ink, d.bg), dAcc: contrast(d.accent, d.bg) };
+    const want = { lInk: 15.6, lAcc: 7.9, dInk: 13.4, dAcc: 8.7 };
+    const off = Object.fromEntries(Object.entries(want).filter(([k, v]) => Math.abs(got[k as keyof typeof got] - v) > 0.15).map(([k]) => [k, +got[k as keyof typeof got].toFixed(2)]));
+    expect(off).toEqual({});
+  });
 });
