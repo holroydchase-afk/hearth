@@ -2,6 +2,14 @@
 // points at the hosted web build, never at hearth.family (not bought: docs/product/ACCOUNTS.md).
 const { test, expect } = require('../../e2e/node_modules/@playwright/test');
 
+// RD-110-R1: a tap on the shrunk glass oval only brings the tabs back, so tap again to act on the tab.
+const tapTab = async (page, name) => {
+  const tab = page.getByRole('tab', { name });
+  const shrunk = /show all tabs/.test((await tab.getAttribute('aria-label')) ?? '');
+  await tab.click();
+  if (shrunk) await page.getByRole('tab', { name }).click();
+};
+
 const HOSTED_JOIN = 'https://thefreighttrains-team-hearth.expo.app/join/';
 
 test('ONB-4 a link from "Make the invite" opens the "invited you" preview in the web build', async ({ page }) => {
@@ -26,7 +34,7 @@ test('ONB-4 a link from "Make the invite" opens the "invited you" preview in the
   expect(link).not.toContain('hearth.family');
 
   // Sign out (a signed-in person redeems straight away), then open the link's path as the relative would.
-  await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Me is a row in More
+  await tapTab(page, /^More/); // RD-15: Me is a row in More
   await page.getByRole('button', { name: /^Me(,|$)/ }).click();
   await page.getByRole('button', { name: 'Sign out of Hearth' }).click();
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();

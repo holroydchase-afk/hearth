@@ -535,5 +535,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** texts are Chase's chosen default sign-in (DEC-57), the code is built and tested, and Twilio Verify needs no carrier registration (Twilio docs, read through search Nov 19), so the remaining steps are small.
 - **Source:** persona check `decisions/2026-11-19-keep-text-sign-in.md`; `docs/eng/SMS-PROVIDER.md`
 
+### DEC-75 · The glass tab bar shrinks on scroll, like iOS 26 (RD-110)
+- **When / status:** Nov 19 · Chase: "I also want the full iOS glass oval interaction on scroll" · Built, waits on Chase's "merge"
+- **Chose:** with Easy view Off, scrolling down shrinks the bar to a small glass oval with only the current tab; scrolling up, reaching the top or tapping the oval brings it back. iPhone uses the system's own minimize; the web demo copies it. Easy view On and Android keep a bar that never shrinks.
+- **Over:** DS-5's "never minimizes" for everyone (kept for Easy view); shrinking on scroll up; adding a search button beside the oval.
+- **Because:** parents expect Apple's own behavior and it gives photos the whole screen; grandparents keep the fixed bar with words, so the way back stays visible for them.
+- **Source:** `docs/product/SPEC-REDESIGN.md` RD-110; persona check `decisions/2026-11-19-glass-bar-shrink.md`
+
 ---
-Last updated: Nov 19, 2026 (DEC-74)
+Last updated: Nov 19, 2026 (DEC-75)

@@ -11,6 +11,13 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 19: glass tab bar shrinks on scroll (Chase, DEC-75, RD-110, R64; branch claude/project-thread-ox4dz4, PR)
+- **Chase:** "I also want the full iOS glass oval interaction on scroll".
+- **Done, test-first:** `nativeTabLook('ios')` gives `minimize: 'onScrollDown'` (the layout passes it to `NativeTabs`); Android stays `never`. Web: `HearthTabBar` follows any scrolling area (`nextMinimized`, capture-phase scroll listener) and narrows to a 64 pt oval with only the picked tab; tap it, scroll up or reach the top to bring the bar back. Easy view On never shrinks. DS-5 wording updated.
+- **Nov 20 code review (Chase: "go for p1 fixes, docs, etc"):** RD-110-R1 the oval's tap only brings the bar back (More no longer loses its place); R2 the web only follows the app's own vertical scrolling (not the laptop story panel, not sideways strips); R3 changing tabs brings the bar back; R4 the shrink really animates (max width) and Reduce Motion is tested; R5 `nativeTabLook` itself says never with Easy view; R6 the browser tests use the real wheel, measured widths and frame waits instead of fixed pixels and timers. Docs: RD-107 row, DEC-73 comments put back. ONB-4 taps the oval then More.
+- **Next exact step:** Chase says "merge 138"; demo rebuilds; live check; republish the Expo preview so Chase sees it on his iPhone (check VoiceOver and a scroll inside More's lists).
+- **Portfolio / public presence:** the demo's glass bar shrinks on scroll once this merges.
+
 ## Nov 19: text sign-in kept and readied to turn on (Chase, DEC-74, TRACKER R43; branch claude/project-thread-df9051, PR)
 - **Why:** the tech-debt review (PM-R5) suggested parking it; Chase: "We need to keep the switched off features."
 - **Done:** TD-UX-R7 test-first (sign-out words no longer say "from your email"; Me says "Signed in with the mobile number ending 0100" for text accounts, from a new optional `Session.phone`). `docs/eng/SMS-PROVIDER.md` "Nov 19 check": Verify needs no carrier registration and costs $0.05 + $0.0083 per text (via search; twilio.com is blocked here); Supabase ignores its SMS template under Verify, so Hearth's words go to Twilio Support as a custom template (request body in the doc).
@@ -548,6 +555,7 @@ blockers:
 - Chase pasted the demo INTAKE into Product Studio (Oct 22). Next: messenger test MS3.
 
 ## Portfolio / public presence
+- **Nov 19:** the demo's glass tab bar shrinks on scroll and comes back on scroll up once the R64 PR merges (DEC-75).
 - **Nov 19:** the demo's tab bar floats as a glass capsule (Easy view Off) and Grandma Jo's view no longer enlarges the laptop panel, once the R61 PR merges (DEC-72).
 - **Nov 19:** the demo's Paper light page becomes Linen `#F7F7F4` when the R58 PR merges (DEC-69).
 - **Oct 30, demo parent renamed (Product Studio INTAKE):** Hearth is featured on the portfolio homepage (portfolio PR #38), and the site credits Chase's real brother Sam, so the demo's made-up parent "Sam" is now "Kai" (no family member has that name; three letters keeps the demo bar on one line). Changed `app/src/demo/seed.ts`, `DemoBar.tsx`, their tests and the web e2e specs; re-shot `docs/portfolio/screens/` (the old shots said "Sam"). Rebuilt the demo from main: `portfolio/hearth-demo-site-2026-10-30.tgz` in the project files. Checks: 677 app tests, 993 database checks, demo + showcase sweep green. Reply to Product Studio: `docs/portfolio/INTAKE-2026-10-30-demo-rename.md`. Backend SQL fixtures still use a child named Sam; they are never shown publicly. **Next:** Product Studio re-copies demo/hearth/ and the screenshots.
