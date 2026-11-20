@@ -25,35 +25,40 @@ function shapedApi() {
   return { be, api };
 }
 
+// Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-5/6/9), flagged for qa-tdd: the share sheet is the postcard's
+// face tiles, spoken "<name>, N people, (not) picked"; there are no Groups / Events headings any more.
+const tileLabels = () => screen.UNSAFE_root.findAll((n: { type: unknown; props: Record<string, unknown> }) => typeof n.type === 'string' && /, \d+ (person|people), (not )?picked$/.test(String(n.props.accessibilityLabel ?? '')))
+  .map((n: { props: Record<string, unknown> }) => String(n.props.accessibilityLabel));
+
 describe('UX-G share sheet words (BETA-AUD-17)', () => {
-  it('UX-G1 BETA-AUD-17 picking Everyone says "Everyone in the family will see these." (never "Only Everyone")', async () => {
+  it('UX-G1 BETA-AUD-17 DEC-73 picking Everyone says "To: Everyone in the family" (never "Only Everyone")', async () => {
     const { be, api } = shapedApi();
     await renderApp(<ShareScreen />, { be, user: 'chase', deps: { api } });
-    fireEvent.press(await screen.findByRole('checkbox', { name: 'Everyone, 6 people' }));
-    expect(await screen.findByText('Everyone in the family will see these.')).toBeTruthy();
+    fireEvent.press(await screen.findByRole('button', { name: /^Pick photos/ }));
+    fireEvent.press(await screen.findByLabelText('Everyone, 6 people, not picked'));
+    expect(await screen.findByText('Everyone in the family')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Send to Everyone in the family' })).toBeTruthy();
     expect(screen.queryByText(/Only Everyone/)).toBeNull();
   });
 
-  it('UX-G2 BETA-AUD-17 Everyone first, then a "Groups" heading, then an "Events" heading', async () => {
+  it('UX-G2 BETA-AUD-17 DEC-73 Everyone first, then the groups and households, events last', async () => {
     const { be, api } = shapedApi();
     await renderApp(<ShareScreen />, { be, user: 'chase', deps: { api } });
-    await screen.findByRole('checkbox', { name: 'Everyone, 6 people' });
-    const boxes = screen.getAllByRole('checkbox').map((b) => b.props.accessibilityLabel as string);
-    // UX-R37: people() joins with a no-break space (engineer, flagged for qa-tdd).
-    expect(boxes[0]).toBe('Everyone, 6\u00a0people');
-    expect(boxes[boxes.length - 1]).toBe('Charleston trip, 3\u00a0people');
-    expect(screen.getByRole('header', { name: 'Groups' })).toBeTruthy();
-    expect(screen.getByRole('header', { name: 'Events' })).toBeTruthy();
+    fireEvent.press(await screen.findByRole('button', { name: /^Pick photos/ }));
+    await screen.findByLabelText('Everyone, 6 people, not picked');
+    expect(tileLabels().map((l) => l.split(',')[0])).toEqual(['Everyone', "Mom's side", "Pawpaw and Granny's house", 'Charleston trip']);
     expectGrandparentSafe();
   });
 
-  it('UX-G3 BETA-AUD-21 a relative allowed to post is never offered Everyone (the server would refuse it)', async () => {
+  it('UX-G3 BETA-AUD-21 DEC-73 a relative allowed to post is never offered Everyone, and sees people, not group names', async () => {
     const { be, api } = shapedApi();
     const real = be.mySpaces.bind(be);
     jest.spyOn(be, 'mySpaces').mockImplementation((u) => real(u).map((s) => ({ ...s, can_post: true })));
     await renderApp(<ShareScreen />, { be, user: 'ruth', deps: { api } });
-    expect(await screen.findByRole('checkbox', { name: "Mom's side, 4 people" })).toBeTruthy();
-    expect(screen.queryByRole('checkbox', { name: 'Everyone, 6 people' })).toBeNull();
+    fireEvent.press(await screen.findByRole('button', { name: /^Pick photos/ }));
+    await waitFor(() => expect(tileLabels().length).toBe(3));
+    expect(tileLabels().filter((l) => /Everyone|Mom's side|house|Charleston/.test(l))).toEqual([]);
+    expect(tileLabels()[0]).toMatch(/^Memaw, Pawpaw and 2 more, 4 people, not picked$/);
   });
 });
 

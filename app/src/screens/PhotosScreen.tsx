@@ -149,6 +149,8 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
       {fresh.length && lastSeen?.at ? (
         <NewForYouRow posts={fresh} since={lastSeen.at} onSee={() => setWalk(fresh.map((p) => p.post_id))} />
       ) : null}
+      {/* SHARE-PC-11 (DEC-73): after a Send, Feed says who it went to, by name, until closed. */}
+      {app.shared && !gallery ? <Notice tone="good" text={app.shared} onClose={() => app.setShared(null)} /> : null}
       {app.space.can_post ? <YourName /> : null}
       <QueueStatus />
       {app.pushAsk && state.posts.length ? <PushAsk /> : null}

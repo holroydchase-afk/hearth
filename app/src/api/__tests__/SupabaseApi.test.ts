@@ -197,9 +197,33 @@ describe('SupabaseApi auth: 6-number text code (BETA-SMS)', () => {
     await expect(make(c).verifyCode('a@b.c', '000000')).rejects.toMatchObject({ code: want });
   });
 
-  it('BETA-SMS-5 too many sends (429) is 54000, like email', async () => {
+  // TS-SEC-R2 moved the project-wide cap (over_sms_send_rate_limit) to SMS_OFF; the per-number wait stays 54000.
+  it('BETA-SMS-5 too many sends from this number (over_request_rate_limit) is 54000, like email', async () => {
     const c = mockClient();
-    c.auth.signInWithOtp.mockResolvedValue({ error: { status: 429, code: 'over_sms_send_rate_limit', message: 'rate limit' } } as never);
+    c.auth.signInWithOtp.mockResolvedValue({ error: { status: 429, code: 'over_request_rate_limit', message: 'rate limit' } } as never);
+    await expect(textApi(c).sendTextCode('+13045550100')).rejects.toMatchObject({ code: '54000' });
+  });
+
+  // TS-SEC-R2 (docs/reviews/2026-11-19-text-sign-in/sec.md, P1): Supabase's hourly SMS cap is project-wide, so one
+  // stranger can use it up for every relative. Then "Too many tries" is wrong and offers no way in; SMS_OFF offers
+  // email (BETA-SMS-6 words). Branch on error.code, never the HTTP status (CLAUDE.md rule 7). Written first.
+  it.each([
+    ['the project-wide cap (over_sms_send_rate_limit)', { status: 429, code: 'over_sms_send_rate_limit', message: 'SMS rate limit exceeded' }],
+    ['the provider refusing for load (sms_send_failed, 429)', { status: 429, code: 'sms_send_failed', message: 'Error sending sms: Too Many Requests' }],
+  ] as const)('TS-SEC-R2 sendTextCode: %s becomes SMS_OFF, so the screen offers email', async (_what, error) => {
+    const c = mockClient();
+    c.auth.signInWithOtp.mockResolvedValue({ error } as never);
+    const e = await textApi(c).sendTextCode('+13045550100').catch((x: unknown) => x);
+    expect(e).toBeInstanceOf(ApiError);
+    expect(e).toMatchObject({ code: 'SMS_OFF' });
+    expect(String((e as Error).message)).not.toMatch(/3045550100/); // BETA-SMS-15
+  });
+
+  // GoTrue (supabase/auth internal/api/phone.go:73-92) sends the per-number wait with the same code as the cap; only
+  // the message tells them apart.
+  it('TS-SEC-R2 sendTextCode: the per-number wait (over_sms_send_rate_limit, "only request this after") still says too many tries (54000)', async () => {
+    const c = mockClient();
+    c.auth.signInWithOtp.mockResolvedValue({ error: { status: 429, code: 'over_sms_send_rate_limit', message: 'For security purposes, you can only request this after 47 seconds.' } } as never);
     await expect(textApi(c).sendTextCode('+13045550100')).rejects.toMatchObject({ code: '54000' });
   });
 
@@ -213,5 +237,22 @@ describe('SupabaseApi auth: 6-number text code (BETA-SMS)', () => {
     expect(e).toBeInstanceOf(ApiError);
     expect(e).toMatchObject({ code: 'SMS_OFF' });
     expect(String((e as Error).message)).not.toMatch(/3045550100/); // BETA-SMS-15: the number never rides along
+  });
+});
+
+// TD-UX-R7b (docs/reviews/2026-11-19-tech-debt/ux.md): Me names a phone-only person by the last 4 of their number,
+// so the session carries the phone. Supabase stores it as digits without '+'; the app keeps E.164. Written first.
+describe('TD-UX-R7b SupabaseApi session carries the phone (E.164)', () => {
+  it("TD-UX-R7b verifyTextCode returns phone '+13045550100' when the auth user's phone is '13045550100'", async () => {
+    const c = mockClient();
+    c.auth.verifyOtp.mockResolvedValueOnce({ data: { session: { access_token: 't', user: { id: 'u9', email: '', phone: '13045550100' } } }, error: null } as never);
+    const s = await textApi(c).verifyTextCode('+13045550100', '123456');
+    expect(s).toMatchObject({ userId: 'u9', email: '', phone: '+13045550100' });
+  });
+
+  it("TD-UX-R7b getSession (restore) returns phone '+13045550100' for a phone-only auth user", async () => {
+    const c = mockClient();
+    c.auth.getSession.mockResolvedValueOnce({ data: { session: { access_token: 't', user: { id: 'u9', email: '', phone: '13045550100' } } } } as never);
+    expect(await make(c).getSession()).toMatchObject({ userId: 'u9', email: '', phone: '+13045550100' });
   });
 });

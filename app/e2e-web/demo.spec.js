@@ -26,6 +26,18 @@ const onFeed = async (page) => {
 };
 
 const FIXTURE = path.join(__dirname, 'fixtures', 'park-gps.jpg');
+
+// DEC-73: tapping Share may open the file chooser itself, or show a "Pick photos" button first; either way, set the
+// files and wait for the "New post" page.
+const openNewPost = async (page, files) => {
+  const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
+  await page.getByRole('tab', { name: /^Share/ }).click();
+  const pick = page.getByRole('button', { name: /^Pick photos/ }).filter({ visible: true }).first();
+  const first = await Promise.race([chooser.then(() => 'chooser'), pick.waitFor({ timeout: 15_000 }).then(() => 'button')]);
+  if (first === 'button') await pick.click();
+  await (await chooser).setFiles(files);
+  await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
+};
 const errors = [];
 
 test.beforeEach(async ({ page }) => {
@@ -67,13 +79,11 @@ test("DEMO-10 RD-17 Grandma Jo's view hides the Mom's-side posts; the parent's v
 test('RR-14 add a photo, reload keeps it, Start over brings back the sample family', async ({ page }) => {
   await page.goto('/');
   await galleryLoaded(page);
-  await page.getByRole('tab', { name: 'Share' }).click();
-  const chooser = page.waitForEvent('filechooser');
-  await page.getByRole('button', { name: 'Pick photos from your phone' }).click();
-  await (await chooser).setFiles(FIXTURE);
-  await page.getByLabel("What's happening?").fill('Leaf pile');
-  await page.getByRole('checkbox', { name: /Grandparents – Dad's side/ }).click();
-  await page.getByRole('button', { name: 'Post', exact: true }).click();
+  // Retargeted Nov 19 by qa-tdd for DEC-73 (SHARE-PC): the postcard's note, a face tile and "Send to ...".
+  await openNewPost(page, [FIXTURE]);
+  await page.getByLabel('Add a note (optional)').fill('Leaf pile');
+  await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
+  await page.getByRole('button', { name: /^Send to / }).click();
   await onFeed(page); // RD-18: captions live on Feed (Gallery may stay mounted behind it, so only what shows counts)
   await expect(page.getByText('Leaf pile', { exact: true }).filter({ visible: true })).toBeVisible();
   await page.reload();
@@ -393,9 +403,12 @@ for (const width of [360, 390]) {
       if (isWide) wides += 1;
       expect({ i, ok: isWide || isSquare, insideMargins: t.x >= 15.5 && t.x + t.width <= width - 15.5 }).toEqual({ i, ok: true, insideMargins: true });
     }
-    // UX-R13: one wide photo per month, not per day.
+    // UX-R13: one wide photo per month, not per day; RD-73: a month of exactly 2 photos is two squares, no wide one.
+    // (Fixed Nov 20: the sample photos' dates move with today, so some days a month holds exactly 2.)
     const months = await page.getByText(MONTH).count();
-    expect({ wides, months }).toEqual({ wides: months, months });
+    const twoPhotoMonths = await page.getByTestId('gallery-grid').evaluate((g) =>
+      [...g.children].filter((m) => m.querySelectorAll('[data-testid^="gallery-tile-"]').length === 2).length);
+    expect({ wides, months }).toEqual({ wides: months - twoPhotoMonths, months });
     // UX-R13: no square alone on its row.
     const rows = new Map();
     for (const t of boxes) if (Math.abs(t.width - inner) > 1.5) rows.set(Math.round(t.y), (rows.get(Math.round(t.y)) ?? 0) + 1);
@@ -799,4 +812,192 @@ test('DEMO-EASY-1 on a laptop, Grandma Jo\'s Easy view leaves the story panel th
   await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
   await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
   expect(await panel()).toEqual(before);
+});
+// SHARE-PC-13 (SPEC-REDESIGN 1j, DEC-73, Chase Nov 19): the postcard Share in the public demo at 393 px. Written first
+// (red), Nov 19, by qa-tdd. Soft expects after the page opens, so one run shows every part still missing.
+test('SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to ...", Feed says "Shared with ..."; Jo sees names only', async ({ page }) => {
+  const shots = path.join(__dirname, '..', 'test-results', 'share-pc-13');
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await openNewPost(page, [FIXTURE, FIXTURE, FIXTURE]);
+  await expect(page.getByText('1 of 3', { exact: true })).toBeVisible();
+  const tiles = page.getByLabel(/, \d+ people, (not )?picked$/).filter({ visible: true });
+  expect.soft(await tiles.count()).toBeGreaterThan(1);
+  expect.soft(await page.getByLabel(/, \d+ people, picked$/).count()).toBe(0);
+  const off = page.getByRole('button', { name: 'Pick who gets it' });
+  await expect.soft(off).toBeVisible();
+  await expect.soft(off).toBeDisabled();
+  expect.soft(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: path.join(shots, 'share-pc-13-light.png') });
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.screenshot({ path: path.join(shots, 'share-pc-13-dark.png') });
+  await page.emulateMedia({ colorScheme: 'light' });
+
+  await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
+  await page.getByLabel(/^Grandparents – Mom's side, \d+ people, not picked$/).click();
+  const send = page.getByRole('button', { name: /^Send to .+/ });
+  await expect(send).toBeEnabled();
+  const names = String(await send.getAttribute('aria-label') ?? await send.innerText()).replace(/^Send to /, '');
+  await send.click();
+  await expect(page.getByText(`Shared with ${names}.`).filter({ visible: true })).toBeVisible();
+  const first = page.locator('[data-testid^="post-"]').filter({ visible: true }).first();
+  await expect.soft(first.getByRole('button', { name: /^Open photo 1 of 3/ })).toBeVisible();
+
+  // Grandma Jo (Easy view on for her): her Share, if she can post, names people only; never a group's title.
+  await details(page);
+  await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+  await details(page);
+  const joShare = page.getByRole('tab', { name: /^Share/ });
+  if (await joShare.count()) {
+    await openNewPost(page, [FIXTURE]);
+    const labels = await page.getByLabel(/, \d+ people, (not )?picked$/).evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')));
+    expect.soft(labels.filter((l) => /Grandparents|Dad's side|Mom's side|^Everyone/.test(l))).toEqual([]);
+  }
+  await page.screenshot({ path: path.join(shots, 'share-pc-13-easy-view.png') });
+});
+
+// GUX-R1 (grandparent-ux, Nov 19): a face tile's name never spills out of its tile. "Grandparents" is about 113 px
+// and a 3-across tile 103 px at 360 (112 px at 390), so those phones show 2 across; names are never shortened.
+// Written first (red), Nov 19, by qa-tdd. The column rule's other cases are in src/screens/__tests__/shareGux.test.tsx.
+for (const width of [360, 390]) {
+  test(`GUX-R1 ${width} px: every face-tile name stays inside its own tile; 2 across; full names`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.emulateMedia({ colorScheme: 'light' });
+    await page.goto('/');
+    await galleryLoaded(page);
+    await openNewPost(page, [FIXTURE]);
+    const tiles = page.getByLabel(/, \d+ people, (not )?picked$/).filter({ visible: true });
+    await expect(tiles.first()).toBeVisible();
+    const found = await tiles.evaluateAll((els) => els.map((el) => {
+      const name = String(el.getAttribute('aria-label')).replace(/, \d+ people, (not )?picked$/, '');
+      const box = el.getBoundingClientRect();
+      // The words of the name: the text node(s) whose text is the name, measured where they are drawn.
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      let left = Infinity; let right = -Infinity; let shown = '';
+      for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+        if (n.textContent.trim() !== name) continue;
+        shown += n.textContent;
+        const r = document.createRange(); r.selectNodeContents(n);
+        for (const q of r.getClientRects()) { left = Math.min(left, q.left); right = Math.max(right, q.right); }
+      }
+      return { name, shown: shown.trim(), top: Math.round(box.top), spill: Math.max(0, Math.round(box.left - left), Math.round(right - box.right)) };
+    }));
+    const spills = found.filter((f) => f.spill > 0).map((f) => `${f.name}: ${f.spill}px out`);
+    expect.soft(spills).toEqual([]);
+    expect.soft(found.filter((f) => f.shown !== f.name).map((f) => f.name)).toEqual([]);
+    const firstRow = found.filter((f) => f.top === found[0].top).length;
+    expect.soft(firstRow).toBe(2);
+    expect.soft(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await page.screenshot({ path: path.join(__dirname, '..', 'test-results', 'gux-r1', `gux-r1-${width}.png`) });
+  });
+}
+
+// RD-110 (Chase, Nov 19, DEC-75): "the full iOS glass oval interaction on scroll". Scrolling down shrinks the floating
+// bar to a small oval with only the picked tab; scrolling up or tapping the oval brings the whole bar back. Grandma
+// Jo's fixed bar (Easy view On) never shrinks. Review of PR 138 (Nov 19): RD-110-R2 only the app's own up-and-down
+// scrolling counts, RD-110-R3 changing tabs brings the bar back, RD-110-R6 no fixed pixel widths or timed waits.
+const bar = (page) => page.getByRole('tablist');
+const barWidth = (page) => bar(page).evaluate((el) => el.getBoundingClientRect().width);
+const fullWidth = (page) => bar(page).evaluate((el) => el.parentElement.getBoundingClientRect().width - 32);
+// The phone column's middle (above the bar), where a finger or a mouse wheel would scroll the page.
+const appMiddle = (page) => bar(page).evaluate((el) => {
+  const r = el.parentElement.getBoundingClientRect();
+  return { x: r.left + r.width / 2, y: r.top + r.height / 3 };
+});
+// How far the scrolling area under a point has scrolled; the area is found the way the browser finds it.
+const scrolledAt = (page, pt) => page.evaluate(({ x, y }) => {
+  let n = document.elementFromPoint(x, y);
+  while (n && !(n.scrollHeight > n.clientHeight && /(auto|scroll)/.test(getComputedStyle(n).overflowY))) n = n.parentElement;
+  return n ? n.scrollTop : -1;
+}, pt);
+const wheel = async (page, pt, dy) => {
+  await page.mouse.move(pt.x, pt.y);
+  for (let i = 0; i < 6; i++) await page.mouse.wheel(0, dy / 6);
+};
+const settled = (page) => page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+const isShrunk = async (page) => (await page.getByRole('tab').count()) === 1;
+
+test('RD-110 the glass bar shrinks on scroll down and comes back on scroll up or a tap; Grandma Jo\'s bar never shrinks', async ({ page }) => {
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  const full = await fullWidth(page);
+  expect(await barWidth(page)).toBeCloseTo(full, 0);
+  const mid = await appMiddle(page);
+  await wheel(page, mid, 600);
+  await expect.poll(() => barWidth(page)).toBeLessThanOrEqual(66);
+  await expect(page.getByRole('tab')).toHaveCount(1);
+  await expect(page.getByRole('tab', { name: 'Gallery, show all tabs' })).toBeVisible();
+  await page.screenshot({ path: path.join(__dirname, '..', 'test-results', 'rd-110', 'shrunk.png') });
+  await wheel(page, mid, -200);
+  await expect.poll(() => barWidth(page)).toBeCloseTo(full, 0);
+  await expect(page.getByRole('tab')).toHaveCount(4);
+
+  // Tapping the shrunk oval brings the bar back and stays on Gallery where it was.
+  await wheel(page, mid, 600);
+  await expect.poll(() => barWidth(page)).toBeLessThanOrEqual(66);
+  const at = await scrolledAt(page, mid);
+  await page.getByRole('tab', { name: /show all tabs/ }).click();
+  await expect.poll(() => barWidth(page)).toBeCloseTo(full, 0);
+  await expect(page.getByRole('tab', { name: /^Gallery/ })).toHaveAttribute('aria-selected', 'true');
+  expect(await scrolledAt(page, mid)).toBe(at);
+
+  // Grandma Jo (Easy view On): the fixed bar never shrinks, even after the page has really scrolled.
+  await details(page);
+  await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+  await details(page);
+  await page.getByRole('tab', { name: /^Gallery/ }).click();
+  await galleryLoaded(page);
+  const jo = await appMiddle(page);
+  const before = await scrolledAt(page, jo);
+  await wheel(page, jo, 600);
+  await expect.poll(() => scrolledAt(page, jo)).toBeGreaterThan(before + 100);
+  await settled(page);
+  expect(await isShrunk(page)).toBe(false);
+  expect(await barWidth(page)).toBeCloseTo(await bar(page).evaluate((el) => el.parentElement.getBoundingClientRect().width), 0);
+});
+
+test('RD-110-R2 scrolling the laptop\'s story panel never shrinks the bar, and a sideways strip never brings it back', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 640 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  const panel = page.getByRole('heading', { name: 'A private photo app for split families' });
+  await expect(panel).toBeVisible();
+  const box = await panel.boundingBox();
+  const pt = { x: box.x + 20, y: box.y + 20 };
+  await wheel(page, pt, 400);
+  await expect.poll(() => scrolledAt(page, pt)).toBeGreaterThan(0); // the panel really scrolled
+  await settled(page);
+  expect(await isShrunk(page)).toBe(false);
+
+  // Shrink it with the app's own scrolling, then move a sideways strip in the app: still shrunk.
+  const mid = await appMiddle(page);
+  await wheel(page, mid, 600);
+  await expect(page.getByRole('tab')).toHaveCount(1);
+  const moved = await bar(page).evaluate((el) => {
+    const strip = [...el.parentElement.querySelectorAll('div')].find((d) => d.scrollWidth > d.clientWidth + 20 && /(auto|scroll)/.test(getComputedStyle(d).overflowX));
+    if (!strip) return false;
+    strip.scrollLeft += 120;
+    return true;
+  });
+  expect(moved).toBe(true);
+  await settled(page);
+  await settled(page);
+  expect(await isShrunk(page)).toBe(true);
+});
+
+test('RD-110-R3 the bar shrunk on Share comes back whole on Feed after sending', async ({ page }) => {
+  await page.setViewportSize({ width: 393, height: 600 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await openNewPost(page, [FIXTURE]);
+  await wheel(page, await appMiddle(page), 800);
+  await expect(page.getByRole('tab')).toHaveCount(1);
+  await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
+  await page.getByRole('button', { name: /^Send to / }).click();
+  await expect(page.getByRole('tab', { name: /^Feed/ })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('tab')).toHaveCount(4);
+  await resetDemo(page);
 });

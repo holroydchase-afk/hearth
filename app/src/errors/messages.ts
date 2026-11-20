@@ -57,7 +57,8 @@ export function messageFor(e: unknown, ctx: MessageContext = {}): string {
     case 'BAD_OTP':
       return `That code didn't work. Check the newest ${ctx.via === 'text' ? 'text' : 'email'} from Hearth and type the 6 numbers again.`;
     case 'SMS_OFF':
-      return "Texts aren't working right now. Use your email instead.";
+      // TS-GUX-R4: an email only if she has used one; a text-only relative would land in a new, empty account.
+      return "Texts aren't working right now. If you've used your email with Hearth before, type it below. If you always use a text, try again in an hour, or call the person who invited you.";
     case 'NETWORK':
       // GUX-R2: a search isn't retried for them, so don't promise it.
       if (ctx.action === 'search') return 'No internet right now. Check your Wi-Fi, then tap Search again.';
@@ -71,7 +72,11 @@ export function messageFor(e: unknown, ctx: MessageContext = {}): string {
     case 'VIDEO_TOO_LONG':
       return 'This video is longer than 1 minute. Please pick a shorter one.';
     case 'AUTH':
-      return 'Please sign in again. We will email you a new code.';
+      // TS-GUX-R5: never promise the wrong channel.
+      if (ctx.via === 'text') return "Please sign in again. We'll text you a new code.";
+      if (ctx.via === 'email') return 'Please sign in again. We will email you a new code.';
+      // Most screens don't know how she signs in, so name no channel (same as the sign-out words, TD-UX-R7a).
+      return "Please sign in again. We'll send you a new code.";
     default:
       return `Something went wrong. Try again${who ? `, or call ${who}` : ''}.`;
   }

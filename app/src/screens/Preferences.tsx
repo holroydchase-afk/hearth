@@ -199,7 +199,7 @@ export function SignOut() {
       {ask ? (
         <AlertDialog
           title="Sign out of Hearth?"
-          body="To come back, you'll need a new code from your email."
+          body="To come back, you'll need a new code. We'll send it to you."
           keep="Stay signed in"
           destroy="Sign out"
           onKeep={() => setAsk(false)}

@@ -64,10 +64,10 @@ for (const size of SIZES) {
       const chooser = page.waitForEvent('filechooser');
       await page.getByRole('button', { name: 'Pick photos from your phone' }).click();
       await (await chooser).setFiles(PICTURE);
-      await page.getByLabel("What's happening?").fill('First snow!');
-      await page.getByRole('checkbox', { name: /Grandparents – Dad's side/ }).click();
+      await page.getByLabel('Add a note (optional)').fill('First snow!');
+      await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
       await shot('share-filled');
-      await page.getByRole('button', { name: 'Post', exact: true }).click();
+      await page.getByRole('button', { name: /^Send to / }).click();
       await expect(page.getByText('First snow!', { exact: true })).toBeVisible();
       await shot('posted');
       await page.getByRole('button', { name: /Open photo 1 of/ }).first().click();

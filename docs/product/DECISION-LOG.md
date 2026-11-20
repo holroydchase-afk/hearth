@@ -521,7 +521,28 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** most people only see Hearth through the web demo; it should show the bar iPhone users get. Text stays off the glass (icons only, DS-6).
 - **Source:** `docs/product/SPEC-REDESIGN.md` RD-108, RD-109, DEMO-EASY-1; persona check `decisions/2026-11-19-web-glass-bar.md`
 
-### DEC-75 · Keep video, built and switched off, and get it ready to turn on (PM-R5)
+### DEC-73 · Share is a postcard: photo, note and "To:" faces in one card, nothing pre-picked (SHARE-PC-1..SHARE-PC-14)
+- **When / status:** Nov 19 · Chase, after the live tester (`/mnt/project-files/design/share-redo-2026-11-19/share-tester.html`), thread "Redo the Share screen", 00:27 ET: "This all looks great to me. proceed with the build"; he picked direction B "Postcard" and confirmed no autoselect of the audience · Specced, failing tests next
+- **Chose:** after the phone's photo picker, one "New post" page with a card: the big photo ("1 of N", small thumbnails and an Add tile), one optional field "Add a note (optional)", then a dashed-line "To:" section inside the card where face tiles (face stack, name, "N people"; 3 across, 2 in Easy view) are tapped to pick who gets it. Parents see group names; everyone else sees people's names, never a group name (DEC-49). Nothing is picked at the start. The pinned button reads "Pick who gets it" (off) until someone is picked, then "Send to <names>". After Send, Feed with the new post on top and "Shared with <names>." New posts get no title; old titles still show. Upload queue, bulk review, helpers, error notices and the 10-photo max stay.
+- **Over:** A One page (photos, fields and a checkbox list stacked on a plain page); C One question at a time (photos, then words, then who, each its own step); keeping Title plus "What's happening?" (DEC-39's two fields); the last audience pre-ticked (a misread of an earlier call, reverted: Chase wants no autoselect).
+- **Because:** a postcard reads as one thing going to named people, so who sees it is never in doubt (PA, A1); faces are easier for a grandparent than group words; one field is one fewer question; a blank To: means a post never goes to last week's group by accident.
+- **Source:** `docs/product/SPEC-REDESIGN.md` 1j; persona check `decisions/2026-11-19-share-postcard.md`. Amends DEC-39 (CAP-D1, CAP-D4: one note, no title on new posts) and BETA-BULK-3's "default: the last group used" (now nothing picked).
+
+### DEC-74 · Keep text sign-in, switched off, and finish it (answers PM-R5)
+- **When / status:** Nov 19 · Chase, after the tech-debt review recommended parking it: "We need to keep the switched off features. Start a thread for each" · Thread "Get text sign-in ready to turn on" (TRACKER R43)
+- **Chose:** keep the text sign-in code and migration 0026 in the public repo with the switch off, and finish what's left before it can go on: the TD-UX-R7 words, the privacy and wording reviews, Twilio's custom message, then Chase's Twilio sign-up, "deploy" and a real-phone test.
+- **Over:** parking it on an archive branch until a relative asks (staff-pm's PM-R5 recommendation).
+- **Because:** texts are Chase's chosen default sign-in (DEC-57), the code is built and tested, and Twilio Verify needs no carrier registration (Twilio docs, read through search Nov 19), so the remaining steps are small.
+- **Source:** persona check `decisions/2026-11-19-keep-text-sign-in.md`; `docs/eng/SMS-PROVIDER.md`
+
+### DEC-75 · The glass tab bar shrinks on scroll, like iOS 26 (RD-110)
+- **When / status:** Nov 19 · Chase: "I also want the full iOS glass oval interaction on scroll" · Built, waits on Chase's "merge"
+- **Chose:** with Easy view Off, scrolling down shrinks the bar to a small glass oval with only the current tab; scrolling up, reaching the top or tapping the oval brings it back. iPhone uses the system's own minimize; the web demo copies it. Easy view On and Android keep a bar that never shrinks.
+- **Over:** DS-5's "never minimizes" for everyone (kept for Easy view); shrinking on scroll up; adding a search button beside the oval.
+- **Because:** parents expect Apple's own behavior and it gives photos the whole screen; grandparents keep the fixed bar with words, so the way back stays visible for them.
+- **Source:** `docs/product/SPEC-REDESIGN.md` RD-110; persona check `decisions/2026-11-19-glass-bar-shrink.md`
+
+### DEC-76 · Keep video, built and switched off, and get it ready to turn on (PM-R5)
 - **When / status:** Nov 19 · Chase: "We need to keep the switched off features. Start a thread for each" · Thread "Get video ready to turn on"; the switch stays off until his word
 - **Chose:** video (VID-1..22, migration 0020, `video_posting` off) stays on main. Before turning on: ENG-R2 (a retried upload no longer spends another free video), ENG-R11 (the cap has its own error code), SEC-R7, PRIV-R1, then VID-19 on an iPhone and an Android phone and the FLAG-7 check (VID-22) on Chase's iPhone.
 - **Over:** parking video on an archive branch until a relative asks for it (PM-R5's recommendation for the other dark features).
@@ -529,4 +550,4 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Source:** `docs/reviews/2026-11-19-tech-debt/pm.md` PM-R5; `docs/product/SPEC-MEDIA.md` section 4; persona check `decisions/2026-11-19-keep-video.md`
 
 ---
-Last updated: Nov 19, 2026 (DEC-75)
+Last updated: Nov 20, 2026 (DEC-76)

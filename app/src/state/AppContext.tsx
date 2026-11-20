@@ -64,6 +64,9 @@ export interface AppValue {
   askPush: () => Promise<void>;
   /** HIG-1: Not now. Hidden for good on this phone; How should we tell you (Help or Me) still works. */
   skipPushAsk: () => void;
+  /** SHARE-PC-11 (DEC-73): "Shared with <names>." after a Send, shown on Feed until closed or the next Send. */
+  shared: string | null;
+  setShared: (line: string | null) => void;
 }
 
 const Ctx = createContext<AppValue | null>(null);
@@ -132,6 +135,7 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
   live.current = s;
 
   const [pushAsk, setPushAsk] = useState(false);
+  const [shared, setShared] = useState<string | null>(null);
   const register = useCallback(async (ask: boolean) => {
     try {
       const token = await registerForPush({ ask });
@@ -298,7 +302,9 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
     pushAsk: pushAsk && s.status === 'ready',
     askPush,
     skipPushAsk,
-  }), [s, deps, setPrefs, saveNotify, setFamilyFeature, load, signOut, pushAsk, askPush, skipPushAsk]);
+    shared: s.status === 'ready' ? shared : null,
+    setShared,
+  }), [s, deps, setPrefs, saveNotify, setFamilyFeature, load, signOut, pushAsk, askPush, skipPushAsk, shared]);
 
   return (
     <Ctx.Provider value={value}>

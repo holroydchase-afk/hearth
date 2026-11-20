@@ -12,11 +12,12 @@
 #   tests/reactions_test.sql  REACT-1..6: Love, Haha, Like (migration 0017); HARD-12: only through the RPCs (0018); REACT-12: Hooray (0023)
 #   tests/captions_test.sql   CAP-1..3, 5..8, 10, 11, HARD-18: post titles (0019), changing the words (0021)
 #   tests/video_cap_test.sql  S14-1..7: the free video cap counts per person, not per space (migration 0020)
-#   tests/video_refund_test.sql  ENG-R2, ENG-R11, SEC-R7: unfinished videos give their count back, the cap's own code (migration 0028)
+#   tests/video_refund_test.sql  ENG-R2, ENG-R11, SEC-R7: unfinished videos give their count back, the cap's own code (migration 0029)
 #   tests/viewers_test.sql    WHO-1..5: who can see a post, by name, for everyone who can see it (migration 0022)
 #   tests/start_family_test.sql  BETA-START-1, 3..8, 10..13: start a family, the switch, the cap (SPEC-START-FAMILY, migration 0024)
 #   tests/sms_test.sql        BETA-SMS-8, -9, -13, -15: phone invites, sign_in_with, push-only phone accounts, no numbers kept (SPEC-SMS-SIGN-IN)
 #   tests/group_names_test.sql  SEC-R1: a group's name stays with the parents, also through the raw API and the export (migration 0027)
+#   tests/auth_no_passwords_test.sql  TS-SEC-R1: no password hash ever stays in auth.users (migration 0028, docs/eng/AUTH-NO-PASSWORDS.md)
 #   tests/search_test.sql  SEARCH-1..14: find posts by words, sender and dates, only ones you can see (SPEC-SEARCH, migration 0025)
 #   ../packages/messenger/relay/test.sql  RELAY-1..9: the shared messenger library's relay template
 #   tests/aud16/  BETA-AUD-16: snapshot on 0001-0010, apply 0011+, diff (0011 must change nobody's access)
@@ -29,7 +30,7 @@ STATUS=0
 for suite in tests/rls_test.sql tests/api_test.sql tests/notify_test.sql tests/setup_test.sql tests/reply_test.sql tests/timeline_test.sql \
              tests/groups_test.sql tests/timeline_future_test.sql tests/privacy_audit_test.sql tests/groups_v2_test.sql tests/chat_test.sql \
              tests/photo_helpers_test.sql tests/reactions_test.sql tests/captions_test.sql tests/video_cap_test.sql tests/video_refund_test.sql tests/viewers_test.sql \
-             tests/start_family_test.sql tests/search_test.sql tests/sms_test.sql tests/group_names_test.sql; do
+             tests/start_family_test.sql tests/search_test.sql tests/sms_test.sql tests/group_names_test.sql tests/auth_no_passwords_test.sql; do
   dropdb --if-exists "$DB"
   createdb "$DB"
   files=(-f tests/supabase_stub.sql)
