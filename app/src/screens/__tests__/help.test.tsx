@@ -5,7 +5,7 @@ import React from 'react';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
 import { HelpScreen } from '../HelpScreen';
 import { MeScreen } from '../MeScreen';
-import { MoreScreen } from '../MoreScreen';
+import { MoreScreen } from '../../test/redesignScreens'; // ENG-R6: More at /more, under expo-router
 
 describe('Help tab (viewers) — UXG-14', () => {
   it('puts "Call Chase" first and it dials', async () => {
