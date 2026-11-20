@@ -51,5 +51,9 @@ describe('tabs', () => {
     expect(nativeTabLook('android', false).minimize).toBe('never');
     expect(nativeTabLook('android', true).minimize).toBe('never');
   });
-});
 
+  // RD-110-R5: Easy view never shrinks, even if the phone's own bar were ever used with it on (DS-5).
+  it('RD-110-R5 with Easy view On the phone\'s own bar never shrinks', () => {
+    expect(nativeTabLook('ios', true).minimize).toBe('never');
+  });
+});

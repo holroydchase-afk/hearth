@@ -14,7 +14,8 @@ blockers:
 ## Nov 19: glass tab bar shrinks on scroll (Chase, DEC-75, RD-110, R64; branch claude/project-thread-ox4dz4, PR)
 - **Chase:** "I also want the full iOS glass oval interaction on scroll".
 - **Done, test-first:** `nativeTabLook('ios')` gives `minimize: 'onScrollDown'` (the layout passes it to `NativeTabs`); Android stays `never`. Web: `HearthTabBar` follows any scrolling area (`nextMinimized`, capture-phase scroll listener) and narrows to a 64 pt oval with only the picked tab; tap it, scroll up or reach the top to bring the bar back. Easy view On never shrinks. DS-5 wording updated.
-- **Next exact step:** Chase says "merge"; demo rebuilds; live check; republish the Expo preview so Chase sees it on his iPhone.
+- **Nov 20 code review (Chase: "go for p1 fixes, docs, etc"):** RD-110-R1 the oval's tap only brings the bar back (More no longer loses its place); R2 the web only follows the app's own vertical scrolling (not the laptop story panel, not sideways strips); R3 changing tabs brings the bar back; R4 the shrink really animates (max width) and Reduce Motion is tested; R5 `nativeTabLook` itself says never with Easy view; R6 the browser tests use the real wheel, measured widths and frame waits instead of fixed pixels and timers. Docs: RD-107 row, DEC-73 comments put back. ONB-4 taps the oval then More.
+- **Next exact step:** Chase says "merge 138"; demo rebuilds; live check; republish the Expo preview so Chase sees it on his iPhone (check VoiceOver and a scroll inside More's lists).
 - **Portfolio / public presence:** the demo's glass bar shrinks on scroll once this merges.
 
 ## Nov 19: text sign-in kept and readied to turn on (Chase, DEC-74, TRACKER R43; branch claude/project-thread-df9051, PR)
