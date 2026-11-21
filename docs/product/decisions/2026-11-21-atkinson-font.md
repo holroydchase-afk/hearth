@@ -7,7 +7,7 @@ Over: the phone's own font (DEC-59's RD-2, Nov 15); Lexend, Inter and Nunito San
 | Persona | Green/Red | Why |
 |---|---|---|
 | GG Great-grandparent who won't install | Green | Emails and the frame view read the same or clearer |
-| LG Least-savvy grandparent | Green | Built for low-vision readers: I, l and 1 and O and 0 can't be mixed up |
+| LG Least-savvy grandparent | Green | Built for low-vision readers: I, l, 1, O and 0 can't be confused |
 | AG Android grandpa | Green | Same letters as the iPhone; bundled, so nothing downloads on an old phone |
 | SG Step or other-household grandparent | Green | Look only; who sees what is unchanged |
 | CU Cousin | Green | Clean, modern sans; reads fine at parent sizes |
