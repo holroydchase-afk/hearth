@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-21T05:00:00-05:00",
+ "label": "Atkinson Hyperlegible Next (DEC-78, FONT-1..5): all app suites 3x (green after test fix T28)",
+ "passed": 5007,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs each at 8a118b3 plus the engineer's uncommitted font change: jest 1632 passed (1 skipped, 1 todo) x3 incl. FONT-1..4, typecheck clean x3, check-expo-go OK x3 (SDK 58). e2e:demo first 36 passed, 1 failed x3 (RD-117/RD-116, test bug T28, consistent so not flaky); after qa-tdd's T28 test fix 37 passed (5 skipped) x3 incl. FONT-5. No product file changed by qa-tdd. Backend SQL and Deno not run (no backend change); e2e:web, e2e:site and phones not run. Screenshots 390x844 in /mnt/project-files/design/font-atkinson-2026-11-21/. e2e/results/font-green-2026-11-21.txt"
+}

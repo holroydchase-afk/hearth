@@ -9,7 +9,7 @@
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { Button, SystemIcon } from '../ui/kit';
-import { WEIGHT, MIN_TARGET, RADIUS, useTheme } from '../ui/theme';
+import { FONT, MIN_TARGET, RADIUS, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
 import { VideoPlayer } from './VideoPlayer';
 
@@ -33,7 +33,7 @@ export function VideoPoster({ postId, mediaId, fit = 'cover', style, onOpen, ope
           <View style={styles.middle} pointerEvents="none">
             <View style={[styles.pill, { backgroundColor: 'rgba(0,0,0,0.72)' }]}>
               <SystemIcon icon={PLAY_ICON} color="#FFFFFF" />
-              <Text style={{ color: '#FFFFFF', fontWeight: WEIGHT.semibold, fontSize: t.base }}>Play</Text>
+              <Text style={{ color: '#FFFFFF', fontFamily: FONT.semibold, fontSize: t.base }}>Play</Text>
             </View>
           </View>
         </Pressable>

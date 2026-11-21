@@ -17,7 +17,7 @@ import { useApp } from '../state/AppContext';
 import { useNav } from '../state/nav';
 import { AddTile, Button, FaceTile, Field, Loading, Notice, Screen, SystemIcon, Txt } from '../ui/kit';
 import { photos } from '../ui/format';
-import { LABEL_SCALE_CAP, RADIUS, WEIGHT, photoShadow, useTheme } from '../ui/theme';
+import { LABEL_SCALE_CAP, RADIUS, FONT, photoShadow, useTheme } from '../ui/theme';
 import type { QueueItem } from '../upload/queue';
 import { useTabBarSpace } from '../ui/tabBarSpace';
 import { AppGate } from './AppGate';
@@ -244,7 +244,7 @@ export function ShareScreen() {
                   accessibilityLabel={items.length > 1 ? `Photo ${shown + 1} of ${items.length}` : 'Your photo'} accessibilityIgnoresInvertColors />
                 {items.length > 1 ? (
                   <View style={styles.count} pointerEvents="none">
-                    <Text style={{ color: '#FFFFFF', fontSize: t.base, fontWeight: WEIGHT.semibold }}>{`${shown + 1} of ${items.length}`}</Text>
+                    <Text style={{ color: '#FFFFFF', fontSize: t.base, fontFamily: FONT.semibold }}>{`${shown + 1} of ${items.length}`}</Text>
                   </View>
                 ) : null}
               </View>
@@ -282,8 +282,8 @@ export function ShareScreen() {
               {/* SHARE-PC-5..9: To: names the people; the tiles fill it in. Nothing is picked to start (SHARE-PC-7). */}
               <View testID="share-to" style={styles.to}>
                 <View style={styles.toLine}>
-                  <Text style={{ color: c.muted, fontSize: t.base, lineHeight: t.line }}>To:</Text>
-                  {toLine ? <Text style={{ flexShrink: 1, color: c.ink, fontSize: t.base, lineHeight: t.line, fontWeight: WEIGHT.semibold }}>{toLine}</Text> : null}
+                  <Text style={{ color: c.muted, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line }}>To:</Text>
+                  {toLine ? <Text style={{ flexShrink: 1, color: c.ink, fontSize: t.base, lineHeight: t.line, fontFamily: FONT.semibold }}>{toLine}</Text> : null}
                 </View>
                 {circles === null ? <Loading words="Loading your groups…" /> : null}
                 {circles?.length === 0 && !notice ? (

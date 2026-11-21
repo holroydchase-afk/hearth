@@ -16,7 +16,7 @@ import { Animated, Platform, Pressable, StyleSheet, Text, View, type LayoutChang
 import type { FeedPost } from '../api/HearthApi';
 import { galleryMonths, mosaicRows, type GridMonth, type GridTile } from '../feed/gallery';
 import { useNav } from '../state/nav';
-import { GALLERY_TYPE, MIN_TARGET, RADIUS, SPACE, WEIGHT, photoShadow, useTheme } from '../ui/theme';
+import { GALLERY_TYPE, MIN_TARGET, RADIUS, SPACE, FONT, photoShadow, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
 
 const GAP = SPACE.sm;
@@ -119,14 +119,14 @@ function Month({ m, stick, relayout, pinAt, onPin }: {
         onLayout={(e) => setHeadH(e.nativeEvent.layout.height)}
         style={[styles.head, { backgroundColor: c.bg }, WEB ? sticky : { transform: [{ translateY: shift }] }]}
       >
-        <Text style={{ fontSize: GALLERY_TYPE.month, lineHeight: 30, fontWeight: WEIGHT.semibold, color: c.ink }}>{m.title}</Text>
+        <Text style={{ fontSize: GALLERY_TYPE.month, lineHeight: 30, fontFamily: FONT.semibold, color: c.ink }}>{m.title}</Text>
         {/* RD-82 / RD-83: while this title is pinned, the bar's shade sits under it (the bottom of the pinned block). */}
         {pinned ? <View testID="search-bar-shade" pointerEvents="none" accessible={false} style={[shadeLine, { backgroundColor: c.line }]} /> : null}
       </Animated.View>
       {m.groups.map((g) => (
         <View key={g.key} style={{ gap: GAP }}>
           {/* RD-56: the group's date, once ("Oct 17", "Nov 11–15"); each tile's spoken label has the full date. */}
-          <Text style={{ fontSize: t.base, lineHeight: t.line, fontWeight: WEIGHT.medium, color: c.ink }}>{g.label}</Text>
+          <Text style={{ fontSize: t.base, lineHeight: t.line, fontFamily: FONT.medium, color: c.ink }}>{g.label}</Text>
           {mosaicRows(g.tiles, ACROSS).map((row) => (
             row[0]!.wide ? tile(row[0]!) : (
               <View key={row[0]!.mediaId} testID="gallery-grid-row" style={styles.row}>

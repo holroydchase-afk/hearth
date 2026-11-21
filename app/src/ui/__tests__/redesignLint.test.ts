@@ -50,14 +50,19 @@ function buttons(): { at: string; props: string }[] {
 }
 
 describe('RD 1a source scans', () => {
-  it('RD-2 Atkinson is no longer loaded anywhere in the app', () => {
-    expect(find(/atkinson-hyperlegible|AtkinsonHyperlegible/i)).toEqual([]);
-    expect(find(/useFonts\s*\(/)).toEqual([]);
+  // qa-tdd, Nov 21: reversed by DEC-78 (FONT-1). Atkinson comes back, imported only in theme.ts and loaded only by
+  // the root layout's useFonts; screens use FONT.* and never name the files themselves.
+  it('RD-2 → FONT-1 Atkinson is imported only by theme.ts and useFonts runs only in the root layout', () => {
+    expect(find(/@expo-google-fonts\/atkinson-hyperlegible-next/i).map((l) => l.split(':')[0])).toEqual(expect.arrayContaining(['ui/theme.ts']));
+    expect(find(/@expo-google-fonts\/atkinson-hyperlegible-next/i, sources(), (f) => f === 'ui/theme.ts')).toEqual([]);
+    expect(find(/useFonts\s*\(/).map((l) => l.split(':')[0])).toEqual(['app/_layout.tsx']);
   });
 
   // Updated Nov 17 for RD-55 (DEC-65): no Bold anywhere, the large title included; Medium is allowed for names (RD-48).
   it('RD-2 RD-55 no Bold or heavier weight anywhere (WEIGHT.bold, 700, 800, 900, "bold")', () => {
     expect(find(/WEIGHT\.bold|fontWeight:\s*['"](700|800|900|bold)['"]/, sources(), (f) => f === 'ui/theme.ts')).toEqual([]);
+    // FONT-1 (DEC-78): no Bold Atkinson family either, theme.ts included.
+    expect(find(/FONT\.bold|AtkinsonHyperlegibleNext_(700|800|900)\w*/)).toEqual([]);
   });
 
   it('RD-3 no component hard-codes an accent hex (old or new); theme.ts is the only home', () => {

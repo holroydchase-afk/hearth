@@ -61,7 +61,7 @@ Contrast is WCAG 2 and is tested, not eyeballed: a new theme ships with a test t
 
 ## 4. Type
 
-- **Font: open decision (Nov 21).** Recommended: **Atkinson Hyperlegible Next**, a free, open font built for low-vision readers, shipped inside each product so every phone and the web show the same letters. Hearth's app today uses the phone's own font (DEC-59, Nov 15). Either way, text must grow with the phone's text-size setting.
+- **Font: Atkinson Hyperlegible Next** (Chase, Nov 21, DEC-78): a free, open font built for low-vision readers, bundled inside each product so every phone and the web show the same letters. One file per weight; on the web, load it with a real fallback stack (`"Atkinson Hyperlegible Next", system-ui, sans-serif`). Text must still grow with the phone's text-size setting.
 - **Weights:** Regular (400) for reading, Medium (500) for a person's name, Semibold (600) for titles, buttons and the picked tab. No Bold, Light, italics or all caps.
 
 Sizes in pt; on the web 1 pt = 1 CSS px. "Bigger text" is an optional in-app setting that steps the whole ramp up, on top of the phone's own text size.
@@ -98,7 +98,7 @@ Labels in tab bars and toolbars grow with the phone up to 1.5×, then stop; body
 
 ## 7. Checklist for a new product
 
-1. Copy `tokens.json`'s type, space, radius and target values as-is. Font: see section 4 (open decision); don't copy `tokens.json`'s font yet.
+1. Copy `tokens.json`'s type, space, radius and target values as-is.
 2. Make one theme: 7 base colors × light and dark, then derive the rest (section 3).
 3. Add the contrast test before any screen.
 4. Use the phone's own controls; write down any custom one.

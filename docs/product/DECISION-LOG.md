@@ -556,5 +556,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** it holds personal plans that don't belong in a public portfolio repo and contradicts the proof-of-concept framing.
 - **Source:** `docs/reviews/2026-11-19-tech-debt/pm.md` PM-R10. Not a product decision, so no persona check. Older commits still hold the file.
 
+### DEC-78 · Atkinson Hyperlegible Next everywhere, again (FONT-1..)
+- **When / status:** Nov 21 · Chase, thread "Build Hearth's design guidelines": "we may want to use atkinson", then after the live font tester "hyperlegible next. also ensure that is on the portfolio demo page" · Building
+- **Chose:** Atkinson Hyperlegible Next (Regular, Medium, SemiBold; no Bold) bundled in the app, on iPhone, Android and the web demo; also the studio core's font for Chase's other products.
+- **Over:** the phone's own font (DEC-59 / RD-2, Nov 15); Lexend, Inter, Nunito Sans.
+- **Because:** the studio wants products that look alike, and the phone's own font differs between iPhone and Android; Atkinson was designed for low-vision readers, which fits the grandparents best.
+- **Source:** persona check `decisions/2026-11-21-atkinson-font.md`; tester https://claude.ai/artifact/7Dfseqn1BtTaPtFuCijPzX. Supersedes DEC-59's font row (RD-2) and DS-12.
+
 ---
-Last updated: Nov 20, 2026 (DEC-77)
+Last updated: Nov 21, 2026 (DEC-78)

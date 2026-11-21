@@ -11,6 +11,12 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 21: Atkinson Hyperlegible Next everywhere, again (Chase, DEC-78, R69; branch claude/project-thread-1ba5s6, PR)
+- **Chase:** "hyperlegible next. also ensure that is on the portfolio demo page" (after the live font tester https://claude.ai/artifact/7Dfseqn1BtTaPtFuCijPzX).
+- **Done:** qa-tdd red FONT-1..5 (flipped RD-2 tests), engineer built: package 0.4.1 bundled, `FONT`/`FONT_FILES` in theme.ts, `useFonts` in the root layout, every `fontWeight` replaced by the matching family, tokens.json regenerated; STUDIO-CORE, DESIGN-SYSTEM DS-12, DEC-78 and persona check updated.
+- **Next:** merge, live demo check fresh and returning, Expo preview republish, Chase's iPhone look at 360 px wrapping.
+- **Portfolio / public presence:** the public demo (chaseholroyd.com/hearth/) shows Atkinson Hyperlegible Next once this merges.
+
 ## Nov 21: studio design core and Hearth's design guidelines (Chase, R68; branch claude/project-thread-1ba5s6, PR)
 - **Chase:** "Can you and the ui agent build design guidelines and whatever design system we should use?", "start lean", "goal is to give this to other projects so their products look similar", "are there other established design systems we should look at?"
 - **Done:** `docs/design/STUDIO-CORE.md`, the product-neutral core other products copy: each phone's own guidelines for behavior, Material 3 color roles as the token vocabulary, no component library, 11 principles, the 7-colors-per-mode theme recipe with tested contrast, type, space, corners, components, a new-product checklist. `docs/product/DESIGN-SYSTEM.md` is now Hearth's layer: stale palette, font and DS-11/DS-12 rows brought up to the code (themes, Medium for names, no Bold), Hearth's themes table, Hearth components, and gaps DSG-1..8 (not fixed). Brand names of other apps removed. ux-reviewer reviewed (DSC-R1..R8, all applied).
