@@ -556,5 +556,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** it holds personal plans that don't belong in a public portfolio repo and contradicts the proof-of-concept framing.
 - **Source:** `docs/reviews/2026-11-19-tech-debt/pm.md` PM-R10. Not a product decision, so no persona check. Older commits still hold the file.
 
+### DEC-78 · Share opens on an empty postcard with one "Add photos" target (SHARE-ST-1..SHARE-ST-9)
+- **When / status:** Nov 20, 9:19 PM ET · Chase, thread on the Share start ("The start screen for sharing needs improvement", "This looks subpar compared to the rest of the app"), decision card "Which Share start screen should replace today's?": "B Empty postcard", on the live tester (`/mnt/project-files/design/share-start-2026-11-20/share-start-tester.html`) · Specced, failing tests next
+- **Chose:** the Share tab opens on the DEC-73 postcard itself, empty: large title "New post", subline "For your family, nobody else.", and inside the card one big "Add photos" target filling the photo spot (icon plus words, "Up to 100 at a time" for parents, "Up to 10 at a time" for others); the note and the To: section ("To: pick after your photos") sit below it, faded and not tappable. One way in: the "Lots of photos?" section and "Pick lots of photos" go away. A parent picks up to 100; 1 to 10 open the postcard, 11 to 100 go to today's bulk review. A relative who can post picks up to 10 (the phone's picker stops at 10); if more ever come back, the first 10 are kept with HARD-2's notice.
+- **Over:** A straight to the phone's picker (a blank screen behind the picker and no sense of what comes next); C recent photos on the page (needs full photo-library access, against A1 and Apple's limited-access default); keeping today's page of words with two text links.
+- **Because:** the start looked unfinished next to the rest of the app; showing the postcard from the first second tells a grandparent what's coming, one big target with words beats two small text links (17 pt, 48 pt rule), and one way in means nobody chooses between "photos" and "lots of photos" before seeing one.
+- **Source:** `docs/product/SPEC-REDESIGN.md` 1j-2; persona check `decisions/2026-11-20-share-start-postcard.md`. Keeps the Oct 17 call (bulk pick is parents only) and HARD-2's 10-photo postcard max; replaces the start page in BETA-BULK's "Pick lots of photos" entry.
+
 ---
-Last updated: Nov 20, 2026 (DEC-77)
+Last updated: Nov 20, 2026 (DEC-78)
