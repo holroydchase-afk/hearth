@@ -80,7 +80,7 @@ describe('Full-screen viewer (BETA-SEE-3, BETA-SEE-5, UXG-08..10)', () => {
     const { be, newer } = await setup();
     await renderApp(<ViewerScreen postId={newer.id} index={1} />, { be, user: 'jo' });
     await screen.findByText('Photo 2 of 3');
-    await waitFor(() => expect(screen.queryByText('Loading the photo…')).toBeNull());
+    await waitFor(() => expect(screen.queryByText('Loading the photo…')).toBeNull(), { timeout: 5000 }); // T29: the photo decrypts for real in the fake backend; 1 s was too short on a busy CI runner
     expectGrandparentSafe();
   });
 });
