@@ -66,6 +66,7 @@ blockers:
 ## Nov 19: web glass tab bar lookalike, Grandma Jo no longer enlarges the laptop page (Chase, DEC-72, RD-108, RD-109, DEMO-EASY-1, R61; branch claude/project-thread-ox4dz4, PR)
 - **Chase:** "i do not see it in the demo" → picked a web lookalike; "its a poor experience that clicking grandma jo makes the screen much larger".
 - **Done, test-first:** `HearthTabBar floating` (web + Easy view Off): capsule 16 pt in, 64 pt, `c.surface` at 60%, `backdropFilter` blur, `c.accentSoft` pill. `ui/tabBarSpace.tsx` context gives screens 96 pt of room (kit `Screen`, Photos, Timeline, Events, Search, the walk's bar). `DemoFrame` panel and the phone's `DemoBar` sit in `BigTextContext` false. RD-44's e2e now measures tile rows from the grid's top (scroll-independent).
+- **Expo preview republished Nov 21** from main f65724f (#146, Atkinson Hyperlegible Next font; group f56e32ac-41d3-4d91-b2ba-b7ea62f3dc01). Before that Nov 20 from 6ace2e8 (#140, Hass Avocado; group e200110a). Standing link serves it.
 - **Expo preview republished Nov 19** from main eceac67 (group 96e510bb, iOS 01a1f21c-d8b4-79f2-a861-c4e8140f43e0); standing link serves it. Chase checks the iPhone tab bar.
 - **Next exact step:** Chase says "merge"; demo rebuilds; live check of the floating bar (fresh and returning).
 - **Portfolio / public presence:** the public demo's tab bar floats as glass for Chase's view once this merges.
