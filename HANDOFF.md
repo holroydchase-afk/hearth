@@ -11,6 +11,13 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 21: Easy view case study for the portfolio (Chase, R66; branch claude/project-thread-lld29p, PR)
+- **Chase:** "We need to ensure we do a write up on easy mode and ensure that's on the portfolio."
+- **Done:** `docs/portfolio/EASY-VIEW.md` (problem, the call and what it beat, persona check and its one Red, tests, what it unlocked: DEC-70 native glass bar, DEC-72 demo, DEC-75 shrink), linked from `CASE-STUDY.md`. Screenshots shot from the live demo Nov 21 (Chase vs Grandma Jo on More, the Easy view page; no faces) in `docs/portfolio/screens/easy-view/`. positioning reviewed the claims.
+- **Also fixed:** `backend/tests/notify_test.sql` had a date bomb: the release-and-resend check used a fixed clock of Nov 20, 7pm ET, so from Nov 21 00:00Z its notice was queued after that clock and CI's backend job went red on every PR. The notice is now queued at 5pm ET that day (before the 6pm email slot). Notify suite 60/60 green 3x locally. Two more fixed dates in that file (Nov 2, Nov 7/16 checks) pass today; worth a look if notify goes red again.
+- **Next:** when the Share split by Easy view ships (thread "Redo the Share screen"), fill the "Next: Share follows Easy view" section (DEC number, PR, Off vs On screenshot pair).
+- **Portfolio / public presence:** intake holroydchase-afk.github.io#85 asks Product Studio to add an Easy view section to the Hearth case study.
+
 ## Nov 20: funding research out of the public repo (Chase, DEC-77, PM-R10)
 - Done: `docs/product/FUNDING-RESEARCH.md` removed; private copy in the project files (`private/`). Older commits still hold it.
 - Next: Chase wants the planning docs (REMAINING, MILESTONE-1, PLAN, PM-REVIEW, TRACKER, BETA-SPEC) rewritten before they stay public; scope waits on his note. Deploy of 0026-0028 still waits on a new Supabase token.
