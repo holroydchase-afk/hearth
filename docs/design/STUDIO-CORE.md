@@ -59,6 +59,15 @@ Also tested: `accentInk` on `accent` 4.5:1, and `safe` and `danger` on `bg` 4.5:
 
 Contrast is WCAG 2 and is tested, not eyeballed: a new theme ships with a test that checks every pair above in light, dark and high contrast. The template is Hearth's `app/src/ui/__tests__/themes.test.ts`.
 
+### Shared themes (Chase, Nov 21)
+
+Every studio product can use Hearth's three themes as-is: **Paper** (default), **Avocado** and **Pomegranate**, each in light, dark and high contrast. They are generated from the code, so they never drift:
+
+- **Apps and anything that reads JSON:** `themes` in [`tokens.json`](tokens.json); `roles` gives each token's Material 3 role.
+- **Web:** [`themes.css`](themes.css). Link it, set `<html data-hearth-theme="avocado">` (no attribute = Paper), add `data-mode="dark"` or `"light"` to force a mode (otherwise the device decides) and `data-contrast="more"` for high contrast. Each color comes as the studio name (`--accent`) and the Material 3 role (`--md-sys-color-primary`); `--font-body` is the font stack.
+
+A product that wants its own look makes a new theme with the recipe above and adds it to `theme.ts` here, so every product can pick it.
+
 ## 4. Type
 
 - **Font: Atkinson Hyperlegible Next** (Chase, Nov 21, DEC-78): a free, open font built for low-vision readers, bundled inside each product so every phone and the web show the same letters. One file per weight; on the web, load it with a real fallback stack (`"Atkinson Hyperlegible Next", system-ui, sans-serif`). Text must still grow with the phone's text-size setting.
