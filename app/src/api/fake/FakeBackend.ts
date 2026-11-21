@@ -140,6 +140,8 @@ export class FakeBackend {
   private listeners = new Set<() => void>();
   /** DEMO-1: the demo build seeds pictures asynchronously; app calls wait for it (tests leave it unset). */
   ready: Promise<void> | null = null;
+  /** DEMO-SAFARI-3: resolves once every save so far has landed; the demo waits on it before a reload. */
+  flush: (() => Promise<void>) | null = null;
   constructor(public state: FakeState, private persist?: (s: FakeState) => void) {}
 
   static empty(): FakeState {
