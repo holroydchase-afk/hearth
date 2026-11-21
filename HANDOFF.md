@@ -11,6 +11,11 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 21: themes shareable with other studio products (Chase, R70; branch claude/project-thread-1ba5s6, PR)
+- **Chase:** "We also probably want the themes Sharable".
+- **Done:** `docs/design/themes.css` (Paper default, Avocado, Pomegranate; light, dark, high contrast; studio names + Material 3 role names; font stack) generated from theme.ts by `themesCss()` in `tokens.ts`; `tokens.json` gains `roles`. Drift tests DS-THEMES-1..3 (red first: e2e/results/themes-red-jest-2026-11-21.txt). STUDIO-CORE "Shared themes" says how to use them. DSG-6 closed.
+- **Portfolio / public presence:** none.
+
 ## Nov 21: Atkinson Hyperlegible Next everywhere, again (Chase, DEC-78, R69; branch claude/project-thread-1ba5s6, PR)
 - **Chase:** "hyperlegible next. also ensure that is on the portfolio demo page" (after the live font tester https://claude.ai/artifact/7Dfseqn1BtTaPtFuCijPzX).
 - **Done:** qa-tdd red FONT-1..5 (flipped RD-2 tests), engineer built: package 0.4.1 bundled, `FONT`/`FONT_FILES` in theme.ts, `useFonts` in the root layout, every `fontWeight` replaced by the matching family, tokens.json regenerated; STUDIO-CORE, DESIGN-SYSTEM DS-12, DEC-78 and persona check updated.

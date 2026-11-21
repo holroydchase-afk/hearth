@@ -109,7 +109,7 @@ Found while writing STUDIO-CORE. Each needs staff-pm's ranking and a failing tes
 | DSG-3 | Three different "picked" looks: reactions use a 2 pt outline with no fill, the To: face tile a 3 pt edge plus a soft fill plus a check, choices a check icon | `PostCard.tsx`, `kit.tsx` `FaceTile`, `Choice` |
 | DSG-4 | Two "biggest title" sizes: `display` 28 in the type scale and the Gallery large title 34, which Bigger text doesn't grow | `theme.ts` `typeScale`, `GALLERY_TYPE` |
 | DSG-5 | A few font sizes typed by hand (17 and 22, with tight line heights and negative letter spacing on face initials) | `PostCard.tsx:520-521`, `PhotoCollage.tsx:108` |
-| DSG-6 | Token names are Hearth's (`bg`, `ink`, `fill`), not the Material 3 roles other products will use; only the mapping table connects them. `tokens.json` should add the role names so other products can read it directly | `app/src/ui/tokens.ts` |
+| DSG-6 | ☑ Nov 21: `tokens.json` now has `roles` (Material 3 role per token) and `themes.css` gives both names (DS-THEMES-1..3) | `app/src/ui/tokens.ts` |
 | DSG-8 | The photo shadow uses Paper's ink in every theme, not each theme's own ink | `theme.ts` `photoShadow` |
 | DSG-7 | The Familiar patterns table below still describes some pre-redesign screens (P-2 "Photos", P-8, P-10) | this file |
 
