@@ -1,0 +1,221 @@
+
+Running 3 tests using 1 worker
+
+  ✘  1 e2e-web/demo.spec.js:79:1 › RR-14 add a photo, reload keeps it, Start over brings back the sample family (16.3s)
+  ✘  2 e2e-web/demo.spec.js:917:1 › SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to ...", Feed says "Shared with ..."; Jo sees names only (16.3s)
+  ✘  3 e2e-web/demo.spec.js:1109:1 › SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded To:, no "Pick lots of photos"; Chase "Up to 100"; 3 photos show "1 of 3" (16.3s)
+
+
+  1) e2e-web/demo.spec.js:79:1 › RR-14 add a photo, reload keeps it, Start over brings back the sample family 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'New post' })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 15000ms
+      - waiting for getByRole('heading', { name: 'New post' })
+
+
+      33 | const openNewPost = async (page, files) => {
+      34 |   await page.getByRole('tab', { name: /^Share/ }).click();
+    > 35 |   await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
+         |                                                                 ^
+      36 |   const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
+      37 |   await page.getByRole('button', { name: ADD_PHOTOS }).filter({ visible: true }).first().click();
+      38 |   await (await chooser).setFiles(files);
+        at openNewPost (/home/user/Hearth/app/e2e-web/demo.spec.js:35:65)
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:83:3
+
+    Error Context: test-results/e2e-demo-artifacts/demo-RR-14-add-a-photo-rel-0511e-ings-back-the-sample-family/error-context.md
+
+  2) e2e-web/demo.spec.js:917:1 › SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to ...", Feed says "Shared with ..."; Jo sees names only 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'New post' })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 15000ms
+      - waiting for getByRole('heading', { name: 'New post' })
+
+
+      33 | const openNewPost = async (page, files) => {
+      34 |   await page.getByRole('tab', { name: /^Share/ }).click();
+    > 35 |   await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
+         |                                                                 ^
+      36 |   const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
+      37 |   await page.getByRole('button', { name: ADD_PHOTOS }).filter({ visible: true }).first().click();
+      38 |   await (await chooser).setFiles(files);
+        at openNewPost (/home/user/Hearth/app/e2e-web/demo.spec.js:35:65)
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:923:3
+
+    Error Context: test-results/e2e-demo-artifacts/demo-SHARE-PC-13-postcard--e78b4-red-with-Jo-sees-names-only/error-context.md
+
+  3) e2e-web/demo.spec.js:1109:1 › SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded To:, no "Pick lots of photos"; Chase "Up to 100"; 3 photos show "1 of 3" 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'New post' })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 15000ms
+      - waiting for getByRole('heading', { name: 'New post' })
+
+
+      1116 |   const startPage = async (limit, shot) => {
+      1117 |     await page.getByRole('tab', { name: /^Share/ }).click();
+    > 1118 |     await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
+           |                                                                   ^
+      1119 |     const add = page.getByRole('button', { name: `Add photos, up to ${limit} at a time` }).filter({ visible: true });
+      1120 |     await expect.soft(add).toBeVisible();
+      1121 |     await expect.soft(page.getByText(`Up to ${limit} at a time`, { exact: true }).filter({ visible: true })).toBeVisible();
+        at startPage (/home/user/Hearth/app/e2e-web/demo.spec.js:1118:67)
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:1156:3
+
+    Error Context: test-results/e2e-demo-artifacts/demo-SHARE-ST-8-empty-post-0958d-o-100-3-photos-show-1-of-3-/error-context.md
+
+  3 failed
+    e2e-web/demo.spec.js:79:1 › RR-14 add a photo, reload keeps it, Start over brings back the sample family 
+    e2e-web/demo.spec.js:917:1 › SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to ...", Feed says "Shared with ..."; Jo sees names only 
+    e2e-web/demo.spec.js:1109:1 › SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded To:, no "Pick lots of photos"; Chase "Up to 100"; 3 photos show "1 of 3" 
+
+Running 9 tests using 1 worker
+
+  ✘  1 e2e-web/core-loop.spec.js:44:1 › core loop: share → Jo sees it → Ruth does not → heart → comment → delete (1.5m)
+  ✘  2 e2e-web/perf.spec.js:10:1 › PERF-FEED-1 cold start to the first photo on screen is under 2 s (1.5m)
+  -  3 e2e-web/showcase.spec.js:21:5 › showcase phone light
+  -  4 e2e-web/showcase.spec.js:21:5 › showcase phone dark
+  -  5 e2e-web/showcase.spec.js:21:5 › showcase laptop light
+  -  6 e2e-web/showcase.spec.js:21:5 › showcase laptop dark
+  -  7 e2e-web/snapshot.spec.js:16:3 › snapshot (iphone)
+  -  8 e2e-web/snapshot.spec.js:16:3 › snapshot (android)
+  ✘  9 e2e-web/video.spec.js:39:1 › VID-18 a video post shows its poster with a Play word button on Photos and the post screen; Play opens the player (1.5m)
+
+
+  1) e2e-web/core-loop.spec.js:44:1 › core loop: share → Jo sees it → Ruth does not → heart → comment → delete 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: page.waitForEvent: Test timeout of 90000ms exceeded.
+    =========================== logs ===========================
+    waiting for event "filechooser"
+    ============================================================
+
+      46 |   await signIn(page, 'chase@example.com');
+      47 |   await page.getByRole('tab', { name: 'Share' }).click();
+    > 48 |   const chooser = page.waitForEvent('filechooser');
+         |                        ^
+      49 |   await page.getByRole('button', { name: /^Add photos, up to \d+ at a time$/ }).click();
+      50 |   await (await chooser).setFiles(FIXTURE);
+      51 |   await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible(); // DEC-73 postcard
+        at /home/user/Hearth/app/e2e-web/core-loop.spec.js:48:24
+
+    Error: locator.click: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /^Add photos, up to \d+ at a time$/ })
+
+
+      47 |   await page.getByRole('tab', { name: 'Share' }).click();
+      48 |   const chooser = page.waitForEvent('filechooser');
+    > 49 |   await page.getByRole('button', { name: /^Add photos, up to \d+ at a time$/ }).click();
+         |                                                                                 ^
+      50 |   await (await chooser).setFiles(FIXTURE);
+      51 |   await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible(); // DEC-73 postcard
+      52 |   await page.getByLabel('Add a note (optional)').fill('Pumpkin patch');
+        at /home/user/Hearth/app/e2e-web/core-loop.spec.js:49:81
+
+    Error Context: test-results/e2e-web-artifacts/core-loop-core-loop-share--513f3--→-heart-→-comment-→-delete/error-context.md
+
+  2) e2e-web/perf.spec.js:10:1 › PERF-FEED-1 cold start to the first photo on screen is under 2 s ──
+
+    Test timeout of 90000ms exceeded.
+
+    Error: page.waitForEvent: Test timeout of 90000ms exceeded.
+    =========================== logs ===========================
+    waiting for event "filechooser"
+    ============================================================
+
+      15 |   await page.getByRole('button', { name: 'Continue' }).click();
+      16 |   await page.getByRole('tab', { name: 'Share' }).click();
+    > 17 |   const chooser = page.waitForEvent('filechooser');
+         |                        ^
+      18 |   await page.getByRole('button', { name: /^Add photos, up to \d+ at a time$/ }).click();
+      19 |   await (await chooser).setFiles(FIXTURE);
+      20 |   await page.getByLabel('Add a note (optional)').fill('Cold start');
+        at /home/user/Hearth/app/e2e-web/perf.spec.js:17:24
+
+    Error: locator.click: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /^Add photos, up to \d+ at a time$/ })
+
+
+      16 |   await page.getByRole('tab', { name: 'Share' }).click();
+      17 |   const chooser = page.waitForEvent('filechooser');
+    > 18 |   await page.getByRole('button', { name: /^Add photos, up to \d+ at a time$/ }).click();
+         |                                                                                 ^
+      19 |   await (await chooser).setFiles(FIXTURE);
+      20 |   await page.getByLabel('Add a note (optional)').fill('Cold start');
+      21 |   await page.getByLabel(/^Grandparents – Dad's side, 2 people, not picked$/).click();
+        at /home/user/Hearth/app/e2e-web/perf.spec.js:18:81
+
+    Error Context: test-results/e2e-web-artifacts/perf-PERF-FEED-1-cold-star-3cfd7-hoto-on-screen-is-under-2-s/error-context.md
+
+  3) e2e-web/video.spec.js:39:1 › VID-18 a video post shows its poster with a Play word button on Photos and the post screen; Play opens the player 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: page.waitForEvent: Test timeout of 90000ms exceeded.
+    =========================== logs ===========================
+    waiting for event "filechooser"
+    ============================================================
+
+      50 |
+      51 |   await page.getByRole('tab', { name: 'Share' }).click();
+    > 52 |   const chooser = page.waitForEvent('filechooser');
+         |                        ^
+      53 |   await page.getByRole('button', { name: /^Add photos or videos, up to \d+ at a time$/ }).click();
+      54 |   await (await chooser).setFiles(VIDEO);
+      55 |   await page.getByLabel('Add a note (optional)').fill('Leo on the slide');
+        at /home/user/Hearth/app/e2e-web/video.spec.js:52:24
+
+    Error: locator.click: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /^Add photos or videos, up to \d+ at a time$/ })
+
+
+      51 |   await page.getByRole('tab', { name: 'Share' }).click();
+      52 |   const chooser = page.waitForEvent('filechooser');
+    > 53 |   await page.getByRole('button', { name: /^Add photos or videos, up to \d+ at a time$/ }).click();
+         |                                                                                           ^
+      54 |   await (await chooser).setFiles(VIDEO);
+      55 |   await page.getByLabel('Add a note (optional)').fill('Leo on the slide');
+      56 |   await page.getByLabel(/^Grandparents – Dad's side, 2 people, not picked$/).click();
+        at /home/user/Hearth/app/e2e-web/video.spec.js:53:91
+
+    Error Context: test-results/e2e-web-artifacts/video-VID-18-a-video-post--8b4df-creen-Play-opens-the-player/error-context.md
+
+  3 failed
+    e2e-web/core-loop.spec.js:44:1 › core loop: share → Jo sees it → Ruth does not → heart → comment → delete 
+    e2e-web/perf.spec.js:10:1 › PERF-FEED-1 cold start to the first photo on screen is under 2 s ───
+    e2e-web/video.spec.js:39:1 › VID-18 a video post shows its poster with a Play word button on Photos and the post screen; Play opens the player 
+  6 skipped
+
+Running 5 tests using 1 worker
+
+  -  1 e2e-web/demo-screens.spec.js:18:1 › portfolio screenshots from the demo
+  -  2 e2e-web/demo-showcase.spec.js:33:5 › demo showcase phone light
+  -  3 e2e-web/demo-showcase.spec.js:33:5 › demo showcase phone dark
+  -  4 e2e-web/demo-showcase.spec.js:33:5 › demo showcase laptop light
+  -  5 e2e-web/demo-showcase.spec.js:33:5 › demo showcase laptop dark
+
+  5 skipped

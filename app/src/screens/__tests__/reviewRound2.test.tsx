@@ -313,14 +313,16 @@ describe('R19 (P2) Share: one 16 pt left edge for all content', () => {
   // Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-1), flagged for qa-tdd: Share is a start page (title, Pick
   // photos) and then the "New post" postcard. The title, Cancel and the card start 16 pt in; inside the card the
   // note's label and the To: line start 16 pt in from the card's edge (32 from the screen).
-  it('R19 DEC-73 Share: the title, Pick photos, Cancel and the card start 16 pt in; the note label and To: 16 pt inside the card', async () => {
+  // Retargeted Nov 21 by qa-tdd for DEC-78 (SHARE-ST-1/2): the start page is the empty postcard ("New post" and the
+  // share-card); the Add photos target fills the card's photo spot, so the card, not the target, sits on the 16 pt edge.
+  it('R19 DEC-73 DEC-78 Share: the title, the empty card, Cancel and the card start 16 pt in; the note label and To: 16 pt inside the card', async () => {
     const r = await renderApp(<ShareScreen />, { user: 'chase' });
-    const title = await screen.findByRole('header', { name: 'Share photos' }, slow);
+    const title = await screen.findByRole('header', { name: 'New post' }, slow);
     let root: Inst = title;
     while (root.parent) root = root.parent;
-    const start = { title: inset(title, root, false), pick: inset(screen.getByRole('button', { name: /^Pick photos/ }), root, true) };
-    expect(start).toEqual({ title: 16, pick: 16 });
-    fireEvent.press(screen.getByRole('button', { name: /^Pick photos/ }));
+    const start = { title: inset(title, root, false), card: inset(screen.getByTestId('share-card'), root, false) };
+    expect(start).toEqual({ title: 16, card: 16 });
+    fireEvent.press(screen.getByRole('button', { name: /^Add photos/ }));
     expect(r.deps.pickPhotos).toHaveBeenCalled();
     const header = await screen.findByRole('header', { name: 'New post' }, slow);
     root = header;

@@ -137,7 +137,9 @@ describe('VID-21 bulk pick with videos', () => {
     exif: { DateTimeOriginal: date, OffsetTimeOriginal: '-04:00' },
   });
   const video = (): PickedAsset => ({ uri: `file:///picked/MOV_${++n}.mov`, type: 'video', mimeType: 'video/quicktime', width: 1280, height: 720, duration: 12_000 });
-  const assets = () => [photo('2024:07:04 09:00:00'), video(), photo('2024:07:04 10:00:00'), video(), video()];
+  // Retargeted Nov 21 by qa-tdd for DEC-78 (SHARE-ST-4): only 11+ picked reach bulk review, so 9 photos and 3 videos.
+  const assets = () => [photo('2024:07:04 09:00:00'), video(), photo('2024:07:04 10:00:00'), video(), video(),
+    ...Array.from({ length: 7 }, (_, i) => photo(`2024:07:04 ${11 + i}:00:00`))];
 
   function videoOn(): FakeBackend {
     const be = FakeBackend.withFixture();
@@ -151,7 +153,7 @@ describe('VID-21 bulk pick with videos', () => {
     await saveLastAudience(kv, FIXTURE.users.chase.id, [FIXTURE.circles.dadSide.id]);
     const pickBulk = jest.fn(async () => ({ assets: assets() }));
     const r = await renderApp(<ShareScreen />, { user: 'chase', be, kv, deps: { pickBulk } });
-    fireEvent.press(await screen.findByRole('button', { name: /^Pick up to 100/ }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Add photos, up to 100 at a time' }));
     // Retargeted Nov 19 by qa-tdd for DEC-73 (SHARE-PC-7): the saved group is no longer ticked; tap it.
     fireEvent.press(await screen.findByRole('checkbox', { name: /^Grandparents – Dad's side,/ }));
     await screen.findByText(`Send to: ${"Grandparents – Dad's side"}`);
@@ -164,7 +166,7 @@ describe('VID-21 bulk pick with videos', () => {
     expect(screen.queryByText(/left out/)).toBeNull();
     fireEvent.press(screen.getByRole('button', { name: /^Send \d+/ }));
     await waitFor(() => expect(nav.goPhotos).toHaveBeenCalled());
-    await waitFor(() => expect((deps.prepare as jest.Mock).mock.calls.length).toBe(5), { timeout: 5000 });
+    await waitFor(() => expect((deps.prepare as jest.Mock).mock.calls.length).toBe(12), { timeout: 5000 });
     const kinds = (deps.prepare as jest.Mock).mock.calls.map(([i]) => i.kind);
     expect(kinds.filter((k) => k === 'video')).toHaveLength(3);
     expect((deps.prepare as jest.Mock).mock.calls.map(([i]) => i).filter((i) => i.kind === 'video'))
@@ -176,7 +178,7 @@ describe('VID-21 bulk pick with videos', () => {
     expect(screen.getByText("Hearth can't send videos yet, so 3 videos were left out.")).toBeTruthy();
     fireEvent.press(screen.getByRole('button', { name: /^Send \d+/ }));
     await waitFor(() => expect(nav.goPhotos).toHaveBeenCalled());
-    await waitFor(() => expect((deps.prepare as jest.Mock).mock.calls.length).toBe(2), { timeout: 5000 });
+    await waitFor(() => expect((deps.prepare as jest.Mock).mock.calls.length).toBe(9), { timeout: 5000 });
     expect((deps.prepare as jest.Mock).mock.calls.every(([i]) => i.kind === 'photo')).toBe(true);
   });
 });

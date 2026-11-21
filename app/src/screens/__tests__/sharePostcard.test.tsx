@@ -12,8 +12,8 @@
 //   - Nav gets goFeed() (wired to /feed in app/_layout.tsx and the demo); Send calls it instead of goPhotos().
 //   - "Shared with <names>." is app state Feed reads (shown when Share and Feed share one AppProvider).
 //   - src/share/postcard.ts  export function namesLine(names: string[]): string   (SHARE-PC-9's wording).
-// How Share opens the picker is the engineer's call (auto on open, or a "Pick photos" button); `openPostcard` copes
-// with both.
+// Retargeted Nov 21 by qa-tdd for DEC-78: Share opens on an empty postcard whose "Add photos" target opens the picker
+// (SHARE-ST-1..9, src/screens/__tests__/shareStart.test.tsx). With no pickBulk in deps, a parent's target uses pickPhotos.
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { Platform, ScrollView, StyleSheet, Text, TextInput } from 'react-native';
@@ -61,7 +61,7 @@ async function openPostcard(opts: { user?: FixtureUser; n?: number; kv?: KV; be?
   const ui = opts.withFeed ? <><ShareScreen /><FeedScreen /></> : <ShareScreen />;
   const r = await renderApp(ui, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickPhotos, ...opts.deps } });
   await waitFor(async () => {
-    const pickBtn = screen.queryAllByRole('button', { name: /^Pick photos/ })[0];
+    const pickBtn = screen.queryAllByRole('button', { name: /^Add photos/ })[0];
     if (pickBtn && !(r.deps.pickPhotos as jest.Mock).mock.calls.length) fireEvent.press(pickBtn);
     expect((r.deps.pickPhotos as jest.Mock).mock.calls.length).toBeGreaterThan(0);
   }, slow);
@@ -283,17 +283,18 @@ describe('SHARE-PC-7 nothing is picked at the start', () => {
     expect(toWords()).toBe('To:');
   });
 
+  // Retargeted Nov 21 by qa-tdd for DEC-78 (SHARE-ST-4): only 11+ picked reach bulk review, so 12 photos, not 4.
   it('SHARE-PC-7 bulk: a saved last audience ticks nothing on the review either; Send waits', async () => {
     const kv = memoryKV();
     await saveLastAudience(kv, chase.id, [FIXTURE.circles.dadSide.id]);
-    const day = Array.from({ length: 4 }, (_, i) => ({ uri: `file:///picked/IMG_pc7_${i}.jpg`, type: 'image' as const, mimeType: 'image/jpeg', width: 4032, height: 3024, exif: { DateTimeOriginal: `2024:07:04 0${i + 1}:00:00` } }));
+    const day = Array.from({ length: 12 }, (_, i) => ({ uri: `file:///picked/IMG_pc7_${i}.jpg`, type: 'image' as const, mimeType: 'image/jpeg', width: 4032, height: 3024, exif: { DateTimeOriginal: `2024:07:04 ${String(i + 1).padStart(2, '0')}:00:00` } }));
     await renderApp(<ShareScreen />, { user: 'chase', kv, deps: { pickBulk: jest.fn(async () => ({ assets: day })) } });
-    fireEvent.press(await screen.findByRole('button', { name: 'Pick up to 100 photos at once' }, slow));
-    await screen.findByText('4 photos from 1 day');
+    fireEvent.press(await screen.findByRole('button', { name: 'Add photos, up to 100 at a time' }, slow));
+    await screen.findByText('12 photos from 1 day');
     expect(screen.queryByText(`Send to: ${DAD}`)).toBeNull();
     const boxes = await screen.findAllByRole('checkbox');
     for (const b of boxes) expect(b.props.accessibilityState).toMatchObject({ checked: false });
-    expect(screen.getByRole('button', { name: 'Send 4 photos' }).props.accessibilityState).toMatchObject({ disabled: true });
+    expect(screen.getByRole('button', { name: 'Send 12 photos' }).props.accessibilityState).toMatchObject({ disabled: true });
   });
 });
 

@@ -15,7 +15,7 @@ test('PERF-FEED-1 cold start to the first photo on screen is under 2 s', async (
   await page.getByRole('button', { name: 'Continue' }).click();
   await page.getByRole('tab', { name: 'Share' }).click();
   const chooser = page.waitForEvent('filechooser');
-  await page.getByRole('button', { name: 'Pick photos from your phone' }).click();
+  await page.getByRole('button', { name: /^Add photos, up to \d+ at a time$/ }).click();
   await (await chooser).setFiles(FIXTURE);
   await page.getByLabel('Add a note (optional)').fill('Cold start');
   await page.getByLabel(/^Grandparents – Dad's side, 2 people, not picked$/).click();

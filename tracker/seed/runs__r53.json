@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-21T02:45:00-05:00",
+ "label": "Share opens on an empty postcard (SHARE-ST-1..8, DEC-78): tests written first (red)",
+ "passed": 117,
+ "failed": 110,
+ "results": {},
+ "note": "Red on purpose, 1 run at bf25121 plus the new and retargeted tests (uncommitted), typecheck clean. Only the new and touched files run. jest: new screens/__tests__/shareStart.test.tsx 21 failed, all at no 'New post' header (today's page is 'Share photos'). 16 retargeted files (bulk, captions, familyShape, features, groupsWords, guxPaper, plainBackground, problemDetails, redesignPolish, reviewRound2, share, shareGux, sharePostcard, uploadFailure, video, wordsPass): 83 failed, 117 passed, every failure at no 'Add photos, up to N at a time' button or no 'New post' start header. e2e:demo (rebuilt) SHARE-ST-8, SHARE-PC-13, RR-14: 3 failed, no 'New post' heading on Share. e2e:web core-loop, perf, video: 3 failed, no Add photos button; showcase, snapshot, demo-screens, demo-showcase skipped (env-gated, T24). Full suites, backend, Deno and phones not run. e2e/results/share-start-red-jest-2026-11-21.txt, share-start-retarget-red-jest-2026-11-21.txt, share-start-red-e2e-2026-11-21.txt"
+}

@@ -33,8 +33,8 @@ describe('FLAG-5 features come from the server', () => {
 
   it('FLAG-5 video_posting off: only photos are offered', async () => {
     const { deps } = await renderApp(<ShareScreen />, { user: 'chase' });
-    const pick = await screen.findByRole('button', { name: 'Pick photos from your phone' });
-    expect(screen.queryByRole('button', { name: 'Pick photos or videos from your phone' })).toBeNull();
+    const pick = await screen.findByRole('button', { name: /^Add photos, up to \d+ at a time$/ });
+    expect(screen.queryByRole('button', { name: /^Add photos or videos, up to \d+ at a time$/ })).toBeNull();
     expect(screen.queryByText(/video/i)).toBeNull();
     fireEvent.press(pick);
     await waitFor(() => expect(deps.pickPhotos).toHaveBeenCalledWith({ videos: false }));
@@ -42,8 +42,8 @@ describe('FLAG-5 features come from the server', () => {
 
   it('FLAG-5 video_posting on: the picker offers photos or videos', async () => {
     const { deps } = await renderApp(<ShareScreen />, { be: videoOn(), user: 'chase' });
-    const pick = await screen.findByRole('button', { name: 'Pick photos or videos from your phone' });
-    expect(screen.getByText('Pick photos or videos')).toBeTruthy();
+    const pick = await screen.findByRole('button', { name: /^Add photos or videos, up to \d+ at a time$/ });
+    expect(screen.getByText('Add photos or videos')).toBeTruthy(); // retargeted Nov 21 by qa-tdd for DEC-78 (SHARE-ST-2)
     expectGrandparentSafe();
     fireEvent.press(pick);
     await waitFor(() => expect(deps.pickPhotos).toHaveBeenCalledWith({ videos: true }));
@@ -54,6 +54,6 @@ describe('FLAG-5 features come from the server', () => {
     const api = be.clientFor(null, { trackAppSession: true });
     jest.spyOn(api, 'myFeatures').mockRejectedValue(new Error('offline'));
     await renderApp(<ShareScreen />, { be, user: 'chase', deps: { api } });
-    expect(await screen.findByRole('button', { name: 'Pick photos from your phone' })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: /^Add photos, up to \d+ at a time$/ })).toBeTruthy();
   });
 });
