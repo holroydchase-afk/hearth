@@ -11,6 +11,11 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 21: studio design core and Hearth's design guidelines (Chase, R68; branch claude/project-thread-1ba5s6, PR)
+- **Chase:** "Can you and the ui agent build design guidelines and whatever design system we should use?", "start lean", "goal is to give this to other projects so their products look similar", "are there other established design systems we should look at?"
+- **Done:** `docs/design/STUDIO-CORE.md`, the product-neutral core other products copy: each phone's own guidelines for behavior, Material 3 color roles as the token vocabulary, no component library, 11 principles, the 7-colors-per-mode theme recipe with tested contrast, type, space, corners, components, a new-product checklist. `docs/product/DESIGN-SYSTEM.md` is now Hearth's layer: stale palette, font and DS-11/DS-12 rows brought up to the code (themes, Medium for names, no Bold), Hearth's themes table, Hearth components, and gaps DSG-1..8 (not fixed). Brand names of other apps removed. ux-reviewer reviewed (DSC-R1..R8, all applied).
+- **Open:** Chase picks the font (decision card; recommended Atkinson Hyperlegible Next everywhere, which would reverse DEC-59's font and needs an app PR). Studio intake to adopt the core in the shared tools repo. DSG-1..8 need staff-pm ranking and failing tests.
+
 ## Nov 21: Easy view case study for the portfolio (Chase, R66; branch claude/project-thread-lld29p, PR)
 - **Chase:** "We need to ensure we do a write up on easy mode and ensure that's on the portfolio."
 - **Done:** `docs/portfolio/EASY-VIEW.md` (problem, the call and what it beat, persona check and its one Red, tests, what it unlocked: DEC-70 native glass bar, DEC-72 demo, DEC-75 shrink), linked from `CASE-STUDY.md`. Screenshots shot from the live demo Nov 21 (Chase vs Grandma Jo on More, the Easy view page; no faces) in `docs/portfolio/screens/easy-view/`. positioning reviewed the claims.
