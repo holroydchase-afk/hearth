@@ -94,6 +94,29 @@ test('RR-14 add a photo, reload keeps it, Start over brings back the sample fami
   await expect(page.getByText('Leaf pile', { exact: true }).filter({ visible: true })).toHaveCount(0);
 });
 
+// FONT-5 (DEC-78, Nov 21): the web demo reads in Atkinson Hyperlegible Next too, the heading SemiBold and a caption
+// Regular, and the bundled font file really loaded (not just named in CSS and falling back to the system font).
+test('FONT-5 the demo\'s heading and body words are Atkinson Hyperlegible Next, and the font really loaded', async ({ page }) => {
+  await page.goto('/');
+  await galleryLoaded(page);
+  await onFeed(page);
+  const look = await page.evaluate(async () => {
+    await document.fonts.ready;
+    const caption = [...document.querySelectorAll('div,span')].find((n) => n.textContent === 'Life jackets on and in all afternoon' && n.offsetParent);
+    const heading = document.querySelector('[role="heading"]');
+    return {
+      heading: heading ? getComputedStyle(heading).fontFamily : 'no heading',
+      body: caption ? getComputedStyle(caption).fontFamily : 'no caption',
+      loaded: ['AtkinsonHyperlegibleNext_400Regular', 'AtkinsonHyperlegibleNext_600SemiBold']
+        .map((f) => [...document.fonts].some((ff) => ff.family.replace(/["']/g, '') === f && ff.status === 'loaded')),
+    };
+  });
+  expect(look.heading).toMatch(/^"?AtkinsonHyperlegibleNext_600SemiBold/);
+  expect(look.body).toMatch(/^"?AtkinsonHyperlegibleNext_400Regular/);
+  expect(look.loaded).toEqual([true, true]);
+  expect(errors).toEqual([]);
+});
+
 test('DEMO-6 / NF-1 laptop shows the story panel beside the app; an unknown link shows plain words', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/');
@@ -779,6 +802,10 @@ test('RD-117 RD-116 Avocado (Hass) light and dark; a picked ❤️ is a 2 px acc
   const WORD = { paper: 'Paper', avocado: 'Avocado', pomegranate: 'Pomegranate' };
   const shots = path.join(__dirname, '..', 'test-results', 'rd-117');
   const pick = async (theme) => {
+    // T28: tapping the heart can scroll Feed and shrink the glass bar (RD-110); a tap on the shrunk oval
+    // only brings the tabs back (RD-110-R1), so restore it first.
+    const shrunk = page.getByRole('tab', { name: /show all tabs/ });
+    if (await shrunk.count()) await shrunk.click();
     await page.getByRole('tab', { name: /^More/ }).click();
     await page.getByRole('button', { name: /^Theme(,|$)/ }).click();
     await page.getByRole('radio', { name: `${WORD[theme]} theme` }).click();

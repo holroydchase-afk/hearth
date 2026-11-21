@@ -1,8 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Native first (docs/product/DESIGN-SYSTEM.md): each phone's own type ramp, font and controls, on the owner's theme
-// (Paper by default; RD-94..RD-99, DEC-68), plus Hearth's overrides (DS-1..DS-9). Nothing under 17 pt (DS-2).
-// RN Text scales with the phone's text size (Dynamic Type / Android font scale): we never turn allowFontScaling off.
+// Native first (docs/product/DESIGN-SYSTEM.md): each phone's own type ramp and controls, Hearth's own font
+// (Atkinson Hyperlegible Next, DEC-78) on the owner's theme (Paper by default; RD-94..RD-99, DEC-68), plus Hearth's
+// overrides (DS-1..DS-9). Nothing under 17 pt (DS-2). RN Text scales with the phone's text size (Dynamic Type /
+// Android font scale): we never turn allowFontScaling off.
+// One bundled file per weight (no network, no Google Fonts CDN), so Light, Bold and italics never ship in the app.
+import { AtkinsonHyperlegibleNext_400Regular } from '@expo-google-fonts/atkinson-hyperlegible-next/400Regular';
+import { AtkinsonHyperlegibleNext_500Medium } from '@expo-google-fonts/atkinson-hyperlegible-next/500Medium';
+import { AtkinsonHyperlegibleNext_600SemiBold } from '@expo-google-fonts/atkinson-hyperlegible-next/600SemiBold';
 import { createContext, useContext } from 'react';
 import { Platform, useColorScheme } from 'react-native';
 
@@ -139,11 +144,23 @@ function highContrast(c: Colors): Colors {
   return out;
 }
 
-// RD-2 (DEC-59): the phone's own font, SF Pro on iPhone, Roboto on Android, the system stack on the web, so no
-// fontFamily is ever set and nothing is loaded. Regular for reading; Semibold for names, titles, buttons and the
-// picked tab and the large title; Medium for a person's name on a post (RD-48). No Bold anywhere (RD-55, DEC-65),
-// never Light, italics or all caps.
-export const WEIGHT = { regular: '400', medium: '500', semibold: '600' } as const;
+// FONT-1..FONT-3 (DEC-78, Chase Nov 21; replaces RD-2 / DEC-59's phone font): Atkinson Hyperlegible Next on
+// iPhone, Android and the web. Regular for reading; SemiBold for names, titles, buttons, the picked tab and the large
+// title; Medium for a person's name on a post (RD-48). The weight comes from the family, never fontWeight: Android
+// can't synthesize a weight from one family. No Bold anywhere (RD-55, DEC-65), never Light, italics or all caps.
+export const FONT = {
+  regular: 'AtkinsonHyperlegibleNext_400Regular',
+  medium: 'AtkinsonHyperlegibleNext_500Medium',
+  semibold: 'AtkinsonHyperlegibleNext_600SemiBold',
+} as const;
+export type FontWeightName = keyof typeof FONT;
+
+/** For expo-font's useFonts in the root layout (bundled assets, loaded once). */
+export const FONT_FILES: Record<string, number> = {
+  [FONT.regular]: AtkinsonHyperlegibleNext_400Regular,
+  [FONT.medium]: AtkinsonHyperlegibleNext_500Medium,
+  [FONT.semibold]: AtkinsonHyperlegibleNext_600SemiBold,
+};
 
 export const MIN_TARGET = 48;
 

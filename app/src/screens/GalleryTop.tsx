@@ -11,7 +11,7 @@ import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useApp } from '../state/AppContext';
 import { greeting } from '../ui/greeting';
 import { SystemIcon, Txt } from '../ui/kit';
-import { GALLERY_TYPE, MIN_TARGET, RADIUS, SPACE, WEIGHT, useTheme } from '../ui/theme';
+import { GALLERY_TYPE, MIN_TARGET, RADIUS, SPACE, FONT, useTheme } from '../ui/theme';
 
 /** How the greeting moves between large and small. */
 export function titleMotion(reduceMotion: boolean): 'fade' | 'shrink' {
@@ -50,7 +50,7 @@ export function LargeGreeting({ words, scrollY }: { words: string; scrollY: Anim
   return (
     <Animated.View style={style}>
       {/* RD-55: Apple's Large Title, 34 pt Semibold (never Bold). */}
-      <Text accessibilityRole="header" {...{ 'aria-level': 1 }} style={{ fontSize: size, lineHeight: Math.round(size * 1.2), fontWeight: WEIGHT.semibold, color: c.ink }}>
+      <Text accessibilityRole="header" {...{ 'aria-level': 1 }} style={{ fontSize: size, lineHeight: Math.round(size * 1.2), fontFamily: FONT.semibold, color: c.ink }}>
         {words}
       </Text>
     </Animated.View>

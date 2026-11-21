@@ -16,10 +16,11 @@ describe('DS-TOKENS portable design tokens', () => {
     expect(fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '').toBe(want);
   });
 
-  it('DS-TOKENS carries one font family, three weights, the type scale, spacing, corners and both palettes', () => {
+  it('DS-TOKENS FONT-4 carries one font family, three weights, the type scale, spacing, corners and both palettes', () => {
     const t = portableTokens();
-    // RD-2 (DEC-59) and RD-55 (DEC-65, Nov 17): the phone's own font, Regular, Medium (names) and Semibold; no Bold.
-    expect(t.font.family).toMatch(/system/i);
+    // FONT-4 (DEC-78, Nov 21; was RD-2's phone font) and RD-55 (DEC-65): Atkinson Hyperlegible Next, Regular,
+    // Medium (names) and SemiBold; no Bold.
+    expect(t.font.family).toMatch(/^Atkinson Hyperlegible Next\b/);
     expect(Object.values(t.font.weight).every((w) => [400, 500, 600].includes(w as number))).toBe(true);
     expect(Object.values(t.font.weight)).toEqual(expect.arrayContaining([400, 600]));
     expect(t.type.default.base).toBe(17);
