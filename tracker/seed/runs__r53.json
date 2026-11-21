@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-21T02:55:00+00:00",
+ "label": "Demo photo bytes to IndexedDB (DEMO-SAFARI-1..4, QA-R1): all app suites 3x (flaky, T28)",
+ "passed": 5072,
+ "failed": 1,
+ "results": {},
+ "note": "3 runs each on ea5dfbe plus the uncommitted engineer fix (fakeSave.ts, fakeRuntime.ts, FakeBackend flush, DemoBar, DemoChrome): typecheck clean x3; jest 1634 passed (1 skipped, 1 todo, 164 suites) x3; e2e:web 5 passed (6 skipped) x3; e2e:demo 40 passed (5 skipped) in runs 1 and 3, run 2 39 passed 1 failed (RD-117 page.reload raced Reset's now-async navigation, T28). DEMO-SAFARI-1..4 passed in all 3 demo runs. Demo and fake builds exported once and reused. New guard: bundleSplit ENG-R5 only fakeRuntime.ts imports fakeSave (red shown with a stray importer), 3x with fakeSave.test.ts. Not run: backend SQL, Deno, e2e:site, real Safari or iPhone (quota emulated in Chromium). e2e/results/demo-safari-gate-flaky-3x-2026-11-21.txt"
+}

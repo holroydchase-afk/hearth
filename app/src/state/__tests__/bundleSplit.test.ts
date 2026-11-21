@@ -43,4 +43,17 @@ describe('ENG-R5 demo and fake code stay out of the real app', () => {
     expect(src).not.toMatch(/from '\.\.\/api\/fake\/|from '\.\.\/demo\/(seed|pictures)'/);
     expect(src).toMatch(/from '\.\/fakeRuntime'/);
   });
+
+  it('ENG-R5 DEMO-SAFARI only fakeRuntime.ts imports fakeSave, so the phone app never carries the IndexedDB saver', () => {
+    const root = path.join(__dirname, '..', '..');
+    const walk = (d: string): string[] => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => {
+      const p = path.join(d, e.name);
+      if (e.isDirectory()) return e.name === '__tests__' ? [] : walk(p);
+      return /\.(ts|tsx)$/.test(e.name) ? [p] : [];
+    });
+    const importers = walk(root)
+      .filter((f) => /from ['"][^'"]*\/fakeSave['"]|require\(['"][^'"]*\/fakeSave['"]\)/.test(fs.readFileSync(f, 'utf8')))
+      .map((f) => path.relative(root, f));
+    expect(importers).toEqual([path.join('state', 'fakeRuntime.ts')]);
+  });
 });

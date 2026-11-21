@@ -19,6 +19,12 @@ blockers:
 - **Next:** when the Share split by Easy view ships (thread "Redo the Share screen"), fill the "Next: Share follows Easy view" section (DEC number, PR, Off vs On screenshot pair).
 - **Portfolio / public presence:** intake holroydchase-afk.github.io#85 asks Product Studio to add an Easy view section to the Hearth case study.
 
+## Nov 21: Grandma Jo switch fixed for iPhone Safari (Chase, DEMO-SAFARI-1..4, QA-R1, TRACKER R67; branch claude/project-thread-x63lzp, PR)
+- Cause: since the real demo photos (Nov 16) the demo saved ~3.5 MB of photo bytes in localStorage; Safari's quota refused it silently, so a reload (the Jo switch, Reset) always restarted as Chase and nothing a visitor did survived a reload on iPhone.
+- Done: photo bytes in IndexedDB (`app/src/state/fakeSave.ts`), small state in localStorage, old saves migrate; Jo switch and Reset wait for saves. New `e2e-web/demo-safari.spec.js` runs the demo under a Safari-sized quota. Sweep found no other regressions.
+- Next: Chase's "merge", then live check fresh + returning at 390/1280, then one tap on his iPhone.
+- **Portfolio / public presence:** the public demo's Grandma Jo switch works on iPhone once this merges.
+
 ## Nov 20: funding research out of the public repo (Chase, DEC-77, PM-R10)
 - Done: `docs/product/FUNDING-RESEARCH.md` removed; private copy in the project files (`private/`). Older commits still hold it.
 - Next: Chase wants the planning docs (REMAINING, MILESTONE-1, PLAN, PM-REVIEW, TRACKER, BETA-SPEC) rewritten before they stay public; scope waits on his note. Deploy of 0026-0028 still waits on a new Supabase token.

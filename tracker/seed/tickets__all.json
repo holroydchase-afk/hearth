@@ -1211,6 +1211,30 @@
    "fixed": null
   },
   {
+   "id": "T28",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "open",
+   "title": "QA-R2 (DEMO-SAFARI green gate, Nov 21): flaky. app/e2e-web/demo.spec.js RD-117/RD-116 'Avocado (Hass) light and dark...' failed e2e:demo run 2 of 3 with page.reload: Not attached to an active page (line 826), passed runs 1 and 3 and 16 of 16 repeats. Likely cause: the DEMO-SAFARI fix made startOver() async (it waits for be.ready and be.flush before clearing storage and navigating), so Reset's own navigation now lands after the click returns; resetDemo() returns at the click and the test reloads straight away (also lines 256 and 871), racing it, as in T16. Fix: resetDemo() waits for the fresh family (the Sample data restored. note or the Gallery URL) before returning. Engineer to judge whether a person refreshing within that window losing the Reset needs a product fix. Test: app/e2e-web/demo.spec.js",
+   "tests": [
+    "app/e2e-web/demo.spec.js"
+   ],
+   "found": "2026-11-21",
+   "fixed": null
+  },
+  {
+   "id": "B21",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R3 (DEMO-SAFARI green gate, Nov 21, review): Reset demo clears localStorage but leaves the photo bytes in IndexedDB (hearth.demoObjects) until the next load starts a fresh family; a visitor who shares their own photo, resets and never comes back leaves those bytes in their browser. Local only, nothing leaves the device. Fix: startOver() clears the store (or deletes the database) before navigating. No test yet.",
+   "tests": [],
+   "found": "2026-11-21",
+   "fixed": null
+  },
+  {
    "id": "B15",
    "kind": "bug",
    "layer": "backend",
