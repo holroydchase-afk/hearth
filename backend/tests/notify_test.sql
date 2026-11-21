@@ -320,6 +320,8 @@ select tests.throws_code($$select public.forget_push_tokens(array['ExponentPushT
 delete from public.notification_outbox;
 select tests.mkpost(:alex, :c_a_gp, 1, 'r');
 select tests.setv('t4', $$select '2026-11-20 19:00 America/New_York'::timestamptz$$);
+-- Queue the notice before the simulated clock and before that evening's 6pm email slot. t4 is a fixed date, so once the real now() passed it the notice was queued "in the future" and nothing was claimed (failed from Nov 21, 2026).
+select tests.queued_at(tests.v('t4')::timestamptz - interval '2 hours');
 select tests.claim(tests.v('t4')::timestamptz);
 select public.release_notifications((select array_agg(o) from tests.batches, unnest(outbox_ids) o));
 select tests.ok_sql(format($$select tests.claim(%L::timestamptz + interval '1 minute') = 2$$, tests.v('t4')),
