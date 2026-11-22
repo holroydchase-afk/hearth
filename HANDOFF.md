@@ -11,6 +11,11 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 22: wired to studio-agents PR #45 checks (intake #149, R71; branch claude/project-thread-qt1q8v, PR)
+- **Chase:** "Pick up the open intake issue ... one small PR, qa-tdd for any code or CI change".
+- **Done:** agents-check fails a code PR whose `qa-tdd skipped` reason isn't exactly `docs only` or `config only` (from studio-agents templates/agents-check.yml; setup-node pin left at v4). Test `scripts/tests/agents_check_skip_test.sh` (AGENTSKIP-0..4, red first) runs the real workflow step; wired into test-all.sh and agents.verify. CLAUDE.md gains "Open every thread the same way" and "Agents come from studio-agents". Shared scripts already matched the studio templates.
+- **Portfolio / public presence:** none.
+
 ## Nov 21: themes shareable with other studio products (Chase, R70; branch claude/project-thread-1ba5s6, PR)
 - **Chase:** "We also probably want the themes Sharable".
 - **Done:** `docs/design/themes.css` (Paper default, Avocado, Pomegranate; light, dark, high contrast; studio names + Material 3 role names; font stack) generated from theme.ts by `themesCss()` in `tokens.ts`; `tokens.json` gains `roles`. Drift tests DS-THEMES-1..3 (red first: e2e/results/themes-red-jest-2026-11-21.txt). STUDIO-CORE "Shared themes" says how to use them. DSG-6 closed.
