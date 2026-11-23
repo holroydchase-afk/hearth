@@ -1216,20 +1216,33 @@ test('SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded 
 // DARK-ELEV-6 (intake #155, studio DARK-5; written first by qa-tdd, Nov 23): in dark, raised things are a lighter
 // surface step, never a shadow. At a 390 px phone in dark, nothing visible on the demo's first screen draws a
 // box-shadow. The DemoBar's 1 px bottom line is an inset divider, not elevation, so inset-only shadows are allowed.
+// qa-tdd (Nov 23, green run): also scrolled a little so RD-82's pinned shade line (search-bar-shade) is on screen,
+// with the other direction: in light that shade line keeps its drop shadow (DARK-ELEV-3 in a real browser).
+const dropShadows = (page) => page.evaluate(() => [...document.querySelectorAll('body *')].flatMap((el) => {
+  const s = getComputedStyle(el);
+  if (s.boxShadow === 'none' || s.visibility === 'hidden' || s.display === 'none') return [];
+  const r = el.getBoundingClientRect();
+  if (r.width === 0 || r.height === 0 || r.bottom < 0 || r.top > innerHeight) return [];
+  // Split on commas outside rgb()/rgba(); keep only the drop (non-inset) shadows.
+  const drops = s.boxShadow.split(/,(?![^(]*\))/).filter((p) => !/\binset\b/.test(p));
+  if (drops.length === 0) return [];
+  const name = el.getAttribute('aria-label') || el.getAttribute('role') || el.getAttribute('data-testid') || el.tagName;
+  return [`${name}: ${s.boxShadow}`];
+}));
+const shadeShadow = (page) => page.getByTestId('search-bar-shade').first().evaluate((el) => getComputedStyle(el).boxShadow);
 test('DARK-ELEV-6 at 390 px dark: no visible element on the first screen has a drop shadow (DemoBar inset divider allowed)', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ colorScheme: 'dark' });
   await page.goto('/');
   await galleryLoaded(page);
-  const shadowed = await page.evaluate(() => [...document.querySelectorAll('body *')].flatMap((el) => {
-    const s = getComputedStyle(el);
-    if (s.boxShadow === 'none' || s.visibility === 'hidden' || s.display === 'none') return [];
-    const r = el.getBoundingClientRect();
-    if (r.width === 0 || r.height === 0 || r.bottom < 0 || r.top > innerHeight) return [];
-    // Split on commas outside rgb()/rgba(); keep only the drop (non-inset) shadows.
-    const drops = s.boxShadow.split(/,(?![^(]*\))/).filter((p) => !/\binset\b/.test(p));
-    if (drops.length === 0) return [];
-    const name = el.getAttribute('aria-label') || el.getAttribute('role') || el.getAttribute('data-testid') || el.tagName;
-    return [`${name}: ${s.boxShadow}`];
-  }));
-  expect(shadowed).toEqual([]);
+  expect(await dropShadows(page)).toEqual([]);
+  // Scrolled a little: the pinned shade line shows, still no drop shadow anywhere (floating tab bar included).
+  await page.mouse.move(195, 600);
+  await page.mouse.wheel(0, 300); // mouse.wheel fires RN-web's onScroll; scrollTo does not
+  await expect(page.getByTestId('search-bar-shade').first()).toBeAttached();
+  expect(await dropShadows(page)).toEqual([]);
+  expect(await shadeShadow(page)).toBe('none');
+  // The other direction: in light the same shade line keeps its soft drop shadow (light is unchanged).
+  await page.emulateMedia({ colorScheme: 'light' });
+  await expect.poll(() => shadeShadow(page)).not.toBe('none');
 });
