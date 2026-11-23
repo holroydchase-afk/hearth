@@ -35,14 +35,15 @@ const onFeed = async (page) => {
   await expect(page.getByText('Life jackets on and in all afternoon', { exact: true }).filter({ visible: true })).toBeVisible();
 };
 const FIXTURE = path.join(__dirname, 'fixtures', 'park-gps.jpg');
+// Retargeted Nov 23 for the empty-postcard Share (SHARE-ST-8): same steps as demo.spec.js.
+const ADD_PHOTOS = /^Add photos( or videos)?, up to \d+ at a time$/;
 const openNewPost = async (page, files) => {
-  const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
   await page.getByRole('tab', { name: /^Share/ }).click();
-  const pick = page.getByRole('button', { name: /^Pick photos/ }).filter({ visible: true }).first();
-  const first = await Promise.race([chooser.then(() => 'chooser'), pick.waitFor({ timeout: 15_000 }).then(() => 'button')]);
-  if (first === 'button') await pick.click();
-  await (await chooser).setFiles(files);
   await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
+  const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
+  await page.getByRole('button', { name: ADD_PHOTOS }).filter({ visible: true }).first().click();
+  await (await chooser).setFiles(files);
+  await expect(page.getByRole('button', { name: 'Cancel this post' })).toBeVisible();
 };
 
 test.beforeEach(async ({ page }, info) => {
