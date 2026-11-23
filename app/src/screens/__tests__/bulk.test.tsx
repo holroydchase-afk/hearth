@@ -244,7 +244,7 @@ describe('R15 photo helpers on the review screen (SPEC-PHOTO-HELPERS)', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: 'Send 48 photos' }).props.accessibilityState).toMatchObject({ disabled: false }));
     await new Promise((r) => setTimeout(r, 50)); // the previews finish reading
     fireEvent.press(screen.getByRole('button', { name: 'Send 48 photos' }));
-    // Retargeted Nov 21 by qa-tdd for DEC-78 (SHARE-ST-4): only 11+ picked reach bulk review, so 2 sent + 9 new.
+    // Retargeted Nov 21 by qa-tdd for DEC-79 (SHARE-ST-4): only 11+ picked reach bulk review, so 2 sent + 9 new.
     pickBulk.mockResolvedValueOnce({ assets: [assets[0]!, assets[1]!, ...pick48().slice(0, 9)] });
     fireEvent.press(await screen.findByRole('button', { name: 'Add photos, up to 100 at a time' }));
     expect(await screen.findByText('2 of these you already sent.')).toBeTruthy();

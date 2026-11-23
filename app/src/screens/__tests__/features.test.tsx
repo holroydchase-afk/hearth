@@ -43,7 +43,7 @@ describe('FLAG-5 features come from the server', () => {
   it('FLAG-5 video_posting on: the picker offers photos or videos', async () => {
     const { deps } = await renderApp(<ShareScreen />, { be: videoOn(), user: 'chase' });
     const pick = await screen.findByRole('button', { name: /^Add photos or videos, up to \d+ at a time$/ });
-    expect(screen.getByText('Add photos or videos')).toBeTruthy(); // retargeted Nov 21 by qa-tdd for DEC-78 (SHARE-ST-2)
+    expect(screen.getByText('Add photos or videos')).toBeTruthy(); // retargeted Nov 21 by qa-tdd for DEC-79 (SHARE-ST-2)
     expectGrandparentSafe();
     fireEvent.press(pick);
     await waitFor(() => expect(deps.pickPhotos).toHaveBeenCalledWith({ videos: true }));

@@ -27,7 +27,7 @@ const onFeed = async (page) => {
 
 const FIXTURE = path.join(__dirname, 'fixtures', 'park-gps.jpg');
 
-// DEC-78 (SHARE-ST-8; retargeted Nov 21 by qa-tdd): Share opens on the empty postcard ("New post"); its one
+// DEC-79 (SHARE-ST-8; retargeted Nov 21 by qa-tdd): Share opens on the empty postcard ("New post"); its one
 // "Add photos, up to N at a time" target opens the file chooser. Set the files and wait for the postcard's Cancel.
 const ADD_PHOTOS = /^Add photos( or videos)?, up to \d+ at a time$/;
 const openNewPost = async (page, files) => {
@@ -1101,7 +1101,7 @@ test('RD-110-R3 the bar shrunk on Share comes back whole on Feed after sending',
   await resetDemo(page);
 });
 
-// SHARE-ST-8 (SPEC-REDESIGN 1j-2, DEC-78, Chase Nov 20): Share opens on an empty postcard in the public demo at 393 px.
+// SHARE-ST-8 (SPEC-REDESIGN 1j-2, DEC-79, Chase Nov 20): Share opens on an empty postcard in the public demo at 393 px.
 // Reference: option B of /mnt/project-files/design/share-start-2026-11-20/share-start-tester.html. Written first (red),
 // Nov 21, by qa-tdd. Soft expects on each start page, so one run shows every part still missing.
 // QA-R (staff-pm): the demo's Grandma Jo is a viewer with no Share tab (RD-9), so her "Up to 10" can't be reached here;

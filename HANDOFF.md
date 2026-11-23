@@ -11,8 +11,8 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
-## Nov 20: Share opens on an empty postcard specced (Chase, DEC-78, R66, SHARE-ST-1..9; branch claude/project-thread-4ulu9i)
-- Done: Chase picked "B Empty postcard"; DEC-78, spec `SPEC-REDESIGN.md` 1j-2, persona check `decisions/2026-11-20-share-start-postcard.md`, TRACKER R66. One way in; the "Pick lots of photos" link goes; non-parents stay at 10.
+## Nov 20: Share opens on an empty postcard specced (Chase, DEC-79, R72, SHARE-ST-1..9; branch claude/project-thread-4ulu9i)
+- Done: Chase picked "B Empty postcard"; DEC-79, spec `SPEC-REDESIGN.md` 1j-2, persona check `decisions/2026-11-20-share-start-postcard.md`, TRACKER R72. One way in; the "Pick lots of photos" link goes; non-parents stay at 10.
 - Next: qa-tdd red (`shareStart.test.tsx`, demo e2e), engineer, grandparent-ux on shots.
 
 ## Nov 20: funding research out of the public repo (Chase, DEC-77, PM-R10)

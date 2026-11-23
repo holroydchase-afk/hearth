@@ -206,7 +206,7 @@ Chase, Nov 19 00:27 ET, on direction B of `/mnt/project-files/design/share-redo-
 | SHARE-PC-13 | Public demo (393 px) as Chase: pick 3 photos, see "1 of 3", no tile picked, button off; tap two groups, button reads "Send to ..."; send; Feed shows the post first with "Shared with ...". Grandma Jo's view shows names only. Screenshots light, dark and Easy view saved. | auto (Playwright) |
 | SHARE-PC-14 | On Chase's iPhone (Expo Go) and one Android: send to one group with a note in under 60 s without help; tiles and button readable in Easy view; the keyboard never hides the button. | manual |
 
-### 1j-2. Share opens on an empty postcard (Chase, Nov 20, DEC-78)
+### 1j-2. Share opens on an empty postcard (Chase, Nov 20, DEC-79)
 Chase, Nov 20 9:19 PM ET: "The start screen for sharing needs improvement", "This looks subpar compared to the rest of the app"; picked "B Empty postcard" on `/mnt/project-files/design/share-start-2026-11-20/share-start-tester.html`. Persona check `decisions/2026-11-20-share-start-postcard.md`. Replaces only the page shown before any photo is picked (`ShareScreen` `!items.length`). Unchanged: SHARE-PC-1..14, HARD-2's 10 max and notice, the Oct 17 call (bulk is parents only), BETA-BULK-1..n (bulk review, dates read on the phone, 100 max), SHARE-2 (no EXIF/GPS uploaded), QueueStatus, the "allow" notice. Tests (written first, red): `app/src/screens/__tests__/shareStart.test.tsx`, `app/e2e-web/demo.spec.js` (SHARE-ST-8).
 | ID | Given / When / Then | Type |
 |---|---|---|

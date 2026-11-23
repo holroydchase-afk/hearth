@@ -150,7 +150,7 @@ describe('BETA-REPLY-11 the comment box names who will read it', () => {
   });
 });
 
-// Retargeted Nov 21 by qa-tdd for DEC-78 (SHARE-ST-2/5): there is no "Pick lots of photos" any more; a parent's one
+// Retargeted Nov 21 by qa-tdd for DEC-79 (SHARE-ST-2/5): there is no "Pick lots of photos" any more; a parent's one
 // Add photos target reads "up to 100", a relative's "up to 10", and bulk review is never reachable for a relative.
 describe('BETA-BULK-3 SHARE-ST-5 bulk (up to 100) is for parents only (Oct 17 decision)', () => {
   const pickBulk = jest.fn(async () => ({ assets: [] }));

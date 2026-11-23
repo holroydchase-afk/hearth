@@ -17,7 +17,7 @@ const slow = { timeout: 5000 };
 // Retargeted Nov 19 by qa-tdd for DEC-73 (SHARE-PC, SPEC-REDESIGN 1j): Share is a "New post" postcard; nothing is
 // pre-picked (the old BETA-AUD-2 preselect is gone), one "Add a note (optional)" field, face tiles spoken
 // "<name>, N people, (not) picked", a pinned "Pick who gets it" / "Send to <names>" button, and Send lands on Feed.
-/** Get to the "New post" postcard with a photo: tap the empty postcard's "Add photos" target (DEC-78). */
+/** Get to the "New post" postcard with a photo: tap the empty postcard's "Add photos" target (DEC-79). */
 async function newPost(opts: { user?: FixtureUser; kv?: KV; be?: FakeBackend; deps?: Partial<AppDeps> } = {}) {
   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: opts.deps });
   const pick = r.deps.pickPhotos as jest.Mock;

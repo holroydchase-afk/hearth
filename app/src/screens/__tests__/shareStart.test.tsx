@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// DEC-78 (Chase, Nov 20): Share opens on an empty postcard. docs/product/SPEC-REDESIGN.md 1j-2, SHARE-ST-1..7
+// DEC-79 (Chase, Nov 20): Share opens on an empty postcard. docs/product/SPEC-REDESIGN.md 1j-2, SHARE-ST-1..7
 // (SHARE-ST-8 is Playwright in app/e2e-web/demo.spec.js; SHARE-ST-9 is a manual phone check). Reference look: option B
 // of /mnt/project-files/design/share-start-2026-11-20/share-start-tester.html. Written first (red), Nov 21, by qa-tdd.
 //

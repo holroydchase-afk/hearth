@@ -136,7 +136,7 @@ describe('GUX-R1 a top-left "‹ More" / "‹ Gallery" back button', () => {
 
 /** Every boxed thing (its own border, or a fill unlike the box around it) that holds words and sits inside another
  *  box. The screen's own background is not a box. The few filled accent / red buttons (RD-7) are allowed. */
-/** DEC-73 / DEC-78: Share opens on the empty postcard; its "Add photos" target opens the picker. Wait for the photo. */
+/** DEC-73 / DEC-79: Share opens on the empty postcard; its "Add photos" target opens the picker. Wait for the photo. */
 async function openNewPost(kv?: ReturnType<typeof memoryKV>) {
   const r = await renderApp(<ShareScreen />, { user: 'chase', kv });
   const pick = r.deps.pickPhotos as jest.Mock;

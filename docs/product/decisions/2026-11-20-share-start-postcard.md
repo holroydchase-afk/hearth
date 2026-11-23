@@ -1,5 +1,5 @@
 # Decision: Share opens on an empty postcard with one "Add photos" target
-Date: Nov 20, 2026 · Status: Chase's (decision card "Which Share start screen should replace today's?" → "B Empty postcard", 9:19 PM ET) · DEC-78 · Spec: `docs/product/SPEC-REDESIGN.md` 1j-2 (SHARE-ST-1..9)
+Date: Nov 20, 2026 · Status: Chase's (decision card "Which Share start screen should replace today's?" → "B Empty postcard", 9:19 PM ET) · DEC-79 · Spec: `docs/product/SPEC-REDESIGN.md` 1j-2 (SHARE-ST-1..9)
 
 What changes: the Share tab opens on the DEC-73 postcard, empty: "New post", "For your family, nobody else.", one big "Add photos" target in the photo spot ("Up to 100 at a time" for parents, "Up to 10" for others), note and To: faded below. "Pick lots of photos" goes; a parent's pick over 10 goes to bulk review; others stay at 10 with HARD-2's notice.
 Over: A straight to the phone's picker; C recent photos on the page (full library access, A1); today's page of words and two links.

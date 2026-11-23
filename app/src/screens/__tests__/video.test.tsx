@@ -137,7 +137,7 @@ describe('VID-21 bulk pick with videos', () => {
     exif: { DateTimeOriginal: date, OffsetTimeOriginal: '-04:00' },
   });
   const video = (): PickedAsset => ({ uri: `file:///picked/MOV_${++n}.mov`, type: 'video', mimeType: 'video/quicktime', width: 1280, height: 720, duration: 12_000 });
-  // Retargeted Nov 21 by qa-tdd for DEC-78 (SHARE-ST-4): only 11+ picked reach bulk review, so 9 photos and 3 videos.
+  // Retargeted Nov 21 by qa-tdd for DEC-79 (SHARE-ST-4): only 11+ picked reach bulk review, so 9 photos and 3 videos.
   const assets = () => [photo('2024:07:04 09:00:00'), video(), photo('2024:07:04 10:00:00'), video(), video(),
     ...Array.from({ length: 7 }, (_, i) => photo(`2024:07:04 ${11 + i}:00:00`))];
 

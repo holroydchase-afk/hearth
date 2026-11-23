@@ -12,7 +12,7 @@
 //   - Nav gets goFeed() (wired to /feed in app/_layout.tsx and the demo); Send calls it instead of goPhotos().
 //   - "Shared with <names>." is app state Feed reads (shown when Share and Feed share one AppProvider).
 //   - src/share/postcard.ts  export function namesLine(names: string[]): string   (SHARE-PC-9's wording).
-// Retargeted Nov 21 by qa-tdd for DEC-78: Share opens on an empty postcard whose "Add photos" target opens the picker
+// Retargeted Nov 21 by qa-tdd for DEC-79: Share opens on an empty postcard whose "Add photos" target opens the picker
 // (SHARE-ST-1..9, src/screens/__tests__/shareStart.test.tsx). With no pickBulk in deps, a parent's target uses pickPhotos.
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
@@ -283,7 +283,7 @@ describe('SHARE-PC-7 nothing is picked at the start', () => {
     expect(toWords()).toBe('To:');
   });
 
-  // Retargeted Nov 21 by qa-tdd for DEC-78 (SHARE-ST-4): only 11+ picked reach bulk review, so 12 photos, not 4.
+  // Retargeted Nov 21 by qa-tdd for DEC-79 (SHARE-ST-4): only 11+ picked reach bulk review, so 12 photos, not 4.
   it('SHARE-PC-7 bulk: a saved last audience ticks nothing on the review either; Send waits', async () => {
     const kv = memoryKV();
     await saveLastAudience(kv, chase.id, [FIXTURE.circles.dadSide.id]);
