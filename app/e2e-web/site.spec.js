@@ -10,10 +10,14 @@ const details = async (page) => {
   const t = page.getByRole('button', { name: 'Demo details' });
   if ((await t.getAttribute('aria-expanded')) !== 'true') await t.click();
 };
+// T33: switching who you are and Reset reload the page (async since #144); wait for the reloaded greeting before
+// opening Details again, or the drawer opens on the old page and is lost in the reload.
+const greeted = (page, who) => expect(page.getByRole('heading', { name: new RegExp(`^Good (morning|afternoon|evening), ${who}$`) })).toBeVisible();
 const resetDemo = async (page) => {
   await details(page);
   await page.getByRole('button', { name: 'Reset demo' }).click();
   await page.getByRole('button', { name: 'Reset', exact: true }).click();
+  await greeted(page, 'Chase');
 };
 
 for (const tab of ['', 'photos', 'share', 'groups', 'me', 'help']) {
@@ -55,6 +59,7 @@ test(`DEMO-5 Grandma's view and Start over stay inside ${BASE}/`, async ({ page 
   await page.goto(`${BASE}/`);
   await details(page);
   await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+  await greeted(page, 'Grandma Jo'); // T33
   await details(page);
   await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
   expect(new URL(page.url()).pathname).toMatch(new RegExp(`^${baseRe}\\/gallery\\/?$`));
