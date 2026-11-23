@@ -13,6 +13,7 @@ blockers:
 
 ## Nov 20: Share opens on an empty postcard specced (Chase, DEC-79, R72, SHARE-ST-1..9; branch claude/project-thread-4ulu9i)
 - Done: Chase picked "B Empty postcard"; DEC-79, spec `SPEC-REDESIGN.md` 1j-2, persona check `decisions/2026-11-20-share-start-postcard.md`, TRACKER R72. One way in; the "Pick lots of photos" link goes; non-parents stay at 10.
+- Nov 23: round 2 "B+ Postcard first, for everyone" (Chase, Nov 21) amends DEC-79 with SHARE-ST-10..18 (new subline, dashed spot, stamp, full-contrast To: with names, "Last shared", no auto-advance).
 - Next: qa-tdd red (`shareStart.test.tsx`, demo e2e), engineer, grandparent-ux on shots.
 ## Nov 22: wired to studio-agents PR #45 checks (intake #149, R71; branch claude/project-thread-qt1q8v, PR)
 - **Chase:** "Pick up the open intake issue ... one small PR, qa-tdd for any code or CI change".
