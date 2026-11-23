@@ -6,7 +6,7 @@
 // photo is picked, Share is the same postcard, empty: one "Add photos" spot (a parent with Easy view off picks up to
 // 100 and 11+ go to bulk review; anyone else up to 10), a stamp, and the note and To: shown but out of reach.
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Image, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions, type StyleProp, type ViewStyle } from 'react-native';
+import { AccessibilityInfo, Image, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions, type StyleProp, type ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { Circle } from '../api/HearthApi';
 import { messageFor } from '../errors/messages';
@@ -27,6 +27,7 @@ import { BatchReview } from './BatchReview';
 import { QueueStatus } from './QueueStatus';
 
 const MAX = 10;
+const FIRST = 'Add photos first, then write your note and pick who sees it.';
 const DENIED = 'Hearth needs your OK to see your photos. Tap "Allow" when your phone asks.';
 
 /** BETA-AUD-17 (SPEC-GROUPS): Everyone first (1 tap), then groups and households, then events. */
@@ -58,6 +59,7 @@ export function ShareScreen() {
   const { c, t, os, dark, bigText } = useTheme();
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [firstSaid, setFirstSaid] = useState(false); // GUX-R1
   const userId = app.session?.userId;
   // SHARE-ST-16: when the last post went and to which groups, read from this phone.
   const [lastShared, setLastShared] = useState<LastShared | null>(null);
@@ -233,29 +235,39 @@ export function ShareScreen() {
   const lastGroups = lastShared ? list.filter((g) => lastShared.ids.includes(g.circle_id)) : [];
   const lastNames = !lastGroups.length ? '' : isParent ? namesLine(lastGroups.map((g) => tileName(g, myName, true))) : recipientsLine(list, lastShared!.ids, myName);
   const hint = { color: c.muted, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line };
+  // GUX-R1: a tap on the waiting note or To: says what comes first, where VoiceOver and TalkBack reach it.
+  const sayFirst = () => { setFirstSaid(true); AccessibilityInfo.announceForAccessibility(FIRST); };
   const emptyCard = (
     <>
       <AddPhotoSpot label={`${addWords}, up to ${limit} at a time`} title={addWords} helper={`Up to ${limit} at a time`}
         onPress={() => void (bulkOk ? pickMany() : pick())} />
-      <Stamp />
-      {/* SHARE-ST-3 / SHARE-ST-14: shown at full contrast, but not a control yet: hidden from screen readers, no taps. */}
-      <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" aria-hidden pointerEvents="none">
-        <View style={styles.words}>
+      {/* SHARE-ST-3 / SHARE-ST-14: shown at full contrast, but not a control yet: hidden from screen readers. GUX-R1: a
+          tap on either part (48 pt) only shows the line below; nothing opens. */}
+      <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" aria-hidden>
+        <Pressable accessible={false} focusable={false} onPress={sayFirst} style={styles.words}>
           <Text accessible={false} style={hint}>Add a note (optional)</Text>
-        </View>
+        </Pressable>
         <View style={styles.dashClip}>
           <View style={[styles.dash, { borderColor: c.line }]} />
         </View>
-        <View testID="share-to" style={styles.toEmpty}>
+        <Pressable testID="share-to" accessible={false} focusable={false} onPress={sayFirst} style={[styles.toEmpty, styles.clearStamp]}>
           <Text accessible={false} style={hint}>To: you pick after your photos</Text>
           {whoLine ? (
             <View style={styles.who}>
-              <FaceStack testID="share-to-faces" ring={c.surface} names={people.length ? people : list.map((g) => tileName(g, myName, true))} />
-              <Text testID="share-to-names" accessible={false} numberOfLines={1} style={[hint, { flexShrink: 1 }]}>{whoLine}</Text>
+              {/* GUX-R3: a parent's row lists groups, so no stack of initials; a relative sees the people's faces. */}
+              {isParent ? null : <FaceStack testID="share-to-faces" ring={c.surface} names={people} />}
+              <Text testID="share-to-names" accessible={false} numberOfLines={2} style={[hint, { flexShrink: 1 }]}>{whoLine}</Text>
             </View>
           ) : null}
-        </View>
+        </Pressable>
       </View>
+      {firstSaid ? (
+        <View accessibilityLiveRegion="polite" style={[styles.first, styles.clearStamp]}>
+          <Text style={{ color: c.ink, fontFamily: FONT.semibold, fontSize: t.base, lineHeight: t.line }}>{FIRST}</Text>
+        </View>
+      ) : null}
+      {/* GUX-R5: the stamp is pinned to the card's bottom-right corner, clear of the dashed photo spot. */}
+      <Stamp />
     </>
   );
 
@@ -359,7 +371,10 @@ export function ShareScreen() {
 
 const styles = StyleSheet.create({
   subline: { marginTop: -12 },
-  toEmpty: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 16, gap: 8 },
+  toEmpty: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 16, gap: 8, minHeight: 48 },
+  // GUX-R5: words at the card's foot stop short of the stamp in its bottom-right corner (16 + 44 + 12).
+  clearStamp: { paddingRight: 72 },
+  first: { paddingHorizontal: 16, paddingBottom: 16 },
   who: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   page: { padding: 16, gap: 16, paddingBottom: 24 },
   // No overflow clip on the card, so its shadow is never cut; the big photo rounds its own top corners.
@@ -370,7 +385,7 @@ const styles = StyleSheet.create({
   thumb: { width: 64, height: 64, borderRadius: RADIUS.medium, borderWidth: 3, overflow: 'hidden' },
   thumbImg: { width: '100%', height: '100%' },
   inset: { paddingHorizontal: 16 },
-  words: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 16 },
+  words: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 16, minHeight: 48 },
   // A dashed line on one side only isn't drawn the same on every phone, so a dashed box is clipped to its top edge.
   dashClip: { height: 2, overflow: 'hidden' },
   dash: { height: 6, borderWidth: 2, borderStyle: 'dashed', marginHorizontal: -2 },
@@ -383,15 +398,15 @@ const styles = StyleSheet.create({
 });
 
 const STAMP_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-/** SHARE-ST-13: a small decorative stamp for the empty postcard's corner, postmarked with today's day and month.
+/** SHARE-ST-13: a small decorative stamp for the empty postcard's corner, postmarked with today's month, then day (GUX-R4).
  *  Not a control: hidden from VoiceOver and TalkBack, and taps pass through it. */
 function Stamp({ date = new Date(), style }: { date?: Date; style?: StyleProp<ViewStyle> }) {
   const { c } = useTheme();
   return (
     <View testID="share-stamp" pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants" aria-hidden
       style={[parts.stamp, { borderColor: c.line }, style]}>
-      <Text accessible={false} allowFontScaling={false} style={[parts.mark, { color: c.muted, fontFamily: FONT.semibold }]}>{String(date.getDate())}</Text>
       <Text accessible={false} allowFontScaling={false} style={[parts.mark, { color: c.muted, fontFamily: FONT.semibold }]}>{STAMP_MONTHS[date.getMonth()]}</Text>
+      <Text accessible={false} allowFontScaling={false} style={[parts.mark, { color: c.muted, fontFamily: FONT.semibold }]}>{String(date.getDate())}</Text>
     </View>
   );
 }
@@ -413,7 +428,7 @@ function FaceStack({ names, ring, testID }: { names: string[]; ring: string; tes
 
 /** The empty postcard's stamp and face stack, from the B+ reference (SHARE-ST-13, SHARE-ST-15). */
 const parts = StyleSheet.create({
-  stamp: { position: 'absolute', top: 22, right: 22, width: 44, height: 52, transform: [{ rotate: '4deg' }], borderWidth: 2, borderStyle: 'dotted', borderRadius: RADIUS.small, alignItems: 'center', justifyContent: 'center' },
+  stamp: { position: 'absolute', bottom: 16, right: 16, width: 44, height: 52, transform: [{ rotate: '4deg' }], borderWidth: 2, borderStyle: 'dotted', borderRadius: RADIUS.small, alignItems: 'center', justifyContent: 'center' },
   stack: { flexDirection: 'row' },
   stackDot: { width: 32, height: 32, borderRadius: RADIUS.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   mark: { fontSize: 17, lineHeight: 18, textAlign: 'center' },
