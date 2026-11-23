@@ -115,6 +115,7 @@ Chase is a full-time dad with limited time. These rules apply to every session.
 - When something truly needs Chase (a purchase, a login, a decision), make it a single step: give the exact link, the exact text to paste, or a one-word question with your recommendation.
 - Never hand Chase a multi-step chore you could shrink to one step, or a copy-and-paste you could avoid by saving the result somewhere you can reach.
 - Pick sensible defaults and keep going instead of asking.
+- Self-check before any ask: Chase never updates settings, environments or repos by hand. Before asking him to do anything, ask yourself: Can I do it myself? Can a thread or an MCP/tool do it so he only taps Allow (for example update_environment for allowed hosts)? Can it be a card with a button? If he must type, is it one code box to copy (one per paste, click path above it)? Only then ask, in the lightest form. If a host is blocked, request it via the environment tool; a copy box is the fallback.
 - If Chase is about to make a mistake (wasted money or time, a risky or irreversible step, a worse option than an obvious alternative), say so plainly and briefly before going along with it.
 
 ### Token hygiene
