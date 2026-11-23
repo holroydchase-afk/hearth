@@ -11,6 +11,13 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 23: dark mode elevation by surface step (intake #155, R75; branch claude/project-thread-6ew09x, PR)
+- **Ask (Product Studio intake):** in dark mode, show elevation with a lighter surface instead of a shadow (DARK-5).
+- **Done, test-first:** qa-tdd red DARK-ELEV-1..6 (`darkElevation.test.tsx`, demo e2e DARK-ELEV-6), then the build: `shadeLine(dark)` (GalleryGrid, PhotosScreen) has no shadow in dark; the floating tab bar drops its dark shadow; the laptop demo's phone column sits on `c.surface` with no shadow in dark. Light unchanged. Green 3x (r60). Before/after shots: /mnt/project-files/design/dark-elevation-2026-11-23/.
+- **Open:** B23 (QA-R1, P2): the dark surface step is only 1.05 to 1.11:1, so separation is subtle; a bigger step needs new palette values (Chase's call). ux-reviewer: Ready, 8/10, no P0/P1. DARK-UX-R1 (P2): the screens paint c.bg over the phone column's c.surface, so on the laptop the column is set off by its border only, until B23. DARK-UX-R2 (P2, older): a photo corner shows through the 0.62 dark glass bar; parked.
+- **Next exact step:** Chase says "merge" (touches app/**, DEC-48); then live check fresh and returning; reply on #155 with the PR link.
+- **Portfolio / public presence:** the public demo's dark mode loses its drop shadows once this merges.
+
 ## Nov 23: ask-less self-check rule (intake #154, R74; branch claude/project-thread-6ew09x, PR)
 - **Chase (Nov 23, via Product Studio):** "I never want to update your settings or environments or repos."
 - **Done:** CLAUDE.md "Minimize Chase's effort" gains the self-check paragraph from studio-agents `docs/studio-standard.md` section 1 (do it yourself, then a tool he only allows, then a card, then one copy box). Docs only.

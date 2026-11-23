@@ -1281,6 +1281,30 @@
    "tests": [],
    "found": "2026-11-21",
    "fixed": null
+  },
+  {
+   "id": "B23",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (dark elevation red run, Nov 23, intake #155): in dark the surface step that now replaces shadows is small: c.surface vs c.bg contrast is 1.078:1 (Paper), 1.114:1 (Avocado), 1.046:1 (Pomegranate), so the laptop phone column and the glass tab bar barely lift off the page in dark (see /mnt/project-files/design/dark-elevation-2026-11-23/after-1280-dark.png). DARK-ELEV-1 only checks lighter (ratio > 1). Design call for grandparent-ux: pick a minimum step and pin it in DARK-ELEV-1. Where: app/src/ui/theme.ts",
+   "tests": [],
+   "found": "2026-11-23",
+   "fixed": null
+  },
+  {
+   "id": "T31",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "QA-R2 (dark elevation green run, Nov 23): app/e2e-web/demo.spec.js DARK-ELEV-6 scanned the first screen only, so RD-82's pinned shade line (shown after a scroll) was not checked in a real browser, and light was not checked. (Reported SKIPPED by the engineer: not reproduced; it runs in the only demo project at 390x844; the 5 skipped are the env-gated screenshot specs.) Fixed: explicit 390x844, scroll 300 px and re-scan, shade box-shadow none in dark and set in light. Red on 1341595 (tab bar, then shade line); green x3",
+   "tests": [
+    "app/e2e-web/demo.spec.js"
+   ],
+   "found": "2026-11-23",
+   "fixed": "2026-11-23"
   }
  ]
 }
