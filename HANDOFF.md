@@ -14,7 +14,7 @@ blockers:
 ## Nov 23: Share start tester packaged for other people and projects (Chase, R72; branch claude/project-thread-ukmbd0, PR)
 - **Chase:** "Can you package the tester and put it on your repo somewhere atlas can get it?" and "I want it to be usable by other humans".
 - **Done:** `docs/design/testers/share-start.html` (round 2 Share start tester, standalone, with a How to use note and Chase's pick, B+) and `docs/design/testers/README.md` (how to open it, what it compares, the pick). Checked: no real names, faces, places or emails.
-- **Portfolio / public presence:** Chase said host it (Nov 23). Intake holroydchase-afk.github.io#93 asks Product Studio to publish it at a public chaseholroyd.com link; merged as hearth#151.
+- **Portfolio / public presence:** Chase said host it (Nov 23). Intake holroydchase-afk.github.io#93 asks Product Studio to publish it at a public chaseholroyd.com link; merged as hearth#151. Live at https://chaseholroyd.com/demo/share-start-tester/ (site PR 94, Nov 22; a self-hosted-font copy with nicknames, not the raw file).
 
 ## Nov 22: wired to studio-agents PR #45 checks (intake #149, R71; branch claude/project-thread-qt1q8v, PR)
 - **Chase:** "Pick up the open intake issue ... one small PR, qa-tdd for any code or CI change".
