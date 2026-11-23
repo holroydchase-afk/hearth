@@ -1212,3 +1212,24 @@ test('SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded 
     test.info().annotations.push({ type: 'SHARE-ST-8', description: 'Grandma Jo has no Share tab in the demo (viewer, RD-9); her "Up to 10" is not checked here.' });
   }
 });
+
+// DARK-ELEV-6 (intake #155, studio DARK-5; written first by qa-tdd, Nov 23): in dark, raised things are a lighter
+// surface step, never a shadow. At a 390 px phone in dark, nothing visible on the demo's first screen draws a
+// box-shadow. The DemoBar's 1 px bottom line is an inset divider, not elevation, so inset-only shadows are allowed.
+test('DARK-ELEV-6 at 390 px dark: no visible element on the first screen has a drop shadow (DemoBar inset divider allowed)', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto('/');
+  await galleryLoaded(page);
+  const shadowed = await page.evaluate(() => [...document.querySelectorAll('body *')].flatMap((el) => {
+    const s = getComputedStyle(el);
+    if (s.boxShadow === 'none' || s.visibility === 'hidden' || s.display === 'none') return [];
+    const r = el.getBoundingClientRect();
+    if (r.width === 0 || r.height === 0 || r.bottom < 0 || r.top > innerHeight) return [];
+    // Split on commas outside rgb()/rgba(); keep only the drop (non-inset) shadows.
+    const drops = s.boxShadow.split(/,(?![^(]*\))/).filter((p) => !/\binset\b/.test(p));
+    if (drops.length === 0) return [];
+    const name = el.getAttribute('aria-label') || el.getAttribute('role') || el.getAttribute('data-testid') || el.tagName;
+    return [`${name}: ${s.boxShadow}`];
+  }));
+  expect(shadowed).toEqual([]);
+});
