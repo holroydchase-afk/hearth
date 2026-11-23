@@ -14,10 +14,15 @@ blockers:
 ## Nov 23: Share start B+ built (postcard first for everyone)
 - Done: Chase picked "B+ Postcard first for everyone" (Nov 21) and said "Merge on green when finished" (Nov 22). SHARE-ST-10..18 + grandparent-ux fixes GUX-R1..R5, green 3x (r57). Screens: /mnt/project-files/design/share-start-b-plus-2026-11-23/. Open: B21 (P2, long group lists end in "…"), GUX-R6 idea, SHARE-ST-9 on phones, Expo preview republish (needs EXPO_TOKEN).
 
-## Nov 20: Share opens on an empty postcard specced (Chase, DEC-79, R72, SHARE-ST-1..9; branch claude/project-thread-4ulu9i)
-- Done: Chase picked "B Empty postcard"; DEC-79, spec `SPEC-REDESIGN.md` 1j-2, persona check `decisions/2026-11-20-share-start-postcard.md`, TRACKER R72. One way in; the "Pick lots of photos" link goes; non-parents stay at 10.
+## Nov 20: Share opens on an empty postcard specced (Chase, DEC-79, R73, SHARE-ST-1..9; branch claude/project-thread-4ulu9i)
+- Done: Chase picked "B Empty postcard"; DEC-79, spec `SPEC-REDESIGN.md` 1j-2, persona check `decisions/2026-11-20-share-start-postcard.md`, TRACKER R73. One way in; the "Pick lots of photos" link goes; non-parents stay at 10.
 - Nov 23: round 2 "B+ Postcard first, for everyone" (Chase, Nov 21) amends DEC-79 with SHARE-ST-10..18 (new subline, dashed spot, stamp, full-contrast To: with names, "Last shared", no auto-advance).
 - Next: qa-tdd red (`shareStart.test.tsx`, demo e2e), engineer, grandparent-ux on shots.
+## Nov 23: Share start tester packaged for other people and projects (Chase, R72; branch claude/project-thread-ukmbd0, PR)
+- **Chase:** "Can you package the tester and put it on your repo somewhere atlas can get it?" and "I want it to be usable by other humans".
+- **Done:** `docs/design/testers/share-start.html` (round 2 Share start tester, standalone, with a How to use note and Chase's pick, B+) and `docs/design/testers/README.md` (how to open it, what it compares, the pick). Checked: no real names, faces, places or emails.
+- **Portfolio / public presence:** Chase said host it (Nov 23). Intake holroydchase-afk.github.io#93 asks Product Studio to publish it at a public chaseholroyd.com link; merged as hearth#151. Live at https://chaseholroyd.com/demo/share-start-tester/ (site PR 94, Nov 22; a self-hosted-font copy with nicknames, not the raw file).
+
 ## Nov 22: wired to studio-agents PR #45 checks (intake #149, R71; branch claude/project-thread-qt1q8v, PR)
 - **Chase:** "Pick up the open intake issue ... one small PR, qa-tdd for any code or CI change".
 - **Done:** agents-check fails a code PR whose `qa-tdd skipped` reason isn't exactly `docs only` or `config only` (from studio-agents templates/agents-check.yml; setup-node pin left at v4). Test `scripts/tests/agents_check_skip_test.sh` (AGENTSKIP-0..4, red first) runs the real workflow step; wired into test-all.sh and agents.verify. CLAUDE.md gains "Open every thread the same way" and "Agents come from studio-agents". Shared scripts already matched the studio templates.
