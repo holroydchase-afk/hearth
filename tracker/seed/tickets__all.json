@@ -1224,6 +1224,19 @@
    "fixed": "2026-11-21"
   },
   {
+   "id": "T29",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "QA-R1 (Share start B+ green run r56, Nov 23): app/src/screens/__tests__/video.test.tsx VID-21 finds the Add photos target by /^Add photos( or videos)?, up to 100 at a time$/ although the test turns video_posting on, so a regression to the plain 'Add photos' label with videos on would pass. Pin the exact 'Add photos or videos, up to 100 at a time' (SHARE-ST-2). Test: that file",
+   "tests": [
+    "app/src/screens/__tests__/video.test.tsx"
+   ],
+   "found": "2026-11-23",
+   "fixed": null
+  },
+  {
    "id": "B15",
    "kind": "bug",
    "layer": "backend",
