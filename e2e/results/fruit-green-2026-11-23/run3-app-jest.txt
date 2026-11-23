@@ -1,0 +1,29 @@
+
+ReferenceError: You are trying to access a property or method of the Jest environment after it has been torn down. From src/screens/__tests__/opening.test.tsx.
+
+      at Timeout.now [as _onTimeout] (node_modules/@react-native/jest-preset/jest/setup.js:61:45)
+
+ReferenceError: You are trying to access a property or method of the Jest environment after it has been torn down. From src/screens/__tests__/redesignGallery.test.tsx.
+
+      at Timeout.now [as _onTimeout] (node_modules/@react-native/jest-preset/jest/setup.js:61:45)
+
+ReferenceError: You are trying to access a property or method of the Jest environment after it has been torn down. From src/screens/__tests__/warmPaper.test.tsx.
+
+      at Timeout.now [as _onTimeout] (node_modules/@react-native/jest-preset/jest/setup.js:61:45)
+
+ReferenceError: You are trying to access a property or method of the Jest environment after it has been torn down. From src/screens/__tests__/groupTitles.test.tsx.
+
+      at Timeout.now [as _onTimeout] (node_modules/@react-native/jest-preset/jest/setup.js:61:45)
+
+ReferenceError: You are trying to access a property or method of the Jest environment after it has been torn down. From src/screens/__tests__/photosHeader.test.tsx.
+
+      at Timeout.now [as _onTimeout] (node_modules/@react-native/jest-preset/jest/setup.js:61:45)
+
+ReferenceError: You are trying to access a property or method of the Jest environment after it has been torn down. From src/screens/__tests__/toolbarWrap.test.tsx.
+
+      at Timeout.now [as _onTimeout] (node_modules/@react-native/jest-preset/jest/setup.js:61:45)
+
+Test Suites: 165 passed, 165 total
+Tests:       1 skipped, 1 todo, 2141 passed, 2143 total
+Snapshots:   0 total
+Time:        220.512 s

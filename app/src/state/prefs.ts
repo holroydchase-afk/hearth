@@ -8,8 +8,8 @@ import type { KV } from '../platform/kv';
 import { SCREEN_LOOKS, THEME_NAMES, type ScreenLook, type ThemeName } from '../ui/theme';
 
 export type NotifyChoice = 'push' | 'evening' | 'sunday';
-/** look (DS-10): light or dark screen; 'system' follows the phone. theme (RD-97, RD-98): Paper, Avocado or
- *  Pomegranate, picked by the family's owner and saved on the owner's phone only (phase 1). */
+/** look (DS-10): light or dark screen; 'system' follows the phone. theme (RD-97, RD-98, FRUIT-8): Paper or one of
+ *  the nine fruits, picked by the family's owner and saved on the owner's phone only (phase 1). */
 export interface Prefs { easyView: boolean; notify: NotifyChoice; look: ScreenLook; theme: ThemeName }
 
 /** What the server needs for each Help choice (AE-2, set_notification_prefs). */

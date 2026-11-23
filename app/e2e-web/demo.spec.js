@@ -234,14 +234,20 @@ test('DEMO-BAR Reset asks first: Keep changes nothing; Reset restores and says s
 // More → Theme → Avocado and Pomegranate recolor the page and the pick survives a reload; Grandma Jo stays Paper with
 // no Theme row; the tab bar is c.surface with a c.line top border (RD-104). Photo shadows stay for now (Chase
 // deciding), so no shadow check here (RD-92 keeps it). Screenshots of all three themes, light and dark.
-test('RD-102 RD-117 Paper by default; Chase picks Avocado then Pomegranate, it survives a reload; Grandma Jo stays Paper', async ({ page }) => {
+// qa-tdd, Nov 23 (FRUIT-11, SPEC-REDESIGN 1l, DEC-80): now walks Paper plus all nine fruits; each fruit's page is the
+// JSON's `page` as rgb() (fixture copy of palettes-v2.json); Pomegranate light is rgb(251, 245, 233), replacing
+// RD-117's rgb(245, 234, 223). The last pick (Red cabbage) must survive the reload. Screenshots of all 10, light and dark.
+test('RD-102 RD-117 FRUIT-11 Paper by default; Chase picks each of the nine fruits, the last survives a reload; Grandma Jo stays Paper', async ({ page }) => {
+  const FRUIT = require('../src/ui/__tests__/fixtures/fruit-palettes.json');
+  const toRgb = (h) => `rgb(${[1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)).join(', ')})`;
   const PAGE = {
     paper: { light: 'rgb(247, 247, 244)', dark: 'rgb(19, 18, 16)' },
-    // qa-tdd, Nov 20: RD-117 (Hass avocado, DEC-76) replaces rgb(238, 239, 211) / rgb(16, 20, 12).
-    avocado: { light: 'rgb(246, 245, 228)', dark: 'rgb(42, 36, 38)' },
-    pomegranate: { light: 'rgb(245, 234, 223)', dark: 'rgb(23, 13, 16)' },
+    ...Object.fromEntries(Object.entries(FRUIT).map(([k, v]) => [k, { light: toRgb(v.light.page), dark: toRgb(v.dark.page) }])),
   };
-  const WORD = { paper: 'Paper', avocado: 'Avocado', pomegranate: 'Pomegranate' };
+  expect({ avocado: PAGE.avocado, pomegranateLight: PAGE.pomegranate.light }).toEqual({ avocado: { light: 'rgb(246, 245, 228)', dark: 'rgb(42, 36, 38)' }, pomegranateLight: 'rgb(251, 245, 233)' });
+  const WORD = { paper: 'Paper', ...Object.fromEntries(Object.entries(FRUIT).map(([k, v]) => [k, v.name])) };
+  const FRUITS = Object.keys(FRUIT);
+  const LAST = FRUITS[FRUITS.length - 1];
   const shots = path.join(__dirname, '..', 'test-results', 'rd-102');
   // The Gallery backing: the first painted ancestor of the grid (the browser's white if none).
   const galleryBg = () => page.evaluate(() => {
@@ -262,8 +268,15 @@ test('RD-102 RD-117 Paper by default; Chase picks Avocado then Pomegranate, it s
     const s = getComputedStyle(el);
     return { bg: s.backgroundColor, top: s.borderTopWidth, painted: s.backgroundColor !== 'rgba(0, 0, 0, 0)' };
   });
-  const toGallery = async () => { await page.getByRole('tab', { name: /^Gallery/ }).click(); await galleryLoaded(page); };
+  // T-FRUIT (qa-tdd, Nov 23): with 10 rows, scrolling a fruit into view shrinks the glass bar (RD-110); a tap on the
+  // shrunk oval only brings the tabs back (RD-110-R1), so restore the bar first, as T28 does in RD-117.
+  const restoreTabs = async () => {
+    const shrunk = page.getByRole('tab', { name: /show all tabs/ });
+    if (await shrunk.count()) await shrunk.click();
+  };
+  const toGallery = async () => { await restoreTabs(); await page.getByRole('tab', { name: /^Gallery/ }).click(); await galleryLoaded(page); };
   const pick = async (theme) => {
+    await restoreTabs();
     await page.getByRole('tab', { name: /^More/ }).click();
     await page.getByRole('button', { name: /^Theme(,|$)/ }).click();
     await expect(page.getByRole('heading', { name: 'Theme' })).toBeVisible();
@@ -278,13 +291,13 @@ test('RD-102 RD-117 Paper by default; Chase picks Avocado then Pomegranate, it s
     await resetDemo(page);
     await page.reload();
     await galleryLoaded(page);
-    // Light starts from a fresh demo (the default); dark follows light's Pomegranate, so it picks Paper back first.
+    // Light starts from a fresh demo (the default); dark follows light's last fruit, so it picks Paper back first.
     if (look === 'dark') { await pick('paper'); await toGallery(); }
     expect.soft({ look, gallery: await galleryBg() }).toEqual({ look, gallery: PAGE.paper[look] });
     const bar = await tabBar();
     expect.soft({ look, painted: bar.painted, notPage: bar.bg !== PAGE.paper[look], top: bar.top }).toEqual({ look, painted: true, notPage: true, top: '1px' });
     await page.screenshot({ path: path.join(shots, `rd-102-paper-${look}.png`) });
-    for (const theme of ['avocado', 'pomegranate']) {
+    for (const theme of FRUITS) {
       await pick(theme);
       await expect.poll(themeBg).toBe(PAGE[theme][look]);
       await toGallery();
@@ -294,7 +307,7 @@ test('RD-102 RD-117 Paper by default; Chase picks Avocado then Pomegranate, it s
     // The pick survives a reload.
     await page.reload();
     await galleryLoaded(page);
-    expect.soft({ look, afterReload: await galleryBg() }).toEqual({ look, afterReload: PAGE.pomegranate[look] });
+    expect.soft({ look, afterReload: await galleryBg() }).toEqual({ look, afterReload: PAGE[LAST][look] });
   }
 
   // Grandma Jo stays Paper, with no Theme row.
@@ -795,10 +808,11 @@ test('RD-117 RD-116 Avocado (Hass) light and dark; a picked ❤️ is a 2 px acc
   const PAGE = {
     paper: { light: 'rgb(247, 247, 244)' },
     avocado: { light: 'rgb(246, 245, 228)', dark: 'rgb(42, 36, 38)' },
-    pomegranate: { light: 'rgb(245, 234, 223)' },
+    pomegranate: { light: 'rgb(251, 245, 233)' }, // qa-tdd, Nov 23: FRUIT-11 (DEC-80) replaces rgb(245, 234, 223)
   };
-  // Accent per theme, light (RD-94, RD-111, RD-95); Avocado dark is Fresh leaf #7ED69B (RD-112).
-  const ACCENT = { paper: 'rgb(173, 55, 29)', avocado: 'rgb(47, 84, 25)', pomegranate: 'rgb(163, 23, 47)', avocadoDark: 'rgb(126, 214, 155)' };
+  // Accent per theme, light (RD-94, RD-111, FRUIT-2); Avocado dark is Fresh leaf #7ED69B (RD-112).
+  // qa-tdd, Nov 23: Pomegranate's accent is the JSON's #B3122F (DEC-80), replacing RD-95's rgb(163, 23, 47).
+  const ACCENT = { paper: 'rgb(173, 55, 29)', avocado: 'rgb(47, 84, 25)', pomegranate: 'rgb(179, 18, 47)', avocadoDark: 'rgb(126, 214, 155)' };
   const WORD = { paper: 'Paper', avocado: 'Avocado', pomegranate: 'Pomegranate' };
   const shots = path.join(__dirname, '..', 'test-results', 'rd-117');
   const pick = async (theme) => {

@@ -51,9 +51,16 @@ const THEMES: { id: ThemeName; title: string }[] = [
   { id: 'paper', title: 'Paper' },
   { id: 'avocado', title: 'Avocado' },
   { id: 'pomegranate', title: 'Pomegranate' },
+  { id: 'blood-orange', title: 'Blood orange' },
+  { id: 'kiwi', title: 'Kiwi' },
+  { id: 'fig', title: 'Fig' },
+  { id: 'dragon-fruit', title: 'Dragon fruit' },
+  { id: 'watermelon', title: 'Watermelon' },
+  { id: 'beet', title: 'Candy-stripe beet' },
+  { id: 'red-cabbage', title: 'Red cabbage' },
 ];
 
-/** RD-97 / RD-98: the family's owner picks a theme: Paper (default), Avocado or Pomegranate. Each row shows a swatch
+/** RD-97 / RD-98 / FRUIT-6: the family's owner picks a theme: Paper (default) or one of nine fruits. Each row shows a swatch
  *  (the theme's page with its accent, light or dark as now), its name and a check on the picked one. A tap
  *  recolors at once. Phase 1: saved on this phone only (prefs.theme). */
 export function ThemePicker({ heading = true }: { heading?: boolean }) {

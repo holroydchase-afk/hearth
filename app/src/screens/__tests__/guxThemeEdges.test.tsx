@@ -20,7 +20,8 @@ import { renderApp } from '../../test/renderApp';
 import { contrast, LookContext, paletteFor, PhoneA11yContext, ThemeContext, type Colors, type ThemeName } from '../../ui/theme';
 import { HearthTabBar } from '../TabBar';
 
-const THEMES: ThemeName[] = ['paper', 'avocado', 'pomegranate'];
+// qa-tdd, Nov 23: FRUIT-1 (DEC-80) replaces the three DEC-68 themes with Paper plus nine fruits.
+const THEMES = ['paper', 'avocado', 'pomegranate', 'blood-orange', 'kiwi', 'fig', 'dragon-fruit', 'watermelon', 'beet', 'red-cabbage'] as ThemeName[];
 const lookName = (dark: boolean) => (dark ? 'dark' : 'light');
 const slow = { timeout: 5000 };
 const { chase } = FIXTURE.users;

@@ -572,5 +572,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** the start looked unfinished next to the rest of the app; showing the postcard from the first second tells a grandparent what's coming, one big target with words beats two small text links (17 pt, 48 pt rule), and one way in means nobody chooses between "photos" and "lots of photos" before seeing one.
 - **Source:** `docs/product/SPEC-REDESIGN.md` 1j-2; persona check `decisions/2026-11-20-share-start-postcard.md`. Keeps the Oct 17 call (bulk pick is parents only) and HARD-2's 10-photo postcard max; replaces the start page in BETA-BULK's "Pick lots of photos" entry.
 
+### DEC-80 · Paper plus nine cut-open fruit themes; Pomegranate gets new values (FRUIT-1..FRUIT-12)
+- **When / status:** Nov 23 · Chase: "put these pallettes in hearth, replacing everything but the default/paper", on the Cut-Open Palettes tool (https://claude.ai/artifact/SQ6gmnFB6bX7t6scr3ipSz) · Specced, failing tests next
+- **Chose:** ten themes in this order: Paper (default, unchanged), Avocado (its JSON values equal RD-111/RD-112), Pomegranate (new values), Blood orange, Kiwi, Fig, Dragon fruit, Watermelon, Candy-stripe beet, Red cabbage; page, fill, ink, muted and accent per mode from `/mnt/project-files/design/fruit-palettes-2026-11-20/palettes-v2.json`; surface and line by the existing rules. Still owner only, saved per phone. Non-Paper dark themes use `#FF6961` for red Delete words (today's `#FF453A` is 4.47:1 on Avocado and Dragon fruit dark).
+- **Over:** three themes (DEC-68's "not doing"); the Nov 18 Pomegranate; any name with "pit" or "rind".
+- **Because:** Chase's pick; each theme comes from a real cut fruit, layer by layer, like the Hass avocado (DEC-76), and every set passes Hearth's contrast rules.
+- **Source:** `docs/product/SPEC-REDESIGN.md` 1l; persona check `decisions/2026-11-23-fruit-themes.md` (LG Red mitigated, PA Red Chase override). Supersedes DEC-68's three-theme limit and its Pomegranate values (RD-95).
+
 ---
-Last updated: Nov 23, 2026 (DEC-79 amended, B+)
+Last updated: Nov 23, 2026 (DEC-80)

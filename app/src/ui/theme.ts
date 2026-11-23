@@ -24,13 +24,13 @@ export interface Colors {
   tabLine: string;
 }
 
-// RD-94..RD-96 (DEC-68, Chase Nov 18 2026): three themes with plain names, each its own page, grays and accent.
-// Paper (the default) is an off-white page with white sheets and warm grays; Avocado a soft green page; Pomegranate
-// a soft blush page. Was one tan paper with three accent-only family colors (RD-84..RD-86, DEC-67). Body text is 7:1
+// RD-94..RD-96 (DEC-68) and FRUIT-1 (DEC-80, Chase Nov 23 2026): Paper (the default) plus nine cut-open fruits,
+// each its own page, grays and accent. Paper is an off-white page with white sheets and warm grays. Body text is 7:1
 // or better; muted 4.5:1 on the page and fill; the accent 4.5:1 on the page, fills and its own soft tint, light
-// and dark (RD-96; themes.test.ts). Status colors (safe, danger) are shared by every theme.
-export type ThemeName = 'paper' | 'avocado' | 'pomegranate';
-export const THEME_NAMES: readonly ThemeName[] = ['paper', 'avocado', 'pomegranate'];
+// and dark (RD-96; themes.test.ts). Status colors (safe, danger) are shared by every theme, except dark dangerText
+// (FRUIT-5: #FF6961 on every fruit, Paper keeps #FF453A).
+export type ThemeName = 'paper' | 'avocado' | 'pomegranate' | 'blood-orange' | 'kiwi' | 'fig' | 'dragon-fruit' | 'watermelon' | 'beet' | 'red-cabbage';
+export const THEME_NAMES: readonly ThemeName[] = ['paper', 'avocado', 'pomegranate', 'blood-orange', 'kiwi', 'fig', 'dragon-fruit', 'watermelon', 'beet', 'red-cabbage'];
 export const ThemeContext = createContext<ThemeName>('paper');
 
 /** How far a soft tint (accentSoft; safeSoft, the "sent" tint) mixes its color into the page. */
@@ -50,6 +50,13 @@ const STATUS = {
  *  photo (the empty photo tile) is the fill. */
 interface Base { bg: string; surface: string; ink: string; muted: string; line: string; fill: string; accent: string }
 
+type Given = Omit<Base, 'surface' | 'line'>;
+/** FRUIT-2: surface = page and fill 50/50; line = page mixed toward ink 12% light, 16% dark (as Avocado). */
+function fruit(light: Given, dark: Given): { light: Base; dark: Base } {
+  const full = (g: Given, t: number): Base => ({ ...g, surface: mix(g.bg, g.fill, 0.5), line: mix(g.bg, g.ink, t) });
+  return { light: full(light, 0.12), dark: full(dark, 0.16) };
+}
+
 /** RD-94 / RD-95: the given values (RD-105: Paper light page is Linen #F7F7F4, Chase Nov 19). Paper's surface is white; the others' sits halfway between page and fill. */
 const BASES: Record<ThemeName, { light: Base; dark: Base }> = {
   paper: {
@@ -63,16 +70,50 @@ const BASES: Record<ThemeName, { light: Base; dark: Base }> = {
     light: { bg: '#F6F5E4', surface: mix('#F6F5E4', '#E7ECC6', 0.5), ink: '#1F1A1B', muted: '#4F4A42', line: '#DCDBCC', fill: '#E7ECC6', accent: '#2F5419' },
     dark: { bg: '#2A2426', surface: mix('#2A2426', '#3A3335', 0.5), ink: '#F3F1DA', muted: '#C2BDA8', line: '#4A4543', fill: '#3A3335', accent: '#7ED69B' },
   },
-  pomegranate: {
-    light: { bg: '#F5EADF', surface: mix('#F5EADF', '#EBDDD0', 0.5), ink: '#22161A', muted: '#62504F', line: '#DDCDBE', fill: '#EBDDD0', accent: '#A3172F' },
-    dark: { bg: '#170D10', surface: mix('#170D10', '#24171A', 0.5), ink: '#F5E9E6', muted: '#BBA7A6', line: '#3A272B', fill: '#24171A', accent: '#FF8597' },
-  },
+  // FRUIT-2 (DEC-80): the Cut-Open Palettes values (page, fill, ink, muted, accent); surface and line by Avocado's rules.
+  pomegranate: fruit(
+    { bg: '#FBF5E9', fill: '#F4E5CA', ink: '#9C1F2E', muted: '#9D5157', accent: '#B3122F' },
+    { bg: '#1C0608', fill: '#2F090E', ink: '#F7EBD2', muted: '#B5A695', accent: '#F07C8A' },
+  ),
+  'blood-orange': fruit(
+    { bg: '#FBF5EB', fill: '#F7DEC7', ink: '#6F1323', muted: '#91535A', accent: '#B4232F' },
+    { bg: '#2A070D', fill: '#3D0A13', ink: '#F7EAD6', muted: '#BAA69A', accent: '#E46F2C' },
+  ),
+  kiwi: fruit(
+    { bg: '#F9F8EC', fill: '#E6EEC0', ink: '#1E1912', muted: '#786750', accent: '#497522' },
+    { bg: '#1F170D', fill: '#302314', ink: '#F3F1D8', muted: '#B3B09B', accent: '#8DBB3C' },
+  ),
+  fig: fruit(
+    { bg: '#F6F1E5', fill: '#F0DBC9', ink: '#4A2A4C', muted: '#715C6E', accent: '#B12F45' },
+    { bg: '#1E111E', fill: '#29172A', ink: '#ECDFC6', muted: '#AEA194', accent: '#DE9A73' },
+  ),
+  'dragon-fruit': fruit(
+    { bg: '#FBF9F5', fill: '#F8DDE4', ink: '#1B1A1C', muted: '#5E5D5D', accent: '#B92A66' },
+    { bg: '#262527', fill: '#363537', ink: '#F8F5EE', muted: '#B9B7B2', accent: '#F4AFC9' },
+  ),
+  watermelon: fruit(
+    { bg: '#F4F7E9', fill: '#F4DFD5', ink: '#2A1C17', muted: '#536C4F', accent: '#B93340' },
+    { bg: '#0A1409', fill: '#101F0F', ink: '#E7EDCF', muted: '#A5AC94', accent: '#F58C8C' },
+  ),
+  beet: fruit(
+    { bg: '#FDF6F9', fill: '#F7DAE5', ink: '#7E2D4A', muted: '#865668', accent: '#AB3960' },
+    { bg: '#210C13', fill: '#30111C', ink: '#F8E6EC', muted: '#B8A5AB', accent: '#E3779E' },
+  ),
+  'red-cabbage': fruit(
+    { bg: '#F7F2F8', fill: '#E4D7E7', ink: '#47245A', muted: '#70587B', accent: '#6C3482' },
+    { bg: '#170C1D', fill: '#211129', ink: '#EEE3F1', muted: '#AEA3B1', accent: '#A481B2' },
+  ),
 };
 
-function build(b: Base, dark: boolean): Colors {
+/** FRUIT-5: #FF453A is under 4.5:1 on some fruit darks (Avocado, Dragon fruit), so they use Apple's
+ *  high-contrast systemRed. Paper keeps #FF453A. */
+const DANGER_TEXT_DARK_FRUIT = '#FF6961';
+
+function build(b: Base, dark: boolean, name: ThemeName): Colors {
   const mode = dark ? 'dark' : 'light';
   return {
     ...STATUS[mode],
+    ...(dark && name !== 'paper' ? { dangerText: DANGER_TEXT_DARK_FRUIT } : {}),
     ...b,
     photo: b.fill,
     safeSoft: mix(SAFE[mode], b.bg, SOFT[mode]),
@@ -93,7 +134,7 @@ function edge(line: string, ink: string, surface: string, page: string): string 
 
 let palettes: Record<ThemeName, { light: Colors; dark: Colors }> | null = null;
 function allPalettes() {
-  palettes ??= Object.fromEntries(THEME_NAMES.map((n) => [n, { light: build(BASES[n].light, false), dark: build(BASES[n].dark, true) }])) as Record<ThemeName, { light: Colors; dark: Colors }>;
+  palettes ??= Object.fromEntries(THEME_NAMES.map((n) => [n, { light: build(BASES[n].light, false, n), dark: build(BASES[n].dark, true, n) }])) as Record<ThemeName, { light: Colors; dark: Colors }>;
   return palettes;
 }
 

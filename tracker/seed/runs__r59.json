@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-23T14:30:00-05:00",
+ "label": "Nine fruit themes beside Paper (FRUIT-1..11, DEC-80): all suites 3x via test-all.sh (green after test fix T30)",
+ "passed": 10230,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs of bash test-all.sh at 1341595 plus the engineer's uncommitted build and qa-tdd's tests: 23 suites passed, 0 failed, 2 skipped x3 (Supabase starter invites: no template; Deno: not installed). jest 2141 passed (1 skipped, 1 todo, 165 suites) x3, typecheck clean x3, e2e:demo 38 passed x3 incl. FRUIT-11 after T30, e2e:web 5 passed x3, backend SQL 1226 passed x3 on local Postgres 16. Not run: Deno, FRUIT-7 at the largest text size and FRUIT-12 on phones (manual). e2e/results/fruit-green-2026-11-23/"
+}

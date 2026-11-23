@@ -1,0 +1,155 @@
+{
+ "avocado": {
+  "name": "Avocado",
+  "light": {
+   "page": "#F6F5E4",
+   "fill": "#E7ECC6",
+   "ink": "#1F1A1B",
+   "muted": "#4F4A42",
+   "accent": "#2F5419"
+  },
+  "dark": {
+   "page": "#2A2426",
+   "fill": "#3A3335",
+   "ink": "#F3F1DA",
+   "muted": "#C2BDA8",
+   "accent": "#7ED69B"
+  }
+ },
+ "pomegranate": {
+  "name": "Pomegranate",
+  "light": {
+   "page": "#FBF5E9",
+   "fill": "#F4E5CA",
+   "ink": "#9C1F2E",
+   "muted": "#9D5157",
+   "accent": "#B3122F"
+  },
+  "dark": {
+   "page": "#1C0608",
+   "fill": "#2F090E",
+   "ink": "#F7EBD2",
+   "muted": "#B5A695",
+   "accent": "#F07C8A"
+  }
+ },
+ "blood-orange": {
+  "name": "Blood orange",
+  "light": {
+   "page": "#FBF5EB",
+   "fill": "#F7DEC7",
+   "ink": "#6F1323",
+   "muted": "#91535A",
+   "accent": "#B4232F"
+  },
+  "dark": {
+   "page": "#2A070D",
+   "fill": "#3D0A13",
+   "ink": "#F7EAD6",
+   "muted": "#BAA69A",
+   "accent": "#E46F2C"
+  }
+ },
+ "kiwi": {
+  "name": "Kiwi",
+  "light": {
+   "page": "#F9F8EC",
+   "fill": "#E6EEC0",
+   "ink": "#1E1912",
+   "muted": "#786750",
+   "accent": "#497522"
+  },
+  "dark": {
+   "page": "#1F170D",
+   "fill": "#302314",
+   "ink": "#F3F1D8",
+   "muted": "#B3B09B",
+   "accent": "#8DBB3C"
+  }
+ },
+ "fig": {
+  "name": "Fig",
+  "light": {
+   "page": "#F6F1E5",
+   "fill": "#F0DBC9",
+   "ink": "#4A2A4C",
+   "muted": "#715C6E",
+   "accent": "#B12F45"
+  },
+  "dark": {
+   "page": "#1E111E",
+   "fill": "#29172A",
+   "ink": "#ECDFC6",
+   "muted": "#AEA194",
+   "accent": "#DE9A73"
+  }
+ },
+ "dragon-fruit": {
+  "name": "Dragon fruit",
+  "light": {
+   "page": "#FBF9F5",
+   "fill": "#F8DDE4",
+   "ink": "#1B1A1C",
+   "muted": "#5E5D5D",
+   "accent": "#B92A66"
+  },
+  "dark": {
+   "page": "#262527",
+   "fill": "#363537",
+   "ink": "#F8F5EE",
+   "muted": "#B9B7B2",
+   "accent": "#F4AFC9"
+  }
+ },
+ "watermelon": {
+  "name": "Watermelon",
+  "light": {
+   "page": "#F4F7E9",
+   "fill": "#F4DFD5",
+   "ink": "#2A1C17",
+   "muted": "#536C4F",
+   "accent": "#B93340"
+  },
+  "dark": {
+   "page": "#0A1409",
+   "fill": "#101F0F",
+   "ink": "#E7EDCF",
+   "muted": "#A5AC94",
+   "accent": "#F58C8C"
+  }
+ },
+ "beet": {
+  "name": "Candy-stripe beet",
+  "light": {
+   "page": "#FDF6F9",
+   "fill": "#F7DAE5",
+   "ink": "#7E2D4A",
+   "muted": "#865668",
+   "accent": "#AB3960"
+  },
+  "dark": {
+   "page": "#210C13",
+   "fill": "#30111C",
+   "ink": "#F8E6EC",
+   "muted": "#B8A5AB",
+   "accent": "#E3779E"
+  }
+ },
+ "red-cabbage": {
+  "name": "Red cabbage",
+  "light": {
+   "page": "#F7F2F8",
+   "fill": "#E4D7E7",
+   "ink": "#47245A",
+   "muted": "#70587B",
+   "accent": "#6C3482"
+  },
+  "dark": {
+   "page": "#170C1D",
+   "fill": "#211129",
+   "ink": "#EEE3F1",
+   "muted": "#AEA3B1",
+   "accent": "#A481B2"
+  }
+ }
+}

@@ -23,8 +23,9 @@ import { contrast, paletteFor } from '../../ui/theme';
 
 // qa-tdd, Nov 18: GUX-R15 loops every theme (RD-95/96, DEC-68) and saves prefs.theme (RD-98) instead of the family
 // color. Only the owner can pick a theme (RD-98), so the reaction is Chase's, on a post by Alex.
-type ColorName = 'paper' | 'avocado' | 'pomegranate';
-const COLOR_NAMES: ColorName[] = ['paper', 'avocado', 'pomegranate'];
+// qa-tdd, Nov 23: FRUIT-1 (DEC-80) replaces the three DEC-68 themes with Paper plus nine fruits.
+type ColorName = 'paper' | 'avocado' | 'pomegranate' | 'blood-orange' | 'kiwi' | 'fig' | 'dragon-fruit' | 'watermelon' | 'beet' | 'red-cabbage';
+const COLOR_NAMES: ColorName[] = ['paper', 'avocado', 'pomegranate', 'blood-orange', 'kiwi', 'fig', 'dragon-fruit', 'watermelon', 'beet', 'red-cabbage'];
 const pfTheme = paletteFor as unknown as (o: string, d: boolean, n?: string, h?: boolean) => ReturnType<typeof paletteFor>;
 import { ShareScreen } from '../ShareScreen';
 

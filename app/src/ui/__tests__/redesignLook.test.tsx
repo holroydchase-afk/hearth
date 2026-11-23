@@ -18,14 +18,17 @@ import { seedPost } from '../../test/seed';
 import { Button, GroupedSection, Txt } from '../kit';
 import * as themeMod from '../theme';
 import { RADIUS, contrast, dialogRadius, paletteFor, useTheme } from '../theme';
+import FRUIT from './fixtures/fruit-palettes.json';
 
 // qa-tdd, Nov 18: RD-3 / RD-24's Ember / Forest / Plum are superseded by RD-94 / RD-95's themes (DEC-68): Paper
 // (default), Avocado, Pomegranate. A theme now changes the page as well as the accent.
-type ColorName = 'paper' | 'avocado' | 'pomegranate';
+// qa-tdd, Nov 23: FRUIT-1 (DEC-80) replaces the three DEC-68 themes with Paper plus nine fruits.
+// Accents: Pomegranate's moved from RD-95's #A3172F / #FF8597 to the JSON's; the other fruits come from the fixture.
+type ColorName = 'paper' | 'avocado' | 'pomegranate' | 'blood-orange' | 'kiwi' | 'fig' | 'dragon-fruit' | 'watermelon' | 'beet' | 'red-cabbage';
 const ACCENTS: Record<string, { light: string; dark: string }> = {
   paper: { light: '#AD371D', dark: '#FF8A65' },
   avocado: { light: '#2F5419', dark: '#7ED69B' }, // qa-tdd Nov 20: RD-111 / RD-112 (Hass avocado, DEC-76)
-  pomegranate: { light: '#A3172F', dark: '#FF8597' },
+  ...Object.fromEntries(Object.entries(FRUIT as unknown as Record<string, { light: { accent: string }; dark: { accent: string } }>).filter(([k]) => k !== 'avocado').map(([k, v]) => [k, { light: v.light.accent, dark: v.dark.accent }])),
 };
 const pf = paletteFor as unknown as (os: string, dark: boolean, n?: string, high?: boolean) => ReturnType<typeof paletteFor>;
 const ThemeCtx = ((themeMod as Record<string, unknown>).ThemeContext ?? React.createContext('paper')) as React.Context<string>;
@@ -38,7 +41,7 @@ const neutral = (h: string) => { const v = rgb(h); return Math.max(...v) - Math.
 const paperFamily = (h: string) => { const [r, g, b] = rgb(h); return r! >= g! && g! >= b! && r! - b! <= 40; };
 const MODES = [false, true] as const;
 /** RD-3 / RD-24: the three choices, fixed here so a missing one fails instead of being skipped. */
-const CHOICES = ['paper', 'avocado', 'pomegranate'] as ColorName[];
+const CHOICES = ['paper', 'avocado', 'pomegranate', 'blood-orange', 'kiwi', 'fig', 'dragon-fruit', 'watermelon', 'beet', 'red-cabbage'] as ColorName[];
 
 describe('RD 1a the look: black and white with one accent', () => {
   // RD-1's white / true black → RD-84/85's tan paper → RD-94 Paper (DEC-68, Chase Nov 18 14:55Z): off-white #F7F7F4, dark #131210.
@@ -95,8 +98,8 @@ describe('RD 1a the look: black and white with one accent', () => {
     for (const t of ['Grandma Jo', 'A title', 'Send', 'Large title']) expect({ t, fam: fam(t) }).toEqual({ t, fam: 'AtkinsonHyperlegibleNext_600SemiBold' });
   });
 
-  it('RD-3 → RD-94/95 one accent per theme, from one setting: Paper (default), Avocado and Pomegranate, light and dark', () => {
-    expect((themeMod as Record<string, unknown>).THEME_NAMES).toEqual(['paper', 'avocado', 'pomegranate']);
+  it('RD-3 → RD-94/95 FRUIT-1 one accent per theme, from one setting: Paper (default) and the nine fruits, light and dark', () => {
+    expect((themeMod as Record<string, unknown>).THEME_NAMES).toEqual(['paper', 'avocado', 'pomegranate', 'blood-orange', 'kiwi', 'fig', 'dragon-fruit', 'watermelon', 'beet', 'red-cabbage']);
     expect(paletteFor('ios', false)).toEqual(pf('ios', false, 'paper'));
     for (const n of CHOICES) {
       expect({ n, light: pf('ios', false, n).accent, dark: pf('ios', true, n).accent }).toEqual({ n, ...ACCENTS[n] });

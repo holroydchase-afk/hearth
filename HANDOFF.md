@@ -11,6 +11,9 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 23: nine fruit themes specced (Chase, DEC-80, R75, FRUIT-1..12; branch claude/project-thread-9r046o)
+- Done: Chase: "put these pallettes in hearth, replacing everything but the default/paper". Spec `SPEC-REDESIGN.md` 1l, persona check `decisions/2026-11-23-fruit-themes.md`, DEC-80, TRACKER R75. Paper and Avocado unchanged; Pomegranate new. Next: qa-tdd red.
+
 ## Nov 23: ask-less self-check rule (intake #154, R74; branch claude/project-thread-6ew09x, PR)
 - **Chase (Nov 23, via Product Studio):** "I never want to update your settings or environments or repos."
 - **Done:** CLAUDE.md "Minimize Chase's effort" gains the self-check paragraph from studio-agents `docs/studio-standard.md` section 1 (do it yourself, then a tool he only allows, then a card, then one copy box). Docs only.
