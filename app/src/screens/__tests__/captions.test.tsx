@@ -20,7 +20,7 @@ describe('CAP post titles', () => {
   it('CAP-1 DEC-73 Share has no Title box any more: the note goes out as the caption, with no title', async () => {
     const be = FakeBackend.withFixture();
     const { nav } = await renderApp(<ShareScreen />, { be, user: 'chase' });
-    fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }));
+    fireEvent.press(await screen.findByRole('button', { name: /^Add photos, up to \d+ at a time$/ }));
     await screen.findByRole('header', { name: 'New post' });
     expect(screen.queryByLabelText('Title (optional)')).toBeNull();
     fireEvent.changeText(screen.getByLabelText('Add a note (optional)'), "Lily's 5th birthday");

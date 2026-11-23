@@ -50,7 +50,7 @@ test('VID-18 a video post shows its poster with a Play word button on Photos and
 
   await page.getByRole('tab', { name: 'Share' }).click();
   const chooser = page.waitForEvent('filechooser');
-  await page.getByRole('button', { name: 'Pick photos or videos from your phone' }).click();
+  await page.getByRole('button', { name: /^Add photos or videos, up to \d+ at a time$/ }).click();
   await (await chooser).setFiles(VIDEO);
   await page.getByLabel('Add a note (optional)').fill('Leo on the slide');
   await page.getByLabel(/^Grandparents – Dad's side, 2 people, not picked$/).click();

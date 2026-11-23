@@ -1224,6 +1224,19 @@
    "fixed": "2026-11-21"
   },
   {
+   "id": "T29",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "QA-R1 (Share start B+ green run r56, Nov 23): app/src/screens/__tests__/video.test.tsx VID-21 finds the Add photos target by /^Add photos( or videos)?, up to 100 at a time$/ although the test turns video_posting on, so a regression to the plain 'Add photos' label with videos on would pass. Pin the exact 'Add photos or videos, up to 100 at a time' (SHARE-ST-2). Test: that file",
+   "tests": [
+    "app/src/screens/__tests__/video.test.tsx"
+   ],
+   "found": "2026-11-23",
+   "fixed": null
+  },
+  {
    "id": "B15",
    "kind": "bug",
    "layer": "backend",
@@ -1232,6 +1245,17 @@
    "title": "QA-R1 (BETA-SMS): a phone-only account's placeholder name falls back to its phone number (tg_handle_new_user, 0007: coalesce(email, phone)), so the family would see the number as a name and in notices. Test: backend/tests/sms_test.sql",
    "tests": [],
    "found": "2026-10-15",
+   "fixed": null
+  },
+  {
+   "id": "B21",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R6 (Share start final green run r57, Nov 23): on Share start a parent's To: group names (GUX-R3, 2 lines) still end with '…' after 2 lines when the family has many groups, so the last groups are cut off with no way to see them on that line. Not covered by a test yet (SHARE-ST-15 checks only 3 groups). Where: app/src/screens/ShareScreen.tsx",
+   "tests": [],
+   "found": "2026-11-23",
    "fixed": null
   }
  ]

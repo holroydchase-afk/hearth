@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-23T10:00:00-05:00",
+ "label": "Share start round 2, B+ (SHARE-ST-10..18, DEC-79 amended): tests written first (red)",
+ "passed": 0,
+ "failed": 43,
+ "results": {},
+ "note": "Red on purpose, 1 run at 3282c4a plus the new and updated tests (uncommitted), typecheck clean. Only the touched file run: screens/__tests__/shareStart.test.tsx 43 failed of 43 (22 new SHARE-ST-10..18, 21 SHARE-ST-1..7 of which ST-1, ST-3 and ST-4 were updated for the new subline and the unfaded 'To: you pick after your photos'), every failure at no 'New post' start header (today's page is still 'Share photos'). No product file changed. Full suites, e2e, backend, Deno and phones not run. e2e/results/share-start-b-plus-red-2026-11-23.txt"
+}

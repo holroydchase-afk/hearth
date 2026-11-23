@@ -11,6 +11,13 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 23: Share start B+ built (postcard first for everyone)
+- Done: Chase picked "B+ Postcard first for everyone" (Nov 21) and said "Merge on green when finished" (Nov 22). SHARE-ST-10..18 + grandparent-ux fixes GUX-R1..R5, green 3x (r57). Screens: /mnt/project-files/design/share-start-b-plus-2026-11-23/. Open: B21 (P2, long group lists end in "…"), GUX-R6 idea, SHARE-ST-9 on phones, Expo preview republish (needs EXPO_TOKEN).
+
+## Nov 20: Share opens on an empty postcard specced (Chase, DEC-79, R73, SHARE-ST-1..9; branch claude/project-thread-4ulu9i)
+- Done: Chase picked "B Empty postcard"; DEC-79, spec `SPEC-REDESIGN.md` 1j-2, persona check `decisions/2026-11-20-share-start-postcard.md`, TRACKER R73. One way in; the "Pick lots of photos" link goes; non-parents stay at 10.
+- Nov 23: round 2 "B+ Postcard first, for everyone" (Chase, Nov 21) amends DEC-79 with SHARE-ST-10..18 (new subline, dashed spot, stamp, full-contrast To: with names, "Last shared", no auto-advance).
+- Next: qa-tdd red (`shareStart.test.tsx`, demo e2e), engineer, grandparent-ux on shots.
 ## Nov 23: Share start tester packaged for other people and projects (Chase, R72; branch claude/project-thread-ukmbd0, PR)
 - **Chase:** "Can you package the tester and put it on your repo somewhere atlas can get it?" and "I want it to be usable by other humans".
 - **Done:** `docs/design/testers/share-start.html` (round 2 Share start tester, standalone, with a How to use note and Chase's pick, B+) and `docs/design/testers/README.md` (how to open it, what it compares, the pick). Checked: no real names, faces, places or emails.

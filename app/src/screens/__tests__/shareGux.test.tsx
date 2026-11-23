@@ -75,7 +75,7 @@ async function openPostcard(opts: { circles?: Circle[]; kv?: KV } = {}) {
   const pickPhotos = jest.fn(async () => ({ items: [photo] }));
   await renderApp(<ShareScreen />, { user: 'chase', kv: opts.kv, be, deps: { api, pickPhotos } });
   await waitFor(() => {
-    const pickBtn = screen.queryAllByRole('button', { name: /^Pick photos/ })[0];
+    const pickBtn = screen.queryAllByRole('button', { name: /^Add photos/ })[0];
     if (pickBtn && !pickPhotos.mock.calls.length) fireEvent.press(pickBtn);
     expect(pickPhotos.mock.calls.length).toBeGreaterThan(0);
   }, slow);

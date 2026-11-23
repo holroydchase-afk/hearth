@@ -4,9 +4,9 @@
 // web, Material 3 on Android. Every tappable thing is a Button or Choice: it always has an
 // accessibilityLabel, a visible word (DS-3), and a 48 pt minimum target (DS-1).
 import { SymbolView } from 'expo-symbols';
-import React, { type ReactNode } from 'react';
+import React, { useRef, type ReactNode } from 'react';
 import {
-  ActivityIndicator, Modal, PanResponder, Platform, Pressable, type PanResponderCallbacks, ScrollView, StyleSheet, Switch, Text, TextInput, View,
+  ActivityIndicator, Animated, Modal, PanResponder, Platform, Pressable, type PanResponderCallbacks, ScrollView, StyleSheet, Switch, Text, TextInput, View,
   useWindowDimensions, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -290,10 +290,39 @@ export function AddTile({ label, onPress }: { label: string; onPress: () => void
     </Pressable>
   );
 }
+/** SHARE-ST-11 / SHARE-ST-12 / SHARE-ST-17 (DEC-79 B+): the empty postcard's photo spot, the one way to start a post.
+ *  A 4:3 dashed accent outline on the card (no tint), set 12 pt in, holding a 72 pt accent-tint circle with the
+ *  add-photo symbol, the title in the accent and a muted helper. A press shrinks it to 0.98 for 120 ms, unless the
+ *  phone's Reduce Motion is on. No fixed height, so the words never get cut at bigger text sizes. */
+const SPOT = { corner: 14, circle: 72 } as const;
+export function AddPhotoSpot({ label, title, helper, onPress }: { label: string; title: string; helper: string; onPress: () => void }) {
+  const { c, t, reduceMotion } = useTheme();
+  const scale = useRef(new Animated.Value(1)).current;
+  const to = (toValue: number) => {
+    if (reduceMotion) return;
+    Animated.timing(scale, { toValue, duration: 120, useNativeDriver: Platform.OS !== 'web' }).start();
+  };
+  return (
+    <Animated.View style={[styles.spotWrap, { transform: [{ scale }] }]}>
+      <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} onPressIn={() => to(0.98)} onPressOut={() => to(1)}
+        style={[styles.spot, { borderColor: c.accent }]}>
+        <View style={[styles.spotCircle, { backgroundColor: c.accentSoft }]}>
+          {/* A fixed 32 pt symbol: it sits in a fixed 72 pt circle, so it does not grow with the text (the words do). */}
+          <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+            <SymbolView name={{ ios: 'photo.badge.plus', android: 'add_photo_alternate', web: 'add_photo_alternate' } as never} size={32} tintColor={c.accent} />
+          </View>
+        </View>
+        <Text style={{ color: c.accent, fontFamily: FONT.semibold, fontSize: t.title, lineHeight: Math.round(t.title * 1.25), textAlign: 'center' }}>{title}</Text>
+        <Text style={{ color: c.muted, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{helper}</Text>
+      </Pressable>
+    </Animated.View>
+  );
+}
+
 /** GUX-R1: on the web a word wider than its box would spill out; phones already break it. */
 const breakLongWords = (Platform.OS === 'web' ? { overflowWrap: 'anywhere' } : {}) as TextStyle;
 /** The first letter of the last word: "Grandma Jo" is J, "Chase" is C. */
-const initial = (name: string) => (name.trim().split(/\s+/).pop() ?? '?').charAt(0).toUpperCase() || '?';
+export const initial = (name: string) => (name.trim().split(/\s+/).pop() ?? '?').charAt(0).toUpperCase() || '?';
 
 function SwitchWord({ on }: { on: boolean }) {
   const { c, t } = useTheme();
@@ -473,6 +502,11 @@ const styles = StyleSheet.create({
   faceRing: { alignSelf: 'stretch', minHeight: 64, borderRadius: RADIUS.pill, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 },
   faceStack: { flexDirection: 'row', justifyContent: 'center' },
   faceDot: { width: 36, height: 36, borderRadius: RADIUS.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+  // SHARE-ST-11 / SHARE-ST-12 (Chase's B+ reference, DEC-79): the photo spot's 14 pt corners and 72 pt circle are set by
+  // the spec, not the RADIUS tokens (engineer, flagged for qa-tdd and the design system: DSG-2 style hand-typed corner).
+  spotWrap: { marginHorizontal: 12, marginTop: 12 },
+  spot: { alignSelf: 'stretch', aspectRatio: 4 / 3, minHeight: MIN_TARGET, borderWidth: 2, borderStyle: 'dashed', borderRadius: SPOT.corner, alignItems: 'center', justifyContent: 'center', gap: 8, padding: 12 },
+  spotCircle: { width: SPOT.circle, height: SPOT.circle, borderRadius: SPOT.circle / 2, alignItems: 'center', justifyContent: 'center' },
   addTile: { minWidth: 64, minHeight: 64, borderRadius: RADIUS.medium, borderWidth: 2, borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 },
   faceTick: { position: 'absolute', top: -6, right: -4, borderRadius: RADIUS.pill, borderWidth: 2, width: 28, height: 28, alignItems: 'center', justifyContent: 'center' },
   card: { padding: 14, gap: 12 },
