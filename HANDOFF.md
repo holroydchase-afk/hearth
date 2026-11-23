@@ -13,8 +13,8 @@ blockers:
 
 ## Nov 23: dark mode elevation by surface step (intake #155, R75; branch claude/project-thread-6ew09x, PR)
 - **Ask (Product Studio intake):** in dark mode, show elevation with a lighter surface instead of a shadow (DARK-5).
-- **Done, test-first:** qa-tdd red DARK-ELEV-1..6 (`darkElevation.test.tsx`, demo e2e DARK-ELEV-6), then the build: `shadeLine(dark)` (GalleryGrid, PhotosScreen) has no shadow in dark; the floating tab bar drops its dark shadow; the laptop demo's phone column sits on `c.surface` with no shadow in dark. Light unchanged. Green 3x (r59). Before/after shots: /mnt/project-files/design/dark-elevation-2026-11-23/.
-- **Open:** B22 (QA-R1, P2): the dark surface step is only 1.05 to 1.11:1, so separation is subtle; a bigger step needs new palette values (Chase's call). ux-reviewer: Ready, 8/10, no P0/P1. DARK-UX-R1 (P2): the screens paint c.bg over the phone column's c.surface, so on the laptop the column is set off by its border only, until B22. DARK-UX-R2 (P2, older): a photo corner shows through the 0.62 dark glass bar; parked.
+- **Done, test-first:** qa-tdd red DARK-ELEV-1..6 (`darkElevation.test.tsx`, demo e2e DARK-ELEV-6), then the build: `shadeLine(dark)` (GalleryGrid, PhotosScreen) has no shadow in dark; the floating tab bar drops its dark shadow; the laptop demo's phone column sits on `c.surface` with no shadow in dark. Light unchanged. Green 3x (r60). Before/after shots: /mnt/project-files/design/dark-elevation-2026-11-23/.
+- **Open:** B23 (QA-R1, P2): the dark surface step is only 1.05 to 1.11:1, so separation is subtle; a bigger step needs new palette values (Chase's call). ux-reviewer: Ready, 8/10, no P0/P1. DARK-UX-R1 (P2): the screens paint c.bg over the phone column's c.surface, so on the laptop the column is set off by its border only, until B23. DARK-UX-R2 (P2, older): a photo corner shows through the 0.62 dark glass bar; parked.
 - **Next exact step:** Chase says "merge" (touches app/**, DEC-48); then live check fresh and returning; reply on #155 with the PR link.
 - **Portfolio / public presence:** the public demo's dark mode loses its drop shadows once this merges.
 
@@ -63,6 +63,12 @@ blockers:
 - **Also fixed:** `backend/tests/notify_test.sql` had a date bomb: the release-and-resend check used a fixed clock of Nov 20, 7pm ET, so from Nov 21 00:00Z its notice was queued after that clock and CI's backend job went red on every PR. The notice is now queued at 5pm ET that day (before the 6pm email slot). Notify suite 60/60 green 3x locally. Two more fixed dates in that file (Nov 2, Nov 7/16 checks) pass today; worth a look if notify goes red again.
 - **Next:** when the Share split by Easy view ships (thread "Redo the Share screen"), fill the "Next: Share follows Easy view" section (DEC number, PR, Off vs On screenshot pair).
 - **Portfolio / public presence:** intake holroydchase-afk.github.io#85 asks Product Studio to add an Easy view section to the Hearth case study.
+
+## Nov 21: Grandma Jo switch fixed for iPhone Safari (Chase, DEMO-SAFARI-1..4, QA-R1, TRACKER R67; branch claude/project-thread-x63lzp, PR)
+- Cause: since the real demo photos (Nov 16) the demo saved ~3.5 MB of photo bytes in localStorage; Safari's quota refused it silently, so a reload (the Jo switch, Reset) always restarted as Chase and nothing a visitor did survived a reload on iPhone.
+- Done: photo bytes in IndexedDB (`app/src/state/fakeSave.ts`), small state in localStorage, old saves migrate; Jo switch and Reset wait for saves. New `e2e-web/demo-safari.spec.js` runs the demo under a Safari-sized quota. Sweep found no other regressions.
+- Next: Chase's "merge", then live check fresh + returning at 390/1280, then one tap on his iPhone.
+- **Portfolio / public presence:** the public demo's Grandma Jo switch works on iPhone once this merges.
 
 ## Nov 20: funding research out of the public repo (Chase, DEC-77, PM-R10)
 - Done: `docs/product/FUNDING-RESEARCH.md` removed; private copy in the project files (`private/`). Older commits still hold it.

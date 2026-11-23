@@ -105,9 +105,16 @@ export function DemoActions({ be, reload, startOver }: { be: FakeBackend; reload
   const { c } = useTheme();
   const [asking, setAsking] = useState(false);
   const viewer = demoViewer(be);
+  // DEMO-SAFARI-1..3: wait for the sample family and every save to land, so the switch survives the reload.
   const swap = () => {
-    setDemoViewer(be, viewer === 'parent' ? 'grandma' : 'parent');
-    reload();
+    const go = () => {
+      setDemoViewer(be, viewer === 'parent' ? 'grandma' : 'parent');
+      const saving = be.flush?.();
+      if (saving) void saving.catch(() => undefined).then(reload);
+      else reload();
+    };
+    if (be.ready) void be.ready.catch(() => undefined).then(go);
+    else go();
   };
   return (
     <View style={styles.actions}>

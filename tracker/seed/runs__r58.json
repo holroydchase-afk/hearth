@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-23T08:50:00-05:00",
- "label": "Dark elevation by surface step (intake #155, DARK-ELEV-1..6): tests written first (red)",
- "passed": 8,
- "failed": 10,
+ "at": "2026-11-21T02:55:00+00:00",
+ "label": "Demo photo bytes to IndexedDB (DEMO-SAFARI-1..4, QA-R1): all app suites 3x (flaky, T30 fixed after)",
+ "passed": 5038,
+ "failed": 1,
  "results": {},
- "note": "Red on purpose, 1 run at 1341595 plus the new tests (dcc89af). jest screens/__tests__/darkElevation.test.tsx: 9 failed, 8 passed (DARK-ELEV-2 tab bar, -3 shade line, -4 laptop column, 3 themes each; DARK-ELEV-1 and -5 pass, as they should). e2e:demo -g DARK-ELEV-6: 1 failed (tablist box-shadow rgba(0,0,0,0.5) at 390 px dark). Open P2 QA-R1 (B22): the dark surface step is small. e2e/results/dark-elev-red-2026-11-23.txt"
+ "note": "3 runs each on ea5dfbe plus the engineer fix (fakeSave.ts, fakeRuntime.ts, FakeBackend flush, DemoBar, DemoChrome): typecheck clean x3; jest 1634 passed x3; e2e:web 5 passed x3; e2e:demo 40, 39/1 (RD-117 raced Reset's now-async navigation, T30), 40. DEMO-SAFARI-1..4 passed in all 3. After the T30 helper fix demo.spec.js --repeat-each 3: 102 passed. Quota emulated in Chromium, no real Safari. e2e/results/demo-safari-gate-flaky-3x-2026-11-21.txt"
 }

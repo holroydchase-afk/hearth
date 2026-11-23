@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-23T09:30:00-05:00",
- "label": "Dark elevation by surface step (intake #155, DARK-ELEV-1..6): all app suites and backend SQL 3x (green)",
- "passed": 8895,
- "failed": 0,
+ "at": "2026-11-23T08:50:00-05:00",
+ "label": "Dark elevation by surface step (intake #155, DARK-ELEV-1..6): tests written first (red)",
+ "passed": 8,
+ "failed": 10,
  "results": {},
- "note": "3 runs each at 10b0657 plus qa-tdd's DARK-ELEV-6 extension (T30, test file only): jest 1704 passed (1 skipped, 1 todo, 166 suites) x3, typecheck clean x3, check-expo-go OK x3 (SDK 58), e2e:demo 39 passed (5 skipped, env-gated screenshot specs) x3 incl. DARK-ELEV-6 (not skipped; the engineer's SKIPPED was not reproduced), e2e:web 5 passed (6 skipped, env-gated) x3, backend SQL 29 suites 1217 passed x3 (no backend change). Extended DARK-ELEV-6 red on 1341595. Before/after screenshots 390 and 1280, dark and light, dsf 2, Gallery scrolled so the shade line shows: /mnt/project-files/design/dark-elevation-2026-11-23/. Open P2: B22 (QA-R1, small dark surface step). Not run: Deno, e2e:site, phones. e2e/results/dark-elev-green-2026-11-23.txt"
+ "note": "Red on purpose, 1 run at 1341595 plus the new tests (dcc89af). jest screens/__tests__/darkElevation.test.tsx: 9 failed, 8 passed (DARK-ELEV-2 tab bar, -3 shade line, -4 laptop column, 3 themes each; DARK-ELEV-1 and -5 pass, as they should). e2e:demo -g DARK-ELEV-6: 1 failed (tablist box-shadow rgba(0,0,0,0.5) at 390 px dark). Open P2 QA-R1 (B22): the dark surface step is small. e2e/results/dark-elev-red-2026-11-23.txt"
 }
