@@ -81,6 +81,11 @@ function videoOn(): FakeBackend {
 function relativeCanPost(be = FakeBackend.withFixture()): FakeBackend {
   const real = be.mySpaces.bind(be);
   jest.spyOn(be, 'mySpaces').mockImplementation((u) => real(u).map((s) => ({ ...s, can_post: true })));
+  // engineer, flagged for qa-tdd: the fake also checks the role in myCircles and createPost, so without this a relative
+  // has no groups to list or send to (SHARE-ST-15/16 could never find her names or tiles).
+  const poster = be.isPoster.bind(be);
+  const relatives = new Set([FIXTURE.users.ruth.id, FIXTURE.users.jo.id]);
+  jest.spyOn(be, 'isPoster').mockImplementation((space, user) => relatives.has(user) || poster(space, user));
   return be;
 }
 
@@ -95,7 +100,7 @@ const target = (limit?: number) => screen.getByRole('button', { name: limit ? `A
 const TO = 'To: you pick after your photos'; // SHARE-ST-15 (was "To: pick after your photos", SHARE-ST-3)
 /** The note and To: part: the View hidden from screen readers that holds the To: words. */
 function fadedPart(): Inst {
-  const words = screen.getByText(TO);
+  const words = screen.getByText(TO, { includeHiddenElements: true }); // engineer: the part is hidden from screen readers by design
   for (let p: Inst | null = words; p; p = p.parent) {
     if (isHost(p) && (p.props.accessibilityElementsHidden === true || p.props.importantForAccessibility === 'no-hide-descendants' || p.props['aria-hidden'] === true)) return p;
   }
@@ -243,7 +248,7 @@ describe('SHARE-ST-4 a parent taps Add photos: one picker, up to 100', () => {
     await waitFor(() => expect(pickBulk).toHaveBeenCalled());
     await new Promise((r) => setTimeout(r, 20));
     expect(target(100)).toBeTruthy();
-    expect(screen.getByText(TO)).toBeTruthy();
+    expect(screen.getByText(TO, { includeHiddenElements: true })).toBeTruthy(); // engineer: hidden from screen readers by design
     expect(screen.queryByRole('button', { name: 'Cancel this post' })).toBeNull();
     expect(screen.queryByRole('alert')).toBeNull();
   });
@@ -410,7 +415,9 @@ describe('SHARE-ST-12 inside the spot: tinted circle, icon, "Add photos", helper
     const circle = (btn.findAll(isHost) as Inst[]).find((x) => { const s = flat(x.props.style); return s.width === 72 && s.height === 72; });
     expect(circle && { radius: flat(circle.props.style).borderRadius, fill: flat(circle.props.style).backgroundColor }).toEqual({ radius: 36, fill: c.accentSoft });
     const icon = circle!.findAll((x: Inst) => x.props.name !== undefined && x.props.tintColor !== undefined);
-    expect(icon.map((i: Inst) => i.props.size)).toEqual([32]);
+    // engineer, flagged for qa-tdd: SymbolView passes name/tintColor/size down through several nodes, so one icon shows
+    // up more than once here; check they all say 32 (was toEqual([32]), which no SymbolView can meet).
+    expect([...new Set(icon.map((i: Inst) => i.props.size))]).toEqual([32]);
     const add = btn.findAll((x: Inst) => x.type === Text && wordsIn(x) === 'Add photos')[0]!;
     const s = flat(add.props.style);
     expect({ size: s.fontSize, font: s.fontFamily, color: s.color }).toEqual({ size: 22, font: FONT.semibold, color: c.accent });

@@ -67,12 +67,7 @@ export function planBatch(assets: PickedAsset[], o: PhoneZone = {}, opts: { vide
   // Only the date leaves this function: never EXIF, GPS or maker data.
   const byDay = new Map<string | null, QueueItem[]>();
   for (const a of kept) {
-    const info = captureInfo(a, o);
-    const item: QueueItem = { uri: a.uri, kind: isVideo(a) ? 'video' : 'photo', takenAt: info?.takenAt ?? null };
-    if (typeof a.width === 'number') item.width = a.width;
-    if (typeof a.height === 'number') item.height = a.height;
-    if (item.kind === 'video') item.durationMs = a.duration ?? null;
-    const key = info?.dayKey ?? null;
+    const { item, dayKey: key } = toItem(a, o);
     const list = byDay.get(key) ?? [];
     list.push(item);
     byDay.set(key, list);
@@ -90,6 +85,31 @@ export function planBatch(assets: PickedAsset[], o: PhoneZone = {}, opts: { vide
     }
   }
   return { posts, photoCount: kept.length, dayCount: days.length, skippedVideos, overLimit };
+}
+
+/** One picked asset as a queue item: its uri, kind, size, a video's length and the date read on the phone. Nothing
+ *  else (no EXIF, GPS or maker data) is copied over. */
+function toItem(a: PickedAsset, o: PhoneZone): { item: QueueItem; dayKey: string | null } {
+  const info = captureInfo(a, o);
+  const item: QueueItem = { uri: a.uri, kind: isVideo(a) ? 'video' : 'photo', takenAt: info?.takenAt ?? null };
+  if (typeof a.width === 'number') item.width = a.width;
+  if (typeof a.height === 'number') item.height = a.height;
+  if (item.kind === 'video') item.durationMs = a.duration ?? null;
+  return { item, dayKey: info?.dayKey ?? null };
+}
+
+/** SHARE-ST-4 / SHARE-ST-7 (DEC-79): a parent's pick of 1 to 10 through the bulk picker goes straight to the postcard,
+ *  in the order picked. Same rules as planBatch: a Live Photo's motion part is dropped, videos are left out (and
+ *  counted) unless video_posting is on, and only the date read on the phone leaves; never EXIF or GPS. */
+export function pickedItems(assets: PickedAsset[], o: PhoneZone = {}, opts: { videos?: boolean } = {}): { items: QueueItem[]; skippedVideos: number } {
+  let skippedVideos = 0;
+  const items: QueueItem[] = [];
+  for (const a of assets) {
+    if (a.type === 'pairedVideo') continue;
+    if (isVideo(a) && !opts.videos) { skippedVideos += 1; continue; }
+    items.push(toItem(a, o).item);
+  }
+  return { items, skippedVideos };
 }
 
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;

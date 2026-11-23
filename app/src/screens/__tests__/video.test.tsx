@@ -153,7 +153,8 @@ describe('VID-21 bulk pick with videos', () => {
     await saveLastAudience(kv, FIXTURE.users.chase.id, [FIXTURE.circles.dadSide.id]);
     const pickBulk = jest.fn(async () => ({ assets: assets() }));
     const r = await renderApp(<ShareScreen />, { user: 'chase', be, kv, deps: { pickBulk } });
-    fireEvent.press(await screen.findByRole('button', { name: 'Add photos, up to 100 at a time' }));
+    // engineer, flagged for qa-tdd: with video_posting on the target reads "Add photos or videos, ..." (SHARE-ST-2).
+    fireEvent.press(await screen.findByRole('button', { name: /^Add photos( or videos)?, up to 100 at a time$/ }));
     // Retargeted Nov 19 by qa-tdd for DEC-73 (SHARE-PC-7): the saved group is no longer ticked; tap it.
     fireEvent.press(await screen.findByRole('checkbox', { name: /^Grandparents – Dad's side,/ }));
     await screen.findByText(`Send to: ${"Grandparents – Dad's side"}`);

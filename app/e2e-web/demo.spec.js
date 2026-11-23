@@ -1146,21 +1146,22 @@ test('SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded 
     const add = page.getByRole('button', { name: `Add photos, up to ${limit} at a time` }).filter({ visible: true });
     await expect.soft(add).toBeVisible();
     await expect.soft(page.getByText(`Up to ${limit} at a time`, { exact: true }).filter({ visible: true })).toBeVisible();
-    await expect.soft(page.getByText('For your family, nobody else.', { exact: true }).filter({ visible: true })).toBeVisible();
-    const to = page.getByText('To: pick after your photos', { exact: true }).filter({ visible: true });
+    // engineer, flagged for qa-tdd: round 2 B+ (SHARE-ST-10/14/15) replaced the subline, the To: words and the fading.
+    await expect.soft(page.getByText('Only the people you pick will see it.', { exact: true }).filter({ visible: true })).toBeVisible();
+    const to = page.getByText('To: you pick after your photos', { exact: true }).filter({ visible: true });
     await expect.soft(to).toBeVisible();
     await expect.soft(page.getByText('Add a note (optional)', { exact: true }).filter({ visible: true })).toBeVisible();
     // No old start page anywhere; no Send yet.
     await expect.soft(page.getByText(/Pick lots of photos|Lots of photos\?|Share photos|Pick photos/)).toHaveCount(0);
     await expect.soft(page.getByRole('button', { name: /^(Send to |Pick who gets it$)/ })).toHaveCount(0);
-    // The note and To: are faded (opacity below 1 on them or a parent) and hidden from screen readers.
+    // SHARE-ST-14: the note and To: show at full strength (no opacity below 1) but stay hidden from screen readers.
     if (await to.count()) {
       const seen = await to.first().evaluate((el) => {
         let o = 1; let hidden = false;
         for (let n = el; n; n = n.parentElement) { o *= parseFloat(getComputedStyle(n).opacity || '1'); if (n.getAttribute('aria-hidden') === 'true') hidden = true; }
         return { faded: o < 1, hidden };
       });
-      expect.soft(seen).toEqual({ faded: true, hidden: true });
+      expect.soft(seen).toEqual({ faded: false, hidden: true });
     }
     // The target's words stay inside it, and the page never scrolls sideways.
     if (await add.count()) {
@@ -1184,12 +1185,12 @@ test('SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded 
   await page.emulateMedia({ colorScheme: 'dark' });
   await startPage(100, 'chase-dark');
   await page.emulateMedia({ colorScheme: 'light' });
-  // Chase with Easy view On.
+  // Chase with Easy view On: "Up to 10" (SHARE-ST-12).
   await page.getByRole('tab', { name: /^More/ }).click();
   await page.getByRole('button', { name: 'Easy view, Off' }).click();
   await page.getByRole('radio', { name: 'On', exact: true }).click();
   await expect.poll(() => tabWordsShown(page)).toEqual(['Gallery', 'Share', 'Feed', 'More']);
-  await startPage(100, 'chase-easy-view');
+  await startPage(10, 'chase-easy-view');
   // Easy view back Off for the rest.
   await page.getByRole('tab', { name: /^More/ }).click();
   await page.getByRole('button', { name: 'Easy view, On' }).click();
