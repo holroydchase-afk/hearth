@@ -50,7 +50,7 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   const gallery = mode === 'gallery';
   const app = useApp();
   const state = useFeed();
-  const { c } = useTheme();
+  const { c, dark } = useTheme();
   const tabRoom = useTabBarSpace(); // RD-109: room under the web's floating tab bar
   // EVT-3/4: the Events list or one event, opened in place; Back returns here.
   const [events, setEvents] = useState<EventsView | null>(null);
@@ -205,7 +205,7 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
             onLayout={(e) => { setPinAt(e.nativeEvent.layout.height); fieldAt.current = e.nativeEvent.layout.y; }}
           >
             <SearchField testID="search-field" onPress={openSearch} />
-            {under && !monthPinned ? <View testID="search-bar-shade" pointerEvents="none" accessible={false} style={[shadeLine, { backgroundColor: c.line }]} /> : null}
+            {under && !monthPinned ? <View testID="search-bar-shade" pointerEvents="none" accessible={false} style={[shadeLine(dark), { backgroundColor: c.line }]} /> : null}
           </View>
           {header}
           {empty}

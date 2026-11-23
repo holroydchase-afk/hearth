@@ -144,7 +144,8 @@ export function HearthTabBar({ role, current, onNavigate, newMessages = 0, float
         backgroundColor: alpha(c.surface, dark ? 0.62 : 0.6),
         borderColor: dark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(255, 255, 255, 0.7)',
         backdropFilter: 'blur(18px) saturate(1.6)',
-        boxShadow: dark ? '0 6px 24px rgba(0, 0, 0, 0.5)' : '0 6px 24px rgba(0, 0, 0, 0.14)',
+        // DARK-ELEV-2: dark lifts by the c.surface fill and light border, not a shadow.
+        boxShadow: dark ? undefined : '0 6px 24px rgba(0, 0, 0, 0.14)',
         // RD-110-R4: a max width that is a length in both states, so the shrink can animate (to or from "auto" can't).
         maxWidth: 'calc(100% - 32px)',
         transition: reduceMotion ? undefined : 'max-width 220ms ease',
