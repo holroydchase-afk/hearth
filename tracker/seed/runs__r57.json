@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-23T06:30:00-05:00",
+ "label": "Share start B+ plus GUX-R1..R5 fixes (DEC-79): all app suites 3x (green)",
+ "passed": 5190,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs each at 09e187f on claude/project-thread-4ulu9i (engineer fix on the red tests d6cabe4; the fix commit changes ShareScreen.tsx only, no test file): jest 1687 passed (1 skipped, 1 todo, 165 suites) x3 incl. the 10 shareStart GUX-R1..R5 tests red in the GUX red run, typecheck clean x3, check-expo-go OK x3 (SDK 58), e2e:demo 38 passed (5 skipped) x3 on dist-demo rebuilt once, e2e:web 5 passed (6 skipped, env-gated) x3. Closes QA-R1..R5 from the GUX red run (e2e/results/share-start-gux-red-2026-11-23.txt). Open P2 QA-R6 (B21): a parent's group names still end with '…' after 2 lines when there are many groups. Backend SQL and Deno not run (no backend change); e2e:site and phones not run. e2e/results/share-start-final-green-2026-11-23.txt"
+}

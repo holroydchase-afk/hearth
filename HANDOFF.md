@@ -11,6 +11,9 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 23: Share start B+ built (postcard first for everyone)
+- Done: Chase picked "B+ Postcard first for everyone" (Nov 21) and said "Merge on green when finished" (Nov 22). SHARE-ST-10..18 + grandparent-ux fixes GUX-R1..R5, green 3x (r57). Screens: /mnt/project-files/design/share-start-b-plus-2026-11-23/. Open: B21 (P2, long group lists end in "…"), GUX-R6 idea, SHARE-ST-9 on phones, Expo preview republish (needs EXPO_TOKEN).
+
 ## Nov 20: Share opens on an empty postcard specced (Chase, DEC-79, R72, SHARE-ST-1..9; branch claude/project-thread-4ulu9i)
 - Done: Chase picked "B Empty postcard"; DEC-79, spec `SPEC-REDESIGN.md` 1j-2, persona check `decisions/2026-11-20-share-start-postcard.md`, TRACKER R72. One way in; the "Pick lots of photos" link goes; non-parents stay at 10.
 - Nov 23: round 2 "B+ Postcard first, for everyone" (Chase, Nov 21) amends DEC-79 with SHARE-ST-10..18 (new subline, dashed spot, stamp, full-contrast To: with names, "Last shared", no auto-advance).

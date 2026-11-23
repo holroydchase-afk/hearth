@@ -1246,6 +1246,17 @@
    "tests": [],
    "found": "2026-10-15",
    "fixed": null
+  },
+  {
+   "id": "B21",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R6 (Share start final green run r57, Nov 23): on Share start a parent's To: group names (GUX-R3, 2 lines) still end with '…' after 2 lines when the family has many groups, so the last groups are cut off with no way to see them on that line. Not covered by a test yet (SHARE-ST-15 checks only 3 groups). Where: app/src/screens/ShareScreen.tsx",
+   "tests": [],
+   "found": "2026-11-23",
+   "fixed": null
   }
  ]
 }
