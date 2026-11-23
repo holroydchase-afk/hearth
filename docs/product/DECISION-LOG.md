@@ -556,6 +556,13 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** it holds personal plans that don't belong in a public portfolio repo and contradicts the proof-of-concept framing.
 - **Source:** `docs/reviews/2026-11-19-tech-debt/pm.md` PM-R10. Not a product decision, so no persona check. Older commits still hold the file.
 
+### DEC-78 · Atkinson Hyperlegible Next everywhere, again (FONT-1..)
+- **When / status:** Nov 21 · Chase, thread "Build Hearth's design guidelines": "we may want to use atkinson", then after the live font tester "hyperlegible next. also ensure that is on the portfolio demo page" · Building
+- **Chose:** Atkinson Hyperlegible Next (Regular, Medium, SemiBold; no Bold) bundled in the app, on iPhone, Android and the web demo; also the studio core's font for Chase's other products.
+- **Over:** the phone's own font (DEC-59 / RD-2, Nov 15); Lexend, Inter, Nunito Sans.
+- **Because:** the studio wants products that look alike, and the phone's own font differs between iPhone and Android; Atkinson was designed for low-vision readers, which fits the grandparents best.
+- **Source:** persona check `decisions/2026-11-21-atkinson-font.md`; tester https://claude.ai/artifact/7Dfseqn1BtTaPtFuCijPzX. Supersedes DEC-59's font row (RD-2) and DS-12.
+
 ### DEC-79 · Share opens on an empty postcard with one "Add photos" target (SHARE-ST-1..SHARE-ST-9)
 - **When / status:** Nov 20, 9:19 PM ET · Chase, thread on the Share start ("The start screen for sharing needs improvement", "This looks subpar compared to the rest of the app"), decision card "Which Share start screen should replace today's?": "B Empty postcard", on the live tester (`/mnt/project-files/design/share-start-2026-11-20/share-start-tester.html`) · Specced, failing tests next
 - **Chose:** the Share tab opens on the DEC-73 postcard itself, empty: large title "New post", subline "For your family, nobody else.", and inside the card one big "Add photos" target filling the photo spot (icon plus words, "Up to 100 at a time" for parents, "Up to 10 at a time" for others); the note and the To: section ("To: pick after your photos") sit below it, faded and not tappable. One way in: the "Lots of photos?" section and "Pick lots of photos" go away. A parent picks up to 100; 1 to 10 open the postcard, 11 to 100 go to today's bulk review. A relative who can post picks up to 10 (the phone's picker stops at 10); if more ever come back, the first 10 are kept with HARD-2's notice.
@@ -564,4 +571,4 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Source:** `docs/product/SPEC-REDESIGN.md` 1j-2; persona check `decisions/2026-11-20-share-start-postcard.md`. Keeps the Oct 17 call (bulk pick is parents only) and HARD-2's 10-photo postcard max; replaces the start page in BETA-BULK's "Pick lots of photos" entry.
 
 ---
-Last updated: Nov 20, 2026 (DEC-79)
+Last updated: Nov 22, 2026 (DEC-79)

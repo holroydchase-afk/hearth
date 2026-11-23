@@ -10,7 +10,7 @@ import {
   useWindowDimensions, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LABEL_SCALE_CAP, MIN_TARGET, RADIUS, WEIGHT, dialogRadius, iconSize, sheetShouldClose, useTheme } from './theme';
+import { LABEL_SCALE_CAP, MIN_TARGET, RADIUS, FONT, dialogRadius, iconSize, sheetShouldClose, useTheme } from './theme';
 import { useTypingField } from './typing';
 import { useTabBarSpace } from './tabBarSpace';
 
@@ -36,14 +36,14 @@ export function Txt({ variant = 'body', style, children, role, testID, numberOfL
   variant?: TxtVariant; style?: StyleProp<TextStyle>; children: ReactNode; role?: 'header' | 'alert' | 'text'; testID?: string; numberOfLines?: number;
 }) {
   const { c, t } = useTheme();
-  // RD-2: the phone's own font (no fontFamily). Body and muted Regular; strong (names) and title Semibold;
-  // display is the large title, Semibold too (RD-55: no Bold anywhere).
+  // FONT-2 (DEC-78): Atkinson Hyperlegible Next, the weight carried by the family. Body and muted Regular; strong
+  // (names) and title SemiBold; display is the large title, SemiBold too (RD-55: no Bold anywhere).
   const v: Record<TxtVariant, TextStyle> = {
-    body: { fontSize: t.base, lineHeight: t.line, color: c.ink },
-    strong: { fontWeight: WEIGHT.semibold, fontSize: t.base, lineHeight: t.line, color: c.ink },
-    muted: { fontSize: t.base, lineHeight: t.line, color: c.muted },
-    title: { fontWeight: WEIGHT.semibold, fontSize: t.title, lineHeight: Math.round(t.title * 1.25), color: c.ink },
-    display: { fontWeight: WEIGHT.semibold, fontSize: t.display, lineHeight: Math.round(t.display * 1.2), color: c.ink },
+    body: { fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line, color: c.ink },
+    strong: { fontFamily: FONT.semibold, fontSize: t.base, lineHeight: t.line, color: c.ink },
+    muted: { fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line, color: c.muted },
+    title: { fontFamily: FONT.semibold, fontSize: t.title, lineHeight: Math.round(t.title * 1.25), color: c.ink },
+    display: { fontFamily: FONT.semibold, fontSize: t.display, lineHeight: Math.round(t.display * 1.2), color: c.ink },
   };
   return (
     <Text
@@ -117,7 +117,7 @@ export function Button({ label, text, onPress, variant = 'primary', disabled, so
       {busy ? <ActivityIndicator color={fg} /> : null}
       {icon && !busy ? <SystemIcon icon={icon} color={selected ? c.accent : fg} /> : null}
       {typeof (text ?? label) === 'string' ? (
-        <Text style={{ color: selected ? c.ink : fg, fontWeight: WEIGHT.semibold, fontSize: t.base, textAlign: 'center' }}>{text ?? label}</Text>
+        <Text style={{ color: selected ? c.ink : fg, fontFamily: FONT.semibold, fontSize: t.base, textAlign: 'center' }}>{text ?? label}</Text>
       ) : (
         text
       )}
@@ -142,7 +142,7 @@ export function IconButton({ label, text, icon, onPress, testID }: { label: stri
     >
       <SystemIcon icon={icon} color={c.ink} size={28} />
       {/* HIG-3: a toolbar word stops growing at 1.5x so the row still fits at the largest text size. */}
-      <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.ink, fontSize: t.base }}>{text}</Text>
+      <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.ink, fontFamily: FONT.regular, fontSize: t.base }}>{text}</Text>
     </Pressable>
   );
 }
@@ -165,7 +165,7 @@ export function BackButton({ to, onPress, label, ink }: {
       style={({ pressed }) => [styles.back, { opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
     >
       <SystemIcon icon={{ sf: 'chevron.backward', md: 'arrow_back' }} color={color} />
-      <Text style={{ color, fontSize: t.base, lineHeight: t.line }}>{to}</Text>
+      <Text style={{ color, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line }}>{to}</Text>
     </Pressable>
   );
 }
@@ -186,9 +186,9 @@ export function MenuRow({ text, icon, count, value, onPress, testID }: { text: s
       style={({ pressed }) => [styles.menuRow, { opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
     >
       <SystemIcon icon={icon} color={c.ink} size={26} />
-      <Text style={{ flex: 1, color: c.ink, fontSize: t.base, lineHeight: t.line }}>{text}</Text>
-      {count ? <Text style={{ color: c.accent, fontSize: t.base, fontWeight: WEIGHT.semibold }}>{count}</Text> : null}
-      {value ? <Text style={{ color: c.muted, fontSize: t.base }}>{value}</Text> : null}
+      <Text style={{ flex: 1, color: c.ink, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line }}>{text}</Text>
+      {count ? <Text style={{ color: c.accent, fontSize: t.base, fontFamily: FONT.semibold }}>{count}</Text> : null}
+      {value ? <Text style={{ color: c.muted, fontFamily: FONT.regular, fontSize: t.base }}>{value}</Text> : null}
       <SystemIcon icon={CHEVRON} color={c.muted} size={18} />
     </Pressable>
   );
@@ -261,7 +261,7 @@ export function FaceTile({ name, count, faces, picked, onPress, across }: {
         <View style={styles.faceStack}>
           {faces.slice(0, 3).map((f, i) => (
             <View key={`${f}-${i}`} style={[styles.faceDot, { backgroundColor: c.line, borderColor: c.bg, marginLeft: i ? -10 : 0 }]}>
-              <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.ink, fontSize: t.base, fontWeight: WEIGHT.semibold }}>{initial(f)}</Text>
+              <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.ink, fontSize: t.base, fontFamily: FONT.semibold }}>{initial(f)}</Text>
             </View>
           ))}
         </View>
@@ -273,8 +273,8 @@ export function FaceTile({ name, count, faces, picked, onPress, across }: {
         ) : null}
       </View>
       {/* GUX-R1: the whole name, never cut; a word too long for even a 2-across tile breaks rather than spill out. */}
-      <Text style={[{ alignSelf: 'stretch', color: c.ink, fontSize: t.base, lineHeight: t.line, fontWeight: WEIGHT.semibold, textAlign: 'center' }, breakLongWords]}>{name}</Text>
-      <Text style={{ color: c.muted, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{`${count} ${count === 1 ? 'person' : 'people'}`}</Text>
+      <Text style={[{ alignSelf: 'stretch', color: c.ink, fontSize: t.base, lineHeight: t.line, fontFamily: FONT.semibold, textAlign: 'center' }, breakLongWords]}>{name}</Text>
+      <Text style={{ color: c.muted, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{`${count} ${count === 1 ? 'person' : 'people'}`}</Text>
     </Pressable>
   );
 }
@@ -286,7 +286,7 @@ export function AddTile({ label, onPress }: { label: string; onPress: () => void
     <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
       style={({ pressed }) => [styles.addTile, { borderColor: c.line, opacity: pressed ? 0.7 : 1 }]}>
       <SystemIcon icon={{ sf: 'plus', md: 'add' }} color={c.accent} />
-      <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.accent, fontSize: t.base, fontWeight: WEIGHT.semibold }}>Add</Text>
+      <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.accent, fontSize: t.base, fontFamily: FONT.semibold }}>Add</Text>
     </Pressable>
   );
 }
@@ -297,7 +297,7 @@ const initial = (name: string) => (name.trim().split(/\s+/).pop() ?? '?').charAt
 
 function SwitchWord({ on }: { on: boolean }) {
   const { c, t } = useTheme();
-  return <Text style={{ color: c.ink, fontSize: t.base, fontWeight: WEIGHT.semibold }}>{on ? 'On' : 'Off'}</Text>;
+  return <Text style={{ color: c.ink, fontSize: t.base, fontFamily: FONT.semibold }}>{on ? 'On' : 'Off'}</Text>;
 }
 
 /** UX-R31: on the web a rounded field draws its own focus ring: a 2 pt accent edge that follows its corners (the
@@ -335,7 +335,7 @@ export function Field(props: TextInputProps & { label: string; underline?: boole
         onFocus={(e) => { typing.onFocus(); onFocus?.(e); }}
         onBlur={(e) => { typing.onBlur(); onBlur?.(e); }}
         style={[
-          { minHeight: 56, color: c.ink, paddingHorizontal: 14, paddingVertical: 12, fontSize: t.base, ...box },
+          { minHeight: 56, color: c.ink, paddingHorizontal: 14, paddingVertical: 12, fontFamily: FONT.regular, fontSize: t.base, ...box },
           style,
         ]}
       />
@@ -399,11 +399,11 @@ export function AlertDialog({ title, body, keep, destroy, onKeep, onDestroy }: {
   title: string; body?: string; keep: string; destroy: string; onKeep: () => void; onDestroy: () => void;
 }) {
   const { c, t, os } = useTheme();
-  const words = (label: string, color: string, weight: '400' | '600', onPress: () => void, first: boolean) => (
+  const words = (label: string, color: string, family: string, onPress: () => void, first: boolean) => (
     <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
       style={({ pressed }) => [styles.alertBtn, first ? { borderRightWidth: StyleSheet.hairlineWidth, borderRightColor: c.line } : null,
         { backgroundColor: pressed ? c.fill : 'transparent' }]}>
-      <Text style={{ color, fontWeight: weight, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{label}</Text>
+      <Text style={{ color, fontFamily: family, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{label}</Text>
     </Pressable>
   );
   return (
@@ -411,12 +411,12 @@ export function AlertDialog({ title, body, keep, destroy, onKeep, onDestroy }: {
       <View style={[styles.scrim, { backgroundColor: c.scrim }]}>
         <View accessibilityViewIsModal style={[styles.alert, { backgroundColor: c.surface, borderRadius: dialogRadius(os) }]}>
           <View style={styles.alertWords}>
-            <Text accessibilityRole="header" style={{ color: c.ink, fontWeight: WEIGHT.semibold, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{title}</Text>
-            {body ? <Text style={{ color: c.ink, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{body}</Text> : null}
+            <Text accessibilityRole="header" style={{ color: c.ink, fontFamily: FONT.semibold, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{title}</Text>
+            {body ? <Text style={{ color: c.ink, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{body}</Text> : null}
           </View>
           <View style={[styles.alertRow, { borderTopColor: c.line }]}>
-            {words(keep, c.ink, WEIGHT.semibold, onKeep, true)}
-            {words(destroy, c.dangerText, WEIGHT.regular, onDestroy, false)}
+            {words(keep, c.ink, FONT.semibold, onKeep, true)}
+            {words(destroy, c.dangerText, FONT.regular, onDestroy, false)}
           </View>
         </View>
       </View>

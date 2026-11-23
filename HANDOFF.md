@@ -14,6 +14,34 @@ blockers:
 ## Nov 20: Share opens on an empty postcard specced (Chase, DEC-79, R72, SHARE-ST-1..9; branch claude/project-thread-4ulu9i)
 - Done: Chase picked "B Empty postcard"; DEC-79, spec `SPEC-REDESIGN.md` 1j-2, persona check `decisions/2026-11-20-share-start-postcard.md`, TRACKER R72. One way in; the "Pick lots of photos" link goes; non-parents stay at 10.
 - Next: qa-tdd red (`shareStart.test.tsx`, demo e2e), engineer, grandparent-ux on shots.
+## Nov 22: wired to studio-agents PR #45 checks (intake #149, R71; branch claude/project-thread-qt1q8v, PR)
+- **Chase:** "Pick up the open intake issue ... one small PR, qa-tdd for any code or CI change".
+- **Done:** agents-check fails a code PR whose `qa-tdd skipped` reason isn't exactly `docs only` or `config only` (from studio-agents templates/agents-check.yml; setup-node pin left at v4). Test `scripts/tests/agents_check_skip_test.sh` (AGENTSKIP-0..4, red first) runs the real workflow step; wired into test-all.sh and agents.verify. CLAUDE.md gains "Open every thread the same way" and "Agents come from studio-agents". Shared scripts already matched the studio templates.
+- **Portfolio / public presence:** none.
+
+## Nov 21: themes shareable with other studio products (Chase, R70; branch claude/project-thread-1ba5s6, PR)
+- **Chase:** "We also probably want the themes Sharable".
+- **Done:** `docs/design/themes.css` (Paper default, Avocado, Pomegranate; light, dark, high contrast; studio names + Material 3 role names; font stack) generated from theme.ts by `themesCss()` in `tokens.ts`; `tokens.json` gains `roles`. Drift tests DS-THEMES-1..3 (red first: e2e/results/themes-red-jest-2026-11-21.txt). STUDIO-CORE "Shared themes" says how to use them. DSG-6 closed.
+- **Portfolio / public presence:** none.
+
+## Nov 21: Atkinson Hyperlegible Next everywhere, again (Chase, DEC-78, R69; branch claude/project-thread-1ba5s6, PR)
+- **Chase:** "hyperlegible next. also ensure that is on the portfolio demo page" (after the live font tester https://claude.ai/artifact/7Dfseqn1BtTaPtFuCijPzX).
+- **Done:** qa-tdd red FONT-1..5 (flipped RD-2 tests), engineer built: package 0.4.1 bundled, `FONT`/`FONT_FILES` in theme.ts, `useFonts` in the root layout, every `fontWeight` replaced by the matching family, tokens.json regenerated; STUDIO-CORE, DESIGN-SYSTEM DS-12, DEC-78 and persona check updated.
+- **Next:** merge, live demo check fresh and returning, Expo preview republish, Chase's iPhone look at 360 px wrapping.
+- **Portfolio / public presence:** the public demo (chaseholroyd.com/hearth/) shows Atkinson Hyperlegible Next once this merges.
+
+## Nov 21: studio design core and Hearth's design guidelines (Chase, R68; branch claude/project-thread-1ba5s6, PR)
+- **Chase:** "Can you and the ui agent build design guidelines and whatever design system we should use?", "start lean", "goal is to give this to other projects so their products look similar", "are there other established design systems we should look at?"
+- **Done:** `docs/design/STUDIO-CORE.md`, the product-neutral core other products copy: each phone's own guidelines for behavior, Material 3 color roles as the token vocabulary, no component library, 11 principles, the 7-colors-per-mode theme recipe with tested contrast, type, space, corners, components, a new-product checklist. `docs/product/DESIGN-SYSTEM.md` is now Hearth's layer: stale palette, font and DS-11/DS-12 rows brought up to the code (themes, Medium for names, no Bold), Hearth's themes table, Hearth components, and gaps DSG-1..8 (not fixed). Brand names of other apps removed. ux-reviewer reviewed (DSC-R1..R8, all applied).
+- **Open:** Chase picks the font (decision card; recommended Atkinson Hyperlegible Next everywhere, which would reverse DEC-59's font and needs an app PR). Studio intake to adopt the core in the shared tools repo. DSG-1..8 need staff-pm ranking and failing tests.
+
+## Nov 21: Easy view case study for the portfolio (Chase, R66; branch claude/project-thread-lld29p, PR)
+- **Chase:** "We need to ensure we do a write up on easy mode and ensure that's on the portfolio."
+- **Done:** `docs/portfolio/EASY-VIEW.md` (problem, the call and what it beat, persona check and its one Red, tests, what it unlocked: DEC-70 native glass bar, DEC-72 demo, DEC-75 shrink), linked from `CASE-STUDY.md`. Screenshots shot from the live demo Nov 21 (Chase vs Grandma Jo on More, the Easy view page; no faces) in `docs/portfolio/screens/easy-view/`. positioning reviewed the claims.
+- **Nov 21, later:** Chase: "delete any mention of any real company in there". The write-up now says standard social feeds, phone photo apps, the phone's standard tab bar and screen reader, AI agents (no company or product names); intake #85 scrubbed the same way.
+- **Also fixed:** `backend/tests/notify_test.sql` had a date bomb: the release-and-resend check used a fixed clock of Nov 20, 7pm ET, so from Nov 21 00:00Z its notice was queued after that clock and CI's backend job went red on every PR. The notice is now queued at 5pm ET that day (before the 6pm email slot). Notify suite 60/60 green 3x locally. Two more fixed dates in that file (Nov 2, Nov 7/16 checks) pass today; worth a look if notify goes red again.
+- **Next:** when the Share split by Easy view ships (thread "Redo the Share screen"), fill the "Next: Share follows Easy view" section (DEC number, PR, Off vs On screenshot pair).
+- **Portfolio / public presence:** intake holroydchase-afk.github.io#85 asks Product Studio to add an Easy view section to the Hearth case study.
 
 ## Nov 20: funding research out of the public repo (Chase, DEC-77, PM-R10)
 - Done: `docs/product/FUNDING-RESEARCH.md` removed; private copy in the project files (`private/`). Older commits still hold it.
@@ -51,6 +79,7 @@ blockers:
 ## Nov 19: web glass tab bar lookalike, Grandma Jo no longer enlarges the laptop page (Chase, DEC-72, RD-108, RD-109, DEMO-EASY-1, R61; branch claude/project-thread-ox4dz4, PR)
 - **Chase:** "i do not see it in the demo" → picked a web lookalike; "its a poor experience that clicking grandma jo makes the screen much larger".
 - **Done, test-first:** `HearthTabBar floating` (web + Easy view Off): capsule 16 pt in, 64 pt, `c.surface` at 60%, `backdropFilter` blur, `c.accentSoft` pill. `ui/tabBarSpace.tsx` context gives screens 96 pt of room (kit `Screen`, Photos, Timeline, Events, Search, the walk's bar). `DemoFrame` panel and the phone's `DemoBar` sit in `BigTextContext` false. RD-44's e2e now measures tile rows from the grid's top (scroll-independent).
+- **Expo preview republished Nov 21** from main f65724f (#146, Atkinson Hyperlegible Next font; group f56e32ac-41d3-4d91-b2ba-b7ea62f3dc01). Before that Nov 20 from 6ace2e8 (#140, Hass Avocado; group e200110a). Standing link serves it.
 - **Expo preview republished Nov 19** from main eceac67 (group 96e510bb, iOS 01a1f21c-d8b4-79f2-a861-c4e8140f43e0); standing link serves it. Chase checks the iPhone tab bar.
 - **Next exact step:** Chase says "merge"; demo rebuilds; live check of the floating bar (fresh and returning).
 - **Portfolio / public presence:** the public demo's tab bar floats as glass for Chase's view once this merges.
