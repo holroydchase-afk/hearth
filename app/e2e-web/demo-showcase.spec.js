@@ -62,7 +62,7 @@ for (const size of SIZES) {
       await page.goto('share');
       await shot('share-empty');
       const chooser = page.waitForEvent('filechooser');
-      await page.getByRole('button', { name: 'Pick photos from your phone' }).click();
+      await page.getByRole('button', { name: /^Add photos, up to \d+ at a time$/ }).click();
       await (await chooser).setFiles(PICTURE);
       await page.getByLabel('Add a note (optional)').fill('First snow!');
       await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();

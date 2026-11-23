@@ -34,7 +34,7 @@ async function openReview(opts: { last?: string[]; assets?: PickedAsset[]; be?: 
   if (opts.last) await saveLastAudience(kv, FIXTURE.users.chase.id, opts.last);
   const pickBulk = jest.fn(async () => ({ assets: opts.assets ?? pick48() }));
   const r = await renderApp(<ShareScreen />, { user: 'chase', kv, be: opts.be, deps: { pickBulk, previewBytes: opts.previewBytes } });
-  fireEvent.press(await screen.findByRole('button', { name: 'Pick up to 100 photos at once' }));
+  fireEvent.press(await screen.findByRole('button', { name: 'Add photos, up to 100 at a time' }));
   await screen.findByText(opts.header ?? '48 photos from 3 days');
   for (const id of opts.last ?? []) fireEvent.press(await screen.findByRole('checkbox', { name: new RegExp(`^${nameOf(id)},`) }));
   return { ...r, pickBulk, kv };
@@ -119,7 +119,7 @@ describe('BETA-BULK-3 batch review screen', () => {
     const be = FakeBackend.withFixture();
     await openReview({ last: [FIXTURE.circles.dadSide.id], be });
     fireEvent.press(screen.getByRole('button', { name: "Don't send these photos" }));
-    expect(await screen.findByRole('button', { name: 'Pick up to 100 photos at once' })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'Add photos, up to 100 at a time' })).toBeTruthy();
     expect(Object.keys(be.state.posts)).toHaveLength(0);
   });
 
@@ -128,7 +128,7 @@ describe('BETA-BULK-3 batch review screen', () => {
     await saveLastAudience(kv, FIXTURE.users.chase.id, [FIXTURE.circles.dadSide.id]);
     const pickBulk = jest.fn(async () => ({ assets: [...day('2024:03:01', 60), ...day('2024:03:02', 60)] }));
     await renderApp(<ShareScreen />, { user: 'chase', kv, deps: { pickBulk } });
-    fireEvent.press(await screen.findByRole('button', { name: 'Pick up to 100 photos at once' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Add photos, up to 100 at a time' }));
     expect(await screen.findByText('100 photos from 2 days')).toBeTruthy();
     expect(screen.getByText('Hearth sends up to 100 photos at a time, so 20 were left out. Pick them next time.')).toBeTruthy();
   });
@@ -166,7 +166,7 @@ describe('BETA-BULK-4 batch progress', () => {
     await saveLastAudience(kv, FIXTURE.users.chase.id, [FIXTURE.circles.dadSide.id]);
     const pickBulk = jest.fn(async () => ({ assets: pick48() }));
     await renderApp(<ShareScreen />, { user: 'chase', kv, be, deps: { pickBulk, api } });
-    fireEvent.press(await screen.findByRole('button', { name: 'Pick up to 100 photos at once' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Add photos, up to 100 at a time' }));
     fireEvent.press(await screen.findByRole('checkbox', { name: new RegExp(`^${DAD},`) })); // DEC-73: nothing pre-picked
     fireEvent.press(await screen.findByRole('button', { name: 'Send 48 photos' }));
     expect(await screen.findByText('Sending 1 of 48 photos…')).toBeTruthy();
@@ -244,11 +244,12 @@ describe('R15 photo helpers on the review screen (SPEC-PHOTO-HELPERS)', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: 'Send 48 photos' }).props.accessibilityState).toMatchObject({ disabled: false }));
     await new Promise((r) => setTimeout(r, 50)); // the previews finish reading
     fireEvent.press(screen.getByRole('button', { name: 'Send 48 photos' }));
-    pickBulk.mockResolvedValueOnce({ assets: [assets[0]!, assets[1]!, ...pick48().slice(0, 3)] });
-    fireEvent.press(await screen.findByRole('button', { name: 'Pick up to 100 photos at once' }));
+    // Retargeted Nov 21 by qa-tdd for DEC-79 (SHARE-ST-4): only 11+ picked reach bulk review, so 2 sent + 9 new.
+    pickBulk.mockResolvedValueOnce({ assets: [assets[0]!, assets[1]!, ...pick48().slice(0, 9)] });
+    fireEvent.press(await screen.findByRole('button', { name: 'Add photos, up to 100 at a time' }));
     expect(await screen.findByText('2 of these you already sent.')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Send 3 photos' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Send 9 photos' })).toBeTruthy();
     fireEvent.press(screen.getByRole('button', { name: 'Send them again' }));
-    expect(await screen.findByRole('button', { name: 'Send 5 photos' })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'Send 11 photos' })).toBeTruthy();
   });
 });

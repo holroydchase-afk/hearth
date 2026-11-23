@@ -67,8 +67,10 @@ describe('RD 1a the look: black and white with one accent', () => {
     }
   });
 
-  it('RD-2 the phone\'s own font: Atkinson is not a dependency and no Text asks for a custom font family', () => {
-    expect(Object.keys(pkg.dependencies).filter((d) => d.startsWith('@expo-google-fonts/'))).toEqual([]);
+  // qa-tdd, Nov 21: RD-2's "phone's own font" is reversed by DEC-78 / FONT-1..FONT-4 (font.test.tsx): Atkinson
+  // Hyperlegible Next everywhere, the weight carried by the family. RD-55's "no Bold anywhere" stays.
+  it('RD-2 → FONT-2 Atkinson Hyperlegible Next is a dependency and every kit Text asks for an Atkinson family', () => {
+    expect(Object.keys(pkg.dependencies).filter((d) => d.startsWith('@expo-google-fonts/'))).toEqual(['@expo-google-fonts/atkinson-hyperlegible-next']);
     render(<>
       <Txt>Body words</Txt><Txt variant="muted">Quiet words</Txt><Txt variant="strong">Grandma Jo</Txt>
       <Txt variant="title">A title</Txt><Txt variant="display">Large title</Txt>
@@ -76,23 +78,21 @@ describe('RD 1a the look: black and white with one accent', () => {
     </>);
     for (const w of ['Body words', 'Quiet words', 'Grandma Jo', 'A title', 'Large title', 'Send']) {
       const fam = StyleSheet.flatten(screen.getByText(w).props.style).fontFamily as string | undefined;
-      // System font: no family (iPhone SF Pro, Android Roboto) or the web's system stack. Never Atkinson.
-      expect({ w, atkinson: /atkinson/i.test(fam ?? '') }).toEqual({ w, atkinson: false });
-      if (fam !== undefined) expect({ w, fam }).toEqual({ w, fam: expect.stringMatching(/system-ui|-apple-system|^System$/) });
+      expect({ w, fam }).toEqual({ w, fam: expect.stringMatching(/^AtkinsonHyperlegibleNext_(400Regular|500Medium|600SemiBold)$/) });
     }
   });
 
   // Updated Nov 17 for RD-55 (DEC-65, Chase: "our fonts are very heavy"): no Bold anywhere, the large title included.
-  it('RD-2 RD-55 Regular or Semibold only; the large title is Semibold too (no Bold anywhere)', () => {
+  // qa-tdd, Nov 21 (DEC-78): the weight is now the Atkinson family, not fontWeight (Android can't synthesize it).
+  it('RD-2 RD-55 → FONT-2 Regular or SemiBold family only; the large title is SemiBold too (no Bold anywhere)', () => {
     render(<>
       <Txt>Body words</Txt><Txt variant="muted">Quiet words</Txt><Txt variant="strong">Grandma Jo</Txt>
       <Txt variant="title">A title</Txt><Txt variant="display">Large title</Txt>
       <Button label="Send" onPress={() => {}} />
     </>);
-    const w = (t: string) => String(StyleSheet.flatten(screen.getByText(t).props.style).fontWeight ?? '400');
-    expect({ body: w('Body words'), muted: w('Quiet words') }).toEqual({ body: expect.stringMatching(/^(400|normal)$/), muted: expect.stringMatching(/^(400|normal)$/) });
-    for (const t of ['Grandma Jo', 'A title', 'Send']) expect({ t, weight: w(t) }).toEqual({ t, weight: '600' });
-    expect(w('Large title')).toBe('600');
+    const fam = (t: string) => String(StyleSheet.flatten(screen.getByText(t).props.style).fontFamily);
+    expect({ body: fam('Body words'), muted: fam('Quiet words') }).toEqual({ body: 'AtkinsonHyperlegibleNext_400Regular', muted: 'AtkinsonHyperlegibleNext_400Regular' });
+    for (const t of ['Grandma Jo', 'A title', 'Send', 'Large title']) expect({ t, fam: fam(t) }).toEqual({ t, fam: 'AtkinsonHyperlegibleNext_600SemiBold' });
   });
 
   it('RD-3 → RD-94/95 one accent per theme, from one setting: Paper (default), Avocado and Pomegranate, light and dark', () => {

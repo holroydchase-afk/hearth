@@ -9,7 +9,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { FeedPost } from '../api/HearthApi';
 import { useNav } from '../state/nav';
-import { MIN_TARGET, RADIUS, SPACE, WEIGHT, photoShadow, useTheme } from '../ui/theme';
+import { MIN_TARGET, RADIUS, SPACE, FONT, photoShadow, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
 import { VideoPoster } from './VideoPoster';
 
@@ -105,5 +105,5 @@ const styles = StyleSheet.create({
   tile: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, overflow: 'hidden', borderRadius: RADIUS.photo },
   // RD-54: a solid dark chip in the corner, the same in light and dark (the photo stays clear around it).
   more: { position: 'absolute', right: SPACE.sm, bottom: SPACE.sm, backgroundColor: '#1C1C1E', borderRadius: RADIUS.medium, paddingHorizontal: 10, paddingVertical: 6 },
-  moreText: { color: '#FFFFFF', fontSize: 17, lineHeight: 20, fontWeight: WEIGHT.medium },
+  moreText: { color: '#FFFFFF', fontSize: 17, lineHeight: 20, fontFamily: FONT.medium },
 });

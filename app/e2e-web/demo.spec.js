@@ -29,16 +29,16 @@ const onFeed = async (page) => {
 
 const FIXTURE = path.join(__dirname, 'fixtures', 'park-gps.jpg');
 
-// DEC-73: tapping Share may open the file chooser itself, or show a "Pick photos" button first; either way, set the
-// files and wait for the "New post" page.
+// DEC-79 (SHARE-ST-8; retargeted Nov 21 by qa-tdd): Share opens on the empty postcard ("New post"); its one
+// "Add photos, up to N at a time" target opens the file chooser. Set the files and wait for the postcard's Cancel.
+const ADD_PHOTOS = /^Add photos( or videos)?, up to \d+ at a time$/;
 const openNewPost = async (page, files) => {
-  const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
   await page.getByRole('tab', { name: /^Share/ }).click();
-  const pick = page.getByRole('button', { name: /^Pick photos/ }).filter({ visible: true }).first();
-  const first = await Promise.race([chooser.then(() => 'chooser'), pick.waitFor({ timeout: 15_000 }).then(() => 'button')]);
-  if (first === 'button') await pick.click();
-  await (await chooser).setFiles(files);
   await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
+  const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
+  await page.getByRole('button', { name: ADD_PHOTOS }).filter({ visible: true }).first().click();
+  await (await chooser).setFiles(files);
+  await expect(page.getByRole('button', { name: 'Cancel this post' })).toBeVisible();
 };
 const errors = [];
 
@@ -94,6 +94,29 @@ test('RR-14 add a photo, reload keeps it, Start over brings back the sample fami
   await resetDemo(page);
   await onFeed(page);
   await expect(page.getByText('Leaf pile', { exact: true }).filter({ visible: true })).toHaveCount(0);
+});
+
+// FONT-5 (DEC-78, Nov 21): the web demo reads in Atkinson Hyperlegible Next too, the heading SemiBold and a caption
+// Regular, and the bundled font file really loaded (not just named in CSS and falling back to the system font).
+test('FONT-5 the demo\'s heading and body words are Atkinson Hyperlegible Next, and the font really loaded', async ({ page }) => {
+  await page.goto('/');
+  await galleryLoaded(page);
+  await onFeed(page);
+  const look = await page.evaluate(async () => {
+    await document.fonts.ready;
+    const caption = [...document.querySelectorAll('div,span')].find((n) => n.textContent === 'Life jackets on and in all afternoon' && n.offsetParent);
+    const heading = document.querySelector('[role="heading"]');
+    return {
+      heading: heading ? getComputedStyle(heading).fontFamily : 'no heading',
+      body: caption ? getComputedStyle(caption).fontFamily : 'no caption',
+      loaded: ['AtkinsonHyperlegibleNext_400Regular', 'AtkinsonHyperlegibleNext_600SemiBold']
+        .map((f) => [...document.fonts].some((ff) => ff.family.replace(/["']/g, '') === f && ff.status === 'loaded')),
+    };
+  });
+  expect(look.heading).toMatch(/^"?AtkinsonHyperlegibleNext_600SemiBold/);
+  expect(look.body).toMatch(/^"?AtkinsonHyperlegibleNext_400Regular/);
+  expect(look.loaded).toEqual([true, true]);
+  expect(errors).toEqual([]);
 });
 
 test('DEMO-6 / NF-1 laptop shows the story panel beside the app; an unknown link shows plain words', async ({ page }) => {
@@ -781,6 +804,10 @@ test('RD-117 RD-116 Avocado (Hass) light and dark; a picked ❤️ is a 2 px acc
   const WORD = { paper: 'Paper', avocado: 'Avocado', pomegranate: 'Pomegranate' };
   const shots = path.join(__dirname, '..', 'test-results', 'rd-117');
   const pick = async (theme) => {
+    // T28: tapping the heart can scroll Feed and shrink the glass bar (RD-110); a tap on the shrunk oval
+    // only brings the tabs back (RD-110-R1), so restore it first.
+    const shrunk = page.getByRole('tab', { name: /show all tabs/ });
+    if (await shrunk.count()) await shrunk.click();
     await page.getByRole('tab', { name: /^More/ }).click();
     await page.getByRole('button', { name: /^Theme(,|$)/ }).click();
     await page.getByRole('radio', { name: `${WORD[theme]} theme` }).click();
@@ -1101,4 +1128,89 @@ test('RD-110-R3 the bar shrunk on Share comes back whole on Feed after sending',
   await expect(page.getByRole('tab', { name: /^Feed/ })).toHaveAttribute('aria-selected', 'true');
   await expect(page.getByRole('tab')).toHaveCount(4);
   await resetDemo(page);
+});
+
+// SHARE-ST-8 (SPEC-REDESIGN 1j-2, DEC-79, Chase Nov 20): Share opens on an empty postcard in the public demo at 393 px.
+// Reference: option B of /mnt/project-files/design/share-start-2026-11-20/share-start-tester.html. Written first (red),
+// Nov 21, by qa-tdd. Soft expects on each start page, so one run shows every part still missing.
+// QA-R (staff-pm): the demo's Grandma Jo is a viewer with no Share tab (RD-9), so her "Up to 10" can't be reached here;
+// it runs only if the demo ever lets her post, and the jest SHARE-ST-2/5 cases cover "Up to 10" meanwhile.
+test('SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded To:, no "Pick lots of photos"; Chase "Up to 100"; 3 photos show "1 of 3"', async ({ page }) => {
+  const shots = path.join(__dirname, '..', 'test-results', 'share-st-8');
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/');
+  await galleryLoaded(page);
+
+  const startPage = async (limit, shot) => {
+    await page.getByRole('tab', { name: /^Share/ }).click();
+    await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
+    const add = page.getByRole('button', { name: `Add photos, up to ${limit} at a time` }).filter({ visible: true });
+    await expect.soft(add).toBeVisible();
+    await expect.soft(page.getByText(`Up to ${limit} at a time`, { exact: true }).filter({ visible: true })).toBeVisible();
+    // engineer, flagged for qa-tdd: round 2 B+ (SHARE-ST-10/14/15) replaced the subline, the To: words and the fading.
+    await expect.soft(page.getByText('Only the people you pick will see it.', { exact: true }).filter({ visible: true })).toBeVisible();
+    const to = page.getByText('To: you pick after your photos', { exact: true }).filter({ visible: true });
+    await expect.soft(to).toBeVisible();
+    await expect.soft(page.getByText('Add a note (optional)', { exact: true }).filter({ visible: true })).toBeVisible();
+    // No old start page anywhere; no Send yet.
+    await expect.soft(page.getByText(/Pick lots of photos|Lots of photos\?|Share photos|Pick photos/)).toHaveCount(0);
+    await expect.soft(page.getByRole('button', { name: /^(Send to |Pick who gets it$)/ })).toHaveCount(0);
+    // SHARE-ST-14: the note and To: show at full strength (no opacity below 1) but stay hidden from screen readers.
+    if (await to.count()) {
+      const seen = await to.first().evaluate((el) => {
+        let o = 1; let hidden = false;
+        for (let n = el; n; n = n.parentElement) { o *= parseFloat(getComputedStyle(n).opacity || '1'); if (n.getAttribute('aria-hidden') === 'true') hidden = true; }
+        return { faded: o < 1, hidden };
+      });
+      expect.soft(seen).toEqual({ faded: false, hidden: true });
+    }
+    // The target's words stay inside it, and the page never scrolls sideways.
+    if (await add.count()) {
+      const spill = await add.first().evaluate((el) => {
+        const box = el.getBoundingClientRect(); let out = 0;
+        const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        for (let n = w.nextNode(); n; n = w.nextNode()) {
+          if (!n.textContent.trim()) continue;
+          const r = document.createRange(); r.selectNodeContents(n);
+          for (const q of r.getClientRects()) out = Math.max(out, box.left - q.left, q.right - box.right, box.top - q.top, q.bottom - box.bottom);
+        }
+        return { h: box.height >= 48, out: Math.round(out) };
+      });
+      expect.soft(spill).toEqual({ h: true, out: 0 });
+    }
+    expect.soft(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await page.screenshot({ path: path.join(shots, `${shot}.png`) });
+  };
+
+  await startPage(100, 'chase-light');
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await startPage(100, 'chase-dark');
+  await page.emulateMedia({ colorScheme: 'light' });
+  // Chase with Easy view On: "Up to 10" (SHARE-ST-12).
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: 'Easy view, Off' }).click();
+  await page.getByRole('radio', { name: 'On', exact: true }).click();
+  await expect.poll(() => tabWordsShown(page)).toEqual(['Gallery', 'Share', 'Feed', 'More']);
+  await startPage(10, 'chase-easy-view');
+  // Easy view back Off for the rest.
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: 'Easy view, On' }).click();
+  await page.getByRole('radio', { name: 'Off', exact: true }).click();
+
+  // As Chase, the target with 3 photos opens the postcard at "1 of 3".
+  await page.getByRole('tab', { name: /^Share/ }).click();
+  const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
+  await page.getByRole('button', { name: 'Add photos, up to 100 at a time' }).filter({ visible: true }).first().click();
+  await (await chooser).setFiles([FIXTURE, FIXTURE, FIXTURE]);
+  await expect(page.getByText('1 of 3', { exact: true })).toBeVisible();
+  await page.screenshot({ path: path.join(shots, 'chase-1-of-3.png') });
+
+  // Grandma Jo (Easy view on for her): "Up to 10", if the demo lets her post.
+  await asJo(page);
+  if (await page.getByRole('tab', { name: /^Share/ }).count()) {
+    await startPage(10, 'jo-easy-view');
+  } else {
+    test.info().annotations.push({ type: 'SHARE-ST-8', description: 'Grandma Jo has no Share tab in the demo (viewer, RD-9); her "Up to 10" is not checked here.' });
+  }
 });

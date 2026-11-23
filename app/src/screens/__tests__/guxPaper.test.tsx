@@ -185,7 +185,7 @@ describe("GUX-R16 → GUX-R3 Share's note writes on the card: no fill, a hairlin
   const FIELDS = ['Add a note (optional)'];
   const fieldStyle = (label: string) => flat(screen.getByLabelText(label).props.style);
   const openNote = async () => {
-    fireEvent.press(await screen.findByRole('button', { name: /^Pick photos/ }, slow));
+    fireEvent.press(await screen.findByRole('button', { name: /^Add photos/ }, slow));
     await screen.findByLabelText(FIELDS[0]!, {}, slow);
   };
 

@@ -10,7 +10,7 @@ import { AlertDialog, BottomSheet, Button, Card, Field, Notice, SystemIcon, Txt,
 import { useTypingField } from '../ui/typing';
 import { haptic } from '../platform/haptics';
 import { andList, initialOf, people, relativeTime, shortDate } from '../ui/format';
-import { MIN_TARGET, RADIUS, SPACE, WEIGHT, useTheme } from '../ui/theme';
+import { MIN_TARGET, RADIUS, SPACE, FONT, useTheme } from '../ui/theme';
 import { PhotoCollage } from './PhotoCollage';
 
 /** MOMENT-1..8 (UAT 9): one upload as one compact card, like a standard photo feed. Who and when, the caption,
@@ -258,7 +258,7 @@ function SheetRow({ label, icon, color, onPress }: { label: string; icon: { sf: 
     <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
       style={({ pressed }) => [styles.sheetRow, { opacity: pressed ? 0.6 : 1 }]}>
       <SystemIcon icon={icon} color={color} />
-      <Text style={{ flex: 1, color, fontSize: t.base, lineHeight: t.line }}>{label}</Text>
+      <Text style={{ flex: 1, color, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line }}>{label}</Text>
     </Pressable>
   );
 }
@@ -311,7 +311,7 @@ function CommentList({ post, list }: { post: FeedPost; list: CommentView[] }) {
     <>
       {list.map((c) => (
         <View key={c.client_id ?? c.comment_id} style={{ gap: 4 }}>
-          <Txt numberOfLines={list.length === 1 ? 2 : undefined}><Txt style={{ fontWeight: WEIGHT.medium }}>{c.author_name}</Txt>{` ${c.body}`}</Txt>
+          <Txt numberOfLines={list.length === 1 ? 2 : undefined}><Txt style={{ fontFamily: FONT.medium }}>{c.author_name}</Txt>{` ${c.body}`}</Txt>
           {c.status === 'sending' ? <Txt variant="muted">Sending…</Txt> : null}
           {c.status === 'failed' ? (
             <>
@@ -401,7 +401,7 @@ function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
           maxLength={500}
           // UX-R36/R40: a 1.3x line (22 at 17 pt, 28 at 21 pt) in (48 - line)/2 padding keeps the field 48 tall and
           // the words centered on Post at default and Bigger text.
-          style={{ flex: 1, minHeight: MIN_TARGET, color: c.ink, paddingLeft: SPACE.lg, paddingRight: SPACE.sm, paddingVertical: (MIN_TARGET - commentLine(t.base)) / 2, fontSize: t.base, lineHeight: commentLine(t.base), borderWidth: 0, ...noWebOutline() }}
+          style={{ flex: 1, minHeight: MIN_TARGET, color: c.ink, paddingLeft: SPACE.lg, paddingRight: SPACE.sm, paddingVertical: (MIN_TARGET - commentLine(t.base)) / 2, fontFamily: FONT.regular, fontSize: t.base, lineHeight: commentLine(t.base), borderWidth: 0, ...noWebOutline() }}
         />
         {/* UX-R6 / RD-59: Post is a text button inside the field, grey and off while empty, accent once there are words. */}
         <Button variant="quiet" label="Post" onPress={() => void send()} disabled={!draft.trim()} style={styles.post} />
@@ -427,7 +427,7 @@ function Caption({ title, text, testID, titleID }: { title: string | null; text:
   return (
     <View style={styles.caption}>
       <Txt testID={testID} numberOfLines={fold && !open ? FOLD_LINES : undefined}>
-        {title ? <Txt testID={titleID} style={{ fontWeight: WEIGHT.medium }}>{title}</Txt> : null}{title && text ? ' – ' : null}{text ? <Txt>{text}</Txt> : null}
+        {title ? <Txt testID={titleID} style={{ fontFamily: FONT.medium }}>{title}</Txt> : null}{title && text ? ' – ' : null}{text ? <Txt>{text}</Txt> : null}
       </Txt>
       {fold ? (
         <Button
@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
   avatar: { width: 36, height: 36, borderRadius: 18, marginTop: 6, alignItems: 'center', justifyContent: 'center' },
   nameBox: { flex: 1, minWidth: 0, minHeight: MIN_TARGET, justifyContent: 'center' },
   // RD-65 (R22): the name is body size, so it grows with Bigger text like the words around it.
-  name: { fontWeight: WEIGHT.medium },
+  name: { fontFamily: FONT.medium },
   more: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, alignItems: 'center', justifyContent: 'center' },
   inset: { paddingHorizontal: SPACE.lg },
   caption: { gap: SPACE.xs },
@@ -511,13 +511,13 @@ const styles = StyleSheet.create({
   // size and, with firstReact's -8, the first emoji still sits on the 16 pt edge (RD-64).
   reactOff: { borderWidth: 1, paddingHorizontal: SPACE.sm - 1, paddingVertical: 1 },
   reactOn: { borderWidth: 2, paddingHorizontal: SPACE.sm - 2, paddingVertical: 0 },
-  count: { fontVariant: ['tabular-nums'] },
+  count: { fontFamily: FONT.regular, fontVariant: ['tabular-nums'] },
   words: { gap: SPACE.xs, paddingHorizontal: SPACE.lg },
   // UX-R35: 12 pt above the words in both views (the 4 pt gap plus 8 pt here); the 48 pt target grows below them.
   who: { minHeight: MIN_TARGET, justifyContent: 'flex-start', paddingTop: SPACE.sm, alignSelf: 'stretch' },
   face: { width: 36, height: 36, borderRadius: RADIUS.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   // FIRSTMIN-1: two letters ("GJ") fit the 32 pt inside the ring at 17 pt with slightly tighter tracking.
-  faceText: { fontWeight: WEIGHT.semibold, fontSize: 17, lineHeight: 20, letterSpacing: -0.5 },
+  faceText: { fontFamily: FONT.semibold, fontSize: 17, lineHeight: 20, letterSpacing: -0.5 },
   emoji: { fontSize: 22, lineHeight: 28, textAlign: 'center' },
   people: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.sm },
   person: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, borderRadius: RADIUS.pill, paddingLeft: SPACE.xs, paddingRight: SPACE.md, minHeight: MIN_TARGET },

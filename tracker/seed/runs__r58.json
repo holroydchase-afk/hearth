@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-21T02:55:00+00:00",
+ "label": "Demo photo bytes to IndexedDB (DEMO-SAFARI-1..4, QA-R1): all app suites 3x (flaky, T30 fixed after)",
+ "passed": 5038,
+ "failed": 1,
+ "results": {},
+ "note": "3 runs each on ea5dfbe plus the engineer fix (fakeSave.ts, fakeRuntime.ts, FakeBackend flush, DemoBar, DemoChrome): typecheck clean x3; jest 1634 passed x3; e2e:web 5 passed x3; e2e:demo 40, 39/1 (RD-117 raced Reset's now-async navigation, T30), 40. DEMO-SAFARI-1..4 passed in all 3. After the T30 helper fix demo.spec.js --repeat-each 3: 102 passed. Quota emulated in Chromium, no real Safari. e2e/results/demo-safari-gate-flaky-3x-2026-11-21.txt"
+}

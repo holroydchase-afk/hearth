@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Share Start Tester</title>
+<!-- Hearth design tester: Share start, round 2. One file, no build, no data leaves the page.
+     About it: docs/design/testers/README.md in github.com/holroydchase-afk/hearth -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;600&display=swap">
+<style>
+/* Layout: control column beside one live 393pt phone, Hearth's Paper theme (Linen). */
+:root{
+ --pg:#ECEBE6;--pgink:#1E1B17;--pgmuted:#5C564E;--pgline:#D6D2C8;--pgcard:#F7F7F4;
+ --bg:#F7F7F4;--surface:#FFFFFF;--ink:#1E1B17;--muted:#5C564E;--line:#E3DED4;--fill:#EFECE5;--acc:#AD371D;--accink:#FFFFFF;
+ --tint:rgba(173,55,29,.10);--shadow:0 2px 12px rgba(30,27,23,.10);--glass:rgba(255,255,255,.72);
+ --font:"Atkinson Hyperlegible Next",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+ --pg:#0B0A09;--pgink:#F1EEE8;--pgmuted:#B2ACA2;--pgline:#2E2B27;--pgcard:#131210;
+ --bg:#131210;--surface:#1C1A17;--ink:#F1EEE8;--muted:#B2ACA2;--line:#2E2B27;--fill:#24221E;--acc:#FF8A65;--accink:#1A0A04;
+ --tint:rgba(255,138,101,.15);--shadow:0 2px 12px rgba(0,0,0,.45);--glass:rgba(28,26,23,.72)}}
+:root[data-theme="dark"]{color-scheme:dark;
+ --pg:#0B0A09;--pgink:#F1EEE8;--pgmuted:#B2ACA2;--pgline:#2E2B27;--pgcard:#131210;
+ --bg:#131210;--surface:#1C1A17;--ink:#F1EEE8;--muted:#B2ACA2;--line:#2E2B27;--fill:#24221E;--acc:#FF8A65;--accink:#1A0A04;
+ --tint:rgba(255,138,101,.15);--shadow:0 2px 12px rgba(0,0,0,.45);--glass:rgba(28,26,23,.72)}
+*{box-sizing:border-box}
+body{background:var(--pg);color:var(--pgink);font:17px/1.45 var(--font);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:start}
+@media (max-width:900px){.wrap{grid-template-columns:minmax(0,1fr)}.stage{justify-self:center}}
+h1{font-size:30px;line-height:1.15;font-weight:600;margin:0 0 6px;text-wrap:balance}
+.lede{color:var(--pgmuted);margin:0 0 20px;max-width:62ch}
+.lbl{font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--pgmuted);margin:20px 0 8px;font-weight:600}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{font:inherit;min-height:48px;padding:0 16px;border-radius:24px;border:1px solid var(--pgline);background:transparent;color:var(--pgink);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--pgink);color:var(--pg);border-color:var(--pgink);font-weight:600}
+.dirs{display:grid;gap:10px}
+.dir{font:inherit;text-align:left;border:1px solid var(--pgline);background:var(--pgcard);color:var(--pgink);border-radius:14px;padding:14px 16px;cursor:pointer;min-height:48px}
+.dir[aria-pressed="true"]{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc)}
+.dir b{font-weight:600;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.dir .rec{font-size:15px;color:var(--acc);font-weight:600}
+.dir span.d{display:block;color:var(--pgmuted);margin-top:2px}
+.notes{margin-top:14px;padding:14px 16px;border-left:3px solid var(--acc);background:var(--pgcard);border-radius:0 12px 12px 0}
+.notes p{margin:0 0 8px}.notes p:last-child{margin:0}.notes i{font-style:normal;font-weight:600}
+.weak{margin:0 0 6px;padding-left:20px;color:var(--pgmuted)}.weak li{margin:2px 0}
+button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+/* phone */
+.stage{position:sticky;top:16px}
+.phone{width:393px;max-width:calc(100vw - 32px);height:852px;max-height:calc(100vh - 32px);min-height:640px;border-radius:48px;background:var(--bg);color:var(--ink);overflow:hidden;position:relative;box-shadow:0 0 0 10px #1C1C1E,0 24px 60px rgba(0,0,0,.22);display:flex;flex-direction:column;font-size:17px}
+.phone.easy{font-size:21px}
+.st{height:50px;flex:none;display:flex;justify-content:space-between;align-items:flex-end;padding:0 32px 6px;font-weight:600;font-size:17px}
+.bat{width:26px;height:12px;border:1.5px solid currentColor;border-radius:4px;opacity:.8}
+.scr{flex:1;overflow-y:auto;overflow-x:hidden;position:relative;scrollbar-width:none;padding-bottom:110px}
+.px{padding:0 16px}
+.ic{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.big-t{font-size:2em;line-height:1.1;font-weight:600;margin:6px 0 6px;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 16px}
+.tabs{position:absolute;left:16px;right:16px;bottom:22px;display:flex;justify-content:space-around;padding:6px;border-radius:32px;background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);box-shadow:var(--shadow);z-index:5}
+.phone.easy .tabs{left:0;right:0;bottom:0;border-radius:0;padding:6px 8px 24px;background:var(--surface);backdrop-filter:none}
+.tab{font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:64px;min-height:52px;color:var(--muted);background:none;border:0;cursor:pointer;border-radius:26px;font-size:17px}
+.tab .ic{width:28px;height:28px}
+.tab.on{color:var(--acc);background:var(--tint)}
+.phone.easy .tab.on{background:none;font-weight:600}
+.nav{flex:none;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 6px;position:relative}
+.nav .c{position:absolute;left:0;right:0;text-align:center;font-weight:600;pointer-events:none}
+.nb{font:inherit;min-height:48px;min-width:48px;display:flex;align-items:center;padding:0 10px;color:var(--ink);background:none;border:0;cursor:pointer;position:relative;z-index:1}
+.nb.sys{color:#0A84FF}.nb.sys.b{font-weight:600}.nb[disabled]{opacity:.4}
+.nb.acc{color:var(--acc);font-weight:600}
+/* photos */
+.q1{background:linear-gradient(160deg,#f6c58f 0%,#e98a5c 45%,#9b5a6e 75%,#4b3a5f 100%)}
+.q2{background:linear-gradient(170deg,#cfe3ee 0%,#a8c7a0 50%,#6f9a5a 100%)}
+.q3{background:radial-gradient(circle at 30% 30%,#ffe4b8 0,transparent 45%),linear-gradient(150deg,#e9b06a,#c06a3c 60%,#7a3f2a)}
+.q4{background:linear-gradient(180deg,#bfd9ef 0%,#e6eff6 45%,#f8efe2 100%)}
+.q5{background:radial-gradient(circle at 70% 70%,#f2c6d2 0,transparent 50%),linear-gradient(140deg,#f6dfc6,#d9a3b5 70%,#b37a95)}
+.q6{background:linear-gradient(160deg,#9fc4c9,#5f8f99 55%,#35596a)}
+.q7{background:radial-gradient(circle at 40% 40%,#fff0c9 0,transparent 40%),linear-gradient(150deg,#d8c29a,#a88a5e 60%,#6e5a3c)}
+.q8{background:linear-gradient(170deg,#e8d5f0,#b9a1d6 50%,#7d6aa8)}
+.q9{background:linear-gradient(150deg,#c8e0b4,#e9d37a 55%,#d99a46)}
+/* picker */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.pgrid button{aspect-ratio:1;position:relative;border:0;padding:0;cursor:pointer;min-height:48px}
+.pgrid .n{position:absolute;right:6px;bottom:6px;width:28px;height:28px;border-radius:50%;background:#0A84FF;color:#fff;font-weight:600;display:flex;align-items:center;justify-content:center;border:2px solid #fff;font-size:17px}
+.pgrid.h .n{background:var(--acc);color:var(--accink);border-color:var(--surface)}
+.syshint{color:var(--muted);text-align:center;padding:10px 16px;font-size:15px}
+/* B empty postcard */
+.card{background:var(--surface);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+.spot{padding:12px;position:relative}
+.drop{font:inherit;color:var(--acc);width:100%;aspect-ratio:4/3;border:2px dashed var(--acc);border-radius:14px;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-weight:600;font-size:22px;transition:transform .12s ease}
+.drop:active{transform:scale(.98)}
+@media (prefers-reduced-motion:reduce){.drop{transition:none}.drop:active{transform:none}}
+.drop .circ{width:72px;height:72px;border-radius:50%;background:var(--tint);display:flex;align-items:center;justify-content:center}
+.drop .ic{width:32px;height:32px;stroke-width:1.6}
+.drop span.s{font-weight:400;color:var(--muted);font-size:17px}
+.stamp{position:absolute;top:22px;right:22px;width:44px;height:52px;transform:rotate(4deg);border:2px dotted var(--line);border-radius:4px;background:var(--surface);display:flex;align-items:center;justify-content:center;pointer-events:none}
+.stamp i{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:9px;letter-spacing:.04em;color:var(--muted);text-align:center;line-height:1.05}
+.faces3{display:flex;align-items:center;gap:10px;margin-top:8px;color:var(--muted)}
+.faces3 .stk{display:flex}.faces3 .stk span{width:32px;height:32px;border-radius:50%;background:var(--fill);color:var(--ink);font-weight:600;font-size:15px;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface);margin-left:-8px}.faces3 .stk span:first-child{margin-left:0}
+.last{color:var(--muted);margin:14px 2px 0}
+.nudge{color:var(--ink);margin:0 0 12px;font-weight:500}
+.fl{color:var(--muted);margin:0}
+.ln{height:0;border-top:1.5px dashed var(--line);margin:24px 0 0}
+.to{padding:12px 16px 16px;border-top:1.5px dashed var(--line)}
+.ghost{display:flex;gap:8px;margin-top:10px}.ghost i{flex:1;height:64px;border-radius:999px;box-shadow:0 0 0 2px var(--line) inset}
+.words{padding:14px 16px 8px}
+.lots{font:inherit;background:none;border:0;color:var(--acc);font-weight:600;min-height:48px;cursor:pointer;padding:0;margin-top:6px}
+/* C recents */
+.strip-h{display:flex;justify-content:space-between;align-items:baseline;margin:6px 0 8px}
+.strip-h b{font-weight:600;font-size:1.15em}
+.allbtn{font:inherit;background:none;border:0;color:var(--acc);font-weight:600;min-height:48px;cursor:pointer}
+.next{position:absolute;left:16px;right:16px;bottom:100px;z-index:6}
+.phone.easy .next{bottom:110px}
+.go{font:inherit;width:100%;min-height:52px;border-radius:26px;border:0;background:var(--acc);color:var(--accink);font-weight:600;cursor:pointer;padding:0 16px;box-shadow:var(--shadow)}
+.go[disabled]{background:var(--fill);color:var(--muted);box-shadow:none}
+.perm{display:flex;gap:10px;align-items:flex-start;background:var(--surface);border-radius:14px;padding:12px 14px;margin:0 0 12px;box-shadow:var(--shadow)}
+.perm p{margin:0}
+/* A */
+.gal .tile{aspect-ratio:1;border-radius:12px}
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.toast{background:var(--surface);box-shadow:var(--shadow);border-radius:14px;padding:12px 14px;margin:8px 0 14px}
+/* result */
+.done .hero{aspect-ratio:4/3}
+.done .t{display:flex;gap:8px;padding:10px 12px 0}.done .t i{width:56px;height:56px;border-radius:10px}
+@media (max-width:440px){.phone{border-radius:36px;box-shadow:0 0 0 6px #1C1C1E;height:780px}}
+</style>
+
+<style>*{box-sizing:border-box}body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<div class="wrap">
+ <div>
+  <h1>A better Share start, round 2</h1>
+  <p class="lede">Today, tapping Share shows a page of words with two text links and a big empty space. Three ways to fix that, live in the phone. Tap the Share tab or the big target to see what happens next.</p>
+  <div class="notes" style="margin:0 0 20px"><p><i>How to use:</i> pick an option below, then use the phone on the right like a real phone. Tap the big "Add photos" box or the Share tab, pick a few photos, and see where you land. Switch "Who is sharing" to see a parent and a grandparent (Easy view). Nothing is saved or sent anywhere.</p><p><i>Decided:</i> Chase picked B+, the postcard first for everyone (Nov 2026).</p></div>
+  <div class="lbl">What's weak today</div>
+  <ul class="weak">
+   <li>It's a page of instructions, not a place to start sharing.</li>
+   <li>The only actions are small text links, easy to miss for older eyes.</li>
+   <li>Two ways in ("Pick photos" and "Pick lots of photos") make you choose before you've seen a photo.</li>
+   <li>The postcard you get next looks nothing like this page.</li>
+  </ul>
+  <div class="lbl" id="l-dir">Options</div>
+  <div class="dirs" role="group" aria-labelledby="l-dir">
+   <button class="dir" data-dir="B"><b>B+. Postcard first, for everyone <span class="rec">Recommended</span></b><span class="d">Round 2 polish: a dashed photo spot, a stamp, who it can go to, and your last share. Everyone taps Add photos.</span></button>
+   <button class="dir" data-dir="S"><b>Split by Easy view</b><span class="d">Easy view off: Share opens your photos at once, Cancel lands on the postcard. Easy view on: the postcard, and you tap Add photos.</span></button>
+   <button class="dir" data-dir="A"><b>Round 1: A. Straight to your photos</b><span class="d">For comparison.</span></button>
+  </div>
+  <div class="notes" id="notes" aria-live="polite"></div>
+  <div class="lbl">Who is sharing</div>
+  <div class="seg"><button data-viewer="chase">Chase (parent)</button><button data-viewer="jo">Grandma Jo (Easy view)</button></div>
+  <div class="lbl">Light or dark</div>
+  <div class="seg"><button data-t="light">Light</button><button data-t="dark">Dark</button><button data-t="system">Same as my phone</button></div>
+  <div class="seg" style="margin-top:12px"><button id="restart">Start over</button></div>
+ </div>
+ <div class="stage"><div class="phone" id="phone" role="region" aria-label="Phone preview"></div></div>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <symbol id="i-gal" viewBox="0 0 24 24"><rect x="3" y="5" width="16" height="14" rx="2"/><path d="M6 3h14a1 1 0 0 1 1 1v12"/><path d="M3 16l5-5 4 4 3-3 4 4"/></symbol>
+ <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></symbol>
+ <symbol id="i-feed" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="7" rx="2"/><rect x="4" y="13" width="16" height="7" rx="2"/></symbol>
+ <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></symbol>
+ <symbol id="i-addph" viewBox="0 0 24 24"><rect x="3" y="6" width="14" height="13" rx="2"/><path d="M3 15l4-4 3 3 2-2 5 5"/><path d="M19 3v6M16 6h6"/></symbol>
+ <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+</svg>
+
+<script>
+const P=['q1','q3','q5','q2','q4','q6','q7','q8','q9','q2','q4','q1','q6','q3','q5','q7','q9','q8'];
+const NOTES={
+ B:`<p><i>Round 2 changes:</i> the photo spot is a dashed outline on the white card (no muddy tinted block), with a little stamp in the corner. The note and To: are full strength, not faded, and To: shows who it can go to. A line under the card reminds you of your last share. The subline says plainly who sees it.</p><p><i>Control:</i> nothing happens on its own. You tap Add photos, the photos stay in the order you picked, and nothing is picked or sent for you.</p><p><i>Why I'd pick it:</i> every relative learns the same two words, "Share, then Add photos". It costs a parent one extra tap.</p>`,
+ S:`<p><i>How it feels:</i> with Easy view off (parents), tapping Share opens your photos right away. Cancel lands on the postcard with "Nothing picked yet." With Easy view on (grandparents), it's B+ exactly. The very first time, everyone sees the postcard first.</p><p><i>Trade-off:</i> Share does two different things depending on a setting, so Mom, with Easy view off, would describe different steps than Gammy sees over the phone.</p><p>Switch "Who is sharing" to compare.</p>`,
+ A:`<p>Round 1's option A, for comparison: no start page, the picker opens at once, Cancel goes back to Gallery.</p>`
+};
+let S={nudge:false,dir:'B',viewer:'chase',screen:'start',sel:[]};
+const $=s=>document.querySelector(s);
+const I=(id,c='ic')=>`<svg class="${c}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
+const st=`<div class="st"><span>9:41</span><span class="bat"></span></div>`;
+const easy=()=>S.viewer==='jo';
+function tabs(on){const t=[['gal','Gallery'],['plus','Share'],['feed','Feed'],['more','More']];
+ return `<nav class="tabs">${t.map(([i,w])=>`<button class="tab${w===on?' on':''}" data-tab="${w}" aria-label="${w}">${I(i)}${easy()?`<span>${w}</span>`:''}</button>`).join('')}</nav>`}
+function picker(own){const n=S.sel.length;
+ return `${st}<div class="nav"><button class="nb ${own?'':'sys'}" data-act="cancel">Cancel</button><span class="c">${n?n+' Selected':'Photos'}</span><button class="nb ${own?'acc':'sys b'}" data-act="add" ${n?'':'disabled'}>${own?'Next':'Add'}</button></div>
+ <div class="scr" style="padding-bottom:0"><div class="pgrid">${P.map((q,i)=>{const k=q+'#'+i,x=S.sel.indexOf(k);return `<button class="${q}" data-pick="${k}" aria-label="Photo ${i+1}">${x>=0?`<span class="n">${x+1}</span>`:''}</button>`}).join('')}</div>
+ <p class="syshint">The phone's own photo picker. ${easy()?'Up to 10.':'Up to 100; more than 10 goes to "Put them in order", which waits for your tap.'}</p></div>`}
+function gallery(msg){return `${st}<div class="scr"><div class="px"><h2 class="big-t">Good evening,<br>${easy()?'Grandma Jo':'Chase'}</h2>${msg?`<div class="toast">${msg}</div>`:''}
+ <div class="gal">${P.slice(0,9).map(q=>`<div class="tile ${q}"></div>`).join('')}</div></div></div>${tabs('Gallery')}`}
+function startB(nudge){const lim=easy()?10:100;
+ const who=easy()?['C','A','E']:['J','E','R'];const whoTxt=easy()?'Chase, Alex and 2 more':'Your groups: Everyone, Dad\'s side, Mom\'s side';
+ return `${st}<div class="scr"><div class="px"><h2 class="big-t">New post</h2><p class="sub">Only the people you pick will see it.</p>
+  ${nudge?'<p class="nudge">Nothing picked yet. Tap Add photos when you\'re ready.</p>':''}
+  <div class="card"><div class="spot"><button class="drop" data-act="open"><span class="circ">${I('addph')}</span>Add photos<span class="s">Up to ${lim} at a time</span></button>
+   <span class="stamp" aria-hidden="true"><i>21<br>NOV</i></span></div>
+   <div class="words"><p class="fl">Add a note (optional)</p><div class="ln"></div></div>
+   <div class="to"><p class="fl">To: you pick after your photos</p><div class="faces3"><span class="stk">${who.map(x=>`<span>${x}</span>`).join('')}</span><span>${whoTxt}</span></div></div>
+  </div><p class="last">Last shared Tuesday, to Grandma Jo and Grandpa Earl</p></div></div>${tabs('Share')}`}
+function startC(){const n=S.sel.length;
+ return `${st}<div class="scr"><div class="px"><h2 class="big-t">New post</h2>
+  ${S.perm?'':`<div class="perm">${I('lock')}<p>To show your recent photos here, Hearth needs to see your photo library. It never uploads a photo you don't pick.</p></div>`}
+  <div class="strip-h"><b>Recent</b><button class="allbtn" data-act="open">All photos</button></div></div>
+  <div class="pgrid h">${P.slice(0,15).map((q,i)=>{const k=q+'#'+i,x=S.sel.indexOf(k);return `<button class="${q}" data-pick="${k}" aria-label="Photo ${i+1}">${x>=0?`<span class="n">${x+1}</span>`:''}</button>`}).join('')}</div></div>
+  <div class="next"><button class="go" data-act="add" ${n?'':'disabled'}>${n?`Next with ${n} photo${n>1?'s':''}`:'Tap photos to share'}</button></div>${tabs('Share')}`}
+function postcard(){const n=S.sel.length;const k=(S.sel[0]||'q1#0').split('#')[0];
+ return `${st}<div class="nav"><button class="nb" data-act="restart">Cancel</button><span class="c">New post</span><span></span></div>
+ <div class="scr"><div class="px"><div class="card done"><div class="hero ${k}"></div><div class="t">${S.sel.map(x=>`<i class="${x.split('#')[0]}"></i>`).join('')}</div>
+ <div class="words"><p class="fl">Add a note (optional)</p><div class="ln"></div></div><div class="to"><p class="fl">To:</p><div class="ghost"><i></i><i></i><i></i></div></div></div>
+ <p class="sub" style="margin-top:14px">${n>10?`${n} photos: next, Hearth puts them in order by day.`:`This is the postcard you already approved. The tester stops here.`}</p></div></div>`}
+function render(){
+ const ph=$('#phone');ph.classList.toggle('easy',easy());let h;
+ if(S.screen==='picker')h=picker(false);
+ else if(S.screen==='card')h=postcard();
+ else if(S.screen==='gallery')h=gallery(S.msg);
+ else h=S.dir==='A'?gallery(''):startB(S.nudge);
+ ph.innerHTML=h;
+ document.querySelectorAll('.dir').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.dir===S.dir)));
+ document.querySelectorAll('[data-viewer]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.viewer===S.viewer)));
+ $('#notes').innerHTML=NOTES[S.dir];
+}
+$('#phone').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.pick){S.perm=true;const k=b.dataset.pick,i=S.sel.indexOf(k);if(i>=0)S.sel.splice(i,1);else if(S.sel.length<(easy()?10:100))S.sel.push(k);render();return}
+ if(b.dataset.tab){if(b.dataset.tab==='Share'){S.sel=[];S.nudge=false;S.screen=(S.dir==='A'||(S.dir==='S'&&!easy()))?'picker':'start'}else{S.screen='gallery';S.msg=''}render();return}
+ const a=b.dataset.act;
+ if(a==='open'){S.screen='picker';render()}
+ else if(a==='add'){S.screen='card';render()}
+ else if(a==='cancel'){if(S.dir==='A'){S.screen='gallery';S.msg='Nothing was shared.'}else{S.screen='start';S.nudge=S.dir==='S'}render()}
+ else if(a==='restart')restart();
+});
+function restart(){S.sel=[];S.perm=false;S.nudge=false;S.screen=S.dir==='S'?'gallery':'start';S.msg=S.dir==='S'?'Tap Share in the tab bar to try it.':'';render()}
+$('#restart').addEventListener('click',restart);
+document.querySelectorAll('.dir').forEach(b=>b.addEventListener('click',()=>{S.dir=b.dataset.dir;restart()}));
+document.querySelectorAll('[data-viewer]').forEach(b=>b.addEventListener('click',()=>{S.viewer=b.dataset.viewer;render()}));
+const root=document.documentElement,tb=document.querySelectorAll('[data-t]');
+function setT(t){if(t==='system')root.removeAttribute('data-theme');else root.setAttribute('data-theme',t);tb.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.t===t)));try{localStorage.setItem('ss-theme',t)}catch(e){}}
+tb.forEach(b=>b.addEventListener('click',()=>setT(b.dataset.t)));let t0='system';try{t0=localStorage.getItem('ss-theme')||'system'}catch(e){}setT(t0);
+render();
+</script>
+</body>
+</html>

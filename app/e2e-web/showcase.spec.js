@@ -51,7 +51,7 @@ for (const size of SIZES) {
       await page.getByRole('tab', { name: 'Share' }).click();
       await shot('share-empty');
       const chooser = page.waitForEvent('filechooser');
-      await page.getByRole('button', { name: 'Pick photos from your phone' }).click();
+      await page.getByRole('button', { name: /^Add photos, up to \d+ at a time$/ }).click();
       await (await chooser).setFiles(FIXTURE);
       await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible(); // DEC-73 postcard
       await page.getByLabel('Add a note (optional)').fill('Pumpkin patch');
