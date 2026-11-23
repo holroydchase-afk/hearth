@@ -69,8 +69,8 @@
   },
   {
    "id": "SQL-010",
-   "title": "Mom-side grandma sees only 1 circle in Dad's space (Everyone)",
-   "area": "Other",
+   "title": "Mom-side grandma reads no group names in Dad's space (SEC-R1)",
+   "area": "Grandparent separation",
    "tickets": [],
    "where": "backend/tests/rls_test.sql"
   },
@@ -83,7 +83,7 @@
   },
   {
    "id": "SQL-012",
-   "title": "Mom-side grandma cannot react to a post she cannot see",
+   "title": "Mom-side grandma cannot react to a post she cannot see (HARD-12: no direct writes at all since 0018)",
    "area": "Grandparent separation",
    "tickets": [],
    "where": "backend/tests/rls_test.sql"
@@ -139,7 +139,7 @@
   },
   {
    "id": "SQL-020",
-   "title": "Viewer can change own reaction",
+   "title": "Viewer can change own reaction (set_reaction)",
    "area": "Grandparent separation",
    "tickets": [],
    "where": "backend/tests/rls_test.sql"
@@ -202,8 +202,8 @@
   },
   {
    "id": "SQL-029",
-   "title": "Co-parent sees only the Co-parent circle (cannot see Dad's family circles)",
-   "area": "Other",
+   "title": "Co-parent reads no group names in Dad's space, including Dad's family circles (SEC-R1)",
+   "area": "Co-parent separation",
    "tickets": [],
    "where": "backend/tests/rls_test.sql"
   },
@@ -300,8 +300,8 @@
   },
   {
    "id": "SQL-043",
-   "title": "Alex sees only the Co-parent circle in Blair's space",
-   "area": "Other",
+   "title": "Alex reads no group names in Blair's space (SEC-R1)",
+   "area": "Owner access",
    "tickets": [],
    "where": "backend/tests/rls_test.sql"
   },
@@ -670,7 +670,7 @@
   },
   {
    "id": "SQL-095",
-   "title": "Owner still sees the upload count",
+   "title": "Owner still sees the upload count (their own, S14)",
    "area": "Security review fixes",
    "tickets": [],
    "where": "backend/tests/rls_test.sql"
@@ -1605,7 +1605,7 @@
   },
   {
    "id": "API-104",
-   "title": "invite_preview: anon sees exactly {inviter_name, space_name}",
+   "title": "invite_preview: anon sees exactly {inviter_name, space_name, sign_in_with} (BETA-SMS-9)",
    "area": "API contract",
    "tickets": [],
    "where": "backend/tests/api_test.sql"
@@ -3146,6 +3146,13 @@
   {
    "id": "TIMELINE-038",
    "title": "BETA-TIME-4 removed from the family: her years list is empty (no counts survive)",
+   "area": "Timeline",
+   "tickets": [],
+   "where": "backend/tests/timeline_test.sql"
+  },
+  {
+   "id": "TIMELINE-039",
+   "title": "HARD-17 feed_rows runs with JIT off",
    "area": "Timeline",
    "tickets": [],
    "where": "backend/tests/timeline_test.sql"
@@ -4783,7 +4790,7 @@
   },
   {
    "id": "GROUPS-V2-046",
-   "title": "GRP-4 reply_readers for Pop Joe on the birthday post names the parents and every other member (got {\"Aunt Linda\",\"Auntie Rachel\",Chase,Mom,\"Meemaw Sue\"})",
+   "title": "GRP-4 reply_readers for Pop Joe on the birthday post names the parents and every other member (got {\"Aunt Linda\",\"Auntie Rachel\",Chase,\"Meemaw Sue\",Mom})",
    "area": "Groups-V2",
    "tickets": [],
    "where": "backend/tests/"
@@ -5779,6 +5786,1742 @@
    "id": "HELPERS-013",
    "title": "HELP-R4 both helpers have a global row (the kill switch exists)",
    "area": "Helpers",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-001",
+   "title": "REACT-1 the summary says Grandma's heart is hers and counts it",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-002",
+   "title": "REACT-1 tapping Haha switches her heart to Haha (still one reaction)",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-003",
+   "title": "REACT-1 tapping Haha again takes it back",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-004",
+   "title": "REACT-1 Like works from nothing",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-005",
+   "title": "setup: Alex loves his own post",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-006",
+   "title": "REACT-2 the summary counts each kind",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-007",
+   "title": "REACT-2 the feed's heart_count is every reaction, and i_hearted means \"I reacted\" (old apps keep working)",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-008",
+   "title": "REACT-3 any other emoji is refused",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-009",
+   "title": "REACT-3 an empty reaction is refused",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-010",
+   "title": "REACT-12 Alex switches his heart to Hooray, and it is counted",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-011",
+   "title": "setup: Alex switches back to Love",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-012",
+   "title": "REACT-4 Jo can't react to a post she can't see",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-013",
+   "title": "REACT-4 ...and the summary leaves it out (no counts leak)",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-014",
+   "title": "setup: Grandma switches Like to Love",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-015",
+   "title": "REACT-5 switching kinds queues no new notice (only the first reaction does)",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-016",
+   "title": "REACT-6 when the family turns replies off for viewers, Grandma can't react either",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-017",
+   "title": "setup: Grandma likes a1",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-018",
+   "title": "HARD-12 a direct update to a made-up reaction is refused",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-019",
+   "title": "HARD-12 her Like is unchanged",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-020",
+   "title": "setup: Grandma takes it back",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-021",
+   "title": "HARD-12 a direct insert of a made-up reaction is refused",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "REACTIONS-022",
+   "title": "HARD-12 even the database refuses a reaction that isn't ❤️ 😂 👍 or 🎉",
+   "area": "Reactions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-001",
+   "title": "CAP-1 create_post takes a title",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-002",
+   "title": "CAP-1 old app builds: create_post without a title still works",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-003",
+   "title": "CAP-2 a title over 80 characters is refused",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-004",
+   "title": "CAP-2 exactly 80 characters (not bytes) is fine",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-005",
+   "title": "CAP-5 a blank title is stored as no title",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-006",
+   "title": "CAP-3 the feed row carries the title",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-007",
+   "title": "CAP-5 no title: the feed row says null, nothing to show",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-008",
+   "title": "CAP-11 the timeline row carries the title",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-009",
+   "title": "CAP-R4 someone who can't see the post never gets its title",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-010",
+   "title": "CAP-10 the notice outbox has no column that could carry a title",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-011",
+   "title": "CAP-6 a post nobody changed has no \"Edited\" time",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-012",
+   "title": "CAP-6 the sender can change the title and the caption",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-013",
+   "title": "CAP-6 everyone who sees the post gets the new words and the \"Edited\" time",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-014",
+   "title": "CAP-6 By date carries the \"Edited\" time too",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-015",
+   "title": "CAP-6 clearing both boxes is allowed",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-016",
+   "title": "CAP-5 a cleared title and caption are stored as none",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-017",
+   "title": "CAP-2 a changed title over 80 characters is refused",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-018",
+   "title": "CAP-6 a changed caption over 2000 characters is refused",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-019",
+   "title": "CAP-8 changing the words sends no notice",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-020",
+   "title": "CAP-8 comments on the card stay as they were",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-021",
+   "title": "CAP-8 reactions on the card stay as they were",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-022",
+   "title": "CAP-7 someone who sees the post but didn't send it is refused",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-023",
+   "title": "CAP-7 someone who can't see the post gets \"not found\"",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-024",
+   "title": "CAP-7 a post that doesn't exist is \"not found\"",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-025",
+   "title": "CAP-7 a deleted post is \"not found\", even for its sender",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-026",
+   "title": "CAP-6 a relative who may post can change their own words",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-027",
+   "title": "CAP-7 a sender taken out of every group the post went to is refused",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-028",
+   "title": "CAP-7 / S12 a sender removed from the family gets \"not found\"",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-029",
+   "title": "CAP-7 refused changes leave the words as they were",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-030",
+   "title": "HARD-18 a sender can't change the caption straight in the table (no \"Edited\" mark)",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-031",
+   "title": "HARD-18 nor the date the photos were taken",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "CAPTIONS-032",
+   "title": "HARD-18 nor the title",
+   "area": "Captions",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-CAP-001",
+   "title": "S14 setup: Alex has a second free space and a post in it",
+   "area": "Video-Cap",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-CAP-002",
+   "title": "S14-1 Alex sends 4 more videos in space A (5 of 10 this month)",
+   "area": "Video-Cap",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-CAP-003",
+   "title": "S14-1 and 5 in his new space (10 of 10)",
+   "area": "Video-Cap",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-CAP-004",
+   "title": "S14-1 the 11th video is refused even in a brand-new space",
+   "area": "Video-Cap",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-CAP-005",
+   "title": "S14-1 and in the first space too",
+   "area": "Video-Cap",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-CAP-006",
+   "title": "S14-2 the new space's quota shows Alex's own 10 of 10, not a fresh 0",
+   "area": "Video-Cap",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-CAP-007",
+   "title": "S14-2 and so does space A",
+   "area": "Video-Cap",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-CAP-008",
+   "title": "S14-3 the refused video made no media row",
+   "area": "Video-Cap",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-CAP-009",
+   "title": "S14-4 one usage row this month: Alex's (Blair has sent none)",
+   "area": "Video-Cap",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-CAP-010",
+   "title": "S14-4 Alex's row says 10",
+   "area": "Video-Cap",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-CAP-011",
+   "title": "S14-5 a paid family can send more than 10 videos",
+   "area": "Video-Cap",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-CAP-012",
+   "title": "S14-5 and they don't count toward the free cap",
+   "area": "Video-Cap",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-CAP-013",
+   "title": "S14-6 an app user can't read or change the usage table",
+   "area": "Video-Cap",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-CAP-014",
+   "title": "S14-7 the refusal says the cap is per person",
+   "area": "Video-Cap",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "WHO-001",
+   "title": "WHO-1 Grandma sees that Alex, Grandpa and she herself can see the post",
+   "area": "Who",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "WHO-002",
+   "title": "WHO-1 ...and nobody who can't see it is listed",
+   "area": "Who",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "WHO-003",
+   "title": "WHO-2 the names are exactly who sees_post lets see it, no more and no fewer",
+   "area": "Who",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "WHO-004",
+   "title": "WHO-3 Aunt Jo, who can't see the post, gets nothing back about it",
+   "area": "Who",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "WHO-005",
+   "title": "WHO-4 each viewer is a name and an id, nothing else",
+   "area": "Who",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "WHO-006",
+   "title": "WHO-4 the group's name never appears",
+   "area": "Who",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "WHO-007",
+   "title": "WHO-5 anon can't call post_viewers",
+   "area": "Who",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-001",
+   "title": "BETA-START-8 the start_family_open switch exists and ships off",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-002",
+   "title": "BETA-START-8 can_start_family() returns a boolean and nothing else",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-003",
+   "title": "BETA-START-8 my_features never lists the switch",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-004",
+   "title": "BETA-START-8 with the switch off, starting a family is refused",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-005",
+   "title": "BETA-START-8 with the switch off, can_start_family() says false",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-006",
+   "title": "BETA-START-8 an app user can't read or flip the switch",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-007",
+   "title": "BETA-START-8 the refused start made nothing",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-008",
+   "title": "BETA-START-10 create_household is revoked from authenticated, anon and public",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-009",
+   "title": "BETA-START-10 create_space is revoked from authenticated, anon and public",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-010",
+   "title": "BETA-START-10 the service role keeps both",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-011",
+   "title": "BETA-START-10 start_family and can_start_family are for signed-in accounts only",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-012",
+   "title": "BETA-START-10 a signed-in account calling create_household directly is denied",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-013",
+   "title": "BETA-START-10 a signed-out caller can't start a family",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-014",
+   "title": "BETA-START-8 with the switch on, an account with no family may start one",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-015",
+   "title": "BETA-START-1 Pat starts \"Our kids\" and gets its id back",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-016",
+   "title": "BETA-START-1 the same request sent twice returns the same family (idempotent)",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-017",
+   "title": "BETA-START-1 Pat is Owner",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-018",
+   "title": "BETA-START-1 exactly one family exists for Pat",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-019",
+   "title": "BETA-START-1 one household, Pat as its admin",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-020",
+   "title": "BETA-START-1 one Everyone, with Pat in it",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-021",
+   "title": "BETA-START-1 Just Everyone: no other groups",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-022",
+   "title": "BETA-START-1 Pat has notification settings for it",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-023",
+   "title": "BETA-START-1 nobody else is in it",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-024",
+   "title": "BETA-START-1 it is marked as started in the app (so the cap applies)",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-025",
+   "title": "BETA-START-11 one start is counted (the repeat request did not count twice)",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-026",
+   "title": "BETA-START-1 another account (Alex) can't see the family, its groups or its people",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-027",
+   "title": "BETA-START-1 nor can an account with no family",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-028",
+   "title": "BETA-START-1 an app user can't read which families were started in the app",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-029",
+   "title": "BETA-START-5 Pat, who already has a family, is refused a second one",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-030",
+   "title": "BETA-START-5 can_start_family() is false for Pat, so no start button",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-031",
+   "title": "BETA-START-5 Alex, who is in an old family, is refused too",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-032",
+   "title": "BETA-START-5 can_start_family() is false for Alex",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-033",
+   "title": "BETA-START-3 Pat invites Quinn by email to Everyone",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-034",
+   "title": "BETA-START-3 Quinn redeems the code and lands in Pat's family",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-035",
+   "title": "BETA-START-3 Quinn sees the post shared to Everyone",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-036",
+   "title": "BETA-START-3 and no other family's posts",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-037",
+   "title": "BETA-START-3 Robin, with no invite, sees none of it",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-038",
+   "title": "BETA-START-4 Val starts a family with Two sides",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-039",
+   "title": "BETA-START-4 both sides exist as groups",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-040",
+   "title": "BETA-START-4 both have Private comments",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-041",
+   "title": "BETA-START-4 nobody is in the sides yet, and nothing is linked",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-042",
+   "title": "BETA-START-4 Everyone is still there",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-043",
+   "title": "BETA-START-6 two sides with the same name are refused",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-044",
+   "title": "BETA-START-6 one side alone is refused",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-045",
+   "title": "BETA-START-6 three sides are refused",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-046",
+   "title": "BETA-START-6 a blank name is refused",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-047",
+   "title": "BETA-START-6 a name over 60 characters is refused",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-048",
+   "title": "BETA-START-6 a blank side name is refused",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-049",
+   "title": "BETA-START-6 the failures left no household, family or group behind",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-050",
+   "title": "BETA-START-6 and no start was counted against Wren",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-051",
+   "title": "BETA-START-6 so Wren can still start one",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-052",
+   "title": "BETA-START-7 Sky, who started an empty family, redeems Alex's code and lands in Alex's family",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-053",
+   "title": "BETA-START-7 Sky's empty family is retired",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-054",
+   "title": "BETA-START-7 retiring it does not reset Sky's count of starts",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-055",
+   "title": "BETA-START-7 Xan starts a family and drafts a post in it",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-056",
+   "title": "BETA-START-7 Xan redeems Alex's code",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-057",
+   "title": "BETA-START-7 a family with a post in it (even a draft) is never retired",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-058",
+   "title": "BETA-START-7 nor is a family with another member (Pat's, which Quinn joined)",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-059",
+   "title": "BETA-START-11 setup: a failed redeem runs the 1-hour purge",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-060",
+   "title": "BETA-START-11 setup: the server's purge runs too",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-061",
+   "title": "BETA-START-11 starts from 2 hours ago survive the 1-hour purge",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-062",
+   "title": "BETA-START-11 starts older than 24 hours are purged",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-063",
+   "title": "BETA-START-11 can_start_family() is false after 3 starts today",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-064",
+   "title": "BETA-START-11 the 4th start in 24 hours is refused",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-065",
+   "title": "BETA-START-11 starts from yesterday don't count",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-066",
+   "title": "BETA-START-11 so Uma can start one",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-067",
+   "title": "BETA-START-12 Pat sends a photo while under the cap",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-068",
+   "title": "BETA-START-12 setup: Pat's family holds 500 items",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-069",
+   "title": "BETA-START-12 the 501st item is refused: family full",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-070",
+   "title": "BETA-START-12 space_upload_quota says family_full before Pat picks photos",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-071",
+   "title": "BETA-START-12 the refused item left no row",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-072",
+   "title": "BETA-START-12 a direct insert is refused the same way",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-073",
+   "title": "BETA-START-12 Val sends a photo that still fits under 2 GB",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-074",
+   "title": "BETA-START-12 a photo that would pass 2 GB is refused",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-075",
+   "title": "BETA-START-12 Alex's family (made the old way) is not capped past 500",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-076",
+   "title": "BETA-START-12 and its quota says family_full false",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-077",
+   "title": "BETA-START-12 once Chase marks it known, Pat's family is not capped",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-078",
+   "title": "BETA-START-13 the already-in-a-family refusal names nobody",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-079",
+   "title": "BETA-START-13 the bad-side refusal names no side, family or person",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-080",
+   "title": "BETA-START-13 the name-too-long refusal doesn't echo the name",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-081",
+   "title": "BETA-START-13 the too-many-starts refusal names nobody",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-082",
+   "title": "BETA-START-13 the switch-off refusal names nobody",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-083",
+   "title": "BETA-START-13 the app reports a start_family refusal",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-084",
+   "title": "BETA-START-13 the error report's fields name nobody",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-085",
+   "title": "BETA-START-8 switched off again, can_start_family() is false for everyone",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-086",
+   "title": "BETA-START-8 and starting is refused",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-087",
+   "title": "BETA-START-8 turning it off leaves Pat's family as it was",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "START-FAMILY-088",
+   "title": "BETA-START-8 and Quinn still sees Pat's post",
+   "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-001",
+   "title": "SEARCH-1 Grandma finds the bike ride by typing \"bike\"",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-002",
+   "title": "SEARCH-1 ...in any case, every word must match, extra spaces are fine",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-003",
+   "title": "SEARCH-1 ...a word that isn't there finds nothing",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-004",
+   "title": "SEARCH-2 Aunt Jo, who can't see the bike ride, finds nothing for \"bike\"",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-005",
+   "title": "SEARCH-2 ...but finds the Everyone post for \"soccer\"",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-006",
+   "title": "SEARCH-2 ...and never the co-parent's report card",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-007",
+   "title": "SEARCH-3 Blair typing her group's name \"Co-parent\" finds nothing",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-008",
+   "title": "SEARCH-3 Aunt Jo typing \"Everyone\" finds nothing (group names aren't searched)",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-009",
+   "title": "SEARCH-3 a found post carries no audience and no group title for someone who didn't send it",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-010",
+   "title": "SEARCH-3 ...the sender still gets their own audience, as on the timeline",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-011",
+   "title": "SEARCH-4 words from a reply find nothing (reply rules stay with the replies)",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-012",
+   "title": "SEARCH-5 the title \"Fourth of July\" is found by \"july\"",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-013",
+   "title": "SEARCH-5 typing the sender's name finds what they sent that you can see",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-014",
+   "title": "SEARCH-6 \"From Alex\" with no words lists everything Alex sent, newest photo first",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-015",
+   "title": "SEARCH-6 \"From Blair\" in a family where Blair sent nothing Grandma can see finds nothing",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-016",
+   "title": "SEARCH-7 \"2026\" finds the two photos taken in 2026 and not last Christmas",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-017",
+   "title": "SEARCH-7 words and dates together",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-018",
+   "title": "SEARCH-8 \"%\" is a literal percent sign, not \"match everything\"",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-019",
+   "title": "SEARCH-8 \"_\" is a literal underscore",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-020",
+   "title": "SEARCH-9 blank words with no person or dates is refused",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-021",
+   "title": "SEARCH-9 more than 100 characters is refused",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-022",
+   "title": "SEARCH-9 more than 8 words is refused",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-023",
+   "title": "SEARCH-10 Grandma Rivera, not in Mom's family, finds nothing there",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-024",
+   "title": "SEARCH-10 ...and Mom's posts never show up in Dad's family",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-025",
+   "title": "SEARCH-11 a deleted post is not found",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-026",
+   "title": "SEARCH-12 page one holds the newest match",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-027",
+   "title": "SEARCH-12 page two starts after the last one shown",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-028",
+   "title": "SEARCH-13 search_posts is STABLE, so it can't store what anyone typed",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-029",
+   "title": "SEARCH-14 anon can't call search_posts",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-030",
+   "title": "SEARCH-14 signed-in people can",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-031",
+   "title": "SEARCH-15 a draft is never found, even by its sender",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-032",
+   "title": "SEARCH-15 a parent who didn't send the post finds it but gets no group title or counts",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-033",
+   "title": "SEARCH-15 removed from the group, Grandma stops finding its posts at once",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SEARCH-034",
+   "title": "SEARCH-15 ...and still finds Everyone's",
+   "area": "Search",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-001",
+   "title": "BETA-SMS-8 setup: a parent makes phone invites (channel sms, E.164 target)",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-002",
+   "title": "BETA-SMS-8 create_invite stores \"(304) 555-0144\" as +13045550144",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-003",
+   "title": "BETA-SMS-8 create_invite stores \"1 304 555 0155\" as +13045550155",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-004",
+   "title": "BETA-SMS-8 create_invite stores \"304.555.0166\" as +13045550166",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-005",
+   "title": "BETA-SMS-8 create_invite refuses a UK number (23514)",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-006",
+   "title": "BETA-SMS-8 create_invite refuses a 7-digit number (23514)",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-007",
+   "title": "BETA-SMS-8 create_invite refuses an area code starting with 1 (23514)",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-008",
+   "title": "BETA-SMS-8 create_invite refuses an exchange starting with 1 (23514)",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-009",
+   "title": "BETA-SMS-8 create_invite refuses 12 digits (23514)",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-010",
+   "title": "BETA-SMS-15 the bad-number refusal raised by create_invite does not hold the number",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-011",
+   "title": "BETA-SMS-9 invite_preview: a phone invite says sign_in_with = phone",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-012",
+   "title": "BETA-SMS-9 invite_preview: an email invite says sign_in_with = email",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-013",
+   "title": "BETA-SMS-9 invite_preview: a link invite says sign_in_with = either",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-014",
+   "title": "BETA-SMS-9 invite_preview never returns the target phone (no number, no target_phone key)",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-015",
+   "title": "BETA-SMS-9 invite_preview never returns the target email",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-016",
+   "title": "BETA-SMS-9 invite_preview returns exactly inviter_name, sign_in_with, space_name",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-017",
+   "title": "BETA-SMS-8 a different number gets \"invalid or expired\" (22023)",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-018",
+   "title": "BETA-SMS-8 an email-only account gets the same \"invalid or expired\" (22023)",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-019",
+   "title": "BETA-SMS-8 an account with no phone gets the same \"invalid or expired\" (22023)",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-020",
+   "title": "BETA-SMS-8 each refused redeem counts an rl_fail for that account",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-021",
+   "title": "BETA-SMS-15 the redeem refusal never holds a phone number",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-022",
+   "title": "BETA-SMS-8 auth.users.phone 13045550100 (no +) redeems an invite for +13045550100",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-023",
+   "title": "BETA-SMS-8 ...and she is in the family",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-024",
+   "title": "BETA-SMS-8 auth.users.phone +13045550111 (with +) redeems an invite for +13045550111",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-025",
+   "title": "BETA-SMS-8 ...and he is in the family",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-026",
+   "title": "BETA-SMS-15 / QA-R1 a phone-only account's placeholder name is never its phone number",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-027",
+   "title": "BETA-SMS-13 setup: Nana (phone only) joins by a link invite",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-028",
+   "title": "BETA-SMS-13 setup: Nana's phone has notices on",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-029",
+   "title": "BETA-SMS-13 setup: Papa (phone only) joins; no push token yet",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-030",
+   "title": "BETA-SMS-13 a phone-only account with notices on gets one push batch",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-031",
+   "title": "BETA-SMS-13 no phone-only account ever gets an email batch (push off or no token included)",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-032",
+   "title": "BETA-SMS-13 the outbox never makes an email batch with no address",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-033",
+   "title": "BETA-SMS-13 an email account with no phone registered still gets her evening email",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-034",
+   "title": "BETA-SMS-15 report_client_error keeps no phone number in any field ((304) 555-0100, 304-555-0100, 3045550100, +13045550100)",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SMS-035",
+   "title": "BETA-SMS-15 a report that held a number keeps \"[phone]\" in its place",
+   "area": "Sms",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUP-NAMES-001",
+   "title": "SEC-R1 Grandma Rivera reads no group or household row (so no name) from circles",
+   "area": "Group-Names",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUP-NAMES-002",
+   "title": "SEC-R1 her data export carries no group name",
+   "area": "Group-Names",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUP-NAMES-003",
+   "title": "SEC-R1 Alex, a parent, still reads his groups by name",
+   "area": "Group-Names",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "GROUP-NAMES-004",
+   "title": "SEC-R1 a parent's export still names the groups",
+   "area": "Group-Names",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "AUTH-NO-PASSWORDS-001",
+   "title": "TS-SEC-R1 a before insert or update trigger on auth.users runs private.tg_no_passwords() (migration 0028)",
+   "area": "Auth-No-Passwords",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "AUTH-NO-PASSWORDS-002",
+   "title": "TS-SEC-R1 insert with a password hash leaves encrypted_password = ''",
+   "area": "Auth-No-Passwords",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "AUTH-NO-PASSWORDS-003",
+   "title": "TS-SEC-R1 insert without a hash also leaves encrypted_password = ''",
+   "area": "Auth-No-Passwords",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "AUTH-NO-PASSWORDS-004",
+   "title": "TS-SEC-R1 an UPDATE setting a hash (updateUser({password})) leaves encrypted_password = ''",
+   "area": "Auth-No-Passwords",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "AUTH-NO-PASSWORDS-005",
+   "title": "TS-SEC-R1 supabase_auth_admin can still insert a user (no grant on the trigger function needed)",
+   "area": "Auth-No-Passwords",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "AUTH-NO-PASSWORDS-006",
+   "title": "TS-SEC-R1 supabase_auth_admin can insert a user without a hash",
+   "area": "Auth-No-Passwords",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "AUTH-NO-PASSWORDS-007",
+   "title": "TS-SEC-R1 supabase_auth_admin can run the update",
+   "area": "Auth-No-Passwords",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "AUTH-NO-PASSWORDS-008",
+   "title": "TS-SEC-R1 as supabase_auth_admin, insert with a hash leaves encrypted_password = ''",
+   "area": "Auth-No-Passwords",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "AUTH-NO-PASSWORDS-009",
+   "title": "TS-SEC-R1 as supabase_auth_admin, an UPDATE setting a hash leaves encrypted_password = ''",
+   "area": "Auth-No-Passwords",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "AUTH-NO-PASSWORDS-010",
+   "title": "TS-SEC-R1 anon cannot EXECUTE private.tg_no_passwords()",
+   "area": "Auth-No-Passwords",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "AUTH-NO-PASSWORDS-011",
+   "title": "TS-SEC-R1 authenticated cannot EXECUTE private.tg_no_passwords()",
+   "area": "Auth-No-Passwords",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "AUTH-NO-PASSWORDS-012",
+   "title": "TS-SEC-R1 no auth.users row (seed included) keeps a password hash",
+   "area": "Auth-No-Passwords",
    "tickets": [],
    "where": "backend/tests/"
   },

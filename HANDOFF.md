@@ -18,6 +18,11 @@ blockers:
 - **Next exact step:** Chase says "merge" (touches app/**, DEC-48); then live check fresh and returning; reply on #155 with the PR link.
 - **Portfolio / public presence:** the public demo's dark mode loses its drop shadows once this merges.
 
+## Nov 23: nine fruit themes beside Paper (Chase, DEC-80, R76, FRUIT-1..12; PR #160, branch claude/project-thread-9r046o)
+- Done: Paper (default, unchanged) + Avocado (unchanged) + new Pomegranate + Blood orange, Kiwi, Fig, Dragon fruit, Watermelon, Candy-stripe beet, Red cabbage. Picker of 10, owner-only. Dark dangerText #FF6961 off Paper. Tokens regenerated. qa-tdd red (r61) then green 3x (r62). Source tool: https://claude.ai/artifact/SQ6gmnFB6bX7t6scr3ipSz
+- Chase Nov 23: "merge all in the right order on green" (after #144, #158). Next: live check fresh + returning; then GUX-R30..R33 (P2) as their own PR; FRUIT-12 on phones.
+- **Portfolio / public presence:** the public demo's Theme picker offers the 10 themes once this merges.
+
 ## Nov 23: ask-less self-check rule (intake #154, R74; branch claude/project-thread-6ew09x, PR)
 - **Chase (Nov 23, via Product Studio):** "I never want to update your settings or environments or repos."
 - **Done:** CLAUDE.md "Minimize Chase's effort" gains the self-check paragraph from studio-agents `docs/studio-standard.md` section 1 (do it yourself, then a tool he only allows, then a card, then one copy box). Docs only.

@@ -39,12 +39,12 @@ function vars(c: Colors, indent: string): string {
     .join('\n');
 }
 
-/** DS-THEMES-1/2 (Chase, Nov 21): Paper, Avocado and Pomegranate as CSS variables for any studio web product,
+/** DS-THEMES-1/2 (Chase, Nov 21): Paper and the nine fruit themes (FRUIT-10) as CSS variables for any studio web product,
  *  written to docs/design/themes.css. Set data-hearth-theme on <html>; data-mode="dark"|"light" forces a mode,
  *  otherwise the phone's setting decides; data-contrast="more" gives the high-contrast set. */
 export function themesCss(): string {
   const out: string[] = [
-    '/* Studio themes: Paper (default), Avocado, Pomegranate. Generated from app/src/ui/theme.ts in',
+    '/* Studio themes: Paper (default) and nine fruits. Generated from app/src/ui/theme.ts in',
     '   holroydchase-afk/hearth (cd app && UPDATE_TOKENS=1 npx jest designTokens). Do not edit by hand.',
     '   Use: <html data-hearth-theme="avocado">; add data-mode="dark" or "light" to force a mode (otherwise the',
     '   device decides) and data-contrast="more" for the high-contrast set. Each color is given twice: the studio',
