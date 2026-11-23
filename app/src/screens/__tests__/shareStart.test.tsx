@@ -10,17 +10,39 @@
 //     on); its words are "Add photos" (or "Add photos or videos") and "Up to N at a time".
 //   - A parent (owner/adult) with deps.pickBulk gets N = 100 and pickBulk; anyone else gets N = 10 and pickPhotos.
 //     With no pickBulk in deps (most older tests), a parent's target falls back to pickPhotos.
-//   - The faded note and To: sit in one View hidden from screen readers (accessibilityElementsHidden and
-//     importantForAccessibility="no-hide-descendants") with opacity below 1; nothing inside it is tappable.
+//   - The note and To: sit in one View hidden from screen readers (accessibilityElementsHidden and
+//     importantForAccessibility="no-hide-descendants"); nothing inside it is tappable.
+//
+// Round 2, B+ (Chase, Nov 21, DEC-79 amended): SHARE-ST-10..18, written first (red), Nov 23, by qa-tdd. They win over
+// SHARE-ST-1's subline and SHARE-ST-3's fading (the old tests below are updated to match). Seams for the engineer:
+//   - Subline: "Only the people you pick will see it." (c.muted, fontSize >= 17).
+//   - The dashed photo spot is the button itself or a host View inside it: borderStyle 'dashed', borderWidth 2,
+//     borderColor c.accent, borderRadius 14, aspectRatio 4/3, backgroundColor c.surface (or none). Its outer edge sits
+//     12 px in from the card ("share-card") on left, right and top: card padding + margins in between add up to 12.
+//   - Inside the spot: a host View 72 x 72, borderRadius 36, backgroundColor c.accentSoft, holding the add-photo
+//     SystemIcon at size 32; "Add photos" Text at fontSize 22, FONT.semibold, color c.accent; then the helper Text.
+//     Helper and spoken label say 100 only for a parent with Easy view off; 10 otherwise.
+//   - testID "share-stamp": the stamp, style width 44, height 52, transform [{ rotate: '4deg' }], hidden from screen
+//     readers (accessibilityElementsHidden + importantForAccessibility "no-hide-descendants"), pointerEvents "none",
+//     no onPress in it or above it; its Text shows today's day of month and month (e.g. "23" and "NOV").
+//   - "Add a note (optional)" and "To: you pick after your photos" Texts: opacity 1 all the way up, >= 4.5:1 on c.surface.
+//   - testID "share-to": the To: row (no accessibilityRole "button", no onPress in it or above it). Inside it,
+//     testID "share-to-faces" (the stack: host Views 32 x 32) and testID "share-to-names" (one Text, numberOfLines 1):
+//     group names for a parent ("Everyone", "Dad's side", "Mom's side" as tileName gives them, no people's names);
+//     people's names for anyone else (never a group title).
+//   - testID "share-last": "Last shared <today|weekday>, to <names>" under the card, only once a post was sent; it
+//     must survive a fresh mount with the same kv (the engineer may add the date to audienceMemory's storage).
+//   - Press feedback: on pressIn the spot runs Animated.timing to 0.98 over 120 ms, and back to 1 on pressOut;
+//     with Reduce Motion on (AccessibilityInfo.isReduceMotionEnabled) no timing goes below 1.
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import { Image, Platform, StyleSheet, Text, TextInput } from 'react-native';
+import { AccessibilityInfo, Animated, Image, Platform, StyleSheet, Text, TextInput } from 'react-native';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { memoryKV, type KV } from '../../platform/kv';
 import type { PickedAsset } from '../../share/bulk';
 import { expectGrandparentSafe, renderApp, screenWords, type FixtureUser } from '../../test/renderApp';
 import type { AppDeps } from '../../state/AppContext';
-import { contrast, mix, paletteFor, photoShadow } from '../../ui/theme';
+import { FONT, contrast, mix, paletteFor, photoShadow } from '../../ui/theme';
 import { ShareScreen } from '../ShareScreen';
 
 const slow = { timeout: 5000 };
@@ -70,13 +92,14 @@ async function start(opts: { user?: FixtureUser; kv?: KV; be?: FakeBackend; deps
   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
 }
 const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
-/** The faded part: the View hidden from screen readers that holds "To: pick after your photos". */
+const TO = 'To: you pick after your photos'; // SHARE-ST-15 (was "To: pick after your photos", SHARE-ST-3)
+/** The note and To: part: the View hidden from screen readers that holds the To: words. */
 function fadedPart(): Inst {
-  const words = screen.getByText('To: pick after your photos');
+  const words = screen.getByText(TO);
   for (let p: Inst | null = words; p; p = p.parent) {
     if (isHost(p) && (p.props.accessibilityElementsHidden === true || p.props.importantForAccessibility === 'no-hide-descendants' || p.props['aria-hidden'] === true)) return p;
   }
-  throw new Error('"To: pick after your photos" is not inside a part hidden from screen readers');
+  throw new Error(`"${TO}" is not inside a part hidden from screen readers`);
 }
 /** Opacity of a node times every host parent's. */
 function opacityOf(node: Inst): number {
@@ -89,13 +112,10 @@ afterEach(() => jest.restoreAllMocks());
 
 describe('SHARE-ST-1 the Share tab opens on "New post", an empty postcard', () => {
   for (const user of ['chase', 'ruth'] as const) {
-    it(`SHARE-ST-1 ${user}: large title "New post", the muted subline, the DEC-73 card; none of the old start page`, async () => {
+    it(`SHARE-ST-1 ${user}: large title "New post", the DEC-73 card; none of the old start page (subline: SHARE-ST-10)`, async () => {
       const be = user === 'ruth' ? relativeCanPost() : undefined;
       await start({ user, be });
       const c = pal(false);
-      const sub = screen.getByText('For your family, nobody else.');
-      const s = flat(sub.props.style);
-      expect({ color: s.color, big: Number(s.fontSize) >= 17 }).toEqual({ color: c.muted, big: true });
       const card = screen.getByTestId('share-card');
       const shadowed = [card, card.parent].filter(Boolean).some((x) => flat(x!.props.style).boxShadow === photoShadow(false)!.boxShadow);
       expect({ fill: flat(card.props.style).backgroundColor, shadowed }).toEqual({ fill: c.surface, shadowed: true });
@@ -161,25 +181,21 @@ describe('SHARE-ST-2 the photo spot is one "Add photos" button', () => {
 
 describe('SHARE-ST-3 the note and To: wait below, faded and out of reach', () => {
   for (const dark of [false, true]) {
-    it(`SHARE-ST-3 (${dark ? 'dark' : 'light'}) "Add a note (optional)" and "To: pick after your photos" with 3 empty tile outlines: faded, words still 4.5:1, hidden from VoiceOver/TalkBack, not tappable; no Send`, async () => {
+    // Updated Nov 23 for SHARE-ST-14/15 (B+): no longer faded, no 3 empty outlines (a face stack instead), new To: words.
+    it(`SHARE-ST-3 (${dark ? 'dark' : 'light'}) "Add a note (optional)" and the To: line: words 4.5:1, hidden from VoiceOver/TalkBack, not tappable; no Send`, async () => {
       await start({ kv: prefs('chase', { look: dark ? 'dark' : 'light' }) });
       const c = pal(dark);
       const faded = fadedPart();
-      expect(wordsIn(faded)).toBe('Add a note (optional) To: pick after your photos');
+      expect(wordsIn(faded)).toMatch(new RegExp(`^Add a note \\(optional\\) ${TO} `));
       expect({ hidden: faded.props.accessibilityElementsHidden, important: faded.props.importantForAccessibility })
         .toEqual({ hidden: true, important: 'no-hide-descendants' });
       const o = opacityOf(faded);
-      expect(o).toBeLessThan(1);
-      // RD-96: the faded words still read at 4.5:1 on the card.
+      // RD-96: the words read at 4.5:1 on the card.
       for (const t of faded.findAll((x: Inst) => x.type === Text)) {
         const color = String(flat(t.props.style).color);
         const seen = mix(c.surface, color, o * Number(flat(t.props.style).opacity ?? 1));
         expect({ text: wordsIn(t), ok: contrast(seen, c.surface) >= 4.5 }).toEqual({ text: wordsIn(t), ok: true });
       }
-      // 3 empty tile outlines in c.line.
-      const outlines = faded.findAll((x: Inst) => isHost(x) && Number(flat(x.props.style).borderWidth ?? 0) > 0 && flat(x.props.style).borderColor === c.line
-        && x.findAll((y: Inst) => y.type === Text).length === 0);
-      expect(outlines).toHaveLength(3);
       // Nothing in it can be focused or tapped.
       expect(faded.findAll((x: Inst) => typeof x.props.onPress === 'function' || typeof x.props.onResponderGrant === 'function' || x.props.accessible === true)).toHaveLength(0);
       expect(screen.UNSAFE_queryAllByType(TextInput)).toHaveLength(0);
@@ -227,7 +243,7 @@ describe('SHARE-ST-4 a parent taps Add photos: one picker, up to 100', () => {
     await waitFor(() => expect(pickBulk).toHaveBeenCalled());
     await new Promise((r) => setTimeout(r, 20));
     expect(target(100)).toBeTruthy();
-    expect(screen.getByText('To: pick after your photos')).toBeTruthy();
+    expect(screen.getByText(TO)).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Cancel this post' })).toBeNull();
     expect(screen.queryByRole('alert')).toBeNull();
   });
@@ -307,5 +323,276 @@ describe('SHARE-ST-7 privacy: a parent\'s 1-10 pick through pickBulk sends no EX
     expect(screen.getByRole('header', { name: 'New post' })).toBeTruthy();
     expect(screen.getByTestId('share-card')).toBeTruthy();
     expect(target(100)).toBeTruthy();
+  });
+});
+
+// ---------- Round 2, B+ (DEC-79 amended): SHARE-ST-10..18 ----------
+const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+/** Host nodes from `node` up to and including `top`. */
+function chain(node: Inst, top: Inst): Inst[] {
+  const out: Inst[] = [];
+  for (let p: Inst | null = node; p; p = p.parent) {
+    if (isHost(p)) out.push(p);
+    if (p === top) return out;
+  }
+  throw new Error('node is not inside top');
+}
+/** The node in the photo spot (the button or inside it) that carries the dashed border. */
+function dashed(btn: Inst): Inst {
+  const all = [btn, ...(btn.findAll(isHost) as Inst[])].filter(isHost);
+  const d = all.find((x) => flat(x.props.style).borderStyle === 'dashed');
+  if (!d) throw new Error('no dashed border on the photo spot');
+  return d;
+}
+const num = (...x: unknown[]) => Number(x.find((y) => typeof y === 'number') ?? 0);
+/** How far `node`'s outer edge sits in from `card`'s outer edge on one side: card padding + margins/paddings between. */
+function inset(node: Inst, card: Inst, side: 'Left' | 'Right' | 'Top'): number {
+  const axis = side === 'Top' ? 'Vertical' : 'Horizontal';
+  let total = 0;
+  for (const n of chain(node, card)) {
+    const s = flat(n.props.style);
+    if (n !== card) total += num(s[`margin${side}`], s[`margin${axis}`], s.margin);
+    if (n !== node) total += num(s[`padding${side}`], s[`padding${axis}`], s.padding) + num(s[`border${side}Width`], s.borderWidth);
+  }
+  return total;
+}
+function noPressUp(node: Inst): boolean {
+  for (let p: Inst | null = node; p; p = p.parent) if (typeof p.props.onPress === 'function' || p.props.accessibilityRole === 'button') return false;
+  return node.findAll((x: Inst) => typeof x.props.onPress === 'function').length === 0;
+}
+type Call = { toValue: unknown; duration: number };
+function spyTiming(): Call[] {
+  const calls: Call[] = [];
+  const real = Animated.timing;
+  jest.spyOn(Animated, 'timing').mockImplementation(((v: Animated.Value, cfg: Animated.TimingAnimationConfig) => {
+    calls.push({ toValue: cfg.toValue, duration: Number(cfg.duration ?? 500) });
+    return real(v, cfg);
+  }) as never);
+  return calls;
+}
+const PEOPLE = /Chase|Alex|Grandma Jo|Nana Ruth|Grandpa Earl/;
+const GROUPS = /Everyone|Dad's side|Mom's side|Grandparents/;
+
+describe('SHARE-ST-10 the subline says who sees it', () => {
+  for (const user of ['chase', 'ruth'] as const) {
+    it(`SHARE-ST-10 ${user}: "Only the people you pick will see it." muted, 17 pt+; the old subline is gone`, async () => {
+      await start({ user, be: user === 'ruth' ? relativeCanPost() : undefined });
+      const s = flat(screen.getByText('Only the people you pick will see it.').props.style);
+      expect({ color: s.color, big: Number(s.fontSize) >= 17 }).toEqual({ color: pal(false).muted, big: true });
+      expect(screen.queryByText('For your family, nobody else.')).toBeNull();
+    });
+  }
+});
+
+describe('SHARE-ST-11 the photo spot is a dashed outline on the card', () => {
+  for (const dark of [false, true]) {
+    it(`SHARE-ST-11 (${dark ? 'dark' : 'light'}) 4:3, 2 px dashed accent border, 14 px corners, surface (no tint), 12 px in from the card`, async () => {
+      await start({ kv: prefs('chase', { look: dark ? 'dark' : 'light' }) });
+      const c = pal(dark);
+      const btn = target(100);
+      const d = dashed(btn);
+      const s = flat(d.props.style);
+      const bg = s.backgroundColor;
+      expect({ ratio: Number(s.aspectRatio ?? flat(btn.props.style).aspectRatio).toFixed(3), width: s.borderWidth, color: s.borderColor, radius: s.borderRadius,
+        noTint: bg === undefined || bg === 'transparent' || bg === c.surface })
+        .toEqual({ ratio: (4 / 3).toFixed(3), width: 2, color: c.accent, radius: 14, noTint: true });
+      const card = screen.getByTestId('share-card');
+      expect({ left: inset(d, card, 'Left'), right: inset(d, card, 'Right'), top: inset(d, card, 'Top') }).toEqual({ left: 12, right: 12, top: 12 });
+    });
+  }
+});
+
+describe('SHARE-ST-12 inside the spot: tinted circle, icon, "Add photos", helper', () => {
+  it('SHARE-ST-12 a parent, Easy view off: 72 px accent-tint circle, 32 px icon, "Add photos" 22 pt SemiBold accent, "Up to 100 at a time"', async () => {
+    await start({ kv: prefs('chase', { easyView: false }) });
+    const c = pal(false);
+    const btn = target(100);
+    const circle = (btn.findAll(isHost) as Inst[]).find((x) => { const s = flat(x.props.style); return s.width === 72 && s.height === 72; });
+    expect(circle && { radius: flat(circle.props.style).borderRadius, fill: flat(circle.props.style).backgroundColor }).toEqual({ radius: 36, fill: c.accentSoft });
+    const icon = circle!.findAll((x: Inst) => x.props.name !== undefined && x.props.tintColor !== undefined);
+    expect(icon.map((i: Inst) => i.props.size)).toEqual([32]);
+    const add = btn.findAll((x: Inst) => x.type === Text && wordsIn(x) === 'Add photos')[0]!;
+    const s = flat(add.props.style);
+    expect({ size: s.fontSize, font: s.fontFamily, color: s.color }).toEqual({ size: 22, font: FONT.semibold, color: c.accent });
+    expect(wordsIn(btn)).toBe('Add photos Up to 100 at a time');
+  });
+
+  it('SHARE-ST-12 a parent with Easy view on reads and hears "Up to 10 at a time"', async () => {
+    await start({ kv: prefs('chase', { easyView: true }) });
+    expect(wordsIn(target(10))).toBe('Add photos Up to 10 at a time');
+    expect(screen.queryByText('Up to 100 at a time')).toBeNull();
+  });
+
+  it('SHARE-ST-12 a relative (Easy view off) reads and hears "Up to 10 at a time"', async () => {
+    await start({ user: 'ruth', be: relativeCanPost(), kv: prefs('ruth', { easyView: false }) });
+    expect(wordsIn(target(10))).toBe('Add photos Up to 10 at a time');
+  });
+});
+
+describe('SHARE-ST-13 a decorative stamp in the corner', () => {
+  it('SHARE-ST-13 44 x 52, rotated 4 degrees, postmark with today\'s day and month; not tappable, hidden from VoiceOver/TalkBack', async () => {
+    await start();
+    const stamp = screen.getByTestId('share-stamp', { includeHiddenElements: true });
+    const s = flat(stamp.props.style);
+    const rot = (Array.isArray(s.transform) ? (s.transform as Array<Record<string, unknown>>) : []).find((x) => 'rotate' in x);
+    expect({ w: s.width, h: s.height, rot: rot?.rotate }).toEqual({ w: 44, h: 52, rot: '4deg' });
+    expect({ hidden: stamp.props.accessibilityElementsHidden, important: stamp.props.importantForAccessibility, pe: stamp.props.pointerEvents ?? s.pointerEvents })
+      .toEqual({ hidden: true, important: 'no-hide-descendants', pe: 'none' });
+    expect(noPressUp(stamp)).toBe(true);
+    const now = new Date();
+    const words = wordsIn(stamp).toUpperCase();
+    expect({ day: new RegExp(`\\b${now.getDate()}\\b`).test(words), month: words.includes(MONTHS[now.getMonth()]!) }).toEqual({ day: true, month: true });
+    let inCard = false;
+    for (let p: Inst | null = stamp; p; p = p.parent) if (p === screen.getByTestId('share-card')) inCard = true;
+    expect(inCard).toBe(true);
+  });
+});
+
+describe('SHARE-ST-14 the note and To: at full contrast', () => {
+  const cases = [
+    { name: 'light', p: { look: 'light' }, dark: false },
+    { name: 'dark', p: { look: 'dark' }, dark: true },
+    { name: 'Easy view', p: { look: 'light', easyView: true }, dark: false },
+  ];
+  for (const k of cases) {
+    it(`SHARE-ST-14 (${k.name}) "Add a note (optional)" and the To: words: no lowered opacity, >= 4.5:1 on the surface`, async () => {
+      await start({ kv: prefs('chase', k.p) });
+      const c = pal(k.dark);
+      for (const words of ['Add a note (optional)', TO]) {
+        const t = screen.getByText(words, { includeHiddenElements: true });
+        const color = String(flat(t.props.style).color);
+        expect({ words, opacity: opacityOf(t), ok: contrast(color, c.surface) >= 4.5 }).toEqual({ words, opacity: 1, ok: true });
+      }
+    });
+  }
+});
+
+describe('SHARE-ST-15 To: shows who it can go to', () => {
+  it('SHARE-ST-15 a parent: "To: you pick after your photos", a 32 px face stack, one line of group names (no people)', async () => {
+    await start();
+    expect(screen.getByText(TO, { includeHiddenElements: true })).toBeTruthy();
+    const faces = await screen.findByTestId('share-to-faces', { includeHiddenElements: true }, slow);
+    const dots = (faces.findAll(isHost) as Inst[]).filter((x) => { const s = flat(x.props.style); return s.width === 32 && s.height === 32; });
+    expect(dots.length).toBeGreaterThan(0);
+    const names = await screen.findByTestId('share-to-names', { includeHiddenElements: true }, slow);
+    const line = wordsIn(names) || String(names.props.children);
+    expect({ everyone: /Everyone/.test(line), dad: /Dad's side/.test(line), mom: /Mom's side/.test(line), people: PEOPLE.test(line), lines: names.props.numberOfLines })
+      .toEqual({ everyone: true, dad: true, mom: true, people: false, lines: 1 });
+  });
+
+  it('SHARE-ST-15 a relative: people\'s names (Chase, Alex), never a group title', async () => {
+    await start({ user: 'ruth', be: relativeCanPost() });
+    const names = await screen.findByTestId('share-to-names', { includeHiddenElements: true }, slow);
+    const line = wordsIn(names) || String(names.props.children);
+    expect({ chase: /Chase/.test(line), alex: /Alex/.test(line), groups: GROUPS.test(line), me: /Ruth/.test(line), lines: names.props.numberOfLines })
+      .toEqual({ chase: true, alex: true, groups: false, me: false, lines: 1 });
+  });
+
+  it('SHARE-ST-15 the To: row is not a button and does nothing when tapped', async () => {
+    const { pickBulk, pickPhotos } = await start();
+    const row = await screen.findByTestId('share-to', { includeHiddenElements: true }, slow);
+    expect(noPressUp(row)).toBe(true);
+    fireEvent.press(row);
+    fireEvent.press(screen.getByText(TO, { includeHiddenElements: true }));
+    await new Promise((r) => setTimeout(r, 20));
+    expect({ bulk: pickBulk.mock.calls.length, photos: pickPhotos.mock.calls.length }).toEqual({ bulk: 0, photos: 0 });
+    expect(target(100)).toBeTruthy();
+  });
+});
+
+describe('SHARE-ST-16 "Last shared" under the card', () => {
+  it('SHARE-ST-16 nothing sent yet: no "Last shared" line', async () => {
+    await start();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(screen.queryByText(/^Last shared/)).toBeNull();
+    expect(screen.queryByTestId('share-last')).toBeNull();
+  });
+
+  it('SHARE-ST-16 a parent sends to Dad\'s side: back on the start, and on a fresh open, "Last shared today, to ... Dad\'s side"', async () => {
+    const be = FakeBackend.withFixture();
+    const kv = memoryKV();
+    const { unmount } = await start({ be, kv, deps: { pickBulk: jest.fn(async () => ({ assets: assets(1) })) } });
+    fireEvent.press(target(100));
+    fireEvent.press(await screen.findByLabelText(/^Grandparents – Dad's side, \d+ people, not picked$/, {}, slow));
+    fireEvent.press(screen.getByRole('button', { name: /^Send to / }));
+    const want = /^Last shared (today|(Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day), to (Grandparents – )?Dad's side$/;
+    expect(await screen.findByText(want, {}, slow)).toBeTruthy();
+    unmount();
+    await start({ be, kv });
+    const last = await screen.findByTestId('share-last', {}, slow);
+    expect(wordsIn(last) || String(last.props.children)).toMatch(want);
+  });
+
+  it('SHARE-ST-16 a relative sends to Mom\'s side: the line names people, not the group', async () => {
+    const be = relativeCanPost();
+    const kv = memoryKV();
+    const pickPhotos = jest.fn(async () => ({ items: items(1) }));
+    await start({ user: 'ruth', be, kv, deps: { pickPhotos } });
+    fireEvent.press(target(10));
+    fireEvent.press(await screen.findByLabelText(/^(Alex and Chase|Chase and Alex), \d+ people, not picked$/, {}, slow));
+    fireEvent.press(screen.getByRole('button', { name: /^Send to / }));
+    expect(await screen.findByText(/^Last shared (today|\w+day), to (Alex and Chase|Chase and Alex)$/, {}, slow)).toBeTruthy();
+  });
+});
+
+describe('SHARE-ST-17 press feedback on the photo spot', () => {
+  it('SHARE-ST-17 pressIn scales to 0.98 over 120 ms; pressOut goes back to 1', async () => {
+    await start();
+    const calls = spyTiming();
+    fireEvent(target(100), 'pressIn');
+    expect(calls.filter((c) => c.toValue === 0.98).map((c) => c.duration)).toEqual([120]);
+    fireEvent(target(100), 'pressOut');
+    expect(calls[calls.length - 1]).toEqual({ toValue: 1, duration: 120 });
+  });
+
+  it('SHARE-ST-17 Reduce Motion on: no scale on press', async () => {
+    jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
+    await start();
+    await new Promise((r) => setTimeout(r, 20));
+    const calls = spyTiming();
+    fireEvent(target(100), 'pressIn');
+    fireEvent(target(100), 'pressOut');
+    expect(calls.filter((c) => Number(c.toValue) < 1)).toEqual([]);
+    const scaledNodes = [target(100), ...(target(100).findAll(isHost) as Inst[])].filter((n) => {
+      const tf = flat(n.props.style).transform as Array<Record<string, unknown>> | undefined;
+      return Array.isArray(tf) && tf.some((x) => 'scale' in x && Number(x.scale) !== 1);
+    });
+    expect(scaledNodes).toHaveLength(0);
+  });
+});
+
+describe('SHARE-ST-18 nothing moves on by itself', () => {
+  const wait = () => new Promise((r) => setTimeout(r, 400));
+  const posts = (be: FakeBackend) => Object.keys(be.state.posts).length;
+
+  it('SHARE-ST-18 the start page never opens a picker by itself', async () => {
+    const { pickBulk, pickPhotos } = await start();
+    await wait();
+    expect({ bulk: pickBulk.mock.calls.length, photos: pickPhotos.mock.calls.length }).toEqual({ bulk: 0, photos: 0 });
+    expect(target(100)).toBeTruthy();
+  });
+
+  it('SHARE-ST-18 3 picked with a saved last audience: the postcard waits, nothing picked for you, nothing sent', async () => {
+    const be = FakeBackend.withFixture();
+    const kv = memoryKV({ [`hearth.lastAudience.v1.${FIXTURE.users.chase.id}`]: JSON.stringify([FIXTURE.circles.dadSide.id]) });
+    await start({ be, kv, deps: { pickBulk: jest.fn(async () => ({ assets: assets(3) })) } });
+    fireEvent.press(target(100));
+    expect(await screen.findByText('1 of 3', {}, slow)).toBeTruthy();
+    await wait();
+    expect(screen.getByText('1 of 3')).toBeTruthy();
+    expect(screen.queryAllByLabelText(/, picked$/)).toHaveLength(0);
+    expect(posts(be)).toBe(0);
+  });
+
+  it('SHARE-ST-18 a parent picks 11: bulk review opens and waits for a tap; nothing picked or sent', async () => {
+    const be = FakeBackend.withFixture();
+    const kv = memoryKV({ [`hearth.lastAudience.v1.${FIXTURE.users.chase.id}`]: JSON.stringify([FIXTURE.circles.dadSide.id]) });
+    await start({ be, kv, deps: { pickBulk: jest.fn(async () => ({ assets: assets(11) })) } });
+    fireEvent.press(target(100));
+    expect(await screen.findByRole('button', { name: 'Send 11 photos' }, slow)).toBeTruthy();
+    await wait();
+    expect(screen.getByRole('button', { name: 'Send 11 photos' })).toBeTruthy();
+    expect(screen.queryAllByLabelText(/, picked$/)).toHaveLength(0);
+    expect(posts(be)).toBe(0);
   });
 });
