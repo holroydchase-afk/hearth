@@ -12,6 +12,8 @@ const resetDemo = async (page) => {
   await details(page);
   await page.getByRole('button', { name: 'Reset demo' }).click();
   await page.getByRole('button', { name: 'Reset', exact: true }).click();
+  // QA-R2 (T28): Reset waits for saves before it navigates (DEMO-SAFARI), so wait for the fresh page's note.
+  await expect(page.getByText('Sample data restored.')).toBeVisible();
 };
 
 // RD-18 (redesign 1c): Gallery shows photos, not captions. "Loaded" = the greeting and a drawn picture; captions are

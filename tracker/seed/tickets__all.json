@@ -1257,6 +1257,30 @@
    "tests": [],
    "found": "2026-11-23",
    "fixed": null
+  },
+  {
+   "id": "T30",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "QA-R2 (DEMO-SAFARI green gate, Nov 21): e2e:demo RD-117 failed 1 of 3 with page.reload: Not attached to an active page, because the DEMO-SAFARI fix made Reset wait for saves before navigating and resetDemo() returned at the click. Fixed Nov 21: resetDemo() waits for 'Sample data restored.'; demo.spec.js 3x green (102/102). Test: app/e2e-web/demo.spec.js",
+   "tests": [
+    "app/e2e-web/demo.spec.js"
+   ],
+   "found": "2026-11-21",
+   "fixed": "2026-11-21"
+  },
+  {
+   "id": "B22",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R3 (DEMO-SAFARI green gate, Nov 21): Reset demo clears localStorage but leaves photo bytes in IndexedDB (hearth.demoObjects) until the next load starts a fresh family. Local only, nothing leaves the device. Fix: startOver() clears the store before navigating. No test yet.",
+   "tests": [],
+   "found": "2026-11-21",
+   "fixed": null
   }
  ]
 }

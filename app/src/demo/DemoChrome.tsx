@@ -26,7 +26,11 @@ function takeRestored(): boolean {
   } catch { return false; }
 }
 
-function startOver() {
+// DEMO-SAFARI: saves still landing would bring the old family back, so wait for them first. The photo bytes in
+// IndexedDB are cleared by the next load, which finds no family and starts a fresh one.
+async function startOver(be: FakeBackend) {
+  if (be.ready) await be.ready.catch(() => undefined);
+  await be.flush?.().catch(() => undefined);
   try { window.sessionStorage.setItem(RESTORED, '1'); } catch { /* no note, still a fresh family */ }
   try {
     const ls = webStorage();
@@ -53,7 +57,7 @@ export function DemoChrome({ children }: { children: ReactNode }) {
         controls={(
           <View style={{ gap: 8 }}>
             {restored && <Txt variant="strong">Sample data restored.</Txt>}
-            <DemoActions be={be} reload={goPhotos} startOver={startOver} />
+            <DemoActions be={be} reload={goPhotos} startOver={() => void startOver(be)} />
           </View>
         )}
       >
@@ -65,7 +69,7 @@ export function DemoChrome({ children }: { children: ReactNode }) {
     <View style={{ flex: 1 }}>
       {/* DEMO-EASY-1: the demo bar is the demo's, not the app's, so Easy view doesn't enlarge it. */}
       <BigTextContext.Provider value={false}>
-        <DemoBar be={be} reload={goPhotos} startOver={startOver} open={open} restored={restored} />
+        <DemoBar be={be} reload={goPhotos} startOver={() => void startOver(be)} open={open} restored={restored} />
       </BigTextContext.Provider>
       <View style={{ flex: 1 }}>{children}</View>
     </View>
