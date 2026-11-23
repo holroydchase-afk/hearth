@@ -34,6 +34,21 @@
 //     must survive a fresh mount with the same kv (the engineer may add the date to audienceMemory's storage).
 //   - Press feedback: on pressIn the spot runs Animated.timing to 0.98 over 120 ms, and back to 1 on pressOut;
 //     with Reduce Motion on (AccessibilityInfo.isReduceMotionEnabled) no timing goes below 1.
+//
+// grandparent-ux round on B+ (Nov 23): GUX-R1..R5, written first (red), Nov 23, by qa-tdd. They win over SHARE-ST-3's
+// and SHARE-ST-15's "not tappable / does nothing", SHARE-ST-15's one line and parent face stack, and SHARE-ST-13's
+// stamp placement and day-then-month order. Seams for the engineer:
+//   - GUX-R1: pressing "Add a note (optional)" or the To: row ("share-to") on the empty postcard shows the Text
+//     "Add photos first, then write your note and pick who sees it." where screen readers reach it (not inside the
+//     hidden part), and announces it: AccessibilityInfo.announceForAccessibility(<that line>) or the line (or a host
+//     parent) carries accessibilityLiveRegion "polite"/"assertive" or accessibilityRole "alert". No picker, no note
+//     box, no group tiles, no Send open. The line is not shown before a tap.
+//   - GUX-R2: "share-to-names" has numberOfLines 2 (never 1).
+//   - GUX-R3: a parent's To: row has no "share-to-faces" (it lists groups); anyone else keeps the 32 px face stack.
+//   - GUX-R4: the stamp's words read month first, then day ("NOV" above "23", or "Nov 23").
+//   - GUX-R5: "share-stamp"'s nearest host parent is "share-card" (not the dashed spot or anything inside the spot
+//     button); if absolute and top-anchored, its top + 52 stays at or above the spot's 12 px top inset (no overlap);
+//     bottom-anchored or in normal flow outside the spot is fine.
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { AccessibilityInfo, Animated, Image, Platform, StyleSheet, Text, TextInput } from 'react-native';
@@ -201,8 +216,7 @@ describe('SHARE-ST-3 the note and To: wait below, faded and out of reach', () =>
         const seen = mix(c.surface, color, o * Number(flat(t.props.style).opacity ?? 1));
         expect({ text: wordsIn(t), ok: contrast(seen, c.surface) >= 4.5 }).toEqual({ text: wordsIn(t), ok: true });
       }
-      // Nothing in it can be focused or tapped.
-      expect(faded.findAll((x: Inst) => typeof x.props.onPress === 'function' || typeof x.props.onResponderGrant === 'function' || x.props.accessible === true)).toHaveLength(0);
+      // Updated Nov 23 for GUX-R1: a tap on the note or To: may show the "Add photos first" line; nothing else opens (GUX-R1 tests).
       expect(screen.UNSAFE_queryAllByType(TextInput)).toHaveLength(0);
       expect(screen.queryByRole('button', { name: /^(Send to |Pick who gets it$)/ })).toBeNull();
       expect(screen.queryByText(/^(Send to |Pick who gets it$)/)).toBeNull();
@@ -475,30 +489,32 @@ describe('SHARE-ST-14 the note and To: at full contrast', () => {
 });
 
 describe('SHARE-ST-15 To: shows who it can go to', () => {
-  it('SHARE-ST-15 a parent: "To: you pick after your photos", a 32 px face stack, one line of group names (no people)', async () => {
+  // Updated Nov 23 for GUX-R2/R3: up to 2 lines of names; a parent's row has no face stack (it lists groups).
+  it('SHARE-ST-15 GUX-R3 a parent: "To: you pick after your photos", no face stack, group names on up to 2 lines (no people)', async () => {
     await start();
     expect(screen.getByText(TO, { includeHiddenElements: true })).toBeTruthy();
-    const faces = await screen.findByTestId('share-to-faces', { includeHiddenElements: true }, slow);
-    const dots = (faces.findAll(isHost) as Inst[]).filter((x) => { const s = flat(x.props.style); return s.width === 32 && s.height === 32; });
-    expect(dots.length).toBeGreaterThan(0);
     const names = await screen.findByTestId('share-to-names', { includeHiddenElements: true }, slow);
     const line = wordsIn(names) || String(names.props.children);
     expect({ everyone: /Everyone/.test(line), dad: /Dad's side/.test(line), mom: /Mom's side/.test(line), people: PEOPLE.test(line), lines: names.props.numberOfLines })
-      .toEqual({ everyone: true, dad: true, mom: true, people: false, lines: 1 });
+      .toEqual({ everyone: true, dad: true, mom: true, people: false, lines: 2 });
+    expect(screen.queryByTestId('share-to-faces', { includeHiddenElements: true })).toBeNull();
   });
 
-  it('SHARE-ST-15 a relative: people\'s names (Chase, Alex), never a group title', async () => {
+  it('SHARE-ST-15 GUX-R3 a relative: a 32 px face stack and people\'s names (Chase, Alex) on up to 2 lines, never a group title', async () => {
     await start({ user: 'ruth', be: relativeCanPost() });
     const names = await screen.findByTestId('share-to-names', { includeHiddenElements: true }, slow);
+    const faces = screen.getByTestId('share-to-faces', { includeHiddenElements: true });
+    const dots = (faces.findAll(isHost) as Inst[]).filter((x) => { const s = flat(x.props.style); return s.width === 32 && s.height === 32; });
+    expect(dots.length).toBeGreaterThan(0);
     const line = wordsIn(names) || String(names.props.children);
     expect({ chase: /Chase/.test(line), alex: /Alex/.test(line), groups: GROUPS.test(line), me: /Ruth/.test(line), lines: names.props.numberOfLines })
-      .toEqual({ chase: true, alex: true, groups: false, me: false, lines: 1 });
+      .toEqual({ chase: true, alex: true, groups: false, me: false, lines: 2 });
   });
 
-  it('SHARE-ST-15 the To: row is not a button and does nothing when tapped', async () => {
+  // Updated Nov 23 for GUX-R1: the row may answer a tap with the "Add photos first" line, but opens nothing.
+  it('SHARE-ST-15 the To: row opens no picker when tapped', async () => {
     const { pickBulk, pickPhotos } = await start();
     const row = await screen.findByTestId('share-to', { includeHiddenElements: true }, slow);
-    expect(noPressUp(row)).toBe(true);
     fireEvent.press(row);
     fireEvent.press(screen.getByText(TO, { includeHiddenElements: true }));
     await new Promise((r) => setTimeout(r, 20));
@@ -601,5 +617,94 @@ describe('SHARE-ST-18 nothing moves on by itself', () => {
     expect(screen.getByRole('button', { name: 'Send 11 photos' })).toBeTruthy();
     expect(screen.queryAllByLabelText(/, picked$/)).toHaveLength(0);
     expect(posts(be)).toBe(0);
+  });
+});
+
+// ---------- grandparent-ux round on B+ (Nov 23): GUX-R1..R5 ----------
+const FIRST = 'Add photos first, then write your note and pick who sees it.';
+/** True when `line` is announced: announceForAccessibility was called with it, or it (or a host parent) is a live region or alert. */
+function announced(line: Inst, spy: jest.SpyInstance): boolean {
+  if (spy.mock.calls.some((c) => c[0] === FIRST)) return true;
+  for (let p: Inst | null = line; p; p = p.parent) {
+    if (!isHost(p)) continue;
+    if (p.props.accessibilityLiveRegion === 'polite' || p.props.accessibilityLiveRegion === 'assertive' || p.props.accessibilityRole === 'alert' || p.props.role === 'alert' || p.props['aria-live'] === 'polite' || p.props['aria-live'] === 'assertive') return true;
+  }
+  return false;
+}
+
+describe('GUX-R1 P1 a tap on the empty note or To: says what to do first', () => {
+  const where = [
+    { name: 'the note label', user: 'chase' as const, tap: () => screen.getByText('Add a note (optional)', { includeHiddenElements: true }) },
+    { name: 'the To: row', user: 'chase' as const, tap: () => screen.getByTestId('share-to', { includeHiddenElements: true }) },
+    { name: 'the To: row (a relative)', user: 'ruth' as const, tap: () => screen.getByTestId('share-to', { includeHiddenElements: true }) },
+  ];
+  for (const w of where) {
+    it(`GUX-R1 ${w.name}: "${FIRST}" shows and is announced; nothing else opens`, async () => {
+      const spy = jest.spyOn(AccessibilityInfo, 'announceForAccessibility');
+      const { pickBulk, pickPhotos } = await start({ user: w.user, be: w.user === 'ruth' ? relativeCanPost() : undefined });
+      expect(screen.queryByText(FIRST, { includeHiddenElements: true })).toBeNull();
+      fireEvent.press(w.tap());
+      const line = await screen.findByText(FIRST, {}, slow); // reachable by VoiceOver/TalkBack, not inside the hidden part
+      expect({ shown: !!line, announced: announced(line, spy) }).toEqual({ shown: true, announced: true });
+      await new Promise((r) => setTimeout(r, 20));
+      expect({
+        bulk: pickBulk.mock.calls.length, photos: pickPhotos.mock.calls.length, input: screen.UNSAFE_queryAllByType(TextInput).length,
+        send: screen.queryAllByRole('button', { name: /^(Send to |Pick who gets it$)/ }).length,
+        tiles: screen.queryAllByRole('checkbox').length + screen.queryAllByRole('switch').length,
+      }).toEqual({ bulk: 0, photos: 0, input: 0, send: 0, tiles: 0 });
+      expect(screen.getByRole('header', { name: 'New post' })).toBeTruthy();
+      expect(target()).toBeTruthy();
+    });
+  }
+});
+
+describe('GUX-R2 P1 the To: names wrap to 2 lines, never cut to 1', () => {
+  for (const user of ['chase', 'ruth'] as const) {
+    it(`GUX-R2 ${user}: share-to-names has numberOfLines 2`, async () => {
+      await start({ user, be: user === 'ruth' ? relativeCanPost() : undefined });
+      const names = await screen.findByTestId('share-to-names', { includeHiddenElements: true }, slow);
+      expect(names.props.numberOfLines).toBe(2);
+    });
+  }
+});
+
+describe('GUX-R3 P1 a parent\'s To: shows group names, not a stack of initials', () => {
+  it('GUX-R3 a parent: no share-to-faces; the group names show', async () => {
+    await start();
+    await screen.findByTestId('share-to-names', { includeHiddenElements: true }, slow);
+    expect(screen.queryByTestId('share-to-faces', { includeHiddenElements: true })).toBeNull();
+  });
+  it('GUX-R3 a relative keeps the faces of the people', async () => {
+    await start({ user: 'ruth', be: relativeCanPost() });
+    expect(await screen.findByTestId('share-to-faces', { includeHiddenElements: true }, slow)).toBeTruthy();
+  });
+});
+
+describe('GUX-R4 P2 the stamp reads month, then day (US)', () => {
+  it('GUX-R4 the month comes before the day in the stamp\'s words', async () => {
+    await start();
+    const now = new Date();
+    const words = wordsIn(screen.getByTestId('share-stamp', { includeHiddenElements: true })).toUpperCase();
+    const month = words.indexOf(MONTHS[now.getMonth()]!);
+    const day = words.search(new RegExp(`\\b${now.getDate()}\\b`));
+    expect({ words, monthFirst: month >= 0 && day >= 0 && month < day }).toEqual({ words, monthFirst: true });
+  });
+});
+
+describe('GUX-R5 P2 the stamp sits in the card\'s corner, outside the dashed photo spot', () => {
+  it('GUX-R5 share-stamp is a child of share-card, not inside the spot, and does not overlap it', async () => {
+    await start();
+    const stamp = screen.getByTestId('share-stamp', { includeHiddenElements: true });
+    const card = screen.getByTestId('share-card');
+    const btn = target(100);
+    const spot = dashed(btn);
+    let parent: Inst | null = stamp.parent;
+    while (parent && !isHost(parent)) parent = parent.parent;
+    let inSpot = false;
+    for (let p: Inst | null = stamp; p; p = p.parent) if (p === spot || p === btn) inSpot = true;
+    const s = flat(stamp.props.style);
+    const topAnchored = s.position === 'absolute' && typeof s.top === 'number' && s.bottom === undefined;
+    const clear = !topAnchored || Number(s.top) + Number(s.height ?? 52) <= inset(spot, card, 'Top');
+    expect({ parentIsCard: parent === card, inSpot, clearOfSpot: clear }).toEqual({ parentIsCard: true, inSpot: false, clearOfSpot: true });
   });
 });
