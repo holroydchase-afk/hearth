@@ -88,7 +88,7 @@ The freeze is lifted (DEC-28). Ranked by staff-pm from `docs/product/reviews/202
 | R69 | Atkinson Hyperlegible Next everywhere, app + demo (Chase Nov 21, DEC-78, FONT-1..5) | P1 | S | ◐ Nov 21: built, green 3x; PR open. Left: live demo check, Expo preview, Chase's iPhone look; P2s GUX-F1 slashed zero ("2Ø26") may confuse older readers (check with a relative), GUX-F2 Share line wrap "them." (Share thread), GUX-F3 shots at the largest text size |
 | R70 | Shareable themes for other studio products (Chase Nov 21): `docs/design/themes.css` + `roles` in tokens.json (DS-THEMES-1..3) | P2 | S | ☑ Nov 21 |
 | R71 | Studio-agents PR #45 checks (intake #149): agents-check refuses `qa-tdd skipped` on code PRs except "docs only"/"config only" (AGENTSKIP-0..4); CLAUDE.md thread-opening and agents-source rules | P2 | S | ☑ Nov 22 |
-| R72 | Share start tester packaged for others (Chase Nov 23): `docs/design/testers/share-start.html` + README; open question: host it on the demo site | P2 | S | ☑ Nov 23 |
+| R72 | Share start tester packaged for others (Chase Nov 23): `docs/design/testers/share-start.html` + README; hosting on chaseholroyd.com is intake holroydchase-afk.github.io#93 (Product Studio) | P2 | S | ☑ Nov 23 |
 | R14 | npm audit: recheck the Expo CLI build-tool findings after the next Expo patch (RV-X4) | P2 | S | ☑ Oct 21: still 62 from 5 advisories on expo 57.0.30 (newest SDK 57 patch). One ships: decode-uri-component in expo-router (a crafted link could freeze the app; no data exposed). No forced override; recheck at the SDK 58 move (Oct 26: moved to SDK 58; recheck in the next PR) |
 
 ## Sequence to milestone 1
