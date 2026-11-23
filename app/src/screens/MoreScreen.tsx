@@ -87,8 +87,9 @@ export function MorePreference({ which }: { which: 'easyView' | 'look' | 'theme'
     <Screen>
       <BackButton to="More" onPress={backToMore} />
       <Txt variant="display" role="header">{title}</Txt>
+      {/* GUX-R32: the "this phone only" note sits above the list, so it is read before a pick. */}
+      {which === 'theme' ? <Txt variant="muted">Only this phone changes. Other people keep their own colors.</Txt> : null}
       {which === 'easyView' ? <EasyView /> : which === 'look' ? <LightOrDark heading={false} /> : <ThemePicker heading={false} />}
-      {which === 'theme' ? <Txt variant="muted">It colors the page, the picked tab and links. For now it changes this phone only.</Txt> : null}
     </Screen>
   );
 }

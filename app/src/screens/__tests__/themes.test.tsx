@@ -37,7 +37,8 @@ const THEMES: Name[] = ['paper', 'avocado', 'pomegranate', 'blood-orange', 'kiwi
 /** RD-104: ThemeContext once it exists; a dummy context until then (so the test fails on the colors, not a crash). */
 const ThemeCtx = ((themeMod as Record<string, unknown>).ThemeContext ?? React.createContext('paper')) as React.Context<string>;
 const WORD: Record<Name, string> = {
-  paper: 'Paper', avocado: 'Avocado', pomegranate: 'Pomegranate', 'blood-orange': 'Blood orange', kiwi: 'Kiwi', fig: 'Fig',
+  paper: 'Paper (standard)', avocado: 'Avocado', // GUX-R33 (Nov 23): the first row reads "Paper (standard)"
+  pomegranate: 'Pomegranate', 'blood-orange': 'Blood orange', kiwi: 'Kiwi', fig: 'Fig',
   'dragon-fruit': 'Dragon fruit', watermelon: 'Watermelon', beet: 'Candy-stripe beet', 'red-cabbage': 'Red cabbage',
 };
 const { dadSide } = FIXTURE.circles;
@@ -106,7 +107,7 @@ describe('RD-97 the owner picks a Theme in More', () => {
     fireEvent.press(screen.getByRole('radio', { name: 'Avocado theme' }));
     await waitFor(() => expect(probe()).toBe(want('avocado')), slow);
     expect(isChecked(screen.getByRole('radio', { name: 'Avocado theme' }))).toBe(true);
-    expect(isChecked(screen.getByRole('radio', { name: 'Paper theme' }))).toBe(false);
+    expect(isChecked(screen.getByRole('radio', { name: 'Paper (standard) theme' }))).toBe(false);
     fireEvent.press(screen.getByRole('radio', { name: 'Pomegranate theme' }));
     await waitFor(() => expect(probe()).toBe(want('pomegranate')), slow);
   }, 20000);

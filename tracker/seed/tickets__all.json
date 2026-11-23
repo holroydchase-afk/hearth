@@ -1335,6 +1335,32 @@
    ],
    "found": "2026-11-23",
    "fixed": "2026-11-23"
+  },
+  {
+   "id": "T33",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "app/e2e-web/site.spec.js DEMO-5 'Grandma's view and Start over' raced the now-async Grandma Jo switch (#144): Details opened before the reload finished, so 'You're Grandma Jo' was not found. Failed 3/3 against the live site from the cloud env (passed locally and on CI). Fixed Nov 23: wait for the reloaded 'Good ..., Grandma Jo' heading before Details, and for 'Good ..., Chase' after resetDemo's reload; no expectation weakened. Red 1/8 failed x2, then 8 passed x3 against chaseholroyd.com/hearth. Same pattern still in demo.spec.js (lines ~66, ~318), passing locally. Test: that file",
+   "tests": [
+    "app/e2e-web/site.spec.js"
+   ],
+   "found": "2026-11-23",
+   "fixed": "2026-11-23"
+  },
+  {
+   "id": "T34",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R2 (T33 run, Nov 23): app/e2e-web/site.spec.js DEMO-5 'a cold load of /hearth/groups' failed 1 of 5 runs against the live site (line 43: a failed own request or page error), passed the other 4. Likely a slow or dropped request through the cloud proxy, not reproduced; error text not kept. Next: rerun with --repeat-each 10 and keep the failed list. Test: that file",
+   "tests": [
+    "app/e2e-web/site.spec.js"
+   ],
+   "found": "2026-11-23",
+   "fixed": null
   }
  ]
 }

@@ -21,6 +21,7 @@ blockers:
 ## Nov 23: nine fruit themes beside Paper (Chase, DEC-80, R76, FRUIT-1..12; PR #160, branch claude/project-thread-9r046o)
 - Done: Paper (default, unchanged) + Avocado (unchanged) + new Pomegranate + Blood orange, Kiwi, Fig, Dragon fruit, Watermelon, Candy-stripe beet, Red cabbage. Picker of 10, owner-only. Dark dangerText #FF6961 off Paper. Tokens regenerated. qa-tdd red (r61) then green 3x (r62). Source tool: https://claude.ai/artifact/SQ6gmnFB6bX7t6scr3ipSz
 - Chase Nov 23: "merge all in the right order on green" (after #144, #158). Next: live check fresh + returning; then GUX-R30..R33 (P2) as their own PR; FRUIT-12 on phones.
+- GUX-R30..R33 (Nov 23, same branch): swatch shows page, fill and accent (R30); note above the list, "Only this phone changes. Other people keep their own colors." (R32, QA-R1 resolved); first row "Paper (standard)" (R33); R31 Delete never colour-only is guarded (held already). Next: qa-tdd green 3x, then FRUIT-12 on phones.
 - **Portfolio / public presence:** the public demo's Theme picker offers the 10 themes once this merges.
 
 ## Nov 23: ask-less self-check rule (intake #154, R74; branch claude/project-thread-6ew09x, PR)

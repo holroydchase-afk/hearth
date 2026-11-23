@@ -247,7 +247,7 @@ test('RD-102 RD-117 FRUIT-11 Paper by default; Chase picks each of the nine frui
     ...Object.fromEntries(Object.entries(FRUIT).map(([k, v]) => [k, { light: toRgb(v.light.page), dark: toRgb(v.dark.page) }])),
   };
   expect({ avocado: PAGE.avocado, pomegranateLight: PAGE.pomegranate.light }).toEqual({ avocado: { light: 'rgb(246, 245, 228)', dark: 'rgb(42, 36, 38)' }, pomegranateLight: 'rgb(251, 245, 233)' });
-  const WORD = { paper: 'Paper', ...Object.fromEntries(Object.entries(FRUIT).map(([k, v]) => [k, v.name])) };
+  const WORD = { paper: 'Paper (standard)', ...Object.fromEntries(Object.entries(FRUIT).map(([k, v]) => [k, v.name])) };
   const FRUITS = Object.keys(FRUIT);
   const LAST = FRUITS[FRUITS.length - 1];
   const shots = path.join(__dirname, '..', 'test-results', 'rd-102');
@@ -815,7 +815,7 @@ test('RD-117 RD-116 Avocado (Hass) light and dark; a picked ❤️ is a 2 px acc
   // Accent per theme, light (RD-94, RD-111, FRUIT-2); Avocado dark is Fresh leaf #7ED69B (RD-112).
   // qa-tdd, Nov 23: Pomegranate's accent is the JSON's #B3122F (DEC-80), replacing RD-95's rgb(163, 23, 47).
   const ACCENT = { paper: 'rgb(173, 55, 29)', avocado: 'rgb(47, 84, 25)', pomegranate: 'rgb(179, 18, 47)', avocadoDark: 'rgb(126, 214, 155)' };
-  const WORD = { paper: 'Paper', avocado: 'Avocado', pomegranate: 'Pomegranate' };
+  const WORD = { paper: 'Paper (standard)', avocado: 'Avocado', pomegranate: 'Pomegranate' };
   const shots = path.join(__dirname, '..', 'test-results', 'rd-117');
   const pick = async (theme) => {
     // T28: tapping the heart can scroll Feed and shrink the glass bar (RD-110); a tap on the shrunk oval
