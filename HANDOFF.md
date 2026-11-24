@@ -11,6 +11,11 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 24: React Compiler on (intake #80, R84; branch claude/project-thread-6ew09x, PR)
+- **Done, test-first:** red checks INTAKE-80-1..3 first (`app/src/__tests__/reactCompiler.test.ts`, `app/scripts/check-compiler-bundle.sh`, `app/scripts/compiler-check.js`, wired into `test-all.sh`), then app.json `expo.experiments.reactCompiler: true` and `npx expo install babel-plugin-react-compiler`. 24 bailouts (23 components; try/finally, refs read in render, manual memo deps) stay uncompiled, which is today's behaviour; each is allowlisted with its reason.
+- **Status:** qa-tdd green 3x (r78): test-all 25 suites, jest 2238, e2e:demo 50, e2e:web 5, backend SQL 1318; bundles show 148/159 memo-cache markers.
+- **Next:** merge on green (Chase, Nov 24: "merge on green in right order", after #178); open Expo Go once with the compiler on; B27 fix bailouts one at a time.
+
 ## Nov 24: eval fixes built (intake #162, R83, SPEC-EVAL-FIXES section 1 + EF-HE-4; branch claude/project-thread-6ew09x, PR #172)
 - **Done:** EF-HE-1 Messages buttons show and speak "Open <name>" / "Open chat with <people>"; EF-HE-2 shared radio shows an empty muted ring unpicked, filled accent ring picked; EF-HE-4 Easy view and Light or dark only in More (off Me); EF-HE-5 honest Groups line, New group filled; EF-HE-6 Events empty-state words; EF-HE-9/B18 Gallery loads older feed pages back to the last visit (`FeedStore.loadBackTo`, max 10 pages) before New for you shows, so the count covers every new post. No API change. Superseded tests retargeted in `test:` commits.
 - **B26 (QA-R1, P1) fixed:** a refresh that answers while an older page is in flight no longer appends that stale page after the new first page (refresh generation counter in `app/src/feed/store.ts`; `loadBackTo` walks on from the new first page). Proof: `loadBackTo.test.ts` "a refresh that lands mid-walk".
