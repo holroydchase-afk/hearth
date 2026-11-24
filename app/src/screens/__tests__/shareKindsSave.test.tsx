@@ -306,3 +306,38 @@ describe('SHARE-U-23 grandparent UX on the working cards', () => {
     });
   }
 });
+
+// Guards added by qa-tdd after 8383d5e (Nov 24): the age check and the shared Notice change.
+describe('SHARE-U-22 guards: a non-number age, and every existing notice still announces itself', () => {
+  for (const age of ['four', '4.5', '-4', '1000']) {
+    it(`SHARE-U-22 Saying age "${age}": a local notice asks for a number, every word stays, and nothing reaches the server`, async () => {
+      const { be } = await start();
+      const create = jest.spyOn(be, 'createPost');
+      const publish = jest.spyOn(be, 'publishPost');
+      fireEvent.press(await toSend('saying', { 'Age then, optional': age }));
+      const notice = await screen.findByRole('alert', {}, slow);
+      expect(wordsIn(notice)).toBe('Type the age as a number, like 4, or leave it blank. Your words are kept.');
+      expect(create).not.toHaveBeenCalled();
+      expect(publish).not.toHaveBeenCalled();
+      expect(screen.getByTestId('share-kind-card-saying')).toBeTruthy();
+      for (const [l, v] of Object.entries({ ...KINDS.saying.required, 'Age then, optional': age })) expect({ l, v: screen.getByLabelText(l).props.value }).toEqual({ l, v });
+      expect(screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' })).toBeTruthy();
+    });
+  }
+
+  it('SHARE-U-22 Notice (kit, shared): an existing photo-flow notice (denied photos) is still one alert holding its words, with its OK button outside it', async () => {
+    await renderApp(<ShareScreen />, { user: 'chase', be: kindsOn(), deps: { pickBulk: jest.fn(async () => ({ denied: true as const })), pickPhotos: jest.fn(async () => ({ items: [] })) } });
+    await screen.findByRole('header', { name: 'New post' }, slow);
+    fireEvent.press(screen.getByRole('button', { name: /^Add photos( or videos)?, up to \d+ at a time$/ }));
+    const alerts = await screen.findAllByRole('alert', {}, slow);
+    expect(alerts).toHaveLength(1);
+    expect(wordsIn(alerts[0]!)).toBe('Hearth needs your OK to see your photos. Tap "Allow" when your phone asks.');
+    expect(hiddenFromReaders(alerts[0]!)).toBe(false);
+    const ok = screen.getByRole('button', { name: 'OK, hide this message' });
+    let inside = false;
+    for (let p: Inst | null = ok; p; p = p.parent) if (p === alerts[0]) inside = true;
+    expect(inside).toBe(false);
+    fireEvent.press(ok);
+    await waitFor(() => expect(screen.queryByRole('alert')).toBeNull(), slow);
+  });
+});
