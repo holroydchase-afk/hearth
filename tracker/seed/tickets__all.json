@@ -1385,6 +1385,19 @@
    ],
    "found": "2026-11-24",
    "fixed": "2026-11-24"
+  },
+  {
+   "id": "T36",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "open",
+   "title": "QA-R5 (DEC-82 all-suites run, Nov 25): app/e2e-web/demo.spec.js:960 SHARE-PC-13 failed 1 of 3 test-all runs (run 3) at line 988, the soft check that Feed's first visible post card has 'Open photo 1 of 3' after Send (15 s timeout, element not found); 'Shared with ...' had shown. Passed runs 1 and 2 at 623388c. Likely cause: the first visible post-* card is not yet the new post (feed refresh order on a slow box), or a race in DEC-82's card changes; not reproduced. Next: --repeat-each 10 on SHARE-PC-13 and keep the trace. Test: that file",
+   "tests": [
+    "app/e2e-web/demo.spec.js"
+   ],
+   "found": "2026-11-25",
+   "fixed": null
   }
  ]
 }
