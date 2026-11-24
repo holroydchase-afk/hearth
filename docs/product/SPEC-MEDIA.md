@@ -161,10 +161,41 @@ Each phase adds to the last; none replaces stored data or a screen.
 | VID-16 | auto | **Given** a prepared video, **When** the upload spec is built, **Then** `kind: 'video'`, the mime from the file's brand, `duration_ms` set, `width`/`height` from the video (not the poster), `byte_size` and `thumb_byte_size` are the encrypted sizes, `exif_stripped: true`. |
 | VID-17 | auto | **Given** thumbnail generation throws or returns nothing, **When** prepared, **Then** the placeholder poster is used, the video still sends, and nothing about the file is logged. |
 | VID-18 | auto (web e2e) | **Given** a video post on Photos and on the post screen, **When** shown, **Then** the poster shows with a visible "Play" word button (17pt+, 48pt target, accessible label "Play video"); tapping it opens the full-screen player; no gesture-only path. |
-| VID-19 | manual (iPhone + Android) | **Given** the full-screen player (BETA-SEE-4 video half), **When** opened by the poster's one Play tap, **Then** it plays, with sound (GUX-R3: nothing plays before that tap, nothing autoplays on Photos), with visible Play/Pause and "Turn sound off"/"Turn sound on" word buttons, on the person's color in its dark version, never pure black (GUX-R2), and Close returns to where the grandparent was. Where the poster has nothing else to open (post screen, By date), the whole poster is the "Play video" button (GUX-R1). |
+| VID-19 | manual (iPhone + Android) | **Given** the full-screen player (BETA-SEE-4 video half), **When** opened by the poster's one Play tap, **Then** it plays, with sound (GUX-R3: nothing plays with sound before that tap; silent autoplay on the Feed is section 5, DEC-82), with visible Play/Pause and "Turn sound off"/"Turn sound on" word buttons, on the person's color in its dark version, never pure black (GUX-R2), and Close returns to where the grandparent was. Where the poster has nothing else to open (post screen, By date), the whole poster is the "Play video" button (GUX-R1). |
 | VID-20 | auto | **Given** a video whose file can't be fetched or decrypted, or the player errors, **When** shown, **Then** plain words ("This video won't play right now. It may be the signal. Tap Try again, or call <who>." with "or call <who>" left out for the family's owner; GUX-R4) and a Try again button; never a blank or spinning screen. |
 | VID-21 | auto | **Given** a bulk pick with 3 videos, **When** `video_posting` is on, **Then** the videos are prepared and sent and there is no left-out message; **When** it is off, **Then** BETA-BULK-5's "Hearth can't send videos yet, so 3 videos were left out." is unchanged. |
 | VID-22 | manual (Chase's iPhone) | FLAG-7 above, run after VID-14..21 are green; exiftool on the downloaded MP4 and poster. Then Chase's word turns `video_posting` on. |
 
 Words in VID-18..20 were reviewed by grandparent-ux on Nov 10 (GUX-R1..R4); E12 still owns any change before VID-19/22.
+
+## 5. Autoplay and Save data (DEC-82, scoped Nov 24, staff-pm)
+**Chase's call (Nov 24):** "I like the effect. Make it a setting, default to on. We can have a sign up choice that's like limit data use. And then we can turn off auto play stuff." Why the data choice: "old people have prepaid phones." Videos are encrypted, so autoplay downloads and decrypts the whole file (up to about 40 MB) for each video that plays.
+
+**Shape.** Two settings, both saved on the phone only. "Play videos as I scroll" (default on). "Save data" (asked once at sign-up as a plain prepaid question, default off, changeable in More). Starts only after a pause: 80% on screen and the list still for 1 s, like the big apps (Chase, Nov 24); nothing downloads before that, so fast scrolling costs no data. Feed only: the Gallery grid never autoplays (many small tiles, lots of data). Matters only once `video_posting` is on (R27).
+
+**Save data turns off (the full list):** (1) autoplay; (2) full-size photos on Feed cards and the Timeline, which show the small thumbnail until the photo is opened (today `PhotoCollage` and `TimelineScreen` load full size); (3) the viewer fetching the next photo's full size ahead of a swipe (`ViewerScreen` prefetch). Nothing else.
+
+**Not doing:** Wi-Fi-only autoplay (the phone can't reliably tell prepaid from Wi-Fi limits; one plain question beats a network rule); following Android Data Saver (ideas log); autoplay on Gallery; sending either setting to the server.
+
+| ID | Type | Given / When / Then |
+|---|---|---|
+| AUTO-1 | auto | **Given** a fresh install, **When** More, Preferences opens, **Then** "Play videos as I scroll" is a switch with words, on, saved on the phone. |
+| AUTO-2 | auto (web e2e) | **Given** the Feed with two video posts and autoplay on, **When** a video is at least 80% on screen and the list has been still for 1 s (FlatList `viewabilityConfig`: `itemVisiblePercentThreshold: 80`, `minimumViewTime: 1000`, `waitForInteraction: true`), **Then** it alone starts playing with no sound. |
+| AUTO-8 | auto | **Given** autoplay on, **When** the Feed is scrolled past a video without a 1 s pause (or the video is under 80% on screen), **Then** no video file is fetched or decrypted (the fake API records zero `display` calls for it); only its poster thumbnail loads. |
+| AUTO-9 | auto | **Given** the viewability config, **When** read by a unit test, **Then** it is 80% / 1000 ms / waitForInteraction true, held in one named constant so tuning is one change. |
+| AUTO-3 | auto | **Given** a playing video, **When** it drops below 80% on screen or the list moves again, **Then** it pauses and any unfinished download stops; at its end it loops silently and never moves to the next video. |
+| AUTO-4 | auto (web e2e) | **Given** a silently playing video, **When** tapped or its "Play" word button is pressed, **Then** the full-screen player (VID-18) opens with sound from the start. |
+| AUTO-5 | auto | **Given** autoplay off, the phone's reduce-motion on, or Save data on, **When** the Feed shows videos, **Then** only the poster with "Play" shows and no video file is fetched until Play is pressed. |
+| AUTO-6 | auto | **Given** the Gallery grid with videos, **When** shown, **Then** nothing autoplays (posters only). |
+| AUTO-7 | manual (iPhone + oldest tester Android) | **Given** a Feed with 3 videos, **When** scrolled up and down for 1 minute, **Then** one plays at a time, no stutter or crash, and the data used is written in the Test Log. |
+| DATA-1 | auto (web e2e) | **Given** a new member after the invite code (or a first sign-in on a phone not yet asked), **When** the next screen shows, **Then** it asks one plain prepaid-plan question with two big word buttons, neither preselected, and the answer is saved. Words: grandparent-ux. |
+| DATA-2 | auto | **Given** More, Preferences, **When** "Save data" is switched, **Then** it takes effect at once without a restart, and the autoplay switch shows off with words saying why while Save data is on. |
+| DATA-3 | auto | **Given** Save data on, **When** Feed cards and the Timeline show photos, **Then** only thumbnails are fetched; full size is fetched only when a photo is opened. |
+| DATA-4 | auto | **Given** Save data on, **When** a photo is open in the viewer, **Then** the next photo's full size is not fetched until the swipe. |
+| DATA-5 | auto | **Given** Save data off, **When** the Feed, Timeline and viewer run, **Then** today's behaviour is unchanged (existing PhotoCollage, Timeline and prefetch tests still pass). |
+| DATA-6 | auto | **Given** either setting changes, **When** the network calls are recorded, **Then** neither value is sent to the backend or any other service. |
+| DATA-7 | manual (real phone) | **Given** 20 posts with 3 videos, **When** scrolled once with Save data on, then off, **Then** bytes used are logged; on must be at most a quarter of off. |
+| DATA-8 | manual (grandparent test) | **Given** an LG or AG tester at sign-up, **When** the prepaid question shows, **Then** they answer it without help in under 60 s. |
+
+**Signals:** DATA-7 bytes, help calls about data or moving videos, testers on prepaid who answer Yes. **Stop:** a tester runs out of data, or AUTO-7 stutters on the oldest Android: default autoplay to off on Android and bring it back to Chase.
 

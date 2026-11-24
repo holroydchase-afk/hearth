@@ -586,5 +586,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** grandparents who avoid social media miss Facebook's birthday nudges; Hearth can tell the family on the day without ads or trackers. Month and day are enough to say "today".
 - **Source:** `docs/product/SPEC-LIFE-CALENDAR.md`; persona check `decisions/2026-11-24-life-calendar.md` (LG and SG Red, mitigated). TRACKER R78.
 
+### DEC-82 · Video autoplay as a setting, default on, plus "Save data" at sign-up (AUTO-1..9, DATA-1..8)
+- **When / status:** Nov 24 · Chase (asked Nov 17 for social-media "starts playing as you scroll"): "I like the effect. Make it a setting, default to on. We can have a sign up choice that's like limit data use. And then we can turn off auto play stuff. Etc", then "Like old people have [prepaid] phones. Prepaid" · Specced, failing tests next
+- **Chose:** on the Feed only, after the person pauses (80% on screen, list still 1 s; Chase: "some one second or something scroll pause, then it plays"; nothing downloads before) the video in view plays silently, one at a time, pauses on scroll-away, loops, never jumps to the next; tap opens the full-screen player with sound. "Play videos as I scroll" in More, default on; off under reduce motion. Sign-up asks one plain prepaid question; "Save data" (default off, changeable in More) turns off autoplay, full-size photos on Feed cards and Timeline, and the viewer's look-ahead.
+- **Over:** CF-08's "no autoplay" calm feed (staff-pm had flagged the data cost: encrypted videos download and decrypt whole); a Wi-Fi-only autoplay rule; following Android Data Saver; autoplay on Gallery.
+- **Because:** Chase likes the effect and the family knows it from social apps; the prepaid question protects the relatives with small data plans in one tap.
+- **Source:** `docs/product/SPEC-MEDIA.md` section 5; CF-08 updated; persona check `decisions/2026-11-24-autoplay-save-data.md` (LG and AG Red, mitigated). TRACKER R79. Waits on video being on (R27).
+
 ---
-Last updated: Nov 24, 2026 (DEC-81)
+Last updated: Nov 24, 2026 (DEC-82)
