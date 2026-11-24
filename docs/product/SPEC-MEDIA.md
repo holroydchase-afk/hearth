@@ -179,23 +179,39 @@ Words in VID-18..20 were reviewed by grandparent-ux on Nov 10 (GUX-R1..R4); E12 
 
 | ID | Type | Given / When / Then |
 |---|---|---|
-| AUTO-1 | auto | **Given** a fresh install, **When** More, Preferences opens, **Then** "Play videos as I scroll" is a switch with words, on, saved on the phone. |
+| AUTO-1 | auto | **Given** a fresh install, **When** More, Videos and data opens, **Then** "Play videos as I scroll" is a switch with words (section 5.1), on, saved on the phone. |
 | AUTO-2 | auto (web e2e) | **Given** the Feed with two video posts and autoplay on, **When** a video is at least 80% on screen and the list has been still for 1 s (FlatList `viewabilityConfig`: `itemVisiblePercentThreshold: 80`, `minimumViewTime: 1000`, `waitForInteraction: true`), **Then** it alone starts playing with no sound. |
 | AUTO-8 | auto | **Given** autoplay on, **When** the Feed is scrolled past a video without a 1 s pause (or the video is under 80% on screen), **Then** no video file is fetched or decrypted (the fake API records zero `display` calls for it); only its poster thumbnail loads. |
 | AUTO-9 | auto | **Given** the viewability config, **When** read by a unit test, **Then** it is 80% / 1000 ms / waitForInteraction true, held in one named constant so tuning is one change. |
 | AUTO-3 | auto | **Given** a playing video, **When** it drops below 80% on screen or the list moves again, **Then** it pauses and any unfinished download stops; at its end it loops silently and never moves to the next video. |
-| AUTO-4 | auto (web e2e) | **Given** a silently playing video, **When** tapped or its "Play" word button is pressed, **Then** the full-screen player (VID-18) opens with sound from the start. |
+| AUTO-4 | auto (web e2e) | **Given** a silently playing video, **When** tapped or its "Play with sound" word button is pressed (section 5.1), **Then** the full-screen player (VID-18) opens with sound from the start. |
 | AUTO-5 | auto | **Given** autoplay off, the phone's reduce-motion on, or Save data on, **When** the Feed shows videos, **Then** only the poster with "Play" shows and no video file is fetched until Play is pressed. |
 | AUTO-6 | auto | **Given** the Gallery grid with videos, **When** shown, **Then** nothing autoplays (posters only). |
 | AUTO-7 | manual (iPhone + oldest tester Android) | **Given** a Feed with 3 videos, **When** scrolled up and down for 1 minute, **Then** one plays at a time, no stutter or crash, and the data used is written in the Test Log. |
-| DATA-1 | auto (web e2e) | **Given** a new member after the invite code (or a first sign-in on a phone not yet asked), **When** the next screen shows, **Then** it asks one plain prepaid-plan question with two big word buttons, neither preselected, and the answer is saved. Words: grandparent-ux. |
-| DATA-2 | auto | **Given** More, Preferences, **When** "Save data" is switched, **Then** it takes effect at once without a restart, and the autoplay switch shows off with words saying why while Save data is on. |
+| DATA-1 | auto (web e2e) | **Given** a new member after the invite code (or a first sign-in on a phone not yet asked), **When** the next screen shows, **Then** it asks one plain prepaid-plan question with two big word buttons, neither preselected, and the answer is saved. Words: section 5.1. |
+| DATA-2 | auto | **Given** More, Videos and data, **When** "Save data" is switched, **Then** it takes effect at once without a restart, and the autoplay switch shows off with "Off while Save data is on." (section 5.1). |
 | DATA-3 | auto | **Given** Save data on, **When** Feed cards and the Timeline show photos, **Then** only thumbnails are fetched; full size is fetched only when a photo is opened. |
 | DATA-4 | auto | **Given** Save data on, **When** a photo is open in the viewer, **Then** the next photo's full size is not fetched until the swipe. |
 | DATA-5 | auto | **Given** Save data off, **When** the Feed, Timeline and viewer run, **Then** today's behaviour is unchanged (existing PhotoCollage, Timeline and prefetch tests still pass). |
 | DATA-6 | auto | **Given** either setting changes, **When** the network calls are recorded, **Then** neither value is sent to the backend or any other service. |
 | DATA-7 | manual (real phone) | **Given** 20 posts with 3 videos, **When** scrolled once with Save data on, then off, **Then** bytes used are logged; on must be at most a quarter of off. |
 | DATA-8 | manual (grandparent test) | **Given** an LG or AG tester at sign-up, **When** the prepaid question shows, **Then** they answer it without help in under 60 s. |
+
+### 5.1 Words (grandparent-ux, Nov 24; final)
+**Sign-up question (DATA-1).** One screen after the invite code, before Gallery. No Back-to-skip, no Next button: tapping an answer saves it and moves on. Both answers are equal gray capsules (DS-9: neither filled, neither preselected), full width, 56 pt tall, 16 pt apart, words 17 pt+ SemiBold that wrap at the largest text.
+- Title (22 pt SemiBold): **"Does your phone plan come with only a little data?"**
+- Line (17 pt): **"Prepaid plans often do. Hearth can use less of it, so it lasts the month."**
+- Button 1: **"Yes, use less data"** (saves Save data on)
+- Button 2: **"No, my plan is fine"** (saves Save data off)
+- Line under the buttons (17 pt, secondary ink at 4.5:1+): **"Not sure? Tap Yes. You can change this later in More, under Videos and data."**
+
+**More (AUTO-1, DATA-2).** One row in More right after Light or dark: **"Videos and data"**, with a chevron, showing "Saving data" or nothing at its right end. It opens a page titled **"Videos and data"** with two switch rows (the phone's own switch, 48 pt+ row, word on the left, spoken as one: "<name>, on/off, <line>"):
+- **"Play videos as I scroll"** with the line **"Videos in the Feed play quietly, without sound. Tap one to hear it."**
+- **"Save data"** with the line **"For prepaid or small phone plans. Videos wait until you tap Play, and photos load smaller until you open them."**
+- While Save data is on, the autoplay switch shows Off, is not tappable, stays readable (4.5:1, not faded below it), and its line becomes **"Off while Save data is on."** Turning Save data off puts it back the way it was.
+- With the phone's reduce-motion on, the line becomes **"Off because your phone is set to reduce motion."** (AUTO-5).
+
+**Feed hint (AUTO-4).** On a video playing silently, the poster's word button reads **"Play with sound"** (speaker icon beside it, 17 pt+, on a solid backing per DS-6, 48 pt target, spoken "Play video with sound"). A poster not playing keeps **"Play"** (VID-18). Passed on: "Tap for sound", because it names a gesture instead of a button and the tap opens the full-screen player, which "Play with sound" says truthfully.
 
 **Signals:** DATA-7 bytes, help calls about data or moving videos, testers on prepaid who answer Yes. **Stop:** a tester runs out of data, or AUTO-7 stutters on the oldest Android: default autoplay to off on Android and bring it back to Chase.
 
