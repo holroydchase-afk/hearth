@@ -11,6 +11,12 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 24: public repo standards (intake #163, R76; branch claude/project-thread-6ew09x, PR)
+- **Ask (Product Studio scorecard):** engineers and hiring managers judge the public repo's layout.
+- **Done:** CONTRIBUTING.md (test-first, privacy rules), CODE_OF_CONDUCT.md, SECURITY.md (private reporting, no overclaims), `.github/pull_request_template.md` with the `Agents:` line, bug and feature issue templates, `.github/dependabot.yml` (Actions weekly; npm in app, e2e and messenger security-only so Expo versions still come from `expo install`), CI badge and links in the README. Config only.
+- **Left:** repo description and topics (Chase pastes one line in Settings), Dependabot security updates switch (Settings), root clutter (moving HANDOFF/CLAUDE/tracker needs the studio rule paths changed in the same PR; not done).
+- **Portfolio / public presence:** the public repo now has the standard community files.
+
 ## Nov 23: dark mode elevation by surface step (intake #155, R75; branch claude/project-thread-6ew09x, PR)
 - **Ask (Product Studio intake):** in dark mode, show elevation with a lighter surface instead of a shadow (DARK-5).
 - **Done, test-first:** qa-tdd red DARK-ELEV-1..6 (`darkElevation.test.tsx`, demo e2e DARK-ELEV-6), then the build: `shadeLine(dark)` (GalleryGrid, PhotosScreen) has no shadow in dark; the floating tab bar drops its dark shadow; the laptop demo's phone column sits on `c.surface` with no shadow in dark. Light unchanged. Green 3x (r60). Before/after shots: /mnt/project-files/design/dark-elevation-2026-11-23/.
