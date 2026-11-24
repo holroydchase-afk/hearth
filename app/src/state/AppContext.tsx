@@ -7,6 +7,7 @@ import type { HearthApi, Session, Space } from '../api/HearthApi';
 import { FeedStore, clearFeedCache, type FeedState } from '../feed/store';
 import { MediaCache, type VideoFiles } from '../media/cache';
 import type { MediaStore } from '../media/diskCache';
+import { stopChats } from '../messenger/client';
 import { clearArrivals, recordArrival } from '../notify/latency';
 import { listenForArrivals, pushStatus, registerForPush } from '../notify/push';
 import type { KV } from '../platform/kv';
@@ -33,6 +34,8 @@ export interface AppDeps {
   mediaDisk?: { store: MediaStore; keys: KV } | null;
   /** VID-18: where a decrypted video goes for the player (platform/videoFiles.ts). Absent: a data: URI (tests). */
   videoFiles?: VideoFiles | null;
+  /** WEB-APP-6: wipes the sealed session store (session, messenger store, its key) at sign-out. Web only. */
+  clearSessionStore?: () => Promise<void>;
 }
 
 /** offline (ENG-R1): signed in, but the family couldn't be read and this phone has none saved. */
@@ -225,6 +228,17 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
     try { Appearance.setColorScheme(nativeScheme(s.prefs.look)); } catch { /* older phones: Hearth's own colors still switch */ }
   }, [s.prefs.look]);
 
+  // HRT-WEB.1 (QA-R6): once signed in on web, ask the browser to keep Hearth's storage (the sealed session and
+  // its IndexedDB key) so Chrome is less likely to clear it under storage pressure. Never on phones.
+  const signedInAs = s.session?.userId ?? null;
+  useEffect(() => {
+    if (Platform.OS !== 'web' || !signedInAs) return;
+    try {
+      const storage = (globalThis as { navigator?: { storage?: { persist?: () => Promise<boolean> } } }).navigator?.storage;
+      if (typeof storage?.persist === 'function') void storage.persist().catch(() => {});
+    } catch { /* not offered: the session still works, it may just be cleared sooner */ }
+  }, [signedInAs]);
+
   // Back in front: retry waiting uploads and fetch new photos (BETA-SHARE-4).
   useEffect(() => {
     const sub = AppState.addEventListener('change', (st) => {
@@ -274,6 +288,8 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
   }, [deps.api]);
 
   const signOut = useCallback(async () => {
+    // PRIV-WEB-R5: open chats stop writing before the store is cleared, so nothing is sealed again after it.
+    stopChats();
     live.current.queue?.stop();
     unlisten.current?.();
     unlisten.current = null;
@@ -284,8 +300,9 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
     if (who) await deps.kv.removeItem(lastSpaceKey(who)).catch(() => {});
     await live.current.media?.clearDisk().catch(() => {});
     await deps.api.signOut().catch(() => {});
+    await deps.clearSessionStore?.().catch(() => {});
     setS(SIGNED_OUT);
-  }, [deps.api, deps.kv]);
+  }, [deps]);
 
   const value = useMemo<AppValue>(() => ({
     ...s,

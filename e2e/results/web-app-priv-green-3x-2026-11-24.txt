@@ -1,0 +1,21 @@
+qa-tdd, 2026-11-24, HRT-WEB.1 privacy-security fixes (QA-R3..R6 = PRIV-WEB-R1, R2, R5 and persist): all suites 3x after the engineer's fix. No code changed by qa-tdd.
+Base: f8d48ed plus the uncommitted HRT-WEB.1 working tree (branch claude/project-thread-o1dwht). Red proof: web-app-priv-red-2026-11-24.txt.
+== app jest --ci, 3 runs: Test Suites 178 passed; Tests 2319 passed, 1 skipped, 1 todo (same each run)
+  QA-R3 PRIV-WEB-R1 x2 (src/platform/__tests__/secureSession.web.test.ts): red ("plainLeft": true) -> green x3
+  QA-R4 PRIV-WEB-R2 x2 (same file, IndexedDB blocked / WebCrypto missing): red ("plainLeft": true) -> green x3
+  QA-R5 PRIV-WEB-R5 x2 (src/state/__tests__/webSignOut.test.tsx, save landing when clear starts / after it ends): red -> green x3
+  PRIV-WEB-R6 canary (src/api/__tests__/SupabaseApi.offlineSignOut.test.ts): green x3 (guard, was green before)
+== app typecheck, 3 runs: clean x3
+== app e2e:web (dist-fake, retries 0), 3 runs: 10 passed, 6 skipped (env-gated) x3
+  QA-R6 web-session.spec.js "HRT-WEB.1 persist: navigator.storage.persist() is requested after sign-in on web, not before": red (0 calls after sign-in) -> green x3
+  WEB-APP-1, WEB-APP-2, WEB-APP-3/4, WEB-APP-6: passed each run
+== app e2e:demo (retries 0), runs 1-3: 53/1, 54/0, 54/0 (5 skipped, env-gated) -> FLAKY
+  run 1 failed: demo-calendar.spec.js:96 "GUX-R2 after Save, 'Saved. Your family will see December 8.' is on-screen at the top of Birthdays":
+    locator.click timeout 90000ms waiting for getByRole('button', { name: 'December', exact: true }) after "Add my birthday" (line 100).
+    Run 1 overlapped qa-tdd's own background jest runs 2-3 (CPU load); runs 2-3 ran alone. Spec and calendar code not touched by this branch.
+  clean rerun, nothing else running, runs 4-6: 54 passed, 5 skipped x3
+  Filed QA-R7 / T39 (P2, open): the month picker step does not wait for the picker to open; under load it times out.
+== prototype e2e, 3 runs: 33 passed x3
+== test-all script suites (agent roster/sync/runs/skip, persona checks, Expo Go SDK + test, log check, SPDX, grandparent guide, test-all helper, test totals, EAS, site analytics, site meta, deploy script, Supabase starter scripts), 3 runs: 17/17 ok x3
+== backend SQL (local Postgres 16, ~68 s a run), 3 runs: 1788 passed, 0 failed x3 (no backend change)
+Not run: Deno functions (not installed; CI runs them), Supabase starter invites (no STUDIO_SUPABASE_TEMPLATE), e2e:site, real Safari/Firefox/iPhone (manual).

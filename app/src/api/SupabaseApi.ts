@@ -161,7 +161,33 @@ export class SupabaseApi implements HearthApi {
     return { userId: data.session.user.id, email: data.session.user.email ?? '', ...phoneOf(data.session.user) };
   }
   async signOut(): Promise<void> {
-    await this.o.client.auth.signOut();
+    // WEB-APP-7 (QA-R2): offline with an expired token, supabase-js can't refresh, returns an error and keeps
+    // the session. Sign-out must still remove it on this device; the server isn't told, so its refresh session stays open
+    // until revoked (only the 1-hour access token expires; PRIV-WEB-R4, TRACKER R86).
+    let failed = false;
+    try {
+      const { error } = await this.o.client.auth.signOut();
+      failed = !!error;
+    } catch {
+      failed = true;
+    }
+    if (failed) await this.removeLocalSession();
+  }
+
+  /** Removes the stored session on this device only (supabase-js's own removal; no network). */
+  private async removeLocalSession(): Promise<void> {
+    const auth = this.o.client.auth as unknown as {
+      _removeSession?: () => Promise<void>;
+      storage?: { removeItem(k: string): unknown };
+      storageKey?: string;
+    };
+    try {
+      if (typeof auth._removeSession === 'function') { await auth._removeSession(); return; }
+      if (auth.storage && auth.storageKey) {
+        await auth.storage.removeItem(auth.storageKey);
+        await auth.storage.removeItem(`${auth.storageKey}-user`);
+      }
+    } catch { /* storage unavailable: nothing more this device can do */ }
   }
 
   // ---- RPCs ----

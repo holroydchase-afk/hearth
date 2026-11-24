@@ -607,5 +607,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** the eval found the duplicates; one place per setting makes phone help one sentence for a grandparent.
 - **Source:** persona check `decisions/2026-11-24-settings-only-in-more.md`; `SPEC-EVAL-FIXES.md`. Amends RD-78.
 
+### DEC-86 · Web app for Android Chrome first; Hearth runs on web, iPhone and Android
+- **When / status:** Nov 24 · Chase: "go" on the web app plan · Specced (`SPEC-WEB-APP.md`, HRT-WEB.1..5); PR 1 (staying signed in, WEB-APP-1..12) next
+- **Chose:** a Chrome web app so the two Android beta grandparents use Hearth before a native Android build, in this order: staying signed in on the web, add to home screen plus Android-size screen checks, photo sharing on web (EXIF/GPS stripped in the browser, upload survives Chrome closing), email notices (Chrome push later), Save to my phone as a download (video off). $0, no domain yet.
+- **Over:** waiting for a native Android build (ANCHORS milestone 5, "once the iPhone side is solid"); leaving the Android grandpas out of the beta.
+- **Because:** two of three least-savvy grandparents are on Android (PERSONAS AG); the web build already exists on free hosting, so the gap is sign-in that sticks and a home-screen icon, not a second app.
+- **Source:** `docs/product/SPEC-WEB-APP.md`; persona check `decisions/2026-11-24-web-app.md`. Pulls part of ANCHORS milestone 5 forward through the web; the native Android build stays milestone 5.
+
 ---
-Last updated: Nov 24, 2026 (DEC-85)
+Last updated: Nov 24, 2026 (DEC-86)

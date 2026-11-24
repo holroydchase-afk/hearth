@@ -1,6 +1,6 @@
 # Hearth tracker: what's next, what's missing, what's pending
 
-The one list of everything open between Chase and Claude. Updated Nov 20, 2026.
+The one list of everything open between Chase and Claude. Updated Nov 24, 2026.
 
 **How it works**
 - Work the **Sequence** top to bottom. One step at a time; nothing new gets built until milestone 1 passes (Chase, Oct 17).
@@ -101,6 +101,9 @@ The freeze is lifted (DEC-28). Ranked by staff-pm from `docs/product/reviews/202
 | R81 | Visibility review leftovers (Nov 24; PRIV-VC-B2 done by QA-R5): `my_spaces` also returns the inviter's name without `can_see_profile` (check whether an inviter who left is still shown). ENG-R20's other reuse candidates (starter, LargeSecureStore, sigv4) not split out | P2 | S | ☐ open |
 | R82 | Export leaves out life-calendar dates you created in a deleted family (QA-R6, Nov 24): `export_my_data` (0029) takes every date with `created_by` = you, so a parent's export still carries dates they added in a family that was deleted. Failing test: `backend/tests/vis_core_test.sql` R80. Open question for staff-pm: whether your own birthday in a deleted family stays in your export (not pinned) | P2 | S | ☑ Nov 24: 0033 narrows only the created_by branch to live families (own birthday unchanged, still unpinned); local, not pushed |
 | R83 | Eval findings fixes (intake #162; Chase: accessibility is high priority; `SPEC-EVAL-FIXES.md`): distinct Open buttons on Messages (EF-HE-1, P0), empty ring on unpicked radios (EF-HE-2), honest group-names line + New group primary (EF-HE-5), Events empty-state words (EF-HE-6), New for you past 20 posts (B18). Closed with evidence: EF-HE-3, 7, 8, D-3. Needs Chase: EF-HE-4 (Me drops Easy view and Light or dark; recommend yes) | P1 | S | ◐ Nov 24: specced; qa-tdd red next (B18 already red) |
+| R84 | Web app PR 1, staying signed in on the web (Chase Nov 24 "go", DEC-86; `SPEC-WEB-APP.md` HRT-WEB.1, WEB-APP-1..12): session sealed with AES-GCM under a non-extractable WebCrypto key in IndexedDB, survives reload and tab close on Android Chrome, plain-text copy migrated, sign-out clears it even offline, native `secureSession.ts` unchanged. Persona check `decisions/2026-11-24-web-app.md` | P1 | S | ☐ Nov 24: specced; qa-tdd red next (WEB-APP-1..10), then engineer, privacy-security; WEB-APP-11, 12 on a real Android phone |
+| R86 | Supabase session timebox, needs Chase (PRIV-WEB-R4, Nov 24): an offline web sign-out can't reach the server, so the refresh session stays open there until revoked; only the 1-hour access token expires. Set a session time limit (and inactivity timeout) in Supabase Auth settings so a forgotten session closes on its own | P2 | XS | ☐ needs Chase (Supabase dashboard setting) |
+| R85 | Web app PRs 2-5 (DEC-86, HRT-WEB.2..5): add to home screen (manifest, icons, standalone) + 360/412-wide screen checks; photo sharing on web (EXIF/GPS stripped in browser, upload survives Chrome closing); email notices for web-only people (Chrome push after the beta); Save to my phone = download, video off. Criteria written per PR by staff-pm | P1 | M | ☐ after R84 |
 | R14 | npm audit: recheck the Expo CLI build-tool findings after the next Expo patch (RV-X4) | P2 | S | ☑ Oct 21: still 62 from 5 advisories on expo 57.0.30 (newest SDK 57 patch). One ships: decode-uri-component in expo-router (a crafted link could freeze the app; no data exposed). No forced override; recheck at the SDK 58 move (Oct 26: moved to SDK 58; recheck in the next PR) |
 
 ## Sequence to milestone 1

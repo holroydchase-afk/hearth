@@ -21,6 +21,10 @@ import { createFakeApi } from './fakeRuntime';
 
 export const FAKE_MODE = process.env.EXPO_PUBLIC_HEARTH_FAKE === '1' || DEMO_MODE;
 
+// HRT-WEB.1 (WEB-APP-6): the web store seals the session and the messenger store and can wipe them all at
+// sign-out; the phone store has no clear (its values go with their own keys).
+const sessionStore = secureSessionStorage as { clear?: () => Promise<void> };
+
 export function createRuntime(): AppDeps | { error: string } {
   const common = {
     kv: asyncStorageKV,
@@ -33,6 +37,7 @@ export function createRuntime(): AppDeps | { error: string } {
     // A3: kept photo files on phones only; the web build keeps none.
     mediaDisk: fileMediaStore && mediaKeyStore ? { store: fileMediaStore, keys: mediaKeyStore } : null,
     videoFiles,
+    clearSessionStore: sessionStore.clear ? () => sessionStore.clear!() : undefined,
   };
   if (FAKE_MODE) {
     return { ...common, api: createFakeApi(), helpPhone: '+1 304 555 0100' };
