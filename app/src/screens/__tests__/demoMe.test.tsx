@@ -13,7 +13,8 @@ jest.mock('../../demo/flags', () => ({ DEMO_MODE: true }));
 describe('DEMO-8 Me screen in the demo build', () => {
   it('DEMO-8 shows the real settings but no test tools, sign out or delete', async () => {
     await renderApp(<MeScreen />, { be: FakeBackend.withFixture(), user: 'chase' });
-    expect(await screen.findByText('Easy view')).toBeTruthy(); // engineer, flagged for qa-tdd: Easy view replaces Bigger text (RD-78)
+    // EF-HE-4 (Chase, Nov 24): Easy view left Me for More, so a real setting still on Me is the proof it loaded.
+    expect(await screen.findByText('How should we tell you about new photos?')).toBeTruthy();
     expect(screen.queryByText(/For testing/)).toBeNull();
     expect(screen.queryByText('Problem details')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Sign out of Hearth' })).toBeNull();
