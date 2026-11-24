@@ -1378,8 +1378,8 @@
    "kind": "bug",
    "layer": "app",
    "severity": "Low",
-   "status": "open",
-   "title": "QA-R1 (wordless Share start gate r70, Nov 24): jest FONT-2 fails 3/3 at 37cbe7f: app/src/ui/kit.tsx:341-342 PostcardStamp renders <Text style={mark}> with fontFamily inside the mark variable, so the kit guard cannot see an Atkinson family. Fix (engineer): put fontFamily: FONT.semibold inline in each stamp Text's style. Test: app/src/ui/__tests__/font.test.tsx",
+   "status": "fixed",
+   "title": "Fixed at 91e424a (fontFamily inline on each stamp Text), FONT-2 green 3x in r71. QA-R1 (wordless Share start gate r70, Nov 24): jest FONT-2 fails 3/3 at 37cbe7f: app/src/ui/kit.tsx:341-342 PostcardStamp renders <Text style={mark}> with fontFamily inside the mark variable, so the kit guard cannot see an Atkinson family. Fix (engineer): put fontFamily: FONT.semibold inline in each stamp Text's style. Test: app/src/ui/__tests__/font.test.tsx",
    "tests": [
     "app/src/ui/kit.tsx"
    ],
