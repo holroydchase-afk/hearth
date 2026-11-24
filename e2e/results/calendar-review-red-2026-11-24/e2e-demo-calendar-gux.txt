@@ -1,0 +1,73 @@
+
+Running 3 tests using 1 worker
+
+  ✘  1 e2e-web/demo-calendar.spec.js:78:1 › GUX-R1 at 390x844 the card's "Add my birthday" opens the form, and after month and day Save is fully on-screen above the tab bar (16.7s)
+  ✘  2 e2e-web/demo-calendar.spec.js:95:1 › GUX-R2 after Save, "Saved. Your family will see December 8." is on-screen at the top of Birthdays (16.6s)
+  ✘  3 e2e-web/demo-calendar.spec.js:107:1 › GUX-R3 Gallery → See birthdays → the back button reads "Gallery" and goes back to Gallery (17.5s)
+
+
+  1) e2e-web/demo-calendar.spec.js:78:1 › GUX-R1 at 390x844 the card's "Add my birthday" opens the form, and after month and day Save is fully on-screen above the tab bar 
+
+    TimeoutError: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for getByTestId('birthday-card').visible().getByRole('button', { name: 'Add my birthday' })
+
+
+      82 |   await expect(card.getByText(/^When[’']s your birthday\?$/)).toBeVisible();
+      83 |   await expect(card.getByRole('button', { name: 'Not now' })).toBeVisible();
+    > 84 |   await card.getByRole('button', { name: 'Add my birthday' }).click({ timeout: 15_000 });
+         |                                                               ^
+      85 |   await expect(page.getByRole('heading', { name: 'Add my birthday' })).toBeVisible();
+      86 |   await page.getByRole('button', { name: 'December', exact: true }).filter({ visible: true }).click();
+      87 |   await page.getByRole('button', { name: 'December 8', exact: true }).filter({ visible: true }).click();
+        at /home/user/Hearth/app/e2e-web/demo-calendar.spec.js:84:63
+
+    Error Context: test-results/e2e-demo-artifacts/demo-calendar-GUX-R1-at-39-bb6e3-on-screen-above-the-tab-bar/error-context.md
+
+  2) e2e-web/demo-calendar.spec.js:95:1 › GUX-R2 after Save, "Saved. Your family will see December 8." is on-screen at the top of Birthdays 
+
+    TimeoutError: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for getByTestId('birthday-card').visible().getByRole('button', { name: 'Add my birthday' })
+
+
+       96 |   await page.goto('/');
+       97 |   await galleryLoaded(page);
+    >  98 |   await page.getByTestId('birthday-card').filter({ visible: true }).getByRole('button', { name: 'Add my birthday' }).click({ timeout: 15_000 });
+          |                                                                                                                      ^
+       99 |   await page.getByRole('button', { name: 'December', exact: true }).filter({ visible: true }).click();
+      100 |   await page.getByRole('button', { name: 'December 8', exact: true }).filter({ visible: true }).click();
+      101 |   await page.getByRole('button', { name: 'Save', exact: true }).filter({ visible: true }).click();
+        at /home/user/Hearth/app/e2e-web/demo-calendar.spec.js:98:118
+
+    Error Context: test-results/e2e-demo-artifacts/demo-calendar-GUX-R2-after-c8736-een-at-the-top-of-Birthdays/error-context.md
+
+  3) e2e-web/demo-calendar.spec.js:107:1 › GUX-R3 Gallery → See birthdays → the back button reads "Gallery" and goes back to Gallery 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: getByRole('button', { name: /^(Back to )?Gallery$/ }).visible()
+    Expected pattern: /Gallery/
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveText" getByRole('button', { name: /^(Back to )?Gallery$/ }).visible() with timeout 15000ms
+      - waiting for getByRole('button', { name: /^(Back to )?Gallery$/ }).visible()
+
+
+      111 |   await expect(page.getByRole('heading', { name: 'Birthdays and dates' })).toBeVisible();
+      112 |   const back = page.getByRole('button', { name: /^(Back to )?Gallery$/ }).filter({ visible: true });
+    > 113 |   await expect(back).toHaveText(/Gallery/);
+          |                      ^
+      114 |   await back.click();
+      115 |   await galleryLoaded(page);
+      116 |   await expect(page.getByRole('tab', { name: /^Gallery/, selected: true })).toBeVisible();
+        at /home/user/Hearth/app/e2e-web/demo-calendar.spec.js:113:22
+
+    Error Context: test-results/e2e-demo-artifacts/demo-calendar-GUX-R3-Galle-2ed9c-ry-and-goes-back-to-Gallery/error-context.md
+
+  3 failed
+    e2e-web/demo-calendar.spec.js:78:1 › GUX-R1 at 390x844 the card's "Add my birthday" opens the form, and after month and day Save is fully on-screen above the tab bar 
+    e2e-web/demo-calendar.spec.js:95:1 › GUX-R2 after Save, "Saved. Your family will see December 8." is on-screen at the top of Birthdays 
+    e2e-web/demo-calendar.spec.js:107:1 › GUX-R3 Gallery → See birthdays → the back button reads "Gallery" and goes back to Gallery 

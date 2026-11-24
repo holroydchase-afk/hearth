@@ -64,27 +64,47 @@ async function openBirthdays(be: FakeBackend, user: FixtureUser, kv?: KV) {
   return r;
 }
 
-describe('CAL-12/13 the birthday card on Gallery', () => {
-  it('CAL-12 a member with no birthday saved sees "When\'s your birthday?" with the privacy line, 12 months, days, Save and Not now', async () => {
+// GUX-R1 (Nov 24, grandparent-ux) changes CAL-12/13: the card is short (question, privacy line, "Add my birthday",
+// "Not now") and "Add my birthday" opens the Add my birthday form on Birthdays, where the month and day are picked.
+// The CAL-12/13 tests below were rewritten for that (they tested the old inline picker on the card).
+async function addFromCard(be: FakeBackend, kv: KV) {
+  const r = await renderApp(<GalleryScreen />, { be, user: 'jo', kv });
+  const card = await screen.findByTestId('birthday-card', {}, slow);
+  fireEvent.press(within(card).getByRole('button', { name: 'Add my birthday' }));
+  expect(await screen.findByRole('header', { name: 'Add my birthday' }, slow)).toBeTruthy();
+  return r;
+}
+
+describe('CAL-12/13 the birthday card on Gallery (GUX-R1: short card, the form on Birthdays)', () => {
+  it('CAL-12 GUX-R1 a member with no birthday saved sees "When\'s your birthday?", the privacy line, "Add my birthday" and "Not now", and no picker on the card', async () => {
     await renderApp(<GalleryScreen />, { user: 'jo' });
     const card = await screen.findByTestId('birthday-card', {}, slow);
     const c = within(card);
     expect(c.getByText(QUESTION)).toBeTruthy();
     expect(c.getByText('Your family will see the month and day. Never the year.')).toBeTruthy();
-    expect(MONTHS.filter((m) => !choice(m, c))).toEqual([]);
-    fireEvent.press(choice('December', c)!);
-    const missingDays = Array.from({ length: 31 }, (_, i) => i + 1).filter((d) => !choice(new RegExp(`^(December )?${d}$`), c));
-    expect(missingDays).toEqual([]);
-    expect(c.getByRole('button', { name: 'Save' })).toBeTruthy();
+    expect(c.getByRole('button', { name: 'Add my birthday' })).toBeTruthy();
     expect(c.getByRole('button', { name: 'Not now' })).toBeTruthy();
-    expect(c.UNSAFE_queryAllByType(TextInput)).toHaveLength(0); // no typing
+    expect(MONTHS.filter((m) => choice(m, c))).toEqual([]); // the months live on the form now, not the card
+    expect(c.queryByRole('button', { name: 'Save' })).toBeNull();
+    expect(c.UNSAFE_queryAllByType(TextInput)).toHaveLength(0);
+  });
+
+  it('CAL-12 GUX-R1 "Add my birthday" opens the Add my birthday form on Birthdays: 12 months, the days, Save; no typing', async () => {
+    await addFromCard(FakeBackend.withFixture(), memoryKV());
+    expect(MONTHS.filter((m) => !choice(m))).toEqual([]);
+    fireEvent.press(choice('December')!);
+    const missingDays = Array.from({ length: 31 }, (_, i) => i + 1).filter((d) => !choice(new RegExp(`^(December )?${d}$`)));
+    expect(missingDays).toEqual([]);
+    expect(screen.getByRole('button', { name: 'Save' })).toBeTruthy();
+    expect(screen.getByText('Your family will see the month and day. Never the year.')).toBeTruthy();
+    expect(screen.UNSAFE_queryAllByType(TextInput)).toHaveLength(0);
   });
 
   it('CAL-12 every target on the card is 48 pt or more and every word 17 pt or more', async () => {
     await renderApp(<GalleryScreen />, { user: 'jo' });
     const card = await screen.findByTestId('birthday-card', {}, slow);
     const targets = card.findAll((n) => typeof n.type === 'string' && typeof n.props.onResponderGrant === 'function' && n.props.accessible === true);
-    expect(targets.length).toBeGreaterThanOrEqual(14);
+    expect(targets.length).toBeGreaterThanOrEqual(2); // GUX-R1: Add my birthday and Not now
     for (const t of targets) {
       const s = flat(t.props.style);
       const h = Number(s.minHeight ?? s.height ?? 0), w = Number(s.minWidth ?? s.width ?? (s.flex || s.alignSelf === 'stretch' ? 999 : 0));
@@ -104,15 +124,19 @@ describe('CAL-12/13 the birthday card on Gallery', () => {
     expect(screen.queryByTestId('birthday-card')).toBeNull();
   });
 
-  it('CAL-13 Save says "Saved. Your family will see December 8.", saves it, and the card is gone for good', async () => {
+  it('CAL-13 GUX-R2 Save on the form says "Saved. Your family will see December 8." at the top of Birthdays, saves it, and the card is gone for good', async () => {
     const be = FakeBackend.withFixture();
     const kv = memoryKV();
-    const first = await renderApp(<GalleryScreen />, { be, user: 'jo', kv });
-    const card = await screen.findByTestId('birthday-card', {}, slow);
-    fireEvent.press(choice('December', within(card))!);
-    fireEvent.press(choice(/^(December )?8$/, within(card))!);
-    fireEvent.press(within(card).getByRole('button', { name: 'Save' }));
+    const first = await addFromCard(be, kv);
+    fireEvent.press(choice('December')!);
+    fireEvent.press(choice(/^(December )?8$/)!);
+    fireEvent.press(screen.getByRole('button', { name: 'Save' }));
     expect(await screen.findByText('Saved. Your family will see December 8.', {}, slow)).toBeTruthy();
+    expect(await screen.findByRole('header', { name: 'Birthdays and dates' }, slow)).toBeTruthy(); // back on the list
+    const words = screenWords();
+    // at the top: above the buttons and the dates, not under the list
+    expect(words.indexOf('Saved. Your family will see December 8.')).toBeLessThan(words.indexOf('Change my birthday'));
+    expect(words.indexOf('Saved. Your family will see December 8.')).toBeLessThan(words.indexOf('December 8', words.indexOf('Change my birthday')));
     const rows = await as(be, 'chase').familyDates(SPACE);
     expect(rows.filter((r) => r.member_id === jo.id)).toEqual([expect.objectContaining({ month: 12, day: 8 })]);
     first.unmount();
@@ -197,7 +221,7 @@ describe('CAL-14/15 More → Birthdays', () => {
     await openBirthdays(FakeBackend.withFixture(), 'chase');
     fireEvent.press(screen.getByRole('button', { name: 'Add a date' }));
     await waitFor(() => expect(['Birthday', 'Anniversary', 'Something else'].filter((k) => !choice(k))).toEqual([]));
-    expect(screen.getByLabelText(/name|label/i)).toBeTruthy();
+    expect(screen.getByLabelText(/name|label|whose/i)).toBeTruthy(); // GUX-R11: "Whose birthday?"
     expect(MONTHS.filter((m) => !choice(m))).toEqual([]);
   });
 
@@ -256,6 +280,91 @@ describe('CAL-16 the line on Gallery on the day', () => {
     await waitFor(async () => expect((await as(be, 'chase').familyDates(SPACE)).length).toBe(2));
     expect(screen.queryByText(/^Today( is|:)/)).toBeNull();
     expect(screen.queryByRole('button', { name: 'See birthdays' })).toBeNull();
+  });
+});
+
+describe('Grandparent-ux review fixes (Nov 24, GUX-R3, R4, R6, R7, R9, R11)', () => {
+  it('GUX-R3 Gallery → See birthdays → the back button reads "Gallery" and returns to Gallery', async () => {
+    atDate(2025, 12, 8);
+    const be = FakeBackend.withFixture();
+    await as(be, 'jo').setMyBirthday(SPACE, 12, 8);
+    await renderApp(<GalleryScreen />, { be, user: 'chase' });
+    fireEvent.press(await screen.findByRole('button', { name: 'See birthdays' }, slow));
+    expect(await screen.findByRole('header', { name: 'Birthdays and dates' }, slow)).toBeTruthy();
+    const back = screen.getByRole('button', { name: /^Back to Gallery$|^Gallery$/ });
+    expect(within(back).getByText('Gallery')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /^Back to More$/ })).toBeNull();
+    fireEvent.press(back);
+    expect(await screen.findByLabelText('Search photos', {}, slow)).toBeTruthy();
+    await waitFor(() => expect(screen.queryByRole('header', { name: 'Birthdays and dates' })).toBeNull());
+  });
+
+  it('GUX-R4 on her own birthday Grandma Jo\'s Gallery says "Happy birthday, Grandma Jo!", not "Today is Grandma Jo\'s birthday"', async () => {
+    atDate(2025, 12, 8);
+    const be = FakeBackend.withFixture();
+    await as(be, 'jo').setMyBirthday(SPACE, 12, 8);
+    await renderApp(<GalleryScreen />, { be, user: 'jo' });
+    expect(await screen.findByText('Happy birthday, Grandma Jo!', {}, slow)).toBeTruthy();
+    expect(screen.queryByText(apos("Today is Grandma Jo's birthday"))).toBeNull();
+  });
+
+  it('GUX-R4 ...while another member (Grandpa Earl) sees "Today is Grandma Jo\'s birthday" and no "Happy birthday"', async () => {
+    atDate(2025, 12, 8);
+    const be = FakeBackend.withFixture();
+    await as(be, 'jo').setMyBirthday(SPACE, 12, 8);
+    await renderApp(<GalleryScreen />, { be, user: 'earl' });
+    expect(await screen.findByText(apos("Today is Grandma Jo's birthday"), {}, slow)).toBeTruthy();
+    expect(screen.queryByText(/Happy birthday/)).toBeNull();
+  });
+
+  it('GUX-R6 a "something else" date today reads "Today: Family reunion"', async () => {
+    atDate(2025, 7, 4);
+    const be = FakeBackend.withFixture();
+    await labelled(be, 'other', 'Family reunion', 7, 4);
+    await renderApp(<GalleryScreen />, { be, user: 'chase' });
+    expect(await screen.findByText('Today: Family reunion', {}, slow)).toBeTruthy();
+    expect(screen.queryByText('Today is Family reunion')).toBeNull();
+  });
+
+  it('GUX-R7 in the Add a date form the back button reads "Birthdays", there is one heading, and back returns to the list', async () => {
+    atDate(2025, 12, 1);
+    await openBirthdays(FakeBackend.withFixture(), 'chase');
+    fireEvent.press(screen.getByRole('button', { name: 'Add a date' }));
+    expect(await screen.findByRole('header', { name: 'Add a date' })).toBeTruthy();
+    expect(screen.queryByRole('header', { name: 'Birthdays and dates' })).toBeNull(); // one heading, not two
+    const back = screen.getByRole('button', { name: /^(Back to )?Birthdays$/ });
+    expect(within(back).getByText('Birthdays')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Back to More' })).toBeNull();
+    fireEvent.press(back);
+    expect(await screen.findByRole('header', { name: 'Birthdays and dates' }, slow)).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Add a date' })).toBeTruthy();
+  });
+
+  it('GUX-R9 when the dates can\'t load, Birthdays says "The dates can\'t load right now. Try again in a minute, or ask Chase."', async () => {
+    const be = FakeBackend.withFixture();
+    const api = be.clientFor(null, { trackAppSession: true }) as unknown as Record<string, unknown>;
+    api.familyDates = async () => { throw new ApiError('NETWORK', 'offline'); };
+    await renderApp(<MoreScreen />, { be, user: 'jo', deps: { api: api as unknown as HearthApi } });
+    fireEvent.press(await screen.findByRole('button', { name: 'Birthdays' }, slow));
+    expect(await screen.findByText(apos("The dates can't load right now. Try again in a minute, or ask Chase."), {}, slow)).toBeTruthy();
+  });
+
+  it('GUX-R11 Add a date → Birthday is labelled "Whose birthday?"', async () => {
+    atDate(2025, 12, 1);
+    await openBirthdays(FakeBackend.withFixture(), 'chase');
+    fireEvent.press(screen.getByRole('button', { name: 'Add a date' }));
+    expect(await screen.findByLabelText('Whose birthday?')).toBeTruthy();
+  });
+
+  it('GUX-R11 Delete this date? says "It\'s removed for everyone in the family."', async () => {
+    atDate(2025, 12, 1);
+    const be = FakeBackend.withFixture();
+    await labelled(be, 'birthday', 'Mia', 12, 6);
+    await openBirthdays(be, 'chase');
+    fireEvent.press(screen.getByRole('button', { name: /Mia/ }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Delete' }));
+    expect(await screen.findByText('Delete this date?')).toBeTruthy();
+    expect(screenWords()).toMatch(/It[’']s removed for everyone in the family\./);
   });
 });
 

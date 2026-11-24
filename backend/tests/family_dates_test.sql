@@ -1,4 +1,4 @@
--- CAL-1..10, CAL-18 (docs/product/SPEC-LIFE-CALENDAR.md, DEC-81): the life calendar, birthdays and important dates.
+-- CAL-1..10, CAL-18, PRIV-R1..R3, PRIV-R5 (docs/product/SPEC-LIFE-CALENDAR.md, DEC-81): the life calendar, birthdays and important dates.
 -- Migration 0029: public.family_dates, list_family_dates, set_my_birthday, save_family_date, delete_family_date.
 -- Written FIRST (Nov 24, qa-tdd): red until 0029 lands.
 -- Contract these tests fix (the spec names the RPCs; the returned columns are set here, engineer please follow):
@@ -290,6 +290,137 @@ select tests.ok_sql($$select count(*) = 4 and bool_and(p.prosrc !~* 'raise\s+(lo
 select tests.ok_sql($$select to_regclass('public.family_dates') is not null
                         and not exists (select 1 from public.notification_outbox o where o::text ~ 'Mia|Chase and Alex|Family reunion')$$,
                     'CAL-18 no notice in the outbox carries a date''s label');
+
+-- ---------- Review fixes (Nov 24, privacy-security PRIV-R1..R3, R5). Written FIRST (qa-tdd): red until the fix ----------
+-- Seed for PRIV-R2: Alex's new partner, Partner Sky, joins A as a viewer in A's Everyone group only. Blair (the co-parent
+-- from the other household) is a viewer in A through the Co-parent group only (seed.sql; docs/architecture/05 S11),
+-- so she can't see Partner Sky's profile (public.can_see_profile) and is not in A's Everyone group.
+\set as_sky   'reset role; set role authenticated; select set_config(''request.jwt.claim.sub'', ''e0000000-0000-0000-0000-0000000000e1'', false);'
+\set sky      '''e0000000-0000-0000-0000-0000000000e1'''
+:as_admin
+insert into auth.users (id, email, raw_user_meta_data) values
+  ('e0000000-0000-0000-0000-0000000000e1', 'sky@example.com', '{"display_name":"Partner Sky"}');
+insert into public.space_members (space_id, user_id, role, invited_by) values
+  ('22222222-0000-0000-0000-00000000000a', 'e0000000-0000-0000-0000-0000000000e1', 'viewer', 'a0000000-0000-0000-0000-00000000000a');
+insert into public.circle_members (circle_id, user_id) values
+  ('33333333-0000-0000-0000-0000000000a0', 'e0000000-0000-0000-0000-0000000000e1');
+:as_sky
+select tests.try($$select public.set_my_birthday('22222222-0000-0000-0000-00000000000a', '4', '12')$$);
+:as_alex
+select tests.try($$select public.set_my_birthday('22222222-0000-0000-0000-00000000000a', '5', '5')$$);
+:as_blair
+select tests.try($$select public.set_my_birthday('22222222-0000-0000-0000-00000000000a', '8', '18')$$);
+:as_admin
+select tests.setv('sky_bd', format($$select id::text from public.family_dates where space_id = %L and member_id = %L$$, :sa, :sky));
+select tests.ok(tests.v('sky_bd') is not null and tests.v('anniv') is not null and tests.v('reunion') is not null,
+                'PRIV-R2 setup: Partner Sky''s birthday, the anniversary and the reunion are in family A');
+
+-- PRIV-R1 (P1): members never read who added a date or when (created_at, updated_at, created_by).
+select tests.ok_sql($$select not has_column_privilege('authenticated', 'public.family_dates', 'created_at', 'select')
+                        and not has_column_privilege('authenticated', 'public.family_dates', 'updated_at', 'select')
+                        and not has_column_privilege('authenticated', 'public.family_dates', 'created_by', 'select')$$,
+                    'PRIV-R1 signed-in accounts have no select on family_dates.created_at, updated_at or created_by');
+select tests.ok_sql($$select not has_column_privilege('anon', 'public.family_dates', 'created_at', 'select')
+                        and not has_column_privilege('anon', 'public.family_dates', 'created_by', 'select')$$,
+                    'PRIV-R1 ...nor does anon');
+select tests.ok_sql($$select p.prosrc !~* 'created_at|updated_at|created_by'
+                        from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                       where n.nspname = 'public' and p.proname = 'list_family_dates'$$,
+                    'PRIV-R1 list_family_dates no longer orders (or ties) by created_at, nor reads updated_at or created_by');
+:as_ma
+select tests.throws_code($$select created_at from public.family_dates$$, 'PRIV-R1 a member selecting created_at is refused (42501)', '42501');
+select tests.throws_code($$select updated_at from public.family_dates$$, 'PRIV-R1 a member selecting updated_at is refused (42501)', '42501');
+select tests.throws_code($$select created_by from public.family_dates$$, 'PRIV-R1 a member selecting created_by is refused (42501)', '42501');
+select tests.ok_sql($$select count(*) > 0 from (select id, space_id, kind, label, month, day, member_id from public.family_dates) x$$,
+                    'PRIV-R1 ...while the date columns themselves still read (allowed direction)');
+
+-- PRIV-R2 (P1): a member's birthday only to people who can see that member; a date with no member only to the
+-- parents and the members of the family's Everyone group. Table (RLS) and list_family_dates alike.
+:as_blair
+select tests.ok_sql(format($$select not exists (select 1 from public.list_family_dates(%L) where member_id = %L or id::text = %L)$$, :sa, :sky, tests.v('sky_bd')),
+                    'PRIV-R2 the co-parent (viewer in A, not in its Everyone group) does not list the new partner''s birthday');
+select tests.ok_sql(format($$select not exists (select 1 from public.list_family_dates(%L) where id::text in (%L, %L) or label in ('Chase and Alex', 'Family reunion'))$$,
+                           :sa, tests.v('anniv'), tests.v('reunion')),
+                    'PRIV-R2 ...nor the anniversary or the "something else" date, not even their labels');
+select tests.ok_sql(format($$select count(*) = 0 from public.family_dates where member_id = %L or id::text in (%L, %L) or label in ('Chase and Alex', 'Family reunion')$$,
+                           :sky, tests.v('anniv'), tests.v('reunion')),
+                    'PRIV-R2 RLS: the co-parent reads none of those rows from the table directly');
+select tests.ok_sql(format($$select exists (select 1 from public.list_family_dates(%L) where member_id = %L)
+                              and exists (select 1 from public.list_family_dates(%L) where member_id = %L)$$, :sa, :alex, :sa, 'b0000000-0000-0000-0000-00000000000b'),
+                    'PRIV-R2 allowed: the co-parent still sees Alex''s birthday (a parent she can see) and her own');
+select tests.throws_code(format($$select public.delete_family_date(%L)$$, tests.v('sky_bd')),
+                         'PRIV-R2 the co-parent deleting the partner''s birthday is not found (P0002)', 'P0002');
+select tests.throws_code(format($$select public.delete_family_date(%L)$$, tests.v('anniv')),
+                         'PRIV-R2 the co-parent deleting the anniversary is not found (P0002)', 'P0002');
+select tests.throws_code(format($$select public.save_family_date(%L, %L, 'anniversary', 'Changed', '1', '1', null)$$, :sa, tests.v('anniv')),
+                         'PRIV-R2 the co-parent changing the anniversary is not found (P0002)', 'P0002');
+:as_ma
+select tests.ok_sql(format($$select exists (select 1 from public.list_family_dates(%L) where member_id = %L)
+                              and exists (select 1 from public.list_family_dates(%L) where id::text = %L)
+                              and exists (select 1 from public.list_family_dates(%L) where id::text = %L)$$,
+                           :sa, :sky, :sa, tests.v('anniv'), :sa, tests.v('reunion')),
+                    'PRIV-R2 allowed: Grandma Rivera (in A''s Everyone group) lists the partner''s birthday, the anniversary and the reunion');
+select tests.ok_sql(format($$select count(*) = 3 from public.family_dates where member_id = %L or id::text in (%L, %L)$$, :sky, tests.v('anniv'), tests.v('reunion')),
+                    'PRIV-R2 allowed: ...and reads them from the table');
+:as_alex
+select tests.ok_sql(format($$select count(*) = 3 from public.list_family_dates(%L) where member_id = %L or id::text in (%L, %L)$$, :sa, :sky, tests.v('anniv'), tests.v('reunion')),
+                    'PRIV-R2 allowed: the owner lists all three');
+
+-- PRIV-R3 (P2): export_my_data carries your own birthday and the dates you added, and nobody else's.
+:as_pa
+select tests.ok_sql($$select coalesce(public.export_my_data()->'family_dates', '[]') @> '[{"month": 2, "day": 29}]'$$,
+                    'PRIV-R3 Grandpa''s export holds his own birthday (February 29) under family_dates');
+:as_alex
+select tests.ok_sql($$select coalesce(public.export_my_data()->'family_dates', '[]') @> '[{"label": "Mia"}]'
+                         and coalesce(public.export_my_data()->'family_dates', '[]') @> '[{"label": "Chase and Alex"}]'$$,
+                    'PRIV-R3 Alex''s export holds the dates he added (Mia, the anniversary)');
+:as_ma
+select tests.ok_sql($$select jsonb_typeof(public.export_my_data()->'family_dates') = 'array'
+                         and not (public.export_my_data()->'family_dates' @> '[{"label": "Mia"}]')
+                         and not (public.export_my_data()->'family_dates' @> '[{"month": 4, "day": 12}]')$$,
+                    'PRIV-R3 ...and Grandma Rivera''s export has none of the dates others added or others'' birthdays');
+
+-- PRIV-R5 (P2): the 200 cap holds under concurrent adds: the RPCs lock the family's spaces row before counting.
+-- A real second session (dblink) tries to add while this session holds FOR NO KEY UPDATE on A's spaces row. That
+-- lock does not block the foreign-key check (FOR KEY SHARE), so only an RPC that locks the row itself waits; with
+-- lock_timeout it then fails 55P03. Returns 'waited' or what happened instead.
+:as_admin
+create extension if not exists dblink with schema tests;
+create function tests.second_session(p_user uuid, p_sql text) returns text language plpgsql as $$
+declare r text;
+begin
+  -- the server connects to itself: as this user, else as postgres (peer auth sees the server's own OS user)
+  begin
+    perform tests.dblink_connect('probe', format('dbname=%s user=%s', current_database(), current_user));
+  exception when others then
+    perform tests.dblink_connect('probe', format('dbname=%s user=postgres', current_database()));
+  end;
+  begin
+    perform tests.dblink_exec('probe', 'set lock_timeout = ''1s''');
+    perform tests.dblink_exec('probe', 'set role authenticated');
+    perform * from tests.dblink('probe', format('select set_config(''request.jwt.claim.sub'', %L, false)', p_user)) as t(x text);
+    perform * from tests.dblink('probe', 'select (' || p_sql || ')::text') as t(x text);
+    r := 'did not wait for the spaces row';
+  exception when others then
+    r := case when sqlstate = '55P03' or sqlerrm ~* 'lock timeout' then 'waited' else 'error ' || sqlstate || ': ' || sqlerrm end;
+  end;
+  perform tests.dblink_disconnect('probe');
+  return r;
+exception when others then
+  return 'probe failed: ' || sqlerrm;
+end $$;
+begin;
+select 1 from public.spaces where id = '22222222-0000-0000-0000-00000000000a' for no key update;
+select tests.setv('lock_save', $$select tests.second_session('a0000000-0000-0000-0000-00000000000a',
+  'public.save_family_date(''22222222-0000-0000-0000-00000000000a'', null, ''other'', ''Lock probe'', 3, 3, null)')$$);
+select tests.setv('lock_mine', $$select tests.second_session('c0000000-0000-0000-0000-0000000000c1',
+  'public.set_my_birthday(''22222222-0000-0000-0000-00000000000a'', 3, 4)')$$);
+commit;
+select tests.ok(tests.v('lock_save') = 'waited', 'PRIV-R5 save_family_date waits on the family''s spaces row lock before adding (got: ' || coalesce(tests.v('lock_save'), 'null') || ')');
+select tests.ok(tests.v('lock_mine') = 'waited', 'PRIV-R5 set_my_birthday waits on it too before adding (got: ' || coalesce(tests.v('lock_mine'), 'null') || ')');
+-- whatever the probes managed to store goes, so CAL-10 below counts from the same place
+delete from public.family_dates where space_id = '22222222-0000-0000-0000-00000000000a'
+   and (label = 'Lock probe' or member_id = 'c0000000-0000-0000-0000-0000000000c1');
 
 -- ---------- CAL-10: 200 dates per family ----------
 :as_admin

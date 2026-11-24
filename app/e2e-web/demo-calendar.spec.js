@@ -66,3 +66,52 @@ test("CAL-19 Grandma Jo's view: her only action on Birthdays is \"Change my birt
     await expect(page.getByRole('button', { name, exact: true }).filter({ visible: true })).toHaveCount(0);
   }
 });
+
+// Grandparent-ux review fixes (Nov 24, GUX-R1..R3). Written FIRST (qa-tdd): red until the fixes land.
+// The demo signs in as Chase, who has no birthday saved, so a fresh visit's Gallery shows the card.
+const tabBarTop = async (page) => {
+  const ys = [];
+  for (const t of await page.getByRole('tab').filter({ visible: true }).all()) ys.push((await t.boundingBox()).y);
+  return Math.min(...ys);
+};
+
+test('GUX-R1 at 390x844 the card\'s "Add my birthday" opens the form, and after month and day Save is fully on-screen above the tab bar', async ({ page }) => {
+  await page.goto('/');
+  await galleryLoaded(page);
+  const card = page.getByTestId('birthday-card').filter({ visible: true });
+  await expect(card.getByText(/^When[’']s your birthday\?$/)).toBeVisible();
+  await expect(card.getByRole('button', { name: 'Not now' })).toBeVisible();
+  await card.getByRole('button', { name: 'Add my birthday' }).click({ timeout: 15_000 });
+  await expect(page.getByRole('heading', { name: 'Add my birthday' })).toBeVisible();
+  await page.getByRole('button', { name: 'December', exact: true }).filter({ visible: true }).click();
+  await page.getByRole('button', { name: 'December 8', exact: true }).filter({ visible: true }).click();
+  const save = page.getByRole('button', { name: 'Save', exact: true }).filter({ visible: true });
+  await expect(save).toBeInViewport({ ratio: 1 }); // no scrolling needed
+  const box = await save.boundingBox();
+  expect(box.y + box.height).toBeLessThanOrEqual(await tabBarTop(page)); // not under the tab bar
+  expect(errors).toEqual([]);
+});
+
+test('GUX-R2 after Save, "Saved. Your family will see December 8." is on-screen at the top of Birthdays', async ({ page }) => {
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.getByTestId('birthday-card').filter({ visible: true }).getByRole('button', { name: 'Add my birthday' }).click({ timeout: 15_000 });
+  await page.getByRole('button', { name: 'December', exact: true }).filter({ visible: true }).click();
+  await page.getByRole('button', { name: 'December 8', exact: true }).filter({ visible: true }).click();
+  await page.getByRole('button', { name: 'Save', exact: true }).filter({ visible: true }).click();
+  const saved = page.getByText('Saved. Your family will see December 8.').filter({ visible: true });
+  await expect(saved).toBeInViewport({ ratio: 1 });
+  await expect(page.getByRole('heading', { name: 'Birthdays and dates' })).toBeVisible();
+});
+
+test('GUX-R3 Gallery → See birthdays → the back button reads "Gallery" and goes back to Gallery', async ({ page }) => {
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.getByRole('button', { name: 'See birthdays' }).filter({ visible: true }).click();
+  await expect(page.getByRole('heading', { name: 'Birthdays and dates' })).toBeVisible();
+  const back = page.getByRole('button', { name: /^(Back to )?Gallery$/ }).filter({ visible: true });
+  await expect(back).toHaveText(/Gallery/);
+  await back.click();
+  await galleryLoaded(page);
+  await expect(page.getByRole('tab', { name: /^Gallery/, selected: true })).toBeVisible();
+});
