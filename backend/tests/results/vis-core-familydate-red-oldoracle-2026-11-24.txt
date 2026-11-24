@@ -1,0 +1,37 @@
+ n  | result |                                                                                                  description                                                                                                  
+----+--------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  1 | ok     | VIS-7 Grandma Rivera, in the post's group, can see post a1 through can_see
+  2 | ok     | VIS-7 Alex, its author, can see post a1 through can_see
+  3 | ok     | VIS-7 Aunt Jo, same family but not in the group, can't see post a1 (false, not null)
+  4 | ok     | VIS-7 Blair, the other home, can't see post a1 (false, not null)
+  5 | ok     | VIS-7 an unregistered kind is seen by nobody (default deny, false not an error)
+  6 | ok     | VIS-7 every user and item-reach row: can_see equals the item rule  [ok]
+  7 | NOT OK | VIS-7 every user and person-reach row: can_see equals the person rule  [30 of 96 wrong; first: family_date 77777777-0000-0000-0000-0000000000a1 user a0000000-0000-0000-0000-00000000000a: can_see t, rule f]
+  8 | ok     | VIS-7 every user and container-reach row: can_see equals the container rule  [ok]
+  9 | ok     | VIS-7 every user and self-reach row: can_see equals the self rule  [ok]
+ 10 | ok     | VIS-7 every user and admin-reach row: can_see equals the admin rule  [ok]
+ 11 | ok     | VIS-7 every user and server-reach row: can_see equals the server rule  [ok]
+ 12 | ok     | VIS-7 the kinds can_see can't address by id (no uuid id) are exactly the 21 reviewed ones
+ 13 | ok     | VIS-22 vis.sees_item equals private.sees_post for every user and every post in the fixtures
+ 14 | ok     | VIS-22 ...and the comparison is not vacuous (someone sees something)
+ 15 | ok     | VIS-22 ...and someone is kept out of something
+ 16 | ok     | VIS-24 private.sees_post(uuid,uuid) exists
+ 17 | ok     | VIS-24 vis.sees_item(uuid,uuid) exists
+ 18 | ok     | VIS-24 vis.can_see(uuid,text,uuid) exists
+ 19 | ok     | VIS-24 private.sees_post(uuid,uuid) lives in a schema PostgREST does not expose
+ 20 | ok     | VIS-24 vis.sees_item(uuid,uuid) lives in a schema PostgREST does not expose
+ 21 | ok     | VIS-24 vis.can_see(uuid,text,uuid) lives in a schema PostgREST does not expose
+ 22 | ok     | VIS-24 signed out (anon) can't execute private.sees_post(uuid,uuid)
+ 23 | ok     | VIS-24 signed out (anon) can't execute vis.sees_item(uuid,uuid)
+ 24 | ok     | VIS-24 signed out (anon) can't execute vis.can_see(uuid,text,uuid)
+ 25 | ok     | VIS-24 private.sees_post(uuid,uuid) pins search_path to empty
+ 26 | ok     | VIS-24 vis.sees_item(uuid,uuid) pins search_path to empty
+ 27 | ok     | VIS-24 vis.can_see(uuid,text,uuid) pins search_path to empty
+ 28 | ok     | VIS-24 a signed-in user (authenticated) can't execute vis.can_see
+ 29 | ok     | VIS-24 no wrapper named sees_post, sees_item or can_see sits in an exposed schema
+ 30 | ok     | VIS-24 Aunt Jo asking can_see whether Grandma sees a post is refused (42501), not answered
+
+
+VIS CORE RESULT: 29 passed, 1 failed
+SOME TESTS FAILED
+psql:tests/vis_core_test.sql:179: ERROR:  division by zero

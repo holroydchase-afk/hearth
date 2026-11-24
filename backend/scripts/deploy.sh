@@ -42,6 +42,31 @@ if [[ -f $ENV_FILE ]] && grep -Eq '^SUPABASE_' "$ENV_FILE"; then
   die "$ENV_FILE must not contain SUPABASE_* keys (Supabase injects them; never store service_role here)"
 fi
 
+# ARCH-VC-R2 / PRIV-VC-B3: 0032 forces RLS on every public table, which is only safe when each table's owner
+# bypasses RLS (else every security definer function would lose rows). One read-only query, dry run included.
+if [[ -z ${SUPABASE_ACCESS_TOKEN:-} ]]; then
+  echo "RLS owners: skipped (no SUPABASE_ACCESS_TOKEN, so the hosted table owners can't be read)"
+else
+  OWNERS=$(sql <<'Q'
+select c.oid::regclass::text as rel, pg_catalog.pg_get_userbyid(c.relowner) as owner,
+       (r.rolsuper or r.rolbypassrls) as bypasses
+  from pg_catalog.pg_class c
+  join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+  join pg_catalog.pg_roles r on r.oid = c.relowner
+ where n.nspname = 'public' and c.relkind in ('r', 'p')
+ order by 1;
+Q
+) || die "could not read the table owners (RLS owners check)"
+  BAD=$(python3 -I -c 'import json, sys
+rows = json.load(sys.stdin)
+print("; ".join("%s (owner %s)" % (r["rel"], r["owner"]) for r in rows if not r["bypasses"]))' <<< "$OWNERS") ||
+    die "could not read the table owners (RLS owners check)"
+  if [[ -n $BAD ]]; then
+    echo "RLS owners: FAIL, these owners don't bypass RLS: $BAD" >&2; exit 1
+  fi
+  echo "RLS owners: pass (every public table's owner bypasses RLS)"
+fi
+
 echo "== 1/5 migrations (no seed data) via POST $API"
 TRACK="create schema if not exists supabase_migrations;
 create table if not exists supabase_migrations.schema_migrations (version text not null primary key, statements text[], name text);"
