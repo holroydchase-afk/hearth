@@ -1438,19 +1438,6 @@
    "tests": [],
    "found": "2026-11-24",
    "fixed": null
-  },
-  {
-   "id": "T39",
-   "kind": "test fix",
-   "layer": "app",
-   "severity": "Low",
-   "status": "open",
-   "title": "QA-R7 (HRT-WEB.1 priv fixes green run, Nov 24): app/e2e-web/demo-calendar.spec.js GUX-R2 'after Save, Saved. Your family will see December 8.' timed out (90 s) in 1 of 6 e2e:demo runs, waiting for the 'December' button after Add my birthday (line 100). That run overlapped qa-tdd's own background jest runs (CPU load); the other 5 runs passed. Not touched by HRT-WEB.1. Likely cause: the step clicks the month before the picker sheet has finished opening. Next: rerun with --repeat-each 10 under load and wait for the picker. Test: that file",
-   "tests": [
-    "app/e2e-web/demo-calendar.spec.js"
-   ],
-   "found": "2026-11-24",
-   "fixed": null
   }
  ]
 }

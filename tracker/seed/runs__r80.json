@@ -1,9 +1,0 @@
-{
- "suite": "app",
- "at": "2026-11-24T15:00:00-05:00",
- "label": "HRT-WEB.1 privacy-security findings (PRIV-WEB-R1/R2/R5/R6, persist): tests written first (red)",
- "passed": 2322,
- "failed": 7,
- "results": {},
- "note": "jest 3x: 6 red, the same each run (secureSession.web.test.ts PRIV-WEB-R1 x2: legacy plain sb-*-auth-token-user and chat.* left in localStorage after first use; PRIV-WEB-R2 x2: plain copies left when sealing fails; webSignOut.test.tsx PRIV-WEB-R5 x2: a messenger save landing during or after clear leaves sealed chat.group data under a new key). PRIV-WEB-R6 canary green (supabase-js still has _removeSession; shown red when it is missing). e2e:web 3x: persist after sign-in red (0 navigator.storage.persist() calls), 9 passed. typecheck clean. e2e/results/web-app-priv-red-2026-11-24.txt"
-}
