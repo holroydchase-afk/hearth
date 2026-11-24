@@ -160,6 +160,17 @@ Rules every reader must follow once clause (B) exists (PRIV-VC-R5). Without them
 - Notices: a link reader gets "new photo" notices only; the sender gets reply notices. No notice ever says a link was closed, a request refused, or an item opened. A link request is delivered by a code the requester hands over, never by looking a person up, so nobody can learn whether an ex has a Hearth account.
 - "Seen by" (`seen_count`, tracker R62) must be dropped before any link ships, or an author learns whether the other parent opened their post.
 
+## Family names: labels, not rules (Planned; Chase, Nov 24)
+
+Families call the same person different things: Grandpa, Pawpaw, Granddad, Nana, Gram, Gran, Granny, Aunt Libby, Uncle Graham. The model keeps these as **free-text labels someone picks**, never a fixed list and never a rule:
+
+- `person_labels(tenant_id, labeler_id, person_id, label text)`: what *this* person calls *that* person ("Pawpaw" to one grandchild, "Dad" to the parent). One row per labeler and person; the app falls back to the person's own display name. A family-wide default (`labeler_id` null, set by a parent) covers the common case so nobody has to type it twice.
+- Suggestions only: the app offers common words (grandma, grandpa, nana, pawpaw, granny, gram, gran, aunt, uncle, cousin) and the person can type anything else.
+- **Labels never decide who sees what.** Visibility stays with groups and the six reaches; a label is a Person-class kind (registered with `vis.attach`, following `can_see_profile`), so a label is only shown to someone who can already see that person. Your private label ("the ex") is readable only by you (self reach).
+- Generic core words: the `vis` package sees only "a label on a member"; the kinship words live in Hearth's layer, so another app (a "village" of neighbours, a team) can use the same table for its own names.
+
+This is the first step toward Chase's "light Village Operating System" idea: people, the names they use for each other, and the groups they share with, all behind one visibility core.
+
 ## What Hearth's server can see
 
 Unchanged by this model: RLS limits what each member's app reads, not the service role or the edge functions (see [04-threat-model.md](04-threat-model.md)). A link adds no new server access.
