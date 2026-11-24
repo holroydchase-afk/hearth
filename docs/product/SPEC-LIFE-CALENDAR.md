@@ -9,7 +9,7 @@ Chase, Nov 24 (rapid messages): "Life calendar" / "Capture birthdays" / "And imp
 
 ## What v1 is (and isn't)
 - **Month and day only. No year, no age.** Nobody is asked their birth year, so there is nothing to hide (pushback on "year optional": a stored year is a privacy liability for a feature that doesn't need it).
-- **Dates follow who sees a name** (privacy-security PRIV-R2, Nov 24; *pending Chase's confirmation*). A member's birthday is seen by whoever may already see that member's name; a date with no member (a kid's birthday by name, an anniversary, something else) by the parents and the family's Everyone group. In a family where everyone is in Everyone this is the whole family, as first specced; it differs only for a co-parent or relative placed in a side group alone.
+- **Dates follow who sees a name** (privacy-security PRIV-R2, Nov 24; confirmed by Chase Nov 24). A member's birthday is seen by whoever may already see that member's name; a date with no member (a kid's birthday by name, an anniversary, something else) by the parents and the family's Everyone group. In a family where everyone is in Everyone this is the whole family, as first specced; it differs only for a co-parent or relative placed in a side group alone.
 - **"Tell everyone" in v1 means in the app:** the date is on everyone's list, and on the day a line on Gallery tells everyone who opens Hearth. A push or email on the day is v1.1 (needs the outbox to accept a notice with no post, a change to `notify`, and a deploy).
 - **Onboarding = one optional card**, not a new gate: the first screen asks "When's your birthday?" with Not now. It reaches every way in (join by code, join by link, start a family) because it lives on Gallery.
 
