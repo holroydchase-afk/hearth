@@ -8,7 +8,7 @@ import { BackHandler, FlatList, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { TimelinePost } from '../api/HearthApi';
 import { TimelineStore, startOfNextYear, timelineRows, type TimelineRow } from '../feed/timeline';
-import { useApp, useFeed } from '../state/AppContext';
+import { useApp, useFeed, useSaveData } from '../state/AppContext';
 import { BackButton, Button, Card, Loading, Notice, Txt } from '../ui/kit';
 import { photos, shortDate } from '../ui/format';
 import { MIN_TARGET, useTheme } from '../ui/theme';
@@ -154,6 +154,7 @@ export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { start
 
 /** A post in the timeline: who sent it, when it was taken, its photos and caption. */
 export function TimelineCard({ post, onOpen }: { post: TimelinePost; onOpen: () => void }) {
+  const saveData = useSaveData(); // DEC-82 (DATA-3): thumbnails only until a photo is opened
   const [all, setAll] = useState(false);
   const ready = post.media.filter((m) => m.status === 'ready');
   const shown = all ? ready : ready.slice(0, SHOW_INLINE);
@@ -171,7 +172,7 @@ export function TimelineCard({ post, onOpen }: { post: TimelinePost; onOpen: () 
         >
           {m.kind === 'video'
             ? <VideoPoster postId={post.post_id} mediaId={m.media_id} style={{ flex: 1 }} />
-            : <MediaImage postId={post.post_id} mediaId={m.media_id} style={{ flex: 1 }} />}
+            : <MediaImage postId={post.post_id} mediaId={m.media_id} full={!saveData} style={{ flex: 1 }} />}
         </View>
       ))}
       <View style={{ padding: 16, gap: 12 }}>

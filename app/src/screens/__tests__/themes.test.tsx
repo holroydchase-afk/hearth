@@ -75,10 +75,12 @@ async function openTheme() {
 
 // ---------- RD-97 ----------
 describe('RD-97 the owner picks a Theme in More', () => {
-  it('RD-97 the owner\'s More has "Theme" right after "Light or dark", and no "Family color"', async () => {
+  // engineer, flagged for qa-tdd: DEC-82 (SPEC-MEDIA 5.1) puts "Videos and data" between Light or dark and Theme.
+  it('RD-97 the owner\'s More has "Theme" right after "Light or dark" and "Videos and data", and no "Family color"', async () => {
     await renderApp(<MoreScreen />, { user: 'chase' });
     const rows = (await screen.findAllByRole('button', {}, slow)).map((b) => String(b.props.accessibilityLabel).split(',')[0]);
-    expect({ theme: rows.indexOf('Theme') - rows.indexOf('Light or dark'), familyColor: rows.includes('Family color') }).toEqual({ theme: 1, familyColor: false });
+    expect({ theme: rows.indexOf('Theme') - rows.indexOf('Light or dark'), familyColor: rows.includes('Family color') }).toEqual({ theme: 2, familyColor: false });
+    expect(rows[rows.indexOf('Light or dark') + 1]).toBe('Videos and data');
   });
 
   for (const dark of [false, true]) {

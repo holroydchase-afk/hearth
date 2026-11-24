@@ -206,8 +206,10 @@ export function MenuLine() {
  *  row (no box of its own, no tinted fill), like the phone's own settings. A picked radio shows an accent check
  *  mark at the end; a checkbox shows an empty circle that fills with an accent check (iPhone) or the phone's own
  *  check box (Android). Switches are the phone's own switch with the word On or Off beside it (DS-3). */
-export function Choice({ label, title, detail, checked, onPress, kind }: {
+export function Choice({ label, title, detail, checked, onPress, kind, disabled }: {
   label: string; title: string; detail?: string; checked: boolean; onPress: () => void; kind: 'checkbox' | 'radio' | 'switch';
+  /** Can't be tapped, but stays fully readable (never faded: DEC-82 5.1); the detail line says why. */
+  disabled?: boolean;
 }) {
   const { c, os } = useTheme();
   const box: Icon = checked ? { sf: 'checkmark.circle', md: 'check_box' } : { sf: 'circle', md: 'check_box_outline_blank' };
@@ -215,8 +217,10 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
     <Pressable
       accessibilityRole={kind}
       accessibilityLabel={label}
-      accessibilityState={{ checked }}
+      accessibilityState={disabled ? { checked, disabled: true } : { checked }}
+      accessibilityHint={kind === 'switch' ? detail : undefined}
       aria-checked={checked} // GUX-R11: the web build reads aria-checked, not accessibilityState
+      disabled={disabled || undefined}
       onPress={onPress}
       android_ripple={{ color: c.line }}
       style={({ pressed }) => [styles.choice, { opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
@@ -232,7 +236,7 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
           <SwitchWord on={checked} />
           {/* A11Y-2: the web's default On thumb is teal; keep it in Hearth's colors (phones ignore activeThumbColor).
               A11Y-3: the Off track is muted, not line, so the switch shows at 3:1 (WCAG 1.4.11). */}
-          <Switch value={checked} trackColor={{ true: c.accent, false: c.muted }} {...({ activeThumbColor: c.surface } as object)} />
+          <Switch value={checked} disabled={disabled} trackColor={{ true: c.accent, false: c.muted }} {...({ activeThumbColor: c.surface } as object)} />
         </View>
       ) : null}
     </Pressable>

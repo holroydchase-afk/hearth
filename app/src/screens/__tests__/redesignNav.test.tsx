@@ -208,7 +208,7 @@ describe('RD-14 new messages on More', () => {
 describe('RD-15 More', () => {
   // engineer, flagged for qa-tdd: RD-78 (DEC-66) renames Bigger text to Easy view in the same place.
   // engineer, flagged for qa-tdd: CAL-14 (SPEC-LIFE-CALENDAR) adds Birthdays after Events for every role.
-  const ALL = ['Messages', 'Groups', 'Events', 'Birthdays', 'Easy view', 'Light or dark', 'Theme', 'Me', 'Help'];
+  const ALL = ['Messages', 'Groups', 'Events', 'Birthdays', 'Easy view', 'Light or dark', 'Videos and data', 'Theme', 'Me', 'Help'];
 
   it.each([
     ['owner', 'chase', ALL],

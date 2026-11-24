@@ -196,17 +196,27 @@ export class MediaCache {
    * VID-18: a local uri the player can open: the video decrypted into `<media_id>.mp4` (the player wants .mp4,
    * even for an iPhone .mov, which is the same format). Without videoFiles (tests), a data: URI.
    */
-  videoUri(postId: string, mediaId: string): Promise<string> {
+  videoUri(postId: string, mediaId: string, opts: { signal?: AbortSignal } = {}): Promise<string> {
+    const { signal } = opts;
+    // AUTO-3 (DEC-82): a Feed video scrolled away stops; nothing is written and the failure is never kept.
+    if (signal?.aborted) return Promise.reject(abortError());
     const hit = this.videos.get(mediaId);
-    if (hit) return hit;
+    if (hit) return signal ? untilAborted(hit, signal) : hit;
+    const stopIfAborted = () => { if (signal?.aborted) throw abortError(); };
     const p = (async () => {
       const it = await this.item(postId, mediaId);
-      const bytes = await decryptMediaAsync(await this.api.getObject(it.display_url), it.dek);
+      stopIfAborted();
+      const cipher = await this.api.getObject(it.display_url);
+      stopIfAborted();
+      const bytes = await decryptMediaAsync(cipher, it.dek);
+      stopIfAborted();
       return this.videoFiles ? this.videoFiles.write(`${mediaId}.mp4`, bytes) : `data:video/mp4;base64,${toBase64(bytes)}`;
     })();
     this.videos.set(mediaId, p);
-    p.catch(() => this.videos.delete(mediaId));
-    return p;
+    const forget = () => { if (this.videos.get(mediaId) === p) this.videos.delete(mediaId); };
+    p.catch(forget);
+    signal?.addEventListener('abort', forget, { once: true });
+    return signal ? untilAborted(p, signal) : p;
   }
 
   /** The player closed: delete the decrypted file. */
@@ -229,4 +239,20 @@ export class MediaCache {
   prefetch(postId: string, mediaIds: string[]): void {
     for (const m of mediaIds) this.uri(postId, m, 'display').catch(() => {});
   }
+}
+
+function abortError(): Error {
+  const e = new Error('The video download was stopped.');
+  e.name = 'AbortError';
+  return e;
+}
+
+/** Rejects with AbortError the moment the signal fires, even mid-download. */
+function untilAborted<T>(p: Promise<T>, signal: AbortSignal): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const onAbort = () => reject(abortError());
+    if (signal.aborted) return onAbort();
+    signal.addEventListener('abort', onAbort, { once: true });
+    p.then((v) => { signal.removeEventListener('abort', onAbort); resolve(v); }, (e: unknown) => { signal.removeEventListener('abort', onAbort); reject(e); });
+  });
 }
