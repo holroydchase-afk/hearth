@@ -10,7 +10,10 @@
 --         answers "not found" there, the same as chat_list already did.
 --   QA-R4 (P2, part) public.is_post_author needs a live family, so post_audiences_select and set_post_audience
 --         stop telling the author that their post in a deleted family exists. In a live family it is unchanged.
--- Not here: delete_post's repeat call on your own deleted post (BETA-AUD-5 promises it is a no-op; see HANDOFF).
+--   R80 (QA-R6, P2) export_my_data leaves out life-calendar dates the caller added in a deleted family (0029 took
+--         every date with created_by = caller). Only that branch changes; your own birthday stays in your export.
+-- Not here: delete_post's repeat call on your own deleted post stays a no-op for its author (BETA-AUD-5; VIS-9's
+-- named exception).
 
 -- ---------- QA-R1: the child rule ----------
 create function private.vis_sees_child(p_viewer uuid, p_child uuid) returns boolean
@@ -169,4 +172,45 @@ language sql security definer set search_path = '' as $$
   join ready r on r.recipient_id = w.recipient_id and r.ch = w.ch
   join public.profiles pr on pr.id = w.actor_id
   group by w.recipient_id, w.ch
+$$;
+
+-- ---------- R80 (QA-R6): no dates you added in a deleted family in your export ----------
+-- 0029's export_my_data with one change in family_dates.
+create or replace function public.export_my_data() returns jsonb
+language sql stable security definer set search_path = '' as $$
+  select jsonb_build_object(
+    'exported_at', now(),
+    'profile',  (select to_jsonb(p) from public.profiles p where p.id = auth.uid()),
+    'households', (select coalesce(jsonb_agg(to_jsonb(h) || jsonb_build_object('role', hm.role)), '[]')
+                   from public.household_members hm join public.households h on h.id = hm.household_id
+                   where hm.user_id = auth.uid()),
+    'spaces',   (select coalesce(jsonb_agg(jsonb_build_object('space_id', sm.space_id, 'name', s.name, 'role', sm.role,
+                   'circles', (select coalesce(jsonb_agg(c.name), '[]') from public.circle_members cm
+                               join public.circles c on c.id = cm.circle_id
+                               where cm.user_id = auth.uid() and c.space_id = sm.space_id
+                                 and private.may_see_circle_name(c.space_id, c.kind)))), '[]')
+                 from public.space_members sm join public.spaces s on s.id = sm.space_id
+                 where sm.user_id = auth.uid()),
+    'posts',    (select coalesce(jsonb_agg(to_jsonb(p) || jsonb_build_object(
+                   'audience', (select coalesce(jsonb_agg(c.name), '[]') from public.post_audiences pa
+                                join public.circles c on c.id = pa.circle_id
+                                where pa.post_id = p.id and private.may_see_circle_name(c.space_id, c.kind)),
+                   'media', (select coalesce(jsonb_agg(jsonb_build_object('id', m.id, 'kind', m.kind,
+                                'display_key', m.display_key, 'width', m.width, 'height', m.height,
+                                'duration_ms', m.duration_ms, 'byte_size', m.byte_size)), '[]')
+                             from public.media_items m where m.post_id = p.id))), '[]')
+                 from public.posts p where p.author_id = auth.uid()),
+    'comments', (select coalesce(jsonb_agg(to_jsonb(c)), '[]') from public.comments c where c.author_id = auth.uid()),
+    'reactions',(select coalesce(jsonb_agg(to_jsonb(r)), '[]') from public.reactions r where r.user_id = auth.uid()),
+    'notification_prefs', (select coalesce(jsonb_agg(to_jsonb(n)), '[]') from public.notification_prefs n where n.user_id = auth.uid()),
+    -- PRIV-R3: your own birthdays and the dates you added; nobody else's. R80 (QA-R6): dates you added count only
+    -- in a live family (a deleted family's dates are not yours to carry out); your own birthday is unchanged.
+    'family_dates', (select coalesce(jsonb_agg(jsonb_build_object('id', d.id, 'space_id', d.space_id, 'kind', d.kind,
+                       'label', d.label, 'month', d.month, 'day', d.day, 'member_id', d.member_id,
+                       'created_at', d.created_at, 'updated_at', d.updated_at) order by d.month, d.day, d.id), '[]')
+                     from public.family_dates d
+                     where d.member_id = auth.uid()
+                        or (d.created_by = auth.uid()
+                            and exists (select 1 from public.spaces s where s.id = d.space_id and s.deleted_at is null)))
+  )
 $$;
