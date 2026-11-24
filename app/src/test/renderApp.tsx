@@ -21,13 +21,24 @@ export function preparedFixture(): Prepared {
   };
 }
 
-/** `userId`: sign in as an account made in the test (a phone account, BETA-SMS) instead of a fixture user. */
-export async function renderApp(ui: ReactElement, opts: { user?: FixtureUser | null; userId?: string; be?: FakeBackend; kv?: KV; deps?: Partial<AppDeps>; fixture?: FixtureOptions; waitReady?: boolean } = {}) {
+/** DEC-82 (SPEC-MEDIA 5): the phone's "Videos and data" choices (Play videos as I scroll, Save data) live under this
+ *  one key, per phone, never per account and never on the server. `saveData: null` (or no key) = the sign-up
+ *  question was never asked on this phone. Kept here too so tests can seed it before the module exists. */
+export const DATA_PREFS_KEY = 'hearth.dataPrefs.v1';
+export type SeedDataPrefs = { autoplay?: boolean; saveData?: boolean | null };
+
+/** `userId`: sign in as an account made in the test (a phone account, BETA-SMS) instead of a fixture user.
+ *  `dataPrefs`: what this phone has saved for Videos and data. By default the phone was already asked the Save data
+ *  question and said No (so older tests never meet DATA-1's question); `dataPrefs: null` is a fresh install. */
+export async function renderApp(ui: ReactElement, opts: { user?: FixtureUser | null; userId?: string; be?: FakeBackend; kv?: KV; deps?: Partial<AppDeps>; fixture?: FixtureOptions; waitReady?: boolean; dataPrefs?: SeedDataPrefs | null } = {}) {
   const be = opts.be ?? FakeBackend.withFixture(opts.fixture);
   const user = opts.userId ?? (opts.user === undefined ? 'jo' : opts.user);
   be.state.appSession = opts.userId ?? (user ? FIXTURE.users[user as FixtureUser].id : null);
   const api = be.clientFor(null, { trackAppSession: true });
   const kv = opts.kv ?? memoryKV();
+  if (opts.dataPrefs !== null && (await kv.getItem(DATA_PREFS_KEY)) === null) {
+    await kv.setItem(DATA_PREFS_KEY, JSON.stringify({ autoplay: true, saveData: false, ...opts.dataPrefs }));
+  }
   // SHARE-PC-11 (DEC-73): Send lands on Feed through nav.goFeed().
   const nav: jest.Mocked<Nav> = { openViewer: jest.fn(), close: jest.fn(), goPhotos: jest.fn(), goFeed: jest.fn(), goSignIn: jest.fn(), goJoin: jest.fn() };
   const deps: AppDeps = {
