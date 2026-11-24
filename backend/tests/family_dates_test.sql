@@ -33,6 +33,10 @@ insert into auth.users (id, email, raw_user_meta_data) values
   ('d0000000-0000-0000-0000-0000000000d3', 'robin@example.com', '{"display_name":"Stranger Robin"}');
 update public.space_members set role = 'adult'
  where space_id = '22222222-0000-0000-0000-00000000000a' and user_id = 'c0000000-0000-0000-0000-0000000000c1';
+-- seed.sql predates 0011's container kinds: its two "Everyone" circles are kind 'group' until marked. A real family's
+-- Everyone is kind 'everyone' (start_family, family-setup.sh), and PRIV-R2 reads the kind.
+update public.circles set kind = 'everyone'
+ where id in ('33333333-0000-0000-0000-0000000000a0', '33333333-0000-0000-0000-0000000000b0');
 
 -- The refusal's SQLSTATE plus its message; null when nothing was raised.
 create function tests.err_text(p_sql text) returns text language plpgsql as $$

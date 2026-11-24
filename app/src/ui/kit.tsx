@@ -386,10 +386,12 @@ export function GroupedSection({ children, style, testID }: { children: ReactNod
   return <View testID={testID} style={[styles.card, { backgroundColor: c.surface }, look, style]}>{children}</View>;
 }
 
-export function Screen({ children, scroll = true, testID }: { children: ReactNode; scroll?: boolean; testID?: string }) {
+/** `footer` (GUX-R1): a screen's one main action, fixed under the scrolling words and above the tab bar, so it is on
+ *  screen without scrolling (a form's Save). */
+export function Screen({ children, scroll = true, testID, footer }: { children: ReactNode; scroll?: boolean; testID?: string; footer?: ReactNode }) {
   const { c } = useTheme();
   const under = useTabBarSpace(); // RD-109: room under a floating tab bar
-  const room = under ? { paddingBottom: 32 + under } : null;
+  const room = under && !footer ? { paddingBottom: 32 + under } : null;
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }} testID={testID}>
       {scroll ? (
@@ -397,6 +399,9 @@ export function Screen({ children, scroll = true, testID }: { children: ReactNod
       ) : (
         <View style={[styles.screen, { flex: 1 }, room]}>{children}</View>
       )}
+      {footer ? (
+        <View style={[styles.footer, { backgroundColor: c.bg, borderTopColor: c.line, paddingBottom: 12 + under }]}>{footer}</View>
+      ) : null}
     </SafeAreaView>
   );
 }
@@ -511,6 +516,7 @@ const styles = StyleSheet.create({
   faceTick: { position: 'absolute', top: -6, right: -4, borderRadius: RADIUS.pill, borderWidth: 2, width: 28, height: 28, alignItems: 'center', justifyContent: 'center' },
   card: { padding: 14, gap: 12 },
   screen: { padding: 16, gap: 16, paddingBottom: 32 },
+  footer: { paddingHorizontal: 16, paddingTop: 12, gap: 8, borderTopWidth: StyleSheet.hairlineWidth },
   loading: { alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 },
   notice: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: RADIUS.medium, borderWidth: 1, padding: 12 },
   scrim: { flex: 1, justifyContent: 'center', padding: 16 },

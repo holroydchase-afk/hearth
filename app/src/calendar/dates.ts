@@ -46,10 +46,19 @@ export function soonestFirst<T extends Pick<FamilyDate, 'month' | 'day'>>(dates:
   return dates.map((d) => ({ ...d, days: daysUntil(d.month, d.day, now) })).sort((a, b) => a.days - b.days);
 }
 
-/** The Gallery line (CAL-16): "Today is Grandma Jo's birthday", or "Today: Grandma Jo's birthday and 1 more". */
-export function todayLine(dates: FamilyDate[], now: Date = new Date()): string | null {
+/** The Gallery line (CAL-16): "Today is Grandma Jo's birthday", "Today: Family reunion" (GUX-R6, a day that isn't
+ *  a birthday or anniversary), or "Today: Grandma Jo's birthday and 1 more". On your own birthday it is yours:
+ *  "Happy birthday, Grandma Jo!" (GUX-R4), with "And 1 more today" when others share the day. */
+export function todayLine(dates: FamilyDate[], now: Date = new Date(), me: string | null = null): string | null {
   const today = dates.filter((d) => daysUntil(d.month, d.day, now) === 0);
   if (!today.length) return null;
-  const first = dateName(today[0]!);
-  return today.length === 1 ? `Today is ${first}` : `Today: ${first} and ${today.length - 1} more`;
+  const mine = me ? today.find((d) => d.member_id === me && d.kind === 'birthday') : undefined;
+  if (mine) {
+    const name = (mine.member_name ?? '').trim();
+    const hello = name ? `Happy birthday, ${name}!` : 'Happy birthday!';
+    return today.length === 1 ? hello : `${hello} And ${today.length - 1} more today`;
+  }
+  const first = today[0]!;
+  if (today.length > 1) return `Today: ${dateName(first)} and ${today.length - 1} more`;
+  return first.kind === 'other' ? `Today: ${dateName(first)}` : `Today is ${dateName(first)}`;
 }

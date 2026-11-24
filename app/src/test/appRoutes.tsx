@@ -14,6 +14,7 @@ const FILES: Record<string, () => unknown> = {
   '(tabs)/gallery/_layout': () => require('../app/(tabs)/gallery/_layout'),
   '(tabs)/gallery/index': () => require('../app/(tabs)/gallery/index'),
   '(tabs)/gallery/search': () => require('../app/(tabs)/gallery/search'),
+  '(tabs)/gallery/birthdays': () => require('../app/(tabs)/gallery/birthdays'),
   '(tabs)/feed/_layout': () => require('../app/(tabs)/feed/_layout'),
   '(tabs)/feed/index': () => require('../app/(tabs)/feed/index'),
   '(tabs)/feed/timeline': () => require('../app/(tabs)/feed/timeline'),

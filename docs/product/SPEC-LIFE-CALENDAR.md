@@ -9,7 +9,7 @@ Chase, Nov 24 (rapid messages): "Life calendar" / "Capture birthdays" / "And imp
 
 ## What v1 is (and isn't)
 - **Month and day only. No year, no age.** Nobody is asked their birth year, so there is nothing to hide (pushback on "year optional": a stored year is a privacy liability for a feature that doesn't need it).
-- **Everyone in the family sees every date.** Dates are family-wide, not per group. The screen says so before anyone saves.
+- **Dates follow who sees a name** (privacy-security PRIV-R2, Nov 24; *pending Chase's confirmation*). A member's birthday is seen by whoever may already see that member's name; a date with no member (a kid's birthday by name, an anniversary, something else) by the parents and the family's Everyone group. In a family where everyone is in Everyone this is the whole family, as first specced; it differs only for a co-parent or relative placed in a side group alone.
 - **"Tell everyone" in v1 means in the app:** the date is on everyone's list, and on the day a line on Gallery tells everyone who opens Hearth. A push or email on the day is v1.1 (needs the outbox to accept a notice with no post, a change to `notify`, and a deploy).
 - **Onboarding = one optional card**, not a new gate: the first screen asks "When's your birthday?" with Not now. It reaches every way in (join by code, join by link, start a family) because it lives on Gallery.
 
@@ -24,7 +24,7 @@ Chase, Nov 24 (rapid messages): "Life calendar" / "Capture birthdays" / "And imp
 ## Acceptance criteria
 | ID | Given / When / Then | Type | Test home |
 |---|---|---|---|
-| CAL-1 | Given a member of family F, when they call `list_family_dates(F)`, then they get every date in F, sorted by month then day, and no date from any other family | auto | `backend/tests/family_dates_test.sql`, contract |
+| CAL-1 | Given a member of family F, when they call `list_family_dates(F)`, then they get every date in F they may see (PRIV-R2: parents all; a member's birthday where they may see that member; other dates to the Everyone group), sorted by month then day, and no date from any other family | auto | `backend/tests/family_dates_test.sql`, contract |
 | CAL-2 | Given someone not in F (or signed out), when they list F's dates, then they get zero rows; when they touch a date id from F, then it fails as not found (`P0002`), same as an unknown id | auto | SQL, contract |
 | CAL-3 | Given any member (viewer included), when they `set_my_birthday` with a month and day, then one birthday row linked to them exists in F; a second call changes it, never adds a second; null and null clears it | auto | SQL, contract |
 | CAL-4 | Given month 2 day 30, month 4 day 31, month 13 or day 0, when saved, then it fails with `22023` and nothing is stored; Feb 29 is accepted | auto | SQL, contract |
@@ -50,7 +50,8 @@ Chase, Nov 24 (rapid messages): "Life calendar" / "Capture birthdays" / "And imp
 - Card: **When's your birthday?** / "Your family will see the month and day. Never the year." / **Save** / **Not now**.
 - More row: **Birthdays**. Screen title: **Birthdays and dates**. Under it: "Everyone in the family sees these."
 - Buttons: **Add my birthday**, **Change my birthday**, **Add a date**, **Change**, **Delete**. Gallery line button: **See birthdays**.
-- "Group" never appears here: dates are family-wide.
+- "Group" never appears here.
+- Review words (grandparent-ux, Nov 24): the card is short, "Add my birthday" opens the form on Birthdays with Save fixed at the bottom (GUX-R1); "Saved. Your family will see December 8." at the top of Birthdays (GUX-R2); "Happy birthday, Grandma Jo!" on your own day (GUX-R4); "Today: Family reunion" for something else (GUX-R6); the form's back reads "Birthdays" (GUX-R7); "The dates can't load right now. Try again in a minute, or ask Chase." (GUX-R9); "Whose birthday?" and "It's removed for everyone in the family." (GUX-R11).
 
 ## Not doing in v1 (parked, one line each)
 - Push or email on the day, and "3 days before" reminders: v1.1; needs outbox changes, `notify` change and a deploy (TRACKER R77 follow-up).

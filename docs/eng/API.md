@@ -131,16 +131,16 @@ Starting is open to a signed-in account with no family; joining stays invite-onl
 | `redeem_invite` (0024 changes) | same | same | START-7. Joining another family retires an empty family the caller started (only member, no posts at all, drafts included). Its start still counts toward the 3 a day. |
 
 ## Life calendar (0029, SPEC-LIFE-CALENDAR, DEC-81; tests `backend/tests/family_dates_test.sql`, `app/src/api/contract/calendar.contract.test.ts`)
-Birthdays and important dates, **month and day only**: no year column, and no RPC takes or returns a year or an age (CAL-9). Dates are family-wide: every member reads every date in their family; nobody else reads any. `public.family_dates` has RLS on (select for members) and no direct writes; all four RPCs are `security definer` with `search_path = ''`, callable by `authenticated` only. Errors are fixed words: a label is never repeated in an error, logged or put in a notice (CAL-18). A server without 0029 answers `PGRST202`; the app maps that to `MISSING` and hides the calendar quietly (CAL-17).
+Birthdays and important dates, **month and day only**: no year column, and no RPC takes or returns a year or an age (CAL-9). Dates follow who sees a name (PRIV-R2): parents read every date in their family; a member's birthday reads only where `can_see_profile(member)` holds; a date with no member only to the family's Everyone group; nobody outside the family reads any. `public.family_dates` has RLS on (select of the date columns only, never `created_by`/`created_at`/`updated_at`, PRIV-R1) and no direct writes; all four RPCs are `security definer` with `search_path = ''`, callable by `authenticated` only. Errors are fixed words: a label is never repeated in an error, logged or put in a notice (CAL-18). A server without 0029 answers `PGRST202`; the app maps that to `MISSING` and hides the calendar quietly (CAL-17).
 
 | RPC | Args | Returns | Notes |
 |---|---|---|---|
-| `list_family_dates` | `p_space uuid` | rows `(id, kind, label, month, day, member_id, member_name)` | Month then day. `kind` is `birthday`, `anniversary` or `other`. A member's own birthday has `label` null and `member_name` = their current name (renames follow, CAL-7). Not a member: zero rows. |
+| `list_family_dates` | `p_space uuid` | rows `(id, kind, label, month, day, member_id, member_name)` | Month then day, ties by id. Only the dates the caller may see. `kind` is `birthday`, `anniversary` or `other`. A member's own birthday has `label` null and `member_name` = their current name (renames follow, CAL-7). Not a member: zero rows. |
 | `set_my_birthday` | `p_space uuid, p_month int, p_day int` | — | Any member (viewers too), their own birthday; one per member per family, a second call changes it. Both null clears it. Not a real date (Feb 30, Apr 31, month 13, day 0) `22023`; Feb 29 is fine. Not a member `P0002`. |
 | `save_family_date` | `p_space uuid, p_id uuid, p_kind text, p_label text, p_month int, p_day int, p_member uuid` | `id` | Parents (owner, adult) only; anyone else `P0002`. `p_id` null adds; an id from another family `P0002`. `p_member` links a member's birthday (label dropped; one per member, a second one changes the first). Otherwise the label is trimmed, 1 to 60 characters, else `22023`. 200 dates per family: the 201st `P0001` with a plain message. |
-| `delete_family_date` | `p_id uuid` | — | Parents any date in their family; anyone their own birthday. Otherwise, or an unknown id, `P0002`. |
+| `delete_family_date` | `p_id uuid` | — | Parents any date in their family; anyone their own birthday. Otherwise, a date the caller can't see, or an unknown id, `P0002`. |
 
-When a member leaves a family, their member-linked dates there go with them (cascade from `space_members`).
+When a member leaves a family, their member-linked dates there go with them (cascade from `space_members`). `export_my_data` gains `family_dates`: your own birthdays and the dates you added (PRIV-R3). The write RPCs lock the family's `spaces` row before the 200 count (PRIV-R5).
 
 ## Messenger relay (0015, SPEC-MESSENGER; contract tests `app/src/api/contract/chat.contract.test.ts`)
 

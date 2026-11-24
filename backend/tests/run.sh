@@ -27,6 +27,12 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 DB=${DB:-hearth_test}
 STATUS=0
+# PRIV-R5 (family_dates_test.sql) opens a real second session with dblink, created by the test itself (never by a
+# migration). dblink ships in Postgres's contrib modules: on Debian/Ubuntu, `apt-get install postgresql-contrib`.
+if ! psql -d postgres -XAtqc "select 1 from pg_available_extensions where name = 'dblink'" | grep -q 1; then
+  echo "tests/run.sh: the dblink extension isn't installed (install postgresql-contrib); PRIV-R5 needs it." >&2
+  exit 1
+fi
 for suite in tests/rls_test.sql tests/api_test.sql tests/notify_test.sql tests/setup_test.sql tests/reply_test.sql tests/timeline_test.sql \
              tests/groups_test.sql tests/timeline_future_test.sql tests/privacy_audit_test.sql tests/groups_v2_test.sql tests/chat_test.sql \
              tests/photo_helpers_test.sql tests/reactions_test.sql tests/captions_test.sql tests/video_cap_test.sql tests/viewers_test.sql \

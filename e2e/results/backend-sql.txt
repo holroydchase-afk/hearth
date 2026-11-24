@@ -524,10 +524,10 @@ TIMELINE RESULT: 39 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('0d8e6b7d-b27d-4347-9889-04f86c7adef2'))
-psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('411c86a0-a2ae-496e-ae4f-b98b7ce27f56'))
-psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('5a2ea743-ef5f-450d-b83b-38036fd5ee3f'))
-psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = 'e1dcd6f8-a1ba-4a3c-bf62-877c8faf83de')
+psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('4267671c-7a55-4e63-a667-0d73915c27ff'))
+psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('538a17e2-88c8-4b5c-94bd-bafe42ab0ba2'))
+psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('2fdc1523-186a-4561-b948-dd8d523236df'))
+psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '8ace13a3-fc63-41bf-a412-75967dba5f8a')
   n  | result |                                                                                  description                                                                                   
 -----+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    1 | ok     | BETA-AUD-11 shape: circles.kind exists (everyone | group | household | event)
@@ -1274,89 +1274,112 @@ AUTH NO PASSWORDS RESULT: 12 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
- n  | result |                                                                     description                                                                      
-----+--------+------------------------------------------------------------------------------------------------------------------------------------------------------
-  1 | ok     | CAL-9 public.family_dates exists (migration 0029)
-  2 | ok     | CAL-9 family_dates has id, space_id, kind, label, month, day, member_id, created_by, created_at, updated_at
-  3 | ok     | CAL-9 no year, age or birth-date column
-  4 | ok     | CAL-9 the four calendar RPCs exist, one of each
-  5 | ok     | CAL-9 no calendar RPC takes or returns a year or an age (argument and output names)
-  6 | ok     | CAL-9 every calendar RPC is security definer with search_path = ''
-  7 | ok     | CAL-2 RLS is on for family_dates
-  8 | ok     | CAL-5 no direct writes: only the RPCs change dates
-  9 | ok     | CAL-11 signed-in accounts can call all four RPCs
- 10 | ok     | CAL-3 Grandma (a viewer) saves her birthday, December 8
- 11 | ok     | CAL-3 one birthday row, linked to Grandma, in family A
- 12 | ok     | CAL-3 she changes it to December 9
- 13 | ok     | CAL-3 a second call changes the row, never adds a second
- 14 | ok     | CAL-3 null and null clears it
- 15 | ok     | CAL-3 ...and her birthday is gone
- 16 | ok     | CAL-4 February 30 is refused (22023)  [22023 That date is not on the calendar.]
- 17 | ok     | CAL-4 April 31 is refused (22023)  [22023 That date is not on the calendar.]
- 18 | ok     | CAL-4 month 13 is refused (22023)  [22023 That date is not on the calendar.]
- 19 | ok     | CAL-4 day 0 is refused (22023)  [22023 That date is not on the calendar.]
- 20 | ok     | CAL-4 month 0 is refused (22023)  [22023 That date is not on the calendar.]
- 21 | ok     | CAL-4 January 32 is refused (22023)  [22023 That date is not on the calendar.]
- 22 | ok     | CAL-4 a refused change leaves her December 8 as it was
- 23 | ok     | CAL-4 a parent adding February 30 is refused too (22023)  [22023 That date is not on the calendar.]
- 24 | ok     | CAL-4 ...and nothing is stored
- 25 | ok     | CAL-4 February 29 is accepted
- 26 | ok     | CAL-4 ...and stored as February 29
- 27 | ok     | CAL-6 the owner adds a kid's birthday with a label and gets its id back
- 28 | ok     | CAL-6 the owner adds an anniversary
- 29 | ok     | CAL-6 an adult adds "something else"
- 30 | ok     | CAL-6 the label is stored trimmed, with who added it
- 31 | ok     | CAL-6 the owner changes Mia's birthday to March 15
- 32 | ok     | CAL-6 ...the same row changed; no second Mia
- 33 | ok     | CAL-6 the owner deletes the anniversary
- 34 | ok     | CAL-6 ...and it is gone
- 35 | ok     | CAL-6 a parent enters Grandma Chen's birthday for her (no label: it is hers)
- 36 | ok     | CAL-6 one birthday per member per family: a second one for Grandma Chen never makes two rows
- 37 | ok     | CAL-6 a label over 60 characters is refused (22023)  [22023 Give it a name of 1 to 60 letters.]
- 38 | ok     | CAL-6 a label of exactly 60 characters is fine
- 39 | ok     | CAL-6 a blank label with no member is refused (22023)  [22023 Give it a name of 1 to 60 letters.]
- 40 | ok     | CAL-6 no label and no member is refused (22023)  [22023 Give it a name of 1 to 60 letters.]
- 41 | ok     | CAL-6 ...and nothing refused was stored
- 42 | ok     | CAL-1 a viewer lists every date in family A
- 43 | ok     | CAL-1 sorted by month, then day
- 44 | ok     | CAL-1 nothing from family B comes back
- 45 | ok     | CAL-1 Grandma Chen's birthday shows once in A (her B one stays in B)
- 46 | ok     | CAL-2 RLS: Grandma Rivera (not in B) reads no B rows from the table either
- 47 | ok     | CAL-1 a member of B sees B's date
- 48 | ok     | CAL-2 someone in no family lists A's dates and gets zero rows
- 49 | ok     | CAL-2 ...and reads no rows from the table
- 50 | ok     | CAL-2 deleting a date in A from outside is not found (P0002)  [P0002 Not found.]
- 51 | ok     | CAL-2 changing a date in A from outside is not found (P0002)  [P0002 Not found.]
- 52 | ok     | CAL-2 an unknown id is not found the same way (P0002)  [P0002 Not found.]
- 53 | ok     | CAL-2 someone outside can't put a birthday in A (P0002)  [P0002 Not found.]
- 54 | ok     | CAL-2 Grandpa Rivera (in A, not in B) lists B and gets zero rows
- 55 | ok     | CAL-2 ...and B's date id is not found to him (P0002)  [P0002 Not found.]
- 56 | ok     | CAL-2 signed out: zero rows (or not callable at all)
- 57 | ok     | CAL-2 Mia's birthday is untouched
- 58 | ok     | CAL-5 a viewer adding a date is not found (P0002)  [P0002 Not found.]
- 59 | ok     | CAL-5 a viewer changing Mia's birthday is not found (P0002)  [P0002 Not found.]
- 60 | ok     | CAL-5 a viewer deleting Mia's birthday is not found (P0002)  [P0002 Not found.]
- 61 | ok     | CAL-5 a viewer deleting another member's birthday is not found (P0002)  [P0002 Not found.]
- 62 | ok     | CAL-5 a direct insert is refused (42501)  [42501 permission denied for table family_dates]
- 63 | ok     | CAL-5 ...and nothing changed
- 64 | ok     | CAL-5 a viewer may delete her own birthday
- 65 | ok     | CAL-5 ...and it is gone
- 66 | ok     | CAL-7 Grandpa Rivera renames himself Pawpaw
- 67 | ok     | CAL-7 his birthday now shows the name Pawpaw to everyone
- 68 | ok     | CAL-8 Grandma Chen leaves A: her birthday is gone from A's list
- 69 | ok     | CAL-8 ...and from the table
- 70 | ok     | CAL-8 ...her birthday in B stays
- 71 | ok     | CAL-18 a refused label is not repeated in the error
- 72 | ok     | CAL-18 the calendar RPCs log nothing (no raise log/notice/info/warning)
- 73 | ok     | CAL-18 no notice in the outbox carries a date's label
- 74 | ok     | CAL-10 setup: family A holds 200 dates
- 75 | ok     | CAL-10 the 201st date is refused (P0001)  [P0001 This family already has 200 dates. Delete one to add another.]
- 76 | ok     | CAL-10 ...with a plain message (no database words)
- 77 | ok     | CAL-10 a member's own birthday is refused too when the family is full (P0001)  [P0001 This family already has 200 dates. Delete one to add another.]
- 78 | ok     | CAL-10 ...and nothing was stored
+  n  | result |                                                                     description                                                                      
+-----+--------+------------------------------------------------------------------------------------------------------------------------------------------------------
+   1 | ok     | CAL-9 public.family_dates exists (migration 0029)
+   2 | ok     | CAL-9 family_dates has id, space_id, kind, label, month, day, member_id, created_by, created_at, updated_at
+   3 | ok     | CAL-9 no year, age or birth-date column
+   4 | ok     | CAL-9 the four calendar RPCs exist, one of each
+   5 | ok     | CAL-9 no calendar RPC takes or returns a year or an age (argument and output names)
+   6 | ok     | CAL-9 every calendar RPC is security definer with search_path = ''
+   7 | ok     | CAL-2 RLS is on for family_dates
+   8 | ok     | CAL-5 no direct writes: only the RPCs change dates
+   9 | ok     | CAL-11 signed-in accounts can call all four RPCs
+  10 | ok     | CAL-3 Grandma (a viewer) saves her birthday, December 8
+  11 | ok     | CAL-3 one birthday row, linked to Grandma, in family A
+  12 | ok     | CAL-3 she changes it to December 9
+  13 | ok     | CAL-3 a second call changes the row, never adds a second
+  14 | ok     | CAL-3 null and null clears it
+  15 | ok     | CAL-3 ...and her birthday is gone
+  16 | ok     | CAL-4 February 30 is refused (22023)  [22023 That date is not on the calendar.]
+  17 | ok     | CAL-4 April 31 is refused (22023)  [22023 That date is not on the calendar.]
+  18 | ok     | CAL-4 month 13 is refused (22023)  [22023 That date is not on the calendar.]
+  19 | ok     | CAL-4 day 0 is refused (22023)  [22023 That date is not on the calendar.]
+  20 | ok     | CAL-4 month 0 is refused (22023)  [22023 That date is not on the calendar.]
+  21 | ok     | CAL-4 January 32 is refused (22023)  [22023 That date is not on the calendar.]
+  22 | ok     | CAL-4 a refused change leaves her December 8 as it was
+  23 | ok     | CAL-4 a parent adding February 30 is refused too (22023)  [22023 That date is not on the calendar.]
+  24 | ok     | CAL-4 ...and nothing is stored
+  25 | ok     | CAL-4 February 29 is accepted
+  26 | ok     | CAL-4 ...and stored as February 29
+  27 | ok     | CAL-6 the owner adds a kid's birthday with a label and gets its id back
+  28 | ok     | CAL-6 the owner adds an anniversary
+  29 | ok     | CAL-6 an adult adds "something else"
+  30 | ok     | CAL-6 the label is stored trimmed, with who added it
+  31 | ok     | CAL-6 the owner changes Mia's birthday to March 15
+  32 | ok     | CAL-6 ...the same row changed; no second Mia
+  33 | ok     | CAL-6 the owner deletes the anniversary
+  34 | ok     | CAL-6 ...and it is gone
+  35 | ok     | CAL-6 a parent enters Grandma Chen's birthday for her (no label: it is hers)
+  36 | ok     | CAL-6 one birthday per member per family: a second one for Grandma Chen never makes two rows
+  37 | ok     | CAL-6 a label over 60 characters is refused (22023)  [22023 Give it a name of 1 to 60 letters.]
+  38 | ok     | CAL-6 a label of exactly 60 characters is fine
+  39 | ok     | CAL-6 a blank label with no member is refused (22023)  [22023 Give it a name of 1 to 60 letters.]
+  40 | ok     | CAL-6 no label and no member is refused (22023)  [22023 Give it a name of 1 to 60 letters.]
+  41 | ok     | CAL-6 ...and nothing refused was stored
+  42 | ok     | CAL-1 a viewer lists every date in family A
+  43 | ok     | CAL-1 sorted by month, then day
+  44 | ok     | CAL-1 nothing from family B comes back
+  45 | ok     | CAL-1 Grandma Chen's birthday shows once in A (her B one stays in B)
+  46 | ok     | CAL-2 RLS: Grandma Rivera (not in B) reads no B rows from the table either
+  47 | ok     | CAL-1 a member of B sees B's date
+  48 | ok     | CAL-2 someone in no family lists A's dates and gets zero rows
+  49 | ok     | CAL-2 ...and reads no rows from the table
+  50 | ok     | CAL-2 deleting a date in A from outside is not found (P0002)  [P0002 Not found.]
+  51 | ok     | CAL-2 changing a date in A from outside is not found (P0002)  [P0002 Not found.]
+  52 | ok     | CAL-2 an unknown id is not found the same way (P0002)  [P0002 Not found.]
+  53 | ok     | CAL-2 someone outside can't put a birthday in A (P0002)  [P0002 Not found.]
+  54 | ok     | CAL-2 Grandpa Rivera (in A, not in B) lists B and gets zero rows
+  55 | ok     | CAL-2 ...and B's date id is not found to him (P0002)  [P0002 Not found.]
+  56 | ok     | CAL-2 signed out: zero rows (or not callable at all)
+  57 | ok     | CAL-2 Mia's birthday is untouched
+  58 | ok     | CAL-5 a viewer adding a date is not found (P0002)  [P0002 Not found.]
+  59 | ok     | CAL-5 a viewer changing Mia's birthday is not found (P0002)  [P0002 Not found.]
+  60 | ok     | CAL-5 a viewer deleting Mia's birthday is not found (P0002)  [P0002 Not found.]
+  61 | ok     | CAL-5 a viewer deleting another member's birthday is not found (P0002)  [P0002 Not found.]
+  62 | ok     | CAL-5 a direct insert is refused (42501)  [42501 permission denied for table family_dates]
+  63 | ok     | CAL-5 ...and nothing changed
+  64 | ok     | CAL-5 a viewer may delete her own birthday
+  65 | ok     | CAL-5 ...and it is gone
+  66 | ok     | CAL-7 Grandpa Rivera renames himself Pawpaw
+  67 | ok     | CAL-7 his birthday now shows the name Pawpaw to everyone
+  68 | ok     | CAL-8 Grandma Chen leaves A: her birthday is gone from A's list
+  69 | ok     | CAL-8 ...and from the table
+  70 | ok     | CAL-8 ...her birthday in B stays
+  71 | ok     | CAL-18 a refused label is not repeated in the error
+  72 | ok     | CAL-18 the calendar RPCs log nothing (no raise log/notice/info/warning)
+  73 | ok     | CAL-18 no notice in the outbox carries a date's label
+  74 | ok     | PRIV-R2 setup: Partner Sky's birthday, the anniversary and the reunion are in family A
+  75 | ok     | PRIV-R1 signed-in accounts have no select on family_dates.created_at, updated_at or created_by
+  76 | ok     | PRIV-R1 ...nor does anon
+  77 | ok     | PRIV-R1 list_family_dates no longer orders (or ties) by created_at, nor reads updated_at or created_by
+  78 | ok     | PRIV-R1 a member selecting created_at is refused (42501)  [42501 permission denied for table family_dates]
+  79 | ok     | PRIV-R1 a member selecting updated_at is refused (42501)  [42501 permission denied for table family_dates]
+  80 | ok     | PRIV-R1 a member selecting created_by is refused (42501)  [42501 permission denied for table family_dates]
+  81 | ok     | PRIV-R1 ...while the date columns themselves still read (allowed direction)
+  82 | ok     | PRIV-R2 the co-parent (viewer in A, not in its Everyone group) does not list the new partner's birthday
+  83 | ok     | PRIV-R2 ...nor the anniversary or the "something else" date, not even their labels
+  84 | ok     | PRIV-R2 RLS: the co-parent reads none of those rows from the table directly
+  85 | ok     | PRIV-R2 allowed: the co-parent still sees Alex's birthday (a parent she can see) and her own
+  86 | ok     | PRIV-R2 the co-parent deleting the partner's birthday is not found (P0002)  [P0002 Not found.]
+  87 | ok     | PRIV-R2 the co-parent deleting the anniversary is not found (P0002)  [P0002 Not found.]
+  88 | ok     | PRIV-R2 the co-parent changing the anniversary is not found (P0002)  [P0002 Not found.]
+  89 | ok     | PRIV-R2 allowed: Grandma Rivera (in A's Everyone group) lists the partner's birthday, the anniversary and the reunion
+  90 | ok     | PRIV-R2 allowed: ...and reads them from the table
+  91 | ok     | PRIV-R2 allowed: the owner lists all three
+  92 | ok     | PRIV-R3 Grandpa's export holds his own birthday (February 29) under family_dates
+  93 | ok     | PRIV-R3 Alex's export holds the dates he added (Mia, the anniversary)
+  94 | ok     | PRIV-R3 ...and Grandma Rivera's export has none of the dates others added or others' birthdays
+  95 | ok     | PRIV-R5 save_family_date waits on the family's spaces row lock before adding (got: waited)
+  96 | ok     | PRIV-R5 set_my_birthday waits on it too before adding (got: waited)
+  97 | ok     | CAL-10 setup: family A holds 200 dates
+  98 | ok     | CAL-10 the 201st date is refused (P0001)  [P0001 This family already has 200 dates. Delete one to add another.]
+  99 | ok     | CAL-10 ...with a plain message (no database words)
+ 100 | ok     | CAL-10 a member's own birthday is refused too when the family is full (P0001)  [P0001 This family already has 200 dates. Delete one to add another.]
+ 101 | ok     | CAL-10 ...and nothing was stored
 
 
-FAMILY DATES RESULT: 78 passed, 0 failed
+FAMILY DATES RESULT: 101 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
@@ -1364,9 +1387,9 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
 Narrowing for Chase (readable before 0011 only through "members see each other's replies"):
      reader     |  kind   |                                 reply_id                                  
 ----------------+---------+---------------------------------------------------------------------------
- Grandma Rivera | comment | aa3b8a81-1beb-4f1c-aafc-41aaf6d7c340
+ Grandma Rivera | comment | 4f266a75-2348-4d34-b8cf-907f0dc3f04d
  Grandma Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a2
- Grandpa Rivera | comment | bba19ed0-8dbe-4b61-b756-7828d2cdd152
+ Grandpa Rivera | comment | e619bfdb-d654-4a1d-9640-e2e0b34e1723
  Grandpa Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a1
 
  n  | result |                                                     description                                                      
@@ -1477,8 +1500,8 @@ ok      SETUP-API: before Chase has an account it says "sign in once in the app"
 ok      SETUP-API: ... and changes nothing
 ok      SETUP-API: fresh setup runs without error
         | Family "Chase's kids" is ready: Everyone, Chase's side, Mom's side, 7 houses, 2 events.
-        | Test viewer invite (account B): code TZCVKP6QDE, works once until Nov 30, link https://thefreighttrains-team-hearth.expo.app/join/63744bb5e26ff517a9ad37d401e4896033fd154d
-        | Mom's poster invite: code 77RJC4TMKR, works once until Nov 30, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/c86c62145608d4fd6e2816262ac42c14cfb16118
+        | Test viewer invite (account B): code YG74VN6HCK, works once until Nov 30, link https://thefreighttrains-team-hearth.expo.app/join/b73639dd0a72a361ebc0595c6e3f280886dee936
+        | Mom's poster invite: code RGWM3ST2YF, works once until Nov 30, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/4627d5430f430052c5e1a906832aa748c7967660
 ok      SETUP-API: Chase owns one family, named as given (an apostrophe in the name is kept, not a SQL error)
 ok      SETUP-API: one Everyone
 ok      SETUP-API: the set groups are Chase's side and Mom's side (no v1 groups to retire later)

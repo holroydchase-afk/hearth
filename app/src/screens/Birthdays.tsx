@@ -13,12 +13,17 @@ import { MONTHS, dateName, dateWords, daysIn, soonestFirst, todayLine, whenWords
 import { calendarMissing, markMissing, useFamilyDates } from '../calendar/useFamilyDates';
 import type { KV } from '../platform/kv';
 import { useApp } from '../state/AppContext';
-import { AlertDialog, BackButton, Button, Card, Choice, Field, Loading, Notice, Screen, Txt } from '../ui/kit';
+import { AlertDialog, BackButton, Button, Card, Choice, Field, Loading, Notice, Screen, SystemIcon, Txt } from '../ui/kit';
 import { MIN_TARGET, useTheme } from '../ui/theme';
 import { backToMore } from './MoreScreen';
 
 const PRIVACY = 'Your family will see the month and day. Never the year.';
-const openBirthdays = () => router.push('/more/birthdays');
+const CHECK = { sf: 'checkmark', md: 'check' };     // GUX-R5: the picked month and day carry a checkmark
+const CHEVRON = { sf: 'chevron.forward', md: 'chevron_right' }; // GUX-R8: a row you can tap says so
+// GUX-R3: from Gallery, Birthdays opens in Gallery's own stack, so its back button reads "Gallery" and returns there.
+const openBirthdays = () => router.push('/gallery/birthdays');
+// GUX-R1: the card's "Add my birthday" opens the Add my birthday form there.
+const addMine = () => router.push('/gallery/birthdays?add=mine');
 
 /** CAL-13: "Not now" on the card holds for this person in this family on this phone (kept on the phone only). */
 const askKey = (user: string, space: string) => `hearth.birthdayAsk.v1.${user}.${space}`;
@@ -45,7 +50,7 @@ export function MonthDayPicker({ month, day, onMonth, onDay }: {
       <Txt variant="strong">Month</Txt>
       <View style={styles.wrap}>
         {MONTHS.map((m, i) => (
-          <Button key={m} label={m} variant="secondary" selected={month === i + 1} onPress={() => onMonth(i + 1)} />
+          <Button key={m} label={m} variant="secondary" selected={month === i + 1} icon={month === i + 1 ? CHECK : undefined} onPress={() => onMonth(i + 1)} />
         ))}
       </View>
       {month ? (
@@ -53,7 +58,7 @@ export function MonthDayPicker({ month, day, onMonth, onDay }: {
           <Txt variant="strong">Day</Txt>
           <View style={styles.wrap}>
             {Array.from({ length: daysIn(month) }, (_, i) => i + 1).map((d) => (
-              <Button key={d} label={dateWords(month, d)} text={String(d)} variant="secondary" selected={day === d} onPress={() => onDay(d)} />
+              <Button key={d} label={dateWords(month, d)} text={String(d)} variant="secondary" selected={day === d} icon={day === d ? CHECK : undefined} onPress={() => onDay(d)} />
             ))}
           </View>
         </>
@@ -66,7 +71,7 @@ export function MonthDayPicker({ month, day, onMonth, onDay }: {
 export function TodayLine() {
   const app = useApp();
   const cal = useFamilyDates(app.deps.api, app.space?.space_id ?? null);
-  const line = cal.status === 'ready' ? todayLine(cal.dates) : null;
+  const line = cal.status === 'ready' ? todayLine(cal.dates, new Date(), app.session?.userId ?? null) : null;
   if (!line) return null;
   return (
     <Card testID="today-line" style={{ paddingHorizontal: 0 }}>
@@ -76,20 +81,15 @@ export function TodayLine() {
   );
 }
 
-/** CAL-12/13: "When's your birthday?" on Gallery for a member with none saved, until Save or Not now. */
+/** CAL-12/13, GUX-R1: "When's your birthday?" on Gallery for a member with none saved, until they save one or tap
+ *  Not now. Short: the question, the privacy line, "Add my birthday" (the form on Birthdays) and "Not now". */
 export function BirthdayCard() {
   const app = useApp();
   const me = app.session?.userId ?? null;
   const space = app.space?.space_id ?? null;
   const kv = app.deps.kv;
-  const api = app.deps.api;
-  const cal = useFamilyDates(api, space);
+  const cal = useFamilyDates(app.deps.api, space);
   const [asked, setAsked] = useState<boolean | null>(null);
-  const [month, setMonth] = useState<number | null>(null);
-  const [day, setDay] = useState<number | null>(null);
-  const [saved, setSaved] = useState<string | null>(null);
-  const [problem, setProblem] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
   useEffect(() => {
     if (!me || !space) return;
     let live = true;
@@ -97,34 +97,14 @@ export function BirthdayCard() {
     return () => { live = false; };
   }, [kv, me, space]);
   if (!me || !space) return null;
-  if (saved) return <Notice tone="good" text={`Saved. Your family will see ${saved}.`} onClose={() => setSaved(null)} />;
   if (cal.status !== 'ready' || asked !== false || cal.dates.some((d) => d.member_id === me)) return null;
 
   const notNow = () => { setAsked(true); void stopAsking(kv, me, space); };
-  const save = async () => {
-    if (!month || !day) { setProblem('Pick a month and a day first.'); return; }
-    setBusy(true);
-    setProblem(null);
-    try {
-      await api.setMyBirthday(space, month, day);
-      void stopAsking(kv, me, space);
-      setAsked(true);
-      setSaved(dateWords(month, day));
-      void cal.reload();
-    } catch (e) {
-      if (calendarMissing(e)) markMissing(api, space);
-      else setProblem(didntSave(e));
-    } finally {
-      setBusy(false);
-    }
-  };
   return (
     <Card testID="birthday-card">
       <Txt variant="title" role="header">When's your birthday?</Txt>
       <Txt>{PRIVACY}</Txt>
-      <MonthDayPicker month={month} day={day} onMonth={(m) => { setMonth(m); if (day && day > daysIn(m)) setDay(null); }} onDay={setDay} />
-      {problem ? <Txt role="alert">{problem}</Txt> : null}
-      <Button label="Save" variant="tinted" softDisabled={!month || !day} busy={busy} onPress={() => void save()} />
+      <Button label="Add my birthday" variant="tinted" icon={{ sf: 'gift', md: 'cake' }} onPress={addMine} />
       <Button label="Not now" variant="quiet" onPress={notNow} />
     </Card>
   );
@@ -133,14 +113,14 @@ export function BirthdayCard() {
 type Form = { mode: 'mine' } | { mode: 'add' } | { mode: 'change'; date: FamilyDate };
 
 const KINDS: { kind: FamilyDateKind; title: string; field: string; hint: string }[] = [
-  { kind: 'birthday', title: 'Birthday', field: 'Whose birthday? Their name', hint: 'Like Mia' },
-  { kind: 'anniversary', title: 'Anniversary', field: 'Whose anniversary? Their names', hint: 'Like Chase and Alex' },
+  { kind: 'birthday', title: 'Birthday', field: 'Whose birthday?', hint: 'Their name, like Mia' },
+  { kind: 'anniversary', title: 'Anniversary', field: 'Whose anniversary?', hint: 'Their names, like Chase and Alex' },
   { kind: 'other', title: 'Something else', field: 'Name of the day', hint: 'Like Family reunion' },
 ];
 
 /** Add my birthday, Change my birthday, Add a date (parents), Change (parents). */
 function DateForm({ form, mine, onDone, onCancel }: {
-  form: Form; mine: FamilyDate | undefined; onDone: () => void; onCancel: () => void;
+  form: Form; mine: FamilyDate | undefined; onDone: (saved: string) => void; onCancel: () => void;
 }) {
   const app = useApp();
   const api = app.deps.api;
@@ -169,16 +149,25 @@ function DateForm({ form, mine, onDone, onCancel }: {
         await api.saveFamilyDate({ space, id: form.mode === 'change' ? form.date.id : null, kind: memberId ? 'birthday' : kind,
           label: memberId ? null : label.trim(), month, day, memberId });
       }
-      onDone();
+      onDone(form.mode === 'mine' ? `Saved. Your family will see ${dateWords(month, day)}.` : 'Saved.');
     } catch (e) {
       if (calendarMissing(e)) { markMissing(api, space); onCancel(); } else setProblem(didntSave(e));
     } finally {
       setBusy(false);
     }
   };
+  // GUX-R7: the form is its own page: back reads "Birthdays", one heading. GUX-R1: Save stays fixed at the bottom.
+  const footer = (
+    <>
+      {problem ? <Txt role="alert">{problem}</Txt> : null}
+      {form.mode === 'mine' && month && day ? <Txt variant="strong">{`Your birthday: ${dateWords(month, day)}`}</Txt> : null}
+      <Button label="Save" variant="tinted" softDisabled={!month || !day} busy={busy} onPress={() => void save()} />
+    </>
+  );
   return (
-    <View style={{ gap: 16 }}>
-      <Txt variant="title" role="header">{title}</Txt>
+    <Screen key="form" footer={footer}>
+      <BackButton to="Birthdays" onPress={onCancel} />
+      <Txt variant="display" role="header">{title}</Txt>
       {form.mode === 'mine' ? <Txt>{PRIVACY}</Txt> : null}
       {linked ? null : (
         <>
@@ -191,15 +180,14 @@ function DateForm({ form, mine, onDone, onCancel }: {
         </>
       )}
       <MonthDayPicker month={month} day={day} onMonth={(m) => { setMonth(m); if (day && day > daysIn(m)) setDay(null); }} onDay={setDay} />
-      {problem ? <Txt role="alert">{problem}</Txt> : null}
-      <Button label="Save" variant="tinted" softDisabled={!month || !day} busy={busy} onPress={() => void save()} />
       <Button label="Cancel" variant="quiet" onPress={onCancel} />
-    </View>
+    </Screen>
   );
 }
 
 /** One date in the list: what it is, the date in words and how soon. Parents tap it for Change and Delete. */
 function DateRow({ d, open, onPress }: { d: FamilyDate & { days: number }; open: boolean; onPress: (() => void) | null }) {
+  const { c } = useTheme();
   const when = whenWords(d.days);
   const words = (
     <View style={{ flex: 1, gap: 2 }}>
@@ -220,12 +208,16 @@ function DateRow({ d, open, onPress }: { d: FamilyDate & { days: number }; open:
       style={({ pressed }) => [styles.row, { opacity: pressed ? 0.7 : 1 }]}
     >
       {words}
+      <SystemIcon icon={CHEVRON} color={c.muted} size={18} />
     </Pressable>
   );
 }
 
-/** CAL-14/15: More → Birthdays, "Birthdays and dates". */
-export function BirthdaysScreen() {
+/** CAL-14/15: More → Birthdays, "Birthdays and dates". From Gallery (GUX-R3) it sits in Gallery's stack and its
+ *  back button reads "Gallery"; `startMine` (GUX-R1, the card's "Add my birthday") opens on the Add my birthday form. */
+export function BirthdaysScreen({ backTo = 'More', onBack = backToMore, startMine = false }: {
+  backTo?: string; onBack?: () => void; startMine?: boolean;
+} = {}) {
   const app = useApp();
   const { c } = useTheme();
   const api = app.deps.api;
@@ -233,14 +225,14 @@ export function BirthdaysScreen() {
   const me = app.session?.userId ?? null;
   const parent = app.space?.role === 'owner' || app.space?.role === 'adult';
   const cal = useFamilyDates(api, space);
-  const [form, setForm] = useState<Form | null>(null);
+  const [form, setForm] = useState<Form | null>(startMine ? { mode: 'mine' } : null);
   const [open, setOpen] = useState<string | null>(null);
   const [confirm, setConfirm] = useState<FamilyDate | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   if (!space) return null;
   const mine = cal.dates.find((d) => d.member_id === me);
 
-  const done = () => { setForm(null); setOpen(null); setNotice('Saved.'); void cal.reload(); };
+  const done = (saved: string) => { setForm(null); setOpen(null); setNotice(saved); void cal.reload(); };
   const remove = async (d: FamilyDate) => {
     setConfirm(null);
     try {
@@ -254,30 +246,19 @@ export function BirthdaysScreen() {
     void cal.reload();
   };
 
-  const header = (
-    <>
-      <BackButton to="More" onPress={backToMore} />
-      <Txt variant="display" role="header">Birthdays and dates</Txt>
-    </>
-  );
-  if (form) {
-    return (
-      <Screen>
-        {header}
-        <DateForm form={form} mine={mine} onDone={done} onCancel={() => setForm(null)} />
-      </Screen>
-    );
-  }
+  if (form) return <DateForm form={form} mine={mine} onDone={done} onCancel={() => setForm(null)} />;
   return (
-    <Screen>
-      {header}
-      <Txt variant="muted">Everyone in the family sees these.</Txt>
+    <Screen key="list">
+      <BackButton to={backTo} onPress={onBack} />
+      <Txt variant="display" role="header">Birthdays and dates</Txt>
+      {/* GUX-R2: "Saved. Your family will see December 8." at the top, in view (the list opens scrolled to the top) */}
       {notice ? <Notice tone="good" text={notice} onClose={() => setNotice(null)} /> : null}
+      <Txt variant="muted">Everyone in the family sees these.</Txt>
       {cal.status === 'missing' ? <Txt>Birthdays aren't ready on Hearth yet. They're coming soon.</Txt> : null}
       {cal.status === 'loading' ? <Loading words="Loading the dates…" /> : null}
       {cal.status === 'error' ? (
         <>
-          <Txt>The dates can't load right now. Check your Wi-Fi, then try again.</Txt>
+          <Txt>The dates can't load right now. Try again in a minute, or ask Chase.</Txt>
           <Button label="Try again" variant="secondary" onPress={() => void cal.reload()} />
         </>
       ) : null}
@@ -306,7 +287,7 @@ export function BirthdaysScreen() {
       {confirm ? (
         <AlertDialog
           title="Delete this date?"
-          body={`${dateName(confirm)}, ${dateWords(confirm.month, confirm.day)}. It goes for everyone in the family.`}
+          body={`${dateName(confirm)}, ${dateWords(confirm.month, confirm.day)}. It's removed for everyone in the family.`}
           keep="Keep it"
           destroy="Delete"
           onKeep={() => setConfirm(null)}

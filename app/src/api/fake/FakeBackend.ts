@@ -983,17 +983,35 @@ export class FakeBackend {
     // CAL-8: a member-linked date goes when that member leaves (the SQL's cascade).
     return (this.state.familyDates ??= []).filter((d) => d.space === space && (!d.member || !!this.member(space, d.member)));
   }
+  /** public.can_see_profile, minus the reply branch: yourself, a family shared where either of you is a parent, or a
+   *  live group shared. */
+  private seesProfile(me: string, them: string): boolean {
+    if (me === them) return true;
+    const parent = (r?: string) => r === 'owner' || r === 'adult';
+    const sharedFamily = this.state.members.some((a) => a.user === me && this.state.members.some((b) =>
+      b.space === a.space && b.user === them && (parent(a.role) || parent(b.role))));
+    return sharedFamily || this.state.circleMembers.some((a) => a.user === me && !this.state.circles[a.circle]?.deleted
+      && this.inCircle(a.circle, them));
+  }
+  /** private.may_see_family_date (PRIV-R2): a member's birthday follows who may see that member's name; a date with
+   *  no member goes to the family's parents and its Everyone group only. */
+  private seesDate(me: string, d: FamilyDateRow): boolean {
+    if (!this.member(d.space, me)) return false;
+    if (this.isPoster(d.space, me)) return true;
+    if (d.member) return this.seesProfile(me, d.member);
+    return Object.values(this.state.circles).some((c) => c.space === d.space && c.kind === 'everyone' && !c.deleted && this.inCircle(c.id, me));
+  }
   private roomForDate(space: string): void {
     if (this.datesIn(space).length >= MAX_FAMILY_DATES) throw new ApiError('UNKNOWN', 'this family already has 200 dates');
   }
 
-  /** list_family_dates: every date in the family, month then day; not a member: none. */
+  /** list_family_dates: every date in the family the caller may see (PRIV-R2), month then day, ties by id. */
   familyDates(user: string | null, space: string): FamilyDate[] {
     const me = this.requireUser(user);
     if (!this.member(space, me)) return [];
     return this.datesIn(space)
-      .slice()
-      .sort((a, b) => a.month - b.month || a.day - b.day || a.created_at.localeCompare(b.created_at))
+      .filter((d) => this.seesDate(me, d))
+      .sort((a, b) => a.month - b.month || a.day - b.day || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
       .map((d) => ({
         id: d.id, kind: d.kind, label: d.label, month: d.month, day: d.day, member_id: d.member,
         member_name: d.member ? this.state.users[d.member]?.name ?? null : null,
@@ -1052,7 +1070,7 @@ export class FakeBackend {
     const me = this.requireUser(user);
     const rows = (this.state.familyDates ??= []);
     const d = rows.find((x) => x.id === id);
-    if (!d || !this.member(d.space, me) || !(this.isPoster(d.space, me) || d.member === me)) throw new ApiError('P0002', 'not found');
+    if (!d || !this.seesDate(me, d) || !(this.isPoster(d.space, me) || d.member === me)) throw new ApiError('P0002', 'not found');
     this.state.familyDates = rows.filter((x) => x !== d);
     this.changed();
   }
