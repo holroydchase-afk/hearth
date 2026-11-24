@@ -132,6 +132,24 @@ revoke all on function private.vis_sees_person(uuid, uuid), private.vis_sees_fam
   private.vis_media_ok(uuid, uuid), private.vis_comment_ok(uuid, uuid)
   from public, anon, authenticated;
 
+-- ---------- 2b. PRIV-VC-B2: chat_roster names the container rule ----------
+-- 0015's chat_roster with one added check: after chat_member_since (the caller is in private.chat_people: the
+-- group's members plus the family's parents), public.can_see_circle must also say yes. It does for everyone
+-- chat_people lets in, except in a deleted family, where the answer becomes "not found" (only ever narrower).
+create or replace function public.chat_roster(p_circle uuid)
+returns table (user_id uuid, name text, signature_key text)
+language plpgsql stable security definer set search_path = '' as $$
+begin
+  perform private.chat_member_since(p_circle);
+  if not public.can_see_circle(p_circle) then raise exception 'not found' using errcode = 'P0002'; end if;
+  return query
+    select cp.user_id, p.display_name, d.signature_key
+    from private.chat_people(p_circle) cp
+    join public.profiles p on p.id = cp.user_id
+    left join public.chat_devices d on d.user_id = cp.user_id
+    order by p.display_name, cp.user_id;
+end $$;
+
 -- ---------- 3a. kinds: every table an app user could reach (07 mapping) ----------
 insert into vis.kinds (kind, relation, reach, item_column, owner_column, rule_fn, narrow_fn, note) values
   -- item: the post and everything hanging off it. RLS calls private.sees_post (directly or via can_view_post,
@@ -244,6 +262,10 @@ insert into vis.functions (fn, kind, note) values
   ('public.chat_publish_device(text,text[])', 'chat_device', 'publishes your own device key only'),
   ('public.list_family_dates(uuid)', 'family_date',
    'other members'' dates and names, only where private.may_see_family_date (can_see_profile for a member''s birthday); VIS-18 holds its rows equal to vis.can_see'),
+  ('public.my_circles(uuid)', 'space',
+   'group names and members for parents only: the admin rule (private.my_managed_space_ids, as circles_select; PRIV-VC-B2)'),
+  ('public.chat_roster(uuid)', 'chat_group',
+   'a chat''s members and their signing keys, to its members only (chat_member_since, then can_see_circle; PRIV-VC-B2)'),
   ('public.save_family_date(uuid,uuid,text,text,integer,integer,uuid)', 'space', 'parents only (is_space_manager); life calendar (0029)'),
   ('public.delete_family_date(uuid)', 'space',
    'parents (is_space_manager), or a member''s own birthday; any other id, or one the caller can''t see (may_see_family_date), says not found'),
@@ -267,7 +289,6 @@ insert into vis.functions (fn, kind, note) values
   ('public.set_my_name(text)', null, 'changes the caller''s own name only'),
   ('public.my_spaces()', null, 'families the caller is a member of'),
   ('public.my_features(uuid)', null, 'feature switches via private.feature_on for a family the caller is in'),
-  ('public.my_circles(uuid)', null, 'group names for parents only (private.my_managed_space_ids, same as circles_select)'),
   ('public.request_account_deletion()', null, 'deletes the caller''s own account only'),
   ('public.export_my_data()', null, 'the caller''s own data; group names only where private.may_see_circle_name says so (SEC-R1)'),
   ('public.get_feed(uuid,timestamp with time zone,uuid,integer)', null,
@@ -288,7 +309,6 @@ insert into vis.functions (fn, kind, note) values
   ('public.set_comment_mode(uuid,text)', null, 'parents only (private.managed_circle)'),
   ('public.chat_key_package_count()', null, 'counts the caller''s own key packages'),
   ('public.chat_start(uuid)', null, 'members only (private.chat_member_since)'),
-  ('public.chat_roster(uuid)', null, 'members only (private.chat_member_since, chat_people)'),
   ('public.chat_claim(uuid,uuid[])', null, 'members only (private.chat_member_since, chat_people)'),
   ('public.chat_send(uuid,text,bigint,text,uuid)', null, 'members only (private.chat_member_since, chat_people)'),
   ('public.chat_fetch(uuid,bigint,integer)', null, 'members only, rows since they joined (private.chat_member_since)'),
