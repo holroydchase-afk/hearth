@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-19T09:30:00-05:00",
- "label": "Start a family ready to turn on (START-ON-1..7): all suites 3x (green)",
- "passed": 2793,
+ "at": "2026-11-24T23:59:55-05:00",
+ "label": "T40 demo panel 'Try this' search hint: app jest + typecheck and e2e:site, 3x (green)",
+ "passed": 6807,
  "failed": 0,
  "results": {},
- "note": "3 runs each at 011a712 (engineer) on the red tests 7849580: backend SQL 1171 passed 0 failed (30 result lines, incl. START FAMILY 88, START-ON SCRIPTS 48, suspend/switch SQL) x3 as PGUSER=root, jest 1534 passed (1 skipped, 1 todo, 160 suites) x3, typecheck clean x3, e2e:web 6 passed (6 skipped: showcase/snapshot opt-in) x3 incl. START-ON-5 start-family.spec.js, real contract (contract-real.sh) 88 passed x3 with BETA-START-1,3..8 now running against PostgREST (START-ON-6). Fix commit changes no test files (harness infra only). check-agents, check-persona-checks and the other test-all.sh script checks, deploy_test and starter scripts 3 runs each, 16/0 every run. Deno, e2e:demo, e2e:site, CI, hosted Supabase and phones not run. backend/tests/results/start_on_green_2026-11-19.txt"
+ "note": "3 runs on the uncommitted T40 fix (DemoFrame.tsx step 3 'Tap Search and type orchard.'): cd app && npm test && npm run typecheck: jest 171 suites, 2255 passed (1 skipped, 1 todo), typecheck clean, x3; npm run e2e:site (build-demo.sh, then site.spec.js on the local demo build): 14 passed x3. Identical runs, no flakes. passed = 3 x (2255 + 14). demoFrame.test.tsx DEMO-NEW-6, T40 and the T40 guard now pass. Not run: e2e:demo, e2e:web, backend SQL (no change there), the live check on the published site (needs the publish). e2e/results/t38-*-2026-11-24.txt"
 }

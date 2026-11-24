@@ -1438,6 +1438,32 @@
    "tests": [],
    "found": "2026-11-24",
    "fixed": null
+  },
+  {
+   "id": "T40",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "Live check (Nov 24): the laptop demo panel's 'Try this' step 3 (app/src/demo/DemoFrame.tsx TRY) still says 'Tap Search and type lake.' After the Kevin/orchard demo (DEC-82) 'lake' finds nothing; 'orchard' finds 1 photo (site.spec.js DEMO-LIVE-2). Failing test first: DEMO-NEW-6, T40 now expects 'Search and type orchard', plus a T40 guard that the hinted word really finds a post in DEMO_POSTS (title, caption or sender name, as demo search reads) so the hint can't drift again. Red, 1 run: 2 failed, 4 passed. Fixed (Nov 24): step 3 now says 'Tap Search and type orchard.'; that file green, 6 passed, typecheck clean. Test: that file",
+   "tests": [
+    "app/src/demo/__tests__/demoFrame.test.tsx"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
+   "id": "B27",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (React Compiler green run r79, Nov 24, intake #80): 24 compiler bailouts in 23 components are allowlisted in app/scripts/compiler-check.js, so they stay uncompiled (exactly the pre-compiler behaviour, not a regression). 10 try/finally or try/catch value blocks, throw in try or new-expression (wait for compiler support or restructure), 9 ref.current reads during render, 2 TimelineScreen manual memo deps that differ from inferred ones, VideoPlayer Playing mutating a hook value, JoinScreen using check before declaration. Follow-up: fix one at a time, each removing its ALLOWED line so INTAKE-80-3 guards it. Where: app/scripts/compiler-check.js ALLOWED. Test: node app/scripts/compiler-check.js",
+   "tests": [
+    "app/scripts/compiler-check.js"
+   ],
+   "found": "2026-11-24",
+   "fixed": null
   }
  ]
 }
