@@ -84,7 +84,6 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
             emoji={e}
             n={counts[e] ?? 0}
             on={mineNow === e}
-            first={e === REACTIONS[0]}
             onPress={() => { haptic('tap'); void feed?.react(post.post_id, e); }}
           />
         ))}
@@ -448,7 +447,10 @@ function Caption({ title, text, testID, titleID }: { title: string | null; text:
  *  RD-90: with Reduce Motion on, no pop; the picked outline just appears. Chase, Nov 18: the count's width is kept even
  *  at 0, so the first "1" doesn't widen the button. */
 const POP = { up: 100, down: 120 } as const;
-function ReactionButton({ emoji, n, on, first, onPress }: { emoji: Reaction; n: number; on: boolean; first: boolean; onPress: () => void }) {
+/** REACT-13b: on the web the color emoji fonts come first, so the browser draws the phone-style emoji at the size asked
+ *  for instead of falling back from the text font. iPhone and Android keep the phone's own emoji font (REACT-11). */
+const EMOJI_FONTS_WEB = '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
+function ReactionButton({ emoji, n, on, onPress }: { emoji: Reaction; n: number; on: boolean; onPress: () => void }) {
   const { c, type, reduceMotion } = useTheme();
   const { fontScale } = useWindowDimensions();
   // One tabular digit is about 0.6 of the text size on every phone font; 0.7 leaves room.
@@ -475,15 +477,15 @@ function ReactionButton({ emoji, n, on, first, onPress }: { emoji: Reaction; n: 
       onPress={press}
       // RD-114 (DEC-76, Chase Nov 20: no "lighter oval"): picked is a 2 pt accent outline with an accent count, no
       // fill; unpicked a 1 pt c.line outline. RD-116: padding gives back the extra 1 pt, so the box never changes size.
-      style={({ pressed }) => [styles.react, first ? styles.firstReact : null, on ? styles.reactOn : styles.reactOff, { borderColor: on ? c.accent : c.line, opacity: pressed ? 0.7 : 1 }]}
+      style={({ pressed }) => [styles.react, on ? styles.reactOn : styles.reactOff, { borderColor: on ? c.accent : c.line, opacity: pressed ? 0.7 : 1 }]}
     >
-      <Animated.View style={{ transform: [{ scale }] }}>
-        <Text style={styles.emoji}>{emoji}</Text>
+      <Animated.View style={[styles.emojiBox, { transform: [{ scale }] }]}>
+        <Text style={[styles.emoji, Platform.OS === 'web' ? { fontFamily: EMOJI_FONTS_WEB } : null]}>{emoji}</Text>
       </Animated.View>
       {/* Chase, Nov 18: the count's slot keeps its width at 0 (an empty space as wide as one digit), so the first
           "1" doesn't widen the button or move its neighbours. */}
       {n ? (
-        <Text testID="reaction-count" style={[styles.count, { color: on ? c.accent : c.ink, fontSize: type.subheadline.fontSize, lineHeight: type.subheadline.lineHeight, minWidth: slot }]}>{String(n)}</Text>
+        <Text testID="reaction-count" style={[styles.count, { color: on ? c.accent : c.ink, fontSize: type.subheadline.fontSize, lineHeight: type.subheadline.lineHeight, minWidth: slot * String(n).length }]}>{String(n)}</Text>
       ) : (
         <View testID="count-slot" style={{ width: slot }} />
       )}
@@ -505,11 +507,11 @@ const styles = StyleSheet.create({
   caption: { gap: SPACE.xs },
   fold: { alignSelf: 'flex-start', paddingHorizontal: 0 },
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.xs, paddingHorizontal: SPACE.lg },
-  // RD-64 (R21): the first emoji's glyph sits on the 16 pt edge; its tap area and highlight reach 8 pt past it.
-  firstReact: { marginLeft: -SPACE.sm },
+  // REACT-13c (Chase, Nov 24): since RD-114 drew outlines, the first pill's outline sits on the 16 pt edge, lined up
+  // with the photo; RD-64's -8 pt pull made it stick out past the photo.
   react: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, borderRadius: RADIUS.pill, backgroundColor: 'transparent' },
   // RD-116: border + padding is 8 pt a side either way (1 + 7 unpicked, 2 + 6 picked), so the box never changes
-  // size and, with firstReact's -8, the first emoji still sits on the 16 pt edge (RD-64).
+  // size.
   reactOff: { borderWidth: 1, paddingHorizontal: SPACE.sm - 1, paddingVertical: 1 },
   reactOn: { borderWidth: 2, paddingHorizontal: SPACE.sm - 2, paddingVertical: 0 },
   count: { fontFamily: FONT.regular, fontVariant: ['tabular-nums'] },
@@ -520,7 +522,10 @@ const styles = StyleSheet.create({
   // FIRSTMIN-1: two letters ("GJ") fit the 32 pt inside the ring at 17 pt with slightly tighter tracking.
   // TYPE-6: headline at its Standard size in both views (the 36 pt ring does not grow with Easy view).
   faceText: { ...TYPE.standard.headline, letterSpacing: -0.5 },
-  emoji: { ...EMOJI_GLYPH, textAlign: 'center' },
+  // REACT-13a (Chase, Nov 24: blurry 😂 👍 🎉): the emoji sits in a whole-point 28 x 28 box, so every pill is a whole
+  // number of points wide and starts on a whole pixel. Phone emoji are pictures; on a fractional pixel they resample soft.
+  emojiBox: { width: 28, height: 28, alignItems: 'center', justifyContent: 'center' },
+  emoji: { ...EMOJI_GLYPH, width: 28, height: 28, textAlign: 'center' },
   people: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.sm },
   person: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, borderRadius: RADIUS.pill, paddingLeft: SPACE.xs, paddingRight: SPACE.md, minHeight: MIN_TARGET },
   newest: { paddingTop: SPACE.sm, paddingHorizontal: SPACE.lg, gap: SPACE.sm },

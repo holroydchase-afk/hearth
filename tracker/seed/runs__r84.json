@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-25T07:00:00-05:00",
- "label": "PR #174 fix round (B27 GUX-T2, B28 GUX-T6, B29 QA-R4): app suites 3x (flaky: SHARE-PC-13 once)",
- "passed": 7445,
- "failed": 1,
+ "at": "2026-11-24T23:58:00-05:00",
+ "label": "Type scale (SPEC-TYPE TYPE-1..12, DEC-84) and Share start round 4 (SHARE-ST-28..33): tests written first (red, 1 run)",
+ "passed": 191,
+ "failed": 89,
  "results": {},
- "note": "3 runs at dead8cf, one export:web:demo and one export:web:fake first. jest 2418 passed (1 skipped, 1 todo) x3; typecheck clean x3; check-expo-go OK (SDK 58) x3; e2e:demo 58 passed 1 failed, then 59 passed, 59 passed (5 skipped); e2e:web 5 passed (6 skipped) x3. Flaky, not green: SHARE-PC-13 failed in demo run 1 only (QA-R13, T39; 5 of 5 alone). The fix tests GUX-T2 (jest light/dark and Playwright, gap now 26 px), GUX-T6 and QA-R4 passed all 3 runs, but B27..B29 stay open until a clean 3x, per the caller's 'fixed if green'. Reviewed the engineer's test edit: GUX-W1 keeps flex 1, card inside the wrap, grow and 4:3, and drops only the centring that GUX-T2 replaces; right (its describe title still says 'middle of the space', wording only). Open: QA-R12 ReplyBox line height P2 (later round), UX-R40 as is. Not run: backend SQL, Deno, prototype e2e (no backend or prototype change), phones. e2e/results/type-scale-fixes-green-2026-11-24.txt"
+ "note": "Red on purpose, 1 run of the 9 touched jest files at 44b2573 plus test edits only (no product code): 191 passed, 89 failed, 1 todo. New: ui/__tests__/typeScale.test.tsx (TYPE-1..4, TYPE-6 per screen in Standard and Easy view, TYPE-3/7 sweep over Gallery, Feed, Share, More, Birthdays, TYPE-12; contract in its header), ui/__tests__/typeLint.test.ts (TYPE-5, TYPE-8), shareStart.test.tsx round 4 (SHARE-ST-28..33, kinds row behind post_kinds, kind card faces per tester option A). Rewritten: designSystem DS-2 to TYPE-3/TYPE-7 (TYPE-11) and the Android tab labelStyle to caption1; retargeted: SHARE-ST-20 (52 px circle, headline), photosStyle month 26 / greeting 38 (Jo's Easy view), Txt variant names in redesignLook, font, a11ySweep, photosStyle; designTokens type.standard/easy; renderApp expectGrandparentSafe allows the TYPE-7 testIDs at 12 pt+. Red for the right reason: no TYPE/textStyle/TEXT_STYLES, old sizes (Feed 28, New post 28, date 17, month 24), missing testIDs (gallery-day-label, face-count, reaction-count, share-kinds), lint finds 10 raw sizes, t.base etc. and old variants. Guards already passing: TYPE-3/TYPE-7 screen sweeps, SHARE-ST-30, SHARE-ST-33. Not run: full jest, typecheck (fails until the new Txt props exist), e2e (TYPE-10 and SHARE-ST-34 Playwright not written yet), phones (TYPE-9, 13, 14 manual). e2e/results/type-scale-red-2026-11-24.txt"
 }

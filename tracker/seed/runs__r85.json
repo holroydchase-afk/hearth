@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-25T05:00:00-05:00",
+ "label": "Type scale (SPEC-TYPE TYPE-1..12, DEC-84) and Share start round 4 (SHARE-ST-28..34): app suites 3x (green)",
+ "passed": 7224,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs at 79cef37 plus qa-tdd's SHARE-ST-34 Playwright test (demo.spec.js; Grandma Jo has no Share tab, so her Easy view column is checked as Kevin with Easy view on; written after the build, passed first run, no red shown), identical. jest 2347 passed (1 skipped, 1 todo) x3; typecheck clean x3; check-expo-go OK (SDK 58) x3; e2e:demo 56 passed (5 skipped) x3 on one fresh export:web:demo incl. TYPE-10 light/dark and SHARE-ST-34; e2e:web 5 passed (6 skipped) x3. Reviewed the engineer's test edits (font.test spread styles, redesignLint ShareKinds accent and disabled Pick who gets it, plainBackground kind tiles): criteria hold; RD-4 allowlist is file-wide (QA-R4 P2). Calls: New post level 1 OK; open P2s: author names and inline title in Medium vs TYPE-4 (QA-R1), face initials fixed at Standard headline in Easy view (QA-R2), reply line 28 vs body 26 in Easy view (QA-R3), TYPE-10 post title body vs map's title2 (QA-R5). Not run: backend SQL and Deno (no backend change), prototype e2e, phones (TYPE-9, 13, 14 manual). e2e/results/type-scale-green-2026-11-24.txt"
+}

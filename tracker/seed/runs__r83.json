@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-25T06:00:00-05:00",
- "label": "PR #174 fix round (GUX-T2, GUX-T5, GUX-T6, QA-R4): tests written first (red, 1 run)",
- "passed": 32,
- "failed": 5,
+ "at": "2026-11-25T03:30:00-05:00",
+ "label": "Wordless Share start (SHARE-ST-19..27, GUX-W1..W5, FONT-2/B25, DEC-79 option A): app suites 3x (green)",
+ "passed": 6867,
+ "failed": 0,
  "results": {},
- "note": "Red on purpose, 1 run at 8c6d28a plus test edits only (no product code). jest (shareStart, redesignLint, -t QA-R4|GUX-T2|GUX-T5|RD-4): 32 passed, 3 failed: GUX-T2 light and dark (share-empty-wrap justifyContent center, B27), QA-R4 (ShareKinds.tsx:58 tone=accent on the Saying quote mark, B29). GUX-T5 all 30 green on arrival (To: >= 4.5:1, rules >= 1.5:1 in all 10 themes, light, dark, Increase Contrast). Playwright demo (390 x 844, dist-demo export of 8c6d28a's code): GUX-T2 failed (gap 125 px light and dark, B27), GUX-T6 failed (Not now bottom 844 under tab bar top 764 after scrolling to it, B28). Not run: full suites (red round), phones. e2e/results/type-scale-fixes-red-2026-11-24.txt"
+ "note": "3 runs at 91e424a, identical. jest 2234 passed (1 skipped, 1 todo) x3 incl. FONT-2 (B25 closed) and GUX-W1..W5; typecheck clean x3; check-expo-go OK (SDK 58) x3; e2e:demo 50 passed (5 skipped) x3 on one fresh export:web:demo; e2e:web 5 passed (6 skipped) x3. Closes r70 QA-R1 (B25) and QA-R2 (SHARE-ST-8 filter narrowed to private-use glyphs in 19f7c98). Reviewed the engineer's plainBackground.test.tsx RD-34 Share edit: still an exact list, so any other grey box fails; the added share-stamp entry is the c.surface stamp inside share-card on the big photo (GUX-W2), so the criterion holds; it does not assert the stamp is a descendant of share-card (QA-R1 P2). Not run: backend SQL and Deno (no backend change), prototype e2e, phones (SHARE-ST-9 manual). e2e/results/share-start-wordless-final-green-2026-11-24.txt"
 }

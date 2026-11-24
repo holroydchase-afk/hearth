@@ -1429,6 +1429,43 @@
    "fixed": "2026-11-24"
   },
   {
+   "id": "T38",
+   "kind": "test fix",
+   "layer": "backend",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (VIS review, Nov 24): VIS-7's every-row parity check in backend/tests/vis_core_test.sql reaches only the 13 of 34 kinds with a uuid id. The other 21 (composite keys like post_audience, reaction, media_key, circle_member; bigint ids like chat_message, comment_mode_log) are pinned by name but get no per-row can_see vs RLS comparison; VIS-4 still checks their select policies. Fix: compare those rows through their item/owner column instead of id",
+   "tests": [],
+   "found": "2026-11-24",
+   "fixed": null
+  },
+  {
+   "id": "T40",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "Live check (Nov 24): the laptop demo panel's 'Try this' step 3 (app/src/demo/DemoFrame.tsx TRY) still says 'Tap Search and type lake.' After the Kevin/orchard demo (DEC-82) 'lake' finds nothing; 'orchard' finds 1 photo (site.spec.js DEMO-LIVE-2). Failing test first: DEMO-NEW-6, T40 now expects 'Search and type orchard', plus a T40 guard that the hinted word really finds a post in DEMO_POSTS (title, caption or sender name, as demo search reads) so the hint can't drift again. Red, 1 run: 2 failed, 4 passed. Fixed (Nov 24): step 3 now says 'Tap Search and type orchard.'; that file green, 6 passed, typecheck clean. Test: that file",
+   "tests": [
+    "app/src/demo/__tests__/demoFrame.test.tsx"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
+   "id": "B27",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (React Compiler green run r79, Nov 24, intake #80): 24 compiler bailouts in 23 components are allowlisted in app/scripts/compiler-check.js, so they stay uncompiled (exactly the pre-compiler behaviour, not a regression). 10 try/finally or try/catch value blocks, throw in try or new-expression (wait for compiler support or restructure), 9 ref.current reads during render, 2 TimelineScreen manual memo deps that differ from inferred ones, VideoPlayer Playing mutating a hook value, JoinScreen using check before declaration. Follow-up: fix one at a time, each removing its ALLOWED line so INTAKE-80-3 guards it. Where: app/scripts/compiler-check.js ALLOWED. Test: node app/scripts/compiler-check.js",
+   "tests": [
+    "app/scripts/compiler-check.js"
+   ],
+   "found": "2026-11-24",
+   "fixed": null
+  },
+  {
    "id": "B25",
    "kind": "bug",
    "layer": "app",
@@ -1442,18 +1479,7 @@
    "fixed": null
   },
   {
-   "id": "T38",
-   "kind": "test fix",
-   "layer": "backend",
-   "severity": "Low",
-   "status": "open",
-   "title": "QA-R1 (VIS review, Nov 24): VIS-7's every-row parity check in backend/tests/vis_core_test.sql reaches only the 13 of 34 kinds with a uuid id. The other 21 (composite keys like post_audience, reaction, media_key, circle_member; bigint ids like chat_message, comment_mode_log) are pinned by name but get no per-row can_see vs RLS comparison; VIS-4 still checks their select policies. Fix: compare those rows through their item/owner column instead of id",
-   "tests": [],
-   "found": "2026-11-24",
-   "fixed": null
-  },
-  {
-   "id": "B27",
+   "id": "B28",
    "kind": "bug",
    "layer": "app",
    "severity": "High",
@@ -1466,7 +1492,7 @@
    "fixed": null
   },
   {
-   "id": "B28",
+   "id": "B29",
    "kind": "bug",
    "layer": "app",
    "severity": "Low",
@@ -1479,7 +1505,7 @@
    "fixed": null
   },
   {
-   "id": "B29",
+   "id": "B30",
    "kind": "bug",
    "layer": "app",
    "severity": "Low",
@@ -1497,7 +1523,7 @@
    "layer": "app",
    "severity": "Low",
    "status": "open",
-   "title": "QA-R13 (PR #174 fix round green run r84, Nov 24): app/e2e-web/demo.spec.js SHARE-PC-13 failed once in run 1 of e2e:demo (toBeVisible, element(s) not found, a soft expect at line 1057 or 1073; the page had reached Grandma Jo) and passed in runs 2 and 3 and 5 of 5 alone. Likely cause: under full-suite load the Feed's first post is not yet showing 'Open photo 1 of 3' within the 5 s default after Send (soft expect, no wait for the upload). Fix the test (wait on the post, or name which expect), not the app. e2e/results/type-scale-fixes-green-2026-11-24.txt",
+   "title": "QA-R13 (PR #174 fix round green run r87, Nov 24): app/e2e-web/demo.spec.js SHARE-PC-13 failed once in run 1 of e2e:demo (toBeVisible, element(s) not found, a soft expect at line 1057 or 1073; the page had reached Grandma Jo) and passed in runs 2 and 3 and 5 of 5 alone. Likely cause: under full-suite load the Feed's first post is not yet showing 'Open photo 1 of 3' within the 5 s default after Send (soft expect, no wait for the upload). Fix the test (wait on the post, or name which expect), not the app. e2e/results/type-scale-fixes-green-2026-11-24.txt",
    "tests": [
     "app/e2e-web/demo.spec.js"
    ],

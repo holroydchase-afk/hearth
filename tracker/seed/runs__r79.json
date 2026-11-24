@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-25T01:30:00-05:00",
- "label": "Wordless Share start (SHARE-ST-19..27, DEC-79 option A): app suites 3x (red: FONT-2)",
- "passed": 6846,
- "failed": 3,
+ "at": "2026-11-24T23:59:00-05:00",
+ "label": "React Compiler on (INTAKE-80-1..3, intake #80): all suites 3x via test-all.sh (green)",
+ "passed": 10932,
+ "failed": 0,
  "results": {},
- "note": "3 runs at 37cbe7f. jest 2227 passed, 1 failed (1 skipped, 1 todo) x3, identical: FONT-2 (ui/__tests__/font.test.tsx) flags kit.tsx:341-342, PostcardStamp's two <Text style={mark}> with the family set through a variable the static scan cannot see (B25). typecheck clean x3, check-expo-go OK (SDK 58) x3, e2e:demo 50 passed (5 skipped) x3 on a fresh export:web:demo incl. GUX-R2 calendar (did not repeat the engineer's one failure), e2e:web 5 passed (6 skipped) x3. Reviewed the engineer's test edits: shareStart SHARE-ST-24 Reduce Motion reset and the plainBackground allowlist (AddPhotoCard circle, PostcardStamp) keep their criteria; demo.spec.js SHARE-ST-8 word filter drops any token with no letter or digit, slightly wider than the private-use glyph it targets (QA-R2 P2). Not run: backend SQL and Deno (no backend change), prototype e2e, phones (SHARE-ST-9 manual). e2e/results/share-start-wordless-green-2026-11-24.txt"
+ "note": "3 runs of bash test-all.sh at a6f4647 (compiler on: app.json experiments.reactCompiler true, babel-plugin-react-compiler): 25 suites passed, 0 failed, 2 skipped (starter invites: no STUDIO_SUPABASE_TEMPLATE; Deno: not installed, CI runs them) x3, identical. jest 2238 passed (1 skipped, 1 todo) incl. INTAKE-80-1, typecheck clean, check-expo-go OK (SDK 58), e2e:demo 50 passed, e2e:web 5, prototype e2e 33, compiler bundle 2/2 (INTAKE-80-2: dist-fake 148, dist-demo 159 memo-cache sentinels), compiler rules (INTAKE-80-3: 170 files, 144 functions compiled, 24 bailouts, 0 not allowlisted), backend SQL 1318 passed, starter scripts 17. No backend files changed vs origin/main. passed = 3 x (2238 + 50 + 5 + 33 + 1318). Red run kept: e2e/results/react-compiler-red-2026-11-23.txt. Open: B27 (QA-R1 P2, 24 allowlisted bailouts to fix later). Not run: Deno, starter invites, contract-real, e2e:site, phones (a phone build with the compiler on is still to be opened). e2e/results/react-compiler-green-2026-11-24/"
 }

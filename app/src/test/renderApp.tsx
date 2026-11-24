@@ -31,7 +31,8 @@ export async function renderApp(ui: ReactElement, opts: { user?: FixtureUser | n
   // SHARE-PC-11 (DEC-73): Send lands on Feed through nav.goFeed().
   const nav: jest.Mocked<Nav> = { openViewer: jest.fn(), close: jest.fn(), goPhotos: jest.fn(), goFeed: jest.fn(), goSignIn: jest.fn(), goJoin: jest.fn() };
   const deps: AppDeps = {
-    api, kv, helpPhone: '+1 304 555 0100',
+    // START-ON-1/2: a fake help address (never a real one) so Help and the start button behave as deployed.
+    api, kv, helpPhone: '+1 304 555 0100', helpEmail: 'help@example.test',
     prepare: jest.fn(async () => preparedFixture()),
     pickPhotos: jest.fn(async () => ({ items: [{ uri: 'file:///pick/1.jpg', kind: 'photo' as const, width: 4032, height: 3024 }] })),
     saveToPhone: jest.fn(async () => 'saved' as const),

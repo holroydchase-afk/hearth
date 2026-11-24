@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-25T03:30:00-05:00",
- "label": "Wordless Share start (SHARE-ST-19..27, GUX-W1..W5, FONT-2/B25, DEC-79 option A): app suites 3x (green)",
- "passed": 6867,
+ "at": "2026-11-19T09:30:00-05:00",
+ "label": "Start a family ready to turn on (START-ON-1..7): all suites 3x (green)",
+ "passed": 2793,
  "failed": 0,
  "results": {},
- "note": "3 runs at 91e424a, identical. jest 2234 passed (1 skipped, 1 todo) x3 incl. FONT-2 (B25 closed) and GUX-W1..W5; typecheck clean x3; check-expo-go OK (SDK 58) x3; e2e:demo 50 passed (5 skipped) x3 on one fresh export:web:demo; e2e:web 5 passed (6 skipped) x3. Closes r70 QA-R1 (B25) and QA-R2 (SHARE-ST-8 filter narrowed to private-use glyphs in 19f7c98). Reviewed the engineer's plainBackground.test.tsx RD-34 Share edit: still an exact list, so any other grey box fails; the added share-stamp entry is the c.surface stamp inside share-card on the big photo (GUX-W2), so the criterion holds; it does not assert the stamp is a descendant of share-card (QA-R1 P2). Not run: backend SQL and Deno (no backend change), prototype e2e, phones (SHARE-ST-9 manual). e2e/results/share-start-wordless-final-green-2026-11-24.txt"
+ "note": "3 runs each at 011a712 (engineer) on the red tests 7849580: backend SQL 1171 passed 0 failed (30 result lines, incl. START FAMILY 88, START-ON SCRIPTS 48, suspend/switch SQL) x3 as PGUSER=root, jest 1534 passed (1 skipped, 1 todo, 160 suites) x3, typecheck clean x3, e2e:web 6 passed (6 skipped: showcase/snapshot opt-in) x3 incl. START-ON-5 start-family.spec.js, real contract (contract-real.sh) 88 passed x3 with BETA-START-1,3..8 now running against PostgREST (START-ON-6). Fix commit changes no test files (harness infra only). check-agents, check-persona-checks and the other test-all.sh script checks, deploy_test and starter scripts 3 runs each, 16/0 every run. Deno, e2e:demo, e2e:site, CI, hosted Supabase and phones not run. backend/tests/results/start_on_green_2026-11-19.txt"
 }

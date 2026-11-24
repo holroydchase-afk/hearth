@@ -610,7 +610,7 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Chose:** Apple's eleven text styles by name in `theme.ts` (largeTitle 34/41, title1 28/34, title2 22/28, title3 20/25, headline 17/22 SemiBold, body 17/22, callout 16/21, subheadline 15/20, footnote 13/18, caption1 12/16, caption2 11/13); Easy view uses Apple's xxLarge set raised to 17 where Apple goes under. Titles and headline SemiBold, the rest Regular, no Bold. Every use today mapped to a style; a lint test fails on raw sizes. Share start option A "Photos first, three below" at those sizes: "New post" title2, "Add photos" headline, 52 px circle (60 in Easy view), 26 px icon; the Event / News / Saying row under it only behind the `post_kinds` switch (off until the visibility-core thread's data lands), parents only. Rule 3 becomes: "Text uses the named iPhone text styles (SPEC-TYPE): reading text is Body 17; smaller styles (callout..caption2) only for secondary words with Easy view off; Easy view keeps everything 17+."
 - **Over:** today's multiplied sizes (base ×1.3, ×1.65) and the "nothing under 17" rule (DS-2, rule 3); Material 3's own scale on Android; B "Four equal cards" and C "One postcard, four faces"; the tester's "today" sizes (76 px circle, 22 pt "Add photos").
 - **Because:** named styles let every screen be checked against the iPhone and stop each screen picking its own size; Easy view (on for viewers, DEC-66) keeps grandparents at 17+, so only parents with Easy view off see the smaller secondary words.
-- **Source:** `docs/product/SPEC-TYPE.md`; `SPEC-REDESIGN.md` 1j-2 round 4; persona check `decisions/2026-11-24-type-scale.md` (SG Red, mitigated). TRACKER R85. Amends DEC-79 (round 4) and DS-2.
+- **Source:** `docs/product/SPEC-TYPE.md`; `SPEC-REDESIGN.md` 1j-2 round 4; persona check `decisions/2026-11-24-type-scale.md` (SG Red, mitigated). TRACKER R87. Amends DEC-79 (round 4) and DS-2.
 
 ### DEC-85 · Easy view and Light or dark live only in More (EF-HE-4)
 - **When / status:** Nov 24 · Chase, decision card "Take Easy view and Light or dark off Me, keeping them only in More?": "Yes, only in More" · Built (intake #162 PR)
@@ -619,5 +619,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** the eval found the duplicates; one place per setting makes phone help one sentence for a grandparent.
 - **Source:** persona check `decisions/2026-11-24-settings-only-in-more.md`; `SPEC-EVAL-FIXES.md`. Amends RD-78.
 
+### DEC-86 · Keep Start a family switched off and get it ready to turn on (START-ON-1..7)
+- **When / status:** Nov 19 · Chase: "We need to keep the switched off features. Start a thread for each" · Code side in progress; turning it on waits on Chase
+- **Chose:** keep DEC-55's Start a family in the repo with `start_family_open` off, and finish what turning it on needs: an Email Hearth row in Help, a suspend-a-family script and runbook, a switch script, a browser walk and real-server contract tests.
+- **Over:** parking the code until a relative asks (tech-debt review PM-R5); deleting it.
+- **Because:** level 5 needs a parent to start a family without Chase's script, and strangers starting families need a way to reach Hearth and a way to stop abuse first.
+- **Source:** `docs/product/SPEC-START-FAMILY.md` section 8; persona check `decisions/2026-11-19-keep-start-a-family.md`; answers PM-R5 in `docs/reviews/2026-11-19-tech-debt/pm.md`
+
 ---
-Last updated: Nov 24, 2026 (DEC-85; DEC-84)
+Last updated: Nov 24, 2026 (DEC-86; DEC-84)

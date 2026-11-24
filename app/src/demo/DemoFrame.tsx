@@ -16,7 +16,7 @@ export const WIDE = 900;
 const TRY = [
   'Tap a photo under New for you. You get what the family sent since your last visit, one post at a time.',
   'Tap See it as Grandma Jo below. She sees only what was shared with her side of the family.',
-  'Tap Search and type lake. It looks at the words people wrote, never inside the photos.',
+  'Tap Search and type orchard. It looks at the words people wrote, never inside the photos.',
 ];
 const PROOF = ['Private by name', 'Stored in the US', 'No ads, no AI training'];
 
