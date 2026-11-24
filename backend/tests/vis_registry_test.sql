@@ -140,7 +140,11 @@ select tests.ok_each($$select f.fn::text from vis.functions f join vis_definer_f
                                                       and w.pronamespace = 'private'::regnamespace), false))
            when 'container' then p.prosrc ~ '(can_see_circle|is_circle_member|is_space_manager|my_circle_ids|my_managed_circle_ids|can_see)\('
            when 'self'      then p.prosrc ~ 'auth\.uid\(\)'
+           -- PRIV-VC-B2 (QA call, Nov 24): kind space's own rule is membership (private.vis_sees_space: any live
+           -- member reads their family, as spaces_select), so for that kind only the membership checks count too.
+           -- Every other admin kind still needs a parents-only rule.
            when 'admin'     then p.prosrc ~ '(is_space_manager|is_space_owner|can|my_managed_space_ids|my_owned_space_ids)\('
+                                 or (f.kind = 'space' and p.prosrc ~ '(is_space_member|my_space_ids)\(')
            else false end
       from vis.functions f join vis.kinds k on k.kind = f.kind join pg_proc p on p.oid = f.fn
      where f.fn = %L::regprocedure$$,
@@ -151,6 +155,8 @@ select tests.ok_sql($$select coalesce(bool_and(length(btrim(note)) > 0), true) f
 -- chat_roster (members and their keys) return other people's data, so none is a "caller's own rows" allowlist
 -- entry. Each must be registered with a kind (space, circle, chat_group are the likely ones), which puts it under
 -- the "calls its reach's rule" check above.
+select tests.ok_sql($$select coalesce((select kind = 'space' from vis.functions where fn = 'public.my_spaces()'::regprocedure), false)$$,
+                    'PRIV-VC-B2 my_spaces is registered with kind space (its rule: the caller is a live member, is_space_member or my_space_ids)');
 select tests.ok_sql(format($$select coalesce((select kind is not null from vis.functions where fn = %L::regprocedure), false)$$, fn),
                     format('PRIV-VC-B2 %s is registered with a kind and rule-checked, not allowlisted', fn))
   from unnest(array['public.my_spaces()', 'public.my_circles(uuid)', 'public.chat_roster(uuid)']) fn;

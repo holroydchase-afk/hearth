@@ -524,10 +524,10 @@ TIMELINE RESULT: 39 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('c3a01169-51b1-46d7-9cc0-e591219f0c71'))
-psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('fc178f47-f1fa-4836-a79b-2051b4f1ecf1'))
-psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('01eebebf-5dfe-467a-b3a3-d563fbc41e49'))
-psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = 'a8682426-33ef-4d32-993e-959b76a2696e')
+psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('8b10b6c1-99c8-4290-90d0-59e93f293e30'))
+psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('e3079e10-d03b-40e5-b072-dd135c6f3e66'))
+psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('69772ed0-4dc9-4212-8780-dcb6e98fe1b6'))
+psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '1d0099e6-8648-4621-97c9-504222f02bb2')
   n  | result |                                                                                  description                                                                                   
 -----+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    1 | ok     | BETA-AUD-11 shape: circles.kind exists (everyone | group | household | event)
@@ -1619,15 +1619,16 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
  232 | ok     | VIS-5 space_upload_quota(uuid) calls its reach's rule
  233 | ok     | VIS-5 toggle_heart(uuid) calls its reach's rule
  234 | ok     | VIS-5 every allowlisted function names its reason
- 235 | NOT OK | PRIV-VC-B2 public.my_spaces() is registered with a kind and rule-checked, not allowlisted
- 236 | ok     | PRIV-VC-B2 public.my_circles(uuid) is registered with a kind and rule-checked, not allowlisted
- 237 | ok     | PRIV-VC-B2 public.chat_roster(uuid) is registered with a kind and rule-checked, not allowlisted
- 238 | ok     | VIS-5 list_family_dates is registered with kind family_date, not allowlisted (it returns other people's dates)
+ 235 | NOT OK | PRIV-VC-B2 my_spaces is registered with kind space (its rule: the caller is a live member, is_space_member or my_space_ids)
+ 236 | NOT OK | PRIV-VC-B2 public.my_spaces() is registered with a kind and rule-checked, not allowlisted
+ 237 | ok     | PRIV-VC-B2 public.my_circles(uuid) is registered with a kind and rule-checked, not allowlisted
+ 238 | ok     | PRIV-VC-B2 public.chat_roster(uuid) is registered with a kind and rule-checked, not allowlisted
+ 239 | ok     | VIS-5 list_family_dates is registered with kind family_date, not allowlisted (it returns other people's dates)
 
 
-VIS REGISTRY RESULT: 237 passed, 1 failed
+VIS REGISTRY RESULT: 237 passed, 2 failed
 SOME TESTS FAILED
-psql:tests/vis_registry_test.sql:176: ERROR:  division by zero
+psql:tests/vis_registry_test.sql:182: ERROR:  division by zero
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
@@ -1716,9 +1717,9 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
 Narrowing for Chase (readable before 0011 only through "members see each other's replies"):
      reader     |  kind   |                                 reply_id                                  
 ----------------+---------+---------------------------------------------------------------------------
- Grandma Rivera | comment | 1abfa33f-bf36-4db6-9420-87b6d7817fca
+ Grandma Rivera | comment | 5b1442a6-271e-428a-ae38-1a9fe19aa5d2
  Grandma Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a2
- Grandpa Rivera | comment | 38b8e0b4-5291-493f-b931-658b5c6cc496
+ Grandpa Rivera | comment | 608d45fa-8f02-4c0b-aec5-f88cde3e60ec
  Grandpa Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a1
 
  n  | result |                                                     description                                                      
@@ -1829,8 +1830,8 @@ ok      SETUP-API: before Chase has an account it says "sign in once in the app"
 ok      SETUP-API: ... and changes nothing
 ok      SETUP-API: fresh setup runs without error
         | Family "Chase's kids" is ready: Everyone, Chase's side, Mom's side, 7 houses, 2 events.
-        | Test viewer invite (account B): code G5XNHH9NQ9, works once until Dec 01, link https://thefreighttrains-team-hearth.expo.app/join/d00cf54e11d69f89cea35248eebfdd85779ea08e
-        | Mom's poster invite: code H2NK76AWFE, works once until Dec 01, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/31d2329f9e516d98c134c66d752caec3f4630396
+        | Test viewer invite (account B): code 8K7T94XKB8, works once until Dec 01, link https://thefreighttrains-team-hearth.expo.app/join/816690c55f42d18861cb8ffb8855864a59406620
+        | Mom's poster invite: code PBKHVMCZS5, works once until Dec 01, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/bd10330fe8bbe8d2b949891f0d5a080d0d1a2e1e
 ok      SETUP-API: Chase owns one family, named as given (an apostrophe in the name is kept, not a SQL error)
 ok      SETUP-API: one Everyone
 ok      SETUP-API: the set groups are Chase's side and Mom's side (no v1 groups to retire later)
@@ -1936,7 +1937,7 @@ ok      TS-SEC-R1 deploy.sh's PATCH config/auth body sends "mailer_autoconfirm":
 
 AUTH CONFIG TEST RESULT: 6 passed, 0 failed
 psql:../packages/messenger/relay/test.sql:123: NOTICE:  RELAY RESULT: 24 passed, 0 failed
-NOT OK  VIS-2 control: the gate passes on main's migrations  [1 NOT OK; first:  235 | NOT OK | PRIV-VC-B2 public.my_spaces() is registered with a kind and rule-checked, not allowlisted]
+NOT OK  VIS-2 control: the gate passes on main's migrations  [2 NOT OK; first:  235 | NOT OK | PRIV-VC-B2 my_spaces is registered with kind space (its rule: the caller is a live member, is_space_member or my_space_ids)]
 NOT OK  VIS-2 a scratch table with no registry row fails the gate, naming public.vis_scratch_unregistered  [control rc=3, scratch rc=3]
 NOT OK  VIS-23 a second permissive select policy on public.posts fails the gate (PRIV-VC-R4)  [control rc=3, scratch rc=3]
 ok      VIS-6 edge function notify is in vis.edge_functions
