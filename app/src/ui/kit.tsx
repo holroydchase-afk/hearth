@@ -208,7 +208,7 @@ export function MenuLine() {
  *  check box (Android). Switches are the phone's own switch with the word On or Off beside it (DS-3). */
 export function Choice({ label, title, detail, checked, onPress, kind, disabled }: {
   label: string; title: string; detail?: string; checked: boolean; onPress: () => void; kind: 'checkbox' | 'radio' | 'switch';
-  /** Can't be tapped, but stays fully readable (never faded: DEC-82 5.1); the detail line says why. */
+  /** Can't be tapped, but stays fully readable (never faded: DEC-86 5.1); the detail line says why. */
   disabled?: boolean;
 }) {
   const { c, os } = useTheme();
@@ -230,7 +230,10 @@ export function Choice({ label, title, detail, checked, onPress, kind, disabled 
         <Txt variant="strong">{title}</Txt>
         {detail ? <Txt variant="muted">{detail}</Txt> : null}
       </View>
-      {kind === 'radio' && checked ? <SystemIcon icon={{ sf: 'checkmark', md: 'check' }} color={c.accent} size={22} /> : null}
+      {/* EF-HE-2: an empty ring when not picked (muted, 3:1+), a filled accent ring when picked. */}
+      {kind === 'radio' ? (
+        <SystemIcon icon={checked ? { sf: 'checkmark.circle.fill', md: 'radio_button_checked' } : { sf: 'circle', md: 'radio_button_unchecked' }} color={checked ? c.accent : c.muted} size={26} />
+      ) : null}
       {kind === 'switch' ? (
         <View style={styles.switchBox} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           <SwitchWord on={checked} />

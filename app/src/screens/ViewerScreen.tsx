@@ -61,7 +61,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
 
   useEffect(() => {
     const n = next !== null ? entries[next] : undefined;
-    // DEC-82 (DATA-4): with Save data on, the next photo's full size waits for the swipe.
+    // DEC-86 (DATA-4): with Save data on, the next photo's full size waits for the swipe.
     if (n && app.dataPrefs.saveData !== true) app.media?.prefetch(n.post.post_id, [n.media.media_id]);
   }, [entry?.media.media_id]); // eslint-disable-line react-hooks/exhaustive-deps
 

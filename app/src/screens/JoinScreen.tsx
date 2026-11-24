@@ -23,7 +23,7 @@ export function JoinScreen({ code }: { code: string }) {
   // TS-GUX-R6: the last 4 digits of the number a phone invite didn't open for (never the full number).
   const [triedNumber, setTriedNumber] = useState<string | null>(null);
   const started = useRef(false);
-  // DATA-1 (DEC-82): a phone never asked about its data plan asks once, before Gallery.
+  // DATA-1 (DEC-86): a phone never asked about its data plan asks once, before Gallery.
   const asked = useRef(app.dataPrefs.saveData !== null);
   asked.current = app.dataPrefs.saveData !== null;
   const opened = () => (asked.current ? nav.goPhotos() : setStep('askData'));

@@ -1,5 +1,5 @@
 # Decision: video autoplay as a setting, plus a "Save data" choice at sign-up
-Date: Nov 24, 2026 · Status: Chase's call ("Make it a setting, default to on"; "old people have prepaid phones") · DEC-82
+Date: Nov 24, 2026 · Status: Chase's call ("Make it a setting, default to on"; "old people have prepaid phones") · DEC-86
 
 What changes: on the Feed the video most in view plays silently, one at a time, as a setting that is on by default. Sign-up asks one plain prepaid-plan question; "Save data" turns off autoplay, full-size photos on cards and the viewer's look-ahead. `docs/product/SPEC-MEDIA.md` section 5, AUTO-1..9, DATA-1..8.
 

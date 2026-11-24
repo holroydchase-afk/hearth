@@ -68,7 +68,7 @@ export interface AppValue {
   /** SHARE-PC-11 (DEC-73): "Shared with <names>." after a Send, shown on Feed until closed or the next Send. */
   shared: string | null;
   setShared: (line: string | null) => void;
-  /** DEC-82 (SPEC-MEDIA 5): Videos and data, this phone's own (never per account, never sent anywhere). Read
+  /** DEC-86 (SPEC-MEDIA 5): Videos and data, this phone's own (never per account, never sent anywhere). Read
    *  before the first screen shows, signed in or not. */
   dataPrefs: DataPrefs;
   /** Changes it at once and saves it on this phone only. */
@@ -83,7 +83,7 @@ export function useApp(): AppValue {
   return v;
 }
 
-/** DEC-82 (SPEC-MEDIA 5): Save data is on, so Feed cards and the Timeline show thumbnails until a photo is opened. */
+/** DEC-86 (SPEC-MEDIA 5): Save data is on, so Feed cards and the Timeline show thumbnails until a photo is opened. */
 export function useSaveData(): boolean {
   return useContext(Ctx)?.dataPrefs.saveData === true;
 }
@@ -175,7 +175,7 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
   const load = useCallback(async () => {
     live.current.queue?.stop();
     if (!dataPrefsRef.current) {
-      // DEC-82: read once, before any screen leaves 'loading', so Save data holds from the first photo.
+      // DEC-86: read once, before any screen leaves 'loading', so Save data holds from the first photo.
       const dp = await loadDataPrefs(deps.kv);
       if (!dataPrefsRef.current) {
         dataPrefsRef.current = dp;

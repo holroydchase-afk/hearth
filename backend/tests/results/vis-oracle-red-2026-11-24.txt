@@ -1,0 +1,35 @@
+# VIS-8..12 red run, Nov 24, 2026 (qa-tdd). Expected red: backend/tests/vis_oracle/ (generator, fixture, nightly job) and FakeBackend.fromOracleFixture don't exist yet.
+# Backend tests/run.sh x3: only these 7 NOT OK, every other suite 0 failed (38-46 s per run).
+
+## tests/vis_oracle_test.sql
+ n | result |                                                         description                                                         
+---+--------+-----------------------------------------------------------------------------------------------------------------------------
+ 1 | NOT OK | VIS-8 harness: tests/vis_oracle/generate.sql defines vis_oracle.generate(seed integer)
+ 2 | NOT OK | VIS-11 harness: tests/vis_oracle/generate.sql defines vis_oracle.fixture_json()
+ 3 | NOT OK | VIS-8 every person x every item x every path equals vis.can_see: not run, generator missing (tests/vis_oracle/generate.sql)
+ 4 | NOT OK | VIS-9 invisible == nonexistent on every path: not run, generator missing
+ 5 | NOT OK | VIS-10 notice recipients pass can_see at send time: not run, generator missing
+ 6 | NOT OK | VIS-11 committed seed-42 fixture equals fixture_json(): not run, generator missing
+
+
+VIS ORACLE RESULT: 0 passed, 6 failed
+
+## tests/vis_oracle_nightly_test.sh
+NOT OK  VIS-12 tests/vis_oracle/nightly.sh exists (the nightly oracle job; not built yet)
+VIS-12 nightly: 0 passed, 1 failed
+
+## app: npx jest src/api/__tests__/visOracle.test.ts
+    VIS-11 fixture missing: backend/tests/vis_oracle/fixtures/seed-42.json (write it with backend/tests/vis_oracle/nightly.sh --seed 42 --fixture)
+Tests:       8 failed, 8 total
+
+## Harness self-check (throwaway generator in a scratch dir, not committed): 91 checks, 9 s, same 8 failures in 3 runs
+VIS ORACLE MATRIX seed=42 seconds=8
+  6 | NOT OK | VIS-11 backend/tests/vis_oracle/fixtures/seed-42.json equals vis_oracle.fixture_json() for seed 42 (regenerate it with nightly.sh --seed 42 --fixture)
+ 36 | NOT OK | VIS-8 post_audiences_table (post) equals vis.can_see for every person: 181 pairs, 15 wrong yes (P0), 0 wrong no (P1)
+ 51 | NOT OK | VIS-8 chat_roster (chat_group) equals vis.can_see for every person: 600 pairs, 6 wrong yes (P0), 0 wrong no (P1)
+ 56 | NOT OK | VIS-8 table (child) equals vis.can_see for every person: 20 pairs, 6 wrong yes (P0), 0 wrong no (P1)
+ 79 | NOT OK | VIS-9 delete_post: a post you can't see answers like one that doesn't exist (1213 hidden pairs, 4 differ)
+ 81 | NOT OK | VIS-9 set_post_audience: a post you can't see answers like one that doesn't exist (1213 hidden pairs, 15 differ)
+ 86 | NOT OK | VIS-9 post_audiences: a post you can't see answers like one that doesn't exist (1213 hidden pairs, 15 differ)
+ 90 | NOT OK | VIS-10 every notice sent (new posts, replies, reactions) names only posts its recipient can see at send time
+VIS ORACLE RESULT: 83 passed, 8 failed

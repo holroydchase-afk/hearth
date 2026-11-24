@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-24T23:55:00-05:00",
+ "label": "Video autoplay and Save data (DEC-86, SPEC-MEDIA 5/5.1: AUTO-1..6, 8, 9; DATA-1..6): tests written first (red)",
+ "passed": 2241,
+ "failed": 43,
+ "results": {},
+ "note": "Red on purpose, 3 identical jest runs at 51ad093 plus the new tests (no implementation): 43 failed / 2241 passed (1 skipped, 1 todo) x3, typecheck clean, every existing test still green. feed/__tests__/autoplay.test.ts 12 failed (no src/feed/autoplay.ts AUTOPLAY_VIEWABILITY, no src/state/dataPrefs.ts); its AUTO-8/9 dwell tests pass against a throwaway 80/1000/waitForInteraction constant (removed). media/__tests__/videoAbort.test.ts 2 failed (videoUri ignores an aborted signal). screens/__tests__/autoplay.test.tsx 13 failed (Feed list has no viewabilityConfig/onViewableItemsChanged); AUTO-8 scroll and AUTO-6 Gallery guards pass. screens/__tests__/videosAndData.test.tsx 12 failed (no Videos and data row/page; no prepaid question after the code); the already-asked control passes. screens/__tests__/saveData.test.tsx 4 failed (Feed and Timeline fetch display; viewer prefetches); DATA-5 controls pass. renderApp now seeds hearth.dataPrefs.v1 as asked (dataPrefs: null = fresh install). Not run: e2e:web, backend, phones (AUTO-7, DATA-7, DATA-8 manual). e2e/results/autoplay-savedata-red-2026-11-24/"
+}

@@ -17,7 +17,7 @@ describe('UI-3 Messages list', () => {
   it('UI-3 each chat\'s Open button is a gray button, not a row of solid blue ones', async () => {
     await renderApp(<MoreScreen />, { be: FakeBackend.withFixture({ joIsMember: true }), user: 'chase' });
     fireEvent.press(await screen.findByRole('button', { name: 'Messages' }));
-    const opens = await screen.findAllByRole('button', { name: /^Open the chat/ });
+    const opens = await screen.findAllByRole('button', { name: /^Open / }); // EF-HE-1: "Open <chat>"
     expect(opens.length).toBeGreaterThan(1);
     for (const b of opens) expect(StyleSheet.flatten(b.props.style).backgroundColor).not.toBe('#0040DD');
   });

@@ -21,7 +21,7 @@ export function preparedFixture(): Prepared {
   };
 }
 
-/** DEC-82 (SPEC-MEDIA 5): the phone's "Videos and data" choices (Play videos as I scroll, Save data) live under this
+/** DEC-86 (SPEC-MEDIA 5): the phone's "Videos and data" choices (Play videos as I scroll, Save data) live under this
  *  one key, per phone, never per account and never on the server. `saveData: null` (or no key) = the sign-up
  *  question was never asked on this phone. Kept here too so tests can seed it before the module exists. */
 export const DATA_PREFS_KEY = 'hearth.dataPrefs.v1';

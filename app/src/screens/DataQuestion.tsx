@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// DATA-1 (DEC-82, SPEC-MEDIA 5.1 final words): asked once per phone, right after the invite code or a first sign-in,
+// DATA-1 (DEC-86, SPEC-MEDIA 5.1 final words): asked once per phone, right after the invite code or a first sign-in,
 // before Gallery. Two equal gray capsules (DS-9: neither filled, neither preselected), full width, 56 pt tall, 16 pt
 // apart. No Back and no Next: tapping an answer saves it on this phone only and moves on.
 import React from 'react';

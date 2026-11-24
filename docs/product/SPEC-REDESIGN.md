@@ -44,7 +44,7 @@ Split into three PRs, in order, one at a time (small PRs, no bursts). Each is sh
 | RD-12 | When Gallery scrolls, the greeting shrinks into the top bar on the left, on a solid background (DS-6); scrolling back up restores it. On iPhone this is the system large title; Android the Material large top bar; web the same look. With Reduce Motion it fades. | auto (web) + manual (iPhone, Android) |
 | RD-13 | The top bar's right side holds exactly two items: Search and By date, each a thin icon with its word. Search opens today's Search (SEARCH-*); By date opens today's By date. | auto |
 | RD-14 | Given a new message, then More's tab shows an accent dot (spoken "More, new message"), and the Messages row in More says "N new". No dot otherwise. | auto |
-| RD-15 | Tapping More fills the screen with big rows (icon, word, chevron, 48 pt+), in this order: Messages, Groups (owner and adult only), Events, Bigger text, Light or dark, Family color (owner only), Me, Help. (Since then: Birthdays after Events, CAL-14; Bigger text is Easy view, RD-78; Family color is Theme, RD-97; and **Videos and data** sits between Light or dark and Theme, DEC-82 / SPEC-MEDIA 5.1, so Theme is no longer right after Light or dark.) Each opens today's screen with a Back word button. | auto |
+| RD-15 | Tapping More fills the screen with big rows (icon, word, chevron, 48 pt+), in this order: Messages, Groups (owner and adult only), Events, Bigger text, Light or dark, Family color (owner only), Me, Help. (Since then: Birthdays after Events, CAL-14; Bigger text is Easy view, RD-78; Family color is Theme, RD-97; and **Videos and data** sits between Light or dark and Theme, DEC-86 / SPEC-MEDIA 5.1, so Theme is no longer right after Light or dark.) Each opens today's screen with a Back word button. | auto |
 | RD-16 | A viewer's More never shows Groups or Family color, and no screen reached from More shows a group's name to anyone who isn't owner or adult (DEC-49). | auto |
 | RD-17 | Feed shows today's posts list (newest first, posts' reactions, who can see it by name, replies); nothing on it is lost. | auto |
 
@@ -64,7 +64,7 @@ Split into three PRs, in order, one at a time (small PRs, no bursts). Each is sh
 | RD-24 | Given the family's owner, More → Family color shows Ember (default), Forest (`#2E7D4F` / `#6FCF97`) and Plum (`#8E3A8F` / `#D9A0E0`), each a row with a swatch, its name and a check on the picked one. | auto |
 | RD-25 | Phase 1 storage: the owner's pick is saved in today's per-device prefs (`prefs.color`) and recolors only that phone. Everyone else sees Ember; any saved Sage or Plum from COLOR-1 is ignored (Sage maps to Forest on the owner's phone). | auto |
 | RD-26 | Given an adult or viewer, there is no color picker anywhere. | auto |
-| RD-27 | Demo: Chase (owner; was Kai until DEC-64) can switch Family color and the demo recolors; Grandma Jo's view stays Ember. | auto (Playwright) |
+| RD-27 | Demo: Kevin (owner; was Chase until DEC-82, Kai until DEC-64) can switch Family color and the demo recolors; Grandma Jo's view stays Ember. | auto (Playwright) |
 
 ### 1d. Plain background (Chase, Nov 16: "why is everything grey?"; Apple HIG Color)
 | ID | Given / When / Then | Type |
@@ -85,7 +85,7 @@ Tests: `app/src/screens/__tests__/reviewRound1.test.tsx` and `app/e2e-web/demo.s
 | RD-40 | UX-R8 (P2): in the walk, the heading, avatar row, title, caption and reaction row share one 16 pt left edge. | auto |
 | RD-41 | UX-R9 (P2): in the walk the accent appears only on "Next photo"; "‹ Gallery" and "Options" are ink (RD-4). | auto |
 | RD-42 | UX-R10 (P2): when the people who will read my comment are exactly the people who can see the post, the line under the field reads "Your comment goes to the same people."; when fewer read it (the safe default), it still names them. | auto |
-| RD-43 | UX-R12 (Chase, Nov 17, DEC-64): the demo's parent is "Chase", so the greeting reads "Good morning/afternoon/evening, Chase"; "Kai" is gone from the demo. Kids stay Mia and Leo; Alex and Grandma Jo stay. | auto (jest + Playwright) |
+| RD-43 | UX-R12 (Chase, Nov 17, DEC-64): the demo's parent was "Chase" (superseded Nov 24 by DEC-82: now "Kevin", greeting "Good morning/afternoon/evening, Kevin"); "Kai" is gone from the demo. Kids stay Mia and Leo; Alex and Grandma Jo stay. | auto (jest + Playwright) |
 
 ### 1f. Apple Photos months, a search field, Instagram-style posts (Chase's picks, Nov 17, DEC-65)
 Mockup: the Nov 17 "Gallery and Feed, the Apple Photos way" page, sections 1 to 3 (round 2). Persona check `decisions/2026-11-17-photos-style.md`. Tests (written first, red): `app/src/screens/__tests__/photosStyle.test.tsx`, `app/src/ui/__tests__/relativeTime.test.ts`, `app/e2e-web/demo.spec.js` (RD-44, RD-47). Supersedes: RD-2's Bold large title, RD-8's square Gallery corners, RD-13 (Search and By date top right), RD-34's hairline dividers between posts, RD-39 (edge to edge), GUX-R3's "Options" word, REACT-11's separate count chips.

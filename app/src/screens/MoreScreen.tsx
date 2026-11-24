@@ -28,7 +28,7 @@ const ROWS: Row[] = [
   { id: 'birthdays', text: 'Birthdays', icon: { sf: 'gift', md: 'cake' }, path: '/more/birthdays' },
   { id: 'easyView', text: 'Easy view', icon: { sf: 'textformat.size', md: 'format_size' }, path: '/more/easy-view' },
   { id: 'look', text: 'Light or dark', icon: { sf: 'sun.max', md: 'contrast' }, path: '/more/look' },
-  // DEC-82 (SPEC-MEDIA 5.1): right after Light or dark, for every role.
+  // DEC-86 (SPEC-MEDIA 5.1): right after Light or dark, for every role.
   { id: 'videosData', text: 'Videos and data', icon: { sf: 'play.rectangle', md: 'data_saver_on' }, path: '/more/videos-data' },
   { id: 'theme', text: 'Theme', icon: { sf: 'paintpalette', md: 'palette' }, path: '/more/theme' },
   { id: 'me', text: 'Me', icon: { sf: 'person.crop.circle', md: 'account_circle' }, path: '/more/me' },
@@ -98,7 +98,7 @@ export function MorePreference({ which }: { which: 'easyView' | 'look' | 'theme'
   );
 }
 
-/** More → Videos and data (DEC-82, SPEC-MEDIA 5.1). */
+/** More → Videos and data (DEC-86, SPEC-MEDIA 5.1). */
 export function MoreVideosData() {
   return (
     <Screen>

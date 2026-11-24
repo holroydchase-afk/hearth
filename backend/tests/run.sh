@@ -19,6 +19,15 @@
 #   tests/auth_no_passwords_test.sql  TS-SEC-R1: no password hash ever stays in auth.users (migration 0028, docs/eng/AUTH-NO-PASSWORDS.md)
 #   tests/family_dates_test.sql  CAL-1..10, CAL-18: the life calendar, birthdays and dates (SPEC-LIFE-CALENDAR, migration 0029)
 #   tests/search_test.sql  SEARCH-1..14: find posts by words, sender and dates, only ones you can see (SPEC-SEARCH, migration 0025)
+#   tests/vis_registry_test.sql  VIS-1, 3, 4, 5: the visibility coverage gate (SPEC-VISIBILITY-CORE C3; red until 0031+)
+#   tests/vis_core_test.sql   VIS-7, 22, 24: vis.can_see / vis.sees_item agree with today's rules, never callable from the app
+#   tests/vis_calendar_test.sql  VIS-18: the life calendar (0029) is a Person-class kind; can_see equals its RLS (Phase 5)
+#   tests/vis_oracle_test.sql  VIS-8..11: the oracle across readers, fixed seed 42 (Phase 2, R51; generator tests/vis_oracle/generate.sql, migration 0033)
+#   tests/vis_oracle_nightly_test.sh  VIS-12: the nightly job (tests/vis_oracle/nightly.sh) writes a dated matrix
+#   tests/vis_gate_test.sh    VIS-2, 6, 23, 24: the gate bites (scratch table, second policy), edge functions, API schemas
+#   ../packages/visibility/core/test.sql  VIS-19, 20, 23: the generic core's conformance kit, with a toy product (rolls back)
+#   ../packages/visibility/core/no_product_words_test.sh  VIS-21: no Hearth words in the generic template
+#   tests/vis_core_copy_test.sh  ARCH-VC-R1: 0031_vis_core.sql = packages/visibility/core/supabase.sql below its header
 #   ../packages/messenger/relay/test.sql  RELAY-1..9: the shared messenger library's relay template
 #   tests/aud16/  BETA-AUD-16: snapshot on 0001-0010, apply 0011+, diff (0011 must change nobody's access)
 #   tests/grp1/   GRP-1/GRP-2: snapshot on 0001-0012, apply 0013+, diff (0013 must change nobody's access)
@@ -37,7 +46,8 @@ for suite in tests/rls_test.sql tests/api_test.sql tests/notify_test.sql tests/s
              tests/groups_test.sql tests/timeline_future_test.sql tests/privacy_audit_test.sql tests/groups_v2_test.sql tests/chat_test.sql \
              tests/photo_helpers_test.sql tests/reactions_test.sql tests/captions_test.sql tests/video_cap_test.sql tests/viewers_test.sql \
              tests/start_family_test.sql tests/search_test.sql tests/sms_test.sql tests/group_names_test.sql tests/auth_no_passwords_test.sql \
-             tests/family_dates_test.sql; do
+             tests/family_dates_test.sql tests/vis_registry_test.sql tests/vis_core_test.sql tests/vis_calendar_test.sql \
+             tests/vis_oracle_test.sql; do
   dropdb --if-exists "$DB"
   createdb "$DB"
   files=(-f tests/supabase_stub.sql)
@@ -85,4 +95,14 @@ bash tests/auth_config_test.sh || STATUS=1  # PRIV-R1: phone numbers need a text
 # RELAY-1..9: the shared messenger library's relay template, with a toy membership rule (rolls back)
 dropdb --if-exists "$DB"; createdb "$DB"
 psql -d "$DB" -v ON_ERROR_STOP=1 -X -q -f ../packages/messenger/relay/test.sql >/dev/null || { echo "relay template: FAILED" >&2; STATUS=1; }
+# VIS-2, 6, 23, 24: the visibility gate bites (builds its own scratch databases)
+bash tests/vis_gate_test.sh || STATUS=1
+# VIS-19, 20, 23, 21: the generic visibility core's conformance kit (toy product, rolls back) and its word check
+dropdb --if-exists "$DB"; createdb "$DB"
+psql -d "$DB" -v ON_ERROR_STOP=1 -X -q -f ../packages/visibility/core/test.sql >/dev/null || { echo "visibility kit: FAILED" >&2; STATUS=1; }
+bash ../packages/visibility/core/no_product_words_test.sh || STATUS=1
+# ARCH-VC-R1: migration 0031 is the package's supabase.sql verbatim below its header (and the check bites)
+bash tests/vis_core_copy_test.sh || STATUS=1
+# VIS-12: the nightly oracle job, run once with a fixed seed (builds its own database)
+bash tests/vis_oracle_nightly_test.sh || STATUS=1
 exit $STATUS

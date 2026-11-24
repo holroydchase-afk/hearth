@@ -41,7 +41,7 @@ export const cardAspect = (m: Pick<Media, 'width' | 'height'> | undefined) =>
 export function PhotoSwipe(props: Props) {
   const nav = useNav();
   const { c } = useTheme();
-  const saveData = useSaveData(); // DEC-82: thumbnails only until a photo is opened
+  const saveData = useSaveData(); // DEC-86: thumbnails only until a photo is opened
   const postId = 'items' in props ? props.id : props.postId;
   const items: SwipeItem[] = 'items' in props ? props.items : props.media.map((media, index) => ({ postId: props.postId, index, media }));
   const media = items.map((i) => i.media);

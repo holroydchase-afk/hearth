@@ -6,7 +6,7 @@
 // photo's does, and a separate "Play" button sits at its bottom left; the two are siblings, never one inside the
 // other, so a screen reader reaches both. Play opens the full-screen VideoPlayer in place; Close comes back here.
 // Only the thumb is fetched here: the video itself loads when Play is tapped, and nothing plays before that.
-// DEC-82 (SPEC-MEDIA 5, 5.1): the exception is a Feed card the list picked for autoplay (AutoplayContext): it fetches
+// DEC-86 (SPEC-MEDIA 5, 5.1): the exception is a Feed card the list picked for autoplay (AutoplayContext): it fetches
 // the video and plays it in the card, muted and looping, while the list is still. Its word button reads "Play with
 // sound"; that button, or tapping the playing video, opens the full-screen player with sound. When it stops being
 // the picked one, it pauses, any unfinished download is stopped and the decrypted file is let go.

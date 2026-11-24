@@ -30,7 +30,7 @@ const FILES: Record<string, () => unknown> = {
   '(tabs)/more/theme': () => require('../app/(tabs)/more/theme'),
   '(tabs)/more/me': () => require('../app/(tabs)/more/me'),
   '(tabs)/more/help': () => require('../app/(tabs)/more/help'),
-  // DEC-82 (SPEC-MEDIA 5.1): More → Videos and data.
+  // DEC-86 (SPEC-MEDIA 5.1): More → Videos and data.
   '(tabs)/more/videos-data': () => require('../app/(tabs)/more/videos-data'),
   groups: () => require('../app/groups'),
   me: () => require('../app/me'),

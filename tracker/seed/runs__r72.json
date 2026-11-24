@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-25T04:00:00-05:00",
- "label": "T36 isolation: SHARE-PC-13 10x on the branch and on main, plus full demo e2e 2x each (not reproduced)",
- "passed": 120,
- "failed": 0,
+ "at": "2026-11-24T23:59:50-05:00",
+ "label": "T40 demo panel 'Try this' search hint: failing test first (red)",
+ "passed": 4,
+ "failed": 2,
  "results": {},
- "note": "SHARE-PC-13 --repeat-each 10: branch (dist-demo from 623388c) 10 passed, main a32609b (scratch worktree, own export) 10 passed. Full playwright.demo.config: branch 50 passed x2, main 50 passed x2. The r71 run-3 failure did not recur on either; cause unconfirmed (likely load). T36 stays open. e2e/results/share-pc-13-isolate-2026-11-25/"
+ "note": "npx jest src/demo/__tests__/demoFrame.test.tsx, 1 run, red on purpose: DEMO-NEW-6, T40 found no step 3 matching 'Search and type orchard' (it still says lake), and the T40 guard found 0 DEMO_POSTS matching 'lake' (title, caption or sender name). Green waits on the engineer's DemoFrame.tsx fix. e2e/results/t38-demoframe-red-2026-11-24.txt"
 }

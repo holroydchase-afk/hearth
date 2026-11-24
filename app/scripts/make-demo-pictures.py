@@ -1,5 +1,6 @@
-"""Drew the demo's old sample pictures (DEMO-3). Retired Nov 16: the demo now uses Chase's own photos (DEC-62),
-so running this would overwrite them. Run: python3 scripts/make-demo-pictures.py [name ...]  -> public/demo-pictures/<name>.jpg and <name>-thumb.jpg
+"""Drew the demo's old sample pictures (DEMO-3). Retired Nov 16 (DEC-62); since Nov 24 the demo uses free stock photos
+from Pexels (DEC-82, public/demo-pictures/CREDITS.md). Kept for history; its names no longer ship.
+Run: python3 scripts/make-demo-pictures.py [name ...]  -> public/demo-pictures/<name>.jpg and <name>-thumb.jpg
 Needs Pillow. The pictures are checked in; rerun only to change them."""
 import math, os, random
 from PIL import Image, ImageDraw, ImageFilter

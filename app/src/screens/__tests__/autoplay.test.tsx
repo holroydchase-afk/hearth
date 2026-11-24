@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// DEC-82 (SPEC-MEDIA 5, 5.1): Feed videos play quietly, one at a time, once she stops on one; Gallery never autoplays.
+// DEC-86 (SPEC-MEDIA 5, 5.1): Feed videos play quietly, one at a time, once she stops on one; Gallery never autoplays.
 //
 // How these drive the list: Feed's FlatList (PhotosScreen mode "feed") must take viewabilityConfig={AUTOPLAY_VIEWABILITY}
 // (src/feed/autoplay.ts) and an onViewableItemsChanged (or the same pair in viewabilityConfigCallbackPairs). React

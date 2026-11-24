@@ -30,13 +30,18 @@ describe('CAL-19 the demo family has dates', () => {
     expect(rows.find((r) => r.member_id === FIXTURE.users.earl.id && r.kind === 'birthday')).toMatchObject(md(in9));
   });
 
-  it('CAL-19 a made-up kid\'s birthday (Mia) and Chase and Alex\'s anniversary', async () => {
+  // Updated Nov 24 (DEMO-PHOTO-9, DEC-82): the parents are Kevin and Alex.
+  it('CAL-19 DEMO-PHOTO-9 a made-up kid\'s birthday (Mia) and Kevin and Alex\'s anniversary', async () => {
     const rows = await demoDates();
     expect(rows.filter((r) => r.kind === 'birthday' && r.member_id === null && /^Mia\b/.test(r.label ?? ''))).toHaveLength(1);
-    expect(rows.filter((r) => r.kind === 'anniversary' && /^Chase and Alex\b/.test(r.label ?? ''))).toHaveLength(1);
+    expect(rows.filter((r) => r.kind === 'anniversary' && /^Kevin and Alex\b/.test(r.label ?? ''))).toHaveLength(1);
   });
 
   it('CAL-19 the demo seed version moves on from the pre-calendar one, so returning visitors get the dates', () => {
     expect(demoSeedVersion()).not.toBe('659ibx'); // demoSeedVersion() on main before CAL-19 (Nov 24)
+  });
+
+  it('DEMO-PHOTO-13 the demo seed version moves on from the Nov 16 photo family (with CAL-19 dates)', () => {
+    expect(demoSeedVersion()).not.toBe('u4ie58'); // demoSeedVersion() on main before DEMO-PHOTO (Nov 24)
   });
 });

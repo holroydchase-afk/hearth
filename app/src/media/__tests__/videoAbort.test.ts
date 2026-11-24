@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// AUTO-3 (DEC-82, SPEC-MEDIA 5): a Feed video scrolled away stops downloading. Seam: MediaCache.videoUri takes an
+// AUTO-3 (DEC-86, SPEC-MEDIA 5): a Feed video scrolled away stops downloading. Seam: MediaCache.videoUri takes an
 // optional third argument `{ signal?: AbortSignal }`; once the signal is aborted the fetch stops, the promise
 // rejects with an error named 'AbortError', nothing is written or kept, and a later call fetches again.
 import { FakeBackend, FIXTURE } from '../../api/fake/FakeBackend';

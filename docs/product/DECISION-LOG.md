@@ -586,12 +586,33 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** grandparents who avoid social media miss Facebook's birthday nudges; Hearth can tell the family on the day without ads or trackers. Month and day are enough to say "today".
 - **Source:** `docs/product/SPEC-LIFE-CALENDAR.md`; persona check `decisions/2026-11-24-life-calendar.md` (LG and SG Red, mitigated). TRACKER R78.
 
-### DEC-82 · Video autoplay as a setting, default on, plus "Save data" at sign-up (AUTO-1..9, DATA-1..8)
+### DEC-82 · The public demo uses Pexels stock photos; the demo parent is Kevin (DEMO-PHOTO-4..18)
+- **When / status:** Nov 23-24 · Chase: "go" on stock photos from Pexels and a demo parent named Kevin, the dad in the photos · Specced, failing tests next
+- **Chose:** 19 free Pexels photos (orchard and baking by Elly Fairytale, bike by Yan Krukov) in 7 posts across May, October and this week; cleaned (no metadata), 1200px display and 400px thumbs; credited in `app/public/demo-pictures/CREDITS.md`, the demo's Details and the README. The signed-in parent is "Kevin"; Alex is mom, Grandma Jo is Kevin's mom (Dad's side). "Chase" is never the demo parent. The Nov 16 photos leave main; no history rewrite.
+- **Over:** Chase's own photos (DEC-62) and "Chase" as the demo parent (DEC-64); keeping "Chase" with stock photos (a visitor would read the model as Chase).
+- **Because:** Chase's family stays out of the public demo, and the name matches the man in the pictures. Demo content only, no change for a relative using the app, so no persona check (as DEC-62).
+- **Source:** `docs/product/SPEC-DEMO-PHOTOS.md`; TRACKER R79. Supersedes DEC-62 and DEC-64.
+
+### DEC-83 · Build the visibility core now; bridge after the beta; 2-minute Take back; news and dates for parents (R77, VIS-*, SHARE-U-*)
+- **When / status:** Nov 24 · Chase, on the four open questions in `SPEC-VISIBILITY-CORE.md`: "Ok agreed to all" · Phases 1 and 1b built (migrations 0031, 0032), Phase 2 next
+- **Chose:** build Phases 1, 1b and 2 (registry, coverage gate, generic `@holroyd/visibility` core, oracle) now, before the beta; the co-parent bridge after the beta, with a co-parent persona brought back first; a 2-minute "Take back" hold before any notice goes out; "Write news" and "Add a date" on the postcard for parents only until the grandparent test. That last one reopens DEC-79's "one way in".
+- **Over:** waiting until after the beta for the whole core (keeping safety on review alone, and R51 as a separate eval); the bridge before the beta (no split-parent pair among the testers); no hold on notices; news and dates for everyone at once.
+- **Because:** the gate makes every later feature safe by default with no screen changes, so it is cheapest before more kinds land; nobody in the WV beta can test the bridge; a wrong send is the worst error, and a grandparent won't notice 2 minutes; most grandparents can't post anyway.
+- **Source:** `docs/product/SPEC-VISIBILITY-CORE.md` (open questions 1 to 4), `docs/architecture/07-visibility-model.md`; persona check `decisions/2026-11-24-visibility-core.md`. Amends DEC-79's one way in (parents only).
+
+### DEC-85 · Easy view and Light or dark live only in More (EF-HE-4)
+- **When / status:** Nov 24 · Chase, decision card "Take Easy view and Light or dark off Me, keeping them only in More?": "Yes, only in More" · Built (intake #162 PR)
+- **Chose:** Me drops both sections; each keeps its own More row and page.
+- **Over:** both places (RD-78 added them to Me).
+- **Because:** the eval found the duplicates; one place per setting makes phone help one sentence for a grandparent.
+- **Source:** persona check `decisions/2026-11-24-settings-only-in-more.md`; `SPEC-EVAL-FIXES.md`. Amends RD-78.
+
+### DEC-86 · Video autoplay as a setting, default on, plus "Save data" at sign-up (AUTO-1..9, DATA-1..8)
 - **When / status:** Nov 24 · Chase (asked Nov 17 for social-media "starts playing as you scroll"): "I like the effect. Make it a setting, default to on. We can have a sign up choice that's like limit data use. And then we can turn off auto play stuff. Etc", then "Like old people have [prepaid] phones. Prepaid" · Specced, failing tests next
 - **Chose:** on the Feed only, after the person pauses (80% on screen, list still 1 s; Chase: "some one second or something scroll pause, then it plays"; nothing downloads before) the video in view plays silently, one at a time, pauses on scroll-away, loops, never jumps to the next; tap opens the full-screen player with sound. "Play videos as I scroll" in More, default on; off under reduce motion. Sign-up asks one plain prepaid question; "Save data" (default off, changeable in More) turns off autoplay, full-size photos on Feed cards and Timeline, and the viewer's look-ahead.
 - **Over:** CF-08's "no autoplay" calm feed (staff-pm had flagged the data cost: encrypted videos download and decrypt whole); a Wi-Fi-only autoplay rule; following Android Data Saver; autoplay on Gallery.
 - **Because:** Chase likes the effect and the family knows it from social apps; the prepaid question protects the relatives with small data plans in one tap.
-- **Source:** `docs/product/SPEC-MEDIA.md` section 5; CF-08 updated; persona check `decisions/2026-11-24-autoplay-save-data.md` (LG and AG Red, mitigated). TRACKER R79. Waits on video being on (R27).
+- **Source:** `docs/product/SPEC-MEDIA.md` section 5; CF-08 updated; persona check `decisions/2026-11-24-autoplay-save-data.md` (LG and AG Red, mitigated). TRACKER R84. Waits on video being on (R27).
 
 ---
-Last updated: Nov 24, 2026 (DEC-82)
+Last updated: Nov 25, 2026 (DEC-86)

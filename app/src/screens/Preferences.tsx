@@ -28,7 +28,7 @@ export function EasyView({ heading = false }: { heading?: boolean }) {
   );
 }
 
-/** DEC-82 (SPEC-MEDIA 5.1, final words): two switches, saved on this phone only. While Save data is on (or the
+/** DEC-86 (SPEC-MEDIA 5.1, final words): two switches, saved on this phone only. While Save data is on (or the
  *  phone is set to reduce motion) the autoplay switch shows Off, can't be tapped and says why; its own saved choice
  *  stays underneath, so turning Save data off puts it back. */
 export function VideosAndData() {

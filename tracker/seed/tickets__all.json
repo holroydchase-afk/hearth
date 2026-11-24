@@ -1028,11 +1028,27 @@
    "kind": "bug",
    "layer": "app",
    "severity": "Low",
-   "status": "open",
-   "title": "QA-R2 (OPEN-1/7/8): New for you only looks at the posts already loaded (the first page of 20). With more than 20 new posts since the last visit, the card's senders and the one-at-a-time view leave out the oldest new ones and don't start at the oldest. No test yet",
-   "tests": [],
+   "status": "fixed",
+   "title": "QA-R2 (OPEN-1/7/8): New for you only looks at the posts already loaded (the first page of 20). With more than 20 new posts since the last visit, the card's senders and the one-at-a-time view leave out the oldest new ones and don't start at the oldest. EF-HE-9 (intake #162, Nov 24): fixed at 88e605c by FeedStore.loadBackTo; with B26 fixed at d8115ee, closed by run r71 (green 3x). Tests: evalFindings.test.tsx, feed/__tests__/loadBackTo.test.ts",
+   "tests": [
+    "app/src/feed/__tests__/loadBackTo.test.ts",
+    "app/src/screens/__tests__/evalFindings.test.tsx"
+   ],
    "found": "2026-11-11",
-   "fixed": null
+   "fixed": "2026-11-24"
+  },
+  {
+   "id": "B26",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "QA-R1 (eval findings run r76, Nov 24): a refresh that answers while a loadMore page (a scroll, or B18's loadBackTo walk) is in flight lets the stale page append after the new first page: with 6 new posts on the server the feed skips 6 posts between the first page and the old page 2, and later pages continue from the bottom, so the hole stays until the next refresh. New for you can undercount the same way. Fixed at d8115ee (a refresh generation: loadMorePage drops a page started before the latest refresh, loadBackTo walks on from the new first page); closed by run r71 (green 3x). Test: app/src/feed/__tests__/loadBackTo.test.ts 'a refresh that lands mid-walk'",
+   "tests": [
+    "app/src/feed/__tests__/loadBackTo.test.ts"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
   },
   {
    "id": "T14",
@@ -1363,6 +1379,32 @@
    "fixed": null
   },
   {
+   "id": "T36",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "DEMO-PHOTO swap (Nov 24): app/e2e-web/demo.spec.js UX-R1 opened the walk with '2 new' / 'New photos: 1 of 2' (the old photo set); the newest post is now Alex's 3-photo bike post (DEMO-PHOTO-12), so '3 new' and 'New photos: 1 of 1' (the walk counts posts, as the New-for-you test already asserts). R18 scrolled a fixed 1200 px, which with the new photos lands exactly on the November/October boundary; it now scrolls 200 px into the second month's section, measured from its title. Intent unchanged. Test: that file",
+   "tests": [
+    "app/e2e-web/demo.spec.js"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
+   "id": "T37",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "Demo-site publish (demo-site.yml run 45430430863, Nov 24) failed its pre-publish check app/e2e-web/site.spec.js: 3 tests still expected the old demo after DEMO-PHOTO (DEC-82). DEMO-5 Start over greeted 'Chase' and read \"You're Chase, a parent\" (now Kevin, DEMO-PHOTO-10); DEMO-LIVE-2 searched 'lake' (now 'orchard': only post 1's title says it; search reads title, caption, sender); DEMO-NEW-5 walked '1 of 2' then Next to '2 of 2' (now one new post: '1 of 1', the bike title shows, no Next new photo, Done back to Kevin's Gallery, as demo.spec.js asserts). Intent unchanged, no check removed. No other publish or live check named the old demo. Test: that file",
+   "tests": [
+    "app/e2e-web/site.spec.js"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
    "id": "B24",
    "kind": "bug",
    "layer": "app",
@@ -1387,12 +1429,36 @@
    "fixed": "2026-11-24"
   },
   {
-   "id": "T36",
+   "id": "T38",
+   "kind": "test fix",
+   "layer": "backend",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (VIS review, Nov 24): VIS-7's every-row parity check in backend/tests/vis_core_test.sql reaches only the 13 of 34 kinds with a uuid id. The other 21 (composite keys like post_audience, reaction, media_key, circle_member; bigint ids like chat_message, comment_mode_log) are pinned by name but get no per-row can_see vs RLS comparison; VIS-4 still checks their select policies. Fix: compare those rows through their item/owner column instead of id",
+   "tests": [],
+   "found": "2026-11-24",
+   "fixed": null
+  },
+  {
+   "id": "T40",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "Live check (Nov 24): the laptop demo panel's 'Try this' step 3 (app/src/demo/DemoFrame.tsx TRY) still says 'Tap Search and type lake.' After the Kevin/orchard demo (DEC-82) 'lake' finds nothing; 'orchard' finds 1 photo (site.spec.js DEMO-LIVE-2). Failing test first: DEMO-NEW-6, T40 now expects 'Search and type orchard', plus a T40 guard that the hinted word really finds a post in DEMO_POSTS (title, caption or sender name, as demo search reads) so the hint can't drift again. Red, 1 run: 2 failed, 4 passed. Fixed (Nov 24): step 3 now says 'Tap Search and type orchard.'; that file green, 6 passed, typecheck clean. Test: that file",
+   "tests": [
+    "app/src/demo/__tests__/demoFrame.test.tsx"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
+   "id": "T41",
    "kind": "test fix",
    "layer": "app",
    "severity": "Medium",
    "status": "open",
-   "title": "QA-R5 (DEC-82 all-suites run, Nov 25): app/e2e-web/demo.spec.js:960 SHARE-PC-13 failed 1 of 3 test-all runs (run 3) at line 988, the soft check that Feed's first visible post card has 'Open photo 1 of 3' after Send (15 s timeout, element not found); 'Shared with ...' had shown. Passed runs 1 and 2 at 623388c. Likely cause: the first visible post-* card is not yet the new post (feed refresh order on a slow box), or a race in DEC-82's card changes; not reproduced. Isolation (Nov 25): SHARE-PC-13 --repeat-each 10 passed 10/10 on the branch (623388c build) and 10/10 on main a32609b; the full demo config passed 50/50 twice on each. Not reproduced, so not shown to come from DEC-82; the failed run took 19.8 s against about 7 s normally, which points to load (the new post's upload not on Feed within 15 s). Next: keep the trace when it next fails. Test: that file",
+   "title": "QA-R5 (DEC-86 all-suites run, Nov 25): app/e2e-web/demo.spec.js:960 SHARE-PC-13 failed 1 of 3 test-all runs (run 3) at line 988, the soft check that Feed's first visible post card has 'Open photo 1 of 3' after Send (15 s timeout, element not found); 'Shared with ...' had shown. Passed runs 1 and 2 at 623388c. Likely cause: the first visible post-* card is not yet the new post (feed refresh order on a slow box), or a race in DEC-86's card changes; not reproduced. Isolation (Nov 25): SHARE-PC-13 --repeat-each 10 passed 10/10 on the branch (623388c build) and 10/10 on main a32609b; the full demo config passed 50/50 twice on each. Not reproduced, so not shown to come from DEC-86; the failed run took 19.8 s against about 7 s normally, which points to load (the new post's upload not on Feed within 15 s). Next: keep the trace when it next fails. Test: that file",
    "tests": [
     "app/e2e-web/demo.spec.js"
    ],

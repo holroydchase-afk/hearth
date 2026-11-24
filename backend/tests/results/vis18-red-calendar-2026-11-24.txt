@@ -1,0 +1,15 @@
+ n | result |                                                                                                   description                                                                                                    
+---+--------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1 | NOT OK | VIS-18 public.family_dates is registered as kind family_date in reach person
+ 2 | NOT OK | VIS-18 family_date's rule reuses the person rule (private.vis_sees_person), no new person rule
+ 3 | NOT OK | VIS-18 every user and every family date: can_see equals the RLS select (PRIV-R2)  [33 of 49 wrong; first: date 77777777-0000-0000-0000-0000000000a1 user a0000000-0000-0000-0000-00000000000a: can_see f, RLS t]
+ 4 | ok     | VIS-18 Blair can't see Partner Sky's birthday in A (can't see Sky's name)
+ 5 | ok     | VIS-18 Blair can't see A's anniversary (not in A's Everyone group)
+ 6 | NOT OK | VIS-18 Blair sees Alex's birthday in A (a parent of A)
+ 7 | NOT OK | VIS-18 Grandma Rivera sees A's anniversary (in A's Everyone group)
+ 8 | ok     | VIS-18 Grandma Rivera can't see B's reunion (not in family B)
+
+
+VIS CALENDAR RESULT: 3 passed, 5 failed
+SOME TESTS FAILED
+psql:tests/vis_calendar_test.sql:105: ERROR:  division by zero

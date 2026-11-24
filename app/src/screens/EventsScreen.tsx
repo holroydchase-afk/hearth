@@ -14,6 +14,7 @@ import { RADIUS, useTheme } from '../ui/theme';
 import { PhotoSwipe } from './PhotoSwipe';
 import { PostCard } from './PostCard';
 import { useTabBarSpace } from '../ui/tabBarSpace';
+import { useApp } from '../state/AppContext';
 
 /** EVT-2: the first post of an event, bigger, under the event's name. */
 export function EventCard({ eventId, eventName, post, onOpen }: { eventId: string; eventName: string; post: FeedPost; onOpen: () => void }) {
@@ -57,6 +58,8 @@ export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, on
   backTo?: string;
 }) {
   const { c } = useTheme();
+  const app = useApp();
+  const isParent = app.space?.role === 'owner' || app.space?.role === 'adult';
   const under = useTabBarSpace(); // RD-109: room under the web's floating tab bar
   const more = hasMore ? <Button label="Show older photos" variant="secondary" busy={loadingMore} onPress={onLoadMore} /> : null;
 
@@ -83,7 +86,14 @@ export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, on
             <Txt variant="display" role="header">Events</Txt>
           </View>
         }
-        ListEmptyComponent={<Txt variant="muted">No events yet.</Txt>}
+        ListEmptyComponent={
+          // EF-HE-6: say what an event is; parents also read how to make one (the real labels).
+          <View style={{ gap: 8 }}>
+            <Txt variant="strong">No events yet.</Txt>
+            <Txt variant="muted">An event is photos from one day, like a birthday or a trip. When someone adds you to one, it shows up here.</Txt>
+            {isParent ? <Txt variant="muted">To make one, open Groups in More, tap New group, and tick "This group is for an event."</Txt> : null}
+          </View>
+        }
         ListFooterComponent={more ?? undefined}
         contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 + under }}
         removeClippedSubviews={false}
@@ -131,6 +141,8 @@ function EventTimeline({ posts, fromList, more, onOpen, onClose }: {
   backTo?: string;
 }) {
   const { c } = useTheme();
+  const app = useApp();
+  const isParent = app.space?.role === 'owner' || app.space?.role === 'adult';
   const under = useTabBarSpace(); // RD-109: room under the web's floating tab bar
   const [person, setPerson] = useState<string | null>(null);
   const name = posts[0]?.event_name ?? '';

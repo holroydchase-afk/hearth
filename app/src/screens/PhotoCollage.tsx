@@ -44,7 +44,7 @@ export function collageTiles(n: number, single = 4 / 3): { aspect: number; wide:
 export function PhotoCollage({ postId, media, from }: { postId: string; media: CollageMedia[]; from?: string }) {
   const nav = useNav();
   const { c, dark } = useTheme();
-  const saveData = useSaveData(); // DEC-82: thumbnails only until a photo is opened
+  const saveData = useSaveData(); // DEC-86: thumbnails only until a photo is opened
   const n = media.length;
   const { big, small, more } = collageShape(n);
 

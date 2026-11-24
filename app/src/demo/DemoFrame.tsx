@@ -7,7 +7,7 @@ import React, { type ReactNode } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Txt } from '../ui/kit';
 import { BigTextContext, useTheme } from '../ui/theme';
-import { PORTFOLIO_URL } from './DemoBar';
+import { PHOTO_CREDIT, PORTFOLIO_URL } from './DemoBar';
 
 export const APP_COLUMN = 430;
 export const WIDE = 900;
@@ -16,7 +16,7 @@ export const WIDE = 900;
 const TRY = [
   'Tap a photo under New for you. You get what the family sent since your last visit, one post at a time.',
   'Tap See it as Grandma Jo below. She sees only what was shared with her side of the family.',
-  'Tap Search and type lake. It looks at the words people wrote, never inside the photos.',
+  'Tap Search and type orchard. It looks at the words people wrote, never inside the photos.',
 ];
 const PROOF = ['Private by name', 'Stored in the US', 'No ads, no AI training'];
 
@@ -45,6 +45,8 @@ export function DemoFrame({ width, children, open = () => {}, controls }: {
         {controls}
         <Button variant="quiet" role="link" label="Read the case study on chaseholroyd.com" text="Read the case study" onPress={() => open(PORTFOLIO_URL)} style={styles.cta} />
         <Txt variant="muted">Built test-first by Chase Holroyd, a product manager, with a team of AI agents. The family here is made up and stays in this browser.</Txt>
+        {/* DEMO-PHOTO-14: a laptop has no Demo bar, so the photo credit sits here too. */}
+        <Txt variant="muted">{PHOTO_CREDIT}</Txt>
       </ScrollView>
       </BigTextContext.Provider>
       {/* DARK-ELEV-4: in dark the column is a surface step lighter than the page, with no shadow. */}

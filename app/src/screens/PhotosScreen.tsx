@@ -54,7 +54,7 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   const app = useApp();
   const state = useFeed();
   const { c, dark, reduceMotion } = useTheme();
-  // DEC-82 (SPEC-MEDIA 5): Feed only; the Gallery grid never autoplays.
+  // DEC-86 (SPEC-MEDIA 5): Feed only; the Gallery grid never autoplays.
   const autoplay = useAutoplay(!gallery && autoplayOn(app.dataPrefs, reduceMotion));
   const tabRoom = useTabBarSpace(); // RD-109: room under the web's floating tab bar
   // EVT-3/4: the Events list or one event, opened in place; Back returns here.
@@ -77,6 +77,17 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
     saved.current = me;
     void saveLastSeen(kv, me, fetchedAt);
   }, [kv, me, lastSeen, fetchedAt]);
+  // EF-HE-9 (B18): once the first network page is in, load older pages back to the last visit, so New for you
+  // counts every new post. Until then New for you waits, so its count never jumps.
+  const feedStore = app.feed;
+  const [backTo, setBackTo] = useState<string | null>(null);
+  const backKey = gallery && me && lastSeen?.user === me && lastSeen.at && fetchedAt ? `${me}|${lastSeen.at}|${fetchedAt}` : null;
+  useEffect(() => {
+    if (!backKey || !feedStore || !lastSeen?.at) return;
+    let live = true;
+    void feedStore.loadBackTo(lastSeen.at).finally(() => { if (live) setBackTo(backKey); });
+    return () => { live = false; };
+  }, [backKey, feedStore, lastSeen?.at]);
   // OPEN-7 / RD-21: the new posts one at a time, in place; Back and Done return here.
   const [walk, setWalk] = useState<string[] | null>(null);
   const closeWalk = useCallback(() => setWalk(null), []);
@@ -124,7 +135,9 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
     );
   }
   // OPEN-1: others' posts since the last visit on this phone; none on a first open (OPEN-5) or for my own posts.
-  const fresh = gallery && me && lastSeen?.user === me ? newForYou(state.posts, lastSeen.at, me) : [];
+  const oldest = state.posts[state.posts.length - 1];
+  const caughtUp = backTo === backKey || !state.hasMore || !oldest || !lastSeen?.at || Date.parse(oldest.published_at) <= Date.parse(lastSeen.at);
+  const fresh = gallery && me && lastSeen?.user === me && caughtUp ? newForYou(state.posts, lastSeen.at, me) : [];
   const senders = andList(state.posts.map((p) => p.author_name));
   // BETA-TIME-1: old photos added today don't take over the top; they go in a card.
   const earlier = earlierGroups(state.posts);

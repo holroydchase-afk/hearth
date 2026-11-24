@@ -154,7 +154,7 @@ export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { start
 
 /** A post in the timeline: who sent it, when it was taken, its photos and caption. */
 export function TimelineCard({ post, onOpen }: { post: TimelinePost; onOpen: () => void }) {
-  const saveData = useSaveData(); // DEC-82 (DATA-3): thumbnails only until a photo is opened
+  const saveData = useSaveData(); // DEC-86 (DATA-3): thumbnails only until a photo is opened
   const [all, setAll] = useState(false);
   const ready = post.media.filter((m) => m.status === 'ready');
   const shown = all ? ready : ready.slice(0, SHOW_INLINE);
