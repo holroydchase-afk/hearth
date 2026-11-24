@@ -334,12 +334,11 @@ const STAMP_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'S
  *  today's month, then day (GUX-R4). Not a control: hidden from VoiceOver and TalkBack, and taps pass through it. */
 export function PostcardStamp({ date = new Date(), testID }: { date?: Date; testID?: string }) {
   const { c } = useTheme();
-  const mark = [styles.stampMark, { color: c.accent, fontFamily: FONT.semibold }];
   return (
     <View testID={testID} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants" aria-hidden
       style={[styles.stamp, { borderColor: c.accent, backgroundColor: c.surface }]}>
-      <Text accessible={false} allowFontScaling={false} style={mark}>{STAMP_MONTHS[date.getMonth()]}</Text>
-      <Text accessible={false} allowFontScaling={false} style={mark}>{String(date.getDate())}</Text>
+      <Text accessible={false} allowFontScaling={false} style={[styles.stampMark, { color: c.accent, fontFamily: FONT.semibold }]}>{STAMP_MONTHS[date.getMonth()]}</Text>
+      <Text accessible={false} allowFontScaling={false} style={[styles.stampMark, { color: c.accent, fontFamily: FONT.semibold }]}>{String(date.getDate())}</Text>
     </View>
   );
 }

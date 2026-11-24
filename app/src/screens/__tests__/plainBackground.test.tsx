@@ -146,7 +146,9 @@ describe('RD-34 content screens sit on the plain background, no grey card fill',
       fireEvent.press(await screen.findByRole('button', { name: /^Add photos, up to \d+ at a time$/ }, slow));
       await screen.findByRole('header', { name: 'New post' }, slow);
       await screen.findByLabelText(/^Grandparents – Dad's side, 3 people, not picked$/, {}, slow);
-      expect(greyBoxes(pal(dark))).toEqual([`View#share-card bg ${pal(dark).surface}`]);
+      // Retargeted Nov 24 by engineer for GUX-W2, flagged for qa-tdd: the paper stamp (c.surface) rides on the filled
+      // postcard's big photo, inside the card; it is part of the postcard, not a grey box on the page.
+      expect(greyBoxes(pal(dark))).toEqual([`View#share-card bg ${pal(dark).surface}`, `View#share-stamp bg ${pal(dark).surface}`]);
     });
 
     // qa-tdd, Nov 18: RD-104 (DEC-68, Chase) sets the tab bar apart on c.surface with a c.line top border; it is no

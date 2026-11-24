@@ -214,7 +214,7 @@ export function ShareScreen() {
   const bulkOk = isParent && !!app.deps.pickBulk && !bigText; // SHARE-ST-21: Easy view picks 10, like everyone else
   const limit = bulkOk ? 100 : MAX;
   const addWords = videos ? 'Add photos or videos' : 'Add photos';
-  const rule = { height: 1, backgroundColor: c.line };
+  const rule = { height: 1, backgroundColor: c.tabLine }; // GUX-W4: c.line was too faint on the card
   const emptyCard = (
     <AddPhotoCard testID="share-card" spotTestID="share-spot" label={`${addWords}, up to ${limit} at a time`} title={addWords}
       cardStyle={[styles.card, { backgroundColor: c.surface }, photoShadow(dark)]} inSpot={<PostcardStamp testID="share-stamp" />}
@@ -245,14 +245,18 @@ export function ShareScreen() {
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={os === 'ios' ? 'padding' : undefined}>
-        <ScrollView ref={scroller} contentContainerStyle={[styles.page, empty ? { paddingBottom: 32 + under } : null]} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
-          {empty ? null : <Button variant="quiet" label="Cancel this post" text="Cancel" style={styles.flush} onPress={reset} />}
-          <Txt variant="display" role="header">New post</Txt>
+        <ScrollView ref={scroller} contentContainerStyle={[styles.page, empty ? { flexGrow: 1, paddingBottom: 32 + under } : null]} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
+          {/* GUX-W3: "New post" sits in one row in both states, so it never moves; Cancel joins it after photos. */}
+          <View style={styles.head}>
+            <View style={styles.headTitle}><Txt variant="display" role="header">New post</Txt></View>
+            {empty ? null : <Button variant="quiet" label="Cancel this post" text="Cancel" style={styles.headCancel} onPress={reset} />}
+          </View>
           <QueueStatus />
           {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
 
           {/* SHARE-PC-1: one card holds the post as the family will see it, and who it goes to. */}
-          {!big ? emptyCard : (
+          {/* GUX-W1: the empty postcard sits in the middle of the space under "New post". */}
+          {!big ? <View testID="share-empty-wrap" style={styles.emptyWrap}>{emptyCard}</View> : (
           <View testID="share-card" style={[styles.card, { backgroundColor: c.surface }, photoShadow(dark)]}>
               <View>
                 <Image source={{ uri: big.uri }} style={styles.big} resizeMode="cover"
@@ -262,6 +266,8 @@ export function ShareScreen() {
                     <Text style={{ color: '#FFFFFF', fontSize: t.base, fontFamily: FONT.semibold }}>{`${shown + 1} of ${items.length}`}</Text>
                   </View>
                 ) : null}
+                {/* GUX-W2: the stamp stays on the filled postcard, top-right over the big photo. */}
+                <PostcardStamp testID="share-stamp" />
               </View>
 
               {/* SHARE-PC-2: small photos to pick the big one, then Add (the phone's picker again, 10 at most). */}
@@ -287,7 +293,7 @@ export function ShareScreen() {
 
               {/* SHARE-PC-3: one note, its label always shown; no title on new posts (DEC-73 amends DEC-39). */}
               <View style={styles.words}>
-                <Field underline label="Add a note (optional)" placeholder="Like: Pumpkin patch day" value={note} onChangeText={setNote} multiline maxLength={2000} />
+                <Field underline label="Add a note (optional)" value={note} onChangeText={setNote} multiline maxLength={2000} />
               </View>
 
               <View style={styles.dashClip}>
@@ -334,6 +340,10 @@ const styles = StyleSheet.create({
   toRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 10, paddingHorizontal: 6, paddingTop: 18, paddingBottom: 6 },
   toRule: { flex: 1, marginBottom: 6 },
   page: { padding: 16, gap: 16, paddingBottom: 24 },
+  head: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 48 }, // same height with or without Cancel
+  headTitle: { flex: 1, flexShrink: 1 },
+  headCancel: { paddingHorizontal: 0 },
+  emptyWrap: { flex: 1, justifyContent: 'center' },
   // No overflow clip on the card, so its shadow is never cut; the big photo rounds its own top corners.
   card: { borderRadius: RADIUS.photo },
   big: { width: '100%', aspectRatio: 4 / 3, borderTopLeftRadius: RADIUS.photo, borderTopRightRadius: RADIUS.photo },
