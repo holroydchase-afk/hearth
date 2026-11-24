@@ -83,6 +83,17 @@ select tests.ok(tests.v('vis7_' || reach) = 'ok',
                        coalesce(tests.v('vis7_' || reach), 'errored: vis.kinds / vis.can_see missing')))
   from unnest(array['item', 'person', 'container', 'self', 'admin', 'server']) reach;
 
+-- VIS-7 (QA review of 0f64e37): the per-row check above can only address kinds with a uuid `id`. Pin the kinds it
+-- skips so a new kind can't drop out of the parity proof quietly; adding one here is a reviewed choice.
+select tests.ok_sql($$select coalesce(string_agg(kind, ',' order by kind), '') =
+                       'chat_device,chat_group,chat_message,child_guardian,circle_link,circle_member,circle_person,client_error,'
+                       'comment_mode_log,household_member,invite_circle,media_key,notification_pref,post_audience,post_child,'
+                       'post_view,reaction,space_child,space_feature,space_member,storage_purge_queue'
+                       from vis.kinds k
+                      where not exists (select 1 from pg_attribute a where a.attrelid = k.relation and a.attname = 'id'
+                                          and not a.attisdropped and a.atttypid = 'uuid'::regtype)$$,
+                    'VIS-7 the kinds can_see can''t address by id (no uuid id) are exactly the 21 reviewed ones');
+
 -- ---------- VIS-22 vis.sees_item agrees with private.sees_post on every user x post (gate for the swap) ----------
 select tests.ok_sql($$select count(*) = 0 from auth.users u cross join public.posts p
                        where vis.sees_item(u.id, p.id) is distinct from private.sees_post(u.id, p.id)$$,

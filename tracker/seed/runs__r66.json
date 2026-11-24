@@ -1,0 +1,9 @@
+{
+ "suite": "backend",
+ "at": "2026-11-24T18:00:00-05:00",
+ "label": "Visibility core Phase 1 and 1b (VIS-1..7, VIS-19..24): all suites 3x via test-all.sh (green)",
+ "passed": 1520,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs of bash test-all.sh at cc618ce (engineer's 0030/0031 and packages/visibility) plus qa-tdd's VIS-7 skip-list pin: 23 suites passed, 0 failed, 2 skipped x3. Backend SQL 1520 passed (VIS REGISTRY 223, VIS CORE 30, VIS GATE 8, VIS CORE KIT 30, VIS-21 3, RELAY 24), jest 2193 passed, typecheck clean, e2e:demo 43, e2e:web 5, prototype 33, each x3. App contract on the real API (PostgREST harness, contract-real.sh) 80 passed x3. Engineer's test edits reviewed: VIS-4 column-grant count is stricter (legit); VIS-7 uuid-only filter is legit but skipped 4 bigint kinds silently, now pinned (21 unaddressable kinds listed; a new one fails VIS-7); seed account_exports row makes the self-reach check non-vacuous (legit). Skipped: Supabase starter invites (no template), Deno (not installed); hosted owner BYPASSRLS not checked here. e2e/results/vis-core-green-3x-2026-11-24.txt"
+}
