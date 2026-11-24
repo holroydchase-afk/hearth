@@ -1144,55 +1144,63 @@ test('RD-110-R3 the bar shrunk on Share comes back whole on Feed after sending',
   await resetDemo(page);
 });
 
-// SHARE-ST-8 (SPEC-REDESIGN 1j-2, DEC-79, Chase Nov 20): Share opens on an empty postcard in the public demo at 393 px.
-// Reference: option B of /mnt/project-files/design/share-start-2026-11-20/share-start-tester.html. Written first (red),
-// Nov 21, by qa-tdd. Soft expects on each start page, so one run shows every part still missing.
-// QA-R (staff-pm): the demo's Grandma Jo is a viewer with no Share tab (RD-9), so her "Up to 10" can't be reached here;
-// it runs only if the demo ever lets her post, and the jest SHARE-ST-2/5 cases cover "Up to 10" meanwhile.
-test('SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded To:, no "Pick lots of photos"; Chase "Up to 100"; 3 photos show "1 of 3"', async ({ page }) => {
-  const shots = path.join(__dirname, '..', 'test-results', 'share-st-8');
+// SHARE-ST-8 / SHARE-ST-27 (SPEC-REDESIGN 1j-2, DEC-79; round 3 "Quiet postcard", wordless, Chase Nov 24): Share opens
+// on an empty postcard in the public demo at 393 px. Reference: option A of
+// /mnt/project-files/design/share-start-2026-11-20/share-start-quiet-tester.html. Retargeted and written first (red),
+// Nov 24, by qa-tdd: SHARE-ST-27 wins over SHARE-ST-8's "Up to 100", faded To: and SHARE-ST-10/14/15's words.
+// Contract (same as the jest file): the whole card (data-testid "share-card") is one button "Add photos, up to N at a
+// time"; data-testid "share-spot", "share-stamp", "share-note-rule" x2, "share-to-rule"; the only words in the card
+// are "Add photos", "To:" and the stamp's month and day. Soft expects, so one run shows every part still missing.
+// QA-R (staff-pm): the demo's Grandma Jo is a viewer with no Share tab (RD-9), so her "up to 10" can't be reached here;
+// it runs only if the demo ever lets her post, and the jest SHARE-ST-21 cases cover it meanwhile.
+test('SHARE-ST-8 SHARE-ST-27 wordless Share start: only "New post", "Add photos", "To:" and the stamp; one card button; a tap on a ruled line with 3 photos shows "1 of 3"', async ({ page }) => {
+  const shots = path.join(__dirname, '..', 'test-results', 'share-st-27');
   await page.setViewportSize({ width: 393, height: 852 });
   await page.emulateMedia({ colorScheme: 'light' });
   await page.goto('/');
   await galleryLoaded(page);
+  const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
   const startPage = async (limit, shot) => {
     await page.getByRole('tab', { name: /^Share/ }).click();
     await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
     const add = page.getByRole('button', { name: `Add photos, up to ${limit} at a time` }).filter({ visible: true });
-    await expect.soft(add).toBeVisible();
-    await expect.soft(page.getByText(`Up to ${limit} at a time`, { exact: true }).filter({ visible: true })).toBeVisible();
-    // engineer, flagged for qa-tdd: round 2 B+ (SHARE-ST-10/14/15) replaced the subline, the To: words and the fading.
-    await expect.soft(page.getByText('Only the people you pick will see it.', { exact: true }).filter({ visible: true })).toBeVisible();
-    const to = page.getByText('To: you pick after your photos', { exact: true }).filter({ visible: true });
-    await expect.soft(to).toBeVisible();
-    await expect.soft(page.getByText('Add a note (optional)', { exact: true }).filter({ visible: true })).toBeVisible();
-    // No old start page anywhere; no Send yet.
-    await expect.soft(page.getByText(/Pick lots of photos|Lots of photos\?|Share photos|Pick photos/)).toHaveCount(0);
-    await expect.soft(page.getByRole('button', { name: /^(Send to |Pick who gets it$)/ })).toHaveCount(0);
-    // SHARE-ST-14: the note and To: show at full strength (no opacity below 1) but stay hidden from screen readers.
-    if (await to.count()) {
-      const seen = await to.first().evaluate((el) => {
-        let o = 1; let hidden = false;
-        for (let n = el; n; n = n.parentElement) { o *= parseFloat(getComputedStyle(n).opacity || '1'); if (n.getAttribute('aria-hidden') === 'true') hidden = true; }
-        return { faded: o < 1, hidden };
-      });
-      expect.soft(seen).toEqual({ faded: false, hidden: true });
-    }
-    // The target's words stay inside it, and the page never scrolls sideways.
+    await expect.soft(add).toHaveCount(1);
+    const card = page.getByTestId('share-card').filter({ visible: true }).first();
+    await expect.soft(card).toBeVisible();
+    // The card is the one button (or sits inside it): the button holds the card.
     if (await add.count()) {
-      const spill = await add.first().evaluate((el) => {
+      const holds = await add.first().evaluate((b) => b.getAttribute('data-testid') === 'share-card' || !!b.querySelector('[data-testid="share-card"]') || ['share-spot', 'share-note-rule', 'share-to-rule'].every((id) => !!b.querySelector(`[data-testid="${id}"]`)));
+      expect.soft(holds).toBe(true);
+    }
+    for (const id of ['share-spot', 'share-stamp', 'share-to-rule']) await expect.soft(page.getByTestId(id).filter({ visible: true })).toHaveCount(1);
+    await expect.soft(page.getByTestId('share-note-rule').filter({ visible: true })).toHaveCount(2);
+    // Only these words in the card: "Add photos", "To:", the stamp's month and day.
+    const now = new Date();
+    const want = ['ADD', 'PHOTOS', 'TO:', MONTHS[now.getMonth()], String(now.getDate())].sort();
+    if (await card.count()) {
+      const got = (await card.innerText()).split(/\s+/).filter(Boolean).map((w) => w.toUpperCase()).sort();
+      expect.soft(got).toEqual(want);
+    }
+    // None of the older start-page words anywhere on the page.
+    await expect.soft(page.getByText(/Only the people you pick|For your family, nobody else|Up to \d+ at a time|To: you pick after|Add a note \(optional\)|Last shared|Add photos first|Pick lots of photos|Lots of photos\?|Share photos|Pick photos/)).toHaveCount(0);
+    await expect.soft(page.getByRole('button', { name: /^(Send to |Pick who gets it$)/ })).toHaveCount(0);
+    // "Add photos" stays inside the spot; the card is at least 48 px; the page never scrolls sideways.
+    const spot = page.getByTestId('share-spot').filter({ visible: true }).first();
+    if (await spot.count()) {
+      const spill = await spot.evaluate((el) => {
         const box = el.getBoundingClientRect(); let out = 0;
         const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
         for (let n = w.nextNode(); n; n = w.nextNode()) {
-          if (!n.textContent.trim()) continue;
+          if (!/Add photos/.test(n.textContent)) continue;
           const r = document.createRange(); r.selectNodeContents(n);
           for (const q of r.getClientRects()) out = Math.max(out, box.left - q.left, q.right - box.right, box.top - q.top, q.bottom - box.bottom);
         }
-        return { h: box.height >= 48, out: Math.round(out) };
+        return Math.round(out);
       });
-      expect.soft(spill).toEqual({ h: true, out: 0 });
+      expect.soft(spill).toBe(0);
     }
+    if (await add.count()) expect.soft((await add.first().boundingBox()).height).toBeGreaterThanOrEqual(48);
     expect.soft(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.screenshot({ path: path.join(shots, `${shot}.png`) });
   };
@@ -1201,7 +1209,7 @@ test('SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded 
   await page.emulateMedia({ colorScheme: 'dark' });
   await startPage(100, 'chase-dark');
   await page.emulateMedia({ colorScheme: 'light' });
-  // Chase with Easy view On: "Up to 10" (SHARE-ST-12).
+  // Chase with Easy view On: spoken "up to 10" (SHARE-ST-21).
   await page.getByRole('tab', { name: /^More/ }).click();
   await page.getByRole('button', { name: 'Easy view, Off' }).click();
   await page.getByRole('radio', { name: 'On', exact: true }).click();
@@ -1212,20 +1220,20 @@ test('SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded 
   await page.getByRole('button', { name: 'Easy view, On' }).click();
   await page.getByRole('radio', { name: 'Off', exact: true }).click();
 
-  // As Chase, the target with 3 photos opens the postcard at "1 of 3".
+  // As Chase, a tap on a ruled line (not the spot) opens the chooser; 3 photos open the postcard at "1 of 3".
   await page.getByRole('tab', { name: /^Share/ }).click();
   const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
-  await page.getByRole('button', { name: 'Add photos, up to 100 at a time' }).filter({ visible: true }).first().click();
+  await page.getByTestId('share-note-rule').filter({ visible: true }).first().click();
   await (await chooser).setFiles([FIXTURE, FIXTURE, FIXTURE]);
   await expect(page.getByText('1 of 3', { exact: true })).toBeVisible();
   await page.screenshot({ path: path.join(shots, 'chase-1-of-3.png') });
 
-  // Grandma Jo (Easy view on for her): "Up to 10", if the demo lets her post.
+  // Grandma Jo (Easy view on for her): "up to 10", if the demo lets her post.
   await asJo(page);
   if (await page.getByRole('tab', { name: /^Share/ }).count()) {
     await startPage(10, 'jo-easy-view');
   } else {
-    test.info().annotations.push({ type: 'SHARE-ST-8', description: 'Grandma Jo has no Share tab in the demo (viewer, RD-9); her "Up to 10" is not checked here.' });
+    test.info().annotations.push({ type: 'SHARE-ST-27', description: 'Grandma Jo has no Share tab in the demo (viewer, RD-9); her "up to 10" is not checked here.' });
   }
 });
 
