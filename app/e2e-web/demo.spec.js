@@ -1262,3 +1262,19 @@ test('DARK-ELEV-6 at 390 px dark: no visible element on the first screen has a d
   await page.emulateMedia({ colorScheme: 'light' });
   await expect.poll(() => shadeShadow(page)).not.toBe('none');
 });
+
+// EF-HE-1 (intake #162, guard): the three Messages "Open" buttons look alike but each speaks its own chat's name.
+test('EF-HE-1 at 390 px: each Messages "Open" button has a distinct accessible name holding its chat title', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: /^Messages(,|$)/ }).click();
+  await expect(page.getByRole('heading', { name: 'Messages' })).toBeVisible();
+  const open = page.getByRole('button', { name: /^Open the chat/ });
+  await expect(open.first()).toBeVisible();
+  const names = await open.evaluateAll((bs) => bs.map((b) => b.getAttribute('aria-label')));
+  expect(names.length).toBeGreaterThan(1);
+  expect(new Set(names).size).toBe(names.length);
+  for (const n of names) await expect(page.getByText(n.replace(/^Open the chat (with )?/, ''), { exact: true }).filter({ visible: true })).toBeVisible();
+});
