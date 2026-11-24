@@ -13,7 +13,8 @@
 --   f3 Mom's family (owner u2, replies open to everyone; Dad u1 is a relative here: the co-parent case)
 --   f4 a family that gets deleted (owner u1)
 -- Each family: Everyone, household, event, two plain groups and one group retired after use; share-history
--- cutoffs; 16 posts (one deleted, one draft, some words-only, some with unfinished media); replies, reactions,
+-- cutoffs; 16 posts (one deleted, one draft, some words-only, some with unfinished media; the words-only ones are
+-- news, event and saying posts with their post_events / post_sayings rows, 0034); replies, reactions,
 -- a deleted reply; birthdays and a family date; a chat; push tokens for some, email for all.
 create schema if not exists vis_oracle;
 
@@ -93,9 +94,18 @@ begin
       p := vis_oracle.id(p_seed, 'p' || n);
       auth := case when f = 1 and i % 5 = 0 then u[12] when f = 2 and i % 4 = 0 then u[13] when f = 3 then u[2]
                    when f = 2 then u[11] else u[1] end;
-      insert into public.posts (id, space_id, author_id, caption, title, taken_at)
+      -- words-only posts (i % 3 = 0, no media) are the 0034 kinds: news, event, saying, then an event again
+      insert into public.posts (id, space_id, author_id, caption, title, taken_at, kind)
         values (p, sp[f], auth, 'Post ' || n, case when i % 4 = 1 then 'Day ' || n end,
-                case when i % 3 = 0 then base - (i || ' days')::interval end);
+                case when i % 3 = 0 then base - (i || ' days')::interval end,
+                case i when 3 then 'news' when 6 then 'event' when 9 then 'saying' when 12 then 'event' else 'photos' end);
+      if i in (6, 12) then
+        insert into public.post_events (id, post_id, what, on_date, place)
+          values (vis_oracle.id(p_seed, 'ev' || n), p, 'Picnic ' || n, date '2026-02-01' + i, case when i = 6 then 'the park' end);
+      elsif i = 9 then
+        insert into public.post_sayings (id, post_id, words, who, age)
+          values (vis_oracle.id(p_seed, 'sy' || n), p, 'Crunchy water ' || n, 'Mia', 4);
+      end if;
       insert into public.post_audiences (post_id, circle_id)
         values (p, circ[1 + floor(vis_oracle.rnd(p_seed, 'aud:' || n) * 6)::int]);
       if vis_oracle.rnd(p_seed, 'aud2:' || n) < 0.4 then
@@ -173,7 +183,7 @@ create or replace function vis_oracle.fixture_json() returns jsonb language sql 
                          from public.circle_members cm where cm.circle_id in (select id from ci)),
     'posts', (select coalesce(jsonb_agg(jsonb_build_object('id', p.id, 'space', p.space_id, 'author', p.author_id,
                 'status', p.status, 'deleted', p.deleted_at is not null, 'published_at', vis_oracle.ts(p.published_at),
-                'taken_at', vis_oracle.ts(p.taken_at), 'title', p.title, 'caption', p.caption,
+                'taken_at', vis_oracle.ts(p.taken_at), 'title', p.title, 'caption', p.caption, 'kind', p.kind,
                 'circles', (select coalesce(jsonb_agg(pa.circle_id order by pa.circle_id), '[]')
                               from public.post_audiences pa where pa.post_id = p.id)) order by p.id), '[]') from po p),
     'comments', (select coalesce(jsonb_agg(jsonb_build_object('id', c.id, 'post', c.post_id, 'author', c.author_id, 'body', c.body,

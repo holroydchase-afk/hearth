@@ -3,6 +3,7 @@
     "posts": [
         {
             "id": "00506d07-098f-4f65-8639-88e9a81e2526",
+            "kind": "news",
             "space": "de1aaa6c-21d2-4128-8215-88f519974f06",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -18,6 +19,7 @@
         },
         {
             "id": "01511d69-ab3a-45c9-80d3-6baf4797879d",
+            "kind": "photos",
             "space": "e0f70a14-2bd9-4d3b-899d-cff5674cf3e3",
             "title": null,
             "author": "34f54546-a518-42cc-87fb-c86c29b7bd4f",
@@ -33,6 +35,7 @@
         },
         {
             "id": "01f7731b-84ce-4bf9-83da-184cbbd1dc8a",
+            "kind": "event",
             "space": "51299002-b4ec-4b52-8db6-fe52a5055b95",
             "title": null,
             "author": "93f2efae-52c4-463a-8891-6992fd5b6a0a",
@@ -48,6 +51,7 @@
         },
         {
             "id": "04479d36-78e7-49ba-8da8-4a8c3bb2bf67",
+            "kind": "photos",
             "space": "71fcbcf9-c9c2-4445-8b1e-7d9e130b7ea3",
             "title": null,
             "author": "f92e6ddb-1a7e-47c6-811f-180be5634efc",
@@ -62,6 +66,7 @@
         },
         {
             "id": "053be082-8505-4d70-8762-d09ebe86880b",
+            "kind": "photos",
             "space": "51299002-b4ec-4b52-8db6-fe52a5055b95",
             "title": null,
             "author": "ea92df82-2e11-4388-89f4-da059e06747a",
@@ -76,6 +81,7 @@
         },
         {
             "id": "083df10d-214f-4c34-8494-e558915c8503",
+            "kind": "photos",
             "space": "e0f70a14-2bd9-4d3b-899d-cff5674cf3e3",
             "title": null,
             "author": "34f54546-a518-42cc-87fb-c86c29b7bd4f",
@@ -91,6 +97,7 @@
         },
         {
             "id": "0d9dcc63-9e93-4039-87d1-861ff228079e",
+            "kind": "event",
             "space": "de1aaa6c-21d2-4128-8215-88f519974f06",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -105,6 +112,7 @@
         },
         {
             "id": "0fbf31c8-c11d-4c69-8d5c-ad39caf8f039",
+            "kind": "photos",
             "space": "de1aaa6c-21d2-4128-8215-88f519974f06",
             "title": "Day 61",
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -120,6 +128,7 @@
         },
         {
             "id": "12b84e8d-6adf-4a77-834f-9aa4d49473a9",
+            "kind": "saying",
             "space": "71fcbcf9-c9c2-4445-8b1e-7d9e130b7ea3",
             "title": "Day 9",
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -134,6 +143,7 @@
         },
         {
             "id": "17fddc56-0f20-4bd3-8c6f-dd41af2fecba",
+            "kind": "photos",
             "space": "e0f70a14-2bd9-4d3b-899d-cff5674cf3e3",
             "title": null,
             "author": "34f54546-a518-42cc-87fb-c86c29b7bd4f",
@@ -149,6 +159,7 @@
         },
         {
             "id": "1874d35f-570c-49a7-813e-1665e2ca653f",
+            "kind": "photos",
             "space": "de1aaa6c-21d2-4128-8215-88f519974f06",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -164,6 +175,7 @@
         },
         {
             "id": "1e32a061-7937-4a21-8789-b68f8a206f41",
+            "kind": "photos",
             "space": "e0f70a14-2bd9-4d3b-899d-cff5674cf3e3",
             "title": null,
             "author": "34f54546-a518-42cc-87fb-c86c29b7bd4f",
@@ -179,6 +191,7 @@
         },
         {
             "id": "2aa6d456-9483-42aa-8247-ecc3e46f95cf",
+            "kind": "photos",
             "space": "71fcbcf9-c9c2-4445-8b1e-7d9e130b7ea3",
             "title": "Day 1",
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -194,6 +207,7 @@
         },
         {
             "id": "2caf7f36-757e-405e-8952-e361bc12c75a",
+            "kind": "photos",
             "space": "51299002-b4ec-4b52-8db6-fe52a5055b95",
             "title": null,
             "author": "ea92df82-2e11-4388-89f4-da059e06747a",
@@ -209,6 +223,7 @@
         },
         {
             "id": "339deab9-62e3-4b4a-8673-1f10947db387",
+            "kind": "photos",
             "space": "de1aaa6c-21d2-4128-8215-88f519974f06",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -224,6 +239,7 @@
         },
         {
             "id": "34569c33-d0eb-4688-86de-d13e034595c0",
+            "kind": "photos",
             "space": "71fcbcf9-c9c2-4445-8b1e-7d9e130b7ea3",
             "title": "Day 5",
             "author": "f92e6ddb-1a7e-47c6-811f-180be5634efc",
@@ -238,6 +254,7 @@
         },
         {
             "id": "3af81642-2737-4b08-85bf-c49795597bb0",
+            "kind": "photos",
             "space": "71fcbcf9-c9c2-4445-8b1e-7d9e130b7ea3",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -252,6 +269,7 @@
         },
         {
             "id": "464164b4-a54f-4b9f-8bad-f3f763e78aab",
+            "kind": "photos",
             "space": "71fcbcf9-c9c2-4445-8b1e-7d9e130b7ea3",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -267,6 +285,7 @@
         },
         {
             "id": "48fd1583-8097-4808-8b01-8f03b7fc2081",
+            "kind": "photos",
             "space": "71fcbcf9-c9c2-4445-8b1e-7d9e130b7ea3",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -281,6 +300,7 @@
         },
         {
             "id": "4911df1d-4b71-4bb0-89c9-893707c41d48",
+            "kind": "event",
             "space": "51299002-b4ec-4b52-8db6-fe52a5055b95",
             "title": null,
             "author": "ea92df82-2e11-4388-89f4-da059e06747a",
@@ -295,6 +315,7 @@
         },
         {
             "id": "4c1d65ce-035a-41de-8684-92f529d806bb",
+            "kind": "event",
             "space": "e0f70a14-2bd9-4d3b-899d-cff5674cf3e3",
             "title": null,
             "author": "34f54546-a518-42cc-87fb-c86c29b7bd4f",
@@ -309,6 +330,7 @@
         },
         {
             "id": "51ab2202-be91-4da1-8a57-4151945d3d26",
+            "kind": "event",
             "space": "de1aaa6c-21d2-4128-8215-88f519974f06",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -323,6 +345,7 @@
         },
         {
             "id": "527fe5a8-fb3e-4096-8775-0f28e69dec93",
+            "kind": "photos",
             "space": "e0f70a14-2bd9-4d3b-899d-cff5674cf3e3",
             "title": "Day 33",
             "author": "34f54546-a518-42cc-87fb-c86c29b7bd4f",
@@ -338,6 +361,7 @@
         },
         {
             "id": "54368cd6-de30-411b-8ca6-419cfe56f699",
+            "kind": "photos",
             "space": "71fcbcf9-c9c2-4445-8b1e-7d9e130b7ea3",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -353,6 +377,7 @@
         },
         {
             "id": "5a490be2-900a-4060-8350-9a3cc68d678a",
+            "kind": "photos",
             "space": "e0f70a14-2bd9-4d3b-899d-cff5674cf3e3",
             "title": "Day 37",
             "author": "34f54546-a518-42cc-87fb-c86c29b7bd4f",
@@ -367,6 +392,7 @@
         },
         {
             "id": "5b4ff098-0f8f-4f6e-84b2-fd6acfa084cb",
+            "kind": "photos",
             "space": "de1aaa6c-21d2-4128-8215-88f519974f06",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -381,6 +407,7 @@
         },
         {
             "id": "630f6c99-4fa0-4387-8742-b88f2330f59d",
+            "kind": "photos",
             "space": "51299002-b4ec-4b52-8db6-fe52a5055b95",
             "title": null,
             "author": "ea92df82-2e11-4388-89f4-da059e06747a",
@@ -395,6 +422,7 @@
         },
         {
             "id": "6a41bcca-7672-4dc7-8faf-7f141ea5a28e",
+            "kind": "saying",
             "space": "e0f70a14-2bd9-4d3b-899d-cff5674cf3e3",
             "title": "Day 41",
             "author": "34f54546-a518-42cc-87fb-c86c29b7bd4f",
@@ -409,6 +437,7 @@
         },
         {
             "id": "6c46e2a0-2374-4df1-8893-e79d9761090c",
+            "kind": "news",
             "space": "e0f70a14-2bd9-4d3b-899d-cff5674cf3e3",
             "title": null,
             "author": "34f54546-a518-42cc-87fb-c86c29b7bd4f",
@@ -424,6 +453,7 @@
         },
         {
             "id": "6f0f2850-568a-4cc7-8c7a-21ed45521f2b",
+            "kind": "photos",
             "space": "e0f70a14-2bd9-4d3b-899d-cff5674cf3e3",
             "title": null,
             "author": "34f54546-a518-42cc-87fb-c86c29b7bd4f",
@@ -439,6 +469,7 @@
         },
         {
             "id": "7328b651-79ae-4137-8244-ae12b39b4d61",
+            "kind": "photos",
             "space": "de1aaa6c-21d2-4128-8215-88f519974f06",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -453,6 +484,7 @@
         },
         {
             "id": "74609207-bd17-47d3-87d6-a35790fe87df",
+            "kind": "photos",
             "space": "e0f70a14-2bd9-4d3b-899d-cff5674cf3e3",
             "title": null,
             "author": "34f54546-a518-42cc-87fb-c86c29b7bd4f",
@@ -467,6 +499,7 @@
         },
         {
             "id": "80bb0c75-f2ec-4859-8dc6-7bf4bc79e531",
+            "kind": "photos",
             "space": "e0f70a14-2bd9-4d3b-899d-cff5674cf3e3",
             "title": null,
             "author": "34f54546-a518-42cc-87fb-c86c29b7bd4f",
@@ -481,6 +514,7 @@
         },
         {
             "id": "81d740ec-6cff-4d41-8101-d751f7f110d7",
+            "kind": "photos",
             "space": "de1aaa6c-21d2-4128-8215-88f519974f06",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -495,6 +529,7 @@
         },
         {
             "id": "82f111ad-85c9-4dd4-8fef-4623e897e7b6",
+            "kind": "photos",
             "space": "51299002-b4ec-4b52-8db6-fe52a5055b95",
             "title": "Day 29",
             "author": "ea92df82-2e11-4388-89f4-da059e06747a",
@@ -509,6 +544,7 @@
         },
         {
             "id": "84a6bd57-efc2-429c-8580-e77c027e5068",
+            "kind": "photos",
             "space": "51299002-b4ec-4b52-8db6-fe52a5055b95",
             "title": null,
             "author": "93f2efae-52c4-463a-8891-6992fd5b6a0a",
@@ -523,6 +559,7 @@
         },
         {
             "id": "86b45a63-8e2d-4103-8854-5f1d5bbcbc94",
+            "kind": "photos",
             "space": "51299002-b4ec-4b52-8db6-fe52a5055b95",
             "title": "Day 21",
             "author": "ea92df82-2e11-4388-89f4-da059e06747a",
@@ -538,6 +575,7 @@
         },
         {
             "id": "87662902-26d3-4907-858b-94b10d7b651c",
+            "kind": "event",
             "space": "71fcbcf9-c9c2-4445-8b1e-7d9e130b7ea3",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -552,6 +590,7 @@
         },
         {
             "id": "8aecf48c-59b4-4855-8ade-4aadc121e9a7",
+            "kind": "photos",
             "space": "de1aaa6c-21d2-4128-8215-88f519974f06",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -566,6 +605,7 @@
         },
         {
             "id": "8cb4a682-ca7d-49b0-8d45-25d7d630c3d5",
+            "kind": "photos",
             "space": "e0f70a14-2bd9-4d3b-899d-cff5674cf3e3",
             "title": null,
             "author": "34f54546-a518-42cc-87fb-c86c29b7bd4f",
@@ -580,6 +620,7 @@
         },
         {
             "id": "9ef5278e-6c70-4e1e-87be-75132fe80f0e",
+            "kind": "photos",
             "space": "71fcbcf9-c9c2-4445-8b1e-7d9e130b7ea3",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -594,6 +635,7 @@
         },
         {
             "id": "a2728ec0-cf5a-4fbd-8f80-0fdd5d0273b3",
+            "kind": "photos",
             "space": "de1aaa6c-21d2-4128-8215-88f519974f06",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -608,6 +650,7 @@
         },
         {
             "id": "a7a00117-f799-442f-8692-ede0a3bf15f3",
+            "kind": "photos",
             "space": "51299002-b4ec-4b52-8db6-fe52a5055b95",
             "title": null,
             "author": "ea92df82-2e11-4388-89f4-da059e06747a",
@@ -623,6 +666,7 @@
         },
         {
             "id": "a85a13e1-993a-493f-8432-fc79bdd2d120",
+            "kind": "saying",
             "space": "51299002-b4ec-4b52-8db6-fe52a5055b95",
             "title": "Day 25",
             "author": "ea92df82-2e11-4388-89f4-da059e06747a",
@@ -637,6 +681,7 @@
         },
         {
             "id": "af3d19dc-522a-4e3e-8a5a-c3f8cb2d06eb",
+            "kind": "photos",
             "space": "e0f70a14-2bd9-4d3b-899d-cff5674cf3e3",
             "title": "Day 45",
             "author": "34f54546-a518-42cc-87fb-c86c29b7bd4f",
@@ -651,6 +696,7 @@
         },
         {
             "id": "b2756ab6-e6d2-49bb-83bb-d7ddf329f10f",
+            "kind": "photos",
             "space": "51299002-b4ec-4b52-8db6-fe52a5055b95",
             "title": null,
             "author": "ea92df82-2e11-4388-89f4-da059e06747a",
@@ -665,6 +711,7 @@
         },
         {
             "id": "b3f16916-4bde-4659-8fea-71c255b59e36",
+            "kind": "event",
             "space": "e0f70a14-2bd9-4d3b-899d-cff5674cf3e3",
             "title": null,
             "author": "34f54546-a518-42cc-87fb-c86c29b7bd4f",
@@ -679,6 +726,7 @@
         },
         {
             "id": "b6196c9e-d0ed-499d-8902-de449c7b5258",
+            "kind": "photos",
             "space": "71fcbcf9-c9c2-4445-8b1e-7d9e130b7ea3",
             "title": null,
             "author": "f92e6ddb-1a7e-47c6-811f-180be5634efc",
@@ -694,6 +742,7 @@
         },
         {
             "id": "b9513a98-aaf2-4208-82fc-cdef61fb719f",
+            "kind": "photos",
             "space": "51299002-b4ec-4b52-8db6-fe52a5055b95",
             "title": null,
             "author": "ea92df82-2e11-4388-89f4-da059e06747a",
@@ -708,6 +757,7 @@
         },
         {
             "id": "c4e2664f-5f6c-4efe-8195-a94594967857",
+            "kind": "news",
             "space": "51299002-b4ec-4b52-8db6-fe52a5055b95",
             "title": null,
             "author": "ea92df82-2e11-4388-89f4-da059e06747a",
@@ -723,6 +773,7 @@
         },
         {
             "id": "ca92395d-756a-43cb-858f-b99ff1e6dd4d",
+            "kind": "photos",
             "space": "51299002-b4ec-4b52-8db6-fe52a5055b95",
             "title": null,
             "author": "93f2efae-52c4-463a-8891-6992fd5b6a0a",
@@ -737,6 +788,7 @@
         },
         {
             "id": "cf079ab5-f3b6-46d3-88fc-500f04af2a10",
+            "kind": "photos",
             "space": "de1aaa6c-21d2-4128-8215-88f519974f06",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -752,6 +804,7 @@
         },
         {
             "id": "d550bf17-e8d1-442a-878c-491c21b1ac3e",
+            "kind": "photos",
             "space": "71fcbcf9-c9c2-4445-8b1e-7d9e130b7ea3",
             "title": "Day 13",
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -767,6 +820,7 @@
         },
         {
             "id": "d7eb7723-60b8-4d9e-83db-9862b5369f1a",
+            "kind": "news",
             "space": "71fcbcf9-c9c2-4445-8b1e-7d9e130b7ea3",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -781,6 +835,7 @@
         },
         {
             "id": "d8aa0a66-eb23-46ea-828c-88a8a73b122f",
+            "kind": "photos",
             "space": "de1aaa6c-21d2-4128-8215-88f519974f06",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -796,6 +851,7 @@
         },
         {
             "id": "dd8edb8f-94cb-465e-8626-e8123897d0d4",
+            "kind": "photos",
             "space": "e0f70a14-2bd9-4d3b-899d-cff5674cf3e3",
             "title": null,
             "author": "34f54546-a518-42cc-87fb-c86c29b7bd4f",
@@ -810,6 +866,7 @@
         },
         {
             "id": "e0c8d999-cf9b-48c8-8cc3-96bd1247396b",
+            "kind": "photos",
             "space": "51299002-b4ec-4b52-8db6-fe52a5055b95",
             "title": null,
             "author": "93f2efae-52c4-463a-8891-6992fd5b6a0a",
@@ -824,6 +881,7 @@
         },
         {
             "id": "e12a82cd-1740-43b9-8ec0-c7a1055afcc2",
+            "kind": "photos",
             "space": "de1aaa6c-21d2-4128-8215-88f519974f06",
             "title": "Day 49",
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -838,6 +896,7 @@
         },
         {
             "id": "e16d865d-7510-4fe9-8757-709867953a65",
+            "kind": "photos",
             "space": "de1aaa6c-21d2-4128-8215-88f519974f06",
             "title": "Day 53",
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -852,6 +911,7 @@
         },
         {
             "id": "ed31c2d3-ee7b-4a13-8076-2d64091aab10",
+            "kind": "event",
             "space": "71fcbcf9-c9c2-4445-8b1e-7d9e130b7ea3",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -867,6 +927,7 @@
         },
         {
             "id": "f00e5ecf-79a7-40b1-8f69-c82a669a0337",
+            "kind": "photos",
             "space": "51299002-b4ec-4b52-8db6-fe52a5055b95",
             "title": "Day 17",
             "author": "ea92df82-2e11-4388-89f4-da059e06747a",
@@ -882,6 +943,7 @@
         },
         {
             "id": "f12b9ced-9ec9-41d6-855f-b7e27b34b7ad",
+            "kind": "saying",
             "space": "de1aaa6c-21d2-4128-8215-88f519974f06",
             "title": "Day 57",
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -897,6 +959,7 @@
         },
         {
             "id": "f533bf66-8af4-4ab7-8bbb-7084967ca766",
+            "kind": "photos",
             "space": "71fcbcf9-c9c2-4445-8b1e-7d9e130b7ea3",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",
@@ -911,6 +974,7 @@
         },
         {
             "id": "ff14d9d2-e8fd-4693-8021-6a8bb1699815",
+            "kind": "photos",
             "space": "71fcbcf9-c9c2-4445-8b1e-7d9e130b7ea3",
             "title": null,
             "author": "361ca342-c99a-4ffb-8f19-b2cae815fe42",

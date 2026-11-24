@@ -1,0 +1,77 @@
+# 0034 post kinds (1c36369) 3x + R83 red (qa-tdd, Nov 24 2026). bash test-all.sh x3 (Deno 2.9.6 from npm on PATH) and app/scripts/contract-real.sh x3.
+# No test loosened since bcaabd4: git diff bcaabd4 1c36369 touches only generate.sql (makes news/event/saying rows) and seed-42.json under tests.
+
+== run 1
+FAILED: backend SQL
+FAILED: Deno functions
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SUITES: 22 passed, 2 failed, 1 skipped
+VIS ORACLE RESULT: 101 passed, 0 failed
+ 82 | NOT OK | R83 claim_notification_batches carries post_kinds for each batch
+ 83 | NOT OK | R83 Grandma Rivera's batch with the news and event posts says their kinds are news and event
+POST KINDS RESULT: 82 passed, 2 failed
+R83 push for a news, event or saying post never mentions photos and still names who sent it ... FAILED (937µs)
+R83 email for a news, event or saying post never mentions photos and still names who sent it ... FAILED (544µs)
+R83 each kind gets its own wording (not one generic line for all three) ... FAILED (419µs)
+R83 a photos batch (post_kinds ['photos']) keeps today's words ... ok (192µs)
+R83 the kind wording carries no caption, what, where or saying words (the batch has none to give) ... ok (272µs)
+R83 push for a news, event or saying post never mentions photos and still names who sent it => ./supabase/functions/notify/index_test.ts:250:6
+R83 email for a news, event or saying post never mentions photos and still names who sent it => ./supabase/functions/notify/index_test.ts:260:6
+R83 each kind gets its own wording (not one generic line for all three) => ./supabase/functions/notify/index_test.ts:269:6
+R83 push for a news, event or saying post never mentions photos and still names who sent it => ./supabase/functions/notify/index_test.ts:250:6
+R83 email for a news, event or saying post never mentions photos and still names who sent it => ./supabase/functions/notify/index_test.ts:260:6
+R83 each kind gets its own wording (not one generic line for all three) => ./supabase/functions/notify/index_test.ts:269:6
+FAILED | 47 passed | 3 failed (427ms)
+Tests:       1 skipped, 1 todo, 2276 passed, 2278 total
+contract-real:
+Tests:       149 skipped, 91 passed, 240 total
+
+== run 2
+FAILED: backend SQL
+FAILED: Deno functions
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SUITES: 22 passed, 2 failed, 1 skipped
+VIS ORACLE RESULT: 101 passed, 0 failed
+ 82 | NOT OK | R83 claim_notification_batches carries post_kinds for each batch
+ 83 | NOT OK | R83 Grandma Rivera's batch with the news and event posts says their kinds are news and event
+POST KINDS RESULT: 82 passed, 2 failed
+R83 push for a news, event or saying post never mentions photos and still names who sent it ... FAILED (867µs)
+R83 email for a news, event or saying post never mentions photos and still names who sent it ... FAILED (433µs)
+R83 each kind gets its own wording (not one generic line for all three) ... FAILED (275µs)
+R83 a photos batch (post_kinds ['photos']) keeps today's words ... ok (77µs)
+R83 the kind wording carries no caption, what, where or saying words (the batch has none to give) ... ok (152µs)
+R83 push for a news, event or saying post never mentions photos and still names who sent it => ./supabase/functions/notify/index_test.ts:250:6
+R83 email for a news, event or saying post never mentions photos and still names who sent it => ./supabase/functions/notify/index_test.ts:260:6
+R83 each kind gets its own wording (not one generic line for all three) => ./supabase/functions/notify/index_test.ts:269:6
+R83 push for a news, event or saying post never mentions photos and still names who sent it => ./supabase/functions/notify/index_test.ts:250:6
+R83 email for a news, event or saying post never mentions photos and still names who sent it => ./supabase/functions/notify/index_test.ts:260:6
+R83 each kind gets its own wording (not one generic line for all three) => ./supabase/functions/notify/index_test.ts:269:6
+FAILED | 47 passed | 3 failed (356ms)
+Tests:       1 skipped, 1 todo, 2276 passed, 2278 total
+contract-real:
+Tests:       149 skipped, 91 passed, 240 total
+
+== run 3
+FAILED: backend SQL
+FAILED: Deno functions
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SUITES: 22 passed, 2 failed, 1 skipped
+VIS ORACLE RESULT: 101 passed, 0 failed
+ 82 | NOT OK | R83 claim_notification_batches carries post_kinds for each batch
+ 83 | NOT OK | R83 Grandma Rivera's batch with the news and event posts says their kinds are news and event
+POST KINDS RESULT: 82 passed, 2 failed
+R83 push for a news, event or saying post never mentions photos and still names who sent it ... FAILED (1ms)
+R83 email for a news, event or saying post never mentions photos and still names who sent it ... FAILED (605µs)
+R83 each kind gets its own wording (not one generic line for all three) ... FAILED (486µs)
+R83 a photos batch (post_kinds ['photos']) keeps today's words ... ok (139µs)
+R83 the kind wording carries no caption, what, where or saying words (the batch has none to give) ... ok (229µs)
+R83 push for a news, event or saying post never mentions photos and still names who sent it => ./supabase/functions/notify/index_test.ts:250:6
+R83 email for a news, event or saying post never mentions photos and still names who sent it => ./supabase/functions/notify/index_test.ts:260:6
+R83 each kind gets its own wording (not one generic line for all three) => ./supabase/functions/notify/index_test.ts:269:6
+R83 push for a news, event or saying post never mentions photos and still names who sent it => ./supabase/functions/notify/index_test.ts:250:6
+R83 email for a news, event or saying post never mentions photos and still names who sent it => ./supabase/functions/notify/index_test.ts:260:6
+R83 each kind gets its own wording (not one generic line for all three) => ./supabase/functions/notify/index_test.ts:269:6
+FAILED | 47 passed | 3 failed (375ms)
+Tests:       1 skipped, 1 todo, 2276 passed, 2278 total
+contract-real:
+Tests:       149 skipped, 91 passed, 240 total

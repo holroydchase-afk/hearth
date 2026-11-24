@@ -1,0 +1,148 @@
+# SHARE-U-4, 5, 11..15 red run (qa-tdd, Nov 24 2026): bash backend/tests/run.sh on main 2e83d02 + the new tests, before migration 0034.
+# Every other backend suite: 0 failed. Red only in post_kinds_test.sql and the four new VIS-8 checks in vis_oracle_test.sql.
+
+RESULT: 120 passed, 0 failed
+API RESULT: 174 passed, 0 failed
+NOTIFY RESULT: 60 passed, 0 failed
+SETUP RESULT: 5 passed, 0 failed
+REPLY RESULT: 47 passed, 0 failed
+TIMELINE RESULT: 39 passed, 0 failed
+GROUPS RESULT: 167 passed, 0 failed
+TIMELINE-FUTURE RESULT: 6 passed, 0 failed
+PRIVACY-AUDIT RESULT: 15 passed, 0 failed
+GROUPS-V2 RESULT: 118 passed, 0 failed
+CHAT RESULT: 57 passed, 0 failed
+HELPERS RESULT: 13 passed, 0 failed
+REACTIONS RESULT: 22 passed, 0 failed
+CAPTIONS RESULT: 32 passed, 0 failed
+VIDEO CAP RESULT: 14 passed, 0 failed
+WHO RESULT: 7 passed, 0 failed
+START FAMILY RESULT: 88 passed, 0 failed
+SEARCH RESULT: 34 passed, 0 failed
+SMS RESULT: 35 passed, 0 failed
+GROUP NAMES RESULT: 4 passed, 0 failed
+AUTH NO PASSWORDS RESULT: 12 passed, 0 failed
+FAMILY DATES RESULT: 101 passed, 0 failed
+VIS REGISTRY RESULT: 240 passed, 0 failed
+VIS CORE RESULT: 65 passed, 0 failed
+VIS CALENDAR RESULT: 8 passed, 0 failed
+VIS ORACLE RESULT: 95 passed, 4 failed
+POST KINDS RESULT: 11 passed, 69 failed
+AUD-16 RESULT: 11 passed, 0 failed
+GRP-1 RESULT: 10 passed, 0 failed
+SETUP V2 RESULT: 15 passed, 0 failed
+SETUP API RESULT: 34 passed, 0 failed
+        | RESULT: sent 12, received 11, lost 1
+SENT-RECEIVED RESULT: 20 passed, 0 failed
+        | SMOKE RESULT: 9 ok, 0 failed
+ok      D1 smoke: ends with "SMOKE RESULT: N ok, 0 failed"
+SMOKE CHECK TEST RESULT: 28 passed, 0 failed
+AUTH CONFIG TEST RESULT: 6 passed, 0 failed
+psql:../packages/messenger/relay/test.sql:123: NOTICE:  RELAY RESULT: 24 passed, 0 failed
+VIS GATE RESULT: 8 passed, 0 failed
+psql:../packages/visibility/core/test.sql:180: NOTICE:  VIS CORE KIT RESULT: 30 passed, 0 failed
+VIS-21 RESULT: 3 passed, 0 failed
+VIS CORE COPY RESULT: 4 passed, 0 failed
+
+## vis_oracle_test.sql failures
+ 25 | NOT OK | VIS-8 shape: live news, event and saying posts (SHARE-U-4, posts.kind)  [42703 column p.kind does not exist]
+ 26 | NOT OK | VIS-8 shape: at least two event rows and two saying rows (SHARE-U-15)  [42P01 relation "public.post_events" does not exist]
+ 57 | NOT OK | VIS-8 table (public.post_events) equals vis.can_see for every person, both ways (SHARE-U-15)
+ 58 | NOT OK | VIS-8 table (public.post_sayings) equals vis.can_see for every person, both ways (SHARE-U-15)
+
+## post_kinds_test.sql
+  1 | ok     | SHARE-U-12 my_features never lists post_kinds while no switch row exists (off by default)
+  2 | NOT OK | SHARE-U-12 with post_kinds off, the owner's news post is refused 42501 post_kinds_off  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+  3 | NOT OK | SHARE-U-12 with post_kinds off, an event is refused (42501)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+  4 | NOT OK | SHARE-U-12 with post_kinds off, a saying is refused (42501)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+  5 | NOT OK | SHARE-U-12 with post_kinds off, a photos post (p_kind photos) is still created  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+  6 | ok     | SHARE-U-12 an older app build (no p_kind, no p_details) still creates a post
+  7 | NOT OK | SHARE-U-12 a post made without p_kind is kind photos  [42703 column "kind" does not exist]
+  8 | NOT OK | SHARE-U-12 every existing post is kind photos after the migration  [42703 column "kind" does not exist]
+  9 | NOT OK | SHARE-U-12 the family switch on but Hearth's global switch missing: still refused (42501)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 10 | NOT OK | SHARE-U-12 Hearth's global switch on but the family's off: still refused (42501)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 11 | NOT OK | SHARE-U-12 both switches on: my_features lists post_kinds for the owner
+ 12 | ok     | SHARE-U-12 ...and never for a relative (parents only)
+ 13 | NOT OK | SHARE-U-4 the owner creates a news post (words only) for one group
+ 14 | NOT OK | SHARE-U-4 a news post publishes with no media  [P0002 post not found]
+ 15 | NOT OK | SHARE-U-4 news with blank words is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 16 | NOT OK | SHARE-U-4 news with no words is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 17 | NOT OK | SHARE-U-4 news with no audience is refused (23514, one post one audience)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 18 | NOT OK | SHARE-U-4 news with event fields is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 19 | NOT OK | SHARE-U-4 news with media: prepare_media_upload on a news post is refused (23514)  [42501 cannot upload to this post]
+ 20 | ok     | SHARE-U-4 news with media: a direct media insert on a news post is refused  [42501 new row violates row-level security policy for table "media_items"]
+ 21 | NOT OK | SHARE-U-4 stored as posts.kind news, words trimmed, no media, its one audience  [42703 column "kind" does not exist]
+ 22 | NOT OK | SHARE-U-4 no news, event or saying post has any media row  [42703 column p.kind does not exist]
+ 23 | NOT OK | SHARE-U-4 a photos draft with no media still can't be published (23514)  [P0002 post not found]
+ 24 | NOT OK | SHARE-U-4 a photos post with kind fields is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 25 | NOT OK | SHARE-U-4 an unknown kind is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 26 | NOT OK | SHARE-U-11 the owner creates an event (what, when, where) for one group
+ 27 | NOT OK | SHARE-U-11 an event publishes with no media  [P0002 post not found]
+ 28 | NOT OK | SHARE-U-11 where is optional
+ 29 | NOT OK | SHARE-U-11 an event without when is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 30 | NOT OK | SHARE-U-11 an event with a blank when is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 31 | NOT OK | SHARE-U-11 an event whose when isn't a date is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 32 | NOT OK | SHARE-U-11 an event without what is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 33 | NOT OK | SHARE-U-11 an event with blank what is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 34 | NOT OK | SHARE-U-11 an event with no fields is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 35 | NOT OK | SHARE-U-11 an event retry with the same client id returns the same post
+ 36 | NOT OK | SHARE-U-11 ...and writes one event row, not two  [42P01 relation "public.post_events" does not exist]
+ 37 | NOT OK | SHARE-U-11 stored as posts.kind event plus one post_events row with what, when and where  [42703 column p.kind does not exist]
+ 38 | NOT OK | SHARE-U-13 the owner creates a saying (words, who, age) for one group
+ 39 | NOT OK | SHARE-U-13 a saying publishes with no media  [P0002 post not found]
+ 40 | NOT OK | SHARE-U-13 age is optional
+ 41 | NOT OK | SHARE-U-13 a saying without words is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 42 | NOT OK | SHARE-U-13 a saying with blank words is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 43 | NOT OK | SHARE-U-13 a saying without who is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 44 | NOT OK | SHARE-U-13 a saying with blank who is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 45 | NOT OK | SHARE-U-13 a negative age is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 46 | NOT OK | SHARE-U-13 an age over 120 is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 47 | NOT OK | SHARE-U-13 an age that isn't a number is refused (23514)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 48 | NOT OK | SHARE-U-13 stored as posts.kind saying plus one post_sayings row with the words and who said it  [42703 column p.kind does not exist]
+ 49 | NOT OK | SHARE-U-15 post_events and post_sayings are registered as item kinds on post_id, with no rule and no hook (no new visibility rule)
+ 50 | NOT OK | SHARE-U-15 RLS is on and forced on both
+ 51 | NOT OK | SHARE-U-15 each has exactly one permissive read policy, vis.attach's (the post's own rule)
+ 52 | NOT OK | SHARE-U-15 app users can't write either table (create_post only), and anon can't read them  [42P01 relation "public.post_events" does not exist]
+ 53 | NOT OK | SHARE-U-15 VIS-8 for event and saying rows: not run, public.post_events / public.post_sayings missing (0034)
+ 54 | NOT OK | SHARE-U-5 allowed: Grandma Rivera (in the group) gets the news, event and saying in her feed, each with its kind  [42703 column "kind" does not exist]
+ 55 | NOT OK | SHARE-U-5 allowed: ...and on her timeline, with kind  [42703 column f.kind does not exist]
+ 56 | NOT OK | SHARE-U-5 allowed: ...and in search, with kind  [42703 column f.kind does not exist]
+ 57 | NOT OK | SHARE-U-5 allowed: ...search finds the news by its words
+ 58 | NOT OK | SHARE-U-5 allowed: ...each opens by id
+ 59 | NOT OK | SHARE-U-5 allowed: ...she reads the event's and the saying's fields  [42P01 relation "public.post_events" does not exist]
+ 60 | NOT OK | SHARE-U-5 the excluded checks below are not vacuous: the news, event and saying are published and live
+ 61 | ok     | SHARE-U-5 excluded: Grandma Chen (Everyone only) gets none of them in her feed
+ 62 | ok     | SHARE-U-5 excluded: ...nor on her timeline
+ 63 | ok     | SHARE-U-5 excluded: ...nor in search, by date or by words
+ 64 | ok     | SHARE-U-5 excluded: ...nor by id (can_view_post false, the posts table shows nothing)
+ 65 | NOT OK | SHARE-U-5 excluded: ...she reads no event and no saying fields at all  [42P01 relation "public.post_events" does not exist]
+ 66 | ok     | SHARE-U-5 excluded: ...post_viewers leaves them out
+ 67 | ok     | SHARE-U-5 excluded: ...and her export carries none of their words
+ 68 | ok     | SHARE-U-5 excluded: ...and the life calendar never lists the event
+ 69 | NOT OK | SHARE-U-5 excluded: Blair (co-parent, not in the group) gets none of them, nor their fields  [42P01 relation "public.post_events" does not exist]
+ 70 | NOT OK | SHARE-U-5 the author's own export has the news words and the event's and saying's fields
+ 71 | NOT OK | SHARE-U-5 setup: the owner deletes the saying  [P0002 post not found]
+ 72 | NOT OK | SHARE-U-5 once the saying is deleted, the person who saw it no longer reads its fields or the post  [42P01 relation "public.post_sayings" does not exist]
+ 73 | NOT OK | SHARE-U-14 setup: with relatives allowed to post, Grandma Rivera can make a photos post  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 74 | NOT OK | SHARE-U-14 ...but her news is refused (42501, parents only)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 75 | NOT OK | SHARE-U-14 ...and her event (42501)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 76 | NOT OK | SHARE-U-14 ...and her saying (42501)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 77 | NOT OK | SHARE-U-14 a relative who can't post gets 42501 for news  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+ 78 | NOT OK | SHARE-U-14 an adult (second parent) gets post_kinds in my_features
+ 79 | NOT OK | SHARE-U-14 an adult (second parent) can post news
+ 80 | NOT OK | SHARE-U-14 the family turns post_kinds off again: the adult is refused (42501)  [42883 function public.create_post(p_client_id => uuid, p_space => unknown, p_caption => text, p_circle_ids => uuid[], p_kind => text, p_details => jsonb) does not exist]
+POST KINDS RESULT: 11 passed, 69 failed
+
+## app jest (npx jest --ci): 2278 tests, 2264 passed, 12 failed, 1 skipped; all 12 failures are the new SHARE-U tests:
+src/api/__tests__/SupabaseApi.test.ts | SHARE-U-4/11/13 createPost news sends p_kind and p_details | Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
+src/api/__tests__/SupabaseApi.test.ts | SHARE-U-4/11/13 createPost event sends p_kind and p_details | Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
+src/api/__tests__/SupabaseApi.test.ts | SHARE-U-4/11/13 createPost saying sends p_kind and p_details | Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
+src/api/contract/postKinds.contract.test.ts | SHARE-U-12 off by default: my_features has no post_kinds, news is refused (42501), photos still work | Error: expect(received).toBe(expected) // Object.is equality
+src/api/contract/postKinds.contract.test.ts | SHARE-U-12 the family switch alone is not enough: Hearth's global switch must be on too | Error: expect(received).toBe(expected) // Object.is equality
+src/api/contract/postKinds.contract.test.ts | SHARE-U-4 news: words, no media; publishes; the group sees it as kind news, someone outside does not | ApiError: media not ready
+src/api/contract/postKinds.contract.test.ts | SHARE-U-4 news without words (23514), with no audience (23514), or with media (23514) is refused | Error: expect(received).toBe(expected) // Object.is equality
+src/api/contract/postKinds.contract.test.ts | SHARE-U-11 event: what, when, where; the group reads the fields, someone outside gets nothing | ApiError: media not ready
+src/api/contract/postKinds.contract.test.ts | SHARE-U-11 an event without when, with a when that isn't a date, or without what is refused (23514) | Error: expect(received).toBe(expected) // Object.is equality
+src/api/contract/postKinds.contract.test.ts | SHARE-U-13 saying: the words, who said it, their age; the group reads it, someone outside gets nothing | ApiError: media not ready
+src/api/contract/postKinds.contract.test.ts | SHARE-U-13 a saying without words or who, or with an age outside 0..120, is refused (23514) | Error: expect(received).toBe(expected) // Object.is equality
+src/api/contract/postKinds.contract.test.ts | SHARE-U-5 someone outside the audience gets nothing on any path: feed, timeline, search, by id, viewers | ApiError: media not ready

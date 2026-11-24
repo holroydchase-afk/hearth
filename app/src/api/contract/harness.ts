@@ -26,6 +26,9 @@ export interface ContractHarness {
   has(user: ContractUser): boolean;
   as(user: ContractUser): HearthApi;
   anon(): HearthApi;
+  /** Hearth's global feature switch (private.feature_flags, service only on a real stack), e.g. 'post_kinds' (SHARE-U-12).
+   *  Absent = this stack can't flip it, so tests that need it skip. */
+  setGlobalFeature?(feature: string, on: boolean): Promise<void>;
   /** sign-media + object storage are reachable (needs B2 for a real stack). */
   supportsMedia: boolean;
   /** Give a draft one ready media item (publish_post needs at least one), however this stack can. */
