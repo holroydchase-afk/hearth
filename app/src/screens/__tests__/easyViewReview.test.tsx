@@ -2,8 +2,8 @@
 // Copyright (C) 2026 Chase Holroyd
 // grandparent-ux review of Easy view (RD-78, DEC-66; Nov 17). GUX-R11: the Easy view page's On / Off rows are the
 // same radio rows as Light or dark (kit `Choice kind="radio"`): an accent check on the picked row, 48 pt+, and
-// aria-checked for the web build. GUX-R12: Me shows the same Easy view block (title, line, On and Off), and picking
-// Off there works like it does from More. Written first (Nov 17).
+// aria-checked for the web build. GUX-R12: the Easy view block (title, line, On and Off) works from More
+// (EF-HE-4, Nov 24: no longer on Me). Written first (Nov 17).
 import { fireEvent, screen, waitFor, within } from '@testing-library/react-native';
 import { SymbolView } from 'expo-symbols';
 import React from 'react';
@@ -14,7 +14,6 @@ import { MoreScreen } from '../../test/redesignScreens';
 import { renderApp } from '../../test/renderApp';
 import { Choice } from '../../ui/kit';
 import { paletteFor } from '../../ui/theme';
-import { MeScreen } from '../MeScreen';
 import { HearthTabBar } from '../TabBar';
 
 type Inst = ReturnType<typeof screen.getByTestId>;
@@ -23,9 +22,10 @@ const light = () => paletteFor(Platform.OS as 'ios', false);
 const slow = { timeout: 5000 };
 const LINE = 'Bigger words, and a word under each button at the bottom of the screen.';
 
-/** The check symbols drawn inside a row, with their tint. */
+/** The check symbols drawn inside a row, with their tint. EF-HE-2: only the filled ring counts (an empty ring,
+ *  `radio_button_unchecked`, sits on every unpicked row). */
 const checks = (row: Inst) =>
-  (row.findAll((n: Inst) => n.type === SymbolView && /check/.test(JSON.stringify(n.props.name))) as Inst[]).map((n) => n.props.tintColor);
+  (row.findAll((n: Inst) => n.type === SymbolView && /checkmark|radio_button_checked/.test(JSON.stringify(n.props.name))) as Inst[]).map((n) => n.props.tintColor);
 
 describe('GUX-R11 (RD-78) Easy view On / Off rows are Light or dark\'s radio rows', () => {
   async function openEasyView() {
@@ -61,28 +61,33 @@ describe('GUX-R11 (RD-78) Easy view On / Off rows are Light or dark\'s radio row
   });
 });
 
-describe('GUX-R12 (RD-78) Me shows the same Easy view block', () => {
+// EF-HE-4 (Chase, Nov 24): Easy view left Me; it lives only in More, so GUX-R12 now checks More's Easy view page.
+describe('GUX-R12 (RD-78, EF-HE-4) More\'s Easy view page shows the Easy view block', () => {
   const key = `hearth.prefs.v1.${FIXTURE.users.jo.id}`;
-  function MeWithTabs() {
+  function MoreWithTabs() {
     return (
       <View>
-        <MeScreen />
+        <MoreScreen />
         <HearthTabBar role="viewer" current="gallery" onNavigate={() => {}} />
       </View>
     );
   }
 
-  it('GUX-R12 Me shows the "Easy view" header, the line, and On and Off radios (On checked for Grandma Jo)', async () => {
-    await renderApp(<MeWithTabs />, { waitReady: false, user: 'jo' });
+  const openIt = async () => fireEvent.press(await screen.findByRole('button', { name: /^Easy view(,|$)/ }, slow));
+
+  it('GUX-R12 More\'s Easy view page shows the "Easy view" header, the line, and On and Off radios (On checked for Grandma Jo)', async () => {
+    await renderApp(<MoreWithTabs />, { waitReady: false, user: 'jo' });
+    await openIt();
     expect(await screen.findByRole('header', { name: 'Easy view' }, slow)).toBeTruthy();
     expect(screen.getByText(LINE)).toBeTruthy();
     expect(screen.getByRole('radio', { name: 'On' }).props.accessibilityState).toMatchObject({ checked: true });
     expect(screen.getByRole('radio', { name: 'Off' }).props.accessibilityState).toMatchObject({ checked: false });
   });
 
-  it('GUX-R12 picking Off on Me saves easyView=false and the tab words disappear at once', async () => {
+  it('GUX-R12 picking Off on More\'s Easy view page saves easyView=false and the tab words disappear at once', async () => {
     const kv = memoryKV();
-    await renderApp(<MeWithTabs />, { waitReady: false, user: 'jo', kv });
+    await renderApp(<MoreWithTabs />, { waitReady: false, user: 'jo', kv });
+    await openIt();
     await screen.findByRole('header', { name: 'Easy view' }, slow);
     const gallery = screen.getByRole('tab', { name: 'Gallery' });
     expect(within(gallery).getByText('Gallery')).toBeTruthy(); // the other direction: On shows the word
