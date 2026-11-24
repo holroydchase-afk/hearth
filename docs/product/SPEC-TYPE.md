@@ -1,6 +1,6 @@
 # SPEC-TYPE: one named type scale, at iPhone's standard sizes (TYPE-1..TYPE-14)
 
-Status: specced Nov 24, 2026 · Pending Chase's OK on DEC-84 (staff-pm recommends yes) · TRACKER R82 · Persona check `decisions/2026-11-24-type-scale.md`
+Status: specced Nov 24, 2026 · Pending Chase's OK on DEC-84 (staff-pm recommends yes) · TRACKER R85 · Persona check `decisions/2026-11-24-type-scale.md`
 
 Chase, Nov 24 (verbatim): "Go with A +Standard iphone sizes... If we do not have everything broken down based on the header, body, title, etc. etc. we need to do that now. Then we need to align with iphones standards."
 

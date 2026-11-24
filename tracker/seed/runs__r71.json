@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-24T23:55:00-05:00",
- "label": "Wordless Share start (SHARE-ST-19..27, DEC-79 round 3, option A): tests written first (red, 1 run)",
- "passed": 18,
- "failed": 28,
+ "at": "2026-11-24T23:59:45-05:00",
+ "label": "T37 demo-site pre-publish check (site.spec.js) on the new demo: red, then green 3x",
+ "passed": 42,
+ "failed": 0,
  "results": {},
- "note": "Red on purpose, 1 run at ee9a496 plus test edits only (no product code). app/src/screens/__tests__/shareStart.test.tsx: 27 failed, 18 passed of 45. Red for the right reason: no share-spot / share-stamp inside the spot / share-note-rule x2 / share-to-rule / bare 'To:'; the subline, 'Up to N at a time', 'Add a note (optional)', 'To: you pick after your photos', group names and 'Last shared' still show; the card is not the one button (taps on the card's padding open nothing; the note and To: Pressables are extra stops). Removed as superseded: SHARE-ST-3, SHARE-ST-10..16, GUX-R1, R2, R3, R5; SHARE-ST-2 and SHARE-ST-4's Cancel case retargeted (words 'Add photos' only, 4:3 on share-spot, 'To:'). Still passing guards: SHARE-ST-1, SHARE-ST-4..7, SHARE-ST-17, SHARE-ST-18, GUX-R4. e2e:demo (demo build) demo.spec.js SHARE-ST-8 retargeted as SHARE-ST-8 SHARE-ST-27: 1 failed (missing testIDs, old words in the card, no tap target on a ruled line); the rest of e2e:demo not run. Not run: full jest, typecheck beyond this file (clean), e2e:web, backend, phones (SHARE-ST-9 manual). e2e/results/share-start-wordless-red-2026-11-24.txt"
+ "note": "npm run e2e:site (build-demo.sh, then site.spec.js on the local /demo/hearth build, cloud Chromium) at a2492cf. Red first, 1 run: 11 passed, 3 failed (DEMO-5 Start over waited for 'Good ..., Chase'; DEMO-LIVE-2 'lake' found nothing; DEMO-NEW-5 no 'New photos: 1 of 2'), the same 3 as CI run 45430430863. After the T37 test fix: 14 passed x3, identical. passed = 3 x 14. Also 1 run under CI's Pages path (build-demo.sh /hearth, SITE_BASE=/hearth): 14 passed. Not run: the live check on chaseholroyd.com/hearth (needs the publish). e2e/results/site-demo-kevin-2026-11-24-*.txt"
 }

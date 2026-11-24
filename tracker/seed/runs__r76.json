@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-24T01:30:00-05:00",
+ "label": "Eval findings (intake #162): all suites 3x via test-all.sh plus backend SQL 3x (red: one new test, B26)",
+ "passed": 10592,
+ "failed": 3,
+ "results": {},
+ "note": "3 runs of bash test-all.sh at 88e605c plus loadBackTo.test.ts. Every EF-HE test passes 3x, including EF-HE-9 B18. jest 2222 passed, 1 failed (the same B26 test each run), 1 skipped, 1 todo; typecheck clean, Expo Go check OK, e2e:demo 44 passed, e2e:web 5 passed, prototype e2e 33 passed, each x3. Backend SQL 1217 passed 0 failed x3 and Supabase starter scripts 17 passed x3 (run 1's pair failed on Postgres peer auth from qa-tdd's shell, then re-ran clean). No flake. Reviewed the engineer's retargets: RD-6 kit radio ring, RD-7 New group primary and EVT-4 event name all accepted (each exception is narrow; EVT-4 still bans the event's own name). Skipped: Supabase starter invites (no template), Deno (not installed). Open: B18 (until B26), B26. e2e/results/eval-findings-3x-2026-11-24.txt"
+}

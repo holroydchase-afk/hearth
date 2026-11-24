@@ -87,7 +87,8 @@ describe('RD 1a source scans', () => {
   });
 
   it('RD-6 outline symbols only: no SF ".fill" names and no filled Material names', () => {
-    expect(find(/sf:\s*['"][\w.]+\.fill['"]|ios:\s*['"][\w.]+\.fill['"]/)).toEqual([]);
+    // EF-HE-2 (SPEC-EVAL-FIXES): the one exception is the shared radio's picked ring, a filled accent circle in the kit.
+    expect(find(/sf:\s*['"][\w.]+\.fill['"]|ios:\s*['"][\w.]+\.fill['"]/).filter((h) => !/^ui\/kit\.tsx:\d+ sf: 'checkmark\.circle\.fill'$/.test(h))).toEqual([]);
     expect(find(/md:\s*['"]\w+_filled['"]/)).toEqual([]);
     // Regular weight: no symbol asks for a heavier weight.
     expect(find(/<SymbolView[^>]*weight=\{?['"](medium|semibold|bold|heavy|black)['"]/)).toEqual([]);
@@ -113,6 +114,7 @@ describe('RD 1a source scans', () => {
       if (file === 'ui/kit.tsx' && /\{yes\}/.test(b.props)) continue; // Confirm's yes: checked for Delete/Leave below
       if (/danger/.test(variant) && /\b(Delete|Leave)\b/.test(words)) continue;
       if (file === 'demo/DemoBar.tsx' && /danger/.test(variant) && words === 'Reset') continue; // the demo's delete-everything confirm
+      if (file === 'screens/GroupsScreen.tsx' && variant === 'primary' && words === 'New group') continue; // EF-HE-5-AC2: a deliberate DS-9 primary
       offenders.push(`${b.at} ${variant} "${words.slice(0, 50)}"`);
     }
     expect(offenders).toEqual([]);

@@ -227,7 +227,10 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
         <Txt variant="headline">{title}</Txt>
         {detail ? <Txt tone="muted">{detail}</Txt> : null}
       </View>
-      {kind === 'radio' && checked ? <SystemIcon icon={{ sf: 'checkmark', md: 'check' }} color={c.accent} size={22} /> : null}
+      {/* EF-HE-2: an empty ring when not picked (muted, 3:1+), a filled accent ring when picked. */}
+      {kind === 'radio' ? (
+        <SystemIcon icon={checked ? { sf: 'checkmark.circle.fill', md: 'radio_button_checked' } : { sf: 'circle', md: 'radio_button_unchecked' }} color={checked ? c.accent : c.muted} size={26} />
+      ) : null}
       {kind === 'switch' ? (
         <View style={styles.switchBox} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           <SwitchWord on={checked} />

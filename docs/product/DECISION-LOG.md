@@ -598,12 +598,26 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** Chase's family stays out of the public demo, and the name matches the man in the pictures. Demo content only, no change for a relative using the app, so no persona check (as DEC-62).
 - **Source:** `docs/product/SPEC-DEMO-PHOTOS.md`; TRACKER R79. Supersedes DEC-62 and DEC-64.
 
+### DEC-83 · Build the visibility core now; bridge after the beta; 2-minute Take back; news and dates for parents (R77, VIS-*, SHARE-U-*)
+- **When / status:** Nov 24 · Chase, on the four open questions in `SPEC-VISIBILITY-CORE.md`: "Ok agreed to all" · Phases 1 and 1b built (migrations 0031, 0032), Phase 2 next
+- **Chose:** build Phases 1, 1b and 2 (registry, coverage gate, generic `@holroyd/visibility` core, oracle) now, before the beta; the co-parent bridge after the beta, with a co-parent persona brought back first; a 2-minute "Take back" hold before any notice goes out; "Write news" and "Add a date" on the postcard for parents only until the grandparent test. That last one reopens DEC-79's "one way in".
+- **Over:** waiting until after the beta for the whole core (keeping safety on review alone, and R51 as a separate eval); the bridge before the beta (no split-parent pair among the testers); no hold on notices; news and dates for everyone at once.
+- **Because:** the gate makes every later feature safe by default with no screen changes, so it is cheapest before more kinds land; nobody in the WV beta can test the bridge; a wrong send is the worst error, and a grandparent won't notice 2 minutes; most grandparents can't post anyway.
+- **Source:** `docs/product/SPEC-VISIBILITY-CORE.md` (open questions 1 to 4), `docs/architecture/07-visibility-model.md`; persona check `decisions/2026-11-24-visibility-core.md`. Amends DEC-79's one way in (parents only).
+
 ### DEC-84 · One named type scale at iPhone's standard sizes; Share start A with standard sizes (TYPE-1..14, SHARE-ST-28..34)
 - **When / status:** Nov 24 · Chase, on the kinds tester (https://claude.ai/artifact/HekNBZ4bAMgpUqReeHgnTS): "Go with A +Standard iphone sizes... If we do not have everything broken down based on the header, body, title, etc. etc. we need to do that now. Then we need to align with iphones standards." · Specced, pending Chase's OK on the rule change (CLAUDE.md rule 3, DS-2); failing tests next
 - **Chose:** Apple's eleven text styles by name in `theme.ts` (largeTitle 34/41, title1 28/34, title2 22/28, title3 20/25, headline 17/22 SemiBold, body 17/22, callout 16/21, subheadline 15/20, footnote 13/18, caption1 12/16, caption2 11/13); Easy view uses Apple's xxLarge set raised to 17 where Apple goes under. Titles and headline SemiBold, the rest Regular, no Bold. Every use today mapped to a style; a lint test fails on raw sizes. Share start option A "Photos first, three below" at those sizes: "New post" title2, "Add photos" headline, 52 px circle (60 in Easy view), 26 px icon; the Event / News / Saying row under it only behind the `post_kinds` switch (off until the visibility-core thread's data lands), parents only. Rule 3 becomes: "Text uses the named iPhone text styles (SPEC-TYPE): reading text is Body 17; smaller styles (callout..caption2) only for secondary words with Easy view off; Easy view keeps everything 17+."
 - **Over:** today's multiplied sizes (base ×1.3, ×1.65) and the "nothing under 17" rule (DS-2, rule 3); Material 3's own scale on Android; B "Four equal cards" and C "One postcard, four faces"; the tester's "today" sizes (76 px circle, 22 pt "Add photos").
 - **Because:** named styles let every screen be checked against the iPhone and stop each screen picking its own size; Easy view (on for viewers, DEC-66) keeps grandparents at 17+, so only parents with Easy view off see the smaller secondary words.
-- **Source:** `docs/product/SPEC-TYPE.md`; `SPEC-REDESIGN.md` 1j-2 round 4; persona check `decisions/2026-11-24-type-scale.md` (SG Red, mitigated). TRACKER R82. Amends DEC-79 (round 4) and DS-2.
+- **Source:** `docs/product/SPEC-TYPE.md`; `SPEC-REDESIGN.md` 1j-2 round 4; persona check `decisions/2026-11-24-type-scale.md` (SG Red, mitigated). TRACKER R85. Amends DEC-79 (round 4) and DS-2.
+
+### DEC-85 · Easy view and Light or dark live only in More (EF-HE-4)
+- **When / status:** Nov 24 · Chase, decision card "Take Easy view and Light or dark off Me, keeping them only in More?": "Yes, only in More" · Built (intake #162 PR)
+- **Chose:** Me drops both sections; each keeps its own More row and page.
+- **Over:** both places (RD-78 added them to Me).
+- **Because:** the eval found the duplicates; one place per setting makes phone help one sentence for a grandparent.
+- **Source:** persona check `decisions/2026-11-24-settings-only-in-more.md`; `SPEC-EVAL-FIXES.md`. Amends RD-78.
 
 ---
-Last updated: Nov 24, 2026 (DEC-84; DEC-79 round 4)
+Last updated: Nov 24, 2026 (DEC-85; DEC-84)

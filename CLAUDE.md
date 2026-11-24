@@ -36,13 +36,14 @@ Studio standard: follow holroydchase-afk/studio-agents docs/studio-standard.md; 
 
 ## Layout
 - `backend/`: Supabase.
-  - `supabase/migrations/0001`–`0029`: RLS, RPCs, triggers, notification outbox (0003), error reports (0006), family shape (0011), groups v2 (0013), messenger relay (0015), video (0020), start a family (0024), search (0025), text sign-in (0026), group names (0027), no passwords (0028), life calendar (0029). What is live on the hosted project: `docs/eng/DEPLOYS.md`.
+  - `supabase/migrations/0001`–`0029`: RLS, RPCs, triggers, notification outbox (0003), error reports (0006), family shape (0011), groups v2 (0013), messenger relay (0015), video (0020), start a family (0024), search (0025), text sign-in (0026), group names (0027), no passwords (0028), life calendar (0029), visibility core + registry (0031, 0032; 0030 is video fixes). What is live on the hosted project: `docs/eng/DEPLOYS.md`.
   - `scripts/`: `deploy.sh` (one-command deploy, `--dry-run`), `family-setup.sh` (fresh family in the 0011 shape + invites, through the Management API, token only), `family-setup.sql` (v1, psql; superseded for fresh setups), `family-setup-v2.sql` (re-seed into the family shape; dry run by default).
   - `functions/notify/`: Deno TS; Expo Push + Resend sender, run by a 1-minute cron.
   - `functions/sign-media/`: Deno TS; presigned Backblaze B2 URLs and per-item keys.
   - `tests/`: SQL, perf, integration (PostgREST harness).
 - `app/`: Expo SDK 58, TypeScript strict, `HearthApi` with a Supabase and a Fake implementation, upload queue, media pipeline.
 - `packages/messenger/`: `@holroyd/messenger`, the shared MLS messenger library (AGPL-3.0-or-later; Relay, Roster, Store; Supabase relay template). Hearth's `app/src/messenger/` is its adapter. Crew Clock is the next user (DEC-42).
+- `packages/visibility/`: `@holroyd/visibility`, the reusable visibility core (registry of kinds, `can_see`, narrowing hooks, conformance kit; no product words). Hearth instantiates it in migrations 0031/0032 (R77, DEC-83).
 - `prototype/`, `e2e/`: the clickable HTML prototype and its Playwright tests. Throwaway.
 - `tracker/`: Hearth Test Log seed builder.
 - `.claude/agents/`: the specialist agents. See "Chief of staff and agent roster" below.
