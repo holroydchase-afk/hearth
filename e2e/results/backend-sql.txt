@@ -524,10 +524,10 @@ TIMELINE RESULT: 39 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('686c8b11-83ef-49ea-8927-5990c8ae4e33'))
-psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('1e6e9405-6a24-4644-b439-72eaab637ad8'))
-psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('9032298f-1e0a-47cb-b8a5-da2ecb659f1d'))
-psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = 'd1cb11b1-91e2-4890-8b0e-0121126ed9fb')
+psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('4796d53e-f947-4ca8-8493-43bf9319f836'))
+psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('9304f0e3-fe60-488e-8332-349711115f63'))
+psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('8da20b46-4c71-4739-9982-28ba12386240'))
+psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '1e99f853-4d21-4369-9edc-096956312873')
   n  | result |                                                                                  description                                                                                   
 -----+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    1 | ok     | BETA-AUD-11 shape: circles.kind exists (everyone | group | household | event)
@@ -1600,30 +1600,32 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
  213 | ok     | VIS-5 delete_post(uuid) calls its reach's rule
  214 | ok     | VIS-5 edit_post_words(uuid,text,text) calls its reach's rule
  215 | ok     | VIS-5 get_comments(uuid,integer) calls its reach's rule
- 216 | ok     | VIS-5 mark_seen(uuid) calls its reach's rule
- 217 | ok     | VIS-5 post_viewers(uuid[]) calls its reach's rule
- 218 | ok     | VIS-5 publish_post(uuid) calls its reach's rule
- 219 | ok     | VIS-5 reaction_summary(uuid[]) calls its reach's rule
- 220 | ok     | VIS-5 register_push_token(text,text) calls its reach's rule
- 221 | ok     | VIS-5 rename_circle(uuid,text) calls its reach's rule
- 222 | ok     | VIS-5 reply_readers(uuid) calls its reach's rule
- 223 | ok     | VIS-5 reply_scope(uuid) calls its reach's rule
- 224 | ok     | VIS-5 request_account_export() calls its reach's rule
- 225 | ok     | VIS-5 save_family_date(uuid,uuid,text,text,integer,integer,uuid) calls its reach's rule
- 226 | ok     | VIS-5 set_notification_prefs(uuid,boolean,text) calls its reach's rule
- 227 | ok     | VIS-5 set_reaction(uuid,text) calls its reach's rule
- 228 | ok     | VIS-5 set_reply_audience(uuid,text) calls its reach's rule
- 229 | ok     | VIS-5 space_upload_quota(uuid) calls its reach's rule
- 230 | ok     | VIS-5 toggle_heart(uuid) calls its reach's rule
- 231 | ok     | VIS-5 every allowlisted function names its reason
+ 216 | ok     | VIS-5 list_family_dates(uuid) calls its reach's rule
+ 217 | ok     | VIS-5 mark_seen(uuid) calls its reach's rule
+ 218 | ok     | VIS-5 post_viewers(uuid[]) calls its reach's rule
+ 219 | ok     | VIS-5 publish_post(uuid) calls its reach's rule
+ 220 | ok     | VIS-5 reaction_summary(uuid[]) calls its reach's rule
+ 221 | ok     | VIS-5 register_push_token(text,text) calls its reach's rule
+ 222 | ok     | VIS-5 rename_circle(uuid,text) calls its reach's rule
+ 223 | ok     | VIS-5 reply_readers(uuid) calls its reach's rule
+ 224 | ok     | VIS-5 reply_scope(uuid) calls its reach's rule
+ 225 | ok     | VIS-5 request_account_export() calls its reach's rule
+ 226 | ok     | VIS-5 save_family_date(uuid,uuid,text,text,integer,integer,uuid) calls its reach's rule
+ 227 | ok     | VIS-5 set_notification_prefs(uuid,boolean,text) calls its reach's rule
+ 228 | ok     | VIS-5 set_reaction(uuid,text) calls its reach's rule
+ 229 | ok     | VIS-5 set_reply_audience(uuid,text) calls its reach's rule
+ 230 | ok     | VIS-5 space_upload_quota(uuid) calls its reach's rule
+ 231 | ok     | VIS-5 toggle_heart(uuid) calls its reach's rule
+ 232 | ok     | VIS-5 every allowlisted function names its reason
+ 233 | ok     | VIS-5 list_family_dates is registered with kind family_date, not allowlisted (it returns other people's dates)
 
 
-VIS REGISTRY RESULT: 231 passed, 0 failed
+VIS REGISTRY RESULT: 233 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
- n  | result |                                         description                                         
-----+--------+---------------------------------------------------------------------------------------------
+ n  | result |                                          description                                           
+----+--------+------------------------------------------------------------------------------------------------
   1 | ok     | VIS-7 Grandma Rivera, in the post's group, can see post a1 through can_see
   2 | ok     | VIS-7 Alex, its author, can see post a1 through can_see
   3 | ok     | VIS-7 Aunt Jo, same family but not in the group, can't see post a1 (false, not null)
@@ -1635,28 +1637,30 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
   9 | ok     | VIS-7 every user and self-reach row: can_see equals the self rule  [ok]
  10 | ok     | VIS-7 every user and admin-reach row: can_see equals the admin rule  [ok]
  11 | ok     | VIS-7 every user and server-reach row: can_see equals the server rule  [ok]
- 12 | ok     | VIS-7 the kinds can_see can't address by id (no uuid id) are exactly the 21 reviewed ones
- 13 | ok     | VIS-22 vis.sees_item equals private.sees_post for every user and every post in the fixtures
- 14 | ok     | VIS-22 ...and the comparison is not vacuous (someone sees something)
- 15 | ok     | VIS-22 ...and someone is kept out of something
- 16 | ok     | VIS-24 private.sees_post(uuid,uuid) exists
- 17 | ok     | VIS-24 vis.sees_item(uuid,uuid) exists
- 18 | ok     | VIS-24 vis.can_see(uuid,text,uuid) exists
- 19 | ok     | VIS-24 private.sees_post(uuid,uuid) lives in a schema PostgREST does not expose
- 20 | ok     | VIS-24 vis.sees_item(uuid,uuid) lives in a schema PostgREST does not expose
- 21 | ok     | VIS-24 vis.can_see(uuid,text,uuid) lives in a schema PostgREST does not expose
- 22 | ok     | VIS-24 signed out (anon) can't execute private.sees_post(uuid,uuid)
- 23 | ok     | VIS-24 signed out (anon) can't execute vis.sees_item(uuid,uuid)
- 24 | ok     | VIS-24 signed out (anon) can't execute vis.can_see(uuid,text,uuid)
- 25 | ok     | VIS-24 private.sees_post(uuid,uuid) pins search_path to empty
- 26 | ok     | VIS-24 vis.sees_item(uuid,uuid) pins search_path to empty
- 27 | ok     | VIS-24 vis.can_see(uuid,text,uuid) pins search_path to empty
- 28 | ok     | VIS-24 a signed-in user (authenticated) can't execute vis.can_see
- 29 | ok     | VIS-24 no wrapper named sees_post, sees_item or can_see sits in an exposed schema
- 30 | ok     | VIS-24 Aunt Jo asking can_see whether Grandma sees a post is refused (42501), not answered
+ 12 | ok     | VIS-7 the fixture's family dates are checked in both directions (seen and not seen)  [ok]
+ 13 | ok     | VIS-18 every user and family: list_family_dates returns exactly the dates can_see allows  [ok]
+ 14 | ok     | VIS-7 the kinds can_see can't address by id (no uuid id) are exactly the 21 reviewed ones
+ 15 | ok     | VIS-22 vis.sees_item equals private.sees_post for every user and every post in the fixtures
+ 16 | ok     | VIS-22 ...and the comparison is not vacuous (someone sees something)
+ 17 | ok     | VIS-22 ...and someone is kept out of something
+ 18 | ok     | VIS-24 private.sees_post(uuid,uuid) exists
+ 19 | ok     | VIS-24 vis.sees_item(uuid,uuid) exists
+ 20 | ok     | VIS-24 vis.can_see(uuid,text,uuid) exists
+ 21 | ok     | VIS-24 private.sees_post(uuid,uuid) lives in a schema PostgREST does not expose
+ 22 | ok     | VIS-24 vis.sees_item(uuid,uuid) lives in a schema PostgREST does not expose
+ 23 | ok     | VIS-24 vis.can_see(uuid,text,uuid) lives in a schema PostgREST does not expose
+ 24 | ok     | VIS-24 signed out (anon) can't execute private.sees_post(uuid,uuid)
+ 25 | ok     | VIS-24 signed out (anon) can't execute vis.sees_item(uuid,uuid)
+ 26 | ok     | VIS-24 signed out (anon) can't execute vis.can_see(uuid,text,uuid)
+ 27 | ok     | VIS-24 private.sees_post(uuid,uuid) pins search_path to empty
+ 28 | ok     | VIS-24 vis.sees_item(uuid,uuid) pins search_path to empty
+ 29 | ok     | VIS-24 vis.can_see(uuid,text,uuid) pins search_path to empty
+ 30 | ok     | VIS-24 a signed-in user (authenticated) can't execute vis.can_see
+ 31 | ok     | VIS-24 no wrapper named sees_post, sees_item or can_see sits in an exposed schema
+ 32 | ok     | VIS-24 Aunt Jo asking can_see whether Grandma sees a post is refused (42501), not answered
 
 
-VIS CORE RESULT: 30 passed, 0 failed
+VIS CORE RESULT: 32 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
@@ -1680,9 +1684,9 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
 Narrowing for Chase (readable before 0011 only through "members see each other's replies"):
      reader     |  kind   |                                 reply_id                                  
 ----------------+---------+---------------------------------------------------------------------------
- Grandma Rivera | comment | 37a9c497-46dd-49d2-963e-7f527d62384b
+ Grandma Rivera | comment | 908370b5-5c15-4f83-a443-1ad6a681537c
  Grandma Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a2
- Grandpa Rivera | comment | fc01876f-dbef-4244-8ad6-5d149ae881ac
+ Grandpa Rivera | comment | 5e1a00df-6efa-4617-96cf-8b27cbd83a59
  Grandpa Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a1
 
  n  | result |                                                     description                                                      
@@ -1793,8 +1797,8 @@ ok      SETUP-API: before Chase has an account it says "sign in once in the app"
 ok      SETUP-API: ... and changes nothing
 ok      SETUP-API: fresh setup runs without error
         | Family "Chase's kids" is ready: Everyone, Chase's side, Mom's side, 7 houses, 2 events.
-        | Test viewer invite (account B): code F2WJH6PSG9, works once until Dec 01, link https://thefreighttrains-team-hearth.expo.app/join/4f5d5d176e0d9b8016440ea156215d776c25e4f8
-        | Mom's poster invite: code W94SJR28WW, works once until Dec 01, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/44717c7424ad75176b90b1ee8666e81ffe54b5d1
+        | Test viewer invite (account B): code 5ZDW8Z3Q8Q, works once until Dec 01, link https://thefreighttrains-team-hearth.expo.app/join/45e6b877cc3d6aad5f03a53fd6b5629dfc0bd2b6
+        | Mom's poster invite: code XECJCYWRYZ, works once until Dec 01, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/79da757d4b90d4fd5f198155294aa4de16b3eb51
 ok      SETUP-API: Chase owns one family, named as given (an apostrophe in the name is kept, not a SQL error)
 ok      SETUP-API: one Everyone
 ok      SETUP-API: the set groups are Chase's side and Mom's side (no v1 groups to retire later)
