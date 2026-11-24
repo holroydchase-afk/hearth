@@ -1,0 +1,100 @@
+FAIL src/screens/__tests__/saveData.test.tsx
+  ● Console
+  ● DATA-3 Save data on: Feed cards and the Timeline load thumbnails only › DATA-3 Feed: every card's photos are fetched as thumbnails; no full size at all
+  ● DATA-3 Save data on: Feed cards and the Timeline load thumbnails only › DATA-3 Timeline: thumbnails only
+  ● DATA-3 Save data on: Feed cards and the Timeline load thumbnails only › DATA-3 opening a photo fetches its full size (and only that one)
+  ● DATA-4 Save data on: the viewer fetches the next photo only on the swipe › DATA-4 no look-ahead: the next photo's full size waits until Next
+FAIL src/feed/__tests__/autoplay.test.ts
+  ● AUTO-9 one named viewability constant › AUTO-9 AUTOPLAY_VIEWABILITY is 80% / 1000 ms / waitForInteraction true, and nothing else
+  ● AUTO-8 nothing is reported viewable (so nothing downloads) without a 1 s still pause at 80% › AUTO-8 before any scroll (waitForInteraction), the first video is not reported, even after 5 s
+  ● AUTO-8 nothing is reported viewable (so nothing downloads) without a 1 s still pause at 80% › AUTO-8 scrolling past a card in under 1 s never reports it
+  ● AUTO-8 nothing is reported viewable (so nothing downloads) without a 1 s still pause at 80% › AUTO-8 a card under 80% on screen is never reported, however long the list is still
+  ● DATA-6 / AUTO-1 the two settings are saved on this phone only › AUTO-1 / DATA-1 a fresh install: Play videos as I scroll on, Save data not yet asked (null)
+  ● DATA-6 / AUTO-1 the two settings are saved on this phone only › DATA-6 one key for the phone (no account id in it); save then load round-trips
+  ● DATA-6 / AUTO-1 the two settings are saved on this phone only › DATA-6 a damaged or odd saved value falls back to the defaults, never throws
+  ● DATA-6 / AUTO-1 the two settings are saved on this phone only › AUTO-5 autoplayOn({"autoplay":true,"saveData":false}, reduceMotion false) is true
+  ● DATA-6 / AUTO-1 the two settings are saved on this phone only › AUTO-5 autoplayOn({"autoplay":true,"saveData":null}, reduceMotion false) is true
+  ● DATA-6 / AUTO-1 the two settings are saved on this phone only › AUTO-5 autoplayOn({"autoplay":false,"saveData":false}, reduceMotion false) is false
+  ● DATA-6 / AUTO-1 the two settings are saved on this phone only › AUTO-5 autoplayOn({"autoplay":true,"saveData":true}, reduceMotion false) is false
+  ● DATA-6 / AUTO-1 the two settings are saved on this phone only › AUTO-5 autoplayOn({"autoplay":true,"saveData":false}, reduceMotion true) is false
+FAIL src/media/__tests__/videoAbort.test.ts
+  ● AUTO-3 a video download stops when it is scrolled away › AUTO-3 already aborted: rejects with AbortError and never downloads the video file
+  ● AUTO-3 a video download stops when it is scrolled away › AUTO-3 aborted mid-download: rejects, nothing is written, and the next call downloads again
+FAIL src/screens/__tests__/autoplay.test.tsx (7.472 s)
+  ● Console
+  ● AUTO-9 Feed uses the one constant › AUTO-9 Feed's list passes AUTOPLAY_VIEWABILITY itself (80 / 1000 / waitForInteraction), not a copy
+  ● AUTO-2 one video plays quietly once she stops on it › AUTO-2 two videos 80%+ on screen after the still pause: only the top one plays, muted, and only it downloads
+  ● AUTO-2 one video plays quietly once she stops on it › AUTO-2 / AUTO-4 the playing card's word button reads "Play with sound" (spoken "Play video with sound"); the other keeps "Play"
+  ● AUTO-3 pauses when she moves on; loops, never advances › AUTO-3 the video drops under 80%: it pauses, its file is let go, and nothing else starts
+  ● AUTO-3 pauses when she moves on; loops, never advances › AUTO-3 scrolled away before the file arrived: the unfinished download is stopped (its signal aborted)
+  ● AUTO-3 pauses when she moves on; loops, never advances › AUTO-3 the list moves again: it pauses at once, and plays again only after 1 s still
+  ● AUTO-3 pauses when she moves on; loops, never advances › AUTO-3 at its end it loops quietly and never moves on to the next video
+  ● AUTO-4 tap for the full-screen player with sound › AUTO-4 "Play with sound" opens the full-screen player (VID-18) with sound from the start; the quiet one pauses
+  ● AUTO-4 tap for the full-screen player with sound › AUTO-4 tapping the playing video itself opens the same full-screen player with sound (not the post screen)
+  ● AUTO-5 off, reduce motion or Save data: poster and Play only, nothing fetched until Play › AUTO-5 "Play videos as I scroll" off
+  ● AUTO-5 off, reduce motion or Save data: poster and Play only, nothing fetched until Play › AUTO-5 the phone's reduce motion on
+  ● AUTO-5 off, reduce motion or Save data: poster and Play only, nothing fetched until Play › AUTO-5 Save data on (autoplay itself still saved as on)
+  ● AUTO-5 off, reduce motion or Save data: poster and Play only, nothing fetched until Play › AUTO-5 control: with autoplay on and nothing else, the same steps do play (so the three above are real)
+FAIL src/screens/__tests__/videosAndData.test.tsx (38.7 s)
+  ● AUTO-1 More → Videos and data › AUTO-1 the "Videos and data" row sits right after "Light or dark", for every role
+  ● AUTO-1 More → Videos and data › AUTO-1 a fresh install: the page has "Play videos as I scroll" on and "Save data" off, with 5.1's exact words
+  ● AUTO-1 More → Videos and data › AUTO-1 the choice is kept: a phone that turned autoplay off opens the page with it off
+  ● DATA-2 Save data switch › DATA-2 Save data on: at once, autoplay shows Off, can't be tapped, says "Off while Save data is on."; off puts it back
+  ● DATA-2 Save data switch › DATA-2 no restart: the app's dataPrefs change the moment the switch is pressed; More's row then says "Saving data"
+  ● DATA-2 Save data switch › DATA-2 with Save data off the row shows nothing at its right end
+  ● AUTO-5 reduce motion on the page › AUTO-5 with the phone's reduce motion on, the autoplay switch shows Off and says why
+  ● DATA-1 the prepaid question at sign-up › DATA-1 a new member, right after the invite code: the question shows before Gallery; "Yes" saves Save data on, then Gallery
+  ● DATA-1 the prepaid question at sign-up › DATA-1 "No, my plan is fine" saves Save data off and moves on
+  ● DATA-1 the prepaid question at sign-up › DATA-1 a first sign-in on a phone not yet asked gets the same question
+  ● DATA-6 neither setting leaves the phone › DATA-6 switching both on the Videos and data page makes no backend call and no other network call
+  ● DATA-6 neither setting leaves the phone › DATA-6 the sign-up answer is saved on the phone only: no call carries it
+FAIL src/screens/__tests__/saveData.test.tsx
+  ● DATA-3 Save data on: Feed cards and the Timeline load thumbnails only › DATA-3 Feed: every card's photos are fetched as thumbnails; no full size at all
+  ● DATA-3 Save data on: Feed cards and the Timeline load thumbnails only › DATA-3 Timeline: thumbnails only
+  ● DATA-3 Save data on: Feed cards and the Timeline load thumbnails only › DATA-3 opening a photo fetches its full size (and only that one)
+  ● DATA-4 Save data on: the viewer fetches the next photo only on the swipe › DATA-4 no look-ahead: the next photo's full size waits until Next
+FAIL src/feed/__tests__/autoplay.test.ts
+  ● AUTO-9 one named viewability constant › AUTO-9 AUTOPLAY_VIEWABILITY is 80% / 1000 ms / waitForInteraction true, and nothing else
+  ● AUTO-8 nothing is reported viewable (so nothing downloads) without a 1 s still pause at 80% › AUTO-8 before any scroll (waitForInteraction), the first video is not reported, even after 5 s
+  ● AUTO-8 nothing is reported viewable (so nothing downloads) without a 1 s still pause at 80% › AUTO-8 scrolling past a card in under 1 s never reports it
+  ● AUTO-8 nothing is reported viewable (so nothing downloads) without a 1 s still pause at 80% › AUTO-8 a card under 80% on screen is never reported, however long the list is still
+  ● DATA-6 / AUTO-1 the two settings are saved on this phone only › AUTO-1 / DATA-1 a fresh install: Play videos as I scroll on, Save data not yet asked (null)
+  ● DATA-6 / AUTO-1 the two settings are saved on this phone only › DATA-6 one key for the phone (no account id in it); save then load round-trips
+  ● DATA-6 / AUTO-1 the two settings are saved on this phone only › DATA-6 a damaged or odd saved value falls back to the defaults, never throws
+  ● DATA-6 / AUTO-1 the two settings are saved on this phone only › AUTO-5 autoplayOn({"autoplay":true,"saveData":false}, reduceMotion false) is true
+  ● DATA-6 / AUTO-1 the two settings are saved on this phone only › AUTO-5 autoplayOn({"autoplay":true,"saveData":null}, reduceMotion false) is true
+  ● DATA-6 / AUTO-1 the two settings are saved on this phone only › AUTO-5 autoplayOn({"autoplay":false,"saveData":false}, reduceMotion false) is false
+  ● DATA-6 / AUTO-1 the two settings are saved on this phone only › AUTO-5 autoplayOn({"autoplay":true,"saveData":true}, reduceMotion false) is false
+  ● DATA-6 / AUTO-1 the two settings are saved on this phone only › AUTO-5 autoplayOn({"autoplay":true,"saveData":false}, reduceMotion true) is false
+FAIL src/media/__tests__/videoAbort.test.ts
+  ● AUTO-3 a video download stops when it is scrolled away › AUTO-3 already aborted: rejects with AbortError and never downloads the video file
+  ● AUTO-3 a video download stops when it is scrolled away › AUTO-3 aborted mid-download: rejects, nothing is written, and the next call downloads again
+FAIL src/screens/__tests__/autoplay.test.tsx (7.472 s)
+  ● AUTO-9 Feed uses the one constant › AUTO-9 Feed's list passes AUTOPLAY_VIEWABILITY itself (80 / 1000 / waitForInteraction), not a copy
+  ● AUTO-2 one video plays quietly once she stops on it › AUTO-2 two videos 80%+ on screen after the still pause: only the top one plays, muted, and only it downloads
+  ● AUTO-2 one video plays quietly once she stops on it › AUTO-2 / AUTO-4 the playing card's word button reads "Play with sound" (spoken "Play video with sound"); the other keeps "Play"
+  ● AUTO-3 pauses when she moves on; loops, never advances › AUTO-3 the video drops under 80%: it pauses, its file is let go, and nothing else starts
+  ● AUTO-3 pauses when she moves on; loops, never advances › AUTO-3 scrolled away before the file arrived: the unfinished download is stopped (its signal aborted)
+  ● AUTO-3 pauses when she moves on; loops, never advances › AUTO-3 the list moves again: it pauses at once, and plays again only after 1 s still
+  ● AUTO-3 pauses when she moves on; loops, never advances › AUTO-3 at its end it loops quietly and never moves on to the next video
+  ● AUTO-4 tap for the full-screen player with sound › AUTO-4 "Play with sound" opens the full-screen player (VID-18) with sound from the start; the quiet one pauses
+  ● AUTO-4 tap for the full-screen player with sound › AUTO-4 tapping the playing video itself opens the same full-screen player with sound (not the post screen)
+  ● AUTO-5 off, reduce motion or Save data: poster and Play only, nothing fetched until Play › AUTO-5 "Play videos as I scroll" off
+  ● AUTO-5 off, reduce motion or Save data: poster and Play only, nothing fetched until Play › AUTO-5 the phone's reduce motion on
+  ● AUTO-5 off, reduce motion or Save data: poster and Play only, nothing fetched until Play › AUTO-5 Save data on (autoplay itself still saved as on)
+  ● AUTO-5 off, reduce motion or Save data: poster and Play only, nothing fetched until Play › AUTO-5 control: with autoplay on and nothing else, the same steps do play (so the three above are real)
+FAIL src/screens/__tests__/videosAndData.test.tsx (38.7 s)
+  ● AUTO-1 More → Videos and data › AUTO-1 the "Videos and data" row sits right after "Light or dark", for every role
+  ● AUTO-1 More → Videos and data › AUTO-1 a fresh install: the page has "Play videos as I scroll" on and "Save data" off, with 5.1's exact words
+  ● AUTO-1 More → Videos and data › AUTO-1 the choice is kept: a phone that turned autoplay off opens the page with it off
+  ● DATA-2 Save data switch › DATA-2 Save data on: at once, autoplay shows Off, can't be tapped, says "Off while Save data is on."; off puts it back
+  ● DATA-2 Save data switch › DATA-2 no restart: the app's dataPrefs change the moment the switch is pressed; More's row then says "Saving data"
+  ● DATA-2 Save data switch › DATA-2 with Save data off the row shows nothing at its right end
+  ● AUTO-5 reduce motion on the page › AUTO-5 with the phone's reduce motion on, the autoplay switch shows Off and says why
+  ● DATA-1 the prepaid question at sign-up › DATA-1 a new member, right after the invite code: the question shows before Gallery; "Yes" saves Save data on, then Gallery
+  ● DATA-1 the prepaid question at sign-up › DATA-1 "No, my plan is fine" saves Save data off and moves on
+  ● DATA-1 the prepaid question at sign-up › DATA-1 a first sign-in on a phone not yet asked gets the same question
+  ● DATA-6 neither setting leaves the phone › DATA-6 switching both on the Videos and data page makes no backend call and no other network call
+  ● DATA-6 neither setting leaves the phone › DATA-6 the sign-up answer is saved on the phone only: no call carries it
+Test Suites: 5 failed, 171 passed, 176 total
+Tests:       43 failed, 1 skipped, 1 todo, 2241 passed, 2286 total

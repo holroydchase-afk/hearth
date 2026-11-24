@@ -61,7 +61,8 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
 
   useEffect(() => {
     const n = next !== null ? entries[next] : undefined;
-    if (n) app.media?.prefetch(n.post.post_id, [n.media.media_id]);
+    // DEC-87 (DATA-4): with Save data on, the next photo's full size waits for the swipe.
+    if (n && app.dataPrefs.saveData !== true) app.media?.prefetch(n.post.post_id, [n.media.media_id]);
   }, [entry?.media.media_id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const go = (to: number | null) => {
@@ -130,7 +131,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
     <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
       <View style={styles.top}>
         <Button label="Close" icon={{ sf: 'xmark', md: 'close' }} variant="secondary" onPress={nav.close} />
-        {entry ? <Txt variant="muted">{`Photo ${cur! + 1} of ${entries.length}`}</Txt> : null}
+        {entry ? <Txt tone="muted">{`Photo ${cur! + 1} of ${entries.length}`}</Txt> : null}
         {entry ? (
           <Button
             label={zoom ? 'Zoom out' : 'Zoom in'}
@@ -142,14 +143,14 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
       </View>
       {!entry ? (
         state.loaded && state.status === 'idle' && (asked.current || pos === -1) ? (
-          <View style={styles.pad}><Txt variant="title">This was removed.</Txt></View>
+          <View style={styles.pad}><Txt variant="title2">This was removed.</Txt></View>
         ) : (
           <Loading words="Loading the photo…" />
         )
       ) : (
         <>
           <View style={styles.pad}>
-            <Txt variant="strong">{`From ${entry.post.author_name} · ${shortDate(entry.post.published_at)}`}</Txt>
+            <Txt variant="headline">{`From ${entry.post.author_name} · ${shortDate(entry.post.published_at)}`}</Txt>
           </View>
           {/* Zoomed: twice the size, moved around in both directions; swiping to the next photo waits until unzoomed.
               iPhone: the outer scroll view also pinches, up to 4x. */}

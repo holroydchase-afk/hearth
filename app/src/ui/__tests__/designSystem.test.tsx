@@ -4,19 +4,26 @@
 import { render, screen } from '@testing-library/react-native';
 import React from 'react';
 import { StyleSheet } from 'react-native';
+import * as TabBar from '../../screens/TabBar';
 import { NATIVE_TAB_OPTIONS, TAB_ICONS, tabsFor } from '../../screens/TabBar';
 import { expectGrandparentSafe } from '../../test/renderApp';
 import { Button } from '../kit';
-import { contrast, paletteFor, typeScale } from '../theme';
+import * as theme from '../theme';
+import { contrast, paletteFor } from '../theme';
 
 describe('DS native design system', () => {
   // DS-12 (Atkinson, Nov 1) is superseded by RD-2 (phone's own font, DEC-59): see redesignLook.test.tsx.
 
-  it('DS-2: text follows the platform ramp (body 17, title 22, large 28) and never goes under 17', () => {
-    expect(typeScale(false)).toMatchObject({ base: 17, title: 22, display: 28 });
-    const big = typeScale(true);
-    expect(big.base).toBeGreaterThanOrEqual(21);
-    expect(big.title).toBeGreaterThan(big.base);
+  // qa-tdd, Nov 24 (TYPE-11, DEC-84): DS-2's "never goes under 17" is rewritten to SPEC-TYPE's TYPE-3 and TYPE-7: Easy view
+  // keeps every style at 17 or more; with Easy view off only the secondary styles (callout..caption2) go under 17, on
+  // the listed elements (typeScale.test.tsx sweeps the screens).
+  it('DS-2 → TYPE-3 / TYPE-7: the named iPhone scale; body is 17 / 22, Easy view never under 17, only secondary styles under 17 when off', () => {
+    const T = theme as unknown as { TYPE?: { standard: Record<string, { fontSize: number }>; easy: Record<string, { fontSize: number }> } };
+    expect(T.TYPE?.standard.body).toMatchObject({ fontSize: 17, lineHeight: 22 });
+    expect(T.TYPE?.easy.body).toMatchObject({ fontSize: 21, lineHeight: 26 });
+    expect(Object.values(T.TYPE?.easy ?? {}).every((s) => s.fontSize >= 17)).toBe(true);
+    const under = Object.entries(T.TYPE?.standard ?? {}).filter(([, s]) => s.fontSize < 17).map(([n]) => n);
+    expect(under).toEqual(['callout', 'subheadline', 'footnote', 'caption1', 'caption2']);
   });
 
   // qa-tdd, Nov 18: RD-94 (DEC-68, Chase 14:55Z) replaces the tan paper with Paper, an off-white page, the default theme.
@@ -52,7 +59,9 @@ describe('DS native design system', () => {
       expect(t.label).toMatch(/\w/);
     }
     expect(NATIVE_TAB_OPTIONS).toMatchObject({ minimizeBehavior: 'never', labelVisibilityMode: 'labeled' });
-    expect(NATIVE_TAB_OPTIONS.labelStyle.fontSize).toBeGreaterThanOrEqual(17);
+    // TYPE-6 (DEC-84): Android's own bar uses caption1, Material's 12 sp with Easy view off and 17 with it on.
+    const label = (TabBar as unknown as { nativeTabLabelStyle?: (e: boolean) => { fontSize: number } }).nativeTabLabelStyle;
+    expect([label?.(false)?.fontSize, label?.(true)?.fontSize]).toEqual([12, 17]);
   });
 
   it('DS-1 / DS-3: a button with an icon still shows its word and is 48 pt', () => {

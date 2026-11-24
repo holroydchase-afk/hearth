@@ -49,7 +49,7 @@ export default function RootLayout() {
   const [fontsReady, fontError] = useFonts(FONT_FILES);
   if (!fontsReady && !fontError) return null;
   if ('error' in runtime) {
-    return <SafeAreaProvider><Screen><Txt variant="title">{runtime.error}</Txt></Screen></SafeAreaProvider>;
+    return <SafeAreaProvider><Screen><Txt variant="title2">{runtime.error}</Txt></Screen></SafeAreaProvider>;
   }
   return (
     <SafeAreaProvider>

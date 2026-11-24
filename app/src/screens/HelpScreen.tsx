@@ -18,12 +18,12 @@ export function HelpScreen({ onBack }: { onBack?: () => void } = {}) {
   return (
     <Screen>
       {onBack ? <BackButton to="More" onPress={onBack} /> : null}
-      <Txt variant="display" role="header">Help</Txt>
+      <Txt variant="title1" role="header">Help</Txt>
       {/* GUX-R10: name the person who invited her, and show the number too. The owner set the family up, so no
           "ask someone" line for him. Bigger text and Light or dark live in More now, not here. */}
       {app.space?.role === 'owner' ? null : (
         <GroupedSection>
-          <Txt variant="title">Need help?</Txt>
+          <Txt variant="title2">Need help?</Txt>
           {who && phone ? (
             <>
               <Txt>{`${who} can help. Their number is ${app.deps.helpPhone}.`}</Txt>
@@ -40,7 +40,7 @@ export function HelpScreen({ onBack }: { onBack?: () => void } = {}) {
           dead row. The mail carries a fixed subject only: no family, group or person. */}
       {app.deps.helpEmail ? (
         <GroupedSection>
-          <Txt variant="title" role="header">Something wrong?</Txt>
+          <Txt variant="title2" role="header">Something wrong?</Txt>
           <Txt>If something on Hearth looks wrong, or someone is using it to upset or hurt people, tell us. A person reads every email.</Txt>
           <Button variant="quiet" label="Email Hearth" icon={{ sf: 'envelope', md: 'mail' }}
             onPress={() => void app.deps.openUrl(`mailto:${app.deps.helpEmail}?subject=${encodeURIComponent('Something wrong on Hearth')}`)}

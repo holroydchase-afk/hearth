@@ -83,7 +83,7 @@ export function TextCodeFlow({ onSignedIn, onUseEmail, inviter }: {
         <Field label="Your mobile number" value={typed} onChangeText={setTyped} keyboardType="phone-pad" autoComplete="tel" textContentType="telephoneNumber" placeholder="304-555-0100" maxLength={20} />
         {msg ? <Notice text={msg} /> : null}
         <Button label="Send me a code" busy={busy} disabled={!/\d/.test(typed) || mustWait} onPress={() => void send(typedE164)} />
-        {mustWait ? <Txt variant="muted">{`You can ask for a new code in ${waitLeft} seconds.`}</Txt> : null}
+        {mustWait ? <Txt tone="muted">{`You can ask for a new code in ${waitLeft} seconds.`}</Txt> : null}
         {onUseEmail ? <Button label="Use email instead" variant="secondary" onPress={() => onUseEmail()} /> : null}
       </>
     );
@@ -95,8 +95,8 @@ export function TextCodeFlow({ onSignedIn, onUseEmail, inviter }: {
       <Field label="6-number code" value={code} onChangeText={(t) => setCode(t.replace(/\D/g, '').slice(0, 6))} keyboardType="number-pad" maxLength={12} autoComplete={Platform.OS === 'android' ? 'sms-otp' : 'one-time-code'} textContentType="oneTimeCode" style={{ letterSpacing: 6 }} />
       {msg ? <Notice text={msg} /> : null}
       <Button label="Continue" busy={busy} disabled={code.replace(/\D/g, '').length !== 6} onPress={() => void verify()} />
-      <Txt variant="muted">It can take a minute.</Txt>
-      {waitLeft > 0 ? <Txt variant="muted">{`You can ask for a new code in ${waitLeft} seconds.`}</Txt> : null}
+      <Txt tone="muted">It can take a minute.</Txt>
+      {waitLeft > 0 ? <Txt tone="muted">{`You can ask for a new code in ${waitLeft} seconds.`}</Txt> : null}
       <Button label="Send a new code" variant="secondary" disabled={waitLeft > 0} onPress={() => void send(sentTo)} />
       <Button label="Use a different number" variant="quiet" onPress={() => { setStep('phone'); setMsg(null); }} />
     </>
