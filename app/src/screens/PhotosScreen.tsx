@@ -211,6 +211,8 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
           stickyHeaderIndices={[1]}
           onContentSizeChange={() => setRelayout((n) => n + 1)}
           contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 + tabRoom }}
+          // GUX-T6: on the web, focus and scroll-into-view stop above the floating tab bar (WCAG 2.4.11), not under it.
+          style={tabRoom ? ({ scrollPaddingBottom: tabRoom } as object) : undefined}
           keyboardShouldPersistTaps="handled"
         >
           {/* RD-11 / RD-55: the greeting is the large title; RD-47: the "Search photos" field right under it. */}

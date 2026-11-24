@@ -55,7 +55,7 @@ export function KindCard({ kind }: { kind: PostKind }) {
         {kind === 'news' ? field('Your news', true) : null}
         {kind === 'saying' ? (
           <>
-            <Txt variant="title2" tone="accent" style={styles.quote}>{'“'}</Txt>
+            <Txt variant="title2" tone="muted" style={styles.quote}>{'“'}</Txt>
             {field('What they said', true)}
             {field('Who said it')}
             {field('Age then, optional')}

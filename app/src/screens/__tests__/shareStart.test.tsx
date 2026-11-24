@@ -745,12 +745,13 @@ function headerRow(): Inst | null {
 }
 
 describe('GUX-W1 P1 the empty postcard sits in the middle of the space under "New post"', () => {
-  it('GUX-W1 "share-card" is in "share-empty-wrap" (flex 1, centred), after the header; the page content can grow; the spot stays 4:3', async () => {
+  it('GUX-W1 "share-card" is in "share-empty-wrap" (flex 1; top-aligned per GUX-T2), after the header; the page content can grow; the spot stays 4:3', async () => {
     await start();
     const wrap = screen.queryByTestId('share-empty-wrap', HIDDEN);
     expect(wrap).not.toBeNull();
     const s = flat(wrap!.props.style);
-    expect({ flex: s.flex, justify: s.justifyContent }).toEqual({ flex: 1, justify: 'center' });
+    // GUX-T2 (Nov 24) supersedes the centring: flex 1 stays, the card is top-aligned (GUX-T2 below checks justifyContent).
+    expect(s.flex).toBe(1);
     expect({ cardIn: within(screen.getByTestId('share-card'), wrap!), headerIn: within(screen.getByRole('header', { name: 'New post' }), wrap!) })
       .toEqual({ cardIn: true, headerIn: false });
     let grows = false;

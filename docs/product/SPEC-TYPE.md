@@ -14,7 +14,7 @@ One table in `theme.ts`, `TYPE`, keyed by style name, with a Standard set (Easy 
 |---|---|---|---|---|
 | `largeTitle` | 34 / 41 | 38 / 46 | SemiBold | The title of a tab's top page: Gallery greeting, Feed, More |
 | `title1` | 28 / 34 | 32 / 39 | SemiBold | The title of every other full page (pushed pages, sign-in, join, start a family) |
-| `title2` | 22 / 28 | 26 / 32 | SemiBold | Section headings, card and dialog-sheet titles, post titles, Share "New post", Gallery month names |
+| `title2` | 22 / 28 | 26 / 32 | SemiBold | Section headings, card and dialog-sheet titles, Share "New post", Gallery month names (a post's own title is inline `body`, RD-71) |
 | `title3` | 20 / 25 | 24 / 30 | SemiBold | Reserved: a heading inside a section (no use today) |
 | `headline` | 17 / 22 | 21 / 26 | SemiBold | Button and action words, names, counts that are the point, "Add photos" |
 | `body` | 17 / 22 | 21 / 26 | Regular | All reading text: captions, comments, notes, menu rows, fields, alert messages |
@@ -46,7 +46,8 @@ Counts from `grep` on Nov 24. "No change" means the same size in Standard; Easy 
 | `TimelineScreen` (Feed), `MoreScreen` | Page title (`display`) | 28 / 35 | `largeTitle` | 28 → 34 |
 | Other screens with `variant="display"` (Groups, Events, Help, Birthdays, Search, Photos, Join, SignIn, AppGate, Messages chat title, BatchReview, Me, StartFamily, DemoFrame; 28 uses) | Page title | 28 / 35 | `title1` | No change (Easy 32). A second `display` in a tab-root file that is not the page title (an empty-state heading) is `title1` too |
 | `ShareScreen` | "New post" | 28 / 35 | `title2` | 28 → 22 (Chase's pick, SHARE-ST-28) |
-| Any `variant="title"` (58 uses: section headings, card titles, post titles in Feed and PostCard, sheets, ErrorBoundary, NotFound, Preferences, Join) | Heading | 22 / 27 | `title2` | No change (Easy 26) |
+| Any `variant="title"` (section headings, card titles, sheets, ErrorBoundary, NotFound, Preferences, Join) | Heading | 22 / 27 | `title2` | No change (Easy 26) |
+| Feed and `PostCard` `Caption` | A post's title, inline before " – " and the words (RD-71, UX-R28) | 22 / 27 heading | `body` in Medium | 22 → 17 (no heading above the words; QA-R9) |
 | Any `variant="strong"` (36 uses) | Names, emphasized words | 17 / 21 SemiBold | `headline` | No change |
 | Any `variant="body"` | Reading text | 17 / 21 | `body` | No change |
 | Any `variant="muted"` (60 uses) | Quiet reading text | 17 / 21 | `body` + `tone="muted"` | No change, except the rows below that are secondary |
@@ -63,10 +64,12 @@ Counts from `grep` on Nov 24. "No change" means the same size in Standard; Easy 
 | `kit` `AlertDialog` | Title / message / buttons | `t.base` | `headline` / `body` / `body` (Keep) and `headline` (Delete) | No change |
 | `kit` styles `stampMark` | Stamp month and day | raw 17 / 18 | `STAMP_MARK` | No change |
 | `PostCard` `SheetRow` | Row label | `t.base` | `body` | No change |
+| `PostCard` styles `name`, comment authors | Author names in Medium (RD-48) | `t.base` Medium | `headline` size in Medium | Exception (QA-R10): Medium is no style's weight, but these names keep it; size and leading follow `headline` in Standard and Easy view |
 | `PostCard` `ReplyBox` | Typed reply | `t.base`, `commentLine()` | `body` (its leading) | No change |
 | `PostCard` `ReactionButton` | Count | `t.base` | `subheadline` | 17 → 15 |
 | `PostCard` styles `emoji` | Reaction emoji | raw 22 / 28 | `EMOJI_GLYPH` (= `title2`) | No change |
 | `PostCard` styles `faceText` | Initials in a face | raw 17 / 20 SemiBold | `headline` | Leading 20 → 22 |
+| `PostCard` styles `faceText` in Easy view | Initials in a face | `headline` | Fixed at Standard `headline` (17 / 22) | Exception (QA-R11): the 36 pt circle is a fixed size (RD-48, GUX-R1), so the two letters do not take Easy view's 21; the name beside the face carries the full size |
 | `PostCard` `muted` lines | Post date and time | 17 muted | `subheadline` muted | 17 → 15 |
 | `PostCard` `muted` lines | Who sees it, "Seen by" | 17 muted | `body` muted | No change (A1: audience words are never small) |
 | `PhotoCollage` styles `moreText` | "+3" on the last tile | raw 17 / 20 Medium, white | `headline` | Medium → SemiBold |

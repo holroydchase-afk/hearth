@@ -258,7 +258,7 @@ export function ShareScreen() {
           {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
 
           {/* SHARE-PC-1: one card holds the post as the family will see it, and who it goes to. */}
-          {/* GUX-W1: the empty postcard sits in the middle of the space under "New post". */}
+          {/* GUX-T2: the empty postcard sits right under "New post", the kinds row right under it. */}
           {!big && kind ? <KindCard kind={kind} /> : null}
           {!big && !kind ? (
             <View testID="share-empty-wrap" style={styles.emptyWrap}>
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   head: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 48 }, // same height with or without Cancel
   headTitle: { flex: 1, flexShrink: 1 },
   headCancel: { paddingHorizontal: 0 },
-  emptyWrap: { flex: 1, justifyContent: 'center' },
+  emptyWrap: { flex: 1 }, // GUX-T2: top-aligned under "New post" (supersedes GUX-W1's centring)
   // No overflow clip on the card, so its shadow is never cut; the big photo rounds its own top corners.
   card: { borderRadius: RADIUS.photo },
   big: { width: '100%', aspectRatio: 4 / 3, borderTopLeftRadius: RADIUS.photo, borderTopRightRadius: RADIUS.photo },
