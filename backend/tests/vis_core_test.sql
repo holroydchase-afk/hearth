@@ -1,6 +1,6 @@
 -- VIS-7, VIS-22, VIS-24: the one dispatch agrees with today's rules, and nobody calls it from the app
 -- (SPEC-VISIBILITY-CORE Phase 1 and 1b; docs/architecture/07-visibility-model.md). Written FIRST (Nov 24, 2026):
--- red until vis.can_see / vis.sees_item land (migrations 0030+). Fixture family: supabase/seed.sql
+-- red until vis.can_see / vis.sees_item land (migrations 0031+). Fixture family: supabase/seed.sql
 -- (space A: Alex, Grandma and Grandpa Rivera, Aunt Jo; space B: Blair, Grandma Chen). VIS-8's generated
 -- families (Phase 2) widen this later.
 -- Names follow 07 (vis.can_see(user, kind, id), vis.sees_item(user, item)); the spec's C2 and VIS-7 text say

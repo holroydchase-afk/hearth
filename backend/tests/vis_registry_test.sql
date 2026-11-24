@@ -1,7 +1,7 @@
 -- VIS-1, VIS-3, VIS-4, VIS-5: the coverage gate (SPEC-VISIBILITY-CORE C3, Phase 1; docs/architecture/07-visibility-model.md).
 -- Reads the live catalog after every migration and fails, naming the relation, when anything an app user can
 -- touch has no reach class or doesn't use its rule. Written FIRST (Nov 24, 2026): red until the vis registry lands
--- (migrations 0030+). Registry shape is 07's sketch: vis.kinds (kind, relation, reach, item_column, owner_column,
+-- (migrations 0031+). Registry shape is 07's sketch: vis.kinds (kind, relation, reach, item_column, owner_column,
 -- narrow_fn, note), vis.functions (fn, kind, note). A vis.functions row with kind null is the VIS-5 allowlist.
 -- VIS-2 and VIS-23 (the gate bites) run this file against scratch migrations: tests/vis_gate_test.sh.
 \set ON_ERROR_STOP 1

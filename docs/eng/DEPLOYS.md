@@ -4,7 +4,7 @@ One table of what runs on the hosted project, so nobody has to guess from chat o
 
 | Piece | Live | On main, not live | Last deploy |
 |---|---|---|---|
-| Database migrations | 0001–0025 (smoke check 9/9) | 0026 text sign-in (switched off; needs "deploy 0026"); 0027 group names for parents only (needs "deploy 0027"); 0028 no passwords in Auth (TS-SEC-R1, PR #134 once merged; the same deploy also turns "Confirm email" on). `deploy.sh` applies every migration not yet applied, so the next deploy ships 0026, 0027 and 0028 together. Branch `claude/project-thread-jtelk5` adds 0030 visibility core and 0031 visibility registry (R77 Phase 1/1b, no behavior change; 0031 refuses to run if the table owner doesn't bypass RLS; 0029 is reserved for the life-calendar branch) | Nov 11, 2026 (0024, 0025) |
+| Database migrations | 0001–0025 (smoke check 9/9) | 0026 text sign-in (switched off; needs "deploy 0026"); 0027 group names for parents only (needs "deploy 0027"); 0028 no passwords in Auth (TS-SEC-R1, PR #134 once merged; the same deploy also turns "Confirm email" on). `deploy.sh` applies every migration not yet applied, so the next deploy ships 0026, 0027 and 0028 together. Branch `claude/project-thread-jtelk5` adds 0031 visibility core and 0032 visibility registry (R77 Phase 1/1b, no behavior change; 0032 refuses to run if the table owner doesn't bypass RLS; 0030 is reserved for the video-fixes branch, PR #135) | Nov 11, 2026 (0024, 0025) |
 | `start_family_open` switch | off | | Nov 11, 2026 |
 | Edge function `notify` | yes (1-minute cron `hearth-notify`) | | Oct 28, 2026 (unchanged since Oct 18) |
 | Edge function `sign-media` | yes | | Oct 28, 2026 |

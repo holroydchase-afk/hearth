@@ -579,12 +579,19 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** Chase's pick; each theme comes from a real cut fruit, layer by layer, like the Hass avocado (DEC-76), and every set passes Hearth's contrast rules.
 - **Source:** `docs/product/SPEC-REDESIGN.md` 1l; persona check `decisions/2026-11-23-fruit-themes.md` (LG Red mitigated, PA Red Chase override). Supersedes DEC-68's three-theme limit and its Pomegranate values (RD-95).
 
-### DEC-81 · Build the visibility core now; bridge after the beta; 2-minute Take back; news and dates for parents (R77, VIS-*, SHARE-U-*)
-- **When / status:** Nov 24 · Chase, on the four open questions in `SPEC-VISIBILITY-CORE.md`: "Ok agreed to all" · Phases 1 and 1b built (migrations 0030, 0031), Phase 2 next
+### DEC-81 · Life calendar v1: birthdays and important dates, month and day only (CAL-1..CAL-21)
+- **When / status:** Nov 24 · Chase's ask, rapid messages: "Life calendar" / "Capture birthdays" / "And important dates" / "Tell everyone" / "So during onboardng" / "Build a v1". His call: build a v1 · Specced, failing tests next
+- **Chose:** an optional "When's your birthday?" card on Gallery for every member (month and day buttons, no typing, Not now); a Birthdays row in More listing every family date soonest first; parents add kids' birthdays, anniversaries and other dates; on the day, "Today is Grandma Jo's birthday" on Gallery for everyone. In-app only. Migration 0029 `family_dates`. Amended Nov 24 after privacy-security review (PRIV-R2), confirmed by Chase Nov 24 ("there should be an advanced central core ... that decides who can see it"; visibility follows the central rules, not a per-feature question): dates follow who sees a name (a member's birthday to whoever may see that member; other dates to parents and the Everyone group), not family-wide.
+- **Over:** an optional birth year (staff-pm: no beta job needs it, and a stored year is a privacy cost); push or email on the day in v1 (needs outbox and `notify` changes plus a deploy; v1.1); per-group audience on dates (wide); a new onboarding gate (a card on Gallery reaches every way in).
+- **Because:** grandparents who avoid social media miss Facebook's birthday nudges; Hearth can tell the family on the day without ads or trackers. Month and day are enough to say "today".
+- **Source:** `docs/product/SPEC-LIFE-CALENDAR.md`; persona check `decisions/2026-11-24-life-calendar.md` (LG and SG Red, mitigated). TRACKER R78.
+
+### DEC-83 · Build the visibility core now; bridge after the beta; 2-minute Take back; news and dates for parents (R77, VIS-*, SHARE-U-*)
+- **When / status:** Nov 24 · Chase, on the four open questions in `SPEC-VISIBILITY-CORE.md`: "Ok agreed to all" · Phases 1 and 1b built (migrations 0031, 0032), Phase 2 next
 - **Chose:** build Phases 1, 1b and 2 (registry, coverage gate, generic `@holroyd/visibility` core, oracle) now, before the beta; the co-parent bridge after the beta, with a co-parent persona brought back first; a 2-minute "Take back" hold before any notice goes out; "Write news" and "Add a date" on the postcard for parents only until the grandparent test. That last one reopens DEC-79's "one way in".
 - **Over:** waiting until after the beta for the whole core (keeping safety on review alone, and R51 as a separate eval); the bridge before the beta (no split-parent pair among the testers); no hold on notices; news and dates for everyone at once.
 - **Because:** the gate makes every later feature safe by default with no screen changes, so it is cheapest before more kinds land; nobody in the WV beta can test the bridge; a wrong send is the worst error, and a grandparent won't notice 2 minutes; most grandparents can't post anyway.
 - **Source:** `docs/product/SPEC-VISIBILITY-CORE.md` (open questions 1 to 4), `docs/architecture/07-visibility-model.md`; persona check `decisions/2026-11-24-visibility-core.md`. Amends DEC-79's one way in (parents only).
 
 ---
-Last updated: Nov 24, 2026 (DEC-81)
+Last updated: Nov 24, 2026 (DEC-83)

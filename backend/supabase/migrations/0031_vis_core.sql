@@ -1,4 +1,4 @@
--- 0030: the generic visibility core (SPEC-VISIBILITY-CORE Phase 1b, docs/architecture/07-visibility-model.md, DEC-81).
+-- 0031: the generic visibility core (SPEC-VISIBILITY-CORE Phase 1b, docs/architecture/07-visibility-model.md, DEC-83).
 -- Everything below this header is packages/visibility/core/supabase.sql, copied verbatim (like 0015 and the messenger
 -- relay). Edit the package first, then copy it here in a new migration. No behavior change: nothing reads it yet.
 

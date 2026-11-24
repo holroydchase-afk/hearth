@@ -19,6 +19,7 @@ import { Button, Card, Loading, Notice, Txt } from '../ui/kit';
 import { andList } from '../ui/format';
 import { useTheme } from '../ui/theme';
 import { AppGate } from './AppGate';
+import { BirthdayCard, TodayLine } from './Birthdays';
 import { EventCard, EventsScreen, EventUpdate, type EventsView } from './EventsScreen';
 import { FOLD_AT, GalleryTopBar, LargeGreeting, SearchField, greeting, useFamilyName } from './GalleryTop';
 import { GalleryGrid, shadeLine } from './GalleryGrid';
@@ -142,6 +143,8 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
       {/* RD-11: Gallery's large title is the greeting (shown once the name is known, so it never flips mid-read);
           Feed's title is "Feed" (GUX-R5), the tab's own word. UI-26 still holds: no "Check for new photos" button; pull down to refresh. */}
       {gallery ? null : <Txt variant="display" role="header">Feed</Txt>}
+      {/* CAL-16: on a day with a family date, one line at the top of Gallery ("Today is Grandma Jo's birthday"). */}
+      {gallery ? <TodayLine /> : null}
       {/* RD-18: Gallery has no "Sent by" line; the grid tiles and New for you name the senders. */}
       {senders && !gallery ? <Txt variant="muted">{`Sent by ${senders}`}</Txt> : null}
       {fresh.length && lastSeen?.at ? (
@@ -150,6 +153,8 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
       {/* SHARE-PC-11 (DEC-73): after a Send, Feed says who it went to, by name, until closed. */}
       {app.shared && !gallery ? <Notice tone="good" text={app.shared} onClose={() => app.setShared(null)} /> : null}
       {app.space.can_post ? <YourName /> : null}
+      {/* CAL-12/13: "When's your birthday?" until Save or Not now; it lives on Gallery so every way in reaches it. */}
+      {gallery ? <BirthdayCard /> : null}
       <QueueStatus />
       {app.pushAsk && state.posts.length ? <PushAsk /> : null}
       {state.notice ? <Notice text={state.notice} onClose={() => feed.clearNotice()} /> : null}

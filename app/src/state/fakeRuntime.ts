@@ -8,7 +8,7 @@ import { FakeBackend, type FakeState } from '../api/fake/FakeBackend';
 import type { HearthApi } from '../api/HearthApi';
 import { DEMO_MODE } from '../demo/flags';
 import { loadDemoPicture } from '../demo/pictures';
-import { freshenDemoStorage, seedDemo } from '../demo/seed';
+import { freshenDemoStorage, seedDemo, seedDemoDates } from '../demo/seed';
 import { asyncStorageKV } from '../platform/storage';
 import { webStorage } from '../platform/webStorage';
 import { idbObjects, objectsComplete, splitSaver } from './fakeSave';
@@ -54,6 +54,8 @@ function fakeBackend(): FakeBackend {
         kept.objects = { ...objects, ...inline };
         saver?.know(Object.keys(objects));
         if (!objectsComplete(kept)) return fresh(be);
+        // CAL-19: the demo's birthdays are counted from the visit, so a family saved on another day gets them moved.
+        if (DEMO_MODE) { try { seedDemoDates(be); } catch { /* the dates are a nice-to-have; the family still shows */ } }
         if (store && Object.keys(inline).length) be.changed();
       });
   }

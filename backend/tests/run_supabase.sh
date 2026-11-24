@@ -24,7 +24,7 @@ echo "== ../packages/messenger/relay/test.sql" >&2
 psql "$DB_URL" -v ON_ERROR_STOP=1 -X -q -f ../packages/messenger/relay/test.sql >/dev/null || STATUS=1
 # VIS-19, 20, 23: the generic visibility core's conformance kit on the real stack (toy product, rolled back);
 # VIS-21: its word check. VIS-2/6/23 gate bites (tests/vis_gate_test.sh) build scratch databases, so they run in tests/run.sh.
-# The kit installs the template itself, and Hearth's 0030 already made `vis` in postgres, so it gets its own database
+# The kit installs the template itself, and Hearth's 0031 already made `vis` in postgres, so it gets its own database
 # on the same server (Supabase's roles are cluster-wide; the kit stubs auth).
 echo "== ../packages/visibility/core/test.sql (scratch database vis_kit)" >&2
 KIT_URL="${DB_URL%/*}/vis_kit"

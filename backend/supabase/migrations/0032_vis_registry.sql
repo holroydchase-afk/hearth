@@ -1,7 +1,7 @@
--- 0031: Hearth's visibility registry and adapter (SPEC-VISIBILITY-CORE Phase 1 and 1b, TRACKER R77, DEC-81;
+-- 0032: Hearth's visibility registry and adapter (SPEC-VISIBILITY-CORE Phase 1 and 1b, TRACKER R77, DEC-83;
 -- docs/architecture/07-visibility-model.md). NO behavior change: every RLS policy and RPC stays as it is.
 -- This migration:
---   1. points the generic core (0030) at Hearth's tables through its four adapter views;
+--   1. points the generic core (0031) at Hearth's tables through its four adapter views;
 --   2. adds the per-user rule functions can_see dispatches to (copies of today's rules with the user as a
 --      parameter; tests/vis_core_test.sql VIS-7 proves each equals the rule RLS uses today);
 --   3. registers every table, every security definer function app users can call, and both edge functions;
@@ -58,6 +58,23 @@ language sql stable security definer set search_path = '' as $$
                        now()))))
 $$;
 
+-- Person, life calendar (0029, VIS-18): private.may_see_family_date for p_viewer. A member's birthday is the
+-- person rule itself (vis_sees_person, the twin of can_see_profile); a date with no member goes to the family's
+-- parents and its Everyone group; members of that live family only, in both cases (PRIV-R2).
+create function private.vis_sees_family_date(p_viewer uuid, p_date uuid) returns boolean
+language sql stable security definer set search_path = '' as $$
+  select exists (
+    select 1 from public.family_dates d
+      join public.space_members me on me.space_id = d.space_id and me.user_id = p_viewer
+      join public.spaces s on s.id = d.space_id and s.deleted_at is null
+     where d.id = p_date
+       and (me.role in ('owner', 'adult')
+            or case when d.member_id is not null then private.vis_sees_person(p_viewer, d.member_id)
+                    else exists (select 1 from public.circle_members cm
+                                   join public.circles c on c.id = cm.circle_id and c.deleted_at is null
+                                  where cm.user_id = p_viewer and c.space_id = d.space_id and c.kind = 'everyone') end))
+$$;
+
 -- Container: circles_select (0027) for p_viewer: parents read every live group in their space; others only
 -- Everyone and events they are in.
 create function private.vis_sees_circle(p_viewer uuid, p_circle uuid) returns boolean
@@ -110,7 +127,7 @@ language sql stable security definer set search_path = '' as $$
                     and private.reply_ok(p_viewer, c.post_id, c.author_id, c.created_at))
 $$;
 
-revoke all on function private.vis_sees_person(uuid, uuid), private.vis_sees_circle(uuid, uuid),
+revoke all on function private.vis_sees_person(uuid, uuid), private.vis_sees_family_date(uuid, uuid), private.vis_sees_circle(uuid, uuid),
   private.vis_sees_space(uuid, uuid), private.vis_sees_invite(uuid, uuid), private.vis_sees_household(uuid, uuid),
   private.vis_media_ok(uuid, uuid), private.vis_comment_ok(uuid, uuid)
   from public, anon, authenticated;
@@ -138,6 +155,8 @@ insert into vis.kinds (kind, relation, reach, item_column, owner_column, rule_fn
    'names: profiles_select = can_see_profile (shared family as a parent, shared live group, or a reply you can read)'),
   ('child', 'public.children', 'person', null, null, 'private.vis_sees_person(uuid,uuid)', null,
    'children: RLS shows guardians, parents and tagged posts; can_see uses the person rule, which says no for a child (default deny until the oracle adds a child rule)'),
+  ('family_date', 'public.family_dates', 'person', null, null, 'private.vis_sees_family_date(uuid,uuid)', null,
+   'life calendar (0029, VIS-18): family_dates_select = private.may_see_family_date: a member''s birthday follows the person rule (can_see_profile), other dates the parents and the Everyone group (PRIV-R2)'),
   ('child_guardian', 'public.child_guardians', 'person', null, null, null, null,
    'who guards a child: child_guardians_select = the reader is a guardian of that child (no row id)'),
   -- container
@@ -223,6 +242,9 @@ insert into vis.functions (fn, kind, note) values
   ('public.set_notification_prefs(uuid,boolean,text)', 'notification_pref', 'writes your own prefs only'),
   ('public.request_account_export()', 'account_export', 'requests your own export only'),
   ('public.chat_publish_device(text,text[])', 'chat_device', 'publishes your own device key only'),
+  ('public.save_family_date(uuid,uuid,text,text,integer,integer,uuid)', 'space', 'parents only (is_space_manager); life calendar (0029)'),
+  ('public.delete_family_date(uuid)', 'space',
+   'parents (is_space_manager), or a member''s own birthday; any other id, or one the caller can''t see (may_see_family_date), says not found'),
   -- allowlist: caller-scoped yes/no checks that read only the caller's own rows and return no one else's data
   ('public.delete_comment(uuid)', null, 'deletes the caller''s own comment, or one on the caller''s own post (is_post_author)'),
   ('public.is_post_author(uuid)', null, 'yes/no: did the caller write this post (author_id = auth.uid())'),
@@ -239,6 +261,9 @@ insert into vis.functions (fn, kind, note) values
   ('public.child_birth_date(uuid)', null, 'a birth date for guardians only (is_child_guardian)'),
   ('public.can_see_profile(uuid)', null, 'the person rule itself (private.vis_sees_person is its server-side twin; VIS-7)'),
   ('public.my_profile()', null, 'the caller''s own profile only'),
+  ('public.list_family_dates(uuid)', null,
+   'rows only where private.may_see_family_date says yes (the family_date rule: can_see_profile for a member''s birthday; VIS-18 holds it equal to vis.can_see)'),
+  ('public.set_my_birthday(uuid,integer,integer)', null, 'writes the caller''s own birthday only (auth.uid(), a member of that family)'),
   ('public.set_my_name(text)', null, 'changes the caller''s own name only'),
   ('public.my_spaces()', null, 'families the caller is a member of'),
   ('public.my_features(uuid)', null, 'feature switches via private.feature_on for a family the caller is in'),

@@ -1,6 +1,6 @@
 # Spec: one visibility core, the co-parent bridge, and one Share composer
 
-Status: **Phases 1 and 1b built locally** (Nov 24, 2026; Chase "Ok agreed to all", DEC-81; migrations 0030 and 0031, `packages/visibility/core`; not deployed). Phase 2 next; bridge after the beta. TRACKER R77. Persona check: `decisions/2026-11-24-visibility-core.md`. Data model: `docs/architecture/07-visibility-model.md` (its names win: `vis.kinds`, `vis.can_see`, `vis.sees_item`, `vis.attach`).
+Status: **Phases 1 and 1b built locally** (Nov 24, 2026; Chase "Ok agreed to all", DEC-83; migrations 0031 and 0032, `packages/visibility/core`; not deployed). Phase 2 next; bridge after the beta. TRACKER R77. Persona check: `decisions/2026-11-24-visibility-core.md`. Data model: `docs/architecture/07-visibility-model.md` (its names win: `vis.kinds`, `vis.can_see`, `vis.sees_item`, `vis.attach`).
 
 **Simple for the user, sophisticated underneath.** One core decides who sees every row of every kind. Families never see it; they pick names on a postcard. The headline feature it unlocks is the **co-parent bridge**: two homes sharing their child's photos and dates on purpose, with each side's relatives kept apart.
 
@@ -140,7 +140,7 @@ Shared dates and life-calendar dates are different things: a shared date ("Gammy
 
 Build order: 1 and 1b together, then 2, 3, 4; 5 when the 0029 branch merges; 6 (bridge) after the beta.
 
-Each phase is a small PR: qa-tdd red first, then engineer. Migrations start at 0030 (0029 is taken by the life-calendar branch).
+Each phase is a small PR: qa-tdd red first, then engineer. Migrations are 0031 and up (0029 is the life calendar, 0030 the video fixes on PR #135).
 
 **Phase 1: registry and gate (no behavior change, about 3 sessions)**
 
@@ -218,7 +218,7 @@ Each phase is a small PR: qa-tdd red first, then engineer. Migrations start at 0
 | BR-11 | auto | Given an ex with no relationship on Hearth, When they enter a wrong or someone else's link code, Then the answer is the same "not found" whether or not the person or family exists, and codes are rate limited like invites |
 | BR-7 | manual | Given two parents on real phones, When one sends a photo to "Other home", Then the other sees it with no help and neither side's relatives do |
 
-**Phase 5: life calendar plugs in** (when the 0029 branch merges): VIS-18 above.
+**Phase 5: life calendar plugs in** (Built Nov 24 in 0032: kind `family_date`, Person class; `backend/tests/vis_calendar_test.sql`): VIS-18 above.
 
 Success signal: VIS-1..12 and VIS-19..22 green on CI for two weeks, and no new feature PR asks Chase "who sees this?". Stop condition: if Phase 1's catalog checks give noisy false failures after 2 sessions, keep VIS-1, VIS-3 and the oracle, and drop the body text checks (VIS-5).
 
@@ -277,4 +277,4 @@ Open (before Phase 6; none block Phases 1 to 4):
 4. **2-minute "Take back" delays every notice by up to 2 minutes.** Recommendation: yes; a grandparent won't notice 2 minutes, and a wrong send is the worst error we have.
 
 ---
-Last checked against code: 2026-11-24, migrations 0001 to 0028, 0030 and 0031 (0029 life calendar on its own branch, not read).
+Last checked against code: 2026-11-24, migrations 0001 to 0029, 0031 and 0032 (0029 life calendar registered, VIS-18; 0030 is the video-fixes branch, not merged).
