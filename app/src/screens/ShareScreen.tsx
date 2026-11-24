@@ -20,12 +20,13 @@ import { useApp } from '../state/AppContext';
 import { useNav } from '../state/nav';
 import { AddPhotoCard, AddTile, PostcardStamp, Button, FaceTile, Field, Loading, Notice, Screen, Txt } from '../ui/kit';
 import { photos } from '../ui/format';
-import { RADIUS, FONT, photoShadow, useTheme } from '../ui/theme';
+import { RADIUS, photoShadow, useTheme } from '../ui/theme';
 import type { QueueItem } from '../upload/queue';
 import { useTabBarSpace } from '../ui/tabBarSpace';
 import { AppGate } from './AppGate';
 import { BatchReview } from './BatchReview';
 import { QueueStatus } from './QueueStatus';
+import { KindCard, KindsRow, showsKinds, type PostKind } from './ShareKinds';
 
 const MAX = 10;
 const DENIED = 'Hearth needs your OK to see your photos. Tap "Allow" when your phone asks.';
@@ -51,12 +52,14 @@ export function ShareScreen() {
   const [gridW, setGridW] = useState<number | null>(null); // GUX-R1: the tile row's drawn width, once laid out
   // CAP-9 / QA-R3: bulk review keeps its one Title box for now; new single posts have no title (DEC-73).
   const [title, setTitle] = useState('');
+  // SHARE-ST-31: the kind picked from the row under the empty postcard (its empty card face; nothing is saved yet).
+  const [kind, setKind] = useState<PostKind | null>(null);
   // SHARE-PC-2: which picked photo is the big one.
   const [cur, setCur] = useState(0);
   // SHARE-PC-9: my own name, so the To: line names the others, not me.
   const [myName, setMyName] = useState<string | null>(null);
   const scroller = useRef<React.ComponentRef<typeof ScrollView>>(null);
-  const { c, t, os, dark, bigText } = useTheme();
+  const { c, type, os, dark, bigText } = useTheme();
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const userId = app.session?.userId;
@@ -113,7 +116,7 @@ export function ShareScreen() {
   }, [spaceId, userId, canPost]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (app.status !== 'ready' || !app.space) return <AppGate />;
-  if (!canPost || !app.queue) return <Screen><Txt variant="title">You can't do that here.</Txt></Screen>;
+  if (!canPost || !app.queue) return <Screen><Txt variant="title2">You can't do that here.</Txt></Screen>;
 
   const pick = async () => {
     setNotice(null);
@@ -170,7 +173,7 @@ export function ShareScreen() {
   const toLine = recipientsLine(list, chosen, myName);
   const ready = items.length > 0 && chosen.length > 0 && !!toLine;
 
-  const reset = () => { setItems([]); setNote(''); setChosen([]); setCur(0); setNotice(null); };
+  const reset = () => { setItems([]); setNote(''); setChosen([]); setCur(0); setNotice(null); setKind(null); };
 
   // SHARE-PC-11: Send goes through today's upload queue, then Feed shows the post on top and "Shared with <names>."
   const send = async () => {
@@ -225,7 +228,7 @@ export function ShareScreen() {
           <View testID="share-note-rule" style={rule} />
         </View>
         <View style={styles.toRow}>
-          <Text accessible={false} style={{ color: c.muted, fontFamily: FONT.semibold, fontSize: t.base, lineHeight: t.line }}>To:</Text>
+          <Text accessible={false} style={{ color: c.muted, ...type.headline }}>To:</Text>
           <View testID="share-to-rule" style={[rule, styles.toRule]} />
         </View>
       </View>
@@ -239,7 +242,7 @@ export function ShareScreen() {
   // (page padding 16 + grid padding 10, each side).
   const across = tileColumns({
     names: list.map((g) => tileName(g, myName, isParent)), rowWidth: gridW ?? win.width - 52,
-    fontSize: t.base, fontScale: win.fontScale ?? 1, bigText,
+    fontSize: type.headline.fontSize, fontScale: win.fontScale ?? 1, bigText,
   });
 
   return (
@@ -248,22 +251,30 @@ export function ShareScreen() {
         <ScrollView ref={scroller} contentContainerStyle={[styles.page, empty ? { flexGrow: 1, paddingBottom: 32 + under } : null]} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
           {/* GUX-W3: "New post" sits in one row in both states, so it never moves; Cancel joins it after photos. */}
           <View style={styles.head}>
-            <View style={styles.headTitle}><Txt variant="display" role="header">New post</Txt></View>
-            {empty ? null : <Button variant="quiet" label="Cancel this post" text="Cancel" style={styles.headCancel} onPress={reset} />}
+            <View style={styles.headTitle}><Txt variant="title2" level={1} role="header">New post</Txt></View>
+            {empty && !kind ? null : <Button variant="quiet" label="Cancel this post" text="Cancel" style={styles.headCancel} onPress={reset} />}
           </View>
           <QueueStatus />
           {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
 
           {/* SHARE-PC-1: one card holds the post as the family will see it, and who it goes to. */}
           {/* GUX-W1: the empty postcard sits in the middle of the space under "New post". */}
-          {!big ? <View testID="share-empty-wrap" style={styles.emptyWrap}>{emptyCard}</View> : (
+          {!big && kind ? <KindCard kind={kind} /> : null}
+          {!big && !kind ? (
+            <View testID="share-empty-wrap" style={styles.emptyWrap}>
+              {emptyCard}
+              {/* SHARE-ST-30..33: Event, News and Saying under the postcard, for parents with post_kinds on. */}
+              {showsKinds(app.features, app.space?.role) ? <KindsRow onPick={setKind} /> : null}
+            </View>
+          ) : null}
+          {!big ? null : (
           <View testID="share-card" style={[styles.card, { backgroundColor: c.surface }, photoShadow(dark)]}>
               <View>
                 <Image source={{ uri: big.uri }} style={styles.big} resizeMode="cover"
                   accessibilityLabel={items.length > 1 ? `Photo ${shown + 1} of ${items.length}` : 'Your photo'} accessibilityIgnoresInvertColors />
                 {items.length > 1 ? (
                   <View style={styles.count} pointerEvents="none">
-                    <Text style={{ color: '#FFFFFF', fontSize: t.base, fontFamily: FONT.semibold }}>{`${shown + 1} of ${items.length}`}</Text>
+                    <Text style={{ color: '#FFFFFF', ...type.headline }}>{`${shown + 1} of ${items.length}`}</Text>
                   </View>
                 ) : null}
                 {/* GUX-W2: the stamp stays on the filled postcard, top-right over the big photo. */}
@@ -303,13 +314,13 @@ export function ShareScreen() {
               {/* SHARE-PC-5..9: To: names the people; the tiles fill it in. Nothing is picked to start (SHARE-PC-7). */}
               <View testID="share-to" style={styles.to}>
                 <View style={styles.toLine}>
-                  <Text style={{ color: c.muted, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line }}>To:</Text>
-                  {toLine ? <Text style={{ flexShrink: 1, color: c.ink, fontSize: t.base, lineHeight: t.line, fontFamily: FONT.semibold }}>{toLine}</Text> : null}
+                  <Text style={{ color: c.muted, ...type.body }}>To:</Text>
+                  {toLine ? <Text style={{ flexShrink: 1, color: c.ink, ...type.headline }}>{toLine}</Text> : null}
                 </View>
                 {circles === null ? <Loading words="Loading your groups…" /> : null}
                 {circles?.length === 0 && !notice ? (
                   <View style={styles.inset}>
-                    <Txt variant="strong">{isParent ? 'There is no group to send to yet. Make one on the Groups tab.' : `There is no group to send to yet. Ask ${app.helper ?? 'a parent'} to add you to one.`}</Txt>
+                    <Txt variant="headline">{isParent ? 'There is no group to send to yet. Make one on the Groups tab.' : `There is no group to send to yet. Ask ${app.helper ?? 'a parent'} to add you to one.`}</Txt>
                   </View>
                 ) : null}
                 <View style={styles.grid} onLayout={(e) => setGridW(Math.max(0, e.nativeEvent.layout.width - 20))}>

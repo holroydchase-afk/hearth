@@ -33,7 +33,7 @@ export class ErrorBoundary extends Component<Props, { failed: boolean }> {
     if (!this.state.failed) return this.props.children;
     return (
       <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 16 }}>
-        <Txt variant="title" role="header">Something went wrong.</Txt>
+        <Txt variant="title2" role="header">Something went wrong.</Txt>
         <Txt>{`Close Hearth and open it again. If it keeps happening, call ${this.props.helper ?? 'the person who set it up for you'}.`}</Txt>
         <Button variant="secondary" label="Try again" onPress={() => this.setState({ failed: false })} />
       </View>

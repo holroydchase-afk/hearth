@@ -85,6 +85,9 @@ describe('FONT Atkinson Hyperlegible Next everywhere (DEC-78)', () => {
       const props = text.slice(m.index!, i);
       // Txt's own <Text> takes its family from the variant table (v[variant]); FONT-2 above renders it.
       if (/style=\{\[v\[variant\]/.test(props)) continue;
+      // TYPE-6 (DEC-84; engineer, flagged for qa-tdd): Txt's own <Text> takes its family from the named style (v), and a
+      // spread named style (...type.body, ...textStyle(...)) carries its family (TYPE-4 checks those are Atkinson).
+      if (/style=\{\[v, style\]/.test(props) || /\.\.\.(type\.\w+|textStyle\()/.test(props)) continue;
       if (!/fontFamily:\s*(FONT\.\w+|\w+)/.test(props)) offenders.push(`ui/kit.tsx:${lineOf(text, m.index!)} ${props.replace(/\s+/g, ' ').slice(0, 80)}`);
     }
     expect(offenders).toEqual([]);

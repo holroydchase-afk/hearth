@@ -1358,3 +1358,54 @@ test('DARK-ELEV-6 at 390 px dark: no visible element on the first screen has a d
   await page.emulateMedia({ colorScheme: 'light' });
   await expect.poll(() => shadeShadow(page)).not.toBe('none');
 });
+
+// TYPE-10 (docs/product/SPEC-TYPE.md, DEC-84): the public demo at 393 px as Kevin, light and dark, Easy view off and
+// on: computed font sizes match SPEC-TYPE's table. Written by the engineer (Nov 24) from the spec, flagged for qa-tdd:
+// "a post title" is Feed's inline title (post-title-<id>), which opens the description at body size (RD-71), and
+// "a button" is the reply row's "Post" (a kit Button, headline).
+const sizeOfEl = (loc) => loc.evaluate((el) => {
+  const leaf = [el, ...el.querySelectorAll('*')].reverse().find((n) => n.children.length === 0 && n.textContent.trim() !== '') ?? el;
+  return parseFloat(getComputedStyle(leaf).fontSize);
+});
+const setEasyView = async (page, on) => {
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: /^Easy view, (On|Off)$/ }).click();
+  await page.getByRole('radio', { name: on ? 'On' : 'Off', exact: true }).click();
+  await expect(page.getByRole('radio', { name: on ? 'On' : 'Off', exact: true })).toBeChecked();
+};
+for (const look of ['light', 'dark']) {
+  test(`TYPE-10 (${look}) Kevin's text sizes match the named scale, Easy view off and on`, async ({ page }) => {
+    await page.setViewportSize({ width: 393, height: 852 });
+    await page.emulateMedia({ colorScheme: look });
+    await page.goto('/');
+    await galleryLoaded(page);
+    for (const easy of [false, true]) {
+      if (easy) await setEasyView(page, true);
+      // SPEC-TYPE's table: [Standard, Easy view].
+      const want = (std, ez) => (easy ? ez : std);
+      await page.getByRole('tab', { name: /^Gallery/ }).click();
+      const got = {};
+      got.greeting = await sizeOfEl(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ }).first());
+      await onFeed(page);
+      got.feedTitle = await sizeOfEl(page.getByRole('heading', { name: 'Feed', exact: true }).first());
+      got.postTitle = await sizeOfEl(page.locator('[data-testid^="post-title-"]').filter({ visible: true }).first());
+      got.postBody = await captionSize(page);
+      got.postDate = await sizeOfEl(page.locator('[data-testid^="when-"]').filter({ visible: true }).first());
+      got.button = await sizeOfEl(page.getByRole('button', { name: 'Post', exact: true }).filter({ visible: true }).first());
+      await page.getByRole('tab', { name: /^Share/ }).click();
+      got.newPost = await sizeOfEl(page.getByRole('heading', { name: 'New post' }));
+      got.addPhotos = await sizeOfEl(page.locator('[data-testid="share-spot"]').getByText(/^Add photos( or videos)?$/).first());
+      expect({ easy, ...got }).toEqual({
+        easy,
+        greeting: want(34, 38), // largeTitle
+        feedTitle: want(34, 38), // largeTitle
+        postTitle: want(17, 21), // body (inline title, RD-71)
+        postBody: want(17, 21), // body
+        postDate: want(15, 19), // subheadline
+        button: want(17, 21), // headline
+        newPost: want(22, 26), // title2 (SHARE-ST-28)
+        addPhotos: want(17, 21), // headline (SHARE-ST-29)
+      });
+    }
+  });
+}

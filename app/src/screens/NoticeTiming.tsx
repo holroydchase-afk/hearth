@@ -24,8 +24,8 @@ function NoticeTimingCard() {
   };
   return (
     <GroupedSection>
-      <Txt variant="title" role="header">Notice timing</Txt>
-      <Txt variant="muted">For testing: how fast notices reach this phone. It stays on this phone.</Txt>
+      <Txt variant="title2" role="header">Notice timing</Txt>
+      <Txt tone="muted">For testing: how fast notices reach this phone. It stays on this phone.</Txt>
       {text ? (
         <>
           <Txt selectable>{text}</Txt>

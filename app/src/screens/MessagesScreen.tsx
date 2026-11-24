@@ -40,15 +40,15 @@ export function MessagesScreen({ onClose, backTo = 'Gallery' }: { onClose: () =>
   return (
     <Shell>
       <BackButton to={backTo} onPress={onClose} />
-      <Txt variant="display" role="header">Messages</Txt>
-      <Txt variant="muted">{PRIVACY}</Txt>
+      <Txt variant="title1" role="header">Messages</Txt>
+      <Txt tone="muted">{PRIVACY}</Txt>
       {error ? <Notice text={error} /> : null}
       {!chats && !error ? <Loading words="Getting your chats…" /> : null}
       {chats?.length === 0 ? <Txt>No chats yet.</Txt> : null}
       {chats?.map((c) => (
         <Card key={c.circle_id}>
-          <Txt variant="title">{c.title}</Txt>
-          <Txt variant="muted">{c.kind === 'event' ? `Event · ${people(c.member_count)}` : people(c.member_count)}</Txt>
+          <Txt variant="title2">{c.title}</Txt>
+          <Txt tone="muted">{c.kind === 'event' ? `Event · ${people(c.member_count)}` : people(c.member_count)}</Txt>
           <Button label={chatOpenLabel(c)} text="Open" variant="secondary" onPress={() => setOpen(c)} />
         </Card>
       ))}
@@ -111,8 +111,8 @@ function ChatScreen({ chat, client, onClose }: { chat: ChatSummary; client: Chat
   return (
     <Shell>
       <BackButton to="Messages" label="Back to all messages" onPress={onClose} />
-      <Txt variant="display" role="header">{chat.title}</Txt>
-      <Txt variant="muted">{PRIVACY}</Txt>
+      <Txt variant="title1" role="header">{chat.title}</Txt>
+      <Txt tone="muted">{PRIVACY}</Txt>
       {error ? <Notice text={error} /> : null}
       {!view ? <Loading words="Opening the chat…" /> : null}
       {view?.status === 'waiting' ? (
@@ -120,7 +120,7 @@ function ChatScreen({ chat, client, onClose }: { chat: ChatSummary; client: Chat
           <Txt>You can write here once someone else in this chat opens Messages. Their phone lets yours in.</Txt>
         </Card>
       ) : null}
-      {view?.status === 'ready' && view.lines.length === 0 ? <Txt variant="muted">No messages yet. Say hello!</Txt> : null}
+      {view?.status === 'ready' && view.lines.length === 0 ? <Txt tone="muted">No messages yet. Say hello!</Txt> : null}
       {view?.lines.map((l) => <Line key={`${l.id}-${l.mine ? 'me' : 'them'}`} line={l} />)}
       <Button label="Check for new messages" variant="secondary" busy={busy} onPress={() => void refresh()} />
       {view?.status === 'ready' ? (
@@ -138,7 +138,7 @@ function Line({ line }: { line: ChatLine }) {
   return (
     <View style={{ alignSelf: line.mine ? 'flex-end' : 'flex-start', maxWidth: '90%', gap: 4, padding: 12, borderRadius: 12,
       backgroundColor: line.mine ? c.accentSoft : c.surface, borderWidth: 1, borderColor: c.line }}>
-      <Txt variant="strong">{line.mine ? 'You' : line.name}</Txt>
+      <Txt variant="headline">{line.mine ? 'You' : line.name}</Txt>
       <Txt selectable>{line.text}</Txt>
     </View>
   );

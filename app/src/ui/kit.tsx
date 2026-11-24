@@ -10,7 +10,7 @@ import {
   useWindowDimensions, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LABEL_SCALE_CAP, MIN_TARGET, RADIUS, FONT, dialogRadius, iconSize, sheetShouldClose, useTheme } from './theme';
+import { LABEL_SCALE_CAP, MIN_TARGET, RADIUS, FONT, STAMP_MARK, dialogRadius, iconSize, sheetShouldClose, useTheme, type TextStyleName } from './theme';
 import { useTypingField } from './typing';
 import { useTabBarSpace } from './tabBarSpace';
 
@@ -27,35 +27,36 @@ export function SystemIcon({ icon, color, size = 22 }: { icon: Icon; color: stri
   );
 }
 
-type TxtVariant = 'body' | 'strong' | 'muted' | 'title' | 'display';
+/** Txt's color, separate from its style (SPEC-TYPE): the old muted variant is body + tone="muted". */
+export type TxtTone = 'ink' | 'muted' | 'accent' | 'danger';
 
-export function Txt({ variant = 'body', style, children, role, testID, numberOfLines, selectable, label }: {
+export function Txt({ variant = 'body', tone = 'ink', emphasized, level, style, children, role, testID, numberOfLines, selectable, label }: {
   selectable?: boolean;
   /** What a screen reader says, when it must be the words exactly (a heading built from parts). Defaults to the text. */
   label?: string;
-  variant?: TxtVariant; style?: StyleProp<TextStyle>; children: ReactNode; role?: 'header' | 'alert' | 'text'; testID?: string; numberOfLines?: number;
+  /** TYPE-6: one of Apple's named text styles (SPEC-TYPE). */
+  variant?: TextStyleName; tone?: TxtTone; emphasized?: boolean;
+  /** A header's level when it is not the style's own (Share's "New post" is title2 yet the page's one h1, R23). */
+  level?: 1 | 2;
+  style?: StyleProp<TextStyle>; children: ReactNode; role?: 'header' | 'alert' | 'text'; testID?: string; numberOfLines?: number;
 }) {
-  const { c, t } = useTheme();
-  // FONT-2 (DEC-78): Atkinson Hyperlegible Next, the weight carried by the family. Body and muted Regular; strong
-  // (names) and title SemiBold; display is the large title, SemiBold too (RD-55: no Bold anywhere).
-  const v: Record<TxtVariant, TextStyle> = {
-    body: { fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line, color: c.ink },
-    strong: { fontFamily: FONT.semibold, fontSize: t.base, lineHeight: t.line, color: c.ink },
-    muted: { fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line, color: c.muted },
-    title: { fontFamily: FONT.semibold, fontSize: t.title, lineHeight: Math.round(t.title * 1.25), color: c.ink },
-    display: { fontFamily: FONT.semibold, fontSize: t.display, lineHeight: Math.round(t.display * 1.2), color: c.ink },
-  };
+  const { c, type } = useTheme();
+  // FONT-2 (DEC-78) and TYPE-4: the weight is carried by the family; titles and headline SemiBold, the rest Regular
+  // unless emphasized (RD-55: no Bold anywhere).
+  const s = type[variant];
+  const color = { ink: c.ink, muted: c.muted, accent: c.accent, danger: c.dangerText }[tone];
+  const v: TextStyle = { fontFamily: emphasized ? FONT.semibold : s.fontFamily, fontSize: s.fontSize, lineHeight: s.lineHeight, color };
   return (
     <Text
       selectable={selectable}
       accessibilityRole={role === 'text' ? undefined : role}
-      // A11Y-1: one level-1 heading per screen (the display title); every other heading is level 2, so a screen
+      // A11Y-1: one level-1 heading per screen (the page title, largeTitle or title1); every other heading is level 2, so a screen
       // reader's heading list reads like an outline instead of fourteen equal titles.
-      {...(role === 'header' ? { 'aria-level': variant === 'display' ? 1 : 2 } : {})}
+      {...(role === 'header' ? { 'aria-level': level ?? (variant === 'largeTitle' || variant === 'title1' ? 1 : 2) } : {})}
       accessibilityLabel={label}
       testID={testID}
       numberOfLines={numberOfLines}
-      style={[v[variant], style]}
+      style={[v, style]}
     >
       {children}
     </Text>
@@ -88,7 +89,7 @@ export function Button({ label, text, onPress, variant = 'primary', disabled, so
   testID?: string;
   role?: 'button' | 'link';
 }) {
-  const { c, t, os } = useTheme();
+  const { c, type, os } = useTheme();
   const material = os === 'android';
   // iPhone: filled, gray (tinted fill) and plain buttons. Android: filled, outlined and text buttons.
   // DS-11: a waiting button is solid gray with readable words, never a see-through blue.
@@ -117,7 +118,7 @@ export function Button({ label, text, onPress, variant = 'primary', disabled, so
       {busy ? <ActivityIndicator color={fg} /> : null}
       {icon && !busy ? <SystemIcon icon={icon} color={selected ? c.accent : fg} /> : null}
       {typeof (text ?? label) === 'string' ? (
-        <Text style={{ color: selected ? c.ink : fg, fontFamily: FONT.semibold, fontSize: t.base, textAlign: 'center' }}>{text ?? label}</Text>
+        <Text style={{ color: selected ? c.ink : fg, ...type.headline, textAlign: 'center' }}>{text ?? label}</Text>
       ) : (
         text
       )}
@@ -128,7 +129,7 @@ export function Button({ label, text, onPress, variant = 'primary', disabled, so
 /** LIVE-2 (Chase, Nov 5): a compact toolbar button for common actions, the icon over a short word, like a
  *  tab. Never icon-only (DS-3); the word stays 17 pt (DS-2) and the target 48 pt (DS-1). */
 export function IconButton({ label, text, icon, onPress, testID }: { label: string; text: string; icon: Icon; onPress: () => void; testID?: string }) {
-  const { c, t } = useTheme();
+  const { c, type } = useTheme();
   return (
     <Pressable
       accessibilityRole="button"
@@ -142,7 +143,7 @@ export function IconButton({ label, text, icon, onPress, testID }: { label: stri
     >
       <SystemIcon icon={icon} color={c.ink} size={28} />
       {/* HIG-3: a toolbar word stops growing at 1.5x so the row still fits at the largest text size. */}
-      <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.ink, fontFamily: FONT.regular, fontSize: t.base }}>{text}</Text>
+      <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.ink, ...type.body }}>{text}</Text>
     </Pressable>
   );
 }
@@ -154,7 +155,7 @@ export function BackButton({ to, onPress, label, ink }: {
   /** UX-R9: in the words' own color, where the screen's one accent belongs to another button (the walk's Next). */
   ink?: boolean;
 }) {
-  const { c, t, os } = useTheme();
+  const { c, type, os } = useTheme();
   const color = ink ? c.ink : c.accent;
   return (
     <Pressable
@@ -165,7 +166,7 @@ export function BackButton({ to, onPress, label, ink }: {
       style={({ pressed }) => [styles.back, { opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
     >
       <SystemIcon icon={{ sf: 'chevron.backward', md: 'arrow_back' }} color={color} />
-      <Text style={{ color, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line }}>{to}</Text>
+      <Text style={{ color, ...type.body }}>{to}</Text>
     </Pressable>
   );
 }
@@ -174,7 +175,7 @@ export function BackButton({ to, onPress, label, ink }: {
  *  row one 48 pt+ target. The screen reader hears the word, then the count ("Messages, 2 new"). */
 /** `value` (RD-78): a setting's state in words at the row's end, in the muted color ("Easy view, On"). */
 export function MenuRow({ text, icon, count, value, onPress, testID }: { text: string; icon: Icon; count?: string | null; value?: string | null; onPress: () => void; testID?: string }) {
-  const { c, t, os } = useTheme();
+  const { c, type, os } = useTheme();
   const extra = count || value;
   return (
     <Pressable
@@ -186,9 +187,9 @@ export function MenuRow({ text, icon, count, value, onPress, testID }: { text: s
       style={({ pressed }) => [styles.menuRow, { opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
     >
       <SystemIcon icon={icon} color={c.ink} size={26} />
-      <Text style={{ flex: 1, color: c.ink, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line }}>{text}</Text>
-      {count ? <Text style={{ color: c.accent, fontSize: t.base, fontFamily: FONT.semibold }}>{count}</Text> : null}
-      {value ? <Text style={{ color: c.muted, fontFamily: FONT.regular, fontSize: t.base }}>{value}</Text> : null}
+      <Text style={{ flex: 1, color: c.ink, ...type.body }}>{text}</Text>
+      {count ? <Text style={{ color: c.accent, ...type.headline }}>{count}</Text> : null}
+      {value ? <Text style={{ color: c.muted, ...type.body }}>{value}</Text> : null}
       <SystemIcon icon={CHEVRON} color={c.muted} size={18} />
     </Pressable>
   );
@@ -223,8 +224,8 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
     >
       {kind === 'checkbox' ? <SystemIcon icon={box} color={checked ? c.accent : c.muted} size={26} /> : null}
       <View style={{ flex: 1 }}>
-        <Txt variant="strong">{title}</Txt>
-        {detail ? <Txt variant="muted">{detail}</Txt> : null}
+        <Txt variant="headline">{title}</Txt>
+        {detail ? <Txt tone="muted">{detail}</Txt> : null}
       </View>
       {kind === 'radio' && checked ? <SystemIcon icon={{ sf: 'checkmark', md: 'check' }} color={c.accent} size={22} /> : null}
       {kind === 'switch' ? (
@@ -245,7 +246,7 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
 export function FaceTile({ name, count, faces, picked, onPress, across }: {
   name: string; count: number; faces: string[]; picked: boolean; onPress: () => void; across: number;
 }) {
-  const { c, t, os } = useTheme();
+  const { c, type, os } = useTheme();
   const edge = picked ? 3 : 2;
   return (
     <Pressable
@@ -261,7 +262,7 @@ export function FaceTile({ name, count, faces, picked, onPress, across }: {
         <View style={styles.faceStack}>
           {faces.slice(0, 3).map((f, i) => (
             <View key={`${f}-${i}`} style={[styles.faceDot, { backgroundColor: c.line, borderColor: c.bg, marginLeft: i ? -10 : 0 }]}>
-              <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.ink, fontSize: t.base, fontFamily: FONT.semibold }}>{initial(f)}</Text>
+              <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.ink, ...type.headline }}>{initial(f)}</Text>
             </View>
           ))}
         </View>
@@ -273,20 +274,20 @@ export function FaceTile({ name, count, faces, picked, onPress, across }: {
         ) : null}
       </View>
       {/* GUX-R1: the whole name, never cut; a word too long for even a 2-across tile breaks rather than spill out. */}
-      <Text style={[{ alignSelf: 'stretch', color: c.ink, fontSize: t.base, lineHeight: t.line, fontFamily: FONT.semibold, textAlign: 'center' }, breakLongWords]}>{name}</Text>
-      <Text style={{ color: c.muted, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{`${count} ${count === 1 ? 'person' : 'people'}`}</Text>
+      <Text style={[{ alignSelf: 'stretch', color: c.ink, ...type.headline, textAlign: 'center' }, breakLongWords]}>{name}</Text>
+      <Text testID="face-count" style={{ color: c.muted, ...type.subheadline, textAlign: 'center' }}>{`${count} ${count === 1 ? 'person' : 'people'}`}</Text>
     </Pressable>
   );
 }
 /** SHARE-PC-2 / GUX-R2: Share's "Add" photos tile beside the small photos: an outline, not a grey box (a dashed
  *  c.line edge, no fill), with "Add" and its plus in the accent. */
 export function AddTile({ label, onPress }: { label: string; onPress: () => void }) {
-  const { c, t } = useTheme();
+  const { c, type } = useTheme();
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
       style={({ pressed }) => [styles.addTile, { borderColor: c.line, opacity: pressed ? 0.7 : 1 }]}>
       <SystemIcon icon={{ sf: 'plus', md: 'add' }} color={c.accent} />
-      <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.accent, fontSize: t.base, fontFamily: FONT.semibold }}>Add</Text>
+      <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.accent, ...type.headline }}>Add</Text>
     </Pressable>
   );
 }
@@ -296,12 +297,14 @@ export function AddTile({ label, onPress }: { label: string; onPress: () => void
  *  with the add-photo symbol and the title in the accent; `inSpot` (the stamp) rides in the spot's corner and
  *  `children` (the decorative ruled lines) go below it. A press shrinks the card to 0.98 for 120 ms, unless the
  *  phone's Reduce Motion is on. No fixed height, so the words never get cut at bigger text sizes. */
-const SPOT = { corner: 14, circle: 76, icon: 36 } as const;
+// SHARE-ST-29 (round 4, DEC-84): the circle is 52 pt with a 26 pt symbol (Easy view 60 / 30); "Add photos" is headline.
+const SPOT = { corner: 14, standard: { circle: 52, icon: 26 }, easy: { circle: 60, icon: 30 } } as const;
 export function AddPhotoCard({ label, title, onPress, testID, spotTestID, cardStyle, inSpot, children }: {
   label: string; title: string; onPress: () => void; testID?: string; spotTestID?: string;
   cardStyle?: StyleProp<ViewStyle>; inSpot?: React.ReactNode; children?: React.ReactNode;
 }) {
-  const { c, t, reduceMotion } = useTheme();
+  const { c, type, bigText, reduceMotion } = useTheme();
+  const spot = bigText ? SPOT.easy : SPOT.standard;
   const scale = useRef(new Animated.Value(1)).current;
   const to = (toValue: number) => {
     if (reduceMotion) return;
@@ -313,13 +316,13 @@ export function AddPhotoCard({ label, title, onPress, testID, spotTestID, cardSt
         style={styles.addCard}>
         <View testID={testID} style={[styles.addCardBody, cardStyle]}>
           <View testID={spotTestID} style={[styles.spot, { backgroundColor: c.accentSoft }]}>
-            <View style={[styles.spotCircle, { backgroundColor: c.surface }]}>
+            <View style={[styles.spotCircle, { width: spot.circle, height: spot.circle, borderRadius: spot.circle / 2, backgroundColor: c.surface }]}>
               {/* A fixed symbol in a fixed circle: it does not grow with the text (the words do). */}
               <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-                <SymbolView name={{ ios: 'photo.badge.plus', android: 'add_photo_alternate', web: 'add_photo_alternate' } as never} size={SPOT.icon} tintColor={c.accent} />
+                <SymbolView name={{ ios: 'photo.badge.plus', android: 'add_photo_alternate', web: 'add_photo_alternate' } as never} size={spot.icon} tintColor={c.accent} />
               </View>
             </View>
-            <Text style={{ color: c.accent, fontFamily: FONT.semibold, fontSize: t.title, lineHeight: Math.round(t.title * 1.25), textAlign: 'center' }}>{title}</Text>
+            <Text style={{ color: c.accent, ...type.headline, textAlign: 'center' }}>{title}</Text>
             {inSpot}
           </View>
           {children}
@@ -337,8 +340,8 @@ export function PostcardStamp({ date = new Date(), testID }: { date?: Date; test
   return (
     <View testID={testID} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants" aria-hidden
       style={[styles.stamp, { borderColor: c.accent, backgroundColor: c.surface }]}>
-      <Text accessible={false} allowFontScaling={false} style={[styles.stampMark, { color: c.accent, fontFamily: FONT.semibold }]}>{STAMP_MONTHS[date.getMonth()]}</Text>
-      <Text accessible={false} allowFontScaling={false} style={[styles.stampMark, { color: c.accent, fontFamily: FONT.semibold }]}>{String(date.getDate())}</Text>
+      <Text accessible={false} allowFontScaling={false} style={[STAMP_MARK, styles.stampMark, { color: c.accent, fontFamily: FONT.semibold }]}>{STAMP_MONTHS[date.getMonth()]}</Text>
+      <Text accessible={false} allowFontScaling={false} style={[STAMP_MARK, styles.stampMark, { color: c.accent, fontFamily: FONT.semibold }]}>{String(date.getDate())}</Text>
     </View>
   );
 }
@@ -349,8 +352,8 @@ const breakLongWords = (Platform.OS === 'web' ? { overflowWrap: 'anywhere' } : {
 export const initial = (name: string) => (name.trim().split(/\s+/).pop() ?? '?').charAt(0).toUpperCase() || '?';
 
 function SwitchWord({ on }: { on: boolean }) {
-  const { c, t } = useTheme();
-  return <Text style={{ color: c.ink, fontSize: t.base, fontFamily: FONT.semibold }}>{on ? 'On' : 'Off'}</Text>;
+  const { c, type } = useTheme();
+  return <Text style={{ color: c.ink, ...type.headline }}>{on ? 'On' : 'Off'}</Text>;
 }
 
 /** UX-R31: on the web a rounded field draws its own focus ring: a 2 pt accent edge that follows its corners (the
@@ -367,7 +370,7 @@ export function noWebOutline(): TextStyle {
 }
 
 export function Field(props: TextInputProps & { label: string; underline?: boolean }) {
-  const { c, t, os } = useTheme();
+  const { c, type, os } = useTheme();
   const { label, style, onFocus, onBlur, underline, ...rest } = props;
   const typing = useTypingField(); // UX-R1: the tab bar steps aside while this field is focused
   // iPhone and the web: a filled rounded box with no edge, like the Search field (GUX-R16; was a c.surface box with a
@@ -380,7 +383,7 @@ export function Field(props: TextInputProps & { label: string; underline?: boole
     : { borderWidth: 0, backgroundColor: c.fill, borderRadius: RADIUS.medium };
   return (
     <View style={{ gap: 6 }}>
-      <Txt variant="strong">{label}</Txt>
+      <Txt variant="headline">{label}</Txt>
       <TextInput
         accessibilityLabel={label}
         placeholderTextColor={c.muted}
@@ -388,7 +391,7 @@ export function Field(props: TextInputProps & { label: string; underline?: boole
         onFocus={(e) => { typing.onFocus(); onFocus?.(e); }}
         onBlur={(e) => { typing.onBlur(); onBlur?.(e); }}
         style={[
-          { minHeight: 56, color: c.ink, paddingHorizontal: 14, paddingVertical: 12, fontFamily: FONT.regular, fontSize: t.base, ...box },
+          { minHeight: 56, color: c.ink, paddingHorizontal: 14, paddingVertical: 12, fontFamily: FONT.regular, fontSize: type.body.fontSize, ...box },
           style,
         ]}
       />
@@ -436,7 +439,7 @@ export function Loading({ words }: { words: string }) {
   return (
     <View style={styles.loading} accessibilityLiveRegion="polite">
       <ActivityIndicator size="large" color={c.muted} />
-      <Txt variant="muted">{words}</Txt>
+      <Txt tone="muted">{words}</Txt>
     </View>
   );
 }
@@ -456,12 +459,12 @@ export function Notice({ text, onClose, tone = 'info' }: { text: string; onClose
 export function AlertDialog({ title, body, keep, destroy, onKeep, onDestroy }: {
   title: string; body?: string; keep: string; destroy: string; onKeep: () => void; onDestroy: () => void;
 }) {
-  const { c, t, os } = useTheme();
+  const { c, type, os } = useTheme();
   const words = (label: string, color: string, family: string, onPress: () => void, first: boolean) => (
     <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
       style={({ pressed }) => [styles.alertBtn, first ? { borderRightWidth: StyleSheet.hairlineWidth, borderRightColor: c.line } : null,
         { backgroundColor: pressed ? c.fill : 'transparent' }]}>
-      <Text style={{ color, fontFamily: family, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{label}</Text>
+      <Text style={{ color, fontFamily: family, fontSize: type.body.fontSize, lineHeight: type.body.lineHeight, textAlign: 'center' }}>{label}</Text>
     </Pressable>
   );
   return (
@@ -469,8 +472,8 @@ export function AlertDialog({ title, body, keep, destroy, onKeep, onDestroy }: {
       <View style={[styles.scrim, { backgroundColor: c.scrim }]}>
         <View accessibilityViewIsModal style={[styles.alert, { backgroundColor: c.surface, borderRadius: dialogRadius(os) }]}>
           <View style={styles.alertWords}>
-            <Text accessibilityRole="header" style={{ color: c.ink, fontFamily: FONT.semibold, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{title}</Text>
-            {body ? <Text style={{ color: c.ink, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{body}</Text> : null}
+            <Text accessibilityRole="header" style={{ color: c.ink, ...type.headline, textAlign: 'center' }}>{title}</Text>
+            {body ? <Text style={{ color: c.ink, ...type.body, textAlign: 'center' }}>{body}</Text> : null}
           </View>
           <View style={[styles.alertRow, { borderTopColor: c.line }]}>
             {words(keep, c.ink, FONT.semibold, onKeep, true)}
@@ -537,8 +540,8 @@ const styles = StyleSheet.create({
   addCardBody: { padding: 12 },
   spot: { alignSelf: 'stretch', aspectRatio: 4 / 3, borderRadius: SPOT.corner, alignItems: 'center', justifyContent: 'center', gap: 12, padding: 12 },
   stamp: { position: 'absolute', top: 10, right: 10, width: 44, height: 52, transform: [{ rotate: '4deg' }], borderWidth: 2, borderStyle: 'dotted', borderRadius: RADIUS.small, alignItems: 'center', justifyContent: 'center' },
-  stampMark: { fontSize: 17, lineHeight: 18, textAlign: 'center' },
-  spotCircle: { width: SPOT.circle, height: SPOT.circle, borderRadius: SPOT.circle / 2, alignItems: 'center', justifyContent: 'center' },
+  stampMark: { textAlign: 'center' },
+  spotCircle: { alignItems: 'center', justifyContent: 'center' },
   addTile: { minWidth: 64, minHeight: 64, borderRadius: RADIUS.medium, borderWidth: 2, borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 },
   faceTick: { position: 'absolute', top: -6, right: -4, borderRadius: RADIUS.pill, borderWidth: 2, width: 28, height: 28, alignItems: 'center', justifyContent: 'center' },
   card: { padding: 14, gap: 12 },

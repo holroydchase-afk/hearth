@@ -230,6 +230,8 @@ const GREY_ALLOWED: Record<string, Record<string, string>> = {
   'screens/GalleryTop.tsx': { SearchField: 'the "Search photos" field (RD-47), a field like the reply field' },
   'screens/TabBar.tsx': { HearthTabBar: 'the tab bar, set apart from the page on c.surface (RD-104)' },
   'screens/ShareScreen.tsx': { ShareScreen: 'the postcard (DEC-73, SHARE-PC-1; engineer, flagged for qa-tdd) and its Add tile, a button' },
+  // engineer, flagged for qa-tdd: SHARE-ST-31 (option A) puts the kind tiles and a kind's empty card on c.surface.
+  'screens/ShareKinds.tsx': { KindsRow: 'the Event / News / Saying tiles under the postcard (SHARE-ST-31)', KindCard: 'a kind\'s empty postcard face (SHARE-ST-31)' },
   'demo/DemoBar.tsx': { DemoBar: 'demo chrome, outside the app' },
   'demo/DemoFrame.tsx': { DemoFrame: 'demo chrome, outside the app' },
 };

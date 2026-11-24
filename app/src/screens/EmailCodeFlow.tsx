@@ -75,7 +75,7 @@ export function EmailCodeFlow({ onSignedIn, inviter, onUseText }: {
         ) : null}
         {msg ? <Notice text={msg} /> : null}
         <Button label="Send me a code" busy={busy} disabled={!email.includes('@') || mustWait} onPress={() => void send()} />
-        {mustWait ? <Txt variant="muted">{`You can ask for a new code in ${waitLeft} seconds.`}</Txt> : null}
+        {mustWait ? <Txt tone="muted">{`You can ask for a new code in ${waitLeft} seconds.`}</Txt> : null}
         {onUseText ? <Button label="Use a text instead" variant="secondary" onPress={onUseText} /> : null}
       </>
     );
@@ -87,8 +87,8 @@ export function EmailCodeFlow({ onSignedIn, inviter, onUseText }: {
       <Field label="6-number code" value={code} onChangeText={(t) => setCode(t.replace(/\D/g, '').slice(0, 6))} keyboardType="number-pad" maxLength={12} autoComplete="one-time-code" textContentType="oneTimeCode" style={{ letterSpacing: 6 }} />
       {msg ? <Notice text={msg} /> : null}
       <Button label="Continue" busy={busy} disabled={code.replace(/\D/g, '').length !== 6} onPress={() => void verify()} />
-      <Txt variant="muted">It can take a minute. Not there? Look in your Junk or Spam folder.</Txt>
-      {waitLeft > 0 ? <Txt variant="muted">{`You can ask for a new code in ${waitLeft} seconds.`}</Txt> : null}
+      <Txt tone="muted">It can take a minute. Not there? Look in your Junk or Spam folder.</Txt>
+      {waitLeft > 0 ? <Txt tone="muted">{`You can ask for a new code in ${waitLeft} seconds.`}</Txt> : null}
       <Button label="Send a new code" variant="secondary" disabled={waitLeft > 0} onPress={() => void send()} />
       <Button label="Use a different email" variant="quiet" onPress={() => { setStep('email'); setMsg(null); }} />
     </>
