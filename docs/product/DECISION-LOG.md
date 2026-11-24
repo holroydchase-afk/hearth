@@ -579,5 +579,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** Chase's pick; each theme comes from a real cut fruit, layer by layer, like the Hass avocado (DEC-76), and every set passes Hearth's contrast rules.
 - **Source:** `docs/product/SPEC-REDESIGN.md` 1l; persona check `decisions/2026-11-23-fruit-themes.md` (LG Red mitigated, PA Red Chase override). Supersedes DEC-68's three-theme limit and its Pomegranate values (RD-95).
 
+### DEC-81 · Easy view and Light or dark live only in More (EF-HE-4)
+- **When / status:** Nov 24 · Chase, decision card "Take Easy view and Light or dark off Me, keeping them only in More?": "Yes, only in More" · Built (intake #162 PR)
+- **Chose:** Me drops both sections; each keeps its own More row and page.
+- **Over:** both places (RD-78 added them to Me).
+- **Because:** the eval found the duplicates; one place per setting makes phone help one sentence for a grandparent.
+- **Source:** persona check `decisions/2026-11-24-settings-only-in-more.md`; `SPEC-EVAL-FIXES.md`. Amends RD-78.
+
 ---
-Last updated: Nov 23, 2026 (DEC-80)
+Last updated: Nov 24, 2026 (DEC-81)
