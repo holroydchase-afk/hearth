@@ -524,10 +524,10 @@ TIMELINE RESULT: 39 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('08557e90-24b5-44ca-b8c6-11e5eefad033'))
-psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('64d176f4-6bdd-49ef-b93a-d195f4d1a2aa'))
-psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('6f3121ac-92a7-43f9-a193-e8cc64d20f56'))
-psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = 'bcd1144b-60d2-4972-bfd4-50df6ba09701')
+psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('32273be1-e1cf-443e-b3ae-9fda67561c7e'))
+psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('313ecaa2-4179-4c11-84f8-a98b03ff54f4'))
+psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('1aafe2d6-df06-4bc9-815a-a0c4a163f7b3'))
+psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '02cc3d5b-cd0a-4ed3-a7c4-8dd57c55a60b')
   n  | result |                                                                                  description                                                                                   
 -----+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    1 | ok     | BETA-AUD-11 shape: circles.kind exists (everyone | group | household | event)
@@ -1022,13 +1022,13 @@ CAPTIONS RESULT: 32 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
- n  | result |                                               description                                               
-----+--------+---------------------------------------------------------------------------------------------------------
+ n  | result |                                                description                                                 
+----+--------+------------------------------------------------------------------------------------------------------------
   1 | ok     | S14 setup: Alex has a second free space and a post in it
   2 | ok     | S14-1 Alex sends 4 more videos in space A (5 of 10 this month)
   3 | ok     | S14-1 and 5 in his new space (10 of 10)
-  4 | ok     | S14-1 the 11th video is refused even in a brand-new space  [P0001 free_video_cap_reached]
-  5 | ok     | S14-1 and in the first space too  [P0001 free_video_cap_reached]
+  4 | ok     | S14-1 the 11th video is refused even in a brand-new space (ENG-R11: HF002)  [HF002 free_video_cap_reached]
+  5 | ok     | S14-1 and in the first space too (ENG-R11: HF002)  [HF002 free_video_cap_reached]
   6 | ok     | S14-2 the new space's quota shows Alex's own 10 of 10, not a fresh 0
   7 | ok     | S14-2 and so does space A
   8 | ok     | S14-3 the refused video made no media row
@@ -1041,6 +1041,44 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
 
 
 VIDEO CAP RESULT: 14 passed, 0 failed
+psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
+psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
+psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
+ n  | result |                                                  description                                                  
+----+--------+---------------------------------------------------------------------------------------------------------------
+  1 | ok     | ENG-R2 setup: Alex's count this month is readable
+  2 | ok     | ENG-R2-1 a video upload restarted 3x (drafts thrown away while pending) counts once
+  3 | ok     | ENG-R2-2 setup: preparing a video counts it
+  4 | ok     | ENG-R2-2 sign-media marks the upload failed
+  5 | ok     | ENG-R2-2 a failed video gives the month's count back
+  6 | ok     | ENG-R2-3 Alex deletes his failed video row
+  7 | ok     | ENG-R2-3 deleting an already-failed video does not give it back a second time
+  8 | ok     | ENG-R2-4 Alex deletes a pending video row
+  9 | ok     | ENG-R2-4 a pending video that is deleted gives its count back
+ 10 | ok     | ENG-R2-5 setup: the video uploaded (ready)
+ 11 | ok     | ENG-R2-5 deleting an uploaded video (post deleted, row purged) keeps it counted
+ 12 | ok     | ENG-R2-6 Alex sends videos up to 10 this month
+ 13 | ok     | ENG-R2-6 the 11th is still refused (free_video_cap_reached)
+ 14 | ok     | ENG-R2-6 the counter stops at 10
+ 15 | ok     | ENG-R2-6 once one of the 10 fails, Alex can send one more
+ 16 | ok     | ENG-R2-6 and then he is at the cap again
+ 17 | ok     | ENG-R2-7 marking a video failed when the counter is already 0 does not error
+ 18 | ok     | ENG-R2-7 nor does deleting a pending one
+ 19 | ok     | ENG-R2-7 the counter stays at 0, never negative
+ 20 | ok     | ENG-R2-8 a paid family's video can fail
+ 21 | ok     | ENG-R2-8 and still has no free-cap usage row
+ 22 | ok     | ENG-R11 the free video cap is refused with SQLSTATE HF002, not generic P0001  [HF002 free_video_cap_reached]
+ 23 | ok     | ENG-R11 the message is still free_video_cap_reached
+ 24 | ok     | SEC-R7 PUBLIC has no EXECUTE on private.videos_this_month(uuid)
+ 25 | ok     | SEC-R7 authenticated has no EXECUTE on private.videos_this_month(uuid)
+ 26 | ok     | SEC-R7 anon has no EXECUTE on private.videos_this_month(uuid)
+ 27 | ok     | SEC-R7 Blair can't read Alex's video count directly  [42501 permission denied for function videos_this_month]
+ 28 | ok     | SEC-R7 Alex still sees his own count through space_upload_quota
+ 29 | ok     | PRIV-R1 authenticated has no privilege on private.video_refundable
+ 30 | ok     | PRIV-R1 anon has no privilege on private.video_refundable
+
+
+VIDEO REFUND RESULT: 30 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
@@ -1387,9 +1425,9 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
 Narrowing for Chase (readable before 0011 only through "members see each other's replies"):
      reader     |  kind   |                                 reply_id                                  
 ----------------+---------+---------------------------------------------------------------------------
- Grandma Rivera | comment | ce007052-1e96-49b6-a438-2afdc93bc504
+ Grandma Rivera | comment | dc2b2595-2678-4d0c-a37d-a73edd4ae725
  Grandma Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a2
- Grandpa Rivera | comment | a38cf9b9-4eb5-42c2-881c-4a11fe570ba8
+ Grandpa Rivera | comment | 6ad94773-ede7-49e4-bea5-2979d31ba487
  Grandpa Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a1
 
  n  | result |                                                     description                                                      
@@ -1500,8 +1538,8 @@ ok      SETUP-API: before Chase has an account it says "sign in once in the app"
 ok      SETUP-API: ... and changes nothing
 ok      SETUP-API: fresh setup runs without error
         | Family "Chase's kids" is ready: Everyone, Chase's side, Mom's side, 7 houses, 2 events.
-        | Test viewer invite (account B): code R46Y8FZQ8P, works once until Nov 30, link https://thefreighttrains-team-hearth.expo.app/join/54d548e4f860efa07fa56cbe17d7fae762fd5fc3
-        | Mom's poster invite: code J5N95CH2WS, works once until Nov 30, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/f6e863dd85968729b94e19030f050e9d69b16b57
+        | Test viewer invite (account B): code 3MPQZV6XQW, works once until Dec 01, link https://thefreighttrains-team-hearth.expo.app/join/655b6b5e2820a41f6f988327f290cc0dd03ec9f6
+        | Mom's poster invite: code ZV438R2FRJ, works once until Dec 01, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/51da24c78964e4b595136392439d3efe4beb1b60
 ok      SETUP-API: Chase owns one family, named as given (an apostrophe in the name is kept, not a SQL error)
 ok      SETUP-API: one Everyone
 ok      SETUP-API: the set groups are Chase's side and Mom's side (no v1 groups to retire later)
@@ -1560,7 +1598,7 @@ ok      QA-3: a visible post with a photo not ready counts as missing, and says 
 SENT-RECEIVED RESULT: 20 passed, 0 failed
 ok      D1 smoke: backend/scripts/smoke-check.sh exists
 ok      D1 smoke: without SUPABASE_ACCESS_TOKEN it stops and names the secret
-        | ok    all 29 migrations applied
+        | ok    all 30 migrations applied
         | ok    RLS is on for every public table
         | ok    cron job hearth-notify
         | ok    cron job hearth-purge-client-errors
@@ -1572,7 +1610,7 @@ ok      D1 smoke: without SUPABASE_ACCESS_TOKEN it stops and names the secret
         | SMOKE RESULT: 9 ok, 0 failed
 ok      D1 smoke: a healthy project passes (exit 0)
 ok      D1 smoke: ends with "SMOKE RESULT: N ok, 0 failed"
-ok      D1 smoke: says all 29 local migrations are applied
+ok      D1 smoke: says all 30 local migrations are applied
 ok      D1 smoke: never prints a secret value
 ok      D1 smoke: never prints the token
 ok      D1 smoke: its SQL runs inside a read-only transaction (no write attempted)
@@ -1581,7 +1619,7 @@ ok      D1 smoke: the token goes in the Authorization header
 ok      D1 smoke: no psql, no unexpected endpoint
 ok      D1 smoke: changes nothing
 ok      ONB-3 smoke: hosted invite_link_base is checked and reads as ok
-ok      D1 smoke: a migration not applied on hosted fails and names it (0029)
+ok      D1 smoke: a migration not applied on hosted fails and names it (0030)
 ok      D1 smoke: a public table without RLS fails and names it
 ok      D1 smoke: a missing cron job fails and names it
 ok      D1 smoke: a missing edge function fails and names it
