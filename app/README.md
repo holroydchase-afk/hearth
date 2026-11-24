@@ -45,6 +45,7 @@ Set in `.env` or EAS secrets:
 EXPO_PUBLIC_SUPABASE_URL=https://<ref>.supabase.co
 EXPO_PUBLIC_SUPABASE_ANON_KEY=<anon key>
 EXPO_PUBLIC_HELP_PHONE=+13045550100      # behind "Call Chase" on the Help tab
+EXPO_PUBLIC_HEARTH_HELP_EMAIL=help@example.test  # behind "Email Hearth" (START-ON-1); unset hides it and the start button
 ```
 
 Supabase Auth: enable Email, and change the "Magic Link" email template to show `{{ .Token }}` (a

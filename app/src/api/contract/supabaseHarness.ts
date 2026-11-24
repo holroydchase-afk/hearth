@@ -6,13 +6,17 @@
 //   HEARTH_API_URL     PostgREST root (http://127.0.0.1:3001) or a Supabase base URL (…/rest/v1 is added
 //                      by supabase-js; set HEARTH_REST_ROOT=0 for that case)
 //   HEARTH_ANON_KEY    anon key
-//   HEARTH_USERS_JSON  {"<name>": {"id": "<uuid>", "jwt": "<access token>"}, ...}
+//   HEARTH_USERS_JSON  {"<name>": {"id": "<uuid>", "jwt": "<access token>", "email"?: "..."}, ...}
+//                      users named starter_01, starter_02, ... are the pool of accounts in no family (START-ON-6)
 //   HEARTH_CAST        optional {"poster": "<name>", "viewerIn": ..., "viewerOut": ..., "joiner": ..., "ratelimit": ...}
 //                      default matches backend/supabase/seed.sql (alex / grandma_rivera / grandma_chen / blair)
 //   HEARTH_SERVICE_KEY optional service_role JWT: lets tests mark media ready without B2
 //   HEARTH_SPACE_ID, HEARTH_CIRCLE_IN, HEARTH_CIRCLE_OUT  default to the seed's space A / Dad's side / Everyone
 //   HEARTH_JOINER_EMAIL email of the joiner user
 //   HEARTH_MEDIA=1     also run the sign-media tests (needs the edge function + B2)
+//   HEARTH_DB_URL      superuser connection (psql conninfo) for the service-only flip of start_family_open
+//                      (START-ON-6); never the app's anon key. With starters, the 0024 cases run instead of skipping.
+import { execFileSync } from 'child_process';
 import { createClient } from '@supabase/supabase-js';
 import { SupabaseApi } from '../SupabaseApi';
 import type { ContractHarness, ContractUser } from './harness';
@@ -26,9 +30,14 @@ export function supabaseCaps(): { joiner: boolean; ratelimit: boolean; media: bo
   const cast: Record<string, string> = process.env.HEARTH_CAST ? JSON.parse(process.env.HEARTH_CAST) : (SEED_CAST as Record<string, string>);
   const has = (u: string) => !!users[u] || (!!cast[u] && !!users[cast[u]!]);
   return { joiner: has('joiner') && !!process.env.HEARTH_JOINER_EMAIL, ratelimit: has('ratelimit'), media: process.env.HEARTH_MEDIA === '1',
-    // 0024 needs a starter user and a service-only flip of start_family_open; this harness has neither yet (QA-R1).
-    starter: false };
+    // 0024 needs a starter in no family and a service-only flip of start_family_open (START-ON-6, QA-R1).
+    starter: starterNames(users).length > 0 && !!process.env.HEARTH_DB_URL };
 }
+
+/** START-ON-6: the pool of accounts in no family (backend/tests/integration/starters.sql), in order. */
+const starterNames = (users: Record<string, unknown>): string[] => Object.keys(users).filter((n) => /^starter_\d+$/.test(n)).sort();
+/** Each harness takes the next unused starter the first time it needs one, so no two tests share one. */
+let nextStarter = 0;
 
 const SEED_CAST: Partial<Record<ContractUser, string>> = {
   poster: 'alex', viewerIn: 'grandma_rivera', viewerOut: 'grandma_chen', ratelimit: 'blair',
@@ -40,10 +49,21 @@ export const netFetch: typeof fetch = (globalThis as { __hearthNodeFetch?: typeo
 export async function supabaseHarness(): Promise<ContractHarness> {
   const url = process.env.HEARTH_API_URL!.replace(/\/$/, '');
   const anonKey = process.env.HEARTH_ANON_KEY!;
-  const users = JSON.parse(process.env.HEARTH_USERS_JSON!) as Record<string, { id: string; jwt: string }>;
+  const users = JSON.parse(process.env.HEARTH_USERS_JSON!) as Record<string, { id: string; jwt: string; email?: string }>;
   const cast: Partial<Record<ContractUser, string>> = process.env.HEARTH_CAST ? JSON.parse(process.env.HEARTH_CAST) : SEED_CAST;
   const restRoot = process.env.HEARTH_REST_ROOT !== '0';
-  const userFor = (u: ContractUser) => (users[u] ? users[u] : cast[u] ? users[cast[u]!] : undefined);
+  const pool = starterNames(users);
+  let mine: string | undefined;
+  const starter = () => {
+    if (mine === undefined) {
+      if (nextStarter >= pool.length) throw new Error(`HEARTH_USERS_JSON has only ${pool.length} starter users; add more to starters.sql`);
+      mine = pool[nextStarter++]!;
+    }
+    return users[mine]!;
+  };
+  const userFor = (u: ContractUser) =>
+    u === 'starter' && pool.length ? starter() : users[u] ? users[u] : cast[u] ? users[cast[u]!] : undefined;
+  const dbUrl = process.env.HEARTH_DB_URL;
   // A bare PostgREST serves /rpc/x, not /rest/v1/rpc/x: strip the gateway prefix supabase-js adds.
   const rewrite: typeof fetch = (input, init) => netFetch(restRoot ? String(input).replace(`${url}/rest/v1/`, `${url}/`) : input, init);
   const make = (jwt: string | null, userId: string | null = null) => {
@@ -71,7 +91,16 @@ export async function supabaseHarness(): Promise<ContractHarness> {
     circleIn: process.env.HEARTH_CIRCLE_IN ?? '33333333-0000-0000-0000-0000000000a1',
     circleOut: process.env.HEARTH_CIRCLE_OUT ?? '33333333-0000-0000-0000-0000000000a0',
     joinerEmail: process.env.HEARTH_JOINER_EMAIL,
-    has: (u) => !!userFor(u),
+    get starterEmail() { return pool.length ? starter().email : undefined; },
+    // START-ON-6: the service-only switch, straight in the database (the app's roles can't touch private.feature_flags).
+    ...(dbUrl ? {
+      setStartFamilyOpen: async (open: boolean) => {
+        execFileSync('psql', [dbUrl, '-X', '-q', '-v', 'ON_ERROR_STOP=1', '-c',
+          `insert into private.feature_flags (feature, enabled) values ('start_family_open', ${open ? 'true' : 'false'})
+           on conflict (feature) do update set enabled = excluded.enabled`], { stdio: ['ignore', 'ignore', 'pipe'] });
+      },
+    } : {}),
+    has: (u) => (u === 'starter' ? pool.length > 0 : !!userFor(u)),
     as: (u) => {
       const x = userFor(u);
       if (!x) throw new Error(`HEARTH_USERS_JSON has no "${u}"`);

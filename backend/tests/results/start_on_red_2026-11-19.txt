@@ -1,0 +1,175 @@
+# START-ON-1..6 red run, 2026-11-19 (qa-tdd). Branch claude/project-thread-mvyrnq. Tests written first; product code not built.
+# Local: Postgres 16.15, Node v22.23.5, Playwright Version 1.63.0, PostgREST v12.2.3 harness.
+
+## START-ON-3/-4 SQL: backend/tests/suspend_family_test.sql
+ n  | result |                                               description                                               
+----+--------+---------------------------------------------------------------------------------------------------------
+  1 | NOT OK | START-ON-3 backend/scripts/suspend-family.sql exists
+  2 | NOT OK | START-ON-4 backend/scripts/start-family-switch.sql exists
+  3 | ok     | START-ON-3 setup: Pat started a family with a post, Quinn joined
+  4 | ok     | START-ON-3 suspend without apply (the dry run) leaves the family alone
+  5 | NOT OK | START-ON-3 suspend with apply sets spaces.deleted_at to now
+  6 | ok     | START-ON-3 only the named family changes (Alex's family untouched)
+  7 | ok     | START-ON-3 Alex's family is not suspended
+  8 | NOT OK | START-ON-3 suspended: the owner (Pat) no longer finds the family or its post (rule 2: not found)
+  9 | NOT OK | START-ON-3 suspended: the family is not in Pat's my_spaces()
+ 10 | NOT OK | START-ON-3 suspended: Pat's upload to the family is refused  [expected one of 42501/P0002, none raised]
+ 11 | NOT OK | START-ON-3 suspended: a member (Quinn) no longer finds the post
+ 12 | ok     | START-ON-3 suspended: another family (Alex) still sees its own posts
+ 13 | ok     | START-ON-3 within 30 days purge_soft_deleted keeps the suspended family (undo still possible)
+ 14 | NOT OK | START-ON-3 undo without apply (the dry run) leaves it suspended
+ 15 | ok     | START-ON-3 undo with apply clears spaces.deleted_at
+ 16 | NOT OK | START-ON-3 after undo the family is unchanged (members, groups, posts, media, invites)
+ 17 | ok     | START-ON-3 after undo Quinn sees the post again
+ 18 | ok     | START-ON-3 after undo Pat can upload again
+ 19 | ok     | START-ON-3 setup: an app-started family starts not known (capped)
+ 20 | ok     | START-ON-3 known without apply (the dry run) leaves the cap on
+ 21 | NOT OK | START-ON-3 known with apply sets started_families.known_at (cap lifted)
+ 22 | ok     | START-ON-3 known does not suspend the family
+ 23 | ok     | START-ON-3 an unknown space id suspends nothing
+ 24 | ok     | START-ON-4 on without apply (the dry run) leaves the switch off
+ 25 | NOT OK | START-ON-4 on with apply turns start_family_open on
+ 26 | ok     | START-ON-4 no other feature flag changes
+ 27 | ok     | START-ON-4 no family is made or removed
+ 28 | NOT OK | START-ON-4 status changes nothing (still on)
+ 29 | ok     | START-ON-4 off with apply turns start_family_open off
+ 30 | ok     | START-ON-4 still no other feature flag changes
+ 31 | ok     | START-ON-4 turning it off leaves existing families as they were
+
+
+SUSPEND FAMILY RESULT: 19 passed, 12 failed
+SOME TESTS FAILED
+psql:tests/suspend_family_test.sql:253: ERROR:  division by zero
+exit=3
+
+## START-ON-3/-4 wrappers: backend/tests/start_on_scripts_test.sh
+ok      START-ON setup: Pat started a family (got '545f5ff4-9942-4d74-bb07-896e05e8c953')
+NOT OK  START-ON-3 backend/scripts/suspend-family.sh exists
+NOT OK  START-ON-3 without SUPABASE_ACCESS_TOKEN it stops and names the secret
+NOT OK  START-ON-3 without --space it stops, says what's missing and sends nothing
+ok      START-ON-3 a --space that isn't a uuid is refused before anything is sent
+ok      START-ON-3 an unknown option is refused before anything is sent
+ok      START-ON-3 --undo and --known together are refused (one action at a time)
+NOT OK  START-ON-3 the dry run runs without error
+        | bash: scripts/suspend-family.sh: No such file or directory
+ok      START-ON-3 without --apply nothing changes (dry run is the default)
+NOT OK  START-ON-3 the dry run says it is a dry run and to add --apply
+NOT OK  START-ON-3 the dry run says purge_soft_deleted removes it for good after 30 days
+NOT OK  START-ON-3 the dry run names the space id
+ok      START-ON-3 the dry run prints no family, side or member name and no email
+NOT OK  START-ON-3 --apply runs without error
+        | bash: scripts/suspend-family.sh: No such file or directory
+NOT OK  START-ON-3 --apply suspends the family (spaces.deleted_at set)
+NOT OK  START-ON-3 --apply says purge_soft_deleted removes it for good after 30 days
+NOT OK  START-ON-3 --apply says how to undo
+ok      START-ON-3 --apply prints no family, side or member name and no email
+NOT OK  START-ON-3 one Management API request (got 0)
+NOT OK  START-ON-3 the token goes in the Authorization header
+ok      START-ON-3 the token is never printed
+NOT OK  START-ON-3 --undo without --apply is a dry run (still suspended)
+NOT OK  START-ON-3 --undo --apply runs without error
+ok      START-ON-3 --undo --apply brings the family back
+ok      START-ON-3 --undo prints no family, side or member name and no email
+NOT OK  START-ON-3 --known without --apply is a dry run (cap still on)
+NOT OK  START-ON-3 --known --apply runs without error
+NOT OK  START-ON-3 --known --apply lifts the cap and does not suspend
+ok      START-ON-3 --known prints no family, side or member name and no email
+ok      START-ON-3 an unknown space id fails and changes nothing
+NOT OK  START-ON-3 --print-sql works without the token
+ok      START-ON-3 --print-sql sends nothing
+NOT OK  START-ON-3 --print-sql shows the SQL with the psql variables filled in as quoted literals
+ok      START-ON-3 psql is never called
+NOT OK  START-ON-4 backend/scripts/start-family-switch.sh exists
+NOT OK  START-ON-4 with no argument it stops, says on|off|status and sends nothing
+ok      START-ON-4 an argument other than on, off or status is refused
+NOT OK  START-ON-4 without SUPABASE_ACCESS_TOKEN it stops and names the secret
+NOT OK  START-ON-4 status runs without error
+NOT OK  START-ON-4 status prints off while it is off
+NOT OK  START-ON-4 on without --apply is a dry run (still off) and says to add --apply
+NOT OK  START-ON-4 on --apply runs without error
+NOT OK  START-ON-4 on --apply turns it on
+NOT OK  START-ON-4 status prints on while it is on
+NOT OK  START-ON-4 status changes nothing
+ok      START-ON-4 off --apply turns it off
+ok      START-ON-4 the token is never printed
+ok      START-ON-4 psql is never called
+
+START-ON SCRIPTS RESULT: 18 passed, 30 failed
+exit=1
+
+## START-ON-1/-2 app: help.test.tsx, join.test.tsx, state/__tests__/runtimeHelpEmail.test.ts
+FAIL src/state/__tests__/runtimeHelpEmail.test.ts
+  ● START-ON-1 runtime reads the help email from EXPO_PUBLIC_HEARTH_HELP_EMAIL › START-ON-1 a set EXPO_PUBLIC_HEARTH_HELP_EMAIL becomes deps.helpEmail
+    Expected: "help@example.test"
+    Received: undefined
+  ● START-ON-1 runtime reads the help email from EXPO_PUBLIC_HEARTH_HELP_EMAIL › START-ON-2 no EXPO_PUBLIC_HEARTH_HELP_EMAIL means helpEmail is null (no start button, no dead row)
+    Received: undefined
+FAIL src/screens/__tests__/join.test.tsx
+  ● START-ON-2 no help email, no start button › START-ON-2 with no help email the start button is hidden even when can_start_family() is true
+FAIL src/screens/__tests__/help.test.tsx (6.473 s)
+  ● START-ON-1 Help has a "Something wrong?" section with Email Hearth › START-ON-1 a viewer sees "Something wrong?" and Email Hearth opens mailto: the help address
+    Unable to find an element with text: Something wrong?
+  ● START-ON-1 Help has a "Something wrong?" section with Email Hearth › START-ON-1 the owner sees "Something wrong?" and Email Hearth opens mailto: the help address
+    Unable to find an element with text: Something wrong?
+  ● START-ON-1 Help has a "Something wrong?" section with Email Hearth › START-ON-1 the mail carries no family name, user id, email or group name
+    Unable to find an element with role: button, name: Email Hearth
+Tests:       6 failed, 25 passed, 31 total
+
+## START-ON-1/-2 typecheck (helpEmail not on AppDeps yet)
+src/screens/__tests__/help.test.tsx(72,72): error TS2353: Object literal may only specify known properties, and 'helpEmail' does not exist in type 'Partial<AppDeps>'.
+src/screens/__tests__/help.test.tsx(82,76): error TS2353: Object literal may only specify known properties, and 'helpEmail' does not exist in type 'Partial<AppDeps>'.
+src/screens/__tests__/help.test.tsx(97,59): error TS2353: Object literal may only specify known properties, and 'helpEmail' does not exist in type 'Partial<AppDeps>'.
+src/screens/__tests__/join.test.tsx(236,87): error TS2353: Object literal may only specify known properties, and 'helpEmail' does not exist in type 'Partial<AppDeps>'.
+src/screens/__tests__/join.test.tsx(245,82): error TS2353: Object literal may only specify known properties, and 'helpEmail' does not exist in type 'Partial<AppDeps>'.
+src/test/renderApp.tsx(34,44): error TS2353: Object literal may only specify known properties, and 'helpEmail' does not exist in type 'AppDeps'.
+
+## START-ON-6 harness wiring: src/api/contract/startOnHarness.test.ts
+FAIL src/api/contract/startOnHarness.test.ts
+    Expected: true
+    Received: false
+    Expected: true
+    Received: false
+    Received: undefined
+Tests:       3 failed, 1 passed, 4 total
+
+## START-ON-6 real PostgREST harness today (backend/tests/integration/start.sh + jest -t start_family): SupabaseApi BETA-START cases
+passed | FakeApi contract (API.md) start_family / can_start_family (BETA-START, migration 0024) BETA-START-8 switch off: can_start_family is false and start_fa
+passed | FakeApi contract (API.md) start_family / can_start_family (BETA-START, migration 0024) BETA-START-1 a signed-in account with no family starts one: Own
+passed | FakeApi contract (API.md) start_family / can_start_family (BETA-START, migration 0024) BETA-START-1 idempotent on p_client_id: a retry returns the fir
+passed | FakeApi contract (API.md) start_family / can_start_family (BETA-START, migration 0024) BETA-START-5 one family per account: a second start is 23505 an
+passed | FakeApi contract (API.md) start_family / can_start_family (BETA-START, migration 0024) BETA-START-6 a blank or over-60 name, or sides that are not 0 o
+passed | FakeApi contract (API.md) start_family / can_start_family (BETA-START, migration 0024) BETA-START-4 Two sides: two groups with Private comments and no
+passed | FakeApi contract (API.md) start_family / can_start_family (BETA-START, migration 0024) BETA-START-3 the owner invites one email to Everyone; that pers
+passed | FakeApi contract (API.md) start_family / can_start_family (BETA-START, migration 0024) BETA-START-7 an empty family I started is retired when I redeem
+SKIPPED | SupabaseApi contract (API.md) start_family / can_start_family (BETA-START, migration 0024) BETA-START-8 switch off: can_start_family is false and star
+SKIPPED | SupabaseApi contract (API.md) start_family / can_start_family (BETA-START, migration 0024) BETA-START-1 a signed-in account with no family starts one:
+SKIPPED | SupabaseApi contract (API.md) start_family / can_start_family (BETA-START, migration 0024) BETA-START-1 idempotent on p_client_id: a retry returns the
+SKIPPED | SupabaseApi contract (API.md) start_family / can_start_family (BETA-START, migration 0024) BETA-START-5 one family per account: a second start is 2350
+SKIPPED | SupabaseApi contract (API.md) start_family / can_start_family (BETA-START, migration 0024) BETA-START-6 a blank or over-60 name, or sides that are not
+SKIPPED | SupabaseApi contract (API.md) start_family / can_start_family (BETA-START, migration 0024) BETA-START-4 Two sides: two groups with Private comments an
+SKIPPED | SupabaseApi contract (API.md) start_family / can_start_family (BETA-START, migration 0024) BETA-START-3 the owner invites one email to Everyone; that 
+SKIPPED | SupabaseApi contract (API.md) start_family / can_start_family (BETA-START, migration 0024) BETA-START-7 an empty family I started is retired when I re
+
+## START-ON-5 Playwright: app/e2e-web/start-family.spec.js (dist-fake built from this branch)
+Running 1 test using 1 worker
+  ✘  1 e2e-web/start-family.spec.js:9:1 › START-ON-5 a parent with no family starts one with Two sides, makes the first invite and lands on Gallery (17.2s)
+  1) e2e-web/start-family.spec.js:9:1 › START-ON-5 a parent with no family starts one with Two sides, makes the first invite and lands on Gallery 
+    Error: expect(locator).toBeVisible() failed
+    Locator: getByText('Something wrong?')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+    Call log:
+      - Expect "toBeVisible" getByText('Something wrong?') with timeout 15000ms
+      - waiting for getByText('Something wrong?')
+      63 |   await page.getByRole('tab', { name: /^More/ }).click();
+      64 |   await page.getByRole('button', { name: /^Help(,|$)/ }).click();
+    > 65 |   await expect(page.getByText('Something wrong?')).toBeVisible();
+         |                                                    ^
+      66 |   await expect(page.getByRole('button', { name: 'Email Hearth' })).toBeVisible();
+      67 | });
+      68 |
+        at /home/user/Hearth/app/e2e-web/start-family.spec.js:65:52
+    Error Context: test-results/e2e-web-artifacts/start-family-START-ON-5-a--d7665-invite-and-lands-on-Gallery/error-context.md
+  1 failed
+    e2e-web/start-family.spec.js:9:1 › START-ON-5 a parent with no family starts one with Two sides, makes the first invite and lands on Gallery 

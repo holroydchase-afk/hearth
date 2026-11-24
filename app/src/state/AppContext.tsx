@@ -21,6 +21,9 @@ export interface AppDeps {
   kv: KV;
   /** Phone number behind "Call Chase" (EXPO_PUBLIC_HELP_PHONE). */
   helpPhone?: string | null;
+  /** START-ON-1/2: where "Email Hearth" writes to (EXPO_PUBLIC_HEARTH_HELP_EMAIL). Absent or null: Help has no
+   *  "Something wrong?" section and nobody can start a family. */
+  helpEmail?: string | null;
   prepare: (item: QueueItem) => Promise<Prepared>;
   /** videos: offer videos too (only when the server says video_posting is on: FLAG-5). */
   pickPhotos: (opts: { videos: boolean }) => Promise<{ items: QueueItem[] } | { denied: true }>;

@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-24T12:30:00-05:00",
+ "label": "HRT-WEB.1 staying signed in on the web (WEB-APP-1..10): tests written first (red)",
+ "passed": 2301,
+ "failed": 17,
+ "results": {},
+ "note": "jest 3x: 15 red, the same each run (secureSession.web.test.ts 14: createSecureSessionStorage not exported yet; SupabaseApi.offlineSignOut.test.ts 1: an expired token plus no network keeps the session on sign-out). WEB-APP-10 native guard 4 passed. e2e:web web-session.spec.js 3x: WEB-APP-3/4 and WEB-APP-6 red (messenger identity and group state in plain JSON in localStorage, no IndexedDB key), WEB-APP-1/2 pass as guards. The rest of jest and e2e:web pass; typecheck clean. e2e/results/web-app-red-2026-11-24.txt"
+}

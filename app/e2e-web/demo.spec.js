@@ -1366,3 +1366,33 @@ test('EF-HE-1-AC1 EF-HE-1-AC2 at 390 px: each Messages Open button shows distinc
   expect(new Set(shown).size).toBe(shown.length);
   await expect(page.getByRole('button', { name: /^Open the chat/ })).toHaveCount(0);
 });
+// REACT-13a/c/d (Chase, Nov 24: 😂 👍 🎉 look small and blurry on Feed, ❤️ is crisp, and the ❤️ pill doesn't line up).
+// Written first (red), Nov 24, by qa-tdd. Apple Color Emoji are bitmaps, so a pill at a fractional x resamples them;
+// every reaction pill must sit at a whole-pixel x with a whole-pixel width, and the first pill's outline must start on
+// the photo's left edge (RD-64's -8 margin put it 8 px outside). Jest contract: src/screens/__tests__/reactEmoji.test.tsx.
+const PILL = '[aria-label="Love it"], [aria-label="Haha"], [aria-label="Like it"], [aria-label="Hooray"]';
+for (const width of [390, 1280]) {
+  test(`REACT-13 at ${width} px: every reaction pill has a whole-pixel x and width; the first lines up with the photo`, async ({ page }) => {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : 800 });
+    await page.goto('/');
+    await galleryLoaded(page);
+    await onFeed(page);
+    const pills = page.locator(PILL).filter({ visible: true });
+    await expect(pills.first()).toBeVisible();
+    const boxes = await pills.evaluateAll((els) => els.map((e) => {
+      const r = e.getBoundingClientRect();
+      return { label: e.getAttribute('aria-label'), x: r.x, width: r.width };
+    }));
+    expect(boxes.length).toBeGreaterThanOrEqual(4);
+    expect.soft(boxes.filter((b) => !Number.isInteger(b.x) || !Number.isInteger(b.width))).toEqual([]);
+    // The first post's first pill (Love it) against the same post's first photo.
+    const edges = await page.locator('[data-testid^="post-"]').filter({ visible: true }).first().evaluate((card, sel) => {
+      const pill = card.querySelector(sel);
+      const photo = card.querySelector('[aria-label^="Open photo"]');
+      return { pill: pill && pill.getBoundingClientRect().left, photo: photo && photo.getBoundingClientRect().left };
+    }, PILL);
+    expect(edges.pill).not.toBeNull();
+    expect(edges.photo).not.toBeNull();
+    expect(Math.abs(edges.pill - edges.photo)).toBeLessThanOrEqual(0.5);
+  });
+}

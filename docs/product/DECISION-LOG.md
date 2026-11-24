@@ -607,6 +607,13 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** the eval found the duplicates; one place per setting makes phone help one sentence for a grandparent.
 - **Source:** persona check `decisions/2026-11-24-settings-only-in-more.md`; `SPEC-EVAL-FIXES.md`. Amends RD-78.
 
+### DEC-86 · Keep Start a family switched off and get it ready to turn on (START-ON-1..7)
+- **When / status:** Nov 19 · Chase: "We need to keep the switched off features. Start a thread for each" · Code side in progress; turning it on waits on Chase
+- **Chose:** keep DEC-55's Start a family in the repo with `start_family_open` off, and finish what turning it on needs: an Email Hearth row in Help, a suspend-a-family script and runbook, a switch script, a browser walk and real-server contract tests.
+- **Over:** parking the code until a relative asks (tech-debt review PM-R5); deleting it.
+- **Because:** level 5 needs a parent to start a family without Chase's script, and strangers starting families need a way to reach Hearth and a way to stop abuse first.
+- **Source:** `docs/product/SPEC-START-FAMILY.md` section 8; persona check `decisions/2026-11-19-keep-start-a-family.md`; answers PM-R5 in `docs/reviews/2026-11-19-tech-debt/pm.md`
+
 ### DEC-87 · Web app for Android Chrome first; Hearth runs on web, iPhone and Android
 - **When / status:** Nov 24 · Chase: "go" on the web app plan · Specced (`SPEC-WEB-APP.md`, HRT-WEB.1..5); PR 1 (staying signed in, WEB-APP-1..12) next
 - **Chose:** a Chrome web app so the two Android beta grandparents use Hearth before a native Android build, in this order: staying signed in on the web, add to home screen plus Android-size screen checks, photo sharing on web (EXIF/GPS stripped in the browser, upload survives Chrome closing), email notices (Chrome push later), Save to my phone as a download (video off). $0, no domain yet.

@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-24T13:30:00-05:00",
+ "label": "HRT-WEB.1 staying signed in on the web (WEB-APP-1..10): all suites 3x after the build (green)",
+ "passed": 7125,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs on f8d48ed plus the uncommitted HRT-WEB.1 tree: jest 2312 passed (1 skipped, 1 todo; the 20 HRT-WEB.1 tests among them), typecheck clean, e2e:web 9 passed (web-session WEB-APP-1/2/3-4/6), e2e:demo 54 passed (5 env-gated skipped), each x3; no flake. Also x3: backend SQL 1788 passed, prototype e2e 33 passed, 17 test-all script suites ok. Closed: QA-R1 (messenger state in plain localStorage; WEB-APP-3/4, WEB-APP-6 e2e), QA-R2 (expired token + offline sign-out kept the session; WEB-APP-7 jest). Not run: Deno (not installed), Supabase starter invites (no template), e2e:site, real Safari/Firefox/iPhone. e2e/results/web-app-green-3x-2026-11-24.txt"
+}

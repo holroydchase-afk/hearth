@@ -40,7 +40,8 @@ export function createRuntime(): AppDeps | { error: string } {
     clearSessionStore: sessionStore.clear ? () => sessionStore.clear!() : undefined,
   };
   if (FAKE_MODE) {
-    return { ...common, api: createFakeApi(), helpPhone: '+1 304 555 0100' };
+    // START-ON-1/2: a fake help address (never a real one) so Help and the start button behave as deployed.
+    return { ...common, api: createFakeApi(), helpPhone: '+1 304 555 0100', helpEmail: 'help@example.test' };
   }
   const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
@@ -48,5 +49,9 @@ export function createRuntime(): AppDeps | { error: string } {
   const client = createClient(url, anonKey, {
     auth: { storage: secureSessionStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
   });
-  return { ...common, api: new SupabaseApi({ url, anonKey, client }), helpPhone: process.env.EXPO_PUBLIC_HELP_PHONE ?? null };
+  return {
+    ...common, api: new SupabaseApi({ url, anonKey, client }), helpPhone: process.env.EXPO_PUBLIC_HELP_PHONE ?? null,
+    // START-ON-1/2: set in the EAS environment, never in the repo. Unset or blank: no "Something wrong?" and no start button.
+    helpEmail: process.env.EXPO_PUBLIC_HEARTH_HELP_EMAIL || null,
+  };
 }
