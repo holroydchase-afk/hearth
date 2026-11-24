@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-24T23:59:55-05:00",
- "label": "T40 demo panel 'Try this' search hint: app jest + typecheck and e2e:site, 3x (green)",
- "passed": 6807,
- "failed": 0,
+ "at": "2026-11-24T00:30:00-05:00",
+ "label": "Eval findings (intake #162, EF-HE-1/2/4/5/6/9, B18): tests written first (red)",
+ "passed": 6,
+ "failed": 19,
  "results": {},
- "note": "3 runs on the uncommitted T40 fix (DemoFrame.tsx step 3 'Tap Search and type orchard.'): cd app && npm test && npm run typecheck: jest 171 suites, 2255 passed (1 skipped, 1 todo), typecheck clean, x3; npm run e2e:site (build-demo.sh, then site.spec.js on the local demo build): 14 passed x3. Identical runs, no flakes. passed = 3 x (2255 + 14). demoFrame.test.tsx DEMO-NEW-6, T40 and the T40 guard now pass. Not run: e2e:demo, e2e:web, backend SQL (no change there), the live check on the published site (needs the publish). e2e/results/t38-*-2026-11-24.txt"
+ "note": "Red on purpose, 1 run at 8f768cb: app/src/screens/__tests__/evalFindings.test.tsx 19 failed, 6 passed (EF-HE-1 Open names, EF-HE-2 empty rings, EF-HE-4 settings only in More, EF-HE-5 Groups line and New group, EF-HE-6 Events words, EF-HE-9 B18 25 new posts). Then qa-tdd's review test app/src/feed/__tests__/loadBackTo.test.ts at 88e605c: 4 passed, 1 failed (B26: a refresh mid-walk leaves a 6-post hole), same in 4 runs. e2e/results/eval-findings-red-2026-11-24.txt, e2e/results/eval-findings-qa-r1-red-2026-11-24.txt"
 }

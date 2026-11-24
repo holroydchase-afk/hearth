@@ -600,5 +600,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** the gate makes every later feature safe by default with no screen changes, so it is cheapest before more kinds land; nobody in the WV beta can test the bridge; a wrong send is the worst error, and a grandparent won't notice 2 minutes; most grandparents can't post anyway.
 - **Source:** `docs/product/SPEC-VISIBILITY-CORE.md` (open questions 1 to 4), `docs/architecture/07-visibility-model.md`; persona check `decisions/2026-11-24-visibility-core.md`. Amends DEC-79's one way in (parents only).
 
+### DEC-85 · Easy view and Light or dark live only in More (EF-HE-4)
+- **When / status:** Nov 24 · Chase, decision card "Take Easy view and Light or dark off Me, keeping them only in More?": "Yes, only in More" · Built (intake #162 PR)
+- **Chose:** Me drops both sections; each keeps its own More row and page.
+- **Over:** both places (RD-78 added them to Me).
+- **Because:** the eval found the duplicates; one place per setting makes phone help one sentence for a grandparent.
+- **Source:** persona check `decisions/2026-11-24-settings-only-in-more.md`; `SPEC-EVAL-FIXES.md`. Amends RD-78.
+
 ---
-Last updated: Nov 24, 2026 (DEC-83)
+Last updated: Nov 24, 2026 (DEC-85)

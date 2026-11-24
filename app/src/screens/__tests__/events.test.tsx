@@ -85,7 +85,7 @@ describe('EVT-3 later event posts in Photos', () => {
     fireEvent.press(await screen.findByRole('button', { name: 'Events' }));
     expect(await screen.findByRole('header', { name: 'Events' })).toBeTruthy();
     expect(screen.queryByRole('button', { name: /^Open / })).toBeNull();
-    expect(screenWords()).not.toContain('birthday');
+    expect(screenWords()).not.toContain(BDAY); // EF-HE-6: the empty-state line says "like a birthday", so check the event's own name
   });
 });
 

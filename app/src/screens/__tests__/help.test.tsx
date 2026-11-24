@@ -49,12 +49,16 @@ describe('Help tab (viewers) — UXG-14', () => {
 });
 
 describe('Me tab (posters)', () => {
-  // engineer, flagged for qa-tdd: Easy view (RD-74) replaces Bigger text on Me too; Off is the checked row.
+  // engineer, flagged for qa-tdd: Easy view (RD-74) replaces Bigger text; Off is the checked row.
+  // EF-HE-4 (Chase, Nov 24): Easy view is only in More now, so the default is checked there; Me keeps sign out.
   it('Easy view is off by default for posters; sign out asks first', async () => {
-    await renderApp(<MeScreen />, { user: 'chase' });
+    const more = await renderApp(<MoreScreen />, { user: 'chase' });
+    fireEvent.press(await screen.findByRole('button', { name: /^Easy view(,|$)/ }));
     expect((await screen.findByRole('radio', { name: 'Off' })).props.accessibilityState).toMatchObject({ checked: true });
     expect(screen.getByRole('radio', { name: 'On' }).props.accessibilityState).toMatchObject({ checked: false }); // qa-tdd: both rows
-    expect(screen.getByText('Signed in as chase@example.com')).toBeTruthy();
+    more.unmount();
+    await renderApp(<MeScreen />, { user: 'chase' });
+    expect(await screen.findByText('Signed in as chase@example.com')).toBeTruthy();
     fireEvent.press(screen.getByRole('button', { name: 'Sign out of Hearth' }));
     expect(screen.getByText('Sign out of Hearth?')).toBeTruthy();
     expectGrandparentSafe();
