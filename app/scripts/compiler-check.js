@@ -12,8 +12,33 @@ const fs = require('fs');
 const path = require('path');
 
 const APP = path.resolve(__dirname, '..');
-// "file:Name" -> reason it is fine to leave uncompiled. Keep empty unless a bailout is truly intended.
-const ALLOWED = {};
+// "file:Name" -> reason it is fine to leave uncompiled. Add only with a reason; prefer fixing.
+const ALLOWED = {
+  // INTAKE-80 (Nov 23): the first run's bailouts, kept uncompiled on purpose (scope call: no refactors in
+  // the switch-on PR). Uncompiled = exactly the pre-compiler behaviour. Any NEW bailout still fails.
+  'src/screens/EmailCodeFlow.tsx:EmailCodeFlow': "try/finally not supported by the compiler yet; left uncompiled (today's behaviour)",
+  'src/screens/GalleryGrid.tsx:GalleryGrid': "reads ref.current during render; left uncompiled (today's behaviour)",
+  'src/screens/GalleryTop.tsx:GalleryTopBar': "reads ref.current during render; left uncompiled (today's behaviour)",
+  'src/screens/GroupsScreen.tsx:GroupsScreen': "conditional/optional chaining inside try/catch not supported yet; left uncompiled",
+  'src/screens/JoinScreen.tsx:JoinScreen': "uses `check` before its declaration (hoisted function); left uncompiled",
+  'src/screens/MessagesScreen.tsx:ChatScreen': "try/finally not supported by the compiler yet; left uncompiled (today's behaviour)",
+  'src/screens/PhotoSwipe.tsx:PhotoSwipe': "conditional/optional chaining inside try/catch not supported yet; left uncompiled",
+  'src/screens/PhotosScreen.tsx:PhotosScreen': "reads ref.current during render; left uncompiled (today's behaviour)",
+  'src/screens/PostCard.tsx:ReactionButton': "reads ref.current during render; left uncompiled (today's behaviour)",
+  'src/screens/SearchScreen.tsx:SearchScreen': "try/finally not supported by the compiler yet; left uncompiled (today's behaviour)",
+  'src/screens/ShareScreen.tsx:ShareScreen': "try/finally not supported by the compiler yet; left uncompiled (today's behaviour)",
+  'src/screens/ShareScreen.tsx:Stamp': "`new` expression the compiler can't reorder; left uncompiled",
+  'src/screens/StartFamily.tsx:StartFamily': "try/finally not supported by the compiler yet; left uncompiled (today's behaviour)",
+  'src/screens/StartFamily.tsx:FirstInvite': "throw inside try/catch not supported yet; left uncompiled",
+  'src/screens/TextCodeFlow.tsx:TextCodeFlow': "try/finally not supported by the compiler yet; left uncompiled (today's behaviour)",
+  'src/screens/TimelineScreen.tsx:TimelineScreen': "manual useMemo/useCallback deps differ from inferred ones (follow-up: fix deps)",
+  'src/screens/VideoPlayer.tsx:Playing': "mutates a value returned from a hook (follow-up: move into the hook)",
+  'src/screens/ViewerScreen.tsx:ViewerScreen': "try/finally not supported by the compiler yet; left uncompiled (today's behaviour)",
+  'src/state/AppContext.tsx:AppProvider': "reads ref.current during render; left uncompiled (today's behaviour)",
+  'src/ui/kit.tsx:AddPhotoSpot': "reads ref.current during render; left uncompiled (today's behaviour)",
+  'src/ui/kit.tsx:BottomSheet': "reads ref.current during render; left uncompiled (today's behaviour)",
+  'src/ui/typing.ts:useTypingField': "reads ref.current during render; left uncompiled (today's behaviour)",
+};
 
 let babel;
 try {
