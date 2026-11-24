@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-23T19:30:00-05:00",
+ "label": "Theme picker P2s (GUX-R30..R33, R76): all suites 3x via test-all.sh plus backend SQL 3x (green)",
+ "passed": 10520,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs of bash test-all.sh at d70610c plus the engineer's uncommitted build (Preferences.tsx three-part swatch and 'Paper (standard)'; MoreScreen.tsx note above the list: 'Only this phone changes. Other people keep their own colors.') and qa-tdd's tests: 21 suites passed, 0 failed, 4 skipped x3. jest 2193 passed (1 skipped, 1 todo), typecheck clean, e2e:demo 43 passed, e2e:web 5 passed, prototype e2e 33 passed, each x3. Postgres was down during test-all, so backend SQL (1217 passed x3) and Supabase starter scripts (17 passed x3) ran separately after starting it. GUX-R30..R33 and the GUX-R31 guard pass in all 3. Skipped: Supabase starter invites (no template), Deno (not installed). T34 (site cold-load flake) still open; e2e:site not part of test-all. e2e/results/gux-theme-picker-green-2026-11-23/"
+}

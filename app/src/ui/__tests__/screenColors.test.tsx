@@ -6,7 +6,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { Text } from 'react-native';
 import { memoryKV } from '../../platform/kv';
-import { MoreScreen } from '../../screens/MoreScreen';
+import { MoreScreen } from '../../test/redesignScreens'; // ENG-R6: More at /more, under expo-router
 import { MeScreen } from '../../screens/MeScreen';
 import { loadPrefs } from '../../state/prefs';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';

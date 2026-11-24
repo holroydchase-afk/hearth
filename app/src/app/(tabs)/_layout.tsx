@@ -8,7 +8,6 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { AppGate } from '../../screens/AppGate';
 import { useNewMessages } from '../../messenger/newMessages';
-import { resetMore } from '../../screens/MoreScreen';
 import { HearthTabBar, NATIVE_TAB_OPTIONS, TAB_ICONS, floatingTabBar, nativeLabelMode, nativeTabLook, tabsFor, usesNativeTabs, type TabName } from '../../screens/TabBar';
 import { useApp } from '../../state/AppContext';
 import { TabBarSpaceContext, TAB_BAR_FLOAT_SPACE } from '../../ui/tabBarSpace';
@@ -41,7 +40,6 @@ export default function TabsLayout() {
           const tab = tabs.find((t) => t.name === name);
           return (
             <NativeTabs.Trigger key={name} name={name} hidden={!allowed.has(name)}
-              listeners={name === 'more' ? { tabPress: resetMore } : undefined}
               accessibilityLabel={name === 'more' && newMessages > 0 ? 'More, new message' : look.labelHidden ? (tab?.label ?? name) : undefined}>
               <NativeTabs.Trigger.Icon sf={TAB_ICONS[name].sf as never} md={TAB_ICONS[name].md as never} />
               <NativeTabs.Trigger.Label hidden={look.labelHidden}>{tab?.label ?? name}</NativeTabs.Trigger.Label>
@@ -60,23 +58,30 @@ export default function TabsLayout() {
     <TabBarSpaceContext.Provider value={floating ? TAB_BAR_FLOAT_SPACE : 0}>
     <Tabs
       screenOptions={{ headerShown: false }}
-      tabBar={(props) => (
+      tabBar={(props) => {
+        const current = props.state.routes[props.state.index]!.name as TabName;
+        return (
         <HearthTabBar
           role={role}
-          current={props.state.routes[props.state.index]!.name as TabName}
+          current={current}
           newMessages={newMessages}
           floating={floating}
           onNavigate={(t) => {
-            if (t === 'more') resetMore(); // tapping More again shows the menu, like the phone's own tabs
-            // SDK 58: the tab bar gets navigateToTab(routeKey) instead of navigation.
+            // SDK 58: the tab bar gets navigateToTab(routeKey) instead of navigation. ENG-R6: like the phone's own
+            // tab bars, a tap is a tabPress first, so tapping the tab you're on takes its stack back to its first
+            // screen (the stack listens for it); the phone's own bar does this itself.
             const key = props.state.routes.find((r) => r.name === t)?.key;
-            if (key) props.navigateToTab(key);
+            if (!key) return;
+            const press = props.emitter.emit({ type: 'tabPress', target: key, canPreventDefault: true });
+            if (t !== current && !press.defaultPrevented) props.navigateToTab(key);
           }}
         />
-      )}
+        );
+      }}
     >
       {ALL.map((name) => (
-        <Tabs.Screen key={name} name={name} options={{ href: allowed.has(name) ? undefined : null }} />
+        // ENG-R6: leaving More takes it back to its menu, as tapping More always did here.
+        <Tabs.Screen key={name} name={name} options={{ href: allowed.has(name) ? undefined : null, popToTopOnBlur: name === 'more' }} />
       ))}
     </Tabs>
     </TabBarSpaceContext.Provider>

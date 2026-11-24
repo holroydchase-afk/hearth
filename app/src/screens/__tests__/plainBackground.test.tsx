@@ -143,7 +143,7 @@ describe('RD-34 content screens sit on the plain background, no grey card fill',
     // card on Share by design (Chase's direction B); nothing else on the page is a grey box.
     it(`RD-34 DEC-73 Share (${name}): the only grey on the page is the postcard itself (fields and buttons may keep their fill)`, async () => {
       await renderApp(<ShareScreen />, { user: 'chase', kv: look(dark, chase.id) });
-      fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }, slow));
+      fireEvent.press(await screen.findByRole('button', { name: /^Add photos, up to \d+ at a time$/ }, slow));
       await screen.findByRole('header', { name: 'New post' }, slow);
       await screen.findByLabelText(/^Grandparents – Dad's side, 3 people, not picked$/, {}, slow);
       expect(greyBoxes(pal(dark))).toEqual([`View#share-card bg ${pal(dark).surface}`]);

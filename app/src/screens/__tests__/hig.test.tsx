@@ -168,7 +168,7 @@ describe('HIG-4 / HIG-5 app.json', () => {
 
 describe('HIG-7 Increase Contrast', () => {
   it('HIG-7 every color has a high-contrast set: secondary words 7:1 and edges 4.5:1', () => {
-    expect(THEME_NAMES).toEqual(['paper', 'avocado', 'pomegranate']);
+    expect(THEME_NAMES).toEqual(['paper', 'avocado', 'pomegranate', 'blood-orange', 'kiwi', 'fig', 'dragon-fruit', 'watermelon', 'beet', 'red-cabbage']); // qa-tdd, Nov 23: FRUIT-1 (DEC-80), was the three DEC-68 themes
     for (const color of THEME_NAMES) {
       for (const dark of [false, true]) {
         const c = pfTheme('ios', dark, color, true);

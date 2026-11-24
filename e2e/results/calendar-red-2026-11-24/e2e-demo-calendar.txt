@@ -1,0 +1,174 @@
+Using src/app as the root directory for Expo Router.
+Starting Metro Bundler
+
+warning: Bundler cache is empty, rebuilding (this may take a minute)
+Web Bundled 15832ms node_modules/expo-router/entry.js (1329 modules)
+
+› Assets (22):
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/400Regular/AtkinsonHyperlegibleNext_400Regular.86635252a71fd7c43fd5b0c41bdc5d54.ttf (48KB)
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/500Medium/AtkinsonHyperlegibleNext_500Medium.2d5d6c0565845615ac6982fc8abf1095.ttf (48KB)
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/600SemiBold/AtkinsonHyperlegibleNext_600SemiBold.5cf92f89d6fa6a976d135e61e9ffde1f.ttf (48KB)
+node_modules/@expo-google-fonts/material-symbols/400Regular/MaterialSymbols_400Regular.6b4f0c2d698edccb36b0f132059c0205.ttf (972KB)
+node_modules/expo-router/assets/arrow_down.017bc6ba3fc25503e5eb5e53826d48a8.png (9.5KB)
+node_modules/expo-router/assets/error.d1ea1496f9057eb392d5bbf3732a61b7.png (469B)
+node_modules/expo-router/assets/file.19eeb73b9593a38f8e9f418337fc7d10.png (138B)
+node_modules/expo-router/assets/forward.d8b800c443b8972542883e0b9de2bdc6.png (188B)
+node_modules/expo-router/assets/pkg.ab19f4cbc543357183a20571f68380a3.png (364B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon-mask.0a328cd9c1afd0afe8e3b1ec5165b1b4.png (653B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon.35ba0eaec5a4f5ed12ca16fabeae451d.png (207B)
+node_modules/expo-router/assets/react-navigation/elements/clear-icon.c94f6478e7ae0cdd9f15de1fcb9e5e55.png (4 variations | 425B)
+node_modules/expo-router/assets/react-navigation/elements/close-icon.808e1b1b9b53114ec2838071a7e6daa7.png (4 variations | 235B)
+node_modules/expo-router/assets/react-navigation/elements/search-icon.286d67d3f74808a60a78d3ebf1a5fb57.png (928B)
+node_modules/expo-router/assets/sitemap.412dd9275b6b48ad28f5e3d81bb1f626.png (465B)
+node_modules/expo-router/assets/unmatched.20e71bdf79e3a97bf55fd9e164041578.png (4.8KB)
+
+› web bundles (36):
+_expo/static/css/native-tabs.module-78b0f59737571f455720970791a36bdd.css (2.5KB)
+_expo/static/js/web/__common-813972baf7abac30d0b87668ba79c788.js (633KB)
+_expo/static/js/web/__expo-metro-runtime-8c088df87a31e4e6accd81c554ec290d.js (3.8KB)
+_expo/static/js/web/_layout-15b9adfe59f5a9781aad64378bd3e5c3.js (55KB)
+_expo/static/js/web/_layout-16965db47d4ee884a8b8a45a2a7c640a.js (398KB)
+_expo/static/js/web/_layout-8dbe9a57e704f561e2e5b8f95ce938ed.js (320B)
+_expo/static/js/web/_layout-e1d7882b360a5d05ad8ec1f2a1a28f1b.js (320B)
+_expo/static/js/web/_layout-f312d868019df407bbf14afbcf14422c.js (320B)
+_expo/static/js/web/[code]-831935f394af1097b4c24726dad6391b.js (4.1KB)
+_expo/static/js/web/[postId]-8f7397fea03b1443ae87e6e9fd069a3d.js (371B)
+_expo/static/js/web/+not-found-c263832e6b635988e8b982b2308c7480.js (747B)
+_expo/static/js/web/easy-view-a9d20f96244e497de6abd476cf624754.js (333B)
+_expo/static/js/web/ed448-fda36558dd89c13f0d7af659c46a1223.js (12KB)
+_expo/static/js/web/entry-20662fd623d9794835712852f65ca487.js (1.1MB)
+_expo/static/js/web/events-450508087c9fe0047fb720c3cf4d7439.js (311B)
+_expo/static/js/web/groups-2b7971c03c7daf1aa0f543987decca3d.js (12KB)
+_expo/static/js/web/groups-fdb259be52b221589b15ecd1927475bc.js (297B)
+_expo/static/js/web/help-3d21b28d7cafa59f56adb6277ef6c6a4.js (295B)
+_expo/static/js/web/help-74def7c9e4445bf0f714b521c674eba9.js (1.6KB)
+_expo/static/js/web/index-2619fb3c516bb9022a5dd3e2620d58ec.js (414B)
+_expo/static/js/web/index-33b241e4c53ff5b909b2a2d3dacf5dac.js (473B)
+_expo/static/js/web/index-64939970866cb6d32606f89f5b915d1a.js (414B)
+_expo/static/js/web/index-bd326d19f2512c707ce4e57ca03899fb.js (430B)
+_expo/static/js/web/index-cf94dd8414acb944b8a035c084af241e.js (529B)
+_expo/static/js/web/look-2a28b3cc63a38f51daef3509066da3e3.js (325B)
+_expo/static/js/web/me-2329a37bf1cf77f69e0bb462c5f7a047.js (3.1KB)
+_expo/static/js/web/me-d51a43618d533952e0f0c104e0c6674a.js (293B)
+_expo/static/js/web/messages-bdee93812a125809d59bb2844cc720be.js (236KB)
+_expo/static/js/web/mod-4aeed31ac0ccb926703ab53548e4a9c1.js (14KB)
+_expo/static/js/web/nist-282e0ff994bbba8fbcbbee385d8e77c2.js (21KB)
+_expo/static/js/web/photos-0bbd212ac02762fc316206ce3b52f129.js (279B)
+_expo/static/js/web/search-66c314c13b8a1300fbc84e53f442ff11.js (5.7KB)
+_expo/static/js/web/share-170c3929e8ea638be5bd7ce93b28f34e.js (20KB)
+_expo/static/js/web/sign-in-c1d09a90796d3d39a9c412e0606ff0ad.js (1.1KB)
+_expo/static/js/web/theme-eadeb3e6c9a89b485bb51b8b302b2ac2.js (327B)
+_expo/static/js/web/timeline-b9c976850d4f036e4f281c55d24b6ef7.js (528B)
+
+› Files (3):
+favicon.ico (15KB)
+index.html (1.6KB)
+metadata.json (49B)
+
+Exported: dist-demo
+
+Running 4 tests using 1 worker
+
+  ✘  1 e2e-web/demo-calendar.spec.js:26:1 › CAL-19 a fresh visit's Gallery says "Today is Grandma Jo's birthday" and See birthdays opens the list (16.8s)
+  ✘  2 e2e-web/demo-calendar.spec.js:35:1 › CAL-19 Birthdays lists Grandma Jo today, Grandpa Earl in 9 days, Mia's birthday and Chase and Alex's anniversary (1.5m)
+  ✘  3 e2e-web/demo-calendar.spec.js:45:1 › CAL-19 a returning visitor with a pre-calendar demo saved gets the dates too (17.5s)
+  ✘  4 e2e-web/demo-calendar.spec.js:54:1 › CAL-19 Grandma Jo's view: her only action on Birthdays is "Change my birthday" (1.5m)
+
+
+  1) e2e-web/demo-calendar.spec.js:26:1 › CAL-19 a fresh visit's Gallery says "Today is Grandma Jo's birthday" and See birthdays opens the list 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText(/^Today is Grandma Jo[’']s birthday$/).visible()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText(/^Today is Grandma Jo[’']s birthday$/).visible() with timeout 15000ms
+      - waiting for getByText(/^Today is Grandma Jo[’']s birthday$/).visible()
+
+
+      27 |   await page.goto('/');
+      28 |   await galleryLoaded(page);
+    > 29 |   await expect(page.getByText(/^Today is Grandma Jo[’']s birthday$/).filter({ visible: true })).toBeVisible();
+         |                                                                                                 ^
+      30 |   await page.getByRole('button', { name: 'See birthdays' }).filter({ visible: true }).click();
+      31 |   await expect(page.getByRole('heading', { name: 'Birthdays and dates' })).toBeVisible();
+      32 |   expect(errors).toEqual([]);
+        at /home/user/Hearth/app/e2e-web/demo-calendar.spec.js:29:97
+
+    Error Context: test-results/e2e-demo-artifacts/demo-calendar-CAL-19-a-fre-7679d-ee-birthdays-opens-the-list/error-context.md
+
+  2) e2e-web/demo-calendar.spec.js:35:1 › CAL-19 Birthdays lists Grandma Jo today, Grandpa Earl in 9 days, Mia's birthday and Chase and Alex's anniversary 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.click: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Birthdays' }).visible()
+
+
+      14 | const openBirthdays = async (page) => {
+      15 |   await page.getByRole('tab', { name: /^More/ }).click();
+    > 16 |   await page.getByRole('button', { name: 'Birthdays' }).filter({ visible: true }).click();
+         |                                                                                   ^
+      17 |   await expect(page.getByRole('heading', { name: 'Birthdays and dates' })).toBeVisible();
+      18 | };
+      19 | const errors = [];
+        at openBirthdays (/home/user/Hearth/app/e2e-web/demo-calendar.spec.js:16:83)
+        at /home/user/Hearth/app/e2e-web/demo-calendar.spec.js:38:3
+
+    Error Context: test-results/e2e-demo-artifacts/demo-calendar-CAL-19-Birth-3491e-hase-and-Alex-s-anniversary/error-context.md
+
+  3) e2e-web/demo-calendar.spec.js:45:1 › CAL-19 a returning visitor with a pre-calendar demo saved gets the dates too 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText(/^Today is Grandma Jo[’']s birthday$/).visible()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText(/^Today is Grandma Jo[’']s birthday$/).visible() with timeout 15000ms
+      - waiting for getByText(/^Today is Grandma Jo[’']s birthday$/).visible()
+
+
+      49 |   await page.reload();
+      50 |   await galleryLoaded(page);
+    > 51 |   await expect(page.getByText(/^Today is Grandma Jo[’']s birthday$/).filter({ visible: true })).toBeVisible();
+         |                                                                                                 ^
+      52 | });
+      53 |
+      54 | test("CAL-19 Grandma Jo's view: her only action on Birthdays is \"Change my birthday\"", async ({ page }) => {
+        at /home/user/Hearth/app/e2e-web/demo-calendar.spec.js:51:97
+
+    Error Context: test-results/e2e-demo-artifacts/demo-calendar-CAL-19-a-ret-90034-mo-saved-gets-the-dates-too/error-context.md
+
+  4) e2e-web/demo-calendar.spec.js:54:1 › CAL-19 Grandma Jo's view: her only action on Birthdays is "Change my birthday" 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.click: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Birthdays' }).visible()
+
+
+      14 | const openBirthdays = async (page) => {
+      15 |   await page.getByRole('tab', { name: /^More/ }).click();
+    > 16 |   await page.getByRole('button', { name: 'Birthdays' }).filter({ visible: true }).click();
+         |                                                                                   ^
+      17 |   await expect(page.getByRole('heading', { name: 'Birthdays and dates' })).toBeVisible();
+      18 | };
+      19 | const errors = [];
+        at openBirthdays (/home/user/Hearth/app/e2e-web/demo-calendar.spec.js:16:83)
+        at /home/user/Hearth/app/e2e-web/demo-calendar.spec.js:61:3
+
+    Error Context: test-results/e2e-demo-artifacts/demo-calendar-CAL-19-Grand-599c6-days-is-Change-my-birthday-/error-context.md
+
+  4 failed
+    e2e-web/demo-calendar.spec.js:26:1 › CAL-19 a fresh visit's Gallery says "Today is Grandma Jo's birthday" and See birthdays opens the list 
+    e2e-web/demo-calendar.spec.js:35:1 › CAL-19 Birthdays lists Grandma Jo today, Grandpa Earl in 9 days, Mia's birthday and Chase and Alex's anniversary 
+    e2e-web/demo-calendar.spec.js:45:1 › CAL-19 a returning visitor with a pre-calendar demo saved gets the dates too 
+    e2e-web/demo-calendar.spec.js:54:1 › CAL-19 Grandma Jo's view: her only action on Birthdays is "Change my birthday" 

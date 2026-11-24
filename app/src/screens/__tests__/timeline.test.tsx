@@ -79,7 +79,7 @@ describe('BETA-TIME-2 timeline ("Show by date")', () => {
 });
 
 describe('BETA-TIME-2 Android back button (Grandaddy, Pawpaw)', () => {
-  it('BETA-TIME-2 the phone\'s Back button goes from a year list to the photos, then back to Gallery (not out of Hearth)', async () => {
+  it('BETA-TIME-2 the phone\'s Back button goes from a year list to the photos, then lets Feed\'s stack take it back (ENG-R6)', async () => {
     const handlers: (() => boolean)[] = [];
     const spy = jest.spyOn(BackHandler, 'addEventListener').mockImplementation((_e, h) => {
       handlers.push(h as () => boolean);
@@ -93,8 +93,10 @@ describe('BETA-TIME-2 Android back button (Grandaddy, Pawpaw)', () => {
       await screen.findByRole('button', { name: 'See 2024, 3 photos' });
       expect(back()).toBe(true);
       expect(await screen.findByRole('button', { name: 'Pick a year' })).toBeTruthy();
-      expect(back()).toBe(true);
-      expect(onClose).toHaveBeenCalledTimes(1); // back out of the timeline, not out of Hearth
+      // ENG-R6: from the photos, the screen lets the phone's Back through, and Feed's stack takes it back to Feed
+      // (navStacks.test.tsx), so the timeline itself no longer closes on it.
+      expect(back()).toBe(false);
+      expect(onClose).not.toHaveBeenCalled();
     } finally {
       spy.mockRestore();
     }

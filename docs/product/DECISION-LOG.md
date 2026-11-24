@@ -542,7 +542,51 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** parents expect Apple's own behavior and it gives photos the whole screen; grandparents keep the fixed bar with words, so the way back stays visible for them.
 - **Source:** `docs/product/SPEC-REDESIGN.md` RD-110; persona check `decisions/2026-11-19-glass-bar-shrink.md`
 
-### DEC-76 · Keep video, built and switched off, and get it ready to turn on (PM-R5)
+### DEC-76 · Avocado from a Hass avocado's layers; a picked reaction is an outline, not a filled oval (RD-111..RD-118)
+- **When / status:** Nov 20 · Chase, thread "Add Paper, Avocado and Pomegranate themes": "Haas avacado", "Break down the avacado its multiple layers including the skin", "I love the light mode"; dark: "It's too dark", the accent "looks like green baby poop or mush peas", picked "Fresh leaf"; "I don't like the background on the emojis (the lighter oval)" · Specced, failing tests next
+- **Chose:** Avocado light: page `#F6F5E4` (inner flesh), fill `#E7ECC6` (middle flesh), ink `#1F1A1B` (ripe skin), muted `#4F4A42`, accent `#2F5419` (the green under the skin). Dark: page `#2A2426` (a softer charcoal-plum skin), fill `#3A3335`, ink `#F3F1DA`, muted `#C2BDA8`, accent `#7ED69B` (Fresh leaf). Surface and line follow the existing rules. In every theme a picked reaction has no fill: a 2 pt accent outline and its count in the accent (≥ 3:1 and ≥ 4.5:1 on the page); unpicked keeps a 1 pt line border. Paper and Pomegranate unchanged.
+- **Over:** the Nov 18 Avocado (`#EEEFD3` page, near-black green `#10140C` dark); a ripe-skin dark page (too dark); dark accents `#B3D25B` (mushy), `#EFEBB8`, `#C8EB7E`; the seed brown as an accent (reads as a second theme); GUX-R15's filled `accentPicked` oval and LIVE-3's "no outline".
+- **Because:** a theme drawn from the real fruit is consistent, layer by layer; the pale flesh keeps photos the star. The filled oval looked heavy behind the emoji; an outline marks the pick with width and color, not a blob.
+- **Source:** `docs/product/SPEC-REDESIGN.md` 1k; persona check `decisions/2026-11-20-avocado-hass.md` (LG Red, mitigated); tester https://claude.ai/artifact/6UJSk4FvbyCVMjUrRWaeYz, saved `/mnt/project-files/design/avocado-hass-tester-2026-11-20.html`. Supersedes DEC-68's Avocado values (RD-95) and GUX-R15's filled capsule.
+
+### DEC-77 · Funding research leaves the public repo (PM-R10)
+- **When / status:** Nov 20 · Chase, thread on the tech-debt review: "Is it OK to move FUNDING-RESEARCH.md out of the public repo? yes." · Done
+- **Chose:** remove `docs/product/FUNDING-RESEARCH.md` from the repo; the private copy lives in the project's own files.
+- **Over:** keeping it public; moving it to `docs/archive/` (still public).
+- **Because:** it holds personal plans that don't belong in a public portfolio repo and contradicts the proof-of-concept framing.
+- **Source:** `docs/reviews/2026-11-19-tech-debt/pm.md` PM-R10. Not a product decision, so no persona check. Older commits still hold the file.
+
+### DEC-78 · Atkinson Hyperlegible Next everywhere, again (FONT-1..)
+- **When / status:** Nov 21 · Chase, thread "Build Hearth's design guidelines": "we may want to use atkinson", then after the live font tester "hyperlegible next. also ensure that is on the portfolio demo page" · Building
+- **Chose:** Atkinson Hyperlegible Next (Regular, Medium, SemiBold; no Bold) bundled in the app, on iPhone, Android and the web demo; also the studio core's font for Chase's other products.
+- **Over:** the phone's own font (DEC-59 / RD-2, Nov 15); Lexend, Inter, Nunito Sans.
+- **Because:** the studio wants products that look alike, and the phone's own font differs between iPhone and Android; Atkinson was designed for low-vision readers, which fits the grandparents best.
+- **Source:** persona check `decisions/2026-11-21-atkinson-font.md`; tester https://claude.ai/artifact/7Dfseqn1BtTaPtFuCijPzX. Supersedes DEC-59's font row (RD-2) and DS-12.
+
+### DEC-79 · Share opens on an empty postcard with one "Add photos" target (SHARE-ST-1..SHARE-ST-18)
+- **When / status:** Nov 20, 9:19 PM ET · Chase, thread on the Share start ("The start screen for sharing needs improvement", "This looks subpar compared to the rest of the app"), decision card "Which Share start screen should replace today's?": "B Empty postcard", on the live tester (`/mnt/project-files/design/share-start-2026-11-20/share-start-tester.html`) · Specced, failing tests next
+- **Amended Nov 21 (round 2):** decision card on the same tester: "B+ Postcard first, for everyone". Chase: "Go with the post card, but conduct a second round with ui. It can be better"; "old timers ... like more control vs automation".
+- **Chose (B+, wins where it differs):** subline "Only the people you pick will see it."; a dashed 4:3 photo spot (surface background, no tint) with a 72 px circle icon and "Add photos" at 22 pt; a decorative stamp with today's postmark; note and To: at full contrast, To: reading "To: you pick after your photos" with faces and names (group names for parents, people's names for everyone else), not tappable; "Last shared <day>, to <names>" when there is a last audience; nothing auto-advances (SHARE-ST-10..18).
+- **Chose (round 1, Nov 20):** the Share tab opens on the DEC-73 postcard itself, empty: large title "New post", subline "For your family, nobody else.", and inside the card one big "Add photos" target filling the photo spot (icon plus words, "Up to 100 at a time" for parents, "Up to 10 at a time" for others); the note and the To: section ("To: pick after your photos") sit below it, faded and not tappable. One way in: the "Lots of photos?" section and "Pick lots of photos" go away. A parent picks up to 100; 1 to 10 open the postcard, 11 to 100 go to today's bulk review. A relative who can post picks up to 10 (the phone's picker stops at 10); if more ever come back, the first 10 are kept with HARD-2's notice.
+- **Over:** A straight to the phone's picker (a blank screen behind the picker and no sense of what comes next); C recent photos on the page (needs full photo-library access, against A1 and Apple's limited-access default); keeping today's page of words with two text links.
+- **Because:** the start looked unfinished next to the rest of the app; showing the postcard from the first second tells a grandparent what's coming, one big target with words beats two small text links (17 pt, 48 pt rule), and one way in means nobody chooses between "photos" and "lots of photos" before seeing one.
+- **Source:** `docs/product/SPEC-REDESIGN.md` 1j-2; persona check `decisions/2026-11-20-share-start-postcard.md`. Keeps the Oct 17 call (bulk pick is parents only) and HARD-2's 10-photo postcard max; replaces the start page in BETA-BULK's "Pick lots of photos" entry.
+
+### DEC-80 · Paper plus nine cut-open fruit themes; Pomegranate gets new values (FRUIT-1..FRUIT-12)
+- **When / status:** Nov 23 · Chase: "put these pallettes in hearth, replacing everything but the default/paper", on the Cut-Open Palettes tool (https://claude.ai/artifact/SQ6gmnFB6bX7t6scr3ipSz) · Specced, failing tests next
+- **Chose:** ten themes in this order: Paper (default, unchanged), Avocado (its JSON values equal RD-111/RD-112), Pomegranate (new values), Blood orange, Kiwi, Fig, Dragon fruit, Watermelon, Candy-stripe beet, Red cabbage; page, fill, ink, muted and accent per mode from `/mnt/project-files/design/fruit-palettes-2026-11-20/palettes-v2.json`; surface and line by the existing rules. Still owner only, saved per phone. Non-Paper dark themes use `#FF6961` for red Delete words (today's `#FF453A` is 4.47:1 on Avocado and Dragon fruit dark).
+- **Over:** three themes (DEC-68's "not doing"); the Nov 18 Pomegranate; any name with "pit" or "rind".
+- **Because:** Chase's pick; each theme comes from a real cut fruit, layer by layer, like the Hass avocado (DEC-76), and every set passes Hearth's contrast rules.
+- **Source:** `docs/product/SPEC-REDESIGN.md` 1l; persona check `decisions/2026-11-23-fruit-themes.md` (LG Red mitigated, PA Red Chase override). Supersedes DEC-68's three-theme limit and its Pomegranate values (RD-95).
+
+### DEC-81 · Life calendar v1: birthdays and important dates, month and day only (CAL-1..CAL-21)
+- **When / status:** Nov 24 · Chase's ask, rapid messages: "Life calendar" / "Capture birthdays" / "And important dates" / "Tell everyone" / "So during onboardng" / "Build a v1". His call: build a v1 · Specced, failing tests next
+- **Chose:** an optional "When's your birthday?" card on Gallery for every member (month and day buttons, no typing, Not now); a Birthdays row in More listing every family date soonest first; parents add kids' birthdays, anniversaries and other dates; on the day, "Today is Grandma Jo's birthday" on Gallery for everyone. In-app only. Migration 0029 `family_dates`. Amended Nov 24 after privacy-security review (PRIV-R2), confirmed by Chase Nov 24 ("there should be an advanced central core ... that decides who can see it"; visibility follows the central rules, not a per-feature question): dates follow who sees a name (a member's birthday to whoever may see that member; other dates to parents and the Everyone group), not family-wide.
+- **Over:** an optional birth year (staff-pm: no beta job needs it, and a stored year is a privacy cost); push or email on the day in v1 (needs outbox and `notify` changes plus a deploy; v1.1); per-group audience on dates (wide); a new onboarding gate (a card on Gallery reaches every way in).
+- **Because:** grandparents who avoid social media miss Facebook's birthday nudges; Hearth can tell the family on the day without ads or trackers. Month and day are enough to say "today".
+- **Source:** `docs/product/SPEC-LIFE-CALENDAR.md`; persona check `decisions/2026-11-24-life-calendar.md` (LG and SG Red, mitigated). TRACKER R78.
+
+### DEC-82 · Keep video, built and switched off, and get it ready to turn on (PM-R5)
 - **When / status:** Nov 19 · Chase: "We need to keep the switched off features. Start a thread for each" · Thread "Get video ready to turn on"; the switch stays off until his word
 - **Chose:** video (VID-1..22, migration 0020, `video_posting` off) stays on main. Before turning on: ENG-R2 (a retried upload no longer spends another free video), ENG-R11 (the cap has its own error code), SEC-R7, PRIV-R1, then VID-19 on an iPhone and an Android phone and the FLAG-7 check (VID-22) on Chase's iPhone.
 - **Over:** parking video on an archive branch until a relative asks for it (PM-R5's recommendation for the other dark features).
@@ -550,4 +594,4 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Source:** `docs/reviews/2026-11-19-tech-debt/pm.md` PM-R5; `docs/product/SPEC-MEDIA.md` section 4; persona check `decisions/2026-11-19-keep-video.md`
 
 ---
-Last updated: Nov 20, 2026 (DEC-76)
+Last updated: Nov 24, 2026 (DEC-82)

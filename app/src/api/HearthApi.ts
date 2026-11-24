@@ -11,6 +11,7 @@ import type {
   FinalizeResult, HeartState, InvitePreview, Reaction, ReactionState, ReactionSummary, PostViewers, Session, Space, UploadGrant, UploadItemSpec, ViewGrant,
   TimelineArgs, TimelinePost, TimelineYear, SearchArgs,
   ChatMember, ChatRow, ChatRowKind, ChatSummary, ClaimedKeyPackage,
+  FamilyDate, SaveFamilyDateArgs,
 } from './types';
 
 export * from './types';
@@ -38,6 +39,7 @@ export type ApiErrorCode =
   | 'VIDEO_CAP' // sign-media 402
   | 'VIDEO_TOO_LONG' // pipeline: > 60 s
   | 'FAMILY_FULL' // HF001 (0024, BETA-START-12): a family started in the app reached 500 photos or 2 GB
+  | 'MISSING' // CAL-17: the life calendar's RPCs only: PGRST202 / 42883, the server has no 0029 yet (the app hides it)
   | 'AUTH' // not signed in / session expired
   | 'NETWORK' // no connection, timeout, 5xx
   | 'UNKNOWN';
@@ -155,6 +157,16 @@ export interface HearthApi {
   /** start_family: the caller becomes Owner of a new family with Everyone, plus two Private groups for Two sides.
    *  Idempotent on clientId. Switch off 42501; already in a family 23505; 3 starts in 24 h 54000; bad name or sides 23514. */
   startFamily(a: StartFamilyArgs): Promise<string>;
+
+  // --- Life calendar (0029, SPEC-LIFE-CALENDAR): month and day only, family-wide. Labels are never logged (CAL-18). ---
+  /** list_family_dates: every date in the family, month then day. Not a member: []. */
+  familyDates(space: string): Promise<FamilyDate[]>;
+  /** set_my_birthday: any member, their own; both null clears it. Bad date 22023, not a member P0002, 200 dates P0001. */
+  setMyBirthday(space: string, month: number | null, day: number | null): Promise<void>;
+  /** save_family_date: parents only (others P0002); returns the id. Bad date or label 22023. */
+  saveFamilyDate(a: SaveFamilyDateArgs): Promise<string>;
+  /** delete_family_date: parents any date; anyone their own birthday; otherwise P0002. */
+  deleteFamilyDate(id: string): Promise<void>;
 
   // --- messenger relay (SPEC-MESSENGER, 0015): opaque base64 MLS bytes ---
   chatList(space: string): Promise<ChatSummary[]>;

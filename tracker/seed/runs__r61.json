@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-23T12:00:00-05:00",
+ "label": "Nine fruit themes beside Paper (FRUIT-1..11, DEC-80): tests written first (red)",
+ "passed": 670,
+ "failed": 64,
+ "results": {},
+ "note": "Red on purpose, 1 run at 1341595 plus the new and retargeted tests (uncommitted); only touched files run. jest 10 files: 64 failed, 670 passed, each at a missing theme or value (THEME_NAMES still 3 ids, new fruits fall back to Paper, old Pomegranate hexes in app/src and docs/design, dangerText dark #FF453A under 4.5:1 on Avocado dark, tokens.json/themes.css list 3 themes, 7 new fruits missing from the picker). e2e:demo FRUIT-11 1 failed: Pomegranate page rgb(245, 234, 223) not rgb(251, 245, 233). Fixture app/src/ui/__tests__/fixtures/fruit-palettes.json. e2e/results/fruit-red-2026-11-23.txt"
+}

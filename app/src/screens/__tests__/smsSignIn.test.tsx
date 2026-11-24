@@ -102,20 +102,29 @@ describe('BETA-SMS-3 US numbers only, sent as E.164', () => {
 
 describe('BETA-SMS-4 the code screen', () => {
   it('BETA-SMS-4 names only the last 4 digits, takes a pasted "123 456" or "123-456", has the autofill hints, waits 60 s', async () => {
-    await renderApp(<SignInScreen />, { user: null });
-    await sendTo('304-555-0100');
-    expect(await screen.findByText('We texted a 6-number code to the number ending in 0100. Type it here.')).toBeTruthy();
-    expect(screenWords()).not.toMatch(/304|555/); // never the full number after step 1
-    const box = screen.getByLabelText('6-number code');
-    expect(box.props.textContentType).toBe('oneTimeCode');
-    expect(['one-time-code', 'sms-otp']).toContain(box.props.autoComplete);
-    fireEvent.changeText(box, '123 456');
-    expect(screen.getByLabelText('6-number code').props.value).toBe('123456');
-    fireEvent.changeText(box, '123-456');
-    expect(screen.getByLabelText('6-number code').props.value).toBe('123456');
-    expect(screen.getByText(/You can ask for a new code in (60|59) seconds\./)).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Send a new code' }).props.accessibilityState).toMatchObject({ disabled: true });
-    expectGrandparentSafe();
+    // T26 (QA-R2): fake timers, so a slow machine can't tick the countdown below 59 before it is read.
+    jest.useFakeTimers({ doNotFake: ['setImmediate', 'nextTick'] });
+    try {
+      await renderApp(<SignInScreen />, { user: null });
+      await sendTo('304-555-0100');
+      expect(await screen.findByText('We texted a 6-number code to the number ending in 0100. Type it here.')).toBeTruthy();
+      expect(screenWords()).not.toMatch(/304|555/); // never the full number after step 1
+      const box = screen.getByLabelText('6-number code');
+      expect(box.props.textContentType).toBe('oneTimeCode');
+      expect(['one-time-code', 'sms-otp']).toContain(box.props.autoComplete);
+      fireEvent.changeText(box, '123 456');
+      expect(screen.getByLabelText('6-number code').props.value).toBe('123456');
+      fireEvent.changeText(box, '123-456');
+      expect(screen.getByLabelText('6-number code').props.value).toBe('123456');
+      expect(screen.getByText('You can ask for a new code in 60 seconds.')).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Send a new code' }).props.accessibilityState).toMatchObject({ disabled: true });
+      expectGrandparentSafe();
+      await act(async () => { jest.advanceTimersByTime(1_000); }); // it counts down, one second at a time
+      expect(screen.getByText('You can ask for a new code in 59 seconds.')).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Send a new code' }).props.accessibilityState).toMatchObject({ disabled: true });
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it('BETA-SMS-4 after 60 s "Send a new code" works again', async () => {

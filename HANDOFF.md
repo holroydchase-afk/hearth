@@ -11,6 +11,105 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 24: life calendar review fixes built (PRIV-R1..R3, R5; GUX-R1..R11; branch claude/project-thread-ov6z2y)
+- **Done, test-first** (qa-tdd red e65adf7, r67): 0029 edited in place (never deployed): members select only the date columns, list ties by id (PRIV-R1); `private.may_see_family_date` in RLS, `list_family_dates` and `delete_family_date`: parents all, a member's birthday where `can_see_profile(member)`, other dates only to the Everyone group (PRIV-R2; Fake backend the same); `export_my_data` gains `family_dates` (PRIV-R3); writes lock the `spaces` row before the 200 count (PRIV-R5). App: short Gallery card, "Add my birthday" opens the form on Birthdays (Gallery's stack, `/gallery/birthdays?add=mine`), Save fixed at the bottom (`Screen footer`), "Your birthday: December 8" above it and checkmarks on the picks (GUX-R1, R5); "Saved. Your family will see December 8." at the top (R2); back reads "Gallery" from Gallery (R3); "Happy birthday, <name>!" (R4); "Today: Family reunion" (R6); the form is its own page, back "Birthdays" (R7); chevrons on tappable rows (R8); the load error words (R9); "Whose birthday?", "It's removed for everyone in the family." (R11). GUX-R10 (cake symbol) not done: `birthday.cake` needs iOS 16. Docs: architecture 02, 04 (gap 7), 05; API.md; spec and DEC-81 say dates follow who sees a name, confirmed by Chase Nov 24. CI: new `backend-sql` job runs `backend/tests/run.sh` on plain Postgres 16 with contrib (dblink); `run.sh` refuses early without dblink.
+- **Test setup note:** `family_dates_test.sql` now marks seed.sql's two "Everyone" circles kind `everyone` (the seed predates 0011's kinds); no assertion changed.
+- **Open:** the Birthdays subline now reads "Only your family can see these." (CAL-14, CAL-19 e2e). Still open (QA-R1, P2): the card and form line "Your family will see the month and day. Never the year." and "Saved. Your family will see December 8." say the whole family sees your birthday; under PRIV-R2 only people who can see your name do: grandparent-ux/staff-pm to pick words. New CI job needs architect's OK.
+- **Next exact step:** all suites green 3x (r68); DEC-81 confirmed by Chase Nov 24. PR #169 merged on Chase's "merge" (Nov 24); next "deploy 0029" (deploy token still broken).
+
+## Nov 24: life calendar v1 built (Chase, DEC-81, R78, CAL-1..21; branch claude/project-thread-ov6z2y)
+- **Done, test-first:** qa-tdd red (9276f27, r65), then the build. Migration `0029_family_dates.sql` (table, RLS select for members, no direct writes, `list_family_dates` / `set_my_birthday` / `save_family_date` / `delete_family_date`, security definer, `search_path = ''`, no year column, 200 per family, leaving the family takes your birthday). `HearthApi` + Fake + Supabase methods (`MISSING` code for a server without 0029, calendar RPCs only), API.md "Life calendar (0029)". App: Gallery "When's your birthday?" card (Save / Not now, kept on the phone), "Today is ..." line with See birthdays, More → Birthdays → "Birthdays and dates" (soonest first, Today / Tomorrow / In N days to 30; viewers: Add or Change my birthday; parents: Add a date, tap a date for Change / Delete). All hide quietly without 0029 (CAL-17). Demo: Grandma Jo today, Grandpa Earl in 9 days, Mia's birthday, Chase and Alex's anniversary; seed version moved; a saved demo family gets the dates moved to the visit day. Architecture 02 and 05 updated (CAL-20).
+- **Open:** CAL-14 "icon and the word" test counts a `Text` glyph, but `SymbolView` draws no Text under jest (font never loads), so it stays red until qa-tdd checks for the `SymbolView` instead (as RD-15 does). RD-15 and RD-78 row lists gained Birthdays (engineer, flagged for qa-tdd). Member names on birthday rows reach the whole family (wider than "Who sees a name"; spec chose it): privacy-security to confirm. Dates are not in `export_my_data` yet.
+- **Next exact step:** qa-tdd green 3x and fix the CAL-14 assertion; grandparent-ux and privacy-security review; then Chase says "merge" and "deploy 0029" (nothing deployed). CAL-21 grandparent test with LG after.
+- **Portfolio / public presence:** the public demo shows the Gallery birthday line and Birthdays once this merges.
+
+## Nov 24: visibility core designed (R77; design only, awaits Chase's go)
+- `docs/product/SPEC-VISIBILITY-CORE.md` + `docs/architecture/07-visibility-model.md`: one registered core for every kind (fungible, generic `@holroyd/visibility`), CI gate, oracle (folds R51), user-error catches, co-parent bridge (after the beta), one composer. Open: Chase's go on Phases 1, 1b, 2.
+
+## Nov 24: public repo standards (intake #163, R76; branch claude/project-thread-6ew09x, PR)
+- **Ask (Product Studio scorecard):** engineers and hiring managers judge the public repo's layout.
+- **Done:** CONTRIBUTING.md (test-first, privacy rules), CODE_OF_CONDUCT.md, SECURITY.md (private reporting, no overclaims), `.github/pull_request_template.md` with the `Agents:` line, bug and feature issue templates, `.github/dependabot.yml` (Actions weekly; npm in app, e2e and messenger security-only so Expo versions still come from `expo install`), CI badge and links in the README. Config only.
+- **Left:** repo description and topics (Chase pastes one line in Settings), Dependabot security updates switch (Settings), root clutter (moving HANDOFF/CLAUDE/tracker needs the studio rule paths changed in the same PR; not done).
+- **Portfolio / public presence:** the public repo now has the standard community files.
+
+## Nov 23: dark mode elevation by surface step (intake #155, R75; branch claude/project-thread-6ew09x, PR)
+- **Ask (Product Studio intake):** in dark mode, show elevation with a lighter surface instead of a shadow (DARK-5).
+- **Done, test-first:** qa-tdd red DARK-ELEV-1..6 (`darkElevation.test.tsx`, demo e2e DARK-ELEV-6), then the build: `shadeLine(dark)` (GalleryGrid, PhotosScreen) has no shadow in dark; the floating tab bar drops its dark shadow; the laptop demo's phone column sits on `c.surface` with no shadow in dark. Light unchanged. Green 3x (r60). Before/after shots: /mnt/project-files/design/dark-elevation-2026-11-23/.
+- **Open:** B23 (QA-R1, P2): the dark surface step is only 1.05 to 1.11:1, so separation is subtle; a bigger step needs new palette values (Chase's call). ux-reviewer: Ready, 8/10, no P0/P1. DARK-UX-R1 (P2): the screens paint c.bg over the phone column's c.surface, so on the laptop the column is set off by its border only, until B23. DARK-UX-R2 (P2, older): a photo corner shows through the 0.62 dark glass bar; parked.
+- **Next exact step:** Chase says "merge" (touches app/**, DEC-48); then live check fresh and returning; reply on #155 with the PR link.
+- **Portfolio / public presence:** the public demo's dark mode loses its drop shadows once this merges.
+
+## Nov 23: nine fruit themes beside Paper (Chase, DEC-80, R76, FRUIT-1..12; PR #160, branch claude/project-thread-9r046o)
+- Done: Paper (default, unchanged) + Avocado (unchanged) + new Pomegranate + Blood orange, Kiwi, Fig, Dragon fruit, Watermelon, Candy-stripe beet, Red cabbage. Picker of 10, owner-only. Dark dangerText #FF6961 off Paper. Tokens regenerated. qa-tdd red (r61) then green 3x (r62). Source tool: https://claude.ai/artifact/SQ6gmnFB6bX7t6scr3ipSz
+- Chase Nov 23: "merge all in the right order on green" (after #144, #158). Next: live check fresh + returning; then GUX-R30..R33 (P2) as their own PR; FRUIT-12 on phones.
+- GUX-R30..R33 (Nov 23, same branch): swatch shows page, fill and accent (R30); note above the list, "Only this phone changes. Other people keep their own colors." (R32, QA-R1 resolved); first row "Paper (standard)" (R33); R31 Delete never colour-only is guarded (held already). Next: qa-tdd green 3x, then FRUIT-12 on phones.
+- **Portfolio / public presence:** the public demo's Theme picker offers the 10 themes once this merges.
+
+## Nov 23: ask-less self-check rule (intake #154, R74; branch claude/project-thread-6ew09x, PR)
+- **Chase (Nov 23, via Product Studio):** "I never want to update your settings or environments or repos."
+- **Done:** CLAUDE.md "Minimize Chase's effort" gains the self-check paragraph from studio-agents `docs/studio-standard.md` section 1 (do it yourself, then a tool he only allows, then a card, then one copy box). Docs only.
+- **Portfolio / public presence:** none.
+
+## Nov 23: Share start B+ built (postcard first for everyone)
+- Done: Chase picked "B+ Postcard first for everyone" (Nov 21) and said "Merge on green when finished" (Nov 22). SHARE-ST-10..18 + grandparent-ux fixes GUX-R1..R5, green 3x (r57). Screens: /mnt/project-files/design/share-start-b-plus-2026-11-23/. Open: B21 (P2, long group lists end in "…"), GUX-R6 idea, SHARE-ST-9 on phones, Expo preview republish (needs EXPO_TOKEN).
+
+## Nov 20: Share opens on an empty postcard specced (Chase, DEC-79, R73, SHARE-ST-1..9; branch claude/project-thread-4ulu9i)
+- Done: Chase picked "B Empty postcard"; DEC-79, spec `SPEC-REDESIGN.md` 1j-2, persona check `decisions/2026-11-20-share-start-postcard.md`, TRACKER R73. One way in; the "Pick lots of photos" link goes; non-parents stay at 10.
+- Nov 23: round 2 "B+ Postcard first, for everyone" (Chase, Nov 21) amends DEC-79 with SHARE-ST-10..18 (new subline, dashed spot, stamp, full-contrast To: with names, "Last shared", no auto-advance).
+- Next: qa-tdd red (`shareStart.test.tsx`, demo e2e), engineer, grandparent-ux on shots.
+## Nov 23: Share start tester packaged for other people and projects (Chase, R72; branch claude/project-thread-ukmbd0, PR)
+- **Chase:** "Can you package the tester and put it on your repo somewhere atlas can get it?" and "I want it to be usable by other humans".
+- **Done:** `docs/design/testers/share-start.html` (round 2 Share start tester, standalone, with a How to use note and Chase's pick, B+) and `docs/design/testers/README.md` (how to open it, what it compares, the pick). Checked: no real names, faces, places or emails.
+- **Portfolio / public presence:** Chase said host it (Nov 23). Intake holroydchase-afk.github.io#93 asks Product Studio to publish it at a public chaseholroyd.com link; merged as hearth#151. Live at https://chaseholroyd.com/demo/share-start-tester/ (site PR 94, Nov 22; a self-hosted-font copy with nicknames, not the raw file).
+
+## Nov 22: wired to studio-agents PR #45 checks (intake #149, R71; branch claude/project-thread-qt1q8v, PR)
+- **Chase:** "Pick up the open intake issue ... one small PR, qa-tdd for any code or CI change".
+- **Done:** agents-check fails a code PR whose `qa-tdd skipped` reason isn't exactly `docs only` or `config only` (from studio-agents templates/agents-check.yml; setup-node pin left at v4). Test `scripts/tests/agents_check_skip_test.sh` (AGENTSKIP-0..4, red first) runs the real workflow step; wired into test-all.sh and agents.verify. CLAUDE.md gains "Open every thread the same way" and "Agents come from studio-agents". Shared scripts already matched the studio templates.
+- **Portfolio / public presence:** none.
+
+## Nov 21: themes shareable with other studio products (Chase, R70; branch claude/project-thread-1ba5s6, PR)
+- **Chase:** "We also probably want the themes Sharable".
+- **Done:** `docs/design/themes.css` (Paper default, Avocado, Pomegranate; light, dark, high contrast; studio names + Material 3 role names; font stack) generated from theme.ts by `themesCss()` in `tokens.ts`; `tokens.json` gains `roles`. Drift tests DS-THEMES-1..3 (red first: e2e/results/themes-red-jest-2026-11-21.txt). STUDIO-CORE "Shared themes" says how to use them. DSG-6 closed.
+- **Portfolio / public presence:** none.
+
+## Nov 21: Atkinson Hyperlegible Next everywhere, again (Chase, DEC-78, R69; branch claude/project-thread-1ba5s6, PR)
+- **Chase:** "hyperlegible next. also ensure that is on the portfolio demo page" (after the live font tester https://claude.ai/artifact/7Dfseqn1BtTaPtFuCijPzX).
+- **Done:** qa-tdd red FONT-1..5 (flipped RD-2 tests), engineer built: package 0.4.1 bundled, `FONT`/`FONT_FILES` in theme.ts, `useFonts` in the root layout, every `fontWeight` replaced by the matching family, tokens.json regenerated; STUDIO-CORE, DESIGN-SYSTEM DS-12, DEC-78 and persona check updated.
+- **Next:** merge, live demo check fresh and returning, Expo preview republish, Chase's iPhone look at 360 px wrapping.
+- **Portfolio / public presence:** the public demo (chaseholroyd.com/hearth/) shows Atkinson Hyperlegible Next once this merges.
+
+## Nov 21: studio design core and Hearth's design guidelines (Chase, R68; branch claude/project-thread-1ba5s6, PR)
+- **Chase:** "Can you and the ui agent build design guidelines and whatever design system we should use?", "start lean", "goal is to give this to other projects so their products look similar", "are there other established design systems we should look at?"
+- **Done:** `docs/design/STUDIO-CORE.md`, the product-neutral core other products copy: each phone's own guidelines for behavior, Material 3 color roles as the token vocabulary, no component library, 11 principles, the 7-colors-per-mode theme recipe with tested contrast, type, space, corners, components, a new-product checklist. `docs/product/DESIGN-SYSTEM.md` is now Hearth's layer: stale palette, font and DS-11/DS-12 rows brought up to the code (themes, Medium for names, no Bold), Hearth's themes table, Hearth components, and gaps DSG-1..8 (not fixed). Brand names of other apps removed. ux-reviewer reviewed (DSC-R1..R8, all applied).
+- **Open:** Chase picks the font (decision card; recommended Atkinson Hyperlegible Next everywhere, which would reverse DEC-59's font and needs an app PR). Studio intake to adopt the core in the shared tools repo. DSG-1..8 need staff-pm ranking and failing tests.
+
+## Nov 21: Easy view case study for the portfolio (Chase, R66; branch claude/project-thread-lld29p, PR)
+- **Chase:** "We need to ensure we do a write up on easy mode and ensure that's on the portfolio."
+- **Done:** `docs/portfolio/EASY-VIEW.md` (problem, the call and what it beat, persona check and its one Red, tests, what it unlocked: DEC-70 native glass bar, DEC-72 demo, DEC-75 shrink), linked from `CASE-STUDY.md`. Screenshots shot from the live demo Nov 21 (Chase vs Grandma Jo on More, the Easy view page; no faces) in `docs/portfolio/screens/easy-view/`. positioning reviewed the claims.
+- **Nov 21, later:** Chase: "delete any mention of any real company in there". The write-up now says standard social feeds, phone photo apps, the phone's standard tab bar and screen reader, AI agents (no company or product names); intake #85 scrubbed the same way.
+- **Also fixed:** `backend/tests/notify_test.sql` had a date bomb: the release-and-resend check used a fixed clock of Nov 20, 7pm ET, so from Nov 21 00:00Z its notice was queued after that clock and CI's backend job went red on every PR. The notice is now queued at 5pm ET that day (before the 6pm email slot). Notify suite 60/60 green 3x locally. Two more fixed dates in that file (Nov 2, Nov 7/16 checks) pass today; worth a look if notify goes red again.
+- **Next:** when the Share split by Easy view ships (thread "Redo the Share screen"), fill the "Next: Share follows Easy view" section (DEC number, PR, Off vs On screenshot pair).
+- **Portfolio / public presence:** intake holroydchase-afk.github.io#85 asks Product Studio to add an Easy view section to the Hearth case study.
+
+## Nov 21: Grandma Jo switch fixed for iPhone Safari (Chase, DEMO-SAFARI-1..4, QA-R1, TRACKER R67; branch claude/project-thread-x63lzp, PR)
+- Cause: since the real demo photos (Nov 16) the demo saved ~3.5 MB of photo bytes in localStorage; Safari's quota refused it silently, so a reload (the Jo switch, Reset) always restarted as Chase and nothing a visitor did survived a reload on iPhone.
+- Done: photo bytes in IndexedDB (`app/src/state/fakeSave.ts`), small state in localStorage, old saves migrate; Jo switch and Reset wait for saves. New `e2e-web/demo-safari.spec.js` runs the demo under a Safari-sized quota. Sweep found no other regressions.
+- Next: Chase's "merge", then live check fresh + returning at 390/1280, then one tap on his iPhone.
+- **Portfolio / public presence:** the public demo's Grandma Jo switch works on iPhone once this merges.
+
+## Nov 20: funding research out of the public repo (Chase, DEC-77, PM-R10)
+- Done: `docs/product/FUNDING-RESEARCH.md` removed; private copy in the project files (`private/`). Older commits still hold it.
+- Next: Chase wants the planning docs (REMAINING, MILESTONE-1, PLAN, PM-REVIEW, TRACKER, BETA-SPEC) rewritten before they stay public; scope waits on his note. Deploy of 0026-0028 still waits on a new Supabase token.
+
+## Nov 20: ENG-R6 navigation is real stacks (tech-debt review, TRACKER R62; branch claude/project-thread-av5ejj, PR)
+- **Done, test-first** (red `navStacks.test.tsx`, then old tests moved off the in-place swaps, then the code): Gallery, Feed and More are each a stack (`app/(tabs)/{gallery,feed,more}/_layout.tsx`, shared `screens/TabStack.tsx`, `anchor: 'index'`). Routes: `/gallery/search`, `/feed/timeline?startAt=`, `/more/{messages,groups,events,easy-view,look,theme,me,help}`. `MoreRowGate` keeps the role rules (a viewer at `/more/groups` or `/more/theme` gets the menu, DEC-49). Old links `/groups`, `/me`, `/help` and `/more?open=` redirect with the menu under them. Deleted `resetMore`/`resets` and the BackHandler fallbacks (Search and the timeline only handle their inner steps now). Re-tapping a tab on Hearth's own bar sends `tabPress`, so its stack goes back to its first screen; leaving More pops it (as before); the phone's own bar pops natively. `build-demo.sh` copies the new addresses. Tests render the real routes through `test/appRoutes.tsx`; jest now transforms `standard-navigation`.
+- **Still in place (not stack screens):** Feed's Events list/event and Gallery's New for you walk (keeps its BackHandler); More → Events → one event pops straight to More on the phone's Back.
+- **Status:** qa-tdd green 3x (P2s QA-R1..R4 open in PR #139); merged on green per Chase's review go-ahead. Next: check iPhone swipe-back and Android Back on More's rows in the Expo preview.
+
+## Nov 20: Hass Avocado and outlined picked reactions built (Chase, DEC-76, RD-111..RD-117; branch claude/project-thread-253q4i, local commit)
+- Built: Avocado's new light/dark values in `app/src/ui/theme.ts`; `accentPicked` removed; a picked reaction in `PostCard.tsx` is a 2 pt `c.accent` outline with an accent count, unpicked a 1 pt `c.line` outline, padding absorbs the border so nothing moves; `docs/design/tokens.json` regenerated. RD-111..RD-116 jest green, typecheck green.
+- Next: qa-tdd retargets 3 older tests that still expect the superseded no-outline capsule (moments LIVE-3, warmPaper RD-89 layout keeps padding, reviewRound2 R21 subtracts the border), then runs all suites 3x and the RD-117 Playwright run; RD-118 on phones.
+
 ## Nov 19: glass tab bar shrinks on scroll (Chase, DEC-75, RD-110, R64; branch claude/project-thread-ox4dz4, PR)
 - **Chase:** "I also want the full iOS glass oval interaction on scroll".
 - **Done, test-first:** `nativeTabLook('ios')` gives `minimize: 'onScrollDown'` (the layout passes it to `NativeTabs`); Android stays `never`. Web: `HearthTabBar` follows any scrolling area (`nextMinimized`, capture-phase scroll listener) and narrows to a 64 pt oval with only the picked tab; tap it, scroll up or reach the top to bring the bar back. Easy view On never shrinks. DS-5 wording updated.
@@ -34,6 +133,7 @@ blockers:
 ## Nov 19: web glass tab bar lookalike, Grandma Jo no longer enlarges the laptop page (Chase, DEC-72, RD-108, RD-109, DEMO-EASY-1, R61; branch claude/project-thread-ox4dz4, PR)
 - **Chase:** "i do not see it in the demo" → picked a web lookalike; "its a poor experience that clicking grandma jo makes the screen much larger".
 - **Done, test-first:** `HearthTabBar floating` (web + Easy view Off): capsule 16 pt in, 64 pt, `c.surface` at 60%, `backdropFilter` blur, `c.accentSoft` pill. `ui/tabBarSpace.tsx` context gives screens 96 pt of room (kit `Screen`, Photos, Timeline, Events, Search, the walk's bar). `DemoFrame` panel and the phone's `DemoBar` sit in `BigTextContext` false. RD-44's e2e now measures tile rows from the grid's top (scroll-independent).
+- **Expo preview republished Nov 21** from main f65724f (#146, Atkinson Hyperlegible Next font; group f56e32ac-41d3-4d91-b2ba-b7ea62f3dc01). Before that Nov 20 from 6ace2e8 (#140, Hass Avocado; group e200110a). Standing link serves it.
 - **Expo preview republished Nov 19** from main eceac67 (group 96e510bb, iOS 01a1f21c-d8b4-79f2-a861-c4e8140f43e0); standing link serves it. Chase checks the iPhone tab bar.
 - **Next exact step:** Chase says "merge"; demo rebuilds; live check of the floating bar (fresh and returning).
 - **Portfolio / public presence:** the public demo's tab bar floats as glass for Chase's view once this merges.
@@ -52,7 +152,7 @@ blockers:
 - **CI PR #131 merged** (96729ff); e2e Playwright pinned to ~1.63.0 so CI's browser matches the sandbox (VID-18 failed on 1.56).
 - **SEC-R1 PR:** migration 0027 keeps group titles with the parents (managers) in the raw API and the data export; relatives see only Everyone and event groups they're in. Merged as a file only: NOT deployed. `deploy.sh` applies every unapplied migration, so Chase's next "deploy" ships 0026 and 0027 together.
 - **SEC-R1 PR #132 merged** (73f541f), migration file only.
-- **Video fixes PR (ENG-R2, ENG-R11, SEC-R7, PRIV-R1; branch claude/project-thread-hl5ax4):** migration 0029 (renumbered Nov 20; 0028 is text sign-in's no-passwords) gives a free video's count back when it never finishes uploading (failed, deleted or its draft thrown away while pending; once, never below 0; an uploaded video keeps its count), the cap refuses with its own code HF002 (sign-media branches on it for 402), and nobody can call `private.videos_this_month` directly. The app clears decrypted video files at every start, signed in or not. File only: NOT deployed (the pending deploy now ships 0026 through 0029 once PR #135 merges). qa-tdd 3x: video green, one unrelated sign-in timer flake (T23). Then Chase: merge, deploy, VID-19 on phones, VID-22 on his iPhone, "turn video on" (TRACKER R27, DEC-76).
+- **Video fixes PR (ENG-R2, ENG-R11, SEC-R7, PRIV-R1; branch claude/project-thread-hl5ax4):** migration 0030 (renumbered twice; 0028 and 0029 went to other features first) gives a free video's count back when it never finishes uploading (failed, deleted or its draft thrown away while pending; once, never below 0; an uploaded video keeps its count), the cap refuses with its own code HF002 (sign-media branches on it for 402), and nobody can call `private.videos_this_month` directly. The app clears decrypted video files at every start, signed in or not. File only: NOT deployed (the pending deploy now ships 0026 through 0030 once PR #135 merges). qa-tdd 3x: video green, one unrelated sign-in timer flake (T23). Then Chase: merge, deploy, VID-19 on phones, VID-22 on his iPhone, "turn video on" (TRACKER R27, DEC-82).
 - **ENG-R5 PR:** the Fake backend, the sample family and the laptop demo frame now ship only in fake and demo builds. Metro swaps `fakeRuntime` and `demo/DemoChrome` for `.off` stand-ins unless `EXPO_PUBLIC_HEARTH_FAKE` or `EXPO_PUBLIC_HEARTH_DEMO` is set; a real web export has no FakeBackend, sample family or demo strings.
 - **Next exact step (after that):** the summary for Chase; open P2s are in `docs/reviews/2026-11-19-tech-debt/README.md`.
 

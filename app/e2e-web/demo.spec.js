@@ -12,6 +12,8 @@ const resetDemo = async (page) => {
   await details(page);
   await page.getByRole('button', { name: 'Reset demo' }).click();
   await page.getByRole('button', { name: 'Reset', exact: true }).click();
+  // QA-R2 (T28): Reset waits for saves before it navigates (DEMO-SAFARI), so wait for the fresh page's note.
+  await expect(page.getByText('Sample data restored.')).toBeVisible();
 };
 
 // RD-18 (redesign 1c): Gallery shows photos, not captions. "Loaded" = the greeting and a drawn picture; captions are
@@ -27,16 +29,16 @@ const onFeed = async (page) => {
 
 const FIXTURE = path.join(__dirname, 'fixtures', 'park-gps.jpg');
 
-// DEC-73: tapping Share may open the file chooser itself, or show a "Pick photos" button first; either way, set the
-// files and wait for the "New post" page.
+// DEC-79 (SHARE-ST-8; retargeted Nov 21 by qa-tdd): Share opens on the empty postcard ("New post"); its one
+// "Add photos, up to N at a time" target opens the file chooser. Set the files and wait for the postcard's Cancel.
+const ADD_PHOTOS = /^Add photos( or videos)?, up to \d+ at a time$/;
 const openNewPost = async (page, files) => {
-  const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
   await page.getByRole('tab', { name: /^Share/ }).click();
-  const pick = page.getByRole('button', { name: /^Pick photos/ }).filter({ visible: true }).first();
-  const first = await Promise.race([chooser.then(() => 'chooser'), pick.waitFor({ timeout: 15_000 }).then(() => 'button')]);
-  if (first === 'button') await pick.click();
-  await (await chooser).setFiles(files);
   await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
+  const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
+  await page.getByRole('button', { name: ADD_PHOTOS }).filter({ visible: true }).first().click();
+  await (await chooser).setFiles(files);
+  await expect(page.getByRole('button', { name: 'Cancel this post' })).toBeVisible();
 };
 const errors = [];
 
@@ -92,6 +94,29 @@ test('RR-14 add a photo, reload keeps it, Start over brings back the sample fami
   await resetDemo(page);
   await onFeed(page);
   await expect(page.getByText('Leaf pile', { exact: true }).filter({ visible: true })).toHaveCount(0);
+});
+
+// FONT-5 (DEC-78, Nov 21): the web demo reads in Atkinson Hyperlegible Next too, the heading SemiBold and a caption
+// Regular, and the bundled font file really loaded (not just named in CSS and falling back to the system font).
+test('FONT-5 the demo\'s heading and body words are Atkinson Hyperlegible Next, and the font really loaded', async ({ page }) => {
+  await page.goto('/');
+  await galleryLoaded(page);
+  await onFeed(page);
+  const look = await page.evaluate(async () => {
+    await document.fonts.ready;
+    const caption = [...document.querySelectorAll('div,span')].find((n) => n.textContent === 'Life jackets on and in all afternoon' && n.offsetParent);
+    const heading = document.querySelector('[role="heading"]');
+    return {
+      heading: heading ? getComputedStyle(heading).fontFamily : 'no heading',
+      body: caption ? getComputedStyle(caption).fontFamily : 'no caption',
+      loaded: ['AtkinsonHyperlegibleNext_400Regular', 'AtkinsonHyperlegibleNext_600SemiBold']
+        .map((f) => [...document.fonts].some((ff) => ff.family.replace(/["']/g, '') === f && ff.status === 'loaded')),
+    };
+  });
+  expect(look.heading).toMatch(/^"?AtkinsonHyperlegibleNext_600SemiBold/);
+  expect(look.body).toMatch(/^"?AtkinsonHyperlegibleNext_400Regular/);
+  expect(look.loaded).toEqual([true, true]);
+  expect(errors).toEqual([]);
 });
 
 test('DEMO-6 / NF-1 laptop shows the story panel beside the app; an unknown link shows plain words', async ({ page }) => {
@@ -211,13 +236,20 @@ test('DEMO-BAR Reset asks first: Keep changes nothing; Reset restores and says s
 // More → Theme → Avocado and Pomegranate recolor the page and the pick survives a reload; Grandma Jo stays Paper with
 // no Theme row; the tab bar is c.surface with a c.line top border (RD-104). Photo shadows stay for now (Chase
 // deciding), so no shadow check here (RD-92 keeps it). Screenshots of all three themes, light and dark.
-test('RD-102 Paper by default; Chase picks Avocado then Pomegranate, it survives a reload; Grandma Jo stays Paper', async ({ page }) => {
+// qa-tdd, Nov 23 (FRUIT-11, SPEC-REDESIGN 1l, DEC-80): now walks Paper plus all nine fruits; each fruit's page is the
+// JSON's `page` as rgb() (fixture copy of palettes-v2.json); Pomegranate light is rgb(251, 245, 233), replacing
+// RD-117's rgb(245, 234, 223). The last pick (Red cabbage) must survive the reload. Screenshots of all 10, light and dark.
+test('RD-102 RD-117 FRUIT-11 Paper by default; Chase picks each of the nine fruits, the last survives a reload; Grandma Jo stays Paper', async ({ page }) => {
+  const FRUIT = require('../src/ui/__tests__/fixtures/fruit-palettes.json');
+  const toRgb = (h) => `rgb(${[1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)).join(', ')})`;
   const PAGE = {
     paper: { light: 'rgb(247, 247, 244)', dark: 'rgb(19, 18, 16)' },
-    avocado: { light: 'rgb(238, 239, 211)', dark: 'rgb(16, 20, 12)' },
-    pomegranate: { light: 'rgb(245, 234, 223)', dark: 'rgb(23, 13, 16)' },
+    ...Object.fromEntries(Object.entries(FRUIT).map(([k, v]) => [k, { light: toRgb(v.light.page), dark: toRgb(v.dark.page) }])),
   };
-  const WORD = { paper: 'Paper', avocado: 'Avocado', pomegranate: 'Pomegranate' };
+  expect({ avocado: PAGE.avocado, pomegranateLight: PAGE.pomegranate.light }).toEqual({ avocado: { light: 'rgb(246, 245, 228)', dark: 'rgb(42, 36, 38)' }, pomegranateLight: 'rgb(251, 245, 233)' });
+  const WORD = { paper: 'Paper (standard)', ...Object.fromEntries(Object.entries(FRUIT).map(([k, v]) => [k, v.name])) };
+  const FRUITS = Object.keys(FRUIT);
+  const LAST = FRUITS[FRUITS.length - 1];
   const shots = path.join(__dirname, '..', 'test-results', 'rd-102');
   // The Gallery backing: the first painted ancestor of the grid (the browser's white if none).
   const galleryBg = () => page.evaluate(() => {
@@ -238,8 +270,15 @@ test('RD-102 Paper by default; Chase picks Avocado then Pomegranate, it survives
     const s = getComputedStyle(el);
     return { bg: s.backgroundColor, top: s.borderTopWidth, painted: s.backgroundColor !== 'rgba(0, 0, 0, 0)' };
   });
-  const toGallery = async () => { await page.getByRole('tab', { name: /^Gallery/ }).click(); await galleryLoaded(page); };
+  // T-FRUIT (qa-tdd, Nov 23): with 10 rows, scrolling a fruit into view shrinks the glass bar (RD-110); a tap on the
+  // shrunk oval only brings the tabs back (RD-110-R1), so restore the bar first, as T28 does in RD-117.
+  const restoreTabs = async () => {
+    const shrunk = page.getByRole('tab', { name: /show all tabs/ });
+    if (await shrunk.count()) await shrunk.click();
+  };
+  const toGallery = async () => { await restoreTabs(); await page.getByRole('tab', { name: /^Gallery/ }).click(); await galleryLoaded(page); };
   const pick = async (theme) => {
+    await restoreTabs();
     await page.getByRole('tab', { name: /^More/ }).click();
     await page.getByRole('button', { name: /^Theme(,|$)/ }).click();
     await expect(page.getByRole('heading', { name: 'Theme' })).toBeVisible();
@@ -254,13 +293,13 @@ test('RD-102 Paper by default; Chase picks Avocado then Pomegranate, it survives
     await resetDemo(page);
     await page.reload();
     await galleryLoaded(page);
-    // Light starts from a fresh demo (the default); dark follows light's Pomegranate, so it picks Paper back first.
+    // Light starts from a fresh demo (the default); dark follows light's last fruit, so it picks Paper back first.
     if (look === 'dark') { await pick('paper'); await toGallery(); }
     expect.soft({ look, gallery: await galleryBg() }).toEqual({ look, gallery: PAGE.paper[look] });
     const bar = await tabBar();
     expect.soft({ look, painted: bar.painted, notPage: bar.bg !== PAGE.paper[look], top: bar.top }).toEqual({ look, painted: true, notPage: true, top: '1px' });
     await page.screenshot({ path: path.join(shots, `rd-102-paper-${look}.png`) });
-    for (const theme of ['avocado', 'pomegranate']) {
+    for (const theme of FRUITS) {
       await pick(theme);
       await expect.poll(themeBg).toBe(PAGE[theme][look]);
       await toGallery();
@@ -270,7 +309,7 @@ test('RD-102 Paper by default; Chase picks Avocado then Pomegranate, it survives
     // The pick survives a reload.
     await page.reload();
     await galleryLoaded(page);
-    expect.soft({ look, afterReload: await galleryBg() }).toEqual({ look, afterReload: PAGE.pomegranate[look] });
+    expect.soft({ look, afterReload: await galleryBg() }).toEqual({ look, afterReload: PAGE[LAST][look] });
   }
 
   // Grandma Jo stays Paper, with no Theme row.
@@ -762,6 +801,109 @@ test('RD-92 RD-94 Paper, photo shadows and the reaction pop in the demo, light a
   await page.screenshot({ path: path.join(shots, 'rd-92-dark-feed.png') });
 });
 
+// RD-117 (SPEC-REDESIGN 1k, Chase Nov 20, DEC-76): Avocado is a Hass avocado (page rgb(246, 245, 228) light,
+// rgb(42, 36, 38) dark) and a picked reaction is a 2 px accent outline with the count in the accent, no fill; an
+// unpicked one has a 1 px border; tapping never moves the heart's box or its neighbour (RD-116). Written first (red),
+// Nov 20, by qa-tdd. Soft expects so one run shows every miss. Screenshots: Avocado light and dark, and a picked
+// reaction in all three themes.
+test('RD-117 RD-116 Avocado (Hass) light and dark; a picked ❤️ is a 2 px accent outline with an accent count, no fill, in every theme', async ({ page }) => {
+  const PAGE = {
+    paper: { light: 'rgb(247, 247, 244)' },
+    avocado: { light: 'rgb(246, 245, 228)', dark: 'rgb(42, 36, 38)' },
+    pomegranate: { light: 'rgb(251, 245, 233)' }, // qa-tdd, Nov 23: FRUIT-11 (DEC-80) replaces rgb(245, 234, 223)
+  };
+  // Accent per theme, light (RD-94, RD-111, FRUIT-2); Avocado dark is Fresh leaf #7ED69B (RD-112).
+  // qa-tdd, Nov 23: Pomegranate's accent is the JSON's #B3122F (DEC-80), replacing RD-95's rgb(163, 23, 47).
+  const ACCENT = { paper: 'rgb(173, 55, 29)', avocado: 'rgb(47, 84, 25)', pomegranate: 'rgb(179, 18, 47)', avocadoDark: 'rgb(126, 214, 155)' };
+  const WORD = { paper: 'Paper (standard)', avocado: 'Avocado', pomegranate: 'Pomegranate' };
+  const shots = path.join(__dirname, '..', 'test-results', 'rd-117');
+  const pick = async (theme) => {
+    // T28: tapping the heart can scroll Feed and shrink the glass bar (RD-110); a tap on the shrunk oval
+    // only brings the tabs back (RD-110-R1), so restore it first.
+    const shrunk = page.getByRole('tab', { name: /show all tabs/ });
+    if (await shrunk.count()) await shrunk.click();
+    await page.getByRole('tab', { name: /^More/ }).click();
+    await page.getByRole('button', { name: /^Theme(,|$)/ }).click();
+    await page.getByRole('radio', { name: `${WORD[theme]} theme` }).click();
+    await expect(page.getByRole('radio', { name: `${WORD[theme]} theme` })).toBeChecked();
+  };
+  const themeBg = () => page.getByRole('heading', { name: 'Theme' }).evaluate((el) => {
+    const opaque = (c) => c && c !== 'transparent' && !/rgba\(\s*\d+,\s*\d+,\s*\d+,\s*0\s*\)/.test(c);
+    let n = el;
+    while (n && !opaque(getComputedStyle(n).backgroundColor)) n = n.parentElement;
+    return n ? getComputedStyle(n).backgroundColor : 'rgb(255, 255, 255)';
+  });
+  const love = () => page.getByRole('button', { name: 'Love it' }).filter({ visible: true }).first();
+  // RN-web renders no aria-selected / aria-pressed on the reaction (QA-R1), so "picked" is read from the count:
+  // tapping on raises it by one. turnOn() leaves the heart picked whatever the demo started with.
+  const countOf = async () => Number((await love().innerText()).replace(/\D/g, '') || 0);
+  const turnOn = async () => {
+    const before = await countOf();
+    await love().click();
+    await expect.poll(countOf).not.toBe(before);
+    if ((await countOf()) < before) { await page.waitForTimeout(300); await love().click(); await expect.poll(countOf).toBe(before); }
+  };
+  const turnOff = async () => { await turnOn(); const n = await countOf(); await page.waitForTimeout(300); await love().click(); await expect.poll(countOf).toBe(n - 1); };
+  const look = () => love().evaluate((btn) => {
+    const s = getComputedStyle(btn);
+    const count = [...btn.querySelectorAll('*')].find((n) => n.children.length === 0 && /^\d+$/.test((n.textContent || '').trim()));
+    const r = btn.getBoundingClientRect();
+    const haha = btn.parentElement.querySelector('[aria-label="Haha"]');
+    return {
+      bg: s.backgroundColor,
+      widths: [s.borderTopWidth, s.borderRightWidth, s.borderBottomWidth, s.borderLeftWidth],
+      color: s.borderTopColor,
+      count: count ? getComputedStyle(count).color : 'no count',
+      box: { x: r.x, y: r.y, w: r.width, h: r.height },
+      haha: haha ? haha.getBoundingClientRect().x : null,
+    };
+  });
+  const clear = (c) => c === 'transparent' || c === 'rgba(0, 0, 0, 0)';
+  const near = (a, b) => Math.abs(a - b) <= 0.5;
+
+  await page.setViewportSize({ width: 393, height: 852 });
+  for (const mode of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme: mode, reducedMotion: 'reduce' });
+    await page.goto('/');
+    await resetDemo(page);
+    await page.reload();
+    await galleryLoaded(page);
+    await pick('avocado');
+    await page.waitForTimeout(300); // soft, so one red run also shows the reaction checks below
+    expect.soft({ mode, page: await themeBg() }).toEqual({ mode, page: PAGE.avocado[mode] });
+    await page.screenshot({ path: path.join(shots, `rd-117-avocado-${mode}.png`) });
+    if (mode === 'dark') {
+      await onFeed(page);
+      await turnOn();
+      const on = await look();
+      expect.soft({ mode, clear: clear(on.bg), widths: on.widths, color: on.color, count: on.count })
+        .toEqual({ mode, clear: true, widths: ['2px', '2px', '2px', '2px'], color: ACCENT.avocadoDark, count: ACCENT.avocadoDark });
+    }
+  }
+
+  // Light: a picked heart in every theme; Paper and Pomegranate pages unchanged.
+  await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
+  for (const theme of ['paper', 'avocado', 'pomegranate']) {
+    await pick(theme);
+    await page.waitForTimeout(300);
+    expect.soft({ theme, page: await themeBg() }).toEqual({ theme, page: PAGE[theme].light });
+    await onFeed(page);
+    await turnOff();
+    await page.waitForTimeout(300);
+    const off = await look();
+    expect.soft({ theme, offClear: clear(off.bg), offWidths: off.widths }).toEqual({ theme, offClear: true, offWidths: ['1px', '1px', '1px', '1px'] });
+    await love().click();
+    await page.waitForTimeout(300);
+    const on = await look();
+    expect.soft({ theme, clear: clear(on.bg), bg: clear(on.bg) ? 'clear' : on.bg, widths: on.widths, color: on.color, count: on.count })
+      .toEqual({ theme, clear: true, bg: 'clear', widths: ['2px', '2px', '2px', '2px'], color: ACCENT[theme], count: ACCENT[theme] });
+    // RD-116: the heart's outer box and its neighbour stay put (±0.5 px).
+    expect.soft({ theme, same: near(on.box.x, off.box.x) && near(on.box.y, off.box.y) && near(on.box.w, off.box.w) && near(on.box.h, off.box.h), haha: off.haha !== null && near(on.haha, off.haha) })
+      .toEqual({ theme, same: true, haha: true });
+    await love().screenshot({ path: path.join(shots, `rd-117-picked-${theme}-light.png`) });
+  }
+});
+
 // RD-108 / RD-109 (Chase, Nov 19, DEC-72): with Easy view Off (Chase) the web shows a lookalike of iOS 26's floating
 // glass tab bar, and the bottom of Gallery scrolls clear of it; Grandma Jo (Easy view On) keeps the fixed bar.
 test('RD-108 RD-109 Chase gets the floating glass tab bar and Gallery clears it; Grandma Jo keeps the fixed bar', async ({ page }) => {
@@ -1000,4 +1142,123 @@ test('RD-110-R3 the bar shrunk on Share comes back whole on Feed after sending',
   await expect(page.getByRole('tab', { name: /^Feed/ })).toHaveAttribute('aria-selected', 'true');
   await expect(page.getByRole('tab')).toHaveCount(4);
   await resetDemo(page);
+});
+
+// SHARE-ST-8 (SPEC-REDESIGN 1j-2, DEC-79, Chase Nov 20): Share opens on an empty postcard in the public demo at 393 px.
+// Reference: option B of /mnt/project-files/design/share-start-2026-11-20/share-start-tester.html. Written first (red),
+// Nov 21, by qa-tdd. Soft expects on each start page, so one run shows every part still missing.
+// QA-R (staff-pm): the demo's Grandma Jo is a viewer with no Share tab (RD-9), so her "Up to 10" can't be reached here;
+// it runs only if the demo ever lets her post, and the jest SHARE-ST-2/5 cases cover "Up to 10" meanwhile.
+test('SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded To:, no "Pick lots of photos"; Chase "Up to 100"; 3 photos show "1 of 3"', async ({ page }) => {
+  const shots = path.join(__dirname, '..', 'test-results', 'share-st-8');
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/');
+  await galleryLoaded(page);
+
+  const startPage = async (limit, shot) => {
+    await page.getByRole('tab', { name: /^Share/ }).click();
+    await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
+    const add = page.getByRole('button', { name: `Add photos, up to ${limit} at a time` }).filter({ visible: true });
+    await expect.soft(add).toBeVisible();
+    await expect.soft(page.getByText(`Up to ${limit} at a time`, { exact: true }).filter({ visible: true })).toBeVisible();
+    // engineer, flagged for qa-tdd: round 2 B+ (SHARE-ST-10/14/15) replaced the subline, the To: words and the fading.
+    await expect.soft(page.getByText('Only the people you pick will see it.', { exact: true }).filter({ visible: true })).toBeVisible();
+    const to = page.getByText('To: you pick after your photos', { exact: true }).filter({ visible: true });
+    await expect.soft(to).toBeVisible();
+    await expect.soft(page.getByText('Add a note (optional)', { exact: true }).filter({ visible: true })).toBeVisible();
+    // No old start page anywhere; no Send yet.
+    await expect.soft(page.getByText(/Pick lots of photos|Lots of photos\?|Share photos|Pick photos/)).toHaveCount(0);
+    await expect.soft(page.getByRole('button', { name: /^(Send to |Pick who gets it$)/ })).toHaveCount(0);
+    // SHARE-ST-14: the note and To: show at full strength (no opacity below 1) but stay hidden from screen readers.
+    if (await to.count()) {
+      const seen = await to.first().evaluate((el) => {
+        let o = 1; let hidden = false;
+        for (let n = el; n; n = n.parentElement) { o *= parseFloat(getComputedStyle(n).opacity || '1'); if (n.getAttribute('aria-hidden') === 'true') hidden = true; }
+        return { faded: o < 1, hidden };
+      });
+      expect.soft(seen).toEqual({ faded: false, hidden: true });
+    }
+    // The target's words stay inside it, and the page never scrolls sideways.
+    if (await add.count()) {
+      const spill = await add.first().evaluate((el) => {
+        const box = el.getBoundingClientRect(); let out = 0;
+        const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        for (let n = w.nextNode(); n; n = w.nextNode()) {
+          if (!n.textContent.trim()) continue;
+          const r = document.createRange(); r.selectNodeContents(n);
+          for (const q of r.getClientRects()) out = Math.max(out, box.left - q.left, q.right - box.right, box.top - q.top, q.bottom - box.bottom);
+        }
+        return { h: box.height >= 48, out: Math.round(out) };
+      });
+      expect.soft(spill).toEqual({ h: true, out: 0 });
+    }
+    expect.soft(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await page.screenshot({ path: path.join(shots, `${shot}.png`) });
+  };
+
+  await startPage(100, 'chase-light');
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await startPage(100, 'chase-dark');
+  await page.emulateMedia({ colorScheme: 'light' });
+  // Chase with Easy view On: "Up to 10" (SHARE-ST-12).
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: 'Easy view, Off' }).click();
+  await page.getByRole('radio', { name: 'On', exact: true }).click();
+  await expect.poll(() => tabWordsShown(page)).toEqual(['Gallery', 'Share', 'Feed', 'More']);
+  await startPage(10, 'chase-easy-view');
+  // Easy view back Off for the rest.
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: 'Easy view, On' }).click();
+  await page.getByRole('radio', { name: 'Off', exact: true }).click();
+
+  // As Chase, the target with 3 photos opens the postcard at "1 of 3".
+  await page.getByRole('tab', { name: /^Share/ }).click();
+  const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
+  await page.getByRole('button', { name: 'Add photos, up to 100 at a time' }).filter({ visible: true }).first().click();
+  await (await chooser).setFiles([FIXTURE, FIXTURE, FIXTURE]);
+  await expect(page.getByText('1 of 3', { exact: true })).toBeVisible();
+  await page.screenshot({ path: path.join(shots, 'chase-1-of-3.png') });
+
+  // Grandma Jo (Easy view on for her): "Up to 10", if the demo lets her post.
+  await asJo(page);
+  if (await page.getByRole('tab', { name: /^Share/ }).count()) {
+    await startPage(10, 'jo-easy-view');
+  } else {
+    test.info().annotations.push({ type: 'SHARE-ST-8', description: 'Grandma Jo has no Share tab in the demo (viewer, RD-9); her "Up to 10" is not checked here.' });
+  }
+});
+
+// DARK-ELEV-6 (intake #155, studio DARK-5; written first by qa-tdd, Nov 23): in dark, raised things are a lighter
+// surface step, never a shadow. At a 390 px phone in dark, nothing visible on the demo's first screen draws a
+// box-shadow. The DemoBar's 1 px bottom line is an inset divider, not elevation, so inset-only shadows are allowed.
+// qa-tdd (Nov 23, green run): also scrolled a little so RD-82's pinned shade line (search-bar-shade) is on screen,
+// with the other direction: in light that shade line keeps its drop shadow (DARK-ELEV-3 in a real browser).
+const dropShadows = (page) => page.evaluate(() => [...document.querySelectorAll('body *')].flatMap((el) => {
+  const s = getComputedStyle(el);
+  if (s.boxShadow === 'none' || s.visibility === 'hidden' || s.display === 'none') return [];
+  const r = el.getBoundingClientRect();
+  if (r.width === 0 || r.height === 0 || r.bottom < 0 || r.top > innerHeight) return [];
+  // Split on commas outside rgb()/rgba(); keep only the drop (non-inset) shadows.
+  const drops = s.boxShadow.split(/,(?![^(]*\))/).filter((p) => !/\binset\b/.test(p));
+  if (drops.length === 0) return [];
+  const name = el.getAttribute('aria-label') || el.getAttribute('role') || el.getAttribute('data-testid') || el.tagName;
+  return [`${name}: ${s.boxShadow}`];
+}));
+const shadeShadow = (page) => page.getByTestId('search-bar-shade').first().evaluate((el) => getComputedStyle(el).boxShadow);
+test('DARK-ELEV-6 at 390 px dark: no visible element on the first screen has a drop shadow (DemoBar inset divider allowed)', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto('/');
+  await galleryLoaded(page);
+  expect(await dropShadows(page)).toEqual([]);
+  // Scrolled a little: the pinned shade line shows, still no drop shadow anywhere (floating tab bar included).
+  await page.mouse.move(195, 600);
+  await page.mouse.wheel(0, 300); // mouse.wheel fires RN-web's onScroll; scrollTo does not
+  await expect(page.getByTestId('search-bar-shade').first()).toBeAttached();
+  expect(await dropShadows(page)).toEqual([]);
+  expect(await shadeShadow(page)).toBe('none');
+  // The other direction: in light the same shade line keeps its soft drop shadow (light is unchanged).
+  await page.emulateMedia({ colorScheme: 'light' });
+  await expect.poll(() => shadeShadow(page)).not.toBe('none');
 });

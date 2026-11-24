@@ -1,0 +1,80 @@
+FRUIT-1..11 RED run (qa-tdd, 2026-11-23, before build). Jest files touched + demo e2e FRUIT-11.
+FAIL src/screens/__tests__/guxThemeEdges.test.tsx
+FAIL src/screens/__tests__/hig.test.tsx (8.853 s)
+FAIL src/screens/__tests__/themes.test.tsx (76.445 s)
+FAIL src/ui/__tests__/designTokens.test.ts
+FAIL src/ui/__tests__/guxPaper.test.ts
+FAIL src/ui/__tests__/redesignLook.test.tsx
+FAIL src/ui/__tests__/themes.test.ts
+Test Suites: 7 failed, 3 passed, 10 total
+Tests:       64 failed, 670 passed, 734 total
+● DS-TOKENS portable design tokens › DS-THEMES-2 every theme has light, dark and high-contrast blocks with studio and Material 3 role names
+● DS-TOKENS portable design tokens › FRUIT-10 docs/design/themes.css has a block for every theme, e.g. data-hearth-theme="blood-orange", with its light page
+● DS-TOKENS portable design tokens › FRUIT-10 docs/design/tokens.json lists all 10 themes in FRUIT-1 order with each fruit's page and accent
+● FRUIT-1 the theme list is Paper plus the nine fruits › FRUIT-1 THEME_NAMES is exactly paper, avocado, pomegranate, blood-orange, kiwi, fig, dragon-fruit, watermelon, beet, red-cabbage
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 beet dark: bg = page, fill = photo = fill, ink, muted, accent from the JSON; accentInk black
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 beet dark: surface = bg and fill 50/50; line = bg mixed toward ink 16% (±1 per channel)
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 beet light: bg = page, fill = photo = fill, ink, muted, accent from the JSON; accentInk white
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 beet light: surface = bg and fill 50/50; line = bg mixed toward ink 12% (±1 per channel)
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 blood-orange dark: bg = page, fill = photo = fill, ink, muted, accent from the JSON; accentInk black
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 blood-orange dark: surface = bg and fill 50/50; line = bg mixed toward ink 16% (±1 per channel)
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 blood-orange light: bg = page, fill = photo = fill, ink, muted, accent from the JSON; accentInk white
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 blood-orange light: surface = bg and fill 50/50; line = bg mixed toward ink 12% (±1 per channel)
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 dragon-fruit dark: bg = page, fill = photo = fill, ink, muted, accent from the JSON; accentInk black
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 dragon-fruit dark: surface = bg and fill 50/50; line = bg mixed toward ink 16% (±1 per channel)
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 dragon-fruit light: bg = page, fill = photo = fill, ink, muted, accent from the JSON; accentInk white
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 dragon-fruit light: surface = bg and fill 50/50; line = bg mixed toward ink 12% (±1 per channel)
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 fig dark: bg = page, fill = photo = fill, ink, muted, accent from the JSON; accentInk black
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 fig dark: surface = bg and fill 50/50; line = bg mixed toward ink 16% (±1 per channel)
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 fig light: bg = page, fill = photo = fill, ink, muted, accent from the JSON; accentInk white
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 fig light: surface = bg and fill 50/50; line = bg mixed toward ink 12% (±1 per channel)
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 kiwi dark: bg = page, fill = photo = fill, ink, muted, accent from the JSON; accentInk black
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 kiwi dark: surface = bg and fill 50/50; line = bg mixed toward ink 16% (±1 per channel)
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 kiwi light: bg = page, fill = photo = fill, ink, muted, accent from the JSON; accentInk white
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 kiwi light: surface = bg and fill 50/50; line = bg mixed toward ink 12% (±1 per channel)
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 pomegranate dark: bg = page, fill = photo = fill, ink, muted, accent from the JSON; accentInk black
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 pomegranate dark: surface = bg and fill 50/50; line = bg mixed toward ink 16% (±1 per channel)
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 pomegranate light: bg = page, fill = photo = fill, ink, muted, accent from the JSON; accentInk white
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 pomegranate light: surface = bg and fill 50/50; line = bg mixed toward ink 12% (±1 per channel)
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 red-cabbage dark: bg = page, fill = photo = fill, ink, muted, accent from the JSON; accentInk black
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 red-cabbage dark: surface = bg and fill 50/50; line = bg mixed toward ink 16% (±1 per channel)
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 red-cabbage light: bg = page, fill = photo = fill, ink, muted, accent from the JSON; accentInk white
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 red-cabbage light: surface = bg and fill 50/50; line = bg mixed toward ink 12% (±1 per channel)
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 watermelon dark: bg = page, fill = photo = fill, ink, muted, accent from the JSON; accentInk black
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 watermelon dark: surface = bg and fill 50/50; line = bg mixed toward ink 16% (±1 per channel)
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 watermelon light: bg = page, fill = photo = fill, ink, muted, accent from the JSON; accentInk white
+● FRUIT-2 each fruit gives exactly the JSON values (18 sets) › FRUIT-2 watermelon light: surface = bg and fill 50/50; line = bg mixed toward ink 12% (±1 per channel)
+● FRUIT-3 Paper and Avocado unchanged; the old Pomegranate is gone › FRUIT-3 none of the old Pomegranate values remains in app/src or docs/design/
+● FRUIT-5 status colors read on every theme (40 sets) › FRUIT-5 avocado dark high: safe and danger ≥ 4.5:1 on bg, surface and fill; dangerText ≥ 4.5:1 on bg and surface
+● FRUIT-5 status colors read on every theme (40 sets) › FRUIT-5 avocado dark: safe and danger ≥ 4.5:1 on bg, surface and fill; dangerText ≥ 4.5:1 on bg and surface
+● FRUIT-5 status colors read on every theme (40 sets) › FRUIT-5 dangerText dark is #FF6961 on every non-Paper theme; Paper dark keeps #FF453A
+● FRUIT-6 the owner's Theme list is Paper plus nine fruits › FRUIT-6 (dark) each fruit's split swatch shows its own page and accent (GUX-R19), not Paper's
+● FRUIT-6 the owner's Theme list is Paper plus nine fruits › FRUIT-6 (light) each fruit's split swatch shows its own page and accent (GUX-R19), not Paper's
+● FRUIT-6 the owner's Theme list is Paper plus nine fruits › FRUIT-6 lists exactly 10 radios in FRUIT-1 order, named in plain words, none using the banned words
+● FRUIT-6 the owner's Theme list is Paper plus nine fruits › FRUIT-6 tapping Candy-stripe beet recolors at once and reads "Candy-stripe beet theme, selected"
+● FRUIT-7 every theme name shows whole at Easy view › FRUIT-7 with Easy view On: 10 rows ≥ 48 pt, names ≥ 17 pt, never cut to one line or "…", inside a scroll view
+● FRUIT-8 saved themes carry over; unknown ones open as Paper › FRUIT-8 a saved beet opens as itself for the owner, no reset
+● FRUIT-8 saved themes carry over; unknown ones open as Paper › FRUIT-8 a saved blood-orange opens as itself for the owner, no reset
+● FRUIT-8 saved themes carry over; unknown ones open as Paper › FRUIT-8 a saved dragon-fruit opens as itself for the owner, no reset
+● FRUIT-8 saved themes carry over; unknown ones open as Paper › FRUIT-8 a saved fig opens as itself for the owner, no reset
+● FRUIT-8 saved themes carry over; unknown ones open as Paper › FRUIT-8 a saved kiwi opens as itself for the owner, no reset
+● FRUIT-8 saved themes carry over; unknown ones open as Paper › FRUIT-8 a saved red-cabbage opens as itself for the owner, no reset
+● FRUIT-8 saved themes carry over; unknown ones open as Paper › FRUIT-8 a saved watermelon opens as itself for the owner, no reset
+● FRUIT-8 saved themes carry over; unknown ones open as Paper › FRUIT-8 the owner opens the app with a saved Blood orange and sees Blood orange at once
+● GUX-R17 safeSoft is safe mixed into the paper page › GUX-R17 (dark) safeSoft = mix(safe, bg, 0.82) ±1 per channel, every theme
+● GUX-R17 safeSoft is safe mixed into the paper page › GUX-R17 (dark, high contrast) safeSoft = mix(safe, bg, 0.82) ±1 per channel, every theme
+● GUX-R17 safeSoft is safe mixed into the paper page › GUX-R17 (light) safeSoft = mix(safe, bg, 0.93) ±1 per channel, every theme
+● GUX-R17 safeSoft is safe mixed into the paper page › GUX-R17 (light, high contrast) safeSoft = mix(safe, bg, 0.93) ±1 per channel, every theme
+● GUX-R19 each Theme option shows a split swatch: page and accent › GUX-R19 (dark) swatch-<theme> is >= 48 pt with side-by-side page and accent parts in that theme's colors
+● GUX-R19 each Theme option shows a split swatch: page and accent › GUX-R19 (light) swatch-<theme> is >= 48 pt with side-by-side page and accent parts in that theme's colors
+● HIG-7 Increase Contrast › HIG-7 every color has a high-contrast set: secondary words 7:1 and edges 4.5:1
+● RD 1a the look: black and white with one accent › RD-3 → RD-94/95 FRUIT-1 one accent per theme, from one setting: Paper (default) and the nine fruits, light and dark
+● RD-94 RD-105 Paper (the default) is Linen #F7F7F4, not white and not tan › RD-94 FRUIT-1 THEME_NAMES is Paper then the nine fruits in order, and Paper is the default
+● RD-97 the owner picks a Theme in More › RD-97 FRUIT-6 (dark) Theme opens all 10 themes: 48 pt radio rows with the name in words, a page + accent swatch, Paper checked
+● RD-97 the owner picks a Theme in More › RD-97 FRUIT-6 (light) Theme opens all 10 themes: 48 pt radio rows with the name in words, a page + accent swatch, Paper checked
+
+--- e2e:demo -g FRUIT-11
+  ✘  1 e2e-web/demo.spec.js:240:1 › RD-102 RD-117 FRUIT-11 Paper by default; Chase picks each of the nine fruits, the last survives a reload; Grandma Jo stays Paper (20.3s)
+    Expected: "rgb(251, 245, 233)"
+    Received: "rgb(245, 234, 223)"
+  1 failed

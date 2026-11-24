@@ -30,11 +30,17 @@ import * as themeMod from '../../ui/theme';
 import { LookContext, paletteFor, useTheme, type Colors } from '../../ui/theme';
 import { HearthTabBar } from '../TabBar';
 
-type Name = 'paper' | 'avocado' | 'pomegranate';
-const THEMES: Name[] = ['paper', 'avocado', 'pomegranate'];
+// qa-tdd, Nov 23 (SPEC-REDESIGN 1l, DEC-80): Paper plus nine fruits replace the three DEC-68 themes, so THEMES and
+// WORD are the FRUIT-1 order and the picker shows 10 rows (FRUIT-6). RD-99 / RD-104 now loop every theme.
+type Name = 'paper' | 'avocado' | 'pomegranate' | 'blood-orange' | 'kiwi' | 'fig' | 'dragon-fruit' | 'watermelon' | 'beet' | 'red-cabbage';
+const THEMES: Name[] = ['paper', 'avocado', 'pomegranate', 'blood-orange', 'kiwi', 'fig', 'dragon-fruit', 'watermelon', 'beet', 'red-cabbage'];
 /** RD-104: ThemeContext once it exists; a dummy context until then (so the test fails on the colors, not a crash). */
 const ThemeCtx = ((themeMod as Record<string, unknown>).ThemeContext ?? React.createContext('paper')) as React.Context<string>;
-const WORD: Record<Name, string> = { paper: 'Paper', avocado: 'Avocado', pomegranate: 'Pomegranate' };
+const WORD: Record<Name, string> = {
+  paper: 'Paper (standard)', avocado: 'Avocado', // GUX-R33 (Nov 23): the first row reads "Paper (standard)"
+  pomegranate: 'Pomegranate', 'blood-orange': 'Blood orange', kiwi: 'Kiwi', fig: 'Fig',
+  'dragon-fruit': 'Dragon fruit', watermelon: 'Watermelon', beet: 'Candy-stripe beet', 'red-cabbage': 'Red cabbage',
+};
 const { dadSide } = FIXTURE.circles;
 const { jo, chase, alex } = FIXTURE.users;
 const slow = { timeout: 5000 };
@@ -76,11 +82,11 @@ describe('RD-97 the owner picks a Theme in More', () => {
   });
 
   for (const dark of [false, true]) {
-    it(`RD-97 (${lookName(dark)}) Theme opens Paper, Avocado and Pomegranate: 48 pt radio rows with the name in words, a page + accent swatch, Paper checked`, async () => {
+    it(`RD-97 FRUIT-6 (${lookName(dark)}) Theme opens all 10 themes: 48 pt radio rows with the name in words, a page + accent swatch, Paper checked`, async () => {
       await renderApp(<MoreScreen />, { user: 'chase', kv: kvFor(chase.id, dark) });
       await openTheme();
       const rows = THEMES.map((n) => screen.getByRole('radio', { name: `${WORD[n]} theme` }));
-      expect(rows.map(isChecked)).toEqual([true, false, false]);
+      expect(rows.map(isChecked)).toEqual(THEMES.map((n) => n === 'paper'));
       rows.forEach((r, i) => {
         const n = THEMES[i]!;
         const s = flat(r.props.style);
@@ -101,7 +107,7 @@ describe('RD-97 the owner picks a Theme in More', () => {
     fireEvent.press(screen.getByRole('radio', { name: 'Avocado theme' }));
     await waitFor(() => expect(probe()).toBe(want('avocado')), slow);
     expect(isChecked(screen.getByRole('radio', { name: 'Avocado theme' }))).toBe(true);
-    expect(isChecked(screen.getByRole('radio', { name: 'Paper theme' }))).toBe(false);
+    expect(isChecked(screen.getByRole('radio', { name: 'Paper (standard) theme' }))).toBe(false);
     fireEvent.press(screen.getByRole('radio', { name: 'Pomegranate theme' }));
     await waitFor(() => expect(probe()).toBe(want('pomegranate')), slow);
   }, 20000);
@@ -226,4 +232,110 @@ describe('RD-104 the tab bar is set apart from the page', () => {
       });
     }
   }
+});
+
+// ---------- SPEC-REDESIGN 1l (Chase, Nov 23, DEC-80). Written first (red), Nov 23, by qa-tdd. ----------
+const radioOrder = () => screen.getAllByRole('radio').map((r) => String(r.props.accessibilityLabel));
+
+describe('FRUIT-6 the owner\'s Theme list is Paper plus nine fruits', () => {
+  it('FRUIT-6 lists exactly 10 radios in FRUIT-1 order, named in plain words, none using the banned words', async () => {
+    await renderApp(<MoreScreen />, { user: 'chase', kv: kvFor(chase.id, false) });
+    await openTheme();
+    const got = radioOrder().filter((l) => / theme$/.test(l));
+    expect(got).toEqual(THEMES.map((n) => `${WORD[n]} theme`));
+    expect(got.filter((l) => /\b(pit|rind)\b/i.test(l))).toEqual([]);
+  }, 20000);
+
+  it('FRUIT-6 tapping Candy-stripe beet recolors at once and reads "Candy-stripe beet theme, selected"', async () => {
+    await renderApp(<><MoreScreen /><Probe /></>, { user: 'chase', kv: kvFor(chase.id, false) });
+    await openTheme();
+    fireEvent.press(screen.getByRole('radio', { name: 'Candy-stripe beet theme' }));
+    await waitFor(() => expect(probe()).toBe(want('beet')), slow);
+    expect(probe()).not.toBe(want('paper'));
+    expect(isChecked(screen.getByRole('radio', { name: 'Candy-stripe beet theme' }))).toBe(true);
+    expect(screen.getAllByRole('radio').filter(isChecked).map((r) => String(r.props.accessibilityLabel))).toEqual(['Candy-stripe beet theme']);
+  }, 20000);
+
+  for (const dark of [false, true]) {
+    it(`FRUIT-6 (${lookName(dark)}) each fruit's split swatch shows its own page and accent (GUX-R19), not Paper's`, async () => {
+      await renderApp(<MoreScreen />, { user: 'chase', kv: kvFor(chase.id, dark) });
+      await openTheme();
+      const got = THEMES.slice(1).map((n) => ({
+        n,
+        page: String(flat(screen.getByTestId(`swatch-${n}-page`).props.style).backgroundColor ?? '').toUpperCase(),
+        accent: String(flat(screen.getByTestId(`swatch-${n}-accent`).props.style).backgroundColor ?? '').toUpperCase(),
+      }));
+      const paper = pal(dark, 'paper');
+      expect(got.filter((g) => g.page === paper.bg.toUpperCase())).toEqual([]);
+      expect(got).toEqual(THEMES.slice(1).map((n) => ({ n, page: pal(dark, n).bg.toUpperCase(), accent: pal(dark, n).accent.toUpperCase() })));
+    }, 20000);
+  }
+});
+
+describe('FRUIT-7 every theme name shows whole at Easy view', () => {
+  it('FRUIT-7 with Easy view On: 10 rows ≥ 48 pt, names ≥ 17 pt, never cut to one line or "…", inside a scroll view', async () => {
+    await renderApp(<MoreScreen />, { user: 'chase', kv: kvFor(chase.id, false, { easyView: true }) });
+    await openTheme();
+    const rows = THEMES.map((n) => screen.queryByRole('radio', { name: `${WORD[n]} theme` }));
+    expect(rows.filter((r) => !r).length).toBe(0);
+    const bad: string[] = [];
+    rows.forEach((r, i) => {
+      const n = THEMES[i]!;
+      const s = flat(r!.props.style);
+      if (!(Number(s.minHeight ?? s.height ?? 0) >= 48)) bad.push(`${n} row under 48`);
+      const label = within(r!).getByText(WORD[n]);
+      const ls = flat(label.props.style);
+      if (!(Number(ls.fontSize ?? 0) >= 17)) bad.push(`${n} text ${String(ls.fontSize)} < 17`);
+      if (Number(label.props.numberOfLines ?? 0) > 0 || label.props.ellipsizeMode) bad.push(`${n} can be cut`);
+      let p: Inst | null = r!.parent as Inst | null; let scroll = false;
+      while (p) { if (String(p.type) === 'RCTScrollView') { scroll = true; break; } p = p.parent as Inst | null; }
+      if (!scroll) bad.push(`${n} not inside a scroll view`);
+    });
+    expect(bad).toEqual([]);
+  }, 20000);
+});
+
+describe('FRUIT-8 saved themes carry over; unknown ones open as Paper', () => {
+  it.each(['pomegranate', 'avocado', 'paper', 'blood-orange', 'kiwi', 'fig', 'dragon-fruit', 'watermelon', 'beet', 'red-cabbage'])('FRUIT-8 a saved %s opens as itself for the owner, no reset', async (t) => {
+    const kv = memoryKV({ [PREFS('u1')]: JSON.stringify({ easyView: false, notify: 'push', look: 'system', theme: t }) });
+    expect(((await loadPrefs(kv, 'u1', 'owner')) as unknown as { theme: string }).theme).toBe(t);
+  });
+
+  it.each([['plum'], ['blood_orange'], [''], [42]] as const)('FRUIT-8 an unknown saved theme %p opens as Paper and is not rewritten', async (t) => {
+    const raw = JSON.stringify({ easyView: false, notify: 'push', look: 'system', theme: t });
+    const kv = memoryKV({ [PREFS('u1')]: raw });
+    expect(((await loadPrefs(kv, 'u1', 'owner')) as unknown as { theme: string }).theme).toBe('paper');
+    expect(await kv.getItem(PREFS('u1'))).toBe(raw);
+  });
+
+  it('FRUIT-8 the owner opens the app with a saved Blood orange and sees Blood orange at once', async () => {
+    await renderApp(<Probe />, { user: 'chase', kv: kvFor(chase.id, false, { theme: 'blood-orange' }) });
+    await waitFor(() => expect(probe()).toBe(want('blood-orange')), slow);
+    expect(probe()).not.toBe(want('paper'));
+  }, 20000);
+
+  it('FRUIT-8 the owner opening with an unknown "plum" sees Paper and the saved value stays "plum" until a pick', async () => {
+    const kv = kvFor(chase.id, false, { theme: 'plum' });
+    await renderApp(<Probe />, { user: 'chase', kv });
+    await waitFor(() => expect(probe()).toBe(want('paper')), slow);
+    expect((JSON.parse((await kv.getItem(PREFS(chase.id)))!) as { theme: unknown }).theme).toBe('plum');
+  }, 20000);
+});
+
+describe('FRUIT-9 adults and viewers keep Paper', () => {
+  it.each(['adult', 'viewer'] as const)('FRUIT-9 a saved fruit (Blood orange) is ignored for an %s: Paper', async (role) => {
+    const kv = memoryKV({ [PREFS('u2')]: JSON.stringify({ easyView: true, notify: 'push', look: 'system', theme: 'blood-orange' }) });
+    expect(((await loadPrefs(kv, 'u2', role)) as unknown as { theme: string }).theme).toBe('paper');
+  });
+
+  it.each([
+    ['viewer Grandma Jo', 'jo', jo.id],
+    ['adult Alex', 'alex', alex.id],
+  ] as const)('FRUIT-9 the %s has no Theme row and sees Paper with Red cabbage saved', async (_n, user, id) => {
+    await renderApp(<><MoreScreen /><Probe /></>, { user, kv: kvFor(id, false, { theme: 'red-cabbage' }) });
+    await screen.findByRole('header', { name: 'More' }, slow);
+    expect(screen.queryByRole('button', { name: /^Theme(,|$)/ })).toBeNull();
+    expect(screen.queryAllByRole('radio', { name: / theme$/ })).toEqual([]);
+    expect(probe()).toBe(want('paper'));
+  }, 20000);
 });

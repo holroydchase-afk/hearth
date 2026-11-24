@@ -50,6 +50,10 @@ files=(-f "$BACKEND/tests/supabase_stub.sql")
 for m in "$BACKEND"/supabase/migrations/*.sql; do files+=(-f "$m"); done
 files+=(-f "$BACKEND/supabase/seed.sql")
 psql -d "$DB" -X -v ON_ERROR_STOP=1 -q "${files[@]}" >&2
+# seed.sql predates 0011's container kinds, so its two "Everyone" circles load as kind 'group'. A real family's
+# Everyone is kind 'everyone' (0011, start_family, family-setup.sh), and the calendar's visibility (0029 PRIV-R2)
+# reads the kind, so give the harness the real shape (same as backend/tests/family_dates_test.sql).
+psql -d "$DB" -X -v ON_ERROR_STOP=1 -q -c "update public.circles set kind = 'everyone' where id in ('33333333-0000-0000-0000-0000000000a0', '33333333-0000-0000-0000-0000000000b0')" >&2
 # PostgREST logs in as `authenticator` and switches to anon/authenticated/service_role per request (as on Supabase).
 psql -d "$DB" -X -v ON_ERROR_STOP=1 -q >&2 <<SQL
 do \$\$ begin

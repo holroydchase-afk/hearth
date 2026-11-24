@@ -212,7 +212,7 @@ async function handleUpload(req: Request, user: Auth, postId: string, items: Upl
     prepared = await rpc(user, "prepare_media_upload", { p_post: postId, p_items: items });
   } catch (e) {
     if (e instanceof DbError) {
-      // ENG-R11: the cap has its own SQLSTATE (0029); branch on the code, never the message (rule 7).
+      // ENG-R11: the cap has its own SQLSTATE (0030); branch on the code, never the message (rule 7).
       if (e.code === "HF002") {
         return json(req, 402, { error: "free_video_cap_reached", message: "Free spaces can upload 10 videos per month." });
       }

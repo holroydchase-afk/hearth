@@ -17,7 +17,7 @@ describe('GUX-R17 safeSoft is safe mixed into the paper page', () => {
   for (const dark of [false, true]) {
     for (const high of [false, true]) {
       it(`GUX-R17 (${dark ? 'dark' : 'light'}${high ? ', high contrast' : ''}) safeSoft = mix(safe, bg, ${dark ? SOFT.dark : SOFT.light}) ±1 per channel, every theme`, () => {
-        expect(THEME_NAMES).toEqual(['paper', 'avocado', 'pomegranate']);
+        expect(THEME_NAMES).toEqual(['paper', 'avocado', 'pomegranate', 'blood-orange', 'kiwi', 'fig', 'dragon-fruit', 'watermelon', 'beet', 'red-cabbage']); // qa-tdd, Nov 23: FRUIT-1 (DEC-80), was the three DEC-68 themes
         for (const color of THEME_NAMES) {
           const c = (paletteFor as unknown as (o: string, d: boolean, n: string, h: boolean) => ReturnType<typeof paletteFor>)('ios', dark, color, high);
           const want = mix(c.safe, c.bg, dark ? SOFT.dark : SOFT.light);

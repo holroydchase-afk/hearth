@@ -19,8 +19,9 @@ import * as themeMod from '../../ui/theme';
 import { LookContext, contrast, paletteFor } from '../../ui/theme';
 
 // qa-tdd, Nov 18: loops every theme through ThemeContext (RD-95/97, DEC-68) instead of the family color.
-type ColorName = 'paper' | 'avocado' | 'pomegranate';
-const COLOR_NAMES: ColorName[] = ['paper', 'avocado', 'pomegranate'];
+// qa-tdd, Nov 23: FRUIT-1 (DEC-80) replaces the three DEC-68 themes with Paper plus nine fruits.
+type ColorName = 'paper' | 'avocado' | 'pomegranate' | 'blood-orange' | 'kiwi' | 'fig' | 'dragon-fruit' | 'watermelon' | 'beet' | 'red-cabbage';
+const COLOR_NAMES: ColorName[] = ['paper', 'avocado', 'pomegranate', 'blood-orange', 'kiwi', 'fig', 'dragon-fruit', 'watermelon', 'beet', 'red-cabbage'];
 const ThemeCtx = ((themeMod as Record<string, unknown>).ThemeContext ?? React.createContext('paper')) as React.Context<string>;
 const pfTheme = paletteFor as unknown as (o: string, d: boolean, n?: string) => ReturnType<typeof paletteFor>;
 import { PhotosScreen } from '../PhotosScreen';

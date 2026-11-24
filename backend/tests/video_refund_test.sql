@@ -1,5 +1,5 @@
 -- ENG-R2, ENG-R11, SEC-R7 (2026-11-19 tech-debt review): the free video cap before video is switched on.
--- Written FIRST: red until migration 0029 lands.
+-- Written FIRST: red until migration 0030 lands.
 --   ENG-R2  a video that never reached 'ready' (deleted while pending, its draft thrown away by the upload queue's
 --           restart(), or marked 'failed') gives its count back; a 'ready' video that's later deleted does not (0020).
 --           The counter never goes below 0, and the 10-a-month cap still holds.
@@ -189,7 +189,7 @@ select tests.throws_code(format('select private.videos_this_month(%L)', :alex),
 select tests.ok_sql(format($$select (public.space_upload_quota(%L)->>'videos_this_month')::int = 10$$, :space_a),
                     'SEC-R7 Alex still sees his own count through space_upload_quota');
 
--- ---------- PRIV-R1 (privacy-security, 0029 review): no app role touches the refund table ----------
+-- ---------- PRIV-R1 (privacy-security, 0030 review): no app role touches the refund table ----------
 :as_admin
 select tests.ok_sql($$select not has_table_privilege('authenticated', 'private.video_refundable', 'SELECT,INSERT,UPDATE,DELETE')$$,
                     'PRIV-R1 authenticated has no privilege on private.video_refundable');

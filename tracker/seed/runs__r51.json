@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-19T07:55:00-05:00",
- "label": "VID fixes ENG-R2, ENG-R11, SEC-R7, PRIV-R1: all suites 3x (flaky, T25)",
- "passed": 1525,
+ "at": "2026-11-20T06:00:00-05:00",
+ "label": "Hass Avocado + outlined picked reactions (RD-111..RD-117, DEC-76): all app suites 3x (flaky, T26 unrelated)",
+ "passed": 1656,
  "failed": 1,
  "results": {},
- "note": "3 runs each at b3d8f98 (engineer) on the red tests 08ab3be; test files unchanged by the fix. Backend SQL 1231 passed, 0 failed x3 (VIDEO REFUND 28, VIDEO CAP 14). jest 1526 passed x2, then run 3: 1525 passed, 1 failed (signin.test.tsx BETA-JOIN-2 countdown, real-clock test bug T25, unrelated). typecheck clean x3, check-agents and check-persona-checks OK x3, e2e:web 5 passed (6 skipped) x3. Deno (sign-media HF002 branch) not run: deno not installed, owed to CI. e2e/results/vid-fixes-green-3x-2026-11-19.txt"
+ "note": "3 runs each at 34b7a77 (engineer) plus qa-tdd's T25 retargets (LIVE-3, RD-89, R21 moved to DEC-76's outline per spec 1k): jest 1615 passed (1 skipped, 1 todo) in runs 1 and 3, run 2 1614 passed 1 failed (BETA-SMS-4 countdown read under 59 s on real timers, T26, unrelated); typecheck clean x3; e2e:web 5 passed (6 skipped) x3; e2e:demo 36 passed (5 skipped) x3 incl. RD-102/RD-117 and RD-117/RD-116. Screenshots at 393 px dsf 2 in /mnt/project-files/design/2026-11-20-avocado-hass/: Avocado Gallery and Feed with a picked heart light and dark, Paper Feed light picked, returning visitor lands on Avocado (Gallery rgb(246, 245, 228)). e2e:site, backend SQL, Deno not run (no backend change); phones not run (RD-118 manual). e2e/results/avocado-hass-green-3x-2026-11-20.txt"
 }

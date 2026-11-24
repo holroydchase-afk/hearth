@@ -55,14 +55,15 @@ export function SearchScreen({ onClose }: { onClose: () => void }) {
     return () => { live = false; };
   }, [api, space]);
 
+  // The phone's Back: from a found post to the results here; from Search, Gallery's stack takes it back (ENG-R6).
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (openId) setOpenId(null);
-      else onClose();
+      if (!openId) return false;
+      setOpenId(null);
       return true;
     });
     return () => sub.remove();
-  }, [openId, onClose]);
+  }, [openId]);
 
   const run = async (q: Query, more = false) => {
     if (!q.words.trim() && !q.author && q.year === null) {

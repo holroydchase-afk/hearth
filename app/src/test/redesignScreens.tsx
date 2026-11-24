@@ -8,19 +8,19 @@
 //   src/screens/MoreScreen.tsx     export function MoreScreen()
 //   src/ui/greeting.ts             export function greeting(now: Date, name: string | null): string
 import React from 'react';
+import { AppRoutes } from './appRoutes';
 
 /* eslint-disable @typescript-eslint/no-require-imports */
+// ENG-R6: Gallery, Feed and More are the first screens of their tab's stack, and what they open (Search, the
+// timeline, More's rows) is pushed on it, so tests render them at their address under expo-router.
 export function GalleryScreen() {
-  const M = (require('../screens/GalleryScreen') as { GalleryScreen: React.ComponentType }).GalleryScreen;
-  return <M />;
+  return <AppRoutes at="/gallery" />;
 }
 export function FeedScreen() {
-  const M = (require('../screens/FeedScreen') as { FeedScreen: React.ComponentType }).FeedScreen;
-  return <M />;
+  return <AppRoutes at="/feed" />;
 }
 export function MoreScreen() {
-  const M = (require('../screens/MoreScreen') as { MoreScreen: React.ComponentType }).MoreScreen;
-  return <M />;
+  return <AppRoutes at="/more" />;
 }
 export function titleMotion(reduceMotion: boolean): string {
   return (require('../screens/GalleryScreen') as { titleMotion: (r: boolean) => string }).titleMotion(reduceMotion);

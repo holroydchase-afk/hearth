@@ -20,6 +20,7 @@
     "eas": "bash scripts/eas.sh"
   },
   "dependencies": {
+    "@expo-google-fonts/atkinson-hyperlegible-next": "0.4.1",
     "@expo/metro-runtime": "~58.0.15",
     "@holroyd/messenger": "file:../packages/messenger",
     "@noble/ciphers": "2.1.1",
@@ -81,7 +82,7 @@
       "/dist"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@noble/.*|@supabase/.*|ts-mls|@hpke/.*)"
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@noble/.*|@supabase/.*|ts-mls|@hpke/.*|standard-navigation)"
     ],
     "testTimeout": 15000,
     "roots": [
