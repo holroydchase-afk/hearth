@@ -1,0 +1,46 @@
+  ✓  41 e2e-web/demo.spec.js:608:1 › UX-R27 every "can see this." line on Feed is one line at 390 px (2.8s)
+  ✓  42 e2e-web/demo.spec.js:641:1 › RD-80 RD-76 RD-77 Chase has icon-only tabs; Grandma Jo has words under the tabs and bigger text; back to Chase restores Off (6.0s)
+  ✓  43 e2e-web/demo.spec.js:672:1 › RD-80 RD-78 each person's Easy view pick is kept separately: Chase turns it On, Jo turns hers Off, Chase's stays On (8.2s)
+  ✓  44 e2e-web/demo.spec.js:701:1 › RD-92 RD-94 Paper, photo shadows and the reaction pop in the demo, light and dark, with reduced motion (7.4s)
+  ✓  45 e2e-web/demo.spec.js:809:1 › RD-117 RD-116 Avocado (Hass) light and dark; a picked ❤️ is a 2 px accent outline with an accent count, no fill, in every theme (16.4s)
+  ✓  46 e2e-web/demo.spec.js:909:1 › RD-108 RD-109 Chase gets the floating glass tab bar and Gallery clears it; Grandma Jo keeps the fixed bar (4.2s)
+  ✓  47 e2e-web/demo.spec.js:945:1 › DEMO-EASY-1 on a laptop, Grandma Jo's Easy view leaves the story panel the same size (2.8s)
+  ✘  48 e2e-web/demo.spec.js:960:1 › SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to ...", Feed says "Shared with ..."; Jo sees names only (19.8s)
+  ✓  49 e2e-web/demo.spec.js:1007:3 › GUX-R1 360 px: every face-tile name stays inside its own tile; 2 across; full names (2.9s)
+  ✓  50 e2e-web/demo.spec.js:1007:3 › GUX-R1 390 px: every face-tile name stays inside its own tile; 2 across; full names (2.9s)
+  ✓  51 e2e-web/demo.spec.js:1064:1 › RD-110 the glass bar shrinks on scroll down and comes back on scroll up or a tap; Grandma Jo's bar never shrinks (4.8s)
+  ✓  52 e2e-web/demo.spec.js:1104:1 › RD-110-R2 scrolling the laptop's story panel never shrinks the bar, and a sideways strip never brings it back (2.6s)
+  ✓  53 e2e-web/demo.spec.js:1133:1 › RD-110-R3 the bar shrunk on Share comes back whole on Feed after sending (4.3s)
+  ✓  54 e2e-web/demo.spec.js:1152:1 › SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded To:, no "Pick lots of photos"; Chase "Up to 100"; 3 photos show "1 of 3" (6.3s)
+  ✓  55 e2e-web/demo.spec.js:1249:1 › DARK-ELEV-6 at 390 px dark: no visible element on the first screen has a drop shadow (DemoBar inset divider allowed) (2.4s)
+
+
+  1) e2e-web/demo.spec.js:960:1 › SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to ...", Feed says "Shared with ..."; Jo sees names only 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('[data-testid^="post-"]').filter({ visible: true }).first().getByRole('button', { name: /^Open photo 1 of 3/ })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "soft toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for locator('[data-testid^="post-"]').filter({ visible: true }).first().getByRole('button', { name: /^Open photo 1 of 3/ })[22m
+
+
+      986 |   await expect(page.getByText(`Shared with ${names}.`).filter({ visible: true })).toBeVisible();
+      987 |   const first = page.locator('[data-testid^="post-"]').filter({ visible: true }).first();
+    > 988 |   await expect.soft(first.getByRole('button', { name: /^Open photo 1 of 3/ })).toBeVisible();
+          |                                                                                ^
+      989 |
+      990 |   // Grandma Jo (Easy view on for her): her Share, if she can post, names people only; never a group's title.
+      991 |   await details(page);
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:988:80
+
+    Error Context: test-results/e2e-demo-artifacts/demo-SHARE-PC-13-postcard--e78b4-red-with-Jo-sees-names-only/error-context.md
+
+  1 failed
+    e2e-web/demo.spec.js:960:1 › SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to ...", Feed says "Shared with ..."; Jo sees names only 
+  5 skipped
+  49 passed (3.8m)
