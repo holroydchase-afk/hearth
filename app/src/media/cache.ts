@@ -38,7 +38,9 @@ export class MediaCache {
   private readonly max: number;
   private readonly disk: DiskOptions | null;
   private readonly videoFiles: VideoFiles | null;
-  private videos = new Map<string, Promise<string>>();
+  /** One shared download per video. `waiters`: callers still wanting it; a caller with a signal leaves when it
+   *  aborts, and only when nobody is left (and it isn't finished) is the download itself stopped (PRIV-R2). */
+  private videos = new Map<string, VideoJob>();
   private keyMap: Promise<Record<string, KeyEntry>> | null = null;
   /** Disk writes run one after another; flush() waits for them. */
   private chain: Promise<void> = Promise.resolve();
@@ -200,29 +202,62 @@ export class MediaCache {
     const { signal } = opts;
     // AUTO-3 (DEC-82): a Feed video scrolled away stops; nothing is written and the failure is never kept.
     if (signal?.aborted) return Promise.reject(abortError());
-    const hit = this.videos.get(mediaId);
-    if (hit) return signal ? untilAborted(hit, signal) : hit;
-    const stopIfAborted = () => { if (signal?.aborted) throw abortError(); };
-    const p = (async () => {
+    const job = this.videos.get(mediaId) ?? this.startVideo(postId, mediaId);
+    job.waiters++;
+    if (!signal) return job.p;
+    return new Promise<string>((resolve, reject) => {
+      const onAbort = () => {
+        reject(abortError());
+        job.waiters--;
+        // PRIV-R1: a finished file stays known until releaseVideo deletes it; an unfinished one with nobody left
+        // waiting is stopped (and anything it writes is deleted).
+        if (!job.settled && job.waiters <= 0) {
+          job.stop.abort();
+          if (this.videos.get(mediaId) === job) this.videos.delete(mediaId);
+        }
+      };
+      signal.addEventListener('abort', onAbort, { once: true });
+      job.p.then(
+        (v) => { signal.removeEventListener('abort', onAbort); resolve(v); },
+        (e: unknown) => { signal.removeEventListener('abort', onAbort); reject(e); },
+      );
+    });
+  }
+
+  private startVideo(postId: string, mediaId: string): VideoJob {
+    const stop = new AbortController();
+    const stopIfAborted = () => { if (stop.signal.aborted) throw abortError(); };
+    const name = `${mediaId}.mp4`;
+    const job: VideoJob = { stop, waiters: 0, settled: false, p: Promise.resolve('') };
+    job.p = (async () => {
       const it = await this.item(postId, mediaId);
       stopIfAborted();
       const cipher = await this.api.getObject(it.display_url);
       stopIfAborted();
       const bytes = await decryptMediaAsync(cipher, it.dek);
       stopIfAborted();
-      return this.videoFiles ? this.videoFiles.write(`${mediaId}.mp4`, bytes) : `data:video/mp4;base64,${toBase64(bytes)}`;
+      if (!this.videoFiles) return `data:video/mp4;base64,${toBase64(bytes)}`;
+      const uri = await this.videoFiles.write(name, bytes);
+      if (stop.signal.aborted) {
+        // PRIV-R1: stopped while the file was being written: it never stays on the phone.
+        await this.videoFiles.remove?.(name).catch(() => {});
+        throw abortError();
+      }
+      return uri;
     })();
-    this.videos.set(mediaId, p);
-    const forget = () => { if (this.videos.get(mediaId) === p) this.videos.delete(mediaId); };
-    p.catch(forget);
-    signal?.addEventListener('abort', forget, { once: true });
-    return signal ? untilAborted(p, signal) : p;
+    job.p.then(() => { job.settled = true; }, () => {
+      job.settled = true;
+      if (this.videos.get(mediaId) === job) this.videos.delete(mediaId);
+    });
+    this.videos.set(mediaId, job);
+    return job;
   }
 
   /** The player closed: delete the decrypted file. */
   releaseVideo(mediaId: string): void {
-    const p = this.videos.get(mediaId);
-    if (!p) return;
+    const job = this.videos.get(mediaId);
+    if (!job) return;
+    const p = job.p;
     this.videos.delete(mediaId);
     const files = this.videoFiles;
     // After the write finishes, so a file still being written is deleted too.
@@ -241,18 +276,10 @@ export class MediaCache {
   }
 }
 
+interface VideoJob { p: Promise<string>; stop: AbortController; waiters: number; settled: boolean }
+
 function abortError(): Error {
   const e = new Error('The video download was stopped.');
   e.name = 'AbortError';
   return e;
-}
-
-/** Rejects with AbortError the moment the signal fires, even mid-download. */
-function untilAborted<T>(p: Promise<T>, signal: AbortSignal): Promise<T> {
-  return new Promise<T>((resolve, reject) => {
-    const onAbort = () => reject(abortError());
-    if (signal.aborted) return onAbort();
-    signal.addEventListener('abort', onAbort, { once: true });
-    p.then((v) => { signal.removeEventListener('abort', onAbort); resolve(v); }, (e: unknown) => { signal.removeEventListener('abort', onAbort); reject(e); });
-  });
 }
