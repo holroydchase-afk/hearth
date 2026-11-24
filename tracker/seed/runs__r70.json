@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-24T01:30:00-05:00",
- "label": "Eval findings (intake #162): all suites 3x via test-all.sh plus backend SQL 3x (red: one new test, B25)",
- "passed": 10592,
- "failed": 3,
+ "at": "2026-11-24T23:59:30-05:00",
+ "label": "Demo photo swap (DEMO-PHOTO, DEC-82, GUX-DP-AC1..6): final pre-PR gate, all suites 3x via test-all.sh incl. backend SQL (green)",
+ "passed": 10989,
+ "failed": 0,
  "results": {},
- "note": "3 runs of bash test-all.sh at 88e605c plus loadBackTo.test.ts. Every EF-HE test passes 3x, including EF-HE-9 B18. jest 2222 passed, 1 failed (the same B25 test each run), 1 skipped, 1 todo; typecheck clean, Expo Go check OK, e2e:demo 44 passed, e2e:web 5 passed, prototype e2e 33 passed, each x3. Backend SQL 1217 passed 0 failed x3 and Supabase starter scripts 17 passed x3 (run 1's pair failed on Postgres peer auth from qa-tdd's shell, then re-ran clean). No flake. Reviewed the engineer's retargets: RD-6 kit radio ring, RD-7 New group primary and EVT-4 event name all accepted (each exception is narrow; EVT-4 still bans the event's own name). Skipped: Supabase starter invites (no template), Deno (not installed). Open: B18 (until B25), B25. e2e/results/eval-findings-3x-2026-11-24.txt"
+ "note": "3 runs of bash test-all.sh on the uncommitted DEMO-PHOTO build after r69 (changed since: seed.ts and DemoBar.tsx words, app/e2e-web/demo-screens.spec.js picture path, README, T36 dates, regenerated screenshots; GUX-DP-AC1..6 in): 23 suites passed, 0 failed, 2 skipped (starter invites: no STUDIO_SUPABASE_TEMPLATE; Deno: not installed, CI runs them) x3, identical. jest 2254 passed (1 skipped, 1 todo), typecheck clean, e2e:demo 53 passed, e2e:web 5, prototype e2e 33, backend SQL 1318 passed (local Postgres 16, started by qa-tdd), Supabase starter scripts 17, deploy script 20, each x3. passed = 3 x (2254 + 53 + 5 + 33 + 1318). One earlier attempt failed backend SQL and starter scripts on the environment only (Postgres had no 'root' role, so psql could not connect; no test ran against the build); qa-tdd added the role and reran all 3; that attempt is kept as env-attempt-no-root-role.txt. No flakes. Not run: Deno, starter invites, contract-real, phones. e2e/results/demo-photos-green-2026-11-24/"
 }

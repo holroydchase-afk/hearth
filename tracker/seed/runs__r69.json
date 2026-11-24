@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-24T00:30:00-05:00",
- "label": "Eval findings (intake #162, EF-HE-1/2/4/5/6/9, B18): tests written first (red)",
- "passed": 6,
- "failed": 19,
+ "at": "2026-11-24T23:59:00-05:00",
+ "label": "Demo photo swap (DEMO-PHOTO, DEC-82): all suites 3x via test-all.sh, backend SQL not run (no Postgres here)",
+ "passed": 7014,
+ "failed": 0,
  "results": {},
- "note": "Red on purpose, 1 run at 8f768cb: app/src/screens/__tests__/evalFindings.test.tsx 19 failed, 6 passed (EF-HE-1 Open names, EF-HE-2 empty rings, EF-HE-4 settings only in More, EF-HE-5 Groups line and New group, EF-HE-6 Events words, EF-HE-9 B18 25 new posts). Then qa-tdd's review test app/src/feed/__tests__/loadBackTo.test.ts at 88e605c: 4 passed, 1 failed (B25: a refresh mid-walk leaves a 6-post hole), same in 4 runs. e2e/results/eval-findings-red-2026-11-24.txt, e2e/results/eval-findings-qa-r1-red-2026-11-24.txt"
+ "note": "3 runs of bash test-all.sh on the uncommitted DEMO-PHOTO build plus qa-tdd's T36 fix (UX-R1 '3 new' / 'New photos: 1 of 1'; R18 scrolls into a month section, not onto a boundary): 21 suites passed, 0 failed, 4 skipped x3, identical. jest 2247 passed (1 skipped, 1 todo), typecheck clean, e2e:demo 53 passed, e2e:web 5, prototype e2e 33, deploy script 20, each x3. passed = 3 x (2247 + 53 + 5 + 33). Skipped: backend SQL and Supabase starter scripts (no local Postgres in this env; no backend change in this build), starter invites (no template), Deno (not installed); CI runs them. A 4th test-all run was cut off by qa-tdd's own shell timeout, not a test failure. e2e/results/demo-photos-green-2026-11-24/"
 }

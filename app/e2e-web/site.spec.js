@@ -17,7 +17,7 @@ const resetDemo = async (page) => {
   await details(page);
   await page.getByRole('button', { name: 'Reset demo' }).click();
   await page.getByRole('button', { name: 'Reset', exact: true }).click();
-  await greeted(page, 'Chase');
+  await greeted(page, 'Kevin'); // DEMO-PHOTO-10 (DEC-82): the demo parent is Kevin
 };
 
 for (const tab of ['', 'photos', 'share', 'groups', 'me', 'help']) {
@@ -64,7 +64,7 @@ test(`DEMO-5 Grandma's view and Start over stay inside ${BASE}/`, async ({ page 
   await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
   expect(new URL(page.url()).pathname).toMatch(new RegExp(`^${baseRe}\\/gallery\\/?$`));
   await resetDemo(page);
-  await expect(page.getByText(/You're Chase, a parent/)).toBeVisible();
+  await expect(page.getByText(/You're Kevin, a parent/)).toBeVisible(); // DEMO-PHOTO-10
   expect(new URL(page.url()).pathname).toMatch(new RegExp(`^${baseRe}\\/`));
 });
 
@@ -78,13 +78,14 @@ test('RR-15 reloading an open full-screen photo on the static host keeps the pho
 });
 
 // DEMO-LIVE-2/3: the two newest things a visitor tries also work on the static host (and, with SITE_URL, live).
-test('DEMO-LIVE-2 Search for "lake" finds the one lake photo', async ({ page }) => {
+// DEMO-PHOTO-8 (DEC-82): only post 1's title, "Apple blossoms at the orchard", says "orchard" (search reads title, caption, sender).
+test('DEMO-LIVE-2 Search for "orchard" finds the one orchard post', async ({ page }) => {
   await page.goto(`${BASE}/`);
   await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible(); // RD-18: Gallery shows photos, not captions
   // RD-47 (Nov 17): the "Search photos" field under the greeting; the old top-right button until the live site is republished.
   await page.getByLabel('Search photos').or(page.getByRole('button', { name: /Search/ })).first().click();
   const box = page.getByRole('textbox').first();
-  await box.fill('lake');
+  await box.fill('orchard');
   await box.press('Enter');
   await expect(page.getByText('Found 1 photo', { exact: true })).toBeVisible();
 });
@@ -111,9 +112,12 @@ test('DEMO-NEW-5 RD-21 a first visit opens on New for you; See all walks the new
   const see = page.getByRole('button', { name: /^See all(?! the photos)/ });
   await expect(see).toBeVisible();
   await see.click();
-  await expect(page.getByText('New photos: 1 of 2', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: /^Next/ }).first().click();
-  await expect(page.getByText('New photos: 2 of 2', { exact: true })).toBeVisible();
+  // DEMO-PHOTO-12 (DEC-82): one new post since the last visit, Alex's balance bike ride; it is the last step, so Done, no Next.
+  await expect(page.getByText('New photos: 1 of 1', { exact: true })).toBeVisible();
+  await expect(page.getByText(/First ride on the balance bike/).filter({ visible: true }).first()).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Next new photo' })).toHaveCount(0);
+  await page.getByRole('button', { name: /^Done/ }).first().click();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Kevin$/ })).toBeVisible();
 });
 
 // DEMO-META-2: a shared link has a preview: the tags are on the page and the picture is served.

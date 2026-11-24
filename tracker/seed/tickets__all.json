@@ -1029,7 +1029,7 @@
    "layer": "app",
    "severity": "Low",
    "status": "fixed",
-   "title": "QA-R2 (OPEN-1/7/8): New for you only looks at the posts already loaded (the first page of 20). With more than 20 new posts since the last visit, the card's senders and the one-at-a-time view leave out the oldest new ones and don't start at the oldest. EF-HE-9 (intake #162, Nov 24): fixed at 88e605c by FeedStore.loadBackTo; with B25 fixed at d8115ee, closed by run r71 (green 3x). Tests: evalFindings.test.tsx, feed/__tests__/loadBackTo.test.ts",
+   "title": "QA-R2 (OPEN-1/7/8): New for you only looks at the posts already loaded (the first page of 20). With more than 20 new posts since the last visit, the card's senders and the one-at-a-time view leave out the oldest new ones and don't start at the oldest. EF-HE-9 (intake #162, Nov 24): fixed at 88e605c by FeedStore.loadBackTo; with B26 fixed at d8115ee, closed by run r71 (green 3x). Tests: evalFindings.test.tsx, feed/__tests__/loadBackTo.test.ts",
    "tests": [
     "app/src/feed/__tests__/loadBackTo.test.ts",
     "app/src/screens/__tests__/evalFindings.test.tsx"
@@ -1038,12 +1038,12 @@
    "fixed": "2026-11-24"
   },
   {
-   "id": "B25",
+   "id": "B26",
    "kind": "bug",
    "layer": "app",
    "severity": "Medium",
    "status": "fixed",
-   "title": "QA-R1 (eval findings run r70, Nov 24): a refresh that answers while a loadMore page (a scroll, or B18's loadBackTo walk) is in flight lets the stale page append after the new first page: with 6 new posts on the server the feed skips 6 posts between the first page and the old page 2, and later pages continue from the bottom, so the hole stays until the next refresh. New for you can undercount the same way. Fixed at d8115ee (a refresh generation: loadMorePage drops a page started before the latest refresh, loadBackTo walks on from the new first page); closed by run r71 (green 3x). Test: app/src/feed/__tests__/loadBackTo.test.ts 'a refresh that lands mid-walk'",
+   "title": "QA-R1 (eval findings run r76, Nov 24): a refresh that answers while a loadMore page (a scroll, or B18's loadBackTo walk) is in flight lets the stale page append after the new first page: with 6 new posts on the server the feed skips 6 posts between the first page and the old page 2, and later pages continue from the bottom, so the hole stays until the next refresh. New for you can undercount the same way. Fixed at d8115ee (a refresh generation: loadMorePage drops a page started before the latest refresh, loadBackTo walks on from the new first page); closed by run r71 (green 3x). Test: app/src/feed/__tests__/loadBackTo.test.ts 'a refresh that lands mid-walk'",
    "tests": [
     "app/src/feed/__tests__/loadBackTo.test.ts"
    ],
@@ -1377,6 +1377,32 @@
    ],
    "found": "2026-11-23",
    "fixed": null
+  },
+  {
+   "id": "T36",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "DEMO-PHOTO swap (Nov 24): app/e2e-web/demo.spec.js UX-R1 opened the walk with '2 new' / 'New photos: 1 of 2' (the old photo set); the newest post is now Alex's 3-photo bike post (DEMO-PHOTO-12), so '3 new' and 'New photos: 1 of 1' (the walk counts posts, as the New-for-you test already asserts). R18 scrolled a fixed 1200 px, which with the new photos lands exactly on the November/October boundary; it now scrolls 200 px into the second month's section, measured from its title. Intent unchanged. Test: that file",
+   "tests": [
+    "app/e2e-web/demo.spec.js"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
+   "id": "T37",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "Demo-site publish (demo-site.yml run 45430430863, Nov 24) failed its pre-publish check app/e2e-web/site.spec.js: 3 tests still expected the old demo after DEMO-PHOTO (DEC-82). DEMO-5 Start over greeted 'Chase' and read \"You're Chase, a parent\" (now Kevin, DEMO-PHOTO-10); DEMO-LIVE-2 searched 'lake' (now 'orchard': only post 1's title says it; search reads title, caption, sender); DEMO-NEW-5 walked '1 of 2' then Next to '2 of 2' (now one new post: '1 of 1', the bike title shows, no Next new photo, Done back to Kevin's Gallery, as demo.spec.js asserts). Intent unchanged, no check removed. No other publish or live check named the old demo. Test: that file",
+   "tests": [
+    "app/e2e-web/site.spec.js"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
   },
   {
    "id": "B24",

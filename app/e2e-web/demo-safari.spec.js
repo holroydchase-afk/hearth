@@ -32,7 +32,7 @@ const galleryLoaded = async (page) => {
 };
 const onFeed = async (page) => {
   await page.getByRole('tab', { name: /^Feed/ }).click();
-  await expect(page.getByText('Life jackets on and in all afternoon', { exact: true }).filter({ visible: true })).toBeVisible();
+  await expect(page.getByText(/First ride on the balance bike/).first().filter({ visible: true })).toBeVisible();
 };
 const FIXTURE = path.join(__dirname, 'fixtures', 'park-gps.jpg');
 // Retargeted Nov 23 for the empty-postcard Share (SHARE-ST-8): same steps as demo.spec.js.
@@ -51,28 +51,28 @@ test.beforeEach(async ({ page }, info) => {
   if (!info.title.startsWith('DEMO-SAFARI-4')) await page.addInitScript(safariQuota);
 });
 
-test('DEMO-SAFARI-1 phone 390 px, Safari quota: Demo details, See it as Grandma Jo greets Jo; back to Chase works', async ({ page }) => {
+test('DEMO-SAFARI-1 phone 390 px, Safari quota: Demo details, See it as Grandma Jo greets Jo; back to Kevin works', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   // A fresh visitor taps as soon as the app shows, before the sample photos finish drawing.
-  await expect(greeting(page, 'Chase')).toBeVisible();
+  await expect(greeting(page, 'Kevin')).toBeVisible();
   await details(page);
   await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
   await expect(greeting(page, 'Grandma Jo')).toBeVisible();
   await details(page);
-  await page.getByRole('button', { name: "Back to Chase's view, the parent" }).click();
-  await expect(greeting(page, 'Chase')).toBeVisible();
+  await page.getByRole('button', { name: "Back to Kevin's view, the parent" }).click();
+  await expect(greeting(page, 'Kevin')).toBeVisible();
 });
 
-test('DEMO-SAFARI-2 laptop 1280 px, Safari quota: Grandma Jo from the story panel, then back to Chase', async ({ page }) => {
+test('DEMO-SAFARI-2 laptop 1280 px, Safari quota: Grandma Jo from the story panel, then back to Kevin', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/');
   await galleryLoaded(page);
-  await expect(greeting(page, 'Chase')).toBeVisible();
+  await expect(greeting(page, 'Kevin')).toBeVisible();
   await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
   await expect(greeting(page, 'Grandma Jo')).toBeVisible();
-  await page.getByRole('button', { name: "Back to Chase's view, the parent" }).click();
-  await expect(greeting(page, 'Chase')).toBeVisible();
+  await page.getByRole('button', { name: "Back to Kevin's view, the parent" }).click();
+  await expect(greeting(page, 'Kevin')).toBeVisible();
 });
 
 test("DEMO-SAFARI-3 phone, Safari quota: Chase's new post to Dad's side survives a reload, and Grandma Jo sees it", async ({ page }) => {
