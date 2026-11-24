@@ -123,7 +123,10 @@ The postcard (DEC-73, DEC-79, SHARE-ST-1..18) stays the one way in. Every kind i
 |---|---|---|
 | Photos and videos | Today's card | `posts.kind = 'photos'` + `media_items` (video stays behind `feature_on`) |
 | Big news | Large words, no photo ("Write news") | `posts.kind = 'news'`, caption required, no media |
-| A date | Title, date, optional place and photo ("Add a date") | `posts.kind = 'date'` + `post_dates` row (child of the post, Post class) |
+| An event (a date) | Title, date, optional place and photo ("Add a date") | `posts.kind = 'date'` + `post_dates` row (child of the post, Post class) |
+| A saying | A quote card, "kids say the darndest things" style: the words, who said it, their age then ("Share a saying") | `posts.kind = 'saying'` + `post_sayings` row (child of the post, Post class) |
+
+**Open-ended by design (Chase, Nov 24: "flexible for other types - events, announcements, a sayings card").** A new kind is one `posts.kind` value plus, if it needs fields, one child table attached with `vis.attach` (VIS-19): no new visibility rule, no new To: step. The Share start (thread "Redo the Share screen") owns the picker UI; this section is the contract it builds on.
 
 The empty postcard shows "Add photos" as the big target (unchanged), with two worded buttons under it, "Write news" and "Add a date". **Parents only (owner/adult) until the grandparent test passes;** anyone else sees today's card with no change (GUX-VC-R1). Exact layout (GUX-VC-R1):
 - Two full-width rows stacked under the card (not side by side, so the words never clip at Android 200% or iOS's largest size), each at least 48pt tall with 12pt between, an outline icon beside the words (DS-3), secondary gray capsules, not filled (DS-9).
