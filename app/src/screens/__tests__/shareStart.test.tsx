@@ -708,3 +708,103 @@ describe('SHARE-ST-26 after a pick, the DEC-73 postcard opens unchanged', () => 
     expect(screen.getByRole('button', { name: /^Send to / })).toBeTruthy();
   });
 });
+
+// ===== grandparent-ux on round 3 (Nov 24): GUX-W1..W5, written first (red), Nov 24, by qa-tdd =====
+// Amendments to SHARE-ST-19..27 (SPEC-REDESIGN 1j-2 Round 3). CONTRACT for the engineer:
+//   - GUX-W1: on the empty start, "share-card" sits inside a host View testID "share-empty-wrap" with flex 1 and
+//     justifyContent 'center', placed after the "New post" header (the header is not inside it); the page's ScrollView
+//     contentContainerStyle has flexGrow 1 while empty, so the wrap fills the space down to the tab bar. "share-spot"
+//     keeps aspectRatio 4/3.
+//   - GUX-W2: the filled postcard also carries "share-stamp": inside "share-card", in the same host View as the big
+//     photo (the Image "Photo 1 of N" / "Your photo"), position 'absolute', numeric top and right (no left), hidden from
+//     screen readers (accessibilityElementsHidden + importantForAccessibility "no-hide-descendants"), no onPress.
+//   - GUX-W3: "New post" sits in one host row View (flexDirection 'row') in both states; after photos, the
+//     "Cancel this post" button is inside that same row (no separate Cancel row above the header).
+//   - GUX-W4: "share-note-rule" and "share-to-rule" backgroundColor is the theme token c.tabLine (3.26:1 light,
+//     3.04:1 dark on c.surface), opaque, opacity 1 up the tree; >= 1.5:1 on c.surface in light and dark. c.line
+//     (1.34:1 / 1.23:1) fails; no alpha or opacity tricks on c.muted.
+//   - GUX-W5: the filled note field keeps its label/spoken name "Add a note (optional)"; its placeholder is unset or
+//     exactly "Add a note (optional)"; no "Like:" text or placeholder anywhere.
+const hostParent = (n: Inst): Inst | null => { for (let p = n.parent; p; p = p.parent) if (isHost(p)) return p; return null; };
+async function filled(count = 3) {
+  const r = await start({ deps: { pickBulk: jest.fn(async () => ({ assets: assets(count) })) } });
+  fireEvent.press(screen.getByTestId('share-card'));
+  await screen.findByText(`1 of ${count}`, {}, slow);
+  return r;
+}
+/** The host row View that holds the "New post" header. */
+function headerRow(): Inst | null {
+  const h = screen.getByRole('header', { name: 'New post' });
+  for (let p = hostParent(h); p; p = hostParent(p)) if (flat(p.props.style).flexDirection === 'row') return p;
+  return null;
+}
+
+describe('GUX-W1 P1 the empty postcard sits in the middle of the space under "New post"', () => {
+  it('GUX-W1 "share-card" is in "share-empty-wrap" (flex 1, centred), after the header; the page content can grow; the spot stays 4:3', async () => {
+    await start();
+    const wrap = screen.queryByTestId('share-empty-wrap', HIDDEN);
+    expect(wrap).not.toBeNull();
+    const s = flat(wrap!.props.style);
+    expect({ flex: s.flex, justify: s.justifyContent }).toEqual({ flex: 1, justify: 'center' });
+    expect({ cardIn: within(screen.getByTestId('share-card'), wrap!), headerIn: within(screen.getByRole('header', { name: 'New post' }), wrap!) })
+      .toEqual({ cardIn: true, headerIn: false });
+    let grows = false;
+    for (let p: Inst | null = wrap; p; p = p.parent) if (p.props.contentContainerStyle !== undefined) { grows = flat(p.props.contentContainerStyle).flexGrow === 1; break; }
+    expect(grows).toBe(true);
+    expect(Number(flat(spotOf().props.style).aspectRatio)).toBeCloseTo(4 / 3);
+  });
+});
+
+describe('GUX-W2 P1 the stamp stays on the filled postcard', () => {
+  it('GUX-W2 3 picked: "share-stamp" top-right over the big photo, inside the card, hidden from screen readers, no onPress', async () => {
+    await filled(3);
+    const stamp = screen.queryByTestId('share-stamp', HIDDEN);
+    expect(stamp).not.toBeNull();
+    const s = flat(stamp!.props.style);
+    const photo = screen.getByLabelText('Photo 1 of 3');
+    const photoBox = hostParent(photo)!;
+    expect({ inCard: within(stamp!, screen.getByTestId('share-card')), overPhoto: within(stamp!, photoBox) }).toEqual({ inCard: true, overPhoto: true });
+    expect({ pos: s.position, top: typeof s.top, right: typeof s.right, left: s.left }).toEqual({ pos: 'absolute', top: 'number', right: 'number', left: undefined });
+    expect({ hidden: stamp!.props.accessibilityElementsHidden, important: stamp!.props.importantForAccessibility }).toEqual({ hidden: true, important: 'no-hide-descendants' });
+    expect(stamp!.findAll((x: Inst) => typeof x.props.onPress === 'function')).toHaveLength(0);
+  });
+});
+
+describe('GUX-W3 P2 "New post" does not move when photos arrive', () => {
+  it('GUX-W3 the header sits in a row on the empty start and after photos; Cancel joins that same row', async () => {
+    await start({ deps: { pickBulk: jest.fn(async () => ({ assets: assets(3) })) } });
+    expect(headerRow()).not.toBeNull();
+    fireEvent.press(screen.getByTestId('share-card'));
+    await screen.findByRole('button', { name: 'Cancel this post' }, slow);
+    const row = headerRow();
+    expect(row).not.toBeNull();
+    expect(within(screen.getByRole('button', { name: 'Cancel this post' }), row!)).toBe(true);
+  }, 10000);
+});
+
+describe('GUX-W4 P2 the ruled lines are visible (>= 1.5:1 on the card)', () => {
+  for (const dark of [false, true]) {
+    it(`GUX-W4 (${dark ? 'dark' : 'light'}) note and To: rules use c.tabLine, opaque, >= 1.5:1 on c.surface`, async () => {
+      await start({ kv: prefs('chase', { look: dark ? 'dark' : 'light' }) });
+      const c = pal(dark);
+      const rules = [...screen.getAllByTestId('share-note-rule', HIDDEN), ...screen.getAllByTestId('share-to-rule', HIDDEN)];
+      expect(rules).toHaveLength(3);
+      for (const r of rules) {
+        const color = String(flat(r.props.style).backgroundColor);
+        const ratio = /^#[0-9A-Fa-f]{6}$/.test(color) ? contrast(color, c.surface) : 0;
+        expect({ id: r.props.testID, color, enough: ratio >= 1.5, opacity: opacityOf(r) })
+          .toEqual({ id: r.props.testID, color: c.tabLine, enough: true, opacity: 1 });
+      }
+    });
+  }
+});
+
+describe('GUX-W5 P2 the filled note field has no example hint', () => {
+  it('GUX-W5 no "Like:" anywhere; the note field still reads "Add a note (optional)"', async () => {
+    await filled(3);
+    const input = screen.getByLabelText('Add a note (optional)');
+    expect([undefined, '', 'Add a note (optional)']).toContain(input.props.placeholder);
+    expect(screen.UNSAFE_queryAllByType(TextInput).filter((x) => /Like:/.test(String(x.props.placeholder ?? '')))).toHaveLength(0);
+    expect(allWords()).not.toMatch(/Like:/);
+  });
+});

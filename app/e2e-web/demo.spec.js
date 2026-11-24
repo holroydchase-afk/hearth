@@ -1181,7 +1181,8 @@ test('SHARE-ST-8 SHARE-ST-27 wordless Share start: only "New post", "Add photos"
     if (await card.count()) {
       // engineer, flagged for qa-tdd: on the web expo-symbols draws the add-photo icon as a Material Symbols glyph (a
       // private-use character in an aria-hidden Text), which innerText includes; it is not a word, so it is dropped.
-      const got = (await card.innerText()).split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).map((w) => w.toUpperCase()).sort();
+      // QA-R2 (qa-tdd, Nov 24): drop only private-use glyphs (U+E000-U+F8FF); any other stray token still fails.
+      const got = (await card.innerText()).replace(/[\uE000-\uF8FF]/g, ' ').split(/\s+/).filter(Boolean).map((w) => w.toUpperCase()).sort();
       expect.soft(got).toEqual(want);
     }
     // None of the older start-page words anywhere on the page.
