@@ -1361,6 +1361,17 @@
    ],
    "found": "2026-11-23",
    "fixed": null
+  },
+  {
+   "id": "T35",
+   "kind": "test fix",
+   "layer": "backend",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (VIS review, Nov 24): VIS-7's every-row parity check in backend/tests/vis_core_test.sql reaches only the 13 of 34 kinds with a uuid id. The other 21 (composite keys like post_audience, reaction, media_key, circle_member; bigint ids like chat_message, comment_mode_log) are pinned by name but get no per-row can_see vs RLS comparison; VIS-4 still checks their select policies. Fix: compare those rows through their item/owner column instead of id",
+   "tests": [],
+   "found": "2026-10-15",
+   "fixed": null
   }
  ]
 }
