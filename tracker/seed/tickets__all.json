@@ -1490,6 +1490,19 @@
    ],
    "found": "2026-11-24",
    "fixed": null
+  },
+  {
+   "id": "T39",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R13 (PR #174 fix round green run r84, Nov 24): app/e2e-web/demo.spec.js SHARE-PC-13 failed once in run 1 of e2e:demo (toBeVisible, element(s) not found, a soft expect at line 1057 or 1073; the page had reached Grandma Jo) and passed in runs 2 and 3 and 5 of 5 alone. Likely cause: under full-suite load the Feed's first post is not yet showing 'Open photo 1 of 3' within the 5 s default after Send (soft expect, no wait for the upload). Fix the test (wait on the post, or name which expect), not the app. e2e/results/type-scale-fixes-green-2026-11-24.txt",
+   "tests": [
+    "app/e2e-web/demo.spec.js"
+   ],
+   "found": "2026-11-24",
+   "fixed": null
   }
  ]
 }
