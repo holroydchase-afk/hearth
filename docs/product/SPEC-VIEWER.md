@@ -3,7 +3,7 @@
 Owner: staff-pm · Nov 24, 2026 · TRACKER R83 (P1) · Status: specced, look pick pending (Chase)
 Source: Chase, Nov 24: "We need to overhaul the full screen photo viewer. It is now the worst aspect of the product."
 Persona check: `decisions/2026-11-24-photo-viewer.md` (proposed).
-Look: A (recommended), live tester https://claude.ai/artifact/UpnLz6SwjooeVsjj2Sa8nq, copy in `/mnt/project-files/design/viewer-2026-11-24/`. B adds a thumbnail strip; C uses the page color behind the photo. This spec is A; if Chase picks B or C, only VIEWER-1 (C) or a new VIEWER-21 (B) changes.
+Look: A (recommended), live tester https://claude.ai/artifact/UpnLz6SwjooeVsjj2Sa8nq, copy in `/mnt/project-files/design/viewer-2026-11-24/`. B adds a thumbnail strip; C uses the page color behind the photo. Chase picked B (Nov 24, DEC-84): A plus the strip, VIEWER-21..23. Earlier text: this spec is A; if Chase picks B or C, only VIEWER-1 (C) or a new VIEWER-21 (B) changes.
 
 ## The bet
 
@@ -70,11 +70,14 @@ Tests live in `app/src/screens/__tests__/viewer.test.tsx` (jest) and `app/e2e-we
 | VIEWER-17 | Given Reduce Motion, then `viewerMotion` returns fade: no slide on a photo change, close fades, zoom has no animation | auto (jest) + manual |
 | VIEWER-18 | Android back closes the viewer; on the web, arrow keys move, Escape closes, double-click zooms | auto (jest BackHandler, e2e keys) |
 | VIEWER-19 | Grandparent-safe: `expectGrandparentSafe` passes in Easy view On; in Easy view Off it passes with only the named viewer exceptions (12 pt date, icon-only Close and Save) and no others | auto (jest) |
+| VIEWER-21 | (Look B, Chase Nov 24) Given more than one photo, then a strip of small photos sits above the bottom buttons; the current one is wider and outlined, and the strip keeps it in view as I swipe | auto (jest + e2e) |
+| VIEWER-22 | Given the strip, when I tap a small photo, then that photo opens unzoomed and the strip follows; each small photo has a spoken name ("Photo 3 of 6, from Alex") | auto (jest + e2e) |
+| VIEWER-23 | Given Easy view Off, the strip hides with the other controls on a single tap and is Photos-sized (named exception to 48pt, like the icon buttons); given Easy view On, each small photo is at least 48 by 48 and never hides | auto (jest) |
 | VIEWER-20 | On Chase's iPhone in Expo Go: swipe, pinch, double tap and swipe down feel like Photos with no stutter; a viewer in Easy view On opens, moves, saves and closes with no help | manual (phone) |
 
 ## Stop rule
 
-Done when VIEWER-1..19 are green 3x, grandparent-ux has passed the Easy view On shots, ux-reviewer the Off shots, and VIEWER-20 passes on Chase's phone. Stop and come back to staff-pm if the architect finds no gallery component that passes review, web support included. The fallback is building on gesture-handler and reanimated directly, with VIEWER-3 as swipe-then-slide (the photo doesn't follow the finger) if that is not smooth. Not doing: a thumbnail strip (look B, unless picked), Live Photos playback, sharing out of Hearth, comments or reactions inside the viewer, auto-hiding controls on a timer.
+Done when VIEWER-1..19 and 21..23 are green 3x, grandparent-ux has passed the Easy view On shots, ux-reviewer the Off shots, and VIEWER-20 passes on Chase's phone. Stop and come back to staff-pm if the architect finds no gallery component that passes review, web support included. The fallback is building on gesture-handler and reanimated directly, with VIEWER-3 as swipe-then-slide (the photo doesn't follow the finger) if that is not smooth. Not doing: a thumbnail strip (look B, unless picked), Live Photos playback, sharing out of Hearth, comments or reactions inside the viewer, auto-hiding controls on a timer.
 
 ## Open questions (Chase)
 

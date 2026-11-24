@@ -600,5 +600,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** the gate makes every later feature safe by default with no screen changes, so it is cheapest before more kinds land; nobody in the WV beta can test the bridge; a wrong send is the worst error, and a grandparent won't notice 2 minutes; most grandparents can't post anyway.
 - **Source:** `docs/product/SPEC-VISIBILITY-CORE.md` (open questions 1 to 4), `docs/architecture/07-visibility-model.md`; persona check `decisions/2026-11-24-visibility-core.md`. Amends DEC-79's one way in (parents only).
 
+### DEC-84 · Full-screen viewer: iPhone Photos look plus a strip of small photos (R83, VIEWER-*)
+- **When / status:** Nov 24 · Chase picked "B. A plus a photo strip" on the viewer card after trying the live tester; he also asked why not the system viewer · Specced, tests next
+- **Chose:** black backdrop, photo edge to edge, swipe, pinch and double tap zoom, swipe down to close, tap hides controls (Easy view Off), Easy view keeps labelled pills that never hide, plus a strip of small photos to jump around. Built on an open-source gallery component (react-native-zoom-toolkit, MIT), not hand-built gestures.
+- **Over:** A (no strip); C (page color behind the photo); the iPhone's own Quick Look viewer (no sender, caption or Easy view, needs decrypted copies on disk, no Expo Go or web); hand-building the gestures.
+- **Because:** Chase called the viewer "the worst aspect of the product"; Photos is what every relative already knows; a proven component means less of our own gesture code to break.
+- **Source:** `docs/product/SPEC-VIEWER.md`; persona check `decisions/2026-11-24-photo-viewer.md`; tester https://claude.ai/artifact/UpnLz6SwjooeVsjj2Sa8nq.
+
 ---
-Last updated: Nov 24, 2026 (DEC-83)
+Last updated: Nov 24, 2026 (DEC-84)
