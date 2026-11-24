@@ -1363,6 +1363,19 @@
    "fixed": null
   },
   {
+   "id": "T36",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "DEMO-PHOTO swap (Nov 24): app/e2e-web/demo.spec.js UX-R1 opened the walk with '2 new' / 'New photos: 1 of 2' (the old photo set); the newest post is now Alex's 3-photo bike post (DEMO-PHOTO-12), so '3 new' and 'New photos: 1 of 1' (the walk counts posts, as the New-for-you test already asserts). R18 scrolled a fixed 1200 px, which with the new photos lands exactly on the November/October boundary; it now scrolls 200 px into the second month's section, measured from its title. Intent unchanged. Test: that file",
+   "tests": [
+    "app/e2e-web/demo.spec.js"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
    "id": "B24",
    "kind": "bug",
    "layer": "app",

@@ -16,7 +16,7 @@ Method: applied all 26 migrations + seed to a scratch Postgres 16 and probed as 
 | SEC-R8 | P2 | backend/supabase/functions/notify/index.ts:191-196 | Bearer compared with `includes` (not constant-time). Negligible remotely. | timingSafeEqual on fixed-length digests. | S | No |
 
 ## Needs Chase
-- app/src/demo/pictures.ts:4: demo pictures are "Chase's own photos", in a public repo and public demo, permanent in git history. Metadata verified clean in every historical version; the question is only whether any face (children) should be public.
+- app/src/demo/pictures.ts:4: demo pictures are "Chase's own photos", in a public repo and public demo, permanent in git history. Metadata verified clean in every historical version; the question is only whether any face (children) should be public. **Resolved Nov 24 (DEC-82):** the demo now uses free Pexels stock photos; Chase's photos are off main (still in history, no rewrite by his call).
 
 ## Verified clean
 - RLS on all 34 public tables; private tables have no app grants; anon can execute only invite_preview and report_client_error (both rate-limited, fixed-shape).

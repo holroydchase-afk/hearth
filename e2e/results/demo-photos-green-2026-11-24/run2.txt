@@ -1,0 +1,65 @@
+Agent notes OK (8 studio agents)
+Agent roster OK (9 agents)
+SYNC AGENTS RESULT: 16 passed, 0 failed
+AGENT RUNS RESULT: 20 passed, 0 failed
+AGENTS SKIP RESULT: 8 passed, 0 failed
+PERSONA CHECK RESULT: 14 passed, 0 failed
+Expo Go check OK: the app and the App Store's Expo Go are both on SDK 58
+# 9 passed, 0 failed
+LOG CHECK RESULT: 13 passed, 0 failed
+SPDX CHECK RESULT: 3 passed, 0 failed
+GRANDPARENT GUIDE RESULT: 4 passed, 0 failed
+TEST-ALL RESULT: 14 passed, 0 failed
+TEST-TOTALS RESULT: 4 passed, 0 failed
+eas: 12 passed, 0 failed
+SITE ANALYTICS RESULT: 10 passed, 0 failed
+SITE META RESULT: 15 passed, 0 failed
+
+Running 33 tests using 2 workers
+
+  ✓   1 tests/hearth.spec.js:24:1 › VIS-01 Owner sees every post in the family space (215ms)
+  ✓   2 tests/hearth.spec.js:29:1 › VIS-02 Grandma Jo sees only posts shared with her circles (237ms)
+  ✓   3 tests/hearth.spec.js:36:1 › VIS-03 Nana Ruth (other side) does not see "My side" posts (180ms)
+  ✓   4 tests/hearth.spec.js:43:1 › VIS-04 Co-parent sees Everyone + co-parent posts only (156ms)
+  ✓   6 tests/hearth.spec.js:60:1 › VIS-06 Removing someone from a circle revokes access and says how many posts (E8) (235ms)
+  ✓   7 tests/hearth.spec.js:68:1 › VIS-07 Co-parent cannot see the other household's relatives in Circles (B2) (152ms)
+  ✓   5 tests/hearth.spec.js:50:1 › VIS-05 Changing a post audience revokes access right away (561ms)
+  ✓   9 tests/hearth.spec.js:85:1 › ROLE-01 Viewers get a clean tab bar with no Share or Circles (B5) (146ms)
+  ✓   8 tests/hearth.spec.js:75:1 › VIS-08 Co-parent never sees the other parent's circle names (275ms)
+  ✓  10 tests/hearth.spec.js:94:1 › ROLE-02 Viewer can react and comment; the poster sees it (270ms)
+  ✓  12 tests/hearth.spec.js:117:1 › POST-02 Share stays disabled until a photo or video is picked (166ms)
+  ✓  11 tests/hearth.spec.js:104:1 › POST-01 Share a photo to one circle (594ms)
+  ✓  14 tests/hearth.spec.js:135:1 › POST-04 Remove a picked photo before sharing (E6) (449ms)
+  ✓  13 tests/hearth.spec.js:124:1 › POST-03 Picking only an empty circle explains why Share is off (B4) (693ms)
+  ✓  16 tests/hearth.spec.js:157:1 › POST-06 Videos upload and show a player (186ms)
+  ✓  15 tests/hearth.spec.js:143:1 › POST-05 Audience defaults to what that same person used last (B8) (888ms)
+  ✓  17 tests/hearth.spec.js:163:1 › POST-07 Delete your own post, with a confirm step (E1) (862ms)
+  ✓  18 tests/hearth.spec.js:177:1 › CIR-01 Create a circle; duplicate names are rejected (B7) (462ms)
+  ✓  19 tests/hearth.spec.js:186:1 › CIR-02 Rename a circle (E7) (523ms)
+  ✓  21 tests/hearth.spec.js:206:1 › INV-01 Copy invite link never crashes, even without clipboard access (B1) (505ms)
+  ✓  22 tests/hearth.spec.js:218:1 › INV-02 Invite lands the new person in the chosen circles (E3) (536ms)
+  ✓  23 tests/hearth.spec.js:231:1 › NOTE-01 Text-message preview names the real poster (B3) (308ms)
+  ✓  24 tests/hearth.spec.js:239:1 › NOTE-02 Notification choice is kept per person (326ms)
+  ✓  25 tests/hearth.spec.js:249:1 › COM-01 A half-typed comment survives reacting to another post (B6) (159ms)
+  ✓  26 tests/hearth.spec.js:256:1 › VIEW-01 Tap a photo to open it full screen; swipe through; Escape closes (E2) (203ms)
+  ✓  27 tests/hearth.spec.js:268:1 › VIEW-02 Poster sees "Seen by" on their posts (E4) (129ms)
+  ✓  28 tests/hearth.spec.js:276:1 › A11Y-01 Sheets take focus and close with Escape (B9) (168ms)
+  ✓  29 tests/hearth.spec.js:284:1 › A11Y-02 Larger text option for grandparents (E5) (224ms)
+  ✓  30 tests/hearth.spec.js:293:3 › A11Y-03 No sideways scrolling on a small phone (light) (251ms)
+  ✓  31 tests/hearth.spec.js:293:3 › A11Y-03 No sideways scrolling on a small phone (dark) (266ms)
+  ✓  32 tests/hearth.spec.js:304:1 › A11Y-04 No script errors through a full walkthrough (655ms)
+  ✓  20 tests/hearth.spec.js:195:1 › CIR-03 Deleting a circle is blocked when a post would lose its only audience (E7) (4.2s)
+  ✓  33 tests/hearth.spec.js:315:1 › SEC-01 Captions and comments can't inject code (168ms)
+
+  33 passed (8.5s)
+Time:        188.634 s, estimated 197 s
+  53 passed (3.3m)
+  5 passed (40.8s)
+deploy: 20 passed, 0 failed
+psql:../packages/messenger/relay/test.sql:123: NOTICE:  RELAY RESULT: 24 passed, 0 failed
+starter scripts: 17 passed, 0 failed
+Rebuild the Test Log data with: python3 tracker/build_seed.py (add a new run entry first)
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SKIPPED: Deno functions (Deno isn't installed; CI runs them)
+SUITES: 23 passed, 0 failed, 2 skipped
+exit=0

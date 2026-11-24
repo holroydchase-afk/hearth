@@ -14,6 +14,8 @@ import { demoViewer, setDemoViewer } from './seed';
 // DEMO-LINK-1: the portfolio's own Hearth case study (index.html opens it from #p-hearth); family-photos.html is the old page.
 export const PORTFOLIO_URL = 'https://chaseholroyd.com/#p-hearth';
 const DRAWER_ID = 'demo-details';
+// DEMO-PHOTO-14 (DEC-82): the stock photos' credit, once in Details (and once in README).
+export const PHOTO_CREDIT = 'Sample photos: Pexels (Elly Fairytale, Yan Krukov)';
 const COPY = 'This is the real Hearth, running on made-up sample data. Anything you change is saved only in this browser and is never sent anywhere. Reset demo puts the sample data back.';
 
 export function DemoBar({ be, reload, startOver, open, restored = false }: {
@@ -87,6 +89,7 @@ export function DemoBar({ be, reload, startOver, open, restored = false }: {
         <View nativeID={DRAWER_ID} testID="demo-drawer" style={[styles.drawer, { borderTopColor: c.line }]}>
           {restored && <Txt variant="strong">Sample data restored.</Txt>}
           <Txt style={styles.copy}>{COPY}</Txt>
+          <Txt variant="muted" style={styles.copy}>{PHOTO_CREDIT}</Txt>
           <DemoActions be={be} reload={reload} startOver={startOver} />
           <View style={styles.actions}>
             <Pressable role="link" aria-label="Back to the Hearth case study" onPress={() => open(PORTFOLIO_URL)} style={styles.link}>
@@ -118,11 +121,11 @@ export function DemoActions({ be, reload, startOver }: { be: FakeBackend; reload
   };
   return (
     <View style={styles.actions}>
-      <Txt>{viewer === 'parent' ? "You're Chase, a parent." : "You're Grandma Jo, a grandparent."}</Txt>
+      <Txt>{viewer === 'parent' ? "You're Kevin, a parent." : "You're Grandma Jo, Kevin's mom."}</Txt>
       <Button
         variant="secondary"
-        label={viewer === 'parent' ? 'See the photos as Grandma Jo sees them' : "Back to Chase's view, the parent"}
-        text={viewer === 'parent' ? 'See it as Grandma Jo' : "Back to Chase's view"}
+        label={viewer === 'parent' ? 'See the photos as Grandma Jo sees them' : "Back to Kevin's view, the parent"}
+        text={viewer === 'parent' ? 'See it as Grandma Jo' : "Back to Kevin's view"}
         onPress={swap}
       />
       {asking ? (

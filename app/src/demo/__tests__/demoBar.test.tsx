@@ -117,10 +117,11 @@ describe('DEMO-BAR studio demo bar', () => {
     expect(open).toHaveBeenCalledWith(PORTFOLIO_URL);
   });
 
-  it("DEMO-10 UX-R12 the drawer switches to Grandma Jo's view and back in one tap", async () => {
+  // Updated Nov 24 (DEMO-PHOTO-9/10, DEC-82): the demo parent is Kevin (was Chase, UX-R12).
+  it("DEMO-10 DEMO-PHOTO-10 the drawer switches to Grandma Jo's view and back to Kevin's in one tap", async () => {
     const { be, reload } = await setup();
     fireEvent.press(toggle(false));
-    expect(screen.getByText(/You're Chase, a parent/)).toBeTruthy();
+    expect(screen.getByText("You're Kevin, a parent.")).toBeTruthy();
     fireEvent.press(screen.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }));
     expect(be.state.appSession).toBe(FIXTURE.users.jo.id);
     expect(reload).toHaveBeenCalledTimes(1);
@@ -128,7 +129,52 @@ describe('DEMO-BAR studio demo bar', () => {
     render(<DemoBar be={be} reload={reload} startOver={jest.fn()} open={jest.fn()} />);
     fireEvent.press(toggle(false));
     expect(screen.getByText(/You're Grandma Jo/)).toBeTruthy();
-    fireEvent.press(screen.getByRole('button', { name: "Back to Chase's view, the parent" }));
+    expect(screen.getByText("Back to Kevin's view")).toBeTruthy();
+    fireEvent.press(screen.getByRole('button', { name: "Back to Kevin's view, the parent" }));
     expect(be.state.appSession).toBe(FIXTURE.users.chase.id);
+  });
+
+  it('DEMO-PHOTO-9 no word in the demo bar or its drawer says "Chase", as the parent or as Grandma Jo', async () => {
+    const { be } = await setup();
+    const words = (): string[] => {
+      const out: string[] = [];
+      const walk = (n: unknown): void => {
+        if (n == null) return;
+        if (typeof n === 'string') { out.push(n); return; }
+        if (Array.isArray(n)) { n.forEach(walk); return; }
+        const node = n as { props?: Record<string, unknown>; children?: unknown };
+        for (const k of ['accessibilityLabel', 'aria-label', 'accessibilityHint', 'title']) {
+          const v = node.props?.[k];
+          if (typeof v === 'string') out.push(v);
+        }
+        walk(node.children);
+      };
+      walk(screen.toJSON());
+      return out;
+    };
+    fireEvent.press(toggle(false));
+    expect(words().filter((w) => /Chase/.test(w))).toEqual([]);
+    screen.unmount();
+    be.state.appSession = FIXTURE.users.jo.id;
+    render(<DemoBar be={be} reload={jest.fn()} startOver={jest.fn()} open={jest.fn()} />);
+    fireEvent.press(toggle(false));
+    expect(words().filter((w) => /Chase/.test(w))).toEqual([]);
+  });
+
+  // GUX-DP-AC6 (grandparent-ux, Nov 24): Grandma Jo's view says who she is in the family, not a role label.
+  it("GUX-DP-AC6 Grandma Jo's view reads \"You're Grandma Jo, Kevin's mom.\"", async () => {
+    const { be } = await setup();
+    be.state.appSession = FIXTURE.users.jo.id;
+    screen.unmount();
+    render(<DemoBar be={be} reload={jest.fn()} startOver={jest.fn()} open={jest.fn()} />);
+    fireEvent.press(toggle(false));
+    expect(screen.getByText("You're Grandma Jo, Kevin's mom.")).toBeTruthy();
+    expect(screen.queryByText(/a grandparent\./)).toBeNull();
+  });
+
+  it('DEMO-PHOTO-14 Details carries the photo credit line once', async () => {
+    await setup();
+    fireEvent.press(toggle(false));
+    expect(screen.getAllByText('Sample photos: Pexels (Elly Fairytale, Yan Krukov)')).toHaveLength(1);
   });
 });

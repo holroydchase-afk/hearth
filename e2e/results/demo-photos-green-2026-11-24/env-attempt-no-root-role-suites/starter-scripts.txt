@@ -1,0 +1,20 @@
+ok   - STARTER-DEPLOY-1 dry run needs no token and calls nothing
+ok   - STARTER-DEPLOY-1 dry run lists every migration and function
+ok   - STARTER-DEPLOY-2 refuses without SUPABASE_PROJECT_REF (no Hearth default)
+ok   - STARTER-DEPLOY-3 deploys with only the token
+ok   - STARTER-DEPLOY-3 skips the applied migration, applies and records the rest in one transaction
+ok   - STARTER-DEPLOY-3 every SQL call goes to this project's database/query
+ok   - STARTER-DEPLOY-3 deploys every function folder but _shared, server-side
+ok   - STARTER-DEPLOY-3 sets function secrets from the env file
+ok   - STARTER-DEPLOY-3 never prints the token
+ok   - STARTER-DEPLOY-4 refuses SUPABASE_* keys in the env file
+ok   - STARTER-DEPLOY-5 a rejected migration stops before functions, naming the file and the error
+createdb: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: FATAL:  role "root" does not exist
+FAIL - STARTER-SMOKE-1 all green passes
+FAIL - STARTER-SMOKE-1 reports migrations, RLS, functions, secrets and cron
+ok   - STARTER-SMOKE-1 never prints a secret value or the token
+ok   - STARTER-SMOKE-1 only reads (POST is database/query, the rest GET)
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: FATAL:  role "root" does not exist
+FAIL - STARTER-SMOKE-2 fails and names each problem
+ok   - STARTER-SMOKE-2 an optional secret is not required
+starter scripts: 14 passed, 3 failed
