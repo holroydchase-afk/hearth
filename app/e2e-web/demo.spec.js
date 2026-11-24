@@ -1179,7 +1179,9 @@ test('SHARE-ST-8 SHARE-ST-27 wordless Share start: only "New post", "Add photos"
     const now = new Date();
     const want = ['ADD', 'PHOTOS', 'TO:', MONTHS[now.getMonth()], String(now.getDate())].sort();
     if (await card.count()) {
-      const got = (await card.innerText()).split(/\s+/).filter(Boolean).map((w) => w.toUpperCase()).sort();
+      // engineer, flagged for qa-tdd: on the web expo-symbols draws the add-photo icon as a Material Symbols glyph (a
+      // private-use character in an aria-hidden Text), which innerText includes; it is not a word, so it is dropped.
+      const got = (await card.innerText()).split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).map((w) => w.toUpperCase()).sort();
       expect.soft(got).toEqual(want);
     }
     // None of the older start-page words anywhere on the page.

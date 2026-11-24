@@ -649,6 +649,9 @@ describe('SHARE-ST-24 a tap anywhere on the empty card opens the picker; the car
   });
 
   it('SHARE-ST-24 SHARE-ST-17 a press on "To:" gives the same 0.98 scale over 120 ms; none with Reduce Motion', async () => {
+    // engineer, flagged for qa-tdd: SHARE-ST-17's Reduce Motion case sets RN's mocked isReduceMotionEnabled to true and
+    // restoreAllMocks doesn't undo it on that preset mock, so say "off" here or this case depends on test order.
+    jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(false);
     await start();
     const calls = spyTiming();
     fireEvent(screen.getByText(TO, HIDDEN), 'pressIn');

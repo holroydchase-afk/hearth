@@ -290,12 +290,17 @@ export function AddTile({ label, onPress }: { label: string; onPress: () => void
     </Pressable>
   );
 }
-/** SHARE-ST-11 / SHARE-ST-12 / SHARE-ST-17 (DEC-79 B+): the empty postcard's photo spot, the one way to start a post.
- *  A 4:3 dashed accent outline on the card (no tint), set 12 pt in, holding a 72 pt accent-tint circle with the
- *  add-photo symbol, the title in the accent and a muted helper. A press shrinks it to 0.98 for 120 ms, unless the
+/** SHARE-ST-20..24 / SHARE-ST-17 (DEC-79 round 3, A "Quiet postcard"): the empty postcard is one button, the only way
+ *  to start a post. The whole card (`cardStyle`, `testID`) sits inside it, so a tap anywhere on it (spot, ruled lines,
+ *  padding) opens the picker. Set 12 pt in, a 4:3 accent-tint photo spot with no border holds a 76 pt surface circle
+ *  with the add-photo symbol and the title in the accent; `inSpot` (the stamp) rides in the spot's corner and
+ *  `children` (the decorative ruled lines) go below it. A press shrinks the card to 0.98 for 120 ms, unless the
  *  phone's Reduce Motion is on. No fixed height, so the words never get cut at bigger text sizes. */
-const SPOT = { corner: 14, circle: 72 } as const;
-export function AddPhotoSpot({ label, title, helper, onPress }: { label: string; title: string; helper: string; onPress: () => void }) {
+const SPOT = { corner: 14, circle: 76, icon: 36 } as const;
+export function AddPhotoCard({ label, title, onPress, testID, spotTestID, cardStyle, inSpot, children }: {
+  label: string; title: string; onPress: () => void; testID?: string; spotTestID?: string;
+  cardStyle?: StyleProp<ViewStyle>; inSpot?: React.ReactNode; children?: React.ReactNode;
+}) {
   const { c, t, reduceMotion } = useTheme();
   const scale = useRef(new Animated.Value(1)).current;
   const to = (toValue: number) => {
@@ -303,19 +308,39 @@ export function AddPhotoSpot({ label, title, helper, onPress }: { label: string;
     Animated.timing(scale, { toValue, duration: 120, useNativeDriver: Platform.OS !== 'web' }).start();
   };
   return (
-    <Animated.View style={[styles.spotWrap, { transform: [{ scale }] }]}>
+    <Animated.View style={{ transform: [{ scale }] }}>
       <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} onPressIn={() => to(0.98)} onPressOut={() => to(1)}
-        style={[styles.spot, { borderColor: c.accent }]}>
-        <View style={[styles.spotCircle, { backgroundColor: c.accentSoft }]}>
-          {/* A fixed 32 pt symbol: it sits in a fixed 72 pt circle, so it does not grow with the text (the words do). */}
-          <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-            <SymbolView name={{ ios: 'photo.badge.plus', android: 'add_photo_alternate', web: 'add_photo_alternate' } as never} size={32} tintColor={c.accent} />
+        style={styles.addCard}>
+        <View testID={testID} style={[styles.addCardBody, cardStyle]}>
+          <View testID={spotTestID} style={[styles.spot, { backgroundColor: c.accentSoft }]}>
+            <View style={[styles.spotCircle, { backgroundColor: c.surface }]}>
+              {/* A fixed symbol in a fixed circle: it does not grow with the text (the words do). */}
+              <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+                <SymbolView name={{ ios: 'photo.badge.plus', android: 'add_photo_alternate', web: 'add_photo_alternate' } as never} size={SPOT.icon} tintColor={c.accent} />
+              </View>
+            </View>
+            <Text style={{ color: c.accent, fontFamily: FONT.semibold, fontSize: t.title, lineHeight: Math.round(t.title * 1.25), textAlign: 'center' }}>{title}</Text>
+            {inSpot}
           </View>
+          {children}
         </View>
-        <Text style={{ color: c.accent, fontFamily: FONT.semibold, fontSize: t.title, lineHeight: Math.round(t.title * 1.25), textAlign: 'center' }}>{title}</Text>
-        <Text style={{ color: c.muted, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{helper}</Text>
       </Pressable>
     </Animated.View>
+  );
+}
+
+const STAMP_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+/** SHARE-ST-22: the empty postcard's small decorative stamp, for the photo spot's top-right corner, postmarked with
+ *  today's month, then day (GUX-R4). Not a control: hidden from VoiceOver and TalkBack, and taps pass through it. */
+export function PostcardStamp({ date = new Date(), testID }: { date?: Date; testID?: string }) {
+  const { c } = useTheme();
+  const mark = [styles.stampMark, { color: c.accent, fontFamily: FONT.semibold }];
+  return (
+    <View testID={testID} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants" aria-hidden
+      style={[styles.stamp, { borderColor: c.accent, backgroundColor: c.surface }]}>
+      <Text accessible={false} allowFontScaling={false} style={mark}>{STAMP_MONTHS[date.getMonth()]}</Text>
+      <Text accessible={false} allowFontScaling={false} style={mark}>{String(date.getDate())}</Text>
+    </View>
   );
 }
 
@@ -509,8 +534,11 @@ const styles = StyleSheet.create({
   faceDot: { width: 36, height: 36, borderRadius: RADIUS.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   // SHARE-ST-11 / SHARE-ST-12 (Chase's B+ reference, DEC-79): the photo spot's 14 pt corners and 72 pt circle are set by
   // the spec, not the RADIUS tokens (engineer, flagged for qa-tdd and the design system: DSG-2 style hand-typed corner).
-  spotWrap: { marginHorizontal: 12, marginTop: 12 },
-  spot: { alignSelf: 'stretch', aspectRatio: 4 / 3, minHeight: MIN_TARGET, borderWidth: 2, borderStyle: 'dashed', borderRadius: SPOT.corner, alignItems: 'center', justifyContent: 'center', gap: 8, padding: 12 },
+  addCard: { alignSelf: 'stretch', minHeight: MIN_TARGET },
+  addCardBody: { padding: 12 },
+  spot: { alignSelf: 'stretch', aspectRatio: 4 / 3, borderRadius: SPOT.corner, alignItems: 'center', justifyContent: 'center', gap: 12, padding: 12 },
+  stamp: { position: 'absolute', top: 10, right: 10, width: 44, height: 52, transform: [{ rotate: '4deg' }], borderWidth: 2, borderStyle: 'dotted', borderRadius: RADIUS.small, alignItems: 'center', justifyContent: 'center' },
+  stampMark: { fontSize: 17, lineHeight: 18, textAlign: 'center' },
   spotCircle: { width: SPOT.circle, height: SPOT.circle, borderRadius: SPOT.circle / 2, alignItems: 'center', justifyContent: 'center' },
   addTile: { minWidth: 64, minHeight: 64, borderRadius: RADIUS.medium, borderWidth: 2, borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 },
   faceTick: { position: 'absolute', top: -6, right: -4, borderRadius: RADIUS.pill, borderWidth: 2, width: 28, height: 28, alignItems: 'center', justifyContent: 'center' },

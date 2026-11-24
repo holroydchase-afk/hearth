@@ -215,6 +215,10 @@ const GREY_ALLOWED: Record<string, Record<string, string>> = {
     Confirm: 'dialog layered on top',
     AlertDialog: 'iOS-style alert layered on top (RD-67)',
     BottomSheet: 'sheet layered on top',
+    // engineer, flagged for qa-tdd: SHARE-ST-20 asks for the 76 pt c.surface circle in the empty postcard's photo spot,
+    // and option A's stamp sits on the card's paper (c.surface) over the accent tint (SHARE-ST-22).
+    AddPhotoCard: 'the empty postcard (DEC-79 round 3): its photo spot\'s surface circle (SHARE-ST-20)',
+    PostcardStamp: 'the empty postcard\'s stamp, on the card\'s paper (SHARE-ST-22)',
   },
   'screens/PostCard.tsx': {
     ReplyBox: 'the reply text field',
