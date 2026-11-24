@@ -1409,3 +1409,58 @@ for (const look of ['light', 'dark']) {
     }
   });
 }
+
+// SHARE-ST-34 (SPEC-REDESIGN 1j-2 round 4, DEC-84; written by qa-tdd, Nov 24): the public demo at 393 px, light, dark
+// and Easy view, post_kinds switch off: "New post" is 22 (Easy 26), "Add photos" 17 (Easy 21), the circle 52 (Easy
+// 60), and no kind tile shows. SUBSTITUTION (qa-tdd): the spec says "as Kevin and as Grandma Jo", but the demo's
+// Grandma Jo is a viewer with no Share tab (RD-9), so her Easy view column is checked as Kevin (the demo parent) with
+// Easy view turned on. If the demo ever gives Jo a Share tab, her own run below takes over. Screenshots for
+// grandparent-ux in test-results/share-st-34/.
+const circleIn = (spot) => spot.evaluate((root) => {
+  const hits = [...root.querySelectorAll('*')].map((el) => {
+    const r = el.getBoundingClientRect(); const s = getComputedStyle(el);
+    return { w: Math.round(r.width), h: Math.round(r.height), radius: parseFloat(s.borderTopLeftRadius) || 0, bg: s.backgroundColor };
+  }).filter((x) => x.w >= 40 && x.w === x.h && x.radius >= x.w / 2 - 1 && x.bg !== 'rgba(0, 0, 0, 0)');
+  return hits.length ? hits[0].w : null;
+});
+test('SHARE-ST-34 Share start at standard sizes on the demo: "New post" 22/26, "Add photos" 17/21, circle 52/60, no kind tile (light, dark, Easy view)', async ({ page }) => {
+  const shots = path.join(__dirname, '..', 'test-results', 'share-st-34');
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/');
+  await galleryLoaded(page);
+  const check = async (easy, shot) => {
+    await page.getByRole('tab', { name: /^Share/ }).click();
+    const heading = page.getByRole('heading', { name: 'New post' });
+    await expect(heading).toBeVisible();
+    const spot = page.getByTestId('share-spot').filter({ visible: true }).first();
+    const got = {
+      newPost: await sizeOfEl(heading),
+      addPhotos: await sizeOfEl(spot.getByText(/^Add photos( or videos)?$/).first()),
+      circle: await circleIn(spot),
+    };
+    expect.soft({ shot, ...got }).toEqual({ shot, newPost: easy ? 26 : 22, addPhotos: easy ? 21 : 17, circle: easy ? 60 : 52 });
+    // Switch off (SHARE-ST-30): no Event, News or Saying tile anywhere.
+    await expect.soft(page.locator('[data-testid^="share-kind"]')).toHaveCount(0);
+    await expect.soft(page.getByRole('button', { name: /^(Add an event|Share news|Add a saying)$/ })).toHaveCount(0);
+    await page.screenshot({ path: path.join(shots, `${shot}.png`) });
+  };
+  await check(false, 'kevin-light');
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await check(false, 'kevin-dark');
+  await page.emulateMedia({ colorScheme: 'light' });
+  // Grandma Jo's column (Easy view on), checked as Kevin with Easy view on: see the substitution note above.
+  await setEasyView(page, true);
+  await check(true, 'kevin-easy-view-light');
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await check(true, 'kevin-easy-view-dark');
+  await page.emulateMedia({ colorScheme: 'light' });
+  await setEasyView(page, false);
+  await asJo(page);
+  if (await page.getByRole('tab', { name: /^Share/ }).count()) {
+    await check(true, 'jo-easy-view');
+  } else {
+    test.info().annotations.push({ type: 'SHARE-ST-34', description: 'Grandma Jo has no Share tab in the demo (viewer, RD-9); her Easy view sizes were checked as Kevin with Easy view on.' });
+  }
+  await resetDemo(page);
+});
