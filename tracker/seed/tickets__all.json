@@ -1438,6 +1438,19 @@
    "tests": [],
    "found": "2026-11-24",
    "fixed": null
+  },
+  {
+   "id": "B27",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (React Compiler green run r78, Nov 24, intake #80): 24 compiler bailouts in 23 components are allowlisted in app/scripts/compiler-check.js, so they stay uncompiled (exactly the pre-compiler behaviour, not a regression). 10 try/finally or try/catch value blocks, throw in try or new-expression (wait for compiler support or restructure), 9 ref.current reads during render, 2 TimelineScreen manual memo deps that differ from inferred ones, VideoPlayer Playing mutating a hook value, JoinScreen using check before declaration. Follow-up: fix one at a time, each removing its ALLOWED line so INTAKE-80-3 guards it. Where: app/scripts/compiler-check.js ALLOWED. Test: node app/scripts/compiler-check.js",
+   "tests": [
+    "app/scripts/compiler-check.js"
+   ],
+   "found": "2026-11-24",
+   "fixed": null
   }
  ]
 }
