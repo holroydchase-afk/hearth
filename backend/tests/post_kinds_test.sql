@@ -368,6 +368,34 @@ select tests.ok_sql($$select bool_and(position('Thanksgiving' in j::text) = 0 an
                                       and position('picnic' in j::text) = 0 and position('hair went on vacation' in j::text) = 0) from tests.r83$$,
   'R83 the claimed batches carry the kind only, never the words, what or saying');
 
+-- ---------- NOTIFY-K (GUX-VC-R11, 44d935c): per-kind counts and the kinds replied on (counts and kinds only) ----------
+-- Contract: claim_notification_batches also gains kind_counts jsonb: new posts per kind in the batch, e.g.
+-- {"news": 1, "event": 1}; {} for a batch of replies/reactions only. post_kinds also names the kinds of the posts
+-- a reply or reaction batch is about, so "replied to your news" can be said.
+select tests.ok_sql(format($$select exists (select 1 from tests.r83 where j ->> 'recipient_id' = 'a0000000-0000-0000-0000-0000000000a1'
+                                              and j -> 'post_ids' ? %L and jsonb_typeof(j -> 'kind_counts') = 'object'
+                                              and (j -> 'kind_counts' ->> 'news')::int >= 1 and (j -> 'kind_counts' ->> 'event')::int >= 1
+                                              and (select coalesce(sum(v::int), 0) from jsonb_each_text(j -> 'kind_counts') x(k, v)) = (j ->> 'post_count')::int)$$,
+                           tests.v('news')),
+  'NOTIFY-K-3 Grandma Rivera''s batch counts its new posts per kind (news and event), and the counts add up to post_count');
+select tests.ok_sql($$select bool_and(position('2026-12-12' in j::text) = 0 and position('church hall' in j::text) = 0
+                                      and position('"Mia"' in j::text) = 0 and position('Gammy is coming' in j::text) = 0) from tests.r83$$,
+  'NOTIFY-K-1 the claimed batches carry no event day, place, child''s name or news words');
+:as_ma
+select tests.lives(format($$select public.add_comment(gen_random_uuid(), %L, 'So happy!')$$, tests.v('news')),
+  'NOTIFY-K-4 setup: Grandma Rivera replies to the news post');
+:as_admin
+insert into public.push_tokens (user_id, expo_token, platform)
+  values ('a0000000-0000-0000-0000-00000000000a', 'ExponentPushToken[r83-alex]', 'ios') on conflict do nothing;
+create table tests.r83_reply as select to_jsonb(b) as j from public.claim_notification_batches(now() + interval '2 days') b
+  where b.recipient_id = 'a0000000-0000-0000-0000-00000000000a';
+select tests.ok_sql($$select exists (select 1 from tests.r83_reply where (j ->> 'comment_count')::int >= 1 and (j ->> 'post_count')::int = 0
+                                       and j -> 'post_kinds' ? 'news' and not (j -> 'post_kinds' ? 'photos')
+                                       and j -> 'kind_counts' = '{}'::jsonb)$$,
+  'NOTIFY-K-4 Alex''s reply batch names the kind replied on (news) with no new-post counts');
+select tests.ok_sql($$select count(*) > 0 and bool_and(position('So happy' in j::text) = 0) from tests.r83_reply$$,
+  'NOTIFY-K-4 the reply batch carries no reply words');
+
 -- ---------- report ----------
 \o
 \pset format aligned

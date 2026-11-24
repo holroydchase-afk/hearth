@@ -243,8 +243,13 @@ Deno.test("BETA-SMS-13: an email batch with a null address is skipped; the run s
 // ---------- R83: news, event and saying notices never say "shared new photos" (written first, Nov 24, qa-tdd) ----------
 // claim_notification_batches gains post_kinds (0034's posts.kind of the batch's new posts). The exact words come from
 // grandparent-ux; these checks hold only that each kind gets its own, true wording, still naming who sent it.
-// The cast keeps this file type-checking before Batch has the field, so only the R83 tests go red.
-const withKinds = (b: Batch, kinds: string[]): Batch => ({ ...b, post_kinds: kinds } as Batch);
+// The cast keeps this file type-checking before Batch has the fields, so only the R83 / NOTIFY-K tests go red.
+// Contract (NOTIFY-K, SPEC-VISIBILITY-CORE "Notices (GUX-VC-R11)"): each claimed batch carries
+//   kind_counts: { photos?: n, news?: n, event?: n, saying?: n }  new posts per kind (counts only; {} for replies only)
+//   post_kinds:  string[]  the kinds of every post the batch is about (new posts and posts replied to or reacted on)
+// A batch without them (an older claim) reads as photos, as today.
+const withKinds = (b: Batch, kinds: string[]): Batch =>
+  ({ ...b, post_kinds: kinds, kind_counts: Object.fromEntries(kinds.map((k) => [k, b.post_count])) } as Batch);
 const NOT_PHOTOS = ["news", "event", "saying"];
 
 Deno.test("R83 push for a news, event or saying post never mentions photos and still names who sent it", () => {
@@ -283,4 +288,121 @@ Deno.test("R83 the kind wording carries no caption, what, where or saying words 
     eq(Object.keys(m).sort(), ["body", "data", "sound", "title", "to"], `${k}: no extra push fields`);
     assert(!/<img/i.test(e.html), `${k}: no image in the email`);
   }
+});
+
+// ---------- NOTIFY-K-1..5: the exact words (grandparent-ux, GUX-VC-R11, 44d935c; written first, Nov 24, qa-tdd) ----------
+const kinds = (b: Batch, counts: Record<string, number>, postKinds?: string[]): Batch =>
+  ({ ...b, kind_counts: counts, post_kinds: postKinds ?? Object.keys(counts) } as Batch);
+// Words a leaky claim might carry. None may ever reach a notice (privacy note at the top of index.ts).
+const LEAK = { caption: "Gammy is coming for Thanksgiving", title: "Pawpaw's 80th birthday picnic", what: "Pawpaw's 80th birthday picnic",
+  when: "2026-12-12", on_date: "2026-12-12", where: "the church hall", place: "the church hall",
+  words: "your hair went on vacation", who: "Mia", age: 4 };
+const LEAK_RX = /Thanksgiving|picnic|80th|2026-12-12|December|Dec 12|church|hair went|vacation|\bMia\b|\b4\b|age 4/i;
+const leaky = (b: Batch): Batch => ({ ...b, ...LEAK } as unknown as Batch);
+const allText = (b: Batch) => {
+  const [m] = buildPush(b);
+  const e = buildEmail({ ...b, channel: "email", email: "grandpa@example.com" } as Batch)!;
+  return { m, e, text: `${m.title}\n${m.body}\n${e.subject}\n${e.text}\n${e.html}` };
+};
+
+Deno.test("NOTIFY-K-1 one news post: 'Alex shared some news. Tap to read it.', subject and email 'read it'", () => {
+  const b = kinds(pushBatch(), { news: 1 });
+  const [m] = buildPush(b);
+  eq(m.title, "From Alex on Hearth", "push title unchanged");
+  eq(m.body, "Alex shared some news. Tap to read it.", "push body");
+  const e = buildEmail(kinds(emailBatch(), { news: 1 }))!;
+  eq(e.subject, "Alex shared some news on Hearth", "subject");
+  assert(e.text.startsWith("Alex shared some news.\n"), "email first line: " + JSON.stringify(e.text));
+  assert(e.text.includes("Open Hearth to read it:"), "email verb read it: " + JSON.stringify(e.text));
+  assert(e.html.includes("Alex shared some news.") && e.html.includes("Open Hearth to read it"), "html line and verb");
+});
+
+Deno.test("NOTIFY-K-1 one event: 'Alex added an event. Tap to see it.', email 'see it'", () => {
+  eq(buildPush(kinds(pushBatch(), { event: 1 }))[0].body, "Alex added an event. Tap to see it.", "push body");
+  const e = buildEmail(kinds(emailBatch(), { event: 1 }))!;
+  eq(e.subject, "Alex added an event on Hearth", "subject");
+  assert(e.text.startsWith("Alex added an event.\n") && e.text.includes("Open Hearth to see it:"), "email: " + JSON.stringify(e.text));
+});
+
+Deno.test("NOTIFY-K-1 one saying: 'Alex shared a saying. Tap to read it.', email 'read it'", () => {
+  eq(buildPush(kinds(pushBatch(), { saying: 1 }))[0].body, "Alex shared a saying. Tap to read it.", "push body");
+  const e = buildEmail(kinds(emailBatch(), { saying: 1 }))!;
+  eq(e.subject, "Alex shared a saying on Hearth", "subject");
+  assert(e.text.startsWith("Alex shared a saying.\n") && e.text.includes("Open Hearth to read it:"), "email: " + JSON.stringify(e.text));
+});
+
+Deno.test("NOTIFY-K-1 the email with no website link says 'Open Hearth on your phone to read it.'", () => {
+  const saved = Deno.env.get("APP_LINK_BASE");
+  Deno.env.delete("APP_LINK_BASE");
+  try {
+    const e = buildEmail(kinds(emailBatch(), { news: 1 }))!;
+    assert(e.text.includes("Open Hearth on your phone to read it."), "plain words: " + JSON.stringify(e.text));
+  } finally { if (saved) Deno.env.set("APP_LINK_BASE", saved); }
+});
+
+Deno.test("NOTIFY-K-1 no post words, day, place, saying, child's name or age anywhere in push or email", () => {
+  for (const c of [{ news: 1 }, { event: 1 }, { saying: 1 }, { photos: 1, news: 1, event: 2, saying: 1 }] as Record<string, number>[]) {
+    const { m, text } = allText(leaky(kinds(pushBatch(), c)));
+    assert(!LEAK_RX.test(text), `${JSON.stringify(c)} leaked: ${JSON.stringify(text)}`);
+    eq(Object.keys(m).sort(), ["body", "data", "sound", "title", "to"], "no extra push fields");
+    eq(m.data, { post_id: P1 }, "data is the post id only");
+  }
+  for (const pk of [["news"], ["event"], ["saying"], ["news", "event"]]) {
+    const { text } = allText(leaky(kinds(pushBatch({ post_count: 0, comment_count: 1 }), {}, pk)));
+    assert(!LEAK_RX.test(text), `reply ${pk} leaked: ${JSON.stringify(text)}`);
+  }
+});
+
+Deno.test("NOTIFY-K-2 two events or two sayings: 'added 2 events' / 'shared 2 sayings' and 'Tap to see them.'", () => {
+  eq(buildPush(kinds(pushBatch({ post_count: 2 }), { event: 2 }))[0].body, "Alex added 2 events. Tap to see them.", "2 events");
+  eq(buildPush(kinds(pushBatch({ post_count: 2 }), { saying: 2 }))[0].body, "Alex shared 2 sayings. Tap to see them.", "2 sayings");
+  eq(buildPush(kinds(pushBatch({ post_count: 2 }), { news: 2 }))[0].body, "Alex shared some news. Tap to read it.", "news has no plural");
+  const e = buildEmail(kinds(emailBatch({ post_count: 2 }), { event: 2 }))!;
+  eq(e.subject, "Alex added 2 events on Hearth", "subject");
+  assert(e.text.includes("Open Hearth to see them:"), "email see them");
+});
+
+Deno.test("NOTIFY-K-3 several kinds: one line in the fixed order photos, news, events, sayings", () => {
+  const b = kinds(pushBatch({ post_count: 5 }), { saying: 1, event: 2, news: 1, photos: 1 });   // order given scrambled
+  eq(buildPush(b)[0].body, "Alex shared new photos, some news, 2 events and a saying. Tap to see them.", "mixed body");
+  eq(buildPush(kinds(pushBatch({ post_count: 2 }), { event: 1, photos: 1 }))[0].body,
+     "Alex shared new photos and an event. Tap to see them.", "two kinds");
+  eq(buildPush(kinds(pushBatch({ actor_names: ["Mom", "Chase"], post_count: 3 }), { photos: 1, news: 1, saying: 2 }))[0].body,
+     "Mom and Chase shared new photos, some news and 2 sayings. Tap to see them.", "two names, three kinds");
+  const e = buildEmail(kinds(emailBatch({ post_count: 2 }), { photos: 1, event: 1 }))!;
+  eq(e.subject, "Alex shared new photos and an event on Hearth", "subject");
+  assert(e.text.includes("Open Hearth to see them:"), "email see them");
+  const long = buildPush(kinds(pushBatch({ actor_names: ["Mom", "Chase", "A", "B", "C"], post_count: 6 }), { photos: 1, news: 1, event: 2, saying: 2 }))[0].body;
+  eq(long, "Mom, Chase and 3 others shared new photos, some news, 2 events and 2 sayings. Tap to see them.", "longest line");
+  assert(long.length <= 95, "fits two lock-screen lines: " + long.length);
+});
+
+Deno.test("NOTIFY-K-4 replies name the kind: your news / your event / your saying / your posts", () => {
+  const reply = (pk: string[]) => buildPush(kinds(pushBatch({ actor_names: ["Grandma"], post_count: 0, comment_count: 1 }), {}, pk))[0].body;
+  eq(reply(["news"]), "Grandma replied to your news. Tap to see.", "news");
+  eq(reply(["event"]), "Grandma replied to your event. Tap to see.", "event");
+  eq(reply(["saying"]), "Grandma replied to your saying. Tap to see.", "saying");
+  eq(reply(["news", "saying"]), "Grandma replied to your posts. Tap to see.", "mixed kinds");
+  eq(reply(["photos", "event"]), "Grandma replied to your posts. Tap to see.", "photos and an event");
+  eq(reply(["photos"]), "Grandma replied to your photos. Tap to see.", "photos unchanged");
+  const e = buildEmail(kinds(emailBatch({ actor_names: ["Grandma"], post_count: 0, comment_count: 1 }), {}, ["event"]))!;
+  eq(e.subject, "Grandma replied to your event on Hearth", "reply subject");
+});
+
+Deno.test("NOTIFY-K-4 posts and replies together: 'New posts and replies from' unless every post is photos", () => {
+  eq(buildPush(kinds(pushBatch({ comment_count: 1 }), { news: 1 }, ["news", "photos"]))[0].body,
+     "New posts and replies from Alex. Tap to see them.", "news plus a reply");
+  eq(buildPush(kinds(pushBatch({ comment_count: 1 }), { photos: 1 }, ["photos"]))[0].body,
+     "New photos and replies from Alex. Tap to see them.", "all photos: unchanged");
+});
+
+Deno.test("NOTIFY-K-5 photo-only batches keep today's words (with and without the new fields, bulk too)", () => {
+  for (const b of [pushBatch(), kinds(pushBatch(), { photos: 1 }), kinds(pushBatch({ post_count: 3 }), { photos: 3 })]) {
+    eq(buildPush(b)[0].body, "Alex shared new photos. Tap to see them.", "photos body");
+  }
+  eq(buildEmail(kinds(emailBatch(), { photos: 1 }))!.subject, "Alex shared new photos on Hearth", "photos subject");
+  eq(buildPush(kinds(pushBatch({ post_count: 0, comment_count: 1 }), {}, ["photos"]))[0].body, "Alex replied to your photos. Tap to see.", "photo reply");
+  const bulkB = { ...pushBatch({ post_count: 48 }), is_batch: true, photo_count: 48, taken_from: "2024-07-04T15:00:00Z",
+                  taken_to: "2024-07-20T15:00:00Z", kind_counts: { photos: 48 }, post_kinds: ["photos"] } as Batch;
+  eq(buildPush(bulkB)[0].body, "Alex added 48 photos from July 2024. Tap to see them.", "bulk unchanged");
 });
