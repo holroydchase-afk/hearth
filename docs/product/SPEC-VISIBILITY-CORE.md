@@ -136,6 +136,41 @@ To: works the same for all three, after the content, nothing pre-picked. Feed sh
 
 Events and life-calendar dates are different things: an event ("Gammy's 80th, Mar 3, at the church") is a post and follows its audience. A life-calendar date (a birthday) belongs to a person and follows `can_see_profile`. Both are registered; neither raises a new question.
 
+### Notices (GUX-VC-R11, P1, TRACKER R89)
+
+Today every new post is announced as "shared new photos" (`notify/index.ts`, `summary()`). Each kind needs its own words before `post_kinds` is on. Rules, same as the photo notice: the person's name as this recipient sees it (`actor_names`, joined by `joinNames`), never a group title; **no words from the post**: no news text, no event title, day, time or place, no saying, no child's name or age (the privacy note at the top of `notify/index.ts`; nothing in the logs). Calm and guilt-free (A1, A2): no "don't miss", no "big", no countdown, no "you haven't seen". Push title stays `From <names> on Hearth` (BETA-NOTIFY-7). Email subject is `<line> on Hearth`; the email body is `<line>.` then the existing "Open Hearth to see/read it" line (20px).
+
+One kind, one or more posts from the same people (`<who>` = `joinNames(actor_names)`):
+
+| Kind | Line (push body starts with it, email subject and first line use it) | Push body ends | Email "Open Hearth…" verb |
+|---|---|---|---|
+| Photos | `<who> shared new photos` (unchanged) | `. Tap to see them.` | see them |
+| News, 1 post | `<who> shared some news` | `. Tap to read it.` | read it |
+| News, 2+ posts | `<who> shared some news` (news has no plural; same line) | `. Tap to read it.` | read it |
+| Event, 1 post | `<who> added an event` | `. Tap to see it.` | see it |
+| Event, 2+ posts | `<who> added <n> events` | `. Tap to see them.` | see them |
+| Saying, 1 post | `<who> shared a saying` | `. Tap to read it.` | read it |
+| Saying, 2+ posts | `<who> shared <n> sayings` | `. Tap to see them.` | see them |
+| Bulk import | unchanged (BETA-BULK-6) | unchanged | unchanged |
+
+Examples: push "From Mom on Hearth" / "Mom added an event. Tap to see it."; email subject "Mom shared some news on Hearth", body "Mom shared some news." then "Open Hearth on your phone to read it."
+
+**Several kinds in one batch:** one line, kinds in the fixed order photos, news, events, sayings, joined like names (", " and " and "): `<who> shared ` + parts, where the parts are `new photos`, `some news`, `an event` / `<n> events`, `a saying` / `<n> sayings`. Push body ends `. Tap to see them.`; email says "see them". Examples: "Mom shared new photos and an event", "Mom and Chase shared new photos, some news and 2 sayings". Subject: "Mom shared new photos and an event on Hearth".
+
+**Replies (same table, so a reply on news isn't called a photo):** `<who> replied to your photos` / `your news` / `your event` / `your saying`; replies across kinds: `<who> replied to your posts`. Posts and replies together: `New posts and replies from <who>` (was "New photos and replies", kept when every post is photos). Push body ends `. Tap to see.` as today.
+
+Length: the longest mixed line with 3+ names ("Mom, Chase and 3 others shared new photos, some news, 2 events and 2 sayings. Tap to see them.", 95 characters) fits the lock screen's two lines on both phones; names keep `headerSafe`'s 40-character cap in the email. The batch needs per-kind post counts from `claim_notification_batches` (counts only, no text).
+
+Confirm with a relative (next UAT): does "shared some news" worry an older reader into expecting bad news (A1)? Fallback if it does: "<who> wrote to the family".
+
+| ID | Type | Given / When / Then |
+|---|---|---|
+| NOTIFY-K-1 | auto | Given a batch of one news, one event or one saying post, When push and email are built, Then the line, push ending and email verb match the table exactly, and the news text, event title, day, place, saying, child's name and age appear nowhere in title, body, subject, text or html (GUX-VC-R11) |
+| NOTIFY-K-2 | auto | Given 2 events or 2 sayings, Then "added 2 events" / "shared 2 sayings" and "Tap to see them." |
+| NOTIFY-K-3 | auto | Given photos, news, 2 events and a saying in one batch, Then one line in the fixed order: "shared new photos, some news, 2 events and a saying" |
+| NOTIFY-K-4 | auto | Given replies only, on news, an event, a saying, or mixed kinds, Then "replied to your news / your event / your saying / your posts" |
+| NOTIFY-K-5 | auto | Given only photo posts (bulk or not), Then today's strings are unchanged (no regression) |
+
 ## Phases and acceptance criteria
 
 Build order: 1 and 1b together, then 2, 3, 4; 5 when the 0029 branch merges; 6 (bridge) after the beta.

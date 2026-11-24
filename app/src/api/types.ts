@@ -99,6 +99,29 @@ export interface FeedPost {
   words_edited_at?: string | null;
   /** WHO-6 (0022): the people who can see it, filled in by post_viewers after the page loads; absent on an older server. */
   viewers?: PostViewer[];
+  /** 0034 (SHARE-U-4): what kind of post it is; missing (an older server) means photos. */
+  kind?: PostKind;
+  /** 0034 (SHARE-U-11): an event's fields, read from post_events under RLS; null for any other kind. */
+  event?: PostEvent | null;
+  /** 0034 (SHARE-U-13): a saying's fields, read from post_sayings under RLS; null for any other kind. */
+  saying?: PostSaying | null;
+}
+
+/** 0034 (SPEC-VISIBILITY-CORE "One Share composer"): News, Event and Saying posts next to photos. News words are the caption. */
+export type PostKind = 'photos' | 'news' | 'event' | 'saying';
+
+/** An event: what's happening, the day (YYYY-MM-DD) and, optionally, where. */
+export interface PostEvent {
+  what: string;
+  when: string;
+  where: string | null;
+}
+
+/** A saying: the words, who said them and, optionally, their age (0..120). */
+export interface PostSaying {
+  words: string;
+  who: string;
+  age: number | null;
 }
 
 /** WHO-1 (0022): someone who can see a post, by name. Never a group's name. */
@@ -131,6 +154,12 @@ export interface CreatePostArgs {
   batchSize?: number | null;
   /** 0019 (CAP-1): optional title for the whole set, 80 characters at most; blank means none. */
   title?: string | null;
+  /** 0034 (SHARE-U-4..13): news, event or saying (parents only, while post_kinds is on); missing means photos. */
+  kind?: PostKind;
+  /** Required for an event (where is optional). */
+  event?: { what: string; when: string; where?: string | null };
+  /** Required for a saying (age is optional). */
+  saying?: { words: string; who: string; age?: number | null };
 }
 
 /** get_timeline (migration 0010, BETA-TIME-2): keyset on (sort_at, post_id). */
