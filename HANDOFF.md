@@ -13,6 +13,7 @@ blockers:
 
 ## Nov 24: eval fixes built (intake #162, R78, SPEC-EVAL-FIXES section 1 + EF-HE-4; branch claude/project-thread-6ew09x, local commits)
 - **Done:** EF-HE-1 Messages buttons show and speak "Open <name>" / "Open chat with <people>"; EF-HE-2 shared radio shows an empty muted ring unpicked, filled accent ring picked; EF-HE-4 Easy view and Light or dark only in More (off Me); EF-HE-5 honest Groups line, New group filled; EF-HE-6 Events empty-state words; EF-HE-9/B18 Gallery loads older feed pages back to the last visit (`FeedStore.loadBackTo`, max 10 pages) before New for you shows, so the count covers every new post. No API change. Superseded tests retargeted in `test:` commits.
+- **B24 (QA-R1, P1) fixed:** a refresh that answers while an older page is in flight no longer appends that stale page after the new first page (refresh generation counter in `app/src/feed/store.ts`; `loadBackTo` walks on from the new first page). Proof: `loadBackTo.test.ts` "a refresh that lands mid-walk".
 - **Next:** qa-tdd green 3x, grandparent-ux on EF-HE-1/2/5/6 shots, then PR. Manual M-20 (long chat title wraps at the largest text) on a phone.
 
 ## Nov 24: visibility core designed (R77; design only, awaits Chase's go)

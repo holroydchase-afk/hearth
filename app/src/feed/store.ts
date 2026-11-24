@@ -99,7 +99,11 @@ export class FeedStore {
     }
   }
 
+  /** B24: bumped by every refresh; an older page that started before it is dropped, not appended after the new first page. */
+  private gen = 0;
+
   async refresh(): Promise<void> {
+    this.gen += 1;
     this.set({ status: this.state.loaded ? 'refreshing' : 'loading' });
     const startedAt = new Date().toISOString();
     try {
@@ -125,7 +129,9 @@ export class FeedStore {
       const oldest = posts[posts.length - 1];
       if (!hasMore || !oldest || Date.parse(oldest.published_at) <= t || status !== 'idle') return;
       const had = posts.length;
+      const gen = this.gen;
       await this.loadMore();
+      if (this.gen !== gen) continue; // B24: a refresh landed mid-page; walk on from the new first page
       if (this.state.posts.length === had) return;
     }
   }
@@ -141,9 +147,11 @@ export class FeedStore {
   }
 
   private async loadMorePage(last: FeedPost): Promise<void> {
+    const gen = this.gen;
     this.set({ status: 'loadingMore' });
     try {
       const rows = await this.o.api.getFeed({ space: this.o.spaceId, beforeTs: last.published_at, beforeId: last.post_id, limit: this.pageSize });
+      if (this.gen !== gen) return; // B24: a refresh replaced the feed meanwhile; this page would leave a hole
       const have = new Set(this.state.posts.map((p) => p.post_id));
       this.set({
         posts: [...this.state.posts, ...this.overlay(rows.filter((r) => !have.has(r.post_id)))],
@@ -152,6 +160,7 @@ export class FeedStore {
       });
       await this.addReactions(rows);
     } catch (e) {
+      if (this.gen !== gen) return; // B24: the refresh owns status and notices now
       this.set({ status: 'idle' });
       this.notice(e);
     }
