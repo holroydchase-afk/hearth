@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-24T23:59:55-05:00",
+ "label": "T38 demo panel 'Try this' search hint: app jest + typecheck and e2e:site, 3x (green)",
+ "passed": 6807,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs on the uncommitted T38 fix (DemoFrame.tsx step 3 'Tap Search and type orchard.'): cd app && npm test && npm run typecheck: jest 171 suites, 2255 passed (1 skipped, 1 todo), typecheck clean, x3; npm run e2e:site (build-demo.sh, then site.spec.js on the local demo build): 14 passed x3. Identical runs, no flakes. passed = 3 x (2255 + 14). demoFrame.test.tsx DEMO-NEW-6, T38 and the T38 guard now pass. Not run: e2e:demo, e2e:web, backend SQL (no change there), the live check on the published site (needs the publish). e2e/results/t38-*-2026-11-24.txt"
+}

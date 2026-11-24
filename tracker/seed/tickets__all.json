@@ -1400,6 +1400,19 @@
    "fixed": null
   },
   {
+   "id": "T38",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "Live check (Nov 24): the laptop demo panel's 'Try this' step 3 (app/src/demo/DemoFrame.tsx TRY) still says 'Tap Search and type lake.' After the Kevin/orchard demo (DEC-82) 'lake' finds nothing; 'orchard' finds 1 photo (site.spec.js DEMO-LIVE-2). Failing test first: DEMO-NEW-6, T38 now expects 'Search and type orchard', plus a T38 guard that the hinted word really finds a post in DEMO_POSTS (title, caption or sender name, as demo search reads) so the hint can't drift again. Red, 1 run: 2 failed, 4 passed. Fixed (Nov 24): step 3 now says 'Tap Search and type orchard.'; that file green, 6 passed, typecheck clean. Test: that file",
+   "tests": [
+    "app/src/demo/__tests__/demoFrame.test.tsx"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
    "id": "T35",
    "kind": "test fix",
    "layer": "app",
