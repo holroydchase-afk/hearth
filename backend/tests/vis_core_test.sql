@@ -222,6 +222,11 @@ select tests.ok_sql($$select jsonb_typeof(public.export_my_data()->'family_dates
 select tests.ok_sql($$select exists (select 1 from jsonb_array_elements(public.export_my_data()->'family_dates') x
                                       where x->>'id' = '77777777-0000-0000-0000-0000000000a5')$$,
                     'R80 ...and still has the date he created in his live family (A''s anniversary)');
+-- Closed (chief of staff, Nov 24): your own birthday stays in your own export, even from a deleted family.
+reset role; select set_config('request.jwt.claim.sub', 'a0000000-0000-0000-0000-0000000000a1', false); set role authenticated;
+select tests.ok_sql($$select exists (select 1 from jsonb_array_elements(public.export_my_data()->'family_dates') x
+                                      where x->>'id' = '77777777-0000-0000-0000-0000000000c1')$$,
+                    'R80 Grandma Rivera''s export keeps her own birthday from deleted family C (her own data)');
 reset role;
 select set_config('request.jwt.claim.sub', '', false);
 
