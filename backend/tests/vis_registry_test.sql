@@ -141,6 +141,12 @@ select tests.ok_each($$select f.fn::text from vis.functions f join vis_definer_f
   'VIS-5 %s calls its reach''s rule');
 select tests.ok_sql($$select coalesce(bool_and(length(btrim(note)) > 0), true) from vis.functions where kind is null$$,
                     'VIS-5 every allowlisted function names its reason');
+-- VIS-5 QA-R (Nov 24, 2026): list_family_dates returns other people's birthdays and names, so it is not a
+-- "caller's own rows" allowlist entry. It must be registered with kind family_date, so the rule check above
+-- covers it (vis_core_test.sql's VIS-18 list parity proves its rows equal vis.can_see).
+select tests.ok_sql($$select coalesce((select kind = 'family_date' from vis.functions
+                                        where fn = 'public.list_family_dates(uuid)'::regprocedure), false)$$,
+                    'VIS-5 list_family_dates is registered with kind family_date, not allowlisted (it returns other people''s dates)');
 
 -- ---------- report ----------
 \o
