@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-24T23:59:45-05:00",
+ "label": "T37 demo-site pre-publish check (site.spec.js) on the new demo: red, then green 3x",
+ "passed": 42,
+ "failed": 0,
+ "results": {},
+ "note": "npm run e2e:site (build-demo.sh, then site.spec.js on the local /demo/hearth build, cloud Chromium) at a2492cf. Red first, 1 run: 11 passed, 3 failed (DEMO-5 Start over waited for 'Good ..., Chase'; DEMO-LIVE-2 'lake' found nothing; DEMO-NEW-5 no 'New photos: 1 of 2'), the same 3 as CI run 45430430863. After the T37 test fix: 14 passed x3, identical. passed = 3 x 14. Also 1 run under CI's Pages path (build-demo.sh /hearth, SITE_BASE=/hearth): 14 passed. Not run: the live check on chaseholroyd.com/hearth (needs the publish). e2e/results/site-demo-kevin-2026-11-24-*.txt"
+}

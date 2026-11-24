@@ -1376,6 +1376,19 @@
    "fixed": "2026-11-24"
   },
   {
+   "id": "T37",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "Demo-site publish (demo-site.yml run 45430430863, Nov 24) failed its pre-publish check app/e2e-web/site.spec.js: 3 tests still expected the old demo after DEMO-PHOTO (DEC-82). DEMO-5 Start over greeted 'Chase' and read \"You're Chase, a parent\" (now Kevin, DEMO-PHOTO-10); DEMO-LIVE-2 searched 'lake' (now 'orchard': only post 1's title says it; search reads title, caption, sender); DEMO-NEW-5 walked '1 of 2' then Next to '2 of 2' (now one new post: '1 of 1', the bike title shows, no Next new photo, Done back to Kevin's Gallery, as demo.spec.js asserts). Intent unchanged, no check removed. No other publish or live check named the old demo. Test: that file",
+   "tests": [
+    "app/e2e-web/site.spec.js"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
    "id": "B24",
    "kind": "bug",
    "layer": "app",
