@@ -1,0 +1,32 @@
+QA-R5 my_spaces equivalence, engineer, Nov 24: public.my_spaces() output per caller (every seed user + signed out), family B live then deleted; before 0032 (0009's body) vs after (0032's). diff: none.
+a0000000-0000-0000-0000-00000000000a
+live a0000000-0000-0000-0000-00000000000a|[{"space_id":"22222222-0000-0000-0000-00000000000a","name":"Sam at Dad's","role":"owner","inviter_name":null,"can_post":true,"reply_audience":"parents"}, 
+ {"space_id":"22222222-0000-0000-0000-00000000000b","name":"Sam at Mom's","role":"viewer","inviter_name":"Blair","can_post":false,"reply_audience":"parents"}]
+a0000000-0000-0000-0000-0000000000a1
+live a0000000-0000-0000-0000-0000000000a1|[{"space_id":"22222222-0000-0000-0000-00000000000a","name":"Sam at Dad's","role":"viewer","inviter_name":"Alex","can_post":false,"reply_audience":"parents"}]
+a0000000-0000-0000-0000-0000000000a2
+live a0000000-0000-0000-0000-0000000000a2|[{"space_id":"22222222-0000-0000-0000-00000000000a","name":"Sam at Dad's","role":"viewer","inviter_name":"Alex","can_post":false,"reply_audience":"parents"}]
+b0000000-0000-0000-0000-00000000000b
+live b0000000-0000-0000-0000-00000000000b|[{"space_id":"22222222-0000-0000-0000-00000000000a","name":"Sam at Dad's","role":"viewer","inviter_name":"Alex","can_post":false,"reply_audience":"parents"}, 
+ {"space_id":"22222222-0000-0000-0000-00000000000b","name":"Sam at Mom's","role":"owner","inviter_name":null,"can_post":true,"reply_audience":"parents"}]
+b0000000-0000-0000-0000-0000000000b1
+live b0000000-0000-0000-0000-0000000000b1|[{"space_id":"22222222-0000-0000-0000-00000000000a","name":"Sam at Dad's","role":"viewer","inviter_name":"Alex","can_post":false,"reply_audience":"parents"}, 
+ {"space_id":"22222222-0000-0000-0000-00000000000b","name":"Sam at Mom's","role":"viewer","inviter_name":"Blair","can_post":false,"reply_audience":"parents"}]
+c0000000-0000-0000-0000-0000000000c1
+live c0000000-0000-0000-0000-0000000000c1|[{"space_id":"22222222-0000-0000-0000-00000000000a","name":"Sam at Dad's","role":"viewer","inviter_name":"Alex","can_post":false,"reply_audience":"parents"}]
+
+live none|[]
+a0000000-0000-0000-0000-00000000000a
+deleted a0000000-0000-0000-0000-00000000000a|[{"space_id":"22222222-0000-0000-0000-00000000000a","name":"Sam at Dad's","role":"owner","inviter_name":null,"can_post":true,"reply_audience":"parents"}]
+a0000000-0000-0000-0000-0000000000a1
+deleted a0000000-0000-0000-0000-0000000000a1|[{"space_id":"22222222-0000-0000-0000-00000000000a","name":"Sam at Dad's","role":"viewer","inviter_name":"Alex","can_post":false,"reply_audience":"parents"}]
+a0000000-0000-0000-0000-0000000000a2
+deleted a0000000-0000-0000-0000-0000000000a2|[{"space_id":"22222222-0000-0000-0000-00000000000a","name":"Sam at Dad's","role":"viewer","inviter_name":"Alex","can_post":false,"reply_audience":"parents"}]
+b0000000-0000-0000-0000-00000000000b
+deleted b0000000-0000-0000-0000-00000000000b|[{"space_id":"22222222-0000-0000-0000-00000000000a","name":"Sam at Dad's","role":"viewer","inviter_name":"Alex","can_post":false,"reply_audience":"parents"}]
+b0000000-0000-0000-0000-0000000000b1
+deleted b0000000-0000-0000-0000-0000000000b1|[{"space_id":"22222222-0000-0000-0000-00000000000a","name":"Sam at Dad's","role":"viewer","inviter_name":"Alex","can_post":false,"reply_audience":"parents"}]
+c0000000-0000-0000-0000-0000000000c1
+deleted c0000000-0000-0000-0000-0000000000c1|[{"space_id":"22222222-0000-0000-0000-00000000000a","name":"Sam at Dad's","role":"viewer","inviter_name":"Alex","can_post":false,"reply_audience":"parents"}]
+
+deleted none|[]

@@ -1,0 +1,9 @@
+{
+  "name": "@holroyd/visibility",
+  "version": "0.1.0",
+  "description": "Who can see what, written once: a Postgres (Supabase) registry of kinds, one rule per reach, one dispatch (can_see) and a CI coverage gate. No product words.",
+  "license": "AGPL-3.0-or-later",
+  "author": "Chase Holroyd",
+  "private": true,
+  "files": ["core", "LICENSE", "README.md"]
+}
