@@ -14,6 +14,7 @@
 \set jo      '''c0000000-0000-0000-0000-0000000000c1'''
 \set blair   '''b0000000-0000-0000-0000-00000000000b'''
 \set p_a1    '''55555555-0000-0000-0000-0000000000a1'''
+\set as_alex_export 'reset role; select set_config(''request.jwt.claim.sub'', ''a0000000-0000-0000-0000-00000000000a'', false); set role authenticated;'
 
 -- VIS-7 family_date rows (QA, Nov 24, 2026; engineer flag on d7870c5): seed.sql has no family dates, so the
 -- per-row check below never touched kind family_date. Personas only. seed.sql predates 0011's kinds; a real
@@ -27,6 +28,13 @@ insert into public.spaces (id, household_id, name, plan, created_by, deleted_at)
 insert into public.space_members (space_id, user_id, role, invited_by) values
   ('22222222-0000-0000-0000-00000000000c', 'a0000000-0000-0000-0000-00000000000a', 'owner', null),
   ('22222222-0000-0000-0000-00000000000c', 'a0000000-0000-0000-0000-0000000000a1', 'viewer', 'a0000000-0000-0000-0000-00000000000a');
+-- VIS-7 child, both directions (QA review of 3eb777d): seed.sql's only child, Sam, is seen by all six people, so
+-- the child rule was never checked saying no. Kit is in family B only, Blair the guardian; Grandma Rivera,
+-- Grandpa Rivera and Aunt Jo (family A only) must not see Kit.
+insert into public.children (id, display_name, created_by) values
+  ('44444444-0000-0000-0000-000000000002', 'Kit', 'b0000000-0000-0000-0000-00000000000b');
+insert into public.space_children (space_id, child_id) values
+  ('22222222-0000-0000-0000-00000000000b', '44444444-0000-0000-0000-000000000002');
 insert into public.family_dates (id, space_id, kind, label, month, day, member_id, created_by) values
   -- A: Alex (owner), Grandma Rivera (viewer), Blair (co-parent, Co-parent group only), Grandma Chen (Everyone only)
   ('77777777-0000-0000-0000-0000000000a1', '22222222-0000-0000-0000-00000000000a', 'birthday', null, 5, 5,
@@ -152,6 +160,14 @@ select tests.ok(tests.v('vis7_dates') = 'ok',
                 format('VIS-7 the fixture''s family dates are checked in both directions (seen and not seen)  [%s]',
                        coalesce(tests.v('vis7_dates'), 'errored: kind family_date or vis.can_see missing')));
 
+select tests.ok_sql($$select count(*) filter (where vis.can_see(u.id, 'child', c.id)) > 0
+                          and count(*) filter (where not vis.can_see(u.id, 'child', c.id)) > 0
+                     from auth.users u cross join public.children c$$,
+                    'VIS-7 the fixture''s children are checked in both directions (seen and not seen)');
+select tests.ok_sql($$select not vis.can_see('a0000000-0000-0000-0000-0000000000a1', 'child', '44444444-0000-0000-0000-000000000002')
+                         and vis.can_see('b0000000-0000-0000-0000-00000000000b', 'child', '44444444-0000-0000-0000-000000000002')$$,
+                    'VIS-7 Blair (guardian) sees Kit; Grandma Rivera (other family only) does not');
+
 -- VIS-18 parity with the RPC the app calls (QA, Nov 24): for every user x family (deleted one included),
 -- list_family_dates returns exactly the dates vis.can_see says yes to. This is what keeps list_family_dates'
 -- allowlist entry in 0032 honest; it reads may_see_family_date, not vis.can_see.
@@ -194,6 +210,20 @@ select tests.ok_sql($$select coalesce(string_agg(kind, ',' order by kind), '') =
                       where not exists (select 1 from pg_attribute a where a.attrelid = k.relation and a.attname = 'id'
                                           and not a.attisdropped and a.atttypid = 'uuid'::regtype)$$,
                     'VIS-7 the kinds can_see can''t address by id (no uuid id) are exactly the 21 reviewed ones');
+
+-- ---------- R80 (QA-R6, P2): the export leaves out dates you created in a deleted family ----------
+-- export_my_data (0029) takes every date with created_by = you, so Alex's export still carries the dates he
+-- added in family C after C was deleted. Both directions: his live family's dates stay in it.
+:as_alex_export
+select tests.ok_sql($$select jsonb_typeof(public.export_my_data()->'family_dates') = 'array'
+                         and not exists (select 1 from jsonb_array_elements(public.export_my_data()->'family_dates') x
+                                          where x->>'space_id' = '22222222-0000-0000-0000-00000000000c')$$,
+                    'R80 Alex''s export has none of the dates he created in a deleted family (family C)');
+select tests.ok_sql($$select exists (select 1 from jsonb_array_elements(public.export_my_data()->'family_dates') x
+                                      where x->>'id' = '77777777-0000-0000-0000-0000000000a5')$$,
+                    'R80 ...and still has the date he created in his live family (A''s anniversary)');
+reset role;
+select set_config('request.jwt.claim.sub', '', false);
 
 -- ---------- VIS-22 vis.sees_item agrees with private.sees_post on every user x post (gate for the swap) ----------
 select tests.ok_sql($$select count(*) = 0 from auth.users u cross join public.posts p

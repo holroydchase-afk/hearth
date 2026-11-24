@@ -11,6 +11,10 @@ ReferenceError: You are trying to access a property or method of the Jest enviro
 
       at Timeout.now [as _onTimeout] (node_modules/@react-native/jest-preset/jest/setup.js:61:45)
 
+ReferenceError: You are trying to access a property or method of the Jest environment after it has been torn down. From src/screens/__tests__/search.test.tsx.
+
+      at Timeout.now [as _onTimeout] (node_modules/@react-native/jest-preset/jest/setup.js:61:45)
+
 ReferenceError: You are trying to access a property or method of the Jest environment after it has been torn down. From src/screens/__tests__/timeline.test.tsx.
 
       at Timeout.now [as _onTimeout] (node_modules/@react-native/jest-preset/jest/setup.js:61:45)
@@ -27,7 +31,7 @@ ReferenceError: You are trying to access a property or method of the Jest enviro
 
       at Timeout.now [as _onTimeout] (node_modules/@react-native/jest-preset/jest/setup.js:61:45)
 
-Test Suites: 171 passed, 171 total
-Tests:       1 skipped, 1 todo, 2235 passed, 2237 total
+Test Suites: 172 passed, 172 total
+Tests:       1 skipped, 1 todo, 2243 passed, 2245 total
 Snapshots:   0 total
-Time:        158.34 s
+Time:        154.792 s, estimated 158 s

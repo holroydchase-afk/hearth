@@ -1,0 +1,74 @@
+qa-tdd, 2026-11-24, at 3eb777d + VIS-9 author no-op exception, VIS-7 child both ways (Kit), R80 export red
+== test-all.sh run 1
+FAILED: backend SQL
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SKIPPED: Deno functions (Deno isn't installed; CI runs them)
+SUITES: 22 passed, 1 failed, 2 skipped
+== test-all.sh run 2
+FAILED: backend SQL
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SKIPPED: Deno functions (Deno isn't installed; CI runs them)
+SUITES: 22 passed, 1 failed, 2 skipped
+== test-all.sh run 3
+FAILED: backend SQL
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SKIPPED: Deno functions (Deno isn't installed; CI runs them)
+SUITES: 22 passed, 1 failed, 2 skipped
+== backend SQL (last run), RESULT lines
+RESULT: 120 passed, 0 failed
+API RESULT: 174 passed, 0 failed
+NOTIFY RESULT: 60 passed, 0 failed
+SETUP RESULT: 5 passed, 0 failed
+REPLY RESULT: 47 passed, 0 failed
+TIMELINE RESULT: 39 passed, 0 failed
+GROUPS RESULT: 167 passed, 0 failed
+TIMELINE-FUTURE RESULT: 6 passed, 0 failed
+PRIVACY-AUDIT RESULT: 15 passed, 0 failed
+GROUPS-V2 RESULT: 118 passed, 0 failed
+CHAT RESULT: 57 passed, 0 failed
+HELPERS RESULT: 13 passed, 0 failed
+REACTIONS RESULT: 22 passed, 0 failed
+CAPTIONS RESULT: 32 passed, 0 failed
+VIDEO CAP RESULT: 14 passed, 0 failed
+WHO RESULT: 7 passed, 0 failed
+START FAMILY RESULT: 88 passed, 0 failed
+SEARCH RESULT: 34 passed, 0 failed
+SMS RESULT: 35 passed, 0 failed
+GROUP NAMES RESULT: 4 passed, 0 failed
+AUTH NO PASSWORDS RESULT: 12 passed, 0 failed
+FAMILY DATES RESULT: 101 passed, 0 failed
+VIS REGISTRY RESULT: 240 passed, 0 failed
+VIS CORE RESULT: 63 passed, 1 failed
+VIS CALENDAR RESULT: 8 passed, 0 failed
+VIS ORACLE RESULT: 95 passed, 0 failed
+AUD-16 RESULT: 11 passed, 0 failed
+GRP-1 RESULT: 10 passed, 0 failed
+SETUP V2 RESULT: 15 passed, 0 failed
+SETUP API RESULT: 34 passed, 0 failed
+        | RESULT: sent 12, received 11, lost 1
+SENT-RECEIVED RESULT: 20 passed, 0 failed
+        | SMOKE RESULT: 9 ok, 0 failed
+ok      D1 smoke: ends with "SMOKE RESULT: N ok, 0 failed"
+SMOKE CHECK TEST RESULT: 28 passed, 0 failed
+AUTH CONFIG TEST RESULT: 6 passed, 0 failed
+psql:../packages/messenger/relay/test.sql:123: NOTICE:  RELAY RESULT: 24 passed, 0 failed
+VIS GATE RESULT: 8 passed, 0 failed
+psql:../packages/visibility/core/test.sql:180: NOTICE:  VIS CORE KIT RESULT: 30 passed, 0 failed
+VIS-21 RESULT: 3 passed, 0 failed
+VIS CORE COPY RESULT: 4 passed, 0 failed
+== app jest (last run)
+Tests:       1 skipped, 1 todo, 2243 passed, 2245 total
+== contract-real run 1
+Tests:       130 skipped, 90 passed, 220 total
+== contract-real run 2
+Tests:       130 skipped, 90 passed, 220 total
+== contract-real run 3
+Tests:       130 skipped, 90 passed, 220 total
+== VIS-9 bite (scratch: delete_post no-op for anyone on a deleted post)
+ 79 | NOT OK | VIS-9 delete_post: a post you can't see answers like one that doesn't exist (1191 hidden pairs, 76 differ)
+ 88 | NOT OK | VIS-9 exception stays narrow: someone else's deleted post still says not found (P0002) to a non-author
+ 89 | NOT OK | VIS-9 exception stays narrow: a non-author calling delete_post on any post hidden from them gets not found (P0002)
+VIS ORACLE RESULT: 92 passed, 3 failed
+== R80 red (vis_core_test.sql)
+ 17 | NOT OK | R80 Alex's export has none of the dates he created in a deleted family (family C)
+ 18 | ok     | R80 ...and still has the date he created in his live family (A's anniversary)

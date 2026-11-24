@@ -481,14 +481,36 @@ create table tests.vo_vis9 as
   select h.u, h.probe, h.post, h.sig, g.sig as ghost_sig
     from tests.vo_sig h join tests.vo_sig g on g.u = h.u and g.probe = h.probe and g.post is null
    where h.post is not null;
-select tests.ok_sql(format($q$select count(*) > 0 and count(*) filter (where sig is distinct from ghost_sig) = 0 from tests.vo_vis9 where probe = %L$q$, x.probe),
+-- VIS-9 named exception (triage, chief of staff with staff-pm's "deep not wide", Nov 24, 2026): delete_post stays
+-- idempotent for the post's OWN AUTHOR (BETA-AUD-5, API.md, the contract): deleting your own already-deleted
+-- post again is a no-op. The author already knows the post exists, so the no-op tells them nothing new. Narrow:
+-- delete_post only, the caller is the author, the post is deleted, and the answer carries no data ('ok:', void).
+-- Those pairs are checked on their own below; every other pair, every other probe, stays strict.
+alter table tests.vo_vis9 add column author_noop boolean;
+update tests.vo_vis9 v set author_noop = (v.probe = 'delete_post' and p.author_id = v.u and p.deleted_at is not null)
+  from public.posts p where p.id = v.post;
+update tests.vo_vis9 set author_noop = false where author_noop is null;
+select tests.ok_sql(format($q$select count(*) > 0 and count(*) filter (where sig is distinct from ghost_sig) = 0 from tests.vo_vis9 where probe = %L and not author_noop$q$, x.probe),
                     format('VIS-9 %s: a post you can''t see answers like one that doesn''t exist (%s)', x.probe,
                            coalesce((select format('%s hidden pairs, %s differ', count(*), count(*) filter (where sig is distinct from ghost_sig))
-                                       from tests.vo_vis9 v where v.probe = x.probe), 'never checked')))
+                                       from tests.vo_vis9 v where v.probe = x.probe and not v.author_noop), 'never checked')))
   from (values ('can_view_post'), ('get_comments'), ('reply_readers'), ('reply_scope'), ('post_viewers'), ('reaction_summary'),
                ('mark_seen'), ('toggle_heart'), ('set_reaction'), ('add_comment'), ('edit_post_words'), ('delete_post'),
                ('publish_post'), ('set_post_audience'), ('posts'), ('media_items'), ('comments'), ('reactions'),
                ('post_audiences')) x(probe);
+-- the named exception, both directions
+select tests.ok_sql($q$select count(*) > 0 and bool_and(sig = 'ok:') from tests.vo_vis9 where author_noop$q$,
+  format('VIS-9 exception: deleting your own already-deleted post again is a no-op that returns nothing (BETA-AUD-5; %s pairs)',
+         (select count(*) from tests.vo_vis9 where author_noop)));
+select tests.ok_sql($q$select count(*) > 0 and bool_and(sig like 'err:P0002:%') from tests.vo_vis9 v join public.posts p on p.id = v.post
+                       where v.probe = 'delete_post' and p.author_id <> v.u and p.deleted_at is not null$q$,
+  'VIS-9 exception stays narrow: someone else''s deleted post still says not found (P0002) to a non-author');
+select tests.ok_sql($q$select count(*) > 0 and bool_and(sig like 'err:P0002:%') from tests.vo_vis9 v join public.posts p on p.id = v.post
+                       where v.probe = 'delete_post' and p.author_id <> v.u$q$,
+  'VIS-9 exception stays narrow: a non-author calling delete_post on any post hidden from them gets not found (P0002)');
+select tests.ok_sql($q$select not exists (select 1 from tests.vo_vis9 where author_noop and probe <> 'delete_post')$q$,
+  'VIS-9 exception covers delete_post only');
+
 -- the ghost really reads as "not found" or empty on the by-id RPCs (so "same as ghost" means hidden, not broken)
 select tests.ok_sql($q$select bool_and(sig in ('ok:false', 'ok:0') or sig like 'err:P0002:%') from tests.vo_sig
                        where post is null and probe in ('can_view_post', 'get_comments', 'post_viewers', 'reaction_summary', 'posts')$q$,

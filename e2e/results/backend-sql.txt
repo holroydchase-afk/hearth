@@ -524,10 +524,10 @@ TIMELINE RESULT: 39 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('3246cc4b-f928-4232-9c1d-b5cb611476e8'))
-psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('45a481c4-7bf2-46a3-99c4-1db9077f5038'))
-psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('f58d1720-0281-4deb-bbdf-ae680c0a1718'))
-psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = 'f83d76ca-abed-4aea-abc1-21ccbb35edb6')
+psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('c76b7e77-4892-4d67-b96a-4ea64d16eda0'))
+psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('76104a41-6242-4599-9b6b-098cd905d338'))
+psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('582ae7ed-13fe-4258-a59b-ab8451787004'))
+psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '48ec00aa-081e-4a7c-892b-cdaf7c1943e7')
   n  | result |                                                                                  description                                                                                   
 -----+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    1 | ok     | BETA-AUD-11 shape: circles.kind exists (everyone | group | household | event)
@@ -1645,54 +1645,63 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
  10 | ok     | VIS-7 every user and admin-reach row: can_see equals the admin rule  [ok]
  11 | ok     | VIS-7 every user and server-reach row: can_see equals the server rule  [ok]
  12 | ok     | VIS-7 the fixture's family dates are checked in both directions (seen and not seen)  [ok]
- 13 | ok     | VIS-18 every user and family: list_family_dates returns exactly the dates can_see allows  [ok]
- 14 | ok     | VIS-7 the kinds can_see can't address by id (no uuid id) are exactly the 21 reviewed ones
- 15 | ok     | VIS-22 vis.sees_item equals private.sees_post for every user and every post in the fixtures
- 16 | ok     | VIS-22 ...and the comparison is not vacuous (someone sees something)
- 17 | ok     | VIS-22 ...and someone is kept out of something
- 18 | ok     | VIS-24 private.sees_post(uuid,uuid) exists
- 19 | ok     | VIS-24 vis.sees_item(uuid,uuid) exists
- 20 | ok     | VIS-24 vis.can_see(uuid,text,uuid) exists
- 21 | ok     | VIS-24 private.sees_post(uuid,uuid) lives in a schema PostgREST does not expose
- 22 | ok     | VIS-24 vis.sees_item(uuid,uuid) lives in a schema PostgREST does not expose
- 23 | ok     | VIS-24 vis.can_see(uuid,text,uuid) lives in a schema PostgREST does not expose
- 24 | ok     | VIS-24 signed out (anon) can't execute private.sees_post(uuid,uuid)
- 25 | ok     | VIS-24 signed out (anon) can't execute vis.sees_item(uuid,uuid)
- 26 | ok     | VIS-24 signed out (anon) can't execute vis.can_see(uuid,text,uuid)
- 27 | ok     | VIS-24 private.sees_post(uuid,uuid) pins search_path to empty
- 28 | ok     | VIS-24 vis.sees_item(uuid,uuid) pins search_path to empty
- 29 | ok     | VIS-24 vis.can_see(uuid,text,uuid) pins search_path to empty
- 30 | ok     | VIS-24 a signed-in user (authenticated) can't execute vis.can_see
- 31 | ok     | VIS-24 no wrapper named sees_post, sees_item or can_see sits in an exposed schema
- 32 | ok     | PRIV-VC-B1 the private.vis_* viewer-id rules are exactly the eight pinned ones
- 33 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_comment_ok(uuid,uuid)
- 34 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_media_ok(uuid,uuid)
- 35 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_circle(uuid,uuid)
- 36 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_family_date(uuid,uuid)
- 37 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_household(uuid,uuid)
- 38 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_invite(uuid,uuid)
- 39 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_person(uuid,uuid)
- 40 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_space(uuid,uuid)
- 41 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_comment_ok(uuid,uuid)
- 42 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_media_ok(uuid,uuid)
- 43 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_circle(uuid,uuid)
- 44 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_family_date(uuid,uuid)
- 45 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_household(uuid,uuid)
- 46 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_invite(uuid,uuid)
- 47 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_person(uuid,uuid)
- 48 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_space(uuid,uuid)
- 49 | ok     | PRIV-VC-B1 private.vis_comment_ok(uuid,uuid) pins search_path to empty
- 50 | ok     | PRIV-VC-B1 private.vis_media_ok(uuid,uuid) pins search_path to empty
- 51 | ok     | PRIV-VC-B1 private.vis_sees_circle(uuid,uuid) pins search_path to empty
- 52 | ok     | PRIV-VC-B1 private.vis_sees_family_date(uuid,uuid) pins search_path to empty
- 53 | ok     | PRIV-VC-B1 private.vis_sees_household(uuid,uuid) pins search_path to empty
- 54 | ok     | PRIV-VC-B1 private.vis_sees_invite(uuid,uuid) pins search_path to empty
- 55 | ok     | PRIV-VC-B1 private.vis_sees_person(uuid,uuid) pins search_path to empty
- 56 | ok     | PRIV-VC-B1 private.vis_sees_space(uuid,uuid) pins search_path to empty
- 57 | ok     | VIS-24 Aunt Jo asking can_see whether Grandma sees a post is refused (42501), not answered
+ 13 | ok     | VIS-7 the fixture's children are checked in both directions (seen and not seen)
+ 14 | ok     | VIS-7 Blair (guardian) sees Kit; Grandma Rivera (other family only) does not
+ 15 | ok     | VIS-18 every user and family: list_family_dates returns exactly the dates can_see allows  [ok]
+ 16 | ok     | VIS-7 the kinds can_see can't address by id (no uuid id) are exactly the 21 reviewed ones
+ 17 | NOT OK | R80 Alex's export has none of the dates he created in a deleted family (family C)
+ 18 | ok     | R80 ...and still has the date he created in his live family (A's anniversary)
+ 19 | ok     | VIS-22 vis.sees_item equals private.sees_post for every user and every post in the fixtures
+ 20 | ok     | VIS-22 ...and the comparison is not vacuous (someone sees something)
+ 21 | ok     | VIS-22 ...and someone is kept out of something
+ 22 | ok     | VIS-24 private.sees_post(uuid,uuid) exists
+ 23 | ok     | VIS-24 vis.sees_item(uuid,uuid) exists
+ 24 | ok     | VIS-24 vis.can_see(uuid,text,uuid) exists
+ 25 | ok     | VIS-24 private.sees_post(uuid,uuid) lives in a schema PostgREST does not expose
+ 26 | ok     | VIS-24 vis.sees_item(uuid,uuid) lives in a schema PostgREST does not expose
+ 27 | ok     | VIS-24 vis.can_see(uuid,text,uuid) lives in a schema PostgREST does not expose
+ 28 | ok     | VIS-24 signed out (anon) can't execute private.sees_post(uuid,uuid)
+ 29 | ok     | VIS-24 signed out (anon) can't execute vis.sees_item(uuid,uuid)
+ 30 | ok     | VIS-24 signed out (anon) can't execute vis.can_see(uuid,text,uuid)
+ 31 | ok     | VIS-24 private.sees_post(uuid,uuid) pins search_path to empty
+ 32 | ok     | VIS-24 vis.sees_item(uuid,uuid) pins search_path to empty
+ 33 | ok     | VIS-24 vis.can_see(uuid,text,uuid) pins search_path to empty
+ 34 | ok     | VIS-24 a signed-in user (authenticated) can't execute vis.can_see
+ 35 | ok     | VIS-24 no wrapper named sees_post, sees_item or can_see sits in an exposed schema
+ 36 | ok     | PRIV-VC-B1 the private.vis_* viewer-id rules are exactly the nine pinned ones
+ 37 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_comment_ok(uuid,uuid)
+ 38 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_media_ok(uuid,uuid)
+ 39 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_child(uuid,uuid)
+ 40 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_circle(uuid,uuid)
+ 41 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_family_date(uuid,uuid)
+ 42 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_household(uuid,uuid)
+ 43 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_invite(uuid,uuid)
+ 44 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_person(uuid,uuid)
+ 45 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_space(uuid,uuid)
+ 46 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_comment_ok(uuid,uuid)
+ 47 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_media_ok(uuid,uuid)
+ 48 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_child(uuid,uuid)
+ 49 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_circle(uuid,uuid)
+ 50 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_family_date(uuid,uuid)
+ 51 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_household(uuid,uuid)
+ 52 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_invite(uuid,uuid)
+ 53 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_person(uuid,uuid)
+ 54 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_space(uuid,uuid)
+ 55 | ok     | PRIV-VC-B1 private.vis_comment_ok(uuid,uuid) pins search_path to empty
+ 56 | ok     | PRIV-VC-B1 private.vis_media_ok(uuid,uuid) pins search_path to empty
+ 57 | ok     | PRIV-VC-B1 private.vis_sees_child(uuid,uuid) pins search_path to empty
+ 58 | ok     | PRIV-VC-B1 private.vis_sees_circle(uuid,uuid) pins search_path to empty
+ 59 | ok     | PRIV-VC-B1 private.vis_sees_family_date(uuid,uuid) pins search_path to empty
+ 60 | ok     | PRIV-VC-B1 private.vis_sees_household(uuid,uuid) pins search_path to empty
+ 61 | ok     | PRIV-VC-B1 private.vis_sees_invite(uuid,uuid) pins search_path to empty
+ 62 | ok     | PRIV-VC-B1 private.vis_sees_person(uuid,uuid) pins search_path to empty
+ 63 | ok     | PRIV-VC-B1 private.vis_sees_space(uuid,uuid) pins search_path to empty
+ 64 | ok     | VIS-24 Aunt Jo asking can_see whether Grandma sees a post is refused (42501), not answered
 
 
-VIS CORE RESULT: 57 passed, 0 failed
+VIS CORE RESULT: 63 passed, 1 failed
+SOME TESTS FAILED
+psql:tests/vis_core_test.sql:294: ERROR:  division by zero
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
@@ -1712,13 +1721,168 @@ VIS CALENDAR RESULT: 8 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
+Time: 0.072 ms
+
+VIS ORACLE MATRIX seed=42 seconds=10
+         path         |        kind         | checked | wrong_yes | wrong_no 
+----------------------+---------------------+---------+-----------+----------
+ chat_roster          | chat_group          |     600 |         0 |        0
+ chat_roster:people   | profile             |     156 |         0 |        0
+ comments             | comment             |     680 |         0 |        0
+ comments             | post                |    1220 |         0 |        0
+ export               | comment             |      41 |         0 |        0
+ export               | family_date         |      17 |         2 |        0
+ export               | post                |    1380 |         0 |        0
+ family_dates         | family_date         |     220 |         0 |        0
+ feed                 | post                |    1220 |         0 |        0
+ post_audiences_table | post                |     185 |         0 |        0
+ post_by_id           | post                |    1380 |         0 |        0
+ post_viewers         | post                |    1220 |         0 |        0
+ post_viewers:names   | post                |     980 |         0 |        0
+ reactions            | post                |     460 |         0 |        0
+ reactions_table      | post                |      55 |         0 |        0
+ reply_readers        | post                |    1220 |         0 |        0
+ search               | post                |    1220 |         0 |        0
+ sign_media           | media_item          |     940 |         0 |        0
+ sign_media           | post                |    1380 |         0 |        0
+ table                | account_export      |      20 |         0 |        0
+ table                | child               |      20 |         0 |        0
+ table                | circle              |     600 |         0 |        0
+ table                | comment             |     820 |         0 |        0
+ table                | family_date         |     220 |         0 |        0
+ table                | household           |      80 |         0 |        0
+ table                | media_item          |    1000 |         0 |        0
+ table                | notification_outbox |    5160 |         0 |        0
+ table                | post                |    1380 |         0 |        0
+ table                | profile             |     400 |         0 |        0
+ table                | push_token          |     120 |         0 |        0
+ table                | space               |     120 |         0 |        0
+ timeline             | post                |    1220 |         0 |        0
+
+VIS ORACLE MISMATCHES (first 50: user, kind, path, id)
+                 user                 |    kind     |  path  |                  id                  |    mismatch    
+--------------------------------------+-------------+--------+--------------------------------------+----------------
+ 361ca342-c99a-4ffb-8f19-b2cae815fe42 | family_date | export | 145fdd1e-95c9-4f14-8cda-efcf6085824c | wrong yes (P0)
+ 361ca342-c99a-4ffb-8f19-b2cae815fe42 | family_date | export | e82b430a-fe14-42c3-8012-2a4e54102795 | wrong yes (P0)
+
+VIS-9 DIFFERENCES (first 30: user, probe, hidden post answer vs missing post answer)
+                 user                 |    probe    |                 post                 | sig |        ghost_sig         
+--------------------------------------+-------------+--------------------------------------+-----+--------------------------
+ 34f54546-a518-42cc-87fb-c86c29b7bd4f | delete_post | dd8edb8f-94cb-465e-8626-e8123897d0d4 | ok: | err:P0002:post not found
+ 361ca342-c99a-4ffb-8f19-b2cae815fe42 | delete_post | d8aa0a66-eb23-46ea-828c-88a8a73b122f | ok: | err:P0002:post not found
+ ea92df82-2e11-4388-89f4-da059e06747a | delete_post | 053be082-8505-4d70-8762-d09ebe86880b | ok: | err:P0002:post not found
+ f92e6ddb-1a7e-47c6-811f-180be5634efc | delete_post | 04479d36-78e7-49ba-8da8-4a8c3bb2bf67 | ok: | err:P0002:post not found
+
+ n  | result |                                                                      description                                                                       
+----+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------
+  1 | ok     | VIS-8 harness: tests/vis_oracle/generate.sql defines vis_oracle.generate(seed integer)
+  2 | ok     | VIS-11 harness: tests/vis_oracle/generate.sql defines vis_oracle.fixture_json()
+  3 | ok     | VIS-8 fixed seed: generate(42) twice gives the same rows, ids and times
+  4 | ok     | VIS-8 fixed seed: a different seed gives a different family
+  5 | ok     | VIS-11 fixture_json() is the same for the same seed
+  6 | ok     | VIS-11 backend/tests/vis_oracle/fixtures/seed-42.json equals vis_oracle.fixture_json() for seed 42 (regenerate it with nightly.sh --seed 42 --fixture)
+  7 | ok     | VIS-8 shape: at least two generated households
+  8 | ok     | VIS-8 shape: at least three live generated families
+  9 | ok     | VIS-8 shape: a deleted family (its members must see nothing in it)
+ 10 | ok     | VIS-8 shape: at least 12 generated people
+ 11 | ok     | VIS-8 shape: personas only (PERSONAS.md nicknames, emails at example.com)
+ 12 | ok     | VIS-8 shape: a co-parent: a parent in one family who is a relative in the other
+ 13 | ok     | VIS-8 shape: overlapping groups (someone in two groups of one family)
+ 14 | ok     | VIS-8 shape: a removed member (wrote a post, no longer in that family)
+ 15 | ok     | VIS-8 shape: a demoted parent (wrote posts, now a relative in a family where relatives can't post)
+ 16 | ok     | VIS-8 shape: a share-history cutoff with posts on both sides of it
+ 17 | ok     | VIS-8 shape: at least 40 live posts, a deleted post and a draft
+ 18 | ok     | VIS-8 shape: Everyone, household, event and plain groups, and a retired group
+ 19 | ok     | VIS-8 shape: a post sent only to a group that was retired since
+ 20 | ok     | VIS-8 shape: at least 10 replies and a deleted reply
+ 21 | ok     | VIS-8 shape: at least 10 reactions
+ 22 | ok     | VIS-8 shape: one family keeps replies with the parents, another opens them to everyone
+ 23 | ok     | VIS-8 shape: ready and unfinished media
+ 24 | ok     | VIS-8 shape: a words-only post (SHARE-U-4)
+ 25 | ok     | VIS-8 shape: life-calendar birthdays and a family date with no member
+ 26 | ok     | VIS-8 shape: at least two chats
+ 27 | ok     | VIS-8 shape: pending notices to people who can be reached (push token or email)
+ 28 | ok     | VIS-8 table (post) equals vis.can_see for every person: 1380 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 29 | ok     | VIS-8 table (comment) equals vis.can_see for every person: 820 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 30 | ok     | VIS-8 table (media_item) equals vis.can_see for every person: 1000 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 31 | ok     | VIS-8 table (profile) equals vis.can_see for every person: 400 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 32 | ok     | VIS-8 table (circle) equals vis.can_see for every person: 600 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 33 | ok     | VIS-8 table (space) equals vis.can_see for every person: 120 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 34 | ok     | VIS-8 table (family_date) equals vis.can_see for every person: 220 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 35 | ok     | VIS-8 table (notification_outbox) equals vis.can_see for every person: 5160 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 36 | ok     | VIS-8 post_audiences_table (post) equals vis.can_see for every person: 185 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 37 | ok     | VIS-8 feed (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 38 | ok     | VIS-8 timeline (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 39 | ok     | VIS-8 search (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 40 | ok     | VIS-8 post_by_id (post) equals vis.can_see for every person: 1380 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 41 | ok     | VIS-8 comments (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 42 | ok     | VIS-8 comments (comment) equals vis.can_see for every person: 680 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 43 | ok     | VIS-8 reply_readers (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 44 | ok     | VIS-8 reactions (post) equals vis.can_see for every person: 460 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 45 | ok     | VIS-8 reactions_table (post) equals vis.can_see for every person: 55 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 46 | ok     | VIS-8 post_viewers (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 47 | ok     | VIS-8 post_viewers:names (post) equals vis.can_see for every person: 980 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 48 | ok     | VIS-8 sign_media (post) equals vis.can_see for every person: 1380 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 49 | ok     | VIS-8 sign_media (media_item) equals vis.can_see for every person: 940 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 50 | ok     | VIS-8 family_dates (family_date) equals vis.can_see for every person: 220 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 51 | ok     | VIS-8 chat_roster (chat_group) equals vis.can_see for every person: 600 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 52 | ok     | VIS-8 chat_roster:people (profile) equals vis.can_see for every person: 156 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 53 | ok     | VIS-8 export (post) equals vis.can_see for every person: 1380 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 54 | ok     | VIS-8 export (comment) equals vis.can_see for every person: 41 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 55 | ok     | VIS-8 table (account_export) equals vis.can_see for every person: 20 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 56 | ok     | VIS-8 table (child) equals vis.can_see for every person: 20 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 57 | ok     | VIS-8 table (household) equals vis.can_see for every person: 80 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 58 | ok     | VIS-8 table (push_token) equals vis.can_see for every person: 120 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 59 | ok     | VIS-8 feed was checked both ways (someone allowed, someone excluded)
+ 60 | ok     | VIS-8 timeline was checked both ways (someone allowed, someone excluded)
+ 61 | ok     | VIS-8 search was checked both ways (someone allowed, someone excluded)
+ 62 | ok     | VIS-8 post_by_id was checked both ways (someone allowed, someone excluded)
+ 63 | ok     | VIS-8 comments was checked both ways (someone allowed, someone excluded)
+ 64 | ok     | VIS-8 post_viewers was checked both ways (someone allowed, someone excluded)
+ 65 | ok     | VIS-8 sign_media was checked both ways (someone allowed, someone excluded)
+ 66 | ok     | VIS-8 family_dates was checked both ways (someone allowed, someone excluded)
+ 67 | ok     | VIS-8 chat_roster was checked both ways (someone allowed, someone excluded)
+ 68 | ok     | VIS-9 can_view_post: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 69 | ok     | VIS-9 get_comments: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 70 | ok     | VIS-9 reply_readers: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 71 | ok     | VIS-9 reply_scope: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 72 | ok     | VIS-9 post_viewers: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 73 | ok     | VIS-9 reaction_summary: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 74 | ok     | VIS-9 mark_seen: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 75 | ok     | VIS-9 toggle_heart: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 76 | ok     | VIS-9 set_reaction: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 77 | ok     | VIS-9 add_comment: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 78 | ok     | VIS-9 edit_post_words: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 79 | ok     | VIS-9 delete_post: a post you can't see answers like one that doesn't exist (1191 hidden pairs, 0 differ)
+ 80 | ok     | VIS-9 publish_post: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 81 | ok     | VIS-9 set_post_audience: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 82 | ok     | VIS-9 posts: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 83 | ok     | VIS-9 media_items: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 84 | ok     | VIS-9 comments: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 85 | ok     | VIS-9 reactions: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 86 | ok     | VIS-9 post_audiences: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 87 | ok     | VIS-9 exception: deleting your own already-deleted post again is a no-op that returns nothing (BETA-AUD-5; 4 pairs)
+ 88 | ok     | VIS-9 exception stays narrow: someone else's deleted post still says not found (P0002) to a non-author
+ 89 | ok     | VIS-9 exception stays narrow: a non-author calling delete_post on any post hidden from them gets not found (P0002)
+ 90 | ok     | VIS-9 exception covers delete_post only
+ 91 | ok     | VIS-9 a post that doesn't exist reads as P0002, false or empty for every person
+ 92 | ok     | VIS-10 setup: relatives taken out of a post's groups after the notice was written can no longer see it
+ 93 | ok     | VIS-10 the send claimed notices (the check below is not vacuous)
+ 94 | ok     | VIS-10 every notice sent (new posts, replies, reactions) names only posts its recipient can see at send time
+ 95 | ok     | VIS-10 a relative removed before the send, and a post deleted before the send, get no notice
+
+
+VIS ORACLE RESULT: 95 passed, 0 failed
+psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
+psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
+psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
 
 Narrowing for Chase (readable before 0011 only through "members see each other's replies"):
      reader     |  kind   |                                 reply_id                                  
 ----------------+---------+---------------------------------------------------------------------------
- Grandma Rivera | comment | 7a8e4892-014c-41df-b1d8-1c38a2b65557
+ Grandma Rivera | comment | cafef19b-bcc8-45ab-ae0f-658617cfd6f2
  Grandma Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a2
- Grandpa Rivera | comment | aa114766-3c7a-4f0b-84f7-1d8491010509
+ Grandpa Rivera | comment | bf02754c-80b9-4eed-976d-9c59ee30dc13
  Grandpa Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a1
 
  n  | result |                                                     description                                                      
@@ -1829,8 +1993,8 @@ ok      SETUP-API: before Chase has an account it says "sign in once in the app"
 ok      SETUP-API: ... and changes nothing
 ok      SETUP-API: fresh setup runs without error
         | Family "Chase's kids" is ready: Everyone, Chase's side, Mom's side, 7 houses, 2 events.
-        | Test viewer invite (account B): code Z7DGJGHZF7, works once until Dec 01, link https://thefreighttrains-team-hearth.expo.app/join/ce5d4ce833c24196c461553977811e6884106921
-        | Mom's poster invite: code DG3QQQV5ZB, works once until Dec 01, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/343ebaf1bbdbdcc648dc81d24751d1331010ebf4
+        | Test viewer invite (account B): code ET2T2NAMJR, works once until Dec 01, link https://thefreighttrains-team-hearth.expo.app/join/a039b43b40c4bfda7cb45ca96e9cde36bd3cc9d3
+        | Mom's poster invite: code TB5VFVK8PT, works once until Dec 01, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/6792bac1cef990f42d607ea51640b1f885951238
 ok      SETUP-API: Chase owns one family, named as given (an apostrophe in the name is kept, not a SQL error)
 ok      SETUP-API: one Everyone
 ok      SETUP-API: the set groups are Chase's side and Mom's side (no v1 groups to retire later)
@@ -1889,7 +2053,7 @@ ok      QA-3: a visible post with a photo not ready counts as missing, and says 
 SENT-RECEIVED RESULT: 20 passed, 0 failed
 ok      D1 smoke: backend/scripts/smoke-check.sh exists
 ok      D1 smoke: without SUPABASE_ACCESS_TOKEN it stops and names the secret
-        | ok    all 31 migrations applied
+        | ok    all 32 migrations applied
         | ok    RLS is on for every public table
         | ok    cron job hearth-notify
         | ok    cron job hearth-purge-client-errors
@@ -1901,7 +2065,7 @@ ok      D1 smoke: without SUPABASE_ACCESS_TOKEN it stops and names the secret
         | SMOKE RESULT: 9 ok, 0 failed
 ok      D1 smoke: a healthy project passes (exit 0)
 ok      D1 smoke: ends with "SMOKE RESULT: N ok, 0 failed"
-ok      D1 smoke: says all 31 local migrations are applied
+ok      D1 smoke: says all 32 local migrations are applied
 ok      D1 smoke: never prints a secret value
 ok      D1 smoke: never prints the token
 ok      D1 smoke: its SQL runs inside a read-only transaction (no write attempted)
@@ -1910,7 +2074,7 @@ ok      D1 smoke: the token goes in the Authorization header
 ok      D1 smoke: no psql, no unexpected endpoint
 ok      D1 smoke: changes nothing
 ok      ONB-3 smoke: hosted invite_link_base is checked and reads as ok
-ok      D1 smoke: a migration not applied on hosted fails and names it (0032)
+ok      D1 smoke: a migration not applied on hosted fails and names it (0033)
 ok      D1 smoke: a public table without RLS fails and names it
 ok      D1 smoke: a missing cron job fails and names it
 ok      D1 smoke: a missing edge function fails and names it
@@ -1955,3 +2119,12 @@ ok      ARCH-VC-R1 bites: a scratch change to the package alone fails the check
 ok      ARCH-VC-R1 bites: a scratch edit to migration 0031 alone fails the check
 ok      ARCH-VC-R1 a missing migration fails the check, not passes it
 VIS CORE COPY RESULT: 4 passed, 0 failed
+ok      VIS-12 tests/vis_oracle/nightly.sh exists
+ok      VIS-12 --seed 4242 writes a dated matrix: tests/results/vis-oracle-2026-11-24-seed4242.txt
+ok      VIS-12 the matrix names its seed
+ok      VIS-12 the matrix has path, kind, checked, wrong_yes, wrong_no
+ok      VIS-12 the matrix has a row for every read path
+ok      VIS-12 the matrix carries no email or other personal text
+ok      VIS-12 the matrix ends with the suite's result line
+ok      VIS-12 the job's exit code follows the oracle (exit 0)
+VIS-12 nightly: 8 passed, 0 failed
