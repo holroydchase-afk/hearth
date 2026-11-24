@@ -1465,6 +1465,58 @@ test('SHARE-ST-34 Share start at standard sizes on the demo: "New post" 22/26, "
   await resetDemo(page);
 });
 
+// ===== PR #174 fix round (grandparent-ux), written first (red), Nov 24, by qa-tdd =====
+// GUX-T2 (P1): at 390 x 844 the empty postcard starts right under the "New post" row (the row is the heading's
+// nearest box at least 48 px tall), not centered with a big gap. Light and dark.
+const rowBottom = (heading) => heading.evaluate((el) => {
+  let n = el;
+  while (n && n.getBoundingClientRect().height < 48) n = n.parentElement;
+  return (n ?? el).getBoundingClientRect().bottom;
+});
+test('GUX-T2 at 390 px the empty postcard is top-aligned: its top is within 32 px of the "New post" row (light, dark)', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  for (const scheme of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme: scheme });
+    await page.getByRole('tab', { name: /^Share/ }).click();
+    const heading = page.getByRole('heading', { name: 'New post' });
+    await expect(heading).toBeVisible();
+    const card = page.getByTestId('share-card').filter({ visible: true }).first();
+    await expect(card).toBeVisible();
+    const gap = Math.round((await card.boundingBox()).y - (await rowBottom(heading)));
+    expect.soft({ scheme, gap, close: gap >= 0 && gap <= 32 }).toEqual({ scheme, gap, close: true });
+  }
+});
+
+// GUX-T6 (P2): the demo shows Gallery's birthday card ("When's your birthday?", CAL-12) at first open. At 390 x 844 its
+// "Not now" starts under the floating tab bar; once it is scrolled to (as keyboard focus or a screen reader does:
+// the least scroll that brings it into the scroll area), all of it sits above the tab bar's top edge. Light only (the
+// layout is the same in dark).
+test('GUX-T6 at 390 x 844 Gallery\'s birthday card "Not now", once scrolled to, sits clear above the floating tab bar', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  const card = page.getByTestId('birthday-card');
+  await expect(card, 'the demo shows the birthday card on Gallery').toBeVisible();
+  const notNow = card.getByRole('button', { name: 'Not now' });
+  const bar = page.getByRole('tablist');
+  await expect(bar).toBeVisible();
+  await notNow.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(300);
+  const b = await notNow.boundingBox();
+  const barTop = (await bar.boundingBox()).y;
+  expect({ notNowBottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: b.y + b.height <= barTop })
+    .toEqual({ notNowBottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: true });
+  // Keyboard reach: Tab focus lands on it and it is not hidden behind the bar (WCAG 2.4.11).
+  await page.goto('/');
+  await galleryLoaded(page);
+  await notNow.focus();
+  await page.waitForTimeout(300);
+  const f = await notNow.boundingBox();
+  expect({ focusedBottom: Math.round(f.y + f.height), clear: f.y + f.height <= barTop }).toEqual({ focusedBottom: Math.round(f.y + f.height), clear: true });
+});
+
 // EF-HE-1-AC1/AC2 (intake #162, SPEC-EVAL-FIXES): supersedes the ff4543e guard ("Open" shown, "Open the chat …" spoken).
 // Each Messages Open button now shows which chat it opens, and its accessible name is exactly the words shown.
 test('EF-HE-1-AC1 EF-HE-1-AC2 at 390 px: each Messages Open button shows distinct words and its accessible name is exactly them', async ({ page }) => {

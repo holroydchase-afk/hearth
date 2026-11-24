@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-25T06:00:00-05:00",
+ "label": "PR #174 fix round (GUX-T2, GUX-T5, GUX-T6, QA-R4): tests written first (red, 1 run)",
+ "passed": 32,
+ "failed": 5,
+ "results": {},
+ "note": "Red on purpose, 1 run at 8c6d28a plus test edits only (no product code). jest (shareStart, redesignLint, -t QA-R4|GUX-T2|GUX-T5|RD-4): 32 passed, 3 failed: GUX-T2 light and dark (share-empty-wrap justifyContent center, B27), QA-R4 (ShareKinds.tsx:58 tone=accent on the Saying quote mark, B29). GUX-T5 all 30 green on arrival (To: >= 4.5:1, rules >= 1.5:1 in all 10 themes, light, dark, Increase Contrast). Playwright demo (390 x 844, dist-demo export of 8c6d28a's code): GUX-T2 failed (gap 125 px light and dark, B27), GUX-T6 failed (Not now bottom 844 under tab bar top 764 after scrolling to it, B28). Not run: full suites (red round), phones. e2e/results/type-scale-fixes-red-2026-11-24.txt"
+}

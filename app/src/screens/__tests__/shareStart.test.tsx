@@ -88,7 +88,7 @@ import { memoryKV, type KV } from '../../platform/kv';
 import type { PickedAsset } from '../../share/bulk';
 import { expectGrandparentSafe, renderApp, screenWords, type FixtureUser } from '../../test/renderApp';
 import type { AppDeps } from '../../state/AppContext';
-import { FONT, contrast, paletteFor, photoShadow } from '../../ui/theme';
+import { FONT, THEME_NAMES, contrast, paletteFor, photoShadow } from '../../ui/theme';
 import { ShareScreen } from '../ShareScreen';
 
 const slow = { timeout: 5000 };
@@ -967,6 +967,53 @@ describe('SHARE-ST-31 / SHARE-ST-33 a tap on a kind shows its empty card face (t
       expect(screen.queryByRole('button', { name: /^Add photos( or videos)?, up to \d+ at a time$/ })).toBeNull();
       expect(Object.keys(be.state.posts).length).toBe(before);
       expectGrandparentSafe();
+    });
+  }
+});
+
+// ===== PR #174 fix round (grandparent-ux GUX-T2 / GUX-T5), written first (red), Nov 24, by qa-tdd =====
+// GUX-T2 (P1): the empty postcard sits right under "New post", not in the middle of the space (it wins over GUX-W1's
+// "middle of the space"). Seam: "share-empty-wrap" keeps flex, but never justifyContent 'center' (or 'space-*' /
+// 'flex-end'); unset or 'flex-start' only. Playwright GUX-T2 in app/e2e-web/demo.spec.js measures it at 390 px.
+describe('GUX-T2 P1 the empty postcard is top-aligned under "New post"', () => {
+  for (const dark of [false, true]) {
+    it(`GUX-T2 (${dark ? 'dark' : 'light'}) "share-empty-wrap" does not center the card: justifyContent unset or flex-start`, async () => {
+      await start({ kv: prefs('chase', { look: dark ? 'dark' : 'light' }) });
+      const wrap = screen.getByTestId('share-empty-wrap');
+      const jc = flat(wrap.props.style).justifyContent;
+      expect({ justifyContent: jc ?? 'unset', topAligned: jc === undefined || jc === 'flex-start' })
+        .toEqual({ justifyContent: jc ?? 'unset', topAligned: true });
+      expect(within(screen.getByTestId('share-card'), wrap)).toBe(true);
+    });
+  }
+});
+
+// GUX-T5 (P2): in every theme (paper and the nine fruits), light and dark, and with the phone's Increase Contrast on,
+// the empty card's "To:" is >= 4.5:1 on the card (text) and the ruled lines are >= 1.5:1 (decoration; qa-tdd keeps
+// GUX-W4's floor, since the lines carry no meaning a person must read). Rendered as Chase (owner, can pick a theme).
+describe('GUX-T5 P2 "To:" and the ruled lines on the empty card, every theme, light and dark', () => {
+  for (const theme of THEME_NAMES) {
+    for (const dark of [false, true]) {
+      it(`GUX-T5 ${theme} (${dark ? 'dark' : 'light'}) "To:" >= 4.5:1 and rules >= 1.5:1 on c.surface`, async () => {
+        await start({ kv: prefs('chase', { look: dark ? 'dark' : 'light', theme }) });
+        const card = screen.getByTestId('share-card');
+        const surface = String(flat(card.props.style).backgroundColor);
+        const want = paletteFor(Platform.OS as 'ios', dark, theme);
+        expect({ theme, surface }).toEqual({ theme, surface: want.surface });
+        const to = String(flat(screen.getByText(TO, HIDDEN).props.style).color);
+        const rules = [...screen.getAllByTestId('share-note-rule', HIDDEN), ...screen.getAllByTestId('share-to-rule', HIDDEN)]
+          .map((r) => String(flat(r.props.style).backgroundColor));
+        const ratio = (x: string) => (/^#[0-9A-Fa-f]{6}$/.test(x) ? Math.round(contrast(x, surface) * 100) / 100 : 0);
+        expect({ theme, to: ratio(to) >= 4.5, rules: rules.map((r) => ratio(r) >= 1.5) })
+          .toEqual({ theme, to: true, rules: [true, true, true] });
+      }, 10000);
+    }
+    it(`GUX-T5 ${theme} Increase Contrast (light and dark): c.muted >= 4.5:1 and c.tabLine >= 1.5:1 on c.surface`, () => {
+      for (const dark of [false, true]) {
+        const c = paletteFor(Platform.OS as 'ios', dark, theme, true);
+        expect({ theme, dark, to: contrast(c.muted, c.surface) >= 4.5, rule: contrast(c.tabLine, c.surface) >= 1.5 })
+          .toEqual({ theme, dark, to: true, rule: true });
+      }
     });
   }
 });
