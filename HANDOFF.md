@@ -11,7 +11,12 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
-## Nov 24: sharp, lined-up reaction emoji (Chase, REACT-13a..d, TRACKER R83; branch claude/project-thread-54xewq, PR)
+## Nov 24: eval fixes built (intake #162, R83, SPEC-EVAL-FIXES section 1 + EF-HE-4; branch claude/project-thread-6ew09x, PR #172)
+- **Done:** EF-HE-1 Messages buttons show and speak "Open <name>" / "Open chat with <people>"; EF-HE-2 shared radio shows an empty muted ring unpicked, filled accent ring picked; EF-HE-4 Easy view and Light or dark only in More (off Me); EF-HE-5 honest Groups line, New group filled; EF-HE-6 Events empty-state words; EF-HE-9/B18 Gallery loads older feed pages back to the last visit (`FeedStore.loadBackTo`, max 10 pages) before New for you shows, so the count covers every new post. No API change. Superseded tests retargeted in `test:` commits.
+- **B26 (QA-R1, P1) fixed:** a refresh that answers while an older page is in flight no longer appends that stale page after the new first page (refresh generation counter in `app/src/feed/store.ts`; `loadBackTo` walks on from the new first page). Proof: `loadBackTo.test.ts` "a refresh that lands mid-walk".
+- **Status:** qa-tdd green 3x (r77; B18 and B26 closed). grandparent-ux Ready, no P0/P1; P2s GUX-EF-R1..R6 open (Events how-to wording, Groups line, Messages intro, long labels at 200%, More row values, bottom padding under the tab bar). DEC-85 (settings only in More). Before/after shots: /mnt/project-files/design/eval-findings-2026-11-24/. Next: Chase says merge (touches app/**). Manual M-20 (long chat title wraps at the largest text) on a phone.
+
+## Nov 24: sharp, lined-up reaction emoji (Chase, REACT-13a..d, TRACKER R84; branch claude/project-thread-54xewq, PR)
 - **Bug (Chase's screenshot of the live Feed):** 😂 👍 🎉 looked small and blurry, ❤️ crisp, and the ❤️ pill stuck out past the photo. Cause: the emoji had no fixed width (27.45 px), so every pill after the first started on a fractional pixel, and phone emoji are pictures that resample soft there; RD-64's -8 pt pull predates RD-114's outlines.
 - **Fix, test-first** (qa-tdd red: `app/src/screens/__tests__/reactEmoji.test.tsx`, `app/e2e-web/demo.spec.js` REACT-13): emoji in a 28 x 28 box, web names the color emoji fonts first (phones keep their own), first pill on the 16 pt edge, count box = slot x digits. Size unchanged (22 pt).
 - **Next exact step:** Chase's merge (touches app/**); then a look on his iPhone and Mac.

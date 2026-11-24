@@ -1348,6 +1348,24 @@ test('DARK-ELEV-6 at 390 px dark: no visible element on the first screen has a d
   await expect.poll(() => shadeShadow(page)).not.toBe('none');
 });
 
+// EF-HE-1-AC1/AC2 (intake #162, SPEC-EVAL-FIXES): supersedes the ff4543e guard ("Open" shown, "Open the chat …" spoken).
+// Each Messages Open button now shows which chat it opens, and its accessible name is exactly the words shown.
+test('EF-HE-1-AC1 EF-HE-1-AC2 at 390 px: each Messages Open button shows distinct words and its accessible name is exactly them', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: /^Messages(,|$)/ }).click();
+  await expect(page.getByRole('heading', { name: 'Messages' })).toBeVisible();
+  const open = page.getByRole('button', { name: /^Open / });
+  await expect(open.first()).toBeVisible();
+  const seen = await open.evaluateAll((bs) => bs.map((b) => ({ name: b.getAttribute('aria-label'), shown: (b.innerText || '').replace(/\s+/g, ' ').trim() })));
+  expect(seen.length).toBeGreaterThan(1);
+  for (const s of seen) expect(s.name).toBe(s.shown);
+  const shown = seen.map((s) => s.shown);
+  expect(new Set(shown).size).toBe(shown.length);
+  await expect(page.getByRole('button', { name: /^Open the chat/ })).toHaveCount(0);
+});
 // REACT-13a/c/d (Chase, Nov 24: 😂 👍 🎉 look small and blurry on Feed, ❤️ is crisp, and the ❤️ pill doesn't line up).
 // Written first (red), Nov 24, by qa-tdd. Apple Color Emoji are bitmaps, so a pill at a fractional x resamples them;
 // every reaction pill must sit at a whole-pixel x with a whole-pixel width, and the first pill's outline must start on
