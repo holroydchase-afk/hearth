@@ -584,7 +584,7 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Chose:** an optional "When's your birthday?" card on Gallery for every member (month and day buttons, no typing, Not now); a Birthdays row in More listing every family date soonest first; parents add kids' birthdays, anniversaries and other dates; on the day, "Today is Grandma Jo's birthday" on Gallery for everyone. In-app only. Migration 0029 `family_dates`. Amended Nov 24 after privacy-security review (PRIV-R2), confirmed by Chase Nov 24 ("there should be an advanced central core ... that decides who can see it"; visibility follows the central rules, not a per-feature question): dates follow who sees a name (a member's birthday to whoever may see that member; other dates to parents and the Everyone group), not family-wide.
 - **Over:** an optional birth year (staff-pm: no beta job needs it, and a stored year is a privacy cost); push or email on the day in v1 (needs outbox and `notify` changes plus a deploy; v1.1); per-group audience on dates (wide); a new onboarding gate (a card on Gallery reaches every way in).
 - **Because:** grandparents who avoid social media miss Facebook's birthday nudges; Hearth can tell the family on the day without ads or trackers. Month and day are enough to say "today".
-- **Source:** `docs/product/SPEC-LIFE-CALENDAR.md`; persona check `decisions/2026-11-24-life-calendar.md` (LG and SG Red, mitigated). TRACKER R77.
+- **Source:** `docs/product/SPEC-LIFE-CALENDAR.md`; persona check `decisions/2026-11-24-life-calendar.md` (LG and SG Red, mitigated). TRACKER R78.
 
 ---
 Last updated: Nov 24, 2026 (DEC-81)

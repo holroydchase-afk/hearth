@@ -54,7 +54,7 @@ Chase, Nov 24 (rapid messages): "Life calendar" / "Capture birthdays" / "And imp
 - Review words (grandparent-ux, Nov 24): the card is short, "Add my birthday" opens the form on Birthdays with Save fixed at the bottom (GUX-R1); "Saved. Your family will see December 8." at the top of Birthdays (GUX-R2); "Happy birthday, Grandma Jo!" on your own day (GUX-R4); "Today: Family reunion" for something else (GUX-R6); the form's back reads "Birthdays" (GUX-R7); "The dates can't load right now. Try again in a minute, or ask Chase." (GUX-R9); "Whose birthday?" and "It's removed for everyone in the family." (GUX-R11).
 
 ## Not doing in v1 (parked, one line each)
-- Push or email on the day, and "3 days before" reminders: v1.1; needs outbox changes, `notify` change and a deploy (TRACKER R77 follow-up).
+- Push or email on the day, and "3 days before" reminders: v1.1; needs outbox changes, `notify` change and a deploy (TRACKER R78 follow-up).
 - Birth year and ages: not needed; privacy cost with no beta job behind it.
 - Per-group audience on dates: wide; revisit if a split family asks (SG risk, persona check).
 - "Say happy birthday" button that opens Share prefilled: nice, not on the core path.
