@@ -10,6 +10,7 @@
 import { Redirect, router } from 'expo-router';
 import React, { useState, type ReactNode } from 'react';
 import { View } from 'react-native';
+import { useFamilyDates } from '../calendar/useFamilyDates';
 import { useNewMessages } from '../messenger/newMessages';
 import { useApp, useFeed } from '../state/AppContext';
 import { BackButton, MenuLine, MenuRow, Screen, Txt, type Icon } from '../ui/kit';
@@ -17,13 +18,14 @@ import { AppGate } from './AppGate';
 import { EventsScreen, type EventsView } from './EventsScreen';
 import { EasyView, LightOrDark, ThemePicker } from './Preferences';
 
-export type RowId = 'messages' | 'groups' | 'events' | 'easyView' | 'look' | 'theme' | 'me' | 'help';
+export type RowId = 'messages' | 'groups' | 'events' | 'birthdays' | 'easyView' | 'look' | 'theme' | 'me' | 'help';
 interface Row { id: RowId; text: string; icon: Icon; path: string }
 
 const ROWS: Row[] = [
   { id: 'messages', text: 'Messages', icon: { sf: 'bubble.left.and.bubble.right', md: 'chat' }, path: '/more/messages' },
   { id: 'groups', text: 'Groups', icon: { sf: 'person.3', md: 'groups' }, path: '/more/groups' },
   { id: 'events', text: 'Events', icon: { sf: 'calendar', md: 'event' }, path: '/more/events' },
+  { id: 'birthdays', text: 'Birthdays', icon: { sf: 'gift', md: 'cake' }, path: '/more/birthdays' },
   { id: 'easyView', text: 'Easy view', icon: { sf: 'textformat.size', md: 'format_size' }, path: '/more/easy-view' },
   { id: 'look', text: 'Light or dark', icon: { sf: 'sun.max', md: 'contrast' }, path: '/more/look' },
   { id: 'theme', text: 'Theme', icon: { sf: 'paintpalette', md: 'palette' }, path: '/more/theme' },
@@ -98,6 +100,8 @@ export function MorePreference({ which }: { which: 'easyView' | 'look' | 'theme'
 export function MoreScreen() {
   const app = useApp();
   const news = useNewMessages();
+  // CAL-17: the Birthdays row shows unless this server has no calendar yet (then it hides quietly).
+  const calendar = useFamilyDates(app.deps.api, app.space?.space_id ?? null, { refresh: false });
   // Reading a chat marks it seen, which recounts the "N new" here (markChatSeen), so the menu needs no refresh on Back.
   if (app.status !== 'ready' || !app.space) return <AppGate />;
 
@@ -105,7 +109,7 @@ export function MoreScreen() {
     <Screen>
       <Txt variant="display" role="header">More</Txt>
       <View>
-        {moreRowsFor(app.space.role).map((r, i) => (
+        {moreRowsFor(app.space.role).filter((r) => r.id !== 'birthdays' || calendar.status !== 'missing').map((r, i) => (
           <React.Fragment key={r.id}>
           {i ? <MenuLine /> : null}
           <MenuRow

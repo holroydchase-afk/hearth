@@ -23,6 +23,7 @@ const FILES: Record<string, () => unknown> = {
   '(tabs)/more/messages': () => require('../app/(tabs)/more/messages'),
   '(tabs)/more/groups': () => require('../app/(tabs)/more/groups'),
   '(tabs)/more/events': () => require('../app/(tabs)/more/events'),
+  '(tabs)/more/birthdays': () => require('../app/(tabs)/more/birthdays'),
   '(tabs)/more/easy-view': () => require('../app/(tabs)/more/easy-view'),
   '(tabs)/more/look': () => require('../app/(tabs)/more/look'),
   '(tabs)/more/theme': () => require('../app/(tabs)/more/theme'),

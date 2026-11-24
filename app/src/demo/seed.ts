@@ -55,6 +55,32 @@ export const DEMO_POSTS: DemoPost[] = [
     hearts: ['jo', 'earl'], replies: [] },
 ];
 
+/** CAL-19: the demo family's dates. Grandma Jo's and Grandpa Earl's birthdays are counted from the visit (days from
+ *  today), so the Gallery line always shows; Mia (a made-up kid) and the parents' anniversary are fixed. */
+export const DEMO_DATES = {
+  members: [{ who: 'jo', inDays: 0 }, { who: 'earl', inDays: 9 }] as { who: 'jo' | 'earl'; inDays: number }[],
+  labelled: [
+    { kind: 'birthday', label: 'Mia', month: 3, day: 14 },
+    { kind: 'anniversary', label: 'Chase and Alex', month: 6, day: 20 },
+  ] as { kind: 'birthday' | 'anniversary'; label: string; month: number; day: number }[],
+};
+
+/** CAL-19: puts the demo's dates in (again): Grandma Jo's birthday today, Grandpa Earl's in 9 days, counted from now.
+ *  Also run on a saved demo family each visit, so a returning visitor still sees the line. */
+export function seedDemoDates(be: FakeBackend, now: Date = new Date()): void {
+  const space = F.space.id;
+  const parent = F.users.chase.id;
+  for (const m of DEMO_DATES.members) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + m.inDays);
+    be.saveFamilyDate(parent, { space, id: null, kind: 'birthday', label: null, month: d.getMonth() + 1, day: d.getDate(), memberId: F.users[m.who].id });
+  }
+  const have = be.familyDates(parent, space);
+  for (const l of DEMO_DATES.labelled) {
+    if (have.some((d) => d.kind === l.kind && d.label === l.label)) continue;
+    be.saveFamilyDate(parent, { space, id: null, kind: l.kind, label: l.label, month: l.month, day: l.day, memberId: null });
+  }
+}
+
 /** DEMO-NEW-1: the demo's pretend last visit, so a first-time visitor sees New for you (DEC-58). */
 export const DEMO_LAST_VISIT_DAYS = 3;
 
@@ -113,6 +139,7 @@ export async function seedDemo(be: FakeBackend, load: (name: string) => Promise<
       be.state.comments[c.comment_id]!.created_at = iso(at + (k + 1) * 47 * 60e3);
     });
   }
+  seedDemoDates(be);
   setDemoViewer(be, 'parent');
 }
 
@@ -135,7 +162,8 @@ export function demoKeysToClear(keys: string[]): string[] {
 export const DEMO_SEED_KEY = 'hearth.demoSeed';
 
 export function demoSeedVersion(src: { posts: DemoPost[]; names: Record<string, string> } = { posts: DEMO_POSTS, names: DEMO_NAMES }): string {
-  const s = JSON.stringify([src.posts, src.names, DEMO_LAST_VISIT_DAYS]);
+  // CAL-19: the dates are part of the sample family, so adding them moves the version and returning visitors get them.
+  const s = JSON.stringify([src.posts, src.names, DEMO_LAST_VISIT_DAYS, DEMO_DATES]);
   let h = 5381;
   for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
   return h.toString(36);

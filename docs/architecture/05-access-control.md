@@ -79,6 +79,9 @@ A signed-in account that is in no family can start one through `start_family`. I
 ## Search (Built locally, migration 0025)
 `search_posts` searches only the posts `private.visible_posts` already lets the caller see, the same function behind Photos and the timeline, and returns rows through `private.feed_rows`, which gives a post's audience (its group titles) to the sender only. Words match the title, caption and sender's name, never group names, replies or anything inside a photo. The function is STABLE, so it can't write what was typed, and the app never logs it. Supabase's own database logs (slow queries) could still hold the words; checking and pinning those settings is TRACKER R42 (SEARCH-R2). `backend/tests/search_test.sql` checks a grandparent outside a group, the co-parent, another family and a deleted post.
 
+## Birthdays and dates (Built locally, migration 0029; not deployed)
+Dates are family-wide, not per group: RLS on `public.family_dates` lets a member select every row in their own families (`private.my_space_ids()`), and nothing else. `list_family_dates` returns zero rows to anyone outside the family. Writes go only through security-definer RPCs with `search_path = ''`; the table has no insert, update or delete grant. Any member, viewers included, sets or clears only their own birthday (`set_my_birthday`). Parents (owner, adult) add, change and delete any date, including a relative's birthday entered for them (`save_family_date`, `delete_family_date`). A viewer may delete only their own birthday. Every other attempt, and any date id from another family, is `P0002`, the same as an unknown id, so ids can't be probed. A member's birthday row carries their current display name to everyone in that family, which is wider than "Who sees a name" below for a viewer whose groups don't overlap; the spec chose family-wide on purpose (DEC-81). Month and day only: there is no year or age column (`backend/tests/family_dates_test.sql` checks the catalog). 200 dates per family.
+
 ## Who sees a name (Built)
 
 A relative's profile (display name) is visible to the people they share a family space with as a parent, to people in a live group with them (`public.can_see_profile`; a deleted group, or a deleted family space, no longer counts, migration 0012, S13), and to whoever can read one of their replies. Only a family space's parents can unlink a child from that space; a co-parent who is a viewer there can't (migration 0012, S11).
@@ -107,4 +110,4 @@ RLS limits what each family member's app can read. It does not limit Hearth's se
 - **Planned:** event dates (`starts_on`, `ends_on`) exist in the schema but the app doesn't use them yet.
 
 ---
-Last checked against code: 2026-11-19, migration 0027 (circles_select and export_my_data keep group names with the parents).
+Last checked against code: 2026-11-24, migration 0029 (family_dates RLS and the four calendar RPCs); earlier 2026-11-19, migration 0027 (circles_select and export_my_data keep group names with the parents).

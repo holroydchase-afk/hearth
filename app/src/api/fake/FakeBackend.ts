@@ -23,6 +23,7 @@ import type {
   HeartState, InvitePreview, Reaction, ReactionCounts, ReactionState, ReactionSummary, PostViewers, MediaKind, MediaStatus, Role, Session, Space, UploadGrant, UploadItemSpec, ViewGrant,
   TimelineArgs, TimelinePost, TimelineYear, SearchArgs,
   ChatKind, ChatMember, ChatRow, ChatRowKind, ChatSummary, ClaimedKeyPackage,
+  FamilyDate, FamilyDateKind, SaveFamilyDateArgs,
 } from '../types';
 import { fromBase64, toBase64 } from '../../crypto/base64';
 import { randomBytes, uuid } from '../../crypto/random';
@@ -63,6 +64,20 @@ interface InviteRow {
   householdMeansEveryone?: boolean;
 }
 
+interface FamilyDateRow {
+  id: string; space: string; kind: FamilyDateKind; label: string | null; month: number; day: number;
+  member: string | null; created_by: string; created_at: string;
+}
+const DATE_KINDS: FamilyDateKind[] = ['birthday', 'anniversary', 'other'];
+const MONTH_DAYS = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+/** 0029 private.check_month_day: a real month and day (Feb 29 allowed). The error never repeats what was sent. */
+function checkMonthDay(month: number | null, day: number | null): void {
+  if (!Number.isInteger(month) || !Number.isInteger(day) || month! < 1 || month! > 12 || day! < 1 || day! > MONTH_DAYS[month! - 1]!) {
+    throw new ApiError('22023', 'that date is not on the calendar');
+  }
+}
+const MAX_FAMILY_DATES = 200;
+
 export interface FakeState {
   users: Record<string, UserRow>;
   /** deleted: spaces.deleted_at is set (0024 retires an empty family this way; the purge removes it later). */
@@ -92,6 +107,8 @@ export interface FakeState {
   startedFamilies?: { space: string; by: string; client_id: string; at: string }[];
   /** 0024 private.rate_limit_events for action 'start_family': start times (ms) per user; retiring never resets them. */
   startEvents?: Record<string, number[]>;
+  /** 0029 life calendar: month and day only, family-wide (CAL-*). */
+  familyDates?: FamilyDateRow[];
   /** 0015 messenger relay: opaque base64 MLS bytes only. */
   chat?: {
     devices: Record<string, string>;
@@ -961,6 +978,85 @@ export class FakeBackend {
       .map((m) => ({ user_id: m.user, name: this.state.users[m.user]?.name ?? '?', role: m.role }));
   }
 
+  // ---------------- life calendar (0029, CAL-*) ----------------
+  private datesIn(space: string): FamilyDateRow[] {
+    // CAL-8: a member-linked date goes when that member leaves (the SQL's cascade).
+    return (this.state.familyDates ??= []).filter((d) => d.space === space && (!d.member || !!this.member(space, d.member)));
+  }
+  private roomForDate(space: string): void {
+    if (this.datesIn(space).length >= MAX_FAMILY_DATES) throw new ApiError('UNKNOWN', 'this family already has 200 dates');
+  }
+
+  /** list_family_dates: every date in the family, month then day; not a member: none. */
+  familyDates(user: string | null, space: string): FamilyDate[] {
+    const me = this.requireUser(user);
+    if (!this.member(space, me)) return [];
+    return this.datesIn(space)
+      .slice()
+      .sort((a, b) => a.month - b.month || a.day - b.day || a.created_at.localeCompare(b.created_at))
+      .map((d) => ({
+        id: d.id, kind: d.kind, label: d.label, month: d.month, day: d.day, member_id: d.member,
+        member_name: d.member ? this.state.users[d.member]?.name ?? null : null,
+      }));
+  }
+
+  /** set_my_birthday: any member, their own; both null clears. */
+  setMyBirthday(user: string | null, space: string, month: number | null, day: number | null): void {
+    const me = this.requireUser(user);
+    if (!this.member(space, me)) throw new ApiError('P0002', 'not found');
+    const rows = (this.state.familyDates ??= []);
+    const mine = rows.find((d) => d.space === space && d.member === me);
+    if (month === null && day === null) {
+      if (mine) this.state.familyDates = rows.filter((d) => d !== mine);
+    } else {
+      checkMonthDay(month, day);
+      if (mine) Object.assign(mine, { month, day });
+      else {
+        this.roomForDate(space);
+        rows.push({ id: uuid(), space, kind: 'birthday', label: null, month: month!, day: day!, member: me, created_by: me, created_at: this.now() });
+      }
+    }
+    this.changed();
+  }
+
+  /** save_family_date: parents only; id null adds; a member's birthday is one per member per family. */
+  saveFamilyDate(user: string | null, a: SaveFamilyDateArgs): string {
+    const me = this.requireUser(user);
+    if (!this.isPoster(a.space, me)) throw new ApiError('P0002', 'not found');
+    const rows = (this.state.familyDates ??= []);
+    const existing = a.id ? rows.find((d) => d.id === a.id && d.space === a.space) : undefined;
+    if (a.id && !existing) throw new ApiError('P0002', 'not found');
+    if (a.memberId && !this.member(a.space, a.memberId)) throw new ApiError('P0002', 'not found');
+    if (!DATE_KINDS.includes(a.kind)) throw new ApiError('22023', 'pick a kind');
+    let label = a.label?.trim() || null;
+    if (a.memberId) {
+      if (a.kind !== 'birthday') throw new ApiError('22023', 'only a birthday belongs to a member');
+      label = null;
+    } else if (!label || label.length > 60) throw new ApiError('22023', 'a name of 1 to 60 letters');
+    checkMonthDay(a.month, a.day);
+    const target = existing ?? (a.memberId ? rows.find((d) => d.space === a.space && d.member === a.memberId) : undefined);
+    if (target) {
+      Object.assign(target, { kind: a.kind, label, month: a.month, day: a.day, member: a.memberId });
+      this.changed();
+      return target.id;
+    }
+    this.roomForDate(a.space);
+    const id = uuid();
+    rows.push({ id, space: a.space, kind: a.kind, label, month: a.month, day: a.day, member: a.memberId, created_by: me, created_at: this.now() });
+    this.changed();
+    return id;
+  }
+
+  /** delete_family_date: parents any date; anyone their own birthday; otherwise "not found". */
+  deleteFamilyDate(user: string | null, id: string): void {
+    const me = this.requireUser(user);
+    const rows = (this.state.familyDates ??= []);
+    const d = rows.find((x) => x.id === id);
+    if (!d || !this.member(d.space, me) || !(this.isPoster(d.space, me) || d.member === me)) throw new ApiError('P0002', 'not found');
+    this.state.familyDates = rows.filter((x) => x !== d);
+    this.changed();
+  }
+
   /** private.feature_on for each known feature: global switch AND family switch AND can(capability); a missing row is the default. */
   myFeatures(user: string | null, space: string): string[] {
     const me = this.requireUser(user);
@@ -1199,6 +1295,10 @@ export class FakeApi implements HearthApi {
   familyPeople = (space: string) => this.run(() => this.be.familyPeople(this.userId, space));
   myFeatures = (space: string) => this.run(() => this.be.myFeatures(this.userId, space));
   canStartFamily = () => this.run(() => this.be.canStartFamily(this.userId));
+  familyDates = (space: string) => this.run(() => this.be.familyDates(this.userId, space));
+  setMyBirthday = (space: string, month: number | null, day: number | null) => this.run(() => this.be.setMyBirthday(this.userId, space, month, day));
+  saveFamilyDate = (a: SaveFamilyDateArgs) => this.run(() => this.be.saveFamilyDate(this.userId, a));
+  deleteFamilyDate = (id: string) => this.run(() => this.be.deleteFamilyDate(this.userId, id));
   startFamily = (a: StartFamilyArgs) => this.run(() => this.be.startFamily(this.userId, a.clientId, a.name, a.sides));
   setFamilyFeature = (space: string, feature: string, enabled: boolean) =>
     this.run(() => this.be.setFamilyFeature(this.userId, space, feature, enabled));

@@ -13,7 +13,9 @@ const galleryLoaded = async (page) => {
 };
 const openBirthdays = async (page) => {
   await page.getByRole('tab', { name: /^More/ }).click();
-  await page.getByRole('button', { name: 'Birthdays' }).filter({ visible: true }).click({ timeout: 15_000 });
+  // engineer, flagged for qa-tdd: exact, because Playwright's name match is a substring and Gallery's "See birthdays"
+  // (CAL-16, always shown in the demo) stays in the page under More on the web.
+  await page.getByRole('button', { name: 'Birthdays', exact: true }).filter({ visible: true }).click({ timeout: 15_000 });
   await expect(page.getByRole('heading', { name: 'Birthdays and dates' })).toBeVisible();
 };
 const errors = [];
