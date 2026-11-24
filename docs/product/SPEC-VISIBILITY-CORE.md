@@ -1,6 +1,6 @@
 # Spec: one visibility core, the co-parent bridge, and one Share composer
 
-Status: **Phases 1 and 1b built locally** (Nov 24, 2026; Chase "Ok agreed to all", DEC-83; migrations 0031 and 0032, `packages/visibility/core`; not deployed). Phase 2 next; bridge after the beta. TRACKER R77. Persona check: `decisions/2026-11-24-visibility-core.md`. Data model: `docs/architecture/07-visibility-model.md` (its names win: `vis.kinds`, `vis.can_see`, `vis.sees_item`, `vis.attach`).
+Status: **Phases 1 and 1b built locally** (Nov 24, 2026; Chase "Ok agreed to all", DEC-83; migrations 0031 and 0032, `packages/visibility/core`; not deployed). Phase 2 built locally on top (Nov 24; VIS-8, 10, 11, 12 green, VIS-9 green except `delete_post`'s promised repeat no-op; migration 0033); bridge after the beta. TRACKER R77. Persona check: `decisions/2026-11-24-visibility-core.md`. Data model: `docs/architecture/07-visibility-model.md` (its names win: `vis.kinds`, `vis.can_see`, `vis.sees_item`, `vis.attach`).
 
 **Simple for the user, sophisticated underneath.** One core decides who sees every row of every kind. Families never see it; they pick names on a postcard. The headline feature it unlocks is the **co-parent bridge**: two homes sharing their child's photos and dates on purpose, with each side's relatives kept apart.
 

@@ -22,8 +22,8 @@
 #   tests/vis_registry_test.sql  VIS-1, 3, 4, 5: the visibility coverage gate (SPEC-VISIBILITY-CORE C3; red until 0031+)
 #   tests/vis_core_test.sql   VIS-7, 22, 24: vis.can_see / vis.sees_item agree with today's rules, never callable from the app
 #   tests/vis_calendar_test.sql  VIS-18: the life calendar (0029) is a Person-class kind; can_see equals its RLS (Phase 5)
-#   tests/vis_oracle_test.sql  VIS-8..11: the oracle across readers, fixed seed 42 (Phase 2, R51; red until tests/vis_oracle/ exists)
-#   tests/vis_oracle_nightly_test.sh  VIS-12: the nightly job writes a dated matrix (red until tests/vis_oracle/nightly.sh)
+#   tests/vis_oracle_test.sql  VIS-8..11: the oracle across readers, fixed seed 42 (Phase 2, R51; generator tests/vis_oracle/generate.sql, migration 0033)
+#   tests/vis_oracle_nightly_test.sh  VIS-12: the nightly job (tests/vis_oracle/nightly.sh) writes a dated matrix
 #   tests/vis_gate_test.sh    VIS-2, 6, 23, 24: the gate bites (scratch table, second policy), edge functions, API schemas
 #   ../packages/visibility/core/test.sql  VIS-19, 20, 23: the generic core's conformance kit, with a toy product (rolls back)
 #   ../packages/visibility/core/no_product_words_test.sh  VIS-21: no Hearth words in the generic template

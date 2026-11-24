@@ -90,7 +90,10 @@ begin
           if k.relation = 'public.profiles'::regclass then
             want := public.can_see_profile(r.id::uuid);
           elsif k.relation = 'public.children'::regclass then
-            want := false;   -- 0032's registry note: default deny for a child until the oracle adds a child rule
+            -- 0033 (QA-R1): the child rule is children_select itself, read as that user under RLS
+            execute 'set local role authenticated';
+            execute 'select exists (select 1 from public.children where id = $1)' into want using r.id::uuid;
+            execute 'reset role';
           elsif k.relation = 'public.family_dates'::regclass then
             select private.may_see_family_date(d.space_id, d.member_id) into want
               from public.family_dates d where d.id = r.id::uuid;
@@ -221,17 +224,17 @@ select tests.ok_sql($$select not exists (select 1 from pg_proc p join pg_namespa
                                            and (p.proname in ('sees_post', 'sees_item', 'can_see')))$$,
                     'VIS-24 no wrapper named sees_post, sees_item or can_see sits in an exposed schema');
 -- PRIV-VC-B1 (P2, privacy review Nov 24): every private.vis_* rule takes a viewer id, so each would answer "can
--- this other person see X" if callable. All eight are pinned (a ninth must be added here on purpose), and
+-- this other person see X" if callable. All nine are pinned (0033 added vis_sees_child on purpose, QA-R1), and
 -- neither anon nor authenticated may execute any of them.
 create temp table vis24_rules (fn text);
 insert into vis24_rules values
   ('private.vis_sees_person(uuid,uuid)'), ('private.vis_sees_family_date(uuid,uuid)'), ('private.vis_sees_circle(uuid,uuid)'),
   ('private.vis_sees_space(uuid,uuid)'), ('private.vis_sees_invite(uuid,uuid)'), ('private.vis_sees_household(uuid,uuid)'),
-  ('private.vis_media_ok(uuid,uuid)'), ('private.vis_comment_ok(uuid,uuid)');
+  ('private.vis_media_ok(uuid,uuid)'), ('private.vis_comment_ok(uuid,uuid)'), ('private.vis_sees_child(uuid,uuid)');
 select tests.ok_sql($$select coalesce(string_agg(p.oid::regprocedure::text, ',' order by p.oid::regprocedure::text), '')
                              = (select string_agg(fn, ',' order by fn) from vis24_rules)
                         from pg_proc p where p.pronamespace = 'private'::regnamespace and p.proname like 'vis\_%'$$,
-                    'PRIV-VC-B1 the private.vis_* viewer-id rules are exactly the eight pinned ones');
+                    'PRIV-VC-B1 the private.vis_* viewer-id rules are exactly the nine pinned ones');
 select tests.ok_sql(format($$select not has_function_privilege('anon', %L, 'execute')$$, fn),
                     format('PRIV-VC-B1 signed out (anon) can''t execute %s', fn)) from vis24_rules order by fn;
 select tests.ok_sql(format($$select not has_function_privilege('authenticated', %L, 'execute')$$, fn),
