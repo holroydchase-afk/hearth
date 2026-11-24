@@ -1054,8 +1054,8 @@ test('SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to
   expect.soft(await tiles.count()).toBeGreaterThan(1);
   expect.soft(await page.getByLabel(/, \d+ people, picked$/).count()).toBe(0);
   const off = page.getByRole('button', { name: 'Pick who gets it' });
-  await expect.soft(off).toBeVisible();
-  await expect.soft(off).toBeDisabled();
+  await expect.soft(off, 'Pick who gets it shows').toBeVisible();
+  await expect.soft(off, 'Pick who gets it is off with nothing picked').toBeDisabled();
   expect.soft(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: path.join(shots, 'share-pc-13-light.png') });
   await page.emulateMedia({ colorScheme: 'dark' });
@@ -1069,8 +1069,15 @@ test('SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to
   const names = String(await send.getAttribute('aria-label') ?? await send.innerText()).replace(/^Send to /, '');
   await send.click();
   await expect(page.getByText(`Shared with ${names}.`).filter({ visible: true })).toBeVisible();
-  const first = page.locator('[data-testid^="post-"]').filter({ visible: true }).first();
-  await expect.soft(first.getByRole('button', { name: /^Open photo 1 of 3/ })).toBeVisible();
+  // T39 (QA-R13): wait for the new post itself, then check it is on top. Every demo seed post is 3+ hours old, so
+  // the new one is the only post that reads "Just now". "The first visible post" alone could be an older one
+  // under load. Sending runs in the browser (resize, strip, encrypt 3 photos); under full-suite load it was still
+  // "Sending 1 of 3…" after 15 s (Nov 24), so the wait for the post allows 60 s. The test's own limit is 90 s.
+  const posts = page.locator('[data-testid^="post-"]').filter({ visible: true });
+  const newPost = posts.filter({ has: page.getByText('Just now', { exact: true }) });
+  await expect(newPost, 'the new post shows on Feed').toHaveCount(1, { timeout: 60_000 });
+  expect.soft(await posts.first().getAttribute('data-testid'), 'the new post is on top of Feed').toBe(await newPost.getAttribute('data-testid'));
+  await expect.soft(newPost.getByRole('button', { name: /^Open photo 1 of 3/ }), 'the new post holds the 3 photos').toBeVisible();
 
   // Grandma Jo (Easy view on for her): her Share, if she can post, names people only; never a group's title.
   await details(page);
