@@ -1,9 +1,0 @@
-{
- "suite": "app",
- "at": "2026-11-24T19:30:00-05:00",
- "label": "HRT-WEB.1 privacy-security fixes (QA-R3..R6): all suites 3x after the fix (flaky: e2e:demo T42, clean rerun green)",
- "passed": 12611,
- "failed": 1,
- "results": {},
- "note": "3 runs on f8d48ed plus the uncommitted HRT-WEB.1 tree with the engineer's PRIV-WEB fixes: jest 2319 passed (1 skipped, 1 todo, 178 suites) x3, typecheck clean x3, e2e:web 10 passed x3, prototype e2e 33 x3, 17 test-all script suites ok x3, backend SQL 1788 x3 (no backend change). e2e:demo 53/1, 54, 54: demo-calendar.spec.js GUX-R2 timed out waiting for the December button in run 1, which overlapped qa-tdd's background jest (QA-R7, T42 open); a clean rerun gave 54 passed x3. Red to green: QA-R3 PRIV-WEB-R1 x2, QA-R4 PRIV-WEB-R2 x2, QA-R5 PRIV-WEB-R5 x2 (jest), QA-R6 persist after sign-in (e2e:web), each green x3; PRIV-WEB-R6 canary green x3. passed = 3 x (2319 + 10 + 33 + 1788) + 53 + 54 + 54. Not run: Deno, starter invites, e2e:site, real Safari/Firefox/iPhone. e2e/results/web-app-priv-green-3x-2026-11-24.txt"
-}

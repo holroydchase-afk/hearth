@@ -14,7 +14,7 @@ Base: f8d48ed plus the uncommitted HRT-WEB.1 working tree (branch claude/project
     locator.click timeout 90000ms waiting for getByRole('button', { name: 'December', exact: true }) after "Add my birthday" (line 100).
     Run 1 overlapped qa-tdd's own background jest runs 2-3 (CPU load); runs 2-3 ran alone. Spec and calendar code not touched by this branch.
   clean rerun, nothing else running, runs 4-6: 54 passed, 5 skipped x3
-  Filed QA-R7 / T42 (P2, open): the month picker step does not wait for the picker to open; under load it times out.
+  Filed QA-R7 / T43 (P2, open): the month picker step does not wait for the picker to open; under load it times out.
 == prototype e2e, 3 runs: 33 passed x3
 == test-all script suites (agent roster/sync/runs/skip, persona checks, Expo Go SDK + test, log check, SPDX, grandparent guide, test-all helper, test totals, EAS, site analytics, site meta, deploy script, Supabase starter scripts), 3 runs: 17/17 ok x3
 == backend SQL (local Postgres 16, ~68 s a run), 3 runs: 1788 passed, 0 failed x3 (no backend change)
