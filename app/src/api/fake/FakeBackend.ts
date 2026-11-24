@@ -54,7 +54,7 @@ interface MediaRow {
   duration_ms: number | null; byte_size: number; thumb_byte_size: number; status: MediaStatus; dek: string;
   display_key: string; thumb_key: string; uploader: string;
 }
-interface CommentRec { id: string; post: string; author: string; body: string; created_at: string; client_id: string }
+interface CommentRec { id: string; post: string; author: string; body: string; created_at: string; client_id: string; deleted?: boolean }
 interface InviteRow {
   code: string; space: string; role: Role; circles: string[]; created_by: string; target_email: string | null;
   /** BETA-SMS-8: E.164, only that number may redeem. */
@@ -85,7 +85,7 @@ export interface FakeState {
   members: MemberRow[];
   circles: Record<string, CircleRow>;
   /** `at`: when they were added (ISO); fixture rows have none and count as always there. */
-  circleMembers: { circle: string; user: string; at?: string }[];
+  circleMembers: { circle: string; user: string; at?: string; sees_from?: string | null }[];
   posts: Record<string, PostRow>;
   media: Record<string, MediaRow>;
   objects: Record<string, string>; // key -> base64 ciphertext
@@ -148,6 +148,25 @@ export const FIXTURE = {
   invites: { jo: 'GRANDMAJ23', expired: 'EXPRDEXPRD' },
 };
 
+/** VIS-11: the rows of backend/tests/vis_oracle/fixtures/seed-N.json (vis_oracle.fixture_json()). */
+export interface OracleFixtureRows {
+  users: { id: string; name: string }[];
+  spaces: { id: string; name: string; deleted: boolean; reply_audience: ReplyAudience }[];
+  members: { space: string; user: string; role: Role }[];
+  circles: { id: string; space: string; name: string; kind: CircleKind; deleted: boolean }[];
+  circle_members: { circle: string; user: string; sees_from: string | null }[];
+  posts: {
+    id: string; space: string; author: string; status: 'draft' | 'published'; deleted: boolean; published_at: string | null;
+    taken_at: string | null; title: string | null; caption: string | null; circles: string[];
+  }[];
+  comments: { id: string; post: string; author: string; body: string; created_at: string; deleted: boolean }[];
+  reactions: { post: string; user: string; emoji: Reaction; created_at: string }[];
+  family_dates: {
+    id: string; space: string; kind: FamilyDateKind; label: string | null; month: number; day: number;
+    member: string | null; created_by: string;
+  }[];
+}
+
 export interface FixtureOptions {
   /** Grandma Jo already joined (contract + screen tests) or still holds an invite (web smoke test). */
   joIsMember?: boolean;
@@ -199,6 +218,37 @@ export class FakeBackend {
     return new FakeBackend(s, persist);
   }
 
+  /** VIS-11: load the server oracle's generated family (backend/tests/vis_oracle/fixtures/seed-N.json) so the Fake
+   *  can be held to vis.can_see on the same rows (app/src/api/__tests__/visOracle.test.ts). Test use only. */
+  static fromOracleFixture(fx: OracleFixtureRows): FakeBackend {
+    const s = FakeBackend.empty();
+    for (const u of fx.users) s.users[u.id] = { id: u.id, email: `${u.id}@example.com`, name: u.name };
+    for (const sp of fx.spaces) {
+      s.spaces[sp.id] = { id: sp.id, name: sp.name, reply_audience: sp.reply_audience, deleted: sp.deleted };
+    }
+    for (const m of fx.members) s.members.push({ space: m.space, user: m.user, role: m.role, invited_by: null });
+    for (const c of fx.circles) {
+      s.circles[c.id] = { id: c.id, space: c.space, name: c.name, created_by: '', deleted: c.deleted, kind: c.kind };
+    }
+    for (const cm of fx.circle_members) s.circleMembers.push({ circle: cm.circle, user: cm.user, sees_from: cm.sees_from });
+    for (const p of fx.posts) {
+      s.posts[p.id] = {
+        id: p.id, space: p.space, author: p.author, caption: p.caption, status: p.status, deleted: p.deleted,
+        circles: [...p.circles], client_id: p.id, created_at: p.published_at ?? '2026-01-01T00:00:00.000Z',
+        published_at: p.published_at, taken_at: p.taken_at, title: p.title,
+      };
+    }
+    for (const c of fx.comments) {
+      s.comments[c.id] = { id: c.id, post: c.post, author: c.author, body: c.body, created_at: c.created_at, client_id: c.id, deleted: c.deleted };
+    }
+    for (const r of fx.reactions) s.hearts.push({ post: r.post, user: r.user, emoji: r.emoji });
+    s.familyDates = fx.family_dates.map((d) => ({
+      id: d.id, space: d.space, kind: d.kind, label: d.label, month: d.month, day: d.day, member: d.member,
+      created_by: d.created_by, created_at: '2026-01-01T00:00:00.000Z',
+    }));
+    return new FakeBackend(s);
+  }
+
   clientFor(userId: string | null, opts: { trackAppSession?: boolean; latencyMs?: number } = {}): HearthApi {
     return new FakeApi(this, userId, opts);
   }
@@ -230,11 +280,14 @@ export class FakeBackend {
   /** can_view_post(): author (while a member), or a member of a circle in the audience. */
   canView(user: string | null, p: PostRow | undefined): p is PostRow {
     if (!user || !p || p.deleted) return false;
+    if (this.state.spaces[p.space]?.deleted) return false; // VIS-11: nothing in a deleted family
     if (!this.member(p.space, user)) return false;
     if (p.author === user) return true;
     if (p.status !== 'published') return false;
     if (this.isPoster(p.space, user)) return true; // 0011 / SPEC-GROUPS: parents see every published post
-    return p.circles.some((c) => !this.state.circles[c]?.deleted && this.inCircle(c, user));
+    // VIS-11: a share-history cutoff (circle_members.sees_from) hides posts sent before it
+    return p.circles.some((c) => !this.state.circles[c]?.deleted && this.state.circleMembers.some((x) =>
+      x.circle === c && x.user === user && (!x.sees_from || (!!p.published_at && Date.parse(p.published_at) >= Date.parse(x.sees_from)))));
   }
   visiblePost(user: string | null, post: string): PostRow {
     const p = this.state.posts[post];
@@ -707,7 +760,7 @@ export class FakeBackend {
   getComments(user: string | null, post: string, limit = 50): CommentRow[] {
     const me = this.requireUser(user);
     const p = this.visiblePost(me, post); // get_comments raises P0002 like the server (0011)
-    return Object.values(this.state.comments).filter((c) => c.post === post && this.canSeeReply(me, p!, c.author))
+    return Object.values(this.state.comments).filter((c) => c.post === post && !c.deleted && this.canSeeReply(me, p!, c.author))
       .sort((a, b) => (a.created_at < b.created_at ? -1 : 1)).slice(0, Math.min(limit, 200))
       .map((c) => ({ comment_id: c.id, author_id: c.author, author_name: this.state.users[c.author]?.name ?? '', body: c.body, created_at: c.created_at }));
   }
@@ -996,7 +1049,7 @@ export class FakeBackend {
   /** private.may_see_family_date (PRIV-R2): a member's birthday follows who may see that member's name; a date with
    *  no member goes to the family's parents and its Everyone group only. */
   private seesDate(me: string, d: FamilyDateRow): boolean {
-    if (!this.member(d.space, me)) return false;
+    if (this.state.spaces[d.space]?.deleted || !this.member(d.space, me)) return false; // PRIV-R2: live families only
     if (this.isPoster(d.space, me)) return true;
     if (d.member) return this.seesProfile(me, d.member);
     return Object.values(this.state.circles).some((c) => c.space === d.space && c.kind === 'everyone' && !c.deleted && this.inCircle(c.id, me));

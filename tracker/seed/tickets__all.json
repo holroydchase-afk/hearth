@@ -1400,19 +1400,6 @@
    "fixed": null
   },
   {
-   "id": "T38",
-   "kind": "bug",
-   "layer": "app",
-   "severity": "Medium",
-   "status": "fixed",
-   "title": "Live check (Nov 24): the laptop demo panel's 'Try this' step 3 (app/src/demo/DemoFrame.tsx TRY) still says 'Tap Search and type lake.' After the Kevin/orchard demo (DEC-82) 'lake' finds nothing; 'orchard' finds 1 photo (site.spec.js DEMO-LIVE-2). Failing test first: DEMO-NEW-6, T38 now expects 'Search and type orchard', plus a T38 guard that the hinted word really finds a post in DEMO_POSTS (title, caption or sender name, as demo search reads) so the hint can't drift again. Red, 1 run: 2 failed, 4 passed. Fixed (Nov 24): step 3 now says 'Tap Search and type orchard.'; that file green, 6 passed, typecheck clean. Test: that file",
-   "tests": [
-    "app/src/demo/__tests__/demoFrame.test.tsx"
-   ],
-   "found": "2026-11-24",
-   "fixed": "2026-11-24"
-  },
-  {
    "id": "T35",
    "kind": "test fix",
    "layer": "app",
@@ -1421,6 +1408,30 @@
    "title": "qa-tdd test bug (life calendar green run, Nov 24): app/src/screens/__tests__/calendar.test.tsx CAL-14 'icon and the word' counted Text nodes for the icon, but the row's icon is a SymbolView, which renders no Text under jest. It stayed red against a correct build (6fd4b91). Fixed: assert a non-chevron SymbolView inside the Birthdays row, as RD-15 does; no expectation weakened (word still checked). Green x3. Test: that file",
    "tests": [
     "app/src/screens/__tests__/calendar.test.tsx"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
+   "id": "T38",
+   "kind": "test fix",
+   "layer": "backend",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (VIS review, Nov 24): VIS-7's every-row parity check in backend/tests/vis_core_test.sql reaches only the 13 of 34 kinds with a uuid id. The other 21 (composite keys like post_audience, reaction, media_key, circle_member; bigint ids like chat_message, comment_mode_log) are pinned by name but get no per-row can_see vs RLS comparison; VIS-4 still checks their select policies. Fix: compare those rows through their item/owner column instead of id",
+   "tests": [],
+   "found": "2026-11-24",
+   "fixed": null
+  },
+  {
+   "id": "T40",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "Live check (Nov 24): the laptop demo panel's 'Try this' step 3 (app/src/demo/DemoFrame.tsx TRY) still says 'Tap Search and type lake.' After the Kevin/orchard demo (DEC-82) 'lake' finds nothing; 'orchard' finds 1 photo (site.spec.js DEMO-LIVE-2). Failing test first: DEMO-NEW-6, T40 now expects 'Search and type orchard', plus a T40 guard that the hinted word really finds a post in DEMO_POSTS (title, caption or sender name, as demo search reads) so the hint can't drift again. Red, 1 run: 2 failed, 4 passed. Fixed (Nov 24): step 3 now says 'Tap Search and type orchard.'; that file green, 6 passed, typecheck clean. Test: that file",
+   "tests": [
+    "app/src/demo/__tests__/demoFrame.test.tsx"
    ],
    "found": "2026-11-24",
    "fixed": "2026-11-24"
