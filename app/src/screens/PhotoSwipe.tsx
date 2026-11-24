@@ -135,7 +135,7 @@ export function PhotoSwipe(props: Props) {
       />
       <View style={{ paddingHorizontal: 14, paddingTop: 12, gap: 8 }}>
         {n > 1 ? <View accessible accessibilityLabel={`Photo ${pos + 1} of ${n}`} accessibilityLiveRegion="polite" style={{ alignItems: 'center' }}>
-          <Txt variant="strong">{`${pos + 1} of ${n}`}</Txt>
+          <Txt variant="headline">{`${pos + 1} of ${n}`}</Txt>
         </View> : null}
         {below && items[pos] ? below(items[pos]!) : null}
         <View style={{ flexDirection: 'row', gap: 12 }}>

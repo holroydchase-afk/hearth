@@ -33,7 +33,7 @@ import { useTabBarSpace } from '../ui/tabBarSpace';
 function EarlierCard({ g, onOpen }: { g: EarlierGroup; onOpen: () => void }) {
   return (
     <Card testID={`earlier-card-${g.authorId}`}>
-      <Txt variant="title" role="header">Older photos</Txt>
+      <Txt variant="title2" role="header">Older photos</Txt>
       <Txt>{`${g.authorName} added ${g.photoCount === 1 ? '1 older photo' : `${g.photoCount} older photos`} from ${monthSpan(g.fromAt, g.openAt)}.`}</Txt>
       <Button variant="secondary" label={`See ${g.authorName}'s older photos by date`} text="See them" onPress={onOpen} />
     </Card>
@@ -155,11 +155,11 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
     <View style={[{ gap: 12 }, side]}>
       {/* RD-11: Gallery's large title is the greeting (shown once the name is known, so it never flips mid-read);
           Feed's title is "Feed" (GUX-R5), the tab's own word. UI-26 still holds: no "Check for new photos" button; pull down to refresh. */}
-      {gallery ? null : <Txt variant="display" role="header">Feed</Txt>}
+      {gallery ? null : <Txt variant="largeTitle" role="header">Feed</Txt>}
       {/* CAL-16: on a day with a family date, one line at the top of Gallery ("Today is Grandma Jo's birthday"). */}
       {gallery ? <TodayLine /> : null}
       {/* RD-18: Gallery has no "Sent by" line; the grid tiles and New for you name the senders. */}
-      {senders && !gallery ? <Txt variant="muted">{`Sent by ${senders}`}</Txt> : null}
+      {senders && !gallery ? <Txt tone="muted">{`Sent by ${senders}`}</Txt> : null}
       {fresh.length && lastSeen?.at ? (
         <NewForYouRow posts={fresh} since={lastSeen.at} onSee={() => setWalk(fresh.map((p) => p.post_id))} />
       ) : null}
@@ -182,7 +182,7 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
     <View style={side}><Loading words="Loading the photos…" /></View>
   ) : (
     <View style={side}>
-      <Txt variant="muted">
+      <Txt tone="muted">
         {app.space.can_post
           ? 'Nothing shared yet. Tap Share to send your first photos.'
           : `No photos yet. When ${app.helper ?? 'your family'} shares photos, they'll show up here.`}
@@ -211,6 +211,8 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
           stickyHeaderIndices={[1]}
           onContentSizeChange={() => setRelayout((n) => n + 1)}
           contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 + tabRoom }}
+          // GUX-T6: on the web, focus and scroll-into-view stop above the floating tab bar (WCAG 2.4.11), not under it.
+          style={tabRoom ? ({ scrollPaddingBottom: tabRoom } as object) : undefined}
           keyboardShouldPersistTaps="handled"
         >
           {/* RD-11 / RD-55: the greeting is the large title; RD-47: the "Search photos" field right under it. */}
@@ -265,7 +267,7 @@ function PushAsk() {
   const app = useApp();
   return (
     <Card testID="push-ask">
-      <Txt variant="title" role="header">Get a notice when the family shares photos?</Txt>
+      <Txt variant="title2" role="header">Get a notice when the family shares photos?</Txt>
       <Txt>Your phone will ask next. Tap Allow to get a notice for new photos.</Txt>
       <Button variant="secondary" label="Turn on notices" icon={{ sf: 'bell', md: 'notifications' }} onPress={() => void app.askPush()} />
       <Button label="Not now, maybe later" text="Not now" variant="quiet" onPress={app.skipPushAsk} />

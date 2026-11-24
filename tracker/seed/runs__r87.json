@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-25T07:00:00-05:00",
+ "label": "PR #174 fix round (B28 GUX-T2, B29 GUX-T6, B30 QA-R4): app suites 3x (flaky: SHARE-PC-13 once)",
+ "passed": 7445,
+ "failed": 1,
+ "results": {},
+ "note": "3 runs at dead8cf, one export:web:demo and one export:web:fake first. jest 2418 passed (1 skipped, 1 todo) x3; typecheck clean x3; check-expo-go OK (SDK 58) x3; e2e:demo 58 passed 1 failed, then 59 passed, 59 passed (5 skipped); e2e:web 5 passed (6 skipped) x3. Flaky, not green: SHARE-PC-13 failed in demo run 1 only (QA-R13, T39; 5 of 5 alone). The fix tests GUX-T2 (jest light/dark and Playwright, gap now 26 px), GUX-T6 and QA-R4 passed all 3 runs, but B28..B30 stay open until a clean 3x, per the caller's 'fixed if green'. Reviewed the engineer's test edit: GUX-W1 keeps flex 1, card inside the wrap, grow and 4:3, and drops only the centring that GUX-T2 replaces; right (its describe title still says 'middle of the space', wording only). Open: QA-R12 ReplyBox line height P2 (later round), UX-R40 as is. Not run: backend SQL, Deno, prototype e2e (no backend or prototype change), phones. e2e/results/type-scale-fixes-green-2026-11-24.txt"
+}

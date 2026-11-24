@@ -47,7 +47,7 @@ export function MonthDayPicker({ month, day, onMonth, onDay }: {
 }) {
   return (
     <View style={{ gap: 12 }}>
-      <Txt variant="strong">Month</Txt>
+      <Txt variant="headline">Month</Txt>
       <View style={styles.wrap}>
         {MONTHS.map((m, i) => (
           <Button key={m} label={m} variant="secondary" selected={month === i + 1} icon={month === i + 1 ? CHECK : undefined} onPress={() => onMonth(i + 1)} />
@@ -55,7 +55,7 @@ export function MonthDayPicker({ month, day, onMonth, onDay }: {
       </View>
       {month ? (
         <>
-          <Txt variant="strong">Day</Txt>
+          <Txt variant="headline">Day</Txt>
           <View style={styles.wrap}>
             {Array.from({ length: daysIn(month) }, (_, i) => i + 1).map((d) => (
               <Button key={d} label={dateWords(month, d)} text={String(d)} variant="secondary" selected={day === d} icon={day === d ? CHECK : undefined} onPress={() => onDay(d)} />
@@ -75,7 +75,7 @@ export function TodayLine() {
   if (!line) return null;
   return (
     <Card testID="today-line" style={{ paddingHorizontal: 0 }}>
-      <Txt variant="title">{line}</Txt>
+      <Txt variant="title2">{line}</Txt>
       <Button label="See birthdays" variant="tinted" icon={{ sf: 'gift', md: 'cake' }} onPress={openBirthdays} />
     </Card>
   );
@@ -102,7 +102,7 @@ export function BirthdayCard() {
   const notNow = () => { setAsked(true); void stopAsking(kv, me, space); };
   return (
     <Card testID="birthday-card">
-      <Txt variant="title" role="header">When's your birthday?</Txt>
+      <Txt variant="title2" role="header">When's your birthday?</Txt>
       <Txt>{PRIVACY}</Txt>
       <Button label="Add my birthday" variant="tinted" icon={{ sf: 'gift', md: 'cake' }} onPress={addMine} />
       <Button label="Not now" variant="quiet" onPress={notNow} />
@@ -160,14 +160,14 @@ function DateForm({ form, mine, onDone, onCancel }: {
   const footer = (
     <>
       {problem ? <Txt role="alert">{problem}</Txt> : null}
-      {form.mode === 'mine' && month && day ? <Txt variant="strong">{`Your birthday: ${dateWords(month, day)}`}</Txt> : null}
+      {form.mode === 'mine' && month && day ? <Txt variant="headline">{`Your birthday: ${dateWords(month, day)}`}</Txt> : null}
       <Button label="Save" variant="tinted" softDisabled={!month || !day} busy={busy} onPress={() => void save()} />
     </>
   );
   return (
     <Screen key="form" footer={footer}>
       <BackButton to="Birthdays" onPress={onCancel} />
-      <Txt variant="display" role="header">{title}</Txt>
+      <Txt variant="title1" role="header">{title}</Txt>
       {form.mode === 'mine' ? <Txt>{PRIVACY}</Txt> : null}
       {linked ? null : (
         <>
@@ -191,10 +191,10 @@ function DateRow({ d, open, onPress }: { d: FamilyDate & { days: number }; open:
   const when = whenWords(d.days);
   const words = (
     <View style={{ flex: 1, gap: 2 }}>
-      <Txt variant="strong">{dateName(d)}</Txt>
+      <Txt variant="headline">{dateName(d)}</Txt>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: 12 }}>
-        <Txt variant="muted">{dateWords(d.month, d.day)}</Txt>
-        {when ? <Txt variant={d.days === 0 ? 'strong' : 'body'}>{when}</Txt> : null}
+        <Txt tone="muted">{dateWords(d.month, d.day)}</Txt>
+        {when ? <Txt variant={d.days === 0 ? 'headline' : 'body'}>{when}</Txt> : null}
       </View>
     </View>
   );
@@ -250,10 +250,10 @@ export function BirthdaysScreen({ backTo = 'More', onBack = backToMore, startMin
   return (
     <Screen key="list">
       <BackButton to={backTo} onPress={onBack} />
-      <Txt variant="display" role="header">Birthdays and dates</Txt>
+      <Txt variant="title1" role="header">Birthdays and dates</Txt>
       {/* GUX-R2: "Saved. Your family will see December 8." at the top, in view (the list opens scrolled to the top) */}
       {notice ? <Notice tone="good" text={notice} onClose={() => setNotice(null)} /> : null}
-      <Txt variant="muted">Only your family can see these.</Txt>
+      <Txt tone="muted">Only your family can see these.</Txt>
       {cal.status === 'missing' ? <Txt>Birthdays aren't ready on Hearth yet. They're coming soon.</Txt> : null}
       {cal.status === 'loading' ? <Loading words="Loading the dates…" /> : null}
       {cal.status === 'error' ? (
@@ -268,7 +268,7 @@ export function BirthdaysScreen({ backTo = 'More', onBack = backToMore, startMin
           {!parent || !mine ? (
             <Button label={mine ? 'Change my birthday' : 'Add my birthday'} variant={parent ? 'secondary' : 'tinted'} onPress={() => setForm({ mode: 'mine' })} />
           ) : null}
-          {cal.dates.length ? null : <Txt variant="muted">No dates yet.</Txt>}
+          {cal.dates.length ? null : <Txt tone="muted">No dates yet.</Txt>}
           <View>
             {soonestFirst(cal.dates).map((d, i) => (
               <View key={d.id} style={i ? { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.line } : null}>

@@ -33,7 +33,7 @@ export function NewForYouRow({ posts, since, onSee }: { posts: FeedPost[]; since
   return (
     <View testID="new-for-you" style={{ gap: SPACE.sm }}>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: SPACE.sm }}>
-        <Txt variant="title" role="header">New for you</Txt>
+        <Txt variant="title2" role="header">New for you</Txt>
         {/* UX-R38/R39: 16 pt side padding pulled back by 16, so the box ends at the screen edge and the words sit on the
             16 pt gutter; still 48 pt to tap. */}
         <Button variant="quiet" label="See all the new photos, one at a time" text="See all" onPress={onSee} style={{ paddingHorizontal: SPACE.lg, marginRight: -SPACE.lg, minHeight: MIN_TARGET }} />
@@ -55,7 +55,7 @@ export function NewForYouRow({ posts, since, onSee }: { posts: FeedPost[]; since
                 <MediaImage postId={t.postId} mediaId={t.mediaId} fit="cover" full={false} style={{ flex: 1 }} />
                 {i === 0 ? (
                   <View style={{ position: 'absolute', top: SPACE.sm, left: SPACE.sm, backgroundColor: c.accent, borderRadius: 12, paddingHorizontal: SPACE.md, paddingVertical: SPACE.xs }}>
-                    <Txt variant="strong" style={{ color: c.accentInk }}>{count}</Txt>
+                    <Txt variant="headline" style={{ color: c.accentInk }}>{count}</Txt>
                   </View>
                 ) : null}
               </Pressable>
@@ -65,7 +65,7 @@ export function NewForYouRow({ posts, since, onSee }: { posts: FeedPost[]; since
         </ScrollView>
       ) : null}
       {/* RD-20 / DEC-61 (Chase, Nov 16: "that is messy"): only the sender line; the tiles and See all are the way in. */}
-      <Txt variant="muted">{fromLine(since, posts.map((p) => p.author_name))}</Txt>
+      <Txt tone="muted">{fromLine(since, posts.map((p) => p.author_name))}</Txt>
     </View>
   );
 }
@@ -113,7 +113,7 @@ export function OneAtATime({ postIds, onClose, onDone }: {
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingTop: SPACE.lg, gap: SPACE.lg, paddingBottom: SPACE.xxl }} keyboardShouldPersistTaps="handled">
           <View style={{ paddingHorizontal: SPACE.lg, gap: SPACE.lg }}>
             <BackButton to="Gallery" ink onPress={onClose} />
-            <Txt variant="title" role="header" label={heading}>{heading}</Txt>
+            <Txt variant="title2" role="header" label={heading}>{heading}</Txt>
           </View>
           <PostCard key={post.post_id} post={post} />
         </ScrollView>

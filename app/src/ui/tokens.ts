@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 // DS-TOKENS (intake #95): theme.ts as plain data, for docs/design/tokens.json. Other products reuse
 // the type scale, spacing, corners and tap target, and swap in their own colors.
-import { MIN_TARGET, THEME_NAMES, RADIUS, SPACE, paletteFor, typeScale, type Colors, type ThemeName } from './theme';
+import { MIN_TARGET, THEME_NAMES, RADIUS, SPACE, paletteFor, TYPE, type Colors, type ThemeName } from './theme';
 
 /** DS-THEMES-3 (DSG-6): each studio color token's Material 3 role, so other products can map it straight in. */
 export const MATERIAL_ROLES: Record<keyof Colors, string> = {
@@ -21,7 +21,7 @@ export function portableTokens() {
       weight: { regular: 400, medium: 500, semibold: 600 },
       rules: 'Regular for reading; SemiBold for titles, buttons, the picked tab and the large title; Medium for a name on a post. No Bold, Light, italics or all caps (RD-55).',
     },
-    type: { default: typeScale(false), large: typeScale(true) },
+    type: { standard: { ...TYPE.standard }, easy: { ...TYPE.easy } },
     space: { ...SPACE },
     radius: { ...RADIUS, dialogIos: 14, dialogAndroid: 28 },
     target: { min: MIN_TARGET },

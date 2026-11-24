@@ -9,7 +9,7 @@
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { Button, SystemIcon } from '../ui/kit';
-import { FONT, MIN_TARGET, RADIUS, useTheme } from '../ui/theme';
+import { MIN_TARGET, RADIUS, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
 import { VideoPlayer } from './VideoPlayer';
 
@@ -21,7 +21,7 @@ export function VideoPoster({ postId, mediaId, fit = 'cover', style, onOpen, ope
   onOpen?: () => void;
   openLabel?: string;
 }) {
-  const { t } = useTheme();
+  const { type } = useTheme();
   const [playing, setPlaying] = useState(false);
   const player = playing ? <VideoPlayer postId={postId} mediaId={mediaId} onClose={() => setPlaying(false)} /> : null;
 
@@ -33,7 +33,7 @@ export function VideoPoster({ postId, mediaId, fit = 'cover', style, onOpen, ope
           <View style={styles.middle} pointerEvents="none">
             <View style={[styles.pill, { backgroundColor: 'rgba(0,0,0,0.72)' }]}>
               <SystemIcon icon={PLAY_ICON} color="#FFFFFF" />
-              <Text style={{ color: '#FFFFFF', fontFamily: FONT.semibold, fontSize: t.base }}>Play</Text>
+              <Text style={{ color: '#FFFFFF', ...type.headline }}>Play</Text>
             </View>
           </View>
         </Pressable>

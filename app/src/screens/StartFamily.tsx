@@ -37,7 +37,7 @@ export function StartFamily({ onUseCode }: { onUseCode: () => void }) {
     return (
       <Screen>
         <Card>
-          <Txt variant="title" role="header">Did someone send you a code?</Txt>
+          <Txt variant="title2" role="header">Did someone send you a code?</Txt>
           <Txt>If family invited you, use their code. A new family starts empty, with nobody's photos in it.</Txt>
           <Button label="Use a code" onPress={onUseCode} />
           <Button label="Start a new family" variant="secondary" onPress={() => setStep('name')} />
@@ -52,11 +52,11 @@ export function StartFamily({ onUseCode }: { onUseCode: () => void }) {
     return (
       <Screen>
         <Card>
-          <Txt variant="title" role="header">Name your family</Txt>
+          <Txt variant="title2" role="header">Name your family</Txt>
           <Field label="Family name" value={name} onChangeText={setName} placeholder='Like "Our kids"' autoCapitalize="words" />
-          {n.length === 0 ? <Txt variant="strong">Type a name first.</Txt> : null}
-          {n.length > MAX_NAME ? <Txt variant="strong">{`Use ${MAX_NAME} letters or fewer.`}</Txt> : null}
-          <Txt variant="muted">Only people you invite will see it.</Txt>
+          {n.length === 0 ? <Txt variant="headline">Type a name first.</Txt> : null}
+          {n.length > MAX_NAME ? <Txt variant="headline">{`Use ${MAX_NAME} letters or fewer.`}</Txt> : null}
+          <Txt tone="muted">Only people you invite will see it.</Txt>
           <Txt>Hearth is for parents and guardians 18 or older.</Txt>
           <Button label="Next" onPress={() => setStep('who')} disabled={!ok} />
           <Button label="Back" variant="secondary" onPress={() => setStep('ask')} />
@@ -87,7 +87,7 @@ export function StartFamily({ onUseCode }: { onUseCode: () => void }) {
     return (
       <Screen>
         <Card>
-          <Txt variant="title" role="header">Who's in it?</Txt>
+          <Txt variant="title2" role="header">Who's in it?</Txt>
           <Choice
             kind="radio"
             label="Just Everyone"
@@ -108,7 +108,7 @@ export function StartFamily({ onUseCode }: { onUseCode: () => void }) {
             <>
               <Field label="First group's name" value={sides[0]} onChangeText={(v) => setSides([v, sides[1]])} />
               <Field label="Second group's name" value={sides[1]} onChangeText={(v) => setSides([sides[0], v])} />
-              {sidesOk ? null : <Txt variant="strong">Give each group a different name.</Txt>}
+              {sidesOk ? null : <Txt variant="headline">Give each group a different name.</Txt>}
             </>
           ) : null}
           {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
@@ -148,7 +148,7 @@ function FirstInvite({ space, onDone }: { space: string; onDone: () => void }) {
 
   return (
     <Screen>
-      <Txt variant="display" role="header">Invite your first person</Txt>
+      <Txt variant="title1" role="header">Invite your first person</Txt>
       {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
       {invite ? (
         <>
@@ -158,7 +158,7 @@ function FirstInvite({ space, onDone }: { space: string; onDone: () => void }) {
       ) : (
         <Card>
           <Field label="Their name, the way your family says it" value={who} onChangeText={setWho} placeholder='Like "Grandma June"' maxLength={40} />
-          <Txt variant="muted">They'll see this name on Hearth and won't have to type it.</Txt>
+          <Txt tone="muted">They'll see this name on Hearth and won't have to type it.</Txt>
           <Choice kind="radio" label="A relative" title="A relative" detail="Sees the photos you send to Everyone." checked={role === 'viewer'} onPress={() => setRole('viewer')} />
           <Choice kind="radio" label="Another parent" title="Another parent" detail="Sends photos too, and can invite people." checked={role === 'adult'} onPress={() => setRole('adult')} />
           <Button label="Make the invite" onPress={() => void make()} />

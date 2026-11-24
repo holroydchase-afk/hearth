@@ -14,7 +14,7 @@ export function SignInScreen({ start }: { start?: SignInWith } = {}) {
   const nav = useNav();
   return (
     <Screen>
-      <Txt variant="display" role="header">Welcome to Hearth</Txt>
+      <Txt variant="title1" role="header">Welcome to Hearth</Txt>
       <Txt>{textsOn()
         ? "Private photos of the family. We'll send you a 6-number code. No password."
         : "Private photos of the family. Type your email. We'll send you a 6-number code. No password."}</Txt>
