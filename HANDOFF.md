@@ -11,6 +11,10 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 24: eval fixes built (intake #162, R78, SPEC-EVAL-FIXES section 1 + EF-HE-4; branch claude/project-thread-6ew09x, local commits)
+- **Done:** EF-HE-1 Messages buttons show and speak "Open <name>" / "Open chat with <people>"; EF-HE-2 shared radio shows an empty muted ring unpicked, filled accent ring picked; EF-HE-4 Easy view and Light or dark only in More (off Me); EF-HE-5 honest Groups line, New group filled; EF-HE-6 Events empty-state words; EF-HE-9/B18 Gallery loads older feed pages back to the last visit (`FeedStore.loadBackTo`, max 10 pages) before New for you shows, so the count covers every new post. No API change. Superseded tests retargeted in `test:` commits.
+- **Next:** qa-tdd green 3x, grandparent-ux on EF-HE-1/2/5/6 shots, then PR. Manual M-20 (long chat title wraps at the largest text) on a phone.
+
 ## Nov 24: visibility core designed (R77; design only, awaits Chase's go)
 - `docs/product/SPEC-VISIBILITY-CORE.md` + `docs/architecture/07-visibility-model.md`: one registered core for every kind (fungible, generic `@holroyd/visibility`), CI gate, oracle (folds R51), user-error catches, co-parent bridge (after the beta), one composer. Open: Chase's go on Phases 1, 1b, 2.
 

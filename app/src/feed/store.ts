@@ -114,9 +114,33 @@ export class FeedStore {
     }
   }
 
-  async loadMore(): Promise<void> {
+  /** EF-HE-9 (B18): load older pages until the oldest loaded post is at or before `since`, so New for you counts
+   *  every post since the last visit, not just the first page. Stops at no more pages, a failed page or `maxPages`. */
+  async loadBackTo(since: string, maxPages = 10): Promise<void> {
+    const t = Date.parse(since);
+    if (Number.isNaN(t)) return;
+    for (let i = 0; i < maxPages; i++) {
+      if (this.more) { await this.more; continue; } // a scroll's page is already coming: wait for it
+      const { posts, hasMore, status } = this.state;
+      const oldest = posts[posts.length - 1];
+      if (!hasMore || !oldest || Date.parse(oldest.published_at) <= t || status !== 'idle') return;
+      const had = posts.length;
+      await this.loadMore();
+      if (this.state.posts.length === had) return;
+    }
+  }
+
+  private more: Promise<void> | null = null;
+
+  loadMore(): Promise<void> {
+    if (this.more) return this.more;
     const last = this.state.posts[this.state.posts.length - 1];
-    if (!last || !this.state.hasMore || this.state.status !== 'idle') return;
+    if (!last || !this.state.hasMore || this.state.status !== 'idle') return Promise.resolve();
+    this.more = this.loadMorePage(last).finally(() => { this.more = null; });
+    return this.more;
+  }
+
+  private async loadMorePage(last: FeedPost): Promise<void> {
     this.set({ status: 'loadingMore' });
     try {
       const rows = await this.o.api.getFeed({ space: this.o.spaceId, beforeTs: last.published_at, beforeId: last.post_id, limit: this.pageSize });
