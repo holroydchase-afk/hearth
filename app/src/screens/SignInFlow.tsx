@@ -11,7 +11,7 @@ import { TextCodeFlow } from './TextCodeFlow';
 
 export function SignInFlow({ onSignedIn, inviter, start = 'either', only = false }: {
   /** The email it signed in with, or null for a text sign-in. */
-  onSignedIn: (email: string | null) => Promise<void>;
+  onSignedIn: (email: string | null, numberEnding?: string) => Promise<void>;
   inviter?: string | null;
   /** 'email' opens on the email field; 'phone' and 'either' on the number. */
   start?: SignInWith;
@@ -23,9 +23,9 @@ export function SignInFlow({ onSignedIn, inviter, start = 'either', only = false
   if (!textsOn()) return <EmailCodeFlow inviter={inviter} onSignedIn={onSignedIn} />;
   const locked = only && start !== 'either';
   if (locked && start === 'email') return <EmailCodeFlow inviter={inviter} onSignedIn={onSignedIn} />;
-  if (locked) return <TextCodeFlow inviter={inviter} onSignedIn={() => onSignedIn(null)} />;
+  if (locked) return <TextCodeFlow inviter={inviter} onSignedIn={(end) => onSignedIn(null, end)} />;
   if (mode === 'phone') {
-    return <TextCodeFlow inviter={inviter} onSignedIn={() => onSignedIn(null)} onUseEmail={(why) => { setNote(why ?? null); setMode('email'); }} />;
+    return <TextCodeFlow inviter={inviter} onSignedIn={(end) => onSignedIn(null, end)} onUseEmail={(why) => { setNote(why ?? null); setMode('email'); }} />;
   }
   return (
     <>

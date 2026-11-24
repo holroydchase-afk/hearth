@@ -14,6 +14,7 @@ The living technical description of how Hearth works, written as we build. It ex
 | [04-threat-model.md](04-threat-model.md) | Assets, adversaries, what we defend, what we don't yet | "Security model" chapter; honest limits |
 | [05-access-control.md](05-access-control.md) | Family spaces, roles, groups, households, events, the one visibility rule, who reads replies | "Who sees what" chapter |
 | [06-messenger.md](06-messenger.md) | Group chat end-to-end encrypted with MLS: ciphersuite, relay, membership, limits | "Messaging" chapter |
+| [07-visibility-model.md](07-visibility-model.md) | Planned: the generic visibility core (reaches, registry, fungible kinds, cross-family links), how every table maps onto it | "Who sees what" chapter, part 2; reusable-core appendix |
 
 Planned sections: data retention and deletion once the purge worker exists; the family vault (E2EE) once specced.
 

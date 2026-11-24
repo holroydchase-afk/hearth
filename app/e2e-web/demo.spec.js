@@ -12,6 +12,8 @@ const resetDemo = async (page) => {
   await details(page);
   await page.getByRole('button', { name: 'Reset demo' }).click();
   await page.getByRole('button', { name: 'Reset', exact: true }).click();
+  // QA-R2 (T28): Reset waits for saves before it navigates (DEMO-SAFARI), so wait for the fresh page's note.
+  await expect(page.getByText('Sample data restored.')).toBeVisible();
 };
 
 // RD-18 (redesign 1c): Gallery shows photos, not captions. "Loaded" = the greeting and a drawn picture; captions are
@@ -22,21 +24,26 @@ const galleryLoaded = async (page) => {
 };
 const onFeed = async (page) => {
   await page.getByRole('tab', { name: /^Feed/ }).click();
-  await expect(page.getByText('Life jackets on and in all afternoon', { exact: true }).filter({ visible: true })).toBeVisible();
+  // DEMO-PHOTO-8: the newest post (Alex's balance bike ride) tops Feed.
+  await expect(page.getByText(/First ride on the balance bike/).filter({ visible: true }).first()).toBeVisible();
 };
+// DEMO-PHOTO-11: Gallery's photo tiles (RD-44), all in the page at once (a ScrollView, not a list).
+const galleryTiles = (page) => page.locator('[data-testid^="gallery-tile-"]');
+// Every post's words on Feed (title and caption), from PostCard's description block.
+const feedWords = (page) => page.locator('[data-testid^="desc-"]').evaluateAll((els) => els.map((e) => e.textContent.trim()));
 
 const FIXTURE = path.join(__dirname, 'fixtures', 'park-gps.jpg');
 
-// DEC-73: tapping Share may open the file chooser itself, or show a "Pick photos" button first; either way, set the
-// files and wait for the "New post" page.
+// DEC-79 (SHARE-ST-8; retargeted Nov 21 by qa-tdd): Share opens on the empty postcard ("New post"); its one
+// "Add photos, up to N at a time" target opens the file chooser. Set the files and wait for the postcard's Cancel.
+const ADD_PHOTOS = /^Add photos( or videos)?, up to \d+ at a time$/;
 const openNewPost = async (page, files) => {
-  const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
   await page.getByRole('tab', { name: /^Share/ }).click();
-  const pick = page.getByRole('button', { name: /^Pick photos/ }).filter({ visible: true }).first();
-  const first = await Promise.race([chooser.then(() => 'chooser'), pick.waitFor({ timeout: 15_000 }).then(() => 'button')]);
-  if (first === 'button') await pick.click();
-  await (await chooser).setFiles(files);
   await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
+  const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
+  await page.getByRole('button', { name: ADD_PHOTOS }).filter({ visible: true }).first().click();
+  await (await chooser).setFiles(files);
+  await expect(page.getByRole('button', { name: 'Cancel this post' })).toBeVisible();
 };
 const errors = [];
 
@@ -65,15 +72,42 @@ test("DEMO-10 RD-17 Grandma Jo's view hides the Mom's-side posts; the parent's v
   await details(page);
   await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
   await onFeed(page);
-  await expect(page.getByText('Bridge walk on the trail', { exact: true })).toBeVisible();
-  await expect(page.getByText('Bike day at the lake', { exact: true })).toHaveCount(0);
+  // Updated Nov 24 (DEMO-PHOTO-8): Dad's side shows (the pancakes), Mom's side (one orchard photo) does not.
+  await expect(page.getByText(/Aunt Bea taught the kids to make pancakes/).first()).toBeAttached();
+  await expect.poll(async () => (await feedWords(page)).length).toBe(6);
   await details(page);
-  await page.getByRole('button', { name: "Back to Chase's view, the parent" }).click();
+  await page.getByRole('button', { name: "Back to Kevin's view, the parent" }).click();
   await details(page);
-  await expect(page.getByText(/You're Chase, a parent/)).toBeVisible();
+  await expect(page.getByText(/You're Kevin, a parent/)).toBeVisible();
   await onFeed(page);
-  await page.getByText('Bike day at the lake', { exact: true }).scrollIntoViewIfNeeded();
-  await expect(page.getByText('Bike day at the lake', { exact: true })).toBeVisible();
+  await expect.poll(async () => (await feedWords(page)).length).toBe(7);
+});
+
+// DEMO-PHOTO-11 (SPEC-DEMO-PHOTOS, DEC-82). Written first (Nov 24, qa-tdd): Grandma Jo's Gallery and Feed hold posts
+// 1, 2, 4, 5, 6 and 7 (18 photos), never Mom's-side post 3 (orchard-4543661); the way back reads "Back to Kevin's view".
+test("DEMO-PHOTO-11 Grandma Jo's view: 18 photos in 6 posts, never Mom's-side post 3; the way back reads Back to Kevin's view", async ({ page }) => {
+  await page.goto('/');
+  await galleryLoaded(page);
+  await expect.poll(() => galleryTiles(page).count()).toBe(19);
+  await onFeed(page);
+  await expect.poll(async () => (await feedWords(page)).length).toBe(7);
+  const kevins = await feedWords(page);
+  await details(page);
+  await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+  await details(page);
+  await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
+  await expect(page.getByRole('button', { name: "Back to Kevin's view, the parent" })).toBeVisible();
+  await expect(page.getByText("Back to Kevin's view", { exact: true })).toBeVisible();
+  await page.getByRole('tab', { name: /^Gallery/ }).click();
+  await expect.poll(() => galleryTiles(page).count()).toBe(18);
+  await onFeed(page);
+  await expect.poll(async () => (await feedWords(page)).length).toBe(6);
+  const hers = await feedWords(page);
+  for (const t of ['Apple blossoms at the orchard', 'Shoulder rides all afternoon', 'Aunt Bea taught the kids to make pancakes', 'First ride on the balance bike']) {
+    expect({ t, shown: hers.some((w) => w.includes(t)) }).toEqual({ t, shown: true });
+  }
+  // The one post Kevin sees and Jo doesn't is post 3, Mom's side.
+  expect(kevins.filter((w) => !hers.includes(w))).toHaveLength(1);
 });
 
 test('RR-14 add a photo, reload keeps it, Start over brings back the sample family', async ({ page }) => {
@@ -92,6 +126,29 @@ test('RR-14 add a photo, reload keeps it, Start over brings back the sample fami
   await resetDemo(page);
   await onFeed(page);
   await expect(page.getByText('Leaf pile', { exact: true }).filter({ visible: true })).toHaveCount(0);
+});
+
+// FONT-5 (DEC-78, Nov 21): the web demo reads in Atkinson Hyperlegible Next too, the heading SemiBold and a caption
+// Regular, and the bundled font file really loaded (not just named in CSS and falling back to the system font).
+test('FONT-5 the demo\'s heading and body words are Atkinson Hyperlegible Next, and the font really loaded', async ({ page }) => {
+  await page.goto('/');
+  await galleryLoaded(page);
+  await onFeed(page);
+  const look = await page.evaluate(async () => {
+    await document.fonts.ready;
+    const caption = [...document.querySelectorAll('div,span')].find((n) => n.textContent === 'Aunt Bea taught the kids to make pancakes' && n.offsetParent);
+    const heading = document.querySelector('[role="heading"]');
+    return {
+      heading: heading ? getComputedStyle(heading).fontFamily : 'no heading',
+      body: caption ? getComputedStyle(caption).fontFamily : 'no caption',
+      loaded: ['AtkinsonHyperlegibleNext_400Regular', 'AtkinsonHyperlegibleNext_600SemiBold']
+        .map((f) => [...document.fonts].some((ff) => ff.family.replace(/["']/g, '') === f && ff.status === 'loaded')),
+    };
+  });
+  expect(look.heading).toMatch(/^"?AtkinsonHyperlegibleNext_600SemiBold/);
+  expect(look.body).toMatch(/^"?AtkinsonHyperlegibleNext_400Regular/);
+  expect(look.loaded).toEqual([true, true]);
+  expect(errors).toEqual([]);
 });
 
 test('DEMO-6 / NF-1 laptop shows the story panel beside the app; an unknown link shows plain words', async ({ page }) => {
@@ -131,11 +188,11 @@ test('DEMO-BAR-LAPTOP-1 at 1280 px: no demo bar; Grandma Jo and Reset work from 
   await galleryLoaded(page);
   await expect(page.getByRole('region', { name: 'Demo' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Demo details' })).toHaveCount(0);
-  await expect(page.getByRole('heading', { name: /, Chase$/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /, Kevin$/ })).toBeVisible();
   await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
   await expect(page.getByRole('heading', { name: /, Grandma Jo$/ })).toBeVisible();
-  await page.getByRole('button', { name: "Back to Chase's view, the parent" }).click();
-  await expect(page.getByRole('heading', { name: /, Chase$/ })).toBeVisible();
+  await page.getByRole('button', { name: "Back to Kevin's view, the parent" }).click();
+  await expect(page.getByRole('heading', { name: /, Kevin$/ })).toBeVisible();
   await page.getByRole('button', { name: 'Reset demo' }).click();
   await page.getByRole('button', { name: 'Reset', exact: true }).click();
   await galleryLoaded(page);
@@ -211,13 +268,20 @@ test('DEMO-BAR Reset asks first: Keep changes nothing; Reset restores and says s
 // More → Theme → Avocado and Pomegranate recolor the page and the pick survives a reload; Grandma Jo stays Paper with
 // no Theme row; the tab bar is c.surface with a c.line top border (RD-104). Photo shadows stay for now (Chase
 // deciding), so no shadow check here (RD-92 keeps it). Screenshots of all three themes, light and dark.
-test('RD-102 Paper by default; Chase picks Avocado then Pomegranate, it survives a reload; Grandma Jo stays Paper', async ({ page }) => {
+// qa-tdd, Nov 23 (FRUIT-11, SPEC-REDESIGN 1l, DEC-80): now walks Paper plus all nine fruits; each fruit's page is the
+// JSON's `page` as rgb() (fixture copy of palettes-v2.json); Pomegranate light is rgb(251, 245, 233), replacing
+// RD-117's rgb(245, 234, 223). The last pick (Red cabbage) must survive the reload. Screenshots of all 10, light and dark.
+test('RD-102 RD-117 FRUIT-11 Paper by default; Chase picks each of the nine fruits, the last survives a reload; Grandma Jo stays Paper', async ({ page }) => {
+  const FRUIT = require('../src/ui/__tests__/fixtures/fruit-palettes.json');
+  const toRgb = (h) => `rgb(${[1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)).join(', ')})`;
   const PAGE = {
     paper: { light: 'rgb(247, 247, 244)', dark: 'rgb(19, 18, 16)' },
-    avocado: { light: 'rgb(238, 239, 211)', dark: 'rgb(16, 20, 12)' },
-    pomegranate: { light: 'rgb(245, 234, 223)', dark: 'rgb(23, 13, 16)' },
+    ...Object.fromEntries(Object.entries(FRUIT).map(([k, v]) => [k, { light: toRgb(v.light.page), dark: toRgb(v.dark.page) }])),
   };
-  const WORD = { paper: 'Paper', avocado: 'Avocado', pomegranate: 'Pomegranate' };
+  expect({ avocado: PAGE.avocado, pomegranateLight: PAGE.pomegranate.light }).toEqual({ avocado: { light: 'rgb(246, 245, 228)', dark: 'rgb(42, 36, 38)' }, pomegranateLight: 'rgb(251, 245, 233)' });
+  const WORD = { paper: 'Paper (standard)', ...Object.fromEntries(Object.entries(FRUIT).map(([k, v]) => [k, v.name])) };
+  const FRUITS = Object.keys(FRUIT);
+  const LAST = FRUITS[FRUITS.length - 1];
   const shots = path.join(__dirname, '..', 'test-results', 'rd-102');
   // The Gallery backing: the first painted ancestor of the grid (the browser's white if none).
   const galleryBg = () => page.evaluate(() => {
@@ -238,8 +302,15 @@ test('RD-102 Paper by default; Chase picks Avocado then Pomegranate, it survives
     const s = getComputedStyle(el);
     return { bg: s.backgroundColor, top: s.borderTopWidth, painted: s.backgroundColor !== 'rgba(0, 0, 0, 0)' };
   });
-  const toGallery = async () => { await page.getByRole('tab', { name: /^Gallery/ }).click(); await galleryLoaded(page); };
+  // T-FRUIT (qa-tdd, Nov 23): with 10 rows, scrolling a fruit into view shrinks the glass bar (RD-110); a tap on the
+  // shrunk oval only brings the tabs back (RD-110-R1), so restore the bar first, as T28 does in RD-117.
+  const restoreTabs = async () => {
+    const shrunk = page.getByRole('tab', { name: /show all tabs/ });
+    if (await shrunk.count()) await shrunk.click();
+  };
+  const toGallery = async () => { await restoreTabs(); await page.getByRole('tab', { name: /^Gallery/ }).click(); await galleryLoaded(page); };
   const pick = async (theme) => {
+    await restoreTabs();
     await page.getByRole('tab', { name: /^More/ }).click();
     await page.getByRole('button', { name: /^Theme(,|$)/ }).click();
     await expect(page.getByRole('heading', { name: 'Theme' })).toBeVisible();
@@ -254,13 +325,13 @@ test('RD-102 Paper by default; Chase picks Avocado then Pomegranate, it survives
     await resetDemo(page);
     await page.reload();
     await galleryLoaded(page);
-    // Light starts from a fresh demo (the default); dark follows light's Pomegranate, so it picks Paper back first.
+    // Light starts from a fresh demo (the default); dark follows light's last fruit, so it picks Paper back first.
     if (look === 'dark') { await pick('paper'); await toGallery(); }
     expect.soft({ look, gallery: await galleryBg() }).toEqual({ look, gallery: PAGE.paper[look] });
     const bar = await tabBar();
     expect.soft({ look, painted: bar.painted, notPage: bar.bg !== PAGE.paper[look], top: bar.top }).toEqual({ look, painted: true, notPage: true, top: '1px' });
     await page.screenshot({ path: path.join(shots, `rd-102-paper-${look}.png`) });
-    for (const theme of ['avocado', 'pomegranate']) {
+    for (const theme of FRUITS) {
       await pick(theme);
       await expect.poll(themeBg).toBe(PAGE[theme][look]);
       await toGallery();
@@ -270,7 +341,7 @@ test('RD-102 Paper by default; Chase picks Avocado then Pomegranate, it survives
     // The pick survives a reload.
     await page.reload();
     await galleryLoaded(page);
-    expect.soft({ look, afterReload: await galleryBg() }).toEqual({ look, afterReload: PAGE.pomegranate[look] });
+    expect.soft({ look, afterReload: await galleryBg() }).toEqual({ look, afterReload: PAGE[LAST][look] });
   }
 
   // Grandma Jo stays Paper, with no Theme row.
@@ -326,8 +397,8 @@ test('RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma 
   expect(errors.slice(before)).toEqual([]);
 });
 
-// RD-18..RD-21 (SPEC-REDESIGN 1c) on the demo build at a 360 px phone: Chase's last visit was 3 days ago and Alex
-// sent two posts since, one picture each. Gallery: New for you with a sideways row, "2 new" on the first photo,
+// RD-18..RD-21 (SPEC-REDESIGN 1c) on the demo build at a 360 px phone: the parent's last visit was 3 days ago and Alex
+// sent one post since, 3 photos (DEMO-PHOTO-12, Nov 24). Gallery: New for you with a sideways row, "3 new" on the first photo,
 // the sender line and See all (no "Tap a photo to start", DEC-61); under it the grid by month. Any photo opens the walk at
 // the oldest new post; Done comes back to Gallery. No All photos button, no group name.
 test('RD-18 RD-19 RD-20 RD-21 New for you and the grid at 360 px; a tap walks the new photos and Done comes back', async ({ page }) => {
@@ -336,7 +407,7 @@ test('RD-18 RD-19 RD-20 RD-21 New for you and the grid at 360 px; a tap walks th
   await page.goto('/');
   await galleryLoaded(page);
   await expect(page.getByRole('heading', { name: 'New for you' })).toBeVisible();
-  await expect(page.getByText('2 new', { exact: true })).toBeVisible();
+  await expect(page.getByText('3 new', { exact: true })).toBeVisible();
   await expect(page.getByText('Tap a photo to start', { exact: true })).toHaveCount(0); // DEC-61
   await expect(page.getByText(/^From Alex (today|since \S+)$/)).toBeVisible();
   await expect(page.getByRole('button', { name: /^See all(?! the photos)/ })).toBeVisible();
@@ -346,9 +417,8 @@ test('RD-18 RD-19 RD-20 RD-21 New for you and the grid at 360 px; a tap walks th
   await expect(page.getByText(/^Sent by /)).toHaveCount(0);
   await expect(page.getByText(/Grandparents –|Dad's side|Mom's side/)).toHaveCount(0); // RD-23
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true); // the row scrolls inside itself
-  await page.getByText('2 new', { exact: true }).click(); // the first tile
-  await expect(page.getByText('New photos: 1 of 2', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: /^Next/ }).first().click();
+  await page.getByText('3 new', { exact: true }).click(); // the first tile
+  await expect(page.getByText('New photos: 1 of 1', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: /^Done/ }).first().click();
   await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible();
   expect(errors.slice(before)).toEqual([]);
@@ -357,13 +427,43 @@ test('RD-18 RD-19 RD-20 RD-21 New for you and the grid at 360 px; a tap walks th
 // ---------------------------------------------------------------------------------------------------------------
 // Review round 1 (ux-reviewer on Chase's iPhone, Nov 17; SPEC-REDESIGN RD-35..). Written first (red).
 
-// UX-R12 (Chase, Nov 17): the demo parent is Chase, so the greeting uses his name.
-test('UX-R12 the demo greets the parent as Chase and "Kai" appears nowhere', async ({ page }) => {
+// UX-R12 (Nov 17) made the demo parent Chase; DEMO-PHOTO-10 (DEC-82, Nov 24) makes it Kevin, since the stock photos
+// show a model. Written first (qa-tdd): "Chase" appears nowhere on Gallery, Feed, More, Birthdays or the demo bar.
+const saysChase = (page) => page.evaluate(() => {
+  const words = [document.body.innerText, ...[...document.querySelectorAll('[aria-label]')].map((e) => e.getAttribute('aria-label'))];
+  return words.filter((w) => /Chase/.test(w || '')).map((w) => w.slice(0, 80));
+});
+test('UX-R12 DEMO-PHOTO-10 the demo greets the parent as Kevin; "Chase" and "Kai" appear nowhere', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Chase$/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Kevin$/ })).toBeVisible();
+  await galleryLoaded(page);
+  expect(await saysChase(page)).toEqual([]);
   await details(page);
-  await expect(page.getByText(/You're Chase, a parent/)).toBeVisible();
+  await expect(page.getByText("You're Kevin, a parent.")).toBeVisible();
+  expect(await saysChase(page)).toEqual([]);
   expect(await page.evaluate(() => /\bKai\b/.test(document.body.innerText))).toBe(false);
+  await onFeed(page);
+  expect(await saysChase(page)).toEqual([]);
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: 'Birthdays', exact: true }).filter({ visible: true }).click({ timeout: 15_000 });
+  await expect(page.getByRole('heading', { name: 'Birthdays and dates' })).toBeVisible();
+  await expect(page.getByText(/Kevin and Alex[’']s anniversary/).filter({ visible: true }).first()).toBeVisible();
+  expect(await saysChase(page)).toEqual([]);
+});
+
+// DEMO-PHOTO-12 (DEC-82). Written first (Nov 24, qa-tdd): a fresh visit (last visit 3 days ago, DEMO-NEW-1) opens
+// New for you on Alex's balance bike post, its 3 photos first.
+test("DEMO-PHOTO-12 a fresh visit's New for you shows Alex's balance bike post first, with its 3 photos", async ({ page }) => {
+  await page.goto('/');
+  await galleryLoaded(page);
+  await expect(page.getByRole('heading', { name: 'New for you' })).toBeVisible();
+  const tiles = page.locator('[data-testid^="new-tile-"]');
+  await expect.poll(() => tiles.count()).toBe(3);
+  await expect(tiles.first()).toHaveAttribute('aria-label', /^3 new\. New photo from Alex, /);
+  for (const label of await tiles.evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')))) expect(label).toMatch(/New photo from Alex, /);
+  await tiles.first().click();
+  await expect(page.getByText('New photos: 1 of 1', { exact: true })).toBeVisible();
+  await expect(page.getByText(/First ride on the balance bike/).filter({ visible: true }).first()).toBeVisible();
 });
 
 // RD-44 (DEC-65, Nov 17; replaces UX-R7's edge-to-edge grid, RD-39) and UX-R13 (review round 2): Gallery is Apple
@@ -403,9 +503,12 @@ for (const width of [360, 390]) {
       if (isWide) wides += 1;
       expect({ i, ok: isWide || isSquare, insideMargins: t.x >= 15.5 && t.x + t.width <= width - 15.5 }).toEqual({ i, ok: true, insideMargins: true });
     }
-    // UX-R13: one wide photo per month, not per day.
+    // UX-R13: one wide photo per month, not per day; RD-73: a month of exactly 2 photos is two squares, no wide one.
+    // (Fixed Nov 20: the sample photos' dates move with today, so some days a month holds exactly 2.)
     const months = await page.getByText(MONTH).count();
-    expect({ wides, months }).toEqual({ wides: months, months });
+    const twoPhotoMonths = await page.getByTestId('gallery-grid').evaluate((g) =>
+      [...g.children].filter((m) => m.querySelectorAll('[data-testid^="gallery-tile-"]').length === 2).length);
+    expect({ wides, months }).toEqual({ wides: months - twoPhotoMonths, months });
     // UX-R13: no square alone on its row.
     const rows = new Map();
     for (const t of boxes) if (Math.abs(t.width - inner) > 1.5) rows.set(Math.round(t.y), (rows.get(Math.round(t.y)) ?? 0) + 1);
@@ -449,8 +552,9 @@ test('RD-47 a "Search photos" field under the greeting opens Search; By date and
 test('UX-R1 focusing the walk\'s comment field hides the tab bar and keeps the field uncovered when the keyboard opens', async ({ page }) => {
   await page.goto('/');
   await galleryLoaded(page);
-  await page.getByText('2 new', { exact: true }).click();
-  await expect(page.getByText('New photos: 1 of 2', { exact: true })).toBeVisible();
+  // DEMO-PHOTO-12: the newest post is Alex's balance bike post, 3 photos; the walk counts posts (1 of 1).
+  await page.getByText('3 new', { exact: true }).click();
+  await expect(page.getByText('New photos: 1 of 1', { exact: true })).toBeVisible();
   await expect(page.getByRole('tab')).toHaveCount(4);
   const field = page.getByRole('textbox');
   await expect(field).toHaveCount(1);
@@ -476,12 +580,30 @@ test('DEMO-FRESH-1 a browser that saved an older demo family sees the current on
   // Pretend this browser kept the family from an older demo: the parent was Kai, and no seed version was saved.
   await page.evaluate(() => {
     const k = 'hearth.fakeBackend.v1';
-    localStorage.setItem(k, localStorage.getItem(k).replaceAll('"Chase"', '"Kai"'));
+    localStorage.setItem(k, localStorage.getItem(k).replaceAll('"Kevin"', '"Kai"'));
     localStorage.removeItem('hearth.demoSeed');
   });
   await page.reload();
-  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Chase$/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Kevin$/ })).toBeVisible();
   await expect(page.getByText(/\bKai\b/)).toHaveCount(0);
+});
+
+// DEMO-PHOTO-13 (DEC-82). Written first (Nov 24, qa-tdd): a browser that saved the Nov 16 family (parent "Chase",
+// seed version u4ie58, its photo bytes in IndexedDB) gets the new family and its 19 photos with no Start over.
+test('DEMO-PHOTO-13 a browser that saved the Nov 16 demo family gets the new 19 photos and Kevin, without Start over', async ({ page }) => {
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.evaluate(() => {
+    const k = 'hearth.fakeBackend.v1';
+    localStorage.setItem(k, localStorage.getItem(k).replaceAll('"Kevin"', '"Chase"'));
+    localStorage.setItem('hearth.demoSeed', 'u4ie58'); // demoSeedVersion() on main before DEMO-PHOTO
+  });
+  await page.reload();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Kevin$/ })).toBeVisible();
+  await galleryLoaded(page);
+  await expect.poll(() => galleryTiles(page).count()).toBe(19);
+  expect(await page.evaluate(() => localStorage.getItem('hearth.demoSeed'))).not.toBe('u4ie58');
+  await expect(page.getByText('Sample data restored.')).toHaveCount(0); // no Start over happened
 });
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -493,7 +615,12 @@ test('R18 the current month title sticks under the pinned search field while Gal
   await page.goto('/');
   await galleryLoaded(page);
   await page.mouse.move(195, 600);
-  await page.mouse.wheel(0, 1200);
+  // Land 200 px inside the second month's section (not on a month boundary, which depends on the photo set):
+  // how far its title starts below the search field, plus 200.
+  const fieldAt = await page.getByLabel('Search photos').first().boundingBox();
+  const tops = await page.getByText(MONTH).evaluateAll((els) => els.map((e) => e.getBoundingClientRect().top));
+  expect(tops.length).toBeGreaterThanOrEqual(2);
+  await page.mouse.wheel(0, Math.round(tops[1] - (fieldAt.y + fieldAt.height)) + 200);
   await page.waitForTimeout(400);
   const field = await page.getByLabel('Search photos').first().boundingBox();
   const heads = await page.getByText(MONTH).evaluateAll((els) => els.map((e) => { const r = e.getBoundingClientRect(); return { top: r.top, bottom: r.bottom }; }));
@@ -581,7 +708,7 @@ test('UX-R27 every "can see this." line on Feed is one line at 390 px', async ({
 // spoken names. Grandma Jo (viewer) starts On: a word under each tab and bigger text. Each person's pick is kept
 // separately in the browser. Written first (Nov 17), red until Easy view exists.
 const tabWordsShown = (page) => page.getByRole('tab').evaluateAll((els) => els.map((e) => (e.innerText || '').replace(/[^A-Za-z ]/g, '').trim()));
-const captionSize = (page) => page.getByText('Life jackets on and in all afternoon', { exact: true }).filter({ visible: true }).first()
+const captionSize = (page) => page.getByText('Aunt Bea taught the kids to make pancakes', { exact: true }).filter({ visible: true }).first()
   .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
 const asJo = async (page) => {
   await details(page);
@@ -591,9 +718,9 @@ const asJo = async (page) => {
 };
 const asChase = async (page) => {
   await details(page);
-  await page.getByRole('button', { name: "Back to Chase's view, the parent" }).click();
+  await page.getByRole('button', { name: "Back to Kevin's view, the parent" }).click();
   await details(page);
-  await expect(page.getByText(/You're Chase, a parent/)).toBeVisible();
+  await expect(page.getByText(/You're Kevin, a parent/)).toBeVisible();
 };
 
 test('RD-80 RD-76 RD-77 Chase has icon-only tabs; Grandma Jo has words under the tabs and bigger text; back to Chase restores Off', async ({ page }) => {
@@ -759,6 +886,109 @@ test('RD-92 RD-94 Paper, photo shadows and the reaction pop in the demo, light a
   await page.screenshot({ path: path.join(shots, 'rd-92-dark-feed.png') });
 });
 
+// RD-117 (SPEC-REDESIGN 1k, Chase Nov 20, DEC-76): Avocado is a Hass avocado (page rgb(246, 245, 228) light,
+// rgb(42, 36, 38) dark) and a picked reaction is a 2 px accent outline with the count in the accent, no fill; an
+// unpicked one has a 1 px border; tapping never moves the heart's box or its neighbour (RD-116). Written first (red),
+// Nov 20, by qa-tdd. Soft expects so one run shows every miss. Screenshots: Avocado light and dark, and a picked
+// reaction in all three themes.
+test('RD-117 RD-116 Avocado (Hass) light and dark; a picked ❤️ is a 2 px accent outline with an accent count, no fill, in every theme', async ({ page }) => {
+  const PAGE = {
+    paper: { light: 'rgb(247, 247, 244)' },
+    avocado: { light: 'rgb(246, 245, 228)', dark: 'rgb(42, 36, 38)' },
+    pomegranate: { light: 'rgb(251, 245, 233)' }, // qa-tdd, Nov 23: FRUIT-11 (DEC-80) replaces rgb(245, 234, 223)
+  };
+  // Accent per theme, light (RD-94, RD-111, FRUIT-2); Avocado dark is Fresh leaf #7ED69B (RD-112).
+  // qa-tdd, Nov 23: Pomegranate's accent is the JSON's #B3122F (DEC-80), replacing RD-95's rgb(163, 23, 47).
+  const ACCENT = { paper: 'rgb(173, 55, 29)', avocado: 'rgb(47, 84, 25)', pomegranate: 'rgb(179, 18, 47)', avocadoDark: 'rgb(126, 214, 155)' };
+  const WORD = { paper: 'Paper (standard)', avocado: 'Avocado', pomegranate: 'Pomegranate' };
+  const shots = path.join(__dirname, '..', 'test-results', 'rd-117');
+  const pick = async (theme) => {
+    // T28: tapping the heart can scroll Feed and shrink the glass bar (RD-110); a tap on the shrunk oval
+    // only brings the tabs back (RD-110-R1), so restore it first.
+    const shrunk = page.getByRole('tab', { name: /show all tabs/ });
+    if (await shrunk.count()) await shrunk.click();
+    await page.getByRole('tab', { name: /^More/ }).click();
+    await page.getByRole('button', { name: /^Theme(,|$)/ }).click();
+    await page.getByRole('radio', { name: `${WORD[theme]} theme` }).click();
+    await expect(page.getByRole('radio', { name: `${WORD[theme]} theme` })).toBeChecked();
+  };
+  const themeBg = () => page.getByRole('heading', { name: 'Theme' }).evaluate((el) => {
+    const opaque = (c) => c && c !== 'transparent' && !/rgba\(\s*\d+,\s*\d+,\s*\d+,\s*0\s*\)/.test(c);
+    let n = el;
+    while (n && !opaque(getComputedStyle(n).backgroundColor)) n = n.parentElement;
+    return n ? getComputedStyle(n).backgroundColor : 'rgb(255, 255, 255)';
+  });
+  const love = () => page.getByRole('button', { name: 'Love it' }).filter({ visible: true }).first();
+  // RN-web renders no aria-selected / aria-pressed on the reaction (QA-R1), so "picked" is read from the count:
+  // tapping on raises it by one. turnOn() leaves the heart picked whatever the demo started with.
+  const countOf = async () => Number((await love().innerText()).replace(/\D/g, '') || 0);
+  const turnOn = async () => {
+    const before = await countOf();
+    await love().click();
+    await expect.poll(countOf).not.toBe(before);
+    if ((await countOf()) < before) { await page.waitForTimeout(300); await love().click(); await expect.poll(countOf).toBe(before); }
+  };
+  const turnOff = async () => { await turnOn(); const n = await countOf(); await page.waitForTimeout(300); await love().click(); await expect.poll(countOf).toBe(n - 1); };
+  const look = () => love().evaluate((btn) => {
+    const s = getComputedStyle(btn);
+    const count = [...btn.querySelectorAll('*')].find((n) => n.children.length === 0 && /^\d+$/.test((n.textContent || '').trim()));
+    const r = btn.getBoundingClientRect();
+    const haha = btn.parentElement.querySelector('[aria-label="Haha"]');
+    return {
+      bg: s.backgroundColor,
+      widths: [s.borderTopWidth, s.borderRightWidth, s.borderBottomWidth, s.borderLeftWidth],
+      color: s.borderTopColor,
+      count: count ? getComputedStyle(count).color : 'no count',
+      box: { x: r.x, y: r.y, w: r.width, h: r.height },
+      haha: haha ? haha.getBoundingClientRect().x : null,
+    };
+  });
+  const clear = (c) => c === 'transparent' || c === 'rgba(0, 0, 0, 0)';
+  const near = (a, b) => Math.abs(a - b) <= 0.5;
+
+  await page.setViewportSize({ width: 393, height: 852 });
+  for (const mode of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme: mode, reducedMotion: 'reduce' });
+    await page.goto('/');
+    await resetDemo(page);
+    await page.reload();
+    await galleryLoaded(page);
+    await pick('avocado');
+    await page.waitForTimeout(300); // soft, so one red run also shows the reaction checks below
+    expect.soft({ mode, page: await themeBg() }).toEqual({ mode, page: PAGE.avocado[mode] });
+    await page.screenshot({ path: path.join(shots, `rd-117-avocado-${mode}.png`) });
+    if (mode === 'dark') {
+      await onFeed(page);
+      await turnOn();
+      const on = await look();
+      expect.soft({ mode, clear: clear(on.bg), widths: on.widths, color: on.color, count: on.count })
+        .toEqual({ mode, clear: true, widths: ['2px', '2px', '2px', '2px'], color: ACCENT.avocadoDark, count: ACCENT.avocadoDark });
+    }
+  }
+
+  // Light: a picked heart in every theme; Paper and Pomegranate pages unchanged.
+  await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
+  for (const theme of ['paper', 'avocado', 'pomegranate']) {
+    await pick(theme);
+    await page.waitForTimeout(300);
+    expect.soft({ theme, page: await themeBg() }).toEqual({ theme, page: PAGE[theme].light });
+    await onFeed(page);
+    await turnOff();
+    await page.waitForTimeout(300);
+    const off = await look();
+    expect.soft({ theme, offClear: clear(off.bg), offWidths: off.widths }).toEqual({ theme, offClear: true, offWidths: ['1px', '1px', '1px', '1px'] });
+    await love().click();
+    await page.waitForTimeout(300);
+    const on = await look();
+    expect.soft({ theme, clear: clear(on.bg), bg: clear(on.bg) ? 'clear' : on.bg, widths: on.widths, color: on.color, count: on.count })
+      .toEqual({ theme, clear: true, bg: 'clear', widths: ['2px', '2px', '2px', '2px'], color: ACCENT[theme], count: ACCENT[theme] });
+    // RD-116: the heart's outer box and its neighbour stay put (±0.5 px).
+    expect.soft({ theme, same: near(on.box.x, off.box.x) && near(on.box.y, off.box.y) && near(on.box.w, off.box.w) && near(on.box.h, off.box.h), haha: off.haha !== null && near(on.haha, off.haha) })
+      .toEqual({ theme, same: true, haha: true });
+    await love().screenshot({ path: path.join(shots, `rd-117-picked-${theme}-light.png`) });
+  }
+});
+
 // RD-108 / RD-109 (Chase, Nov 19, DEC-72): with Easy view Off (Chase) the web shows a lookalike of iOS 26's floating
 // glass tab bar, and the bottom of Gallery scrolls clear of it; Grandma Jo (Easy view On) keeps the fixed bar.
 test('RD-108 RD-109 Chase gets the floating glass tab bar and Gallery clears it; Grandma Jo keeps the fixed bar', async ({ page }) => {
@@ -890,3 +1120,249 @@ for (const width of [360, 390]) {
     await page.screenshot({ path: path.join(__dirname, '..', 'test-results', 'gux-r1', `gux-r1-${width}.png`) });
   });
 }
+
+// RD-110 (Chase, Nov 19, DEC-75): "the full iOS glass oval interaction on scroll". Scrolling down shrinks the floating
+// bar to a small oval with only the picked tab; scrolling up or tapping the oval brings the whole bar back. Grandma
+// Jo's fixed bar (Easy view On) never shrinks. Review of PR 138 (Nov 19): RD-110-R2 only the app's own up-and-down
+// scrolling counts, RD-110-R3 changing tabs brings the bar back, RD-110-R6 no fixed pixel widths or timed waits.
+const bar = (page) => page.getByRole('tablist');
+const barWidth = (page) => bar(page).evaluate((el) => el.getBoundingClientRect().width);
+const fullWidth = (page) => bar(page).evaluate((el) => el.parentElement.getBoundingClientRect().width - 32);
+// The phone column's middle (above the bar), where a finger or a mouse wheel would scroll the page.
+const appMiddle = (page) => bar(page).evaluate((el) => {
+  const r = el.parentElement.getBoundingClientRect();
+  return { x: r.left + r.width / 2, y: r.top + r.height / 3 };
+});
+// How far the scrolling area under a point has scrolled; the area is found the way the browser finds it.
+const scrolledAt = (page, pt) => page.evaluate(({ x, y }) => {
+  let n = document.elementFromPoint(x, y);
+  while (n && !(n.scrollHeight > n.clientHeight && /(auto|scroll)/.test(getComputedStyle(n).overflowY))) n = n.parentElement;
+  return n ? n.scrollTop : -1;
+}, pt);
+const wheel = async (page, pt, dy) => {
+  await page.mouse.move(pt.x, pt.y);
+  for (let i = 0; i < 6; i++) await page.mouse.wheel(0, dy / 6);
+};
+const settled = (page) => page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+const isShrunk = async (page) => (await page.getByRole('tab').count()) === 1;
+
+test('RD-110 the glass bar shrinks on scroll down and comes back on scroll up or a tap; Grandma Jo\'s bar never shrinks', async ({ page }) => {
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  const full = await fullWidth(page);
+  expect(await barWidth(page)).toBeCloseTo(full, 0);
+  const mid = await appMiddle(page);
+  await wheel(page, mid, 600);
+  await expect.poll(() => barWidth(page)).toBeLessThanOrEqual(66);
+  await expect(page.getByRole('tab')).toHaveCount(1);
+  await expect(page.getByRole('tab', { name: 'Gallery, show all tabs' })).toBeVisible();
+  await page.screenshot({ path: path.join(__dirname, '..', 'test-results', 'rd-110', 'shrunk.png') });
+  await wheel(page, mid, -200);
+  await expect.poll(() => barWidth(page)).toBeCloseTo(full, 0);
+  await expect(page.getByRole('tab')).toHaveCount(4);
+
+  // Tapping the shrunk oval brings the bar back and stays on Gallery where it was.
+  await wheel(page, mid, 600);
+  await expect.poll(() => barWidth(page)).toBeLessThanOrEqual(66);
+  const at = await scrolledAt(page, mid);
+  await page.getByRole('tab', { name: /show all tabs/ }).click();
+  await expect.poll(() => barWidth(page)).toBeCloseTo(full, 0);
+  await expect(page.getByRole('tab', { name: /^Gallery/ })).toHaveAttribute('aria-selected', 'true');
+  expect(await scrolledAt(page, mid)).toBe(at);
+
+  // Grandma Jo (Easy view On): the fixed bar never shrinks, even after the page has really scrolled.
+  await details(page);
+  await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+  await details(page);
+  await page.getByRole('tab', { name: /^Gallery/ }).click();
+  await galleryLoaded(page);
+  const jo = await appMiddle(page);
+  const before = await scrolledAt(page, jo);
+  await wheel(page, jo, 600);
+  await expect.poll(() => scrolledAt(page, jo)).toBeGreaterThan(before + 100);
+  await settled(page);
+  expect(await isShrunk(page)).toBe(false);
+  expect(await barWidth(page)).toBeCloseTo(await bar(page).evaluate((el) => el.parentElement.getBoundingClientRect().width), 0);
+});
+
+test('RD-110-R2 scrolling the laptop\'s story panel never shrinks the bar, and a sideways strip never brings it back', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 640 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  const panel = page.getByRole('heading', { name: 'A private photo app for split families' });
+  await expect(panel).toBeVisible();
+  const box = await panel.boundingBox();
+  const pt = { x: box.x + 20, y: box.y + 20 };
+  await wheel(page, pt, 400);
+  await expect.poll(() => scrolledAt(page, pt)).toBeGreaterThan(0); // the panel really scrolled
+  await settled(page);
+  expect(await isShrunk(page)).toBe(false);
+
+  // Shrink it with the app's own scrolling, then move a sideways strip in the app: still shrunk.
+  const mid = await appMiddle(page);
+  await wheel(page, mid, 600);
+  await expect(page.getByRole('tab')).toHaveCount(1);
+  const moved = await bar(page).evaluate((el) => {
+    const strip = [...el.parentElement.querySelectorAll('div')].find((d) => d.scrollWidth > d.clientWidth + 20 && /(auto|scroll)/.test(getComputedStyle(d).overflowX));
+    if (!strip) return false;
+    strip.scrollLeft += 120;
+    return true;
+  });
+  expect(moved).toBe(true);
+  await settled(page);
+  await settled(page);
+  expect(await isShrunk(page)).toBe(true);
+});
+
+test('RD-110-R3 the bar shrunk on Share comes back whole on Feed after sending', async ({ page }) => {
+  await page.setViewportSize({ width: 393, height: 600 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await openNewPost(page, [FIXTURE]);
+  await wheel(page, await appMiddle(page), 800);
+  await expect(page.getByRole('tab')).toHaveCount(1);
+  await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
+  await page.getByRole('button', { name: /^Send to / }).click();
+  await expect(page.getByRole('tab', { name: /^Feed/ })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('tab')).toHaveCount(4);
+  await resetDemo(page);
+});
+
+// SHARE-ST-8 (SPEC-REDESIGN 1j-2, DEC-79, Chase Nov 20): Share opens on an empty postcard in the public demo at 393 px.
+// Reference: option B of /mnt/project-files/design/share-start-2026-11-20/share-start-tester.html. Written first (red),
+// Nov 21, by qa-tdd. Soft expects on each start page, so one run shows every part still missing.
+// QA-R (staff-pm): the demo's Grandma Jo is a viewer with no Share tab (RD-9), so her "Up to 10" can't be reached here;
+// it runs only if the demo ever lets her post, and the jest SHARE-ST-2/5 cases cover "Up to 10" meanwhile.
+test('SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded To:, no "Pick lots of photos"; Chase "Up to 100"; 3 photos show "1 of 3"', async ({ page }) => {
+  const shots = path.join(__dirname, '..', 'test-results', 'share-st-8');
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/');
+  await galleryLoaded(page);
+
+  const startPage = async (limit, shot) => {
+    await page.getByRole('tab', { name: /^Share/ }).click();
+    await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
+    const add = page.getByRole('button', { name: `Add photos, up to ${limit} at a time` }).filter({ visible: true });
+    await expect.soft(add).toBeVisible();
+    await expect.soft(page.getByText(`Up to ${limit} at a time`, { exact: true }).filter({ visible: true })).toBeVisible();
+    // engineer, flagged for qa-tdd: round 2 B+ (SHARE-ST-10/14/15) replaced the subline, the To: words and the fading.
+    await expect.soft(page.getByText('Only the people you pick will see it.', { exact: true }).filter({ visible: true })).toBeVisible();
+    const to = page.getByText('To: you pick after your photos', { exact: true }).filter({ visible: true });
+    await expect.soft(to).toBeVisible();
+    await expect.soft(page.getByText('Add a note (optional)', { exact: true }).filter({ visible: true })).toBeVisible();
+    // No old start page anywhere; no Send yet.
+    await expect.soft(page.getByText(/Pick lots of photos|Lots of photos\?|Share photos|Pick photos/)).toHaveCount(0);
+    await expect.soft(page.getByRole('button', { name: /^(Send to |Pick who gets it$)/ })).toHaveCount(0);
+    // SHARE-ST-14: the note and To: show at full strength (no opacity below 1) but stay hidden from screen readers.
+    if (await to.count()) {
+      const seen = await to.first().evaluate((el) => {
+        let o = 1; let hidden = false;
+        for (let n = el; n; n = n.parentElement) { o *= parseFloat(getComputedStyle(n).opacity || '1'); if (n.getAttribute('aria-hidden') === 'true') hidden = true; }
+        return { faded: o < 1, hidden };
+      });
+      expect.soft(seen).toEqual({ faded: false, hidden: true });
+    }
+    // The target's words stay inside it, and the page never scrolls sideways.
+    if (await add.count()) {
+      const spill = await add.first().evaluate((el) => {
+        const box = el.getBoundingClientRect(); let out = 0;
+        const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        for (let n = w.nextNode(); n; n = w.nextNode()) {
+          if (!n.textContent.trim()) continue;
+          const r = document.createRange(); r.selectNodeContents(n);
+          for (const q of r.getClientRects()) out = Math.max(out, box.left - q.left, q.right - box.right, box.top - q.top, q.bottom - box.bottom);
+        }
+        return { h: box.height >= 48, out: Math.round(out) };
+      });
+      expect.soft(spill).toEqual({ h: true, out: 0 });
+    }
+    expect.soft(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await page.screenshot({ path: path.join(shots, `${shot}.png`) });
+  };
+
+  await startPage(100, 'chase-light');
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await startPage(100, 'chase-dark');
+  await page.emulateMedia({ colorScheme: 'light' });
+  // Chase with Easy view On: "Up to 10" (SHARE-ST-12).
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: 'Easy view, Off' }).click();
+  await page.getByRole('radio', { name: 'On', exact: true }).click();
+  await expect.poll(() => tabWordsShown(page)).toEqual(['Gallery', 'Share', 'Feed', 'More']);
+  await startPage(10, 'chase-easy-view');
+  // Easy view back Off for the rest.
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: 'Easy view, On' }).click();
+  await page.getByRole('radio', { name: 'Off', exact: true }).click();
+
+  // As Chase, the target with 3 photos opens the postcard at "1 of 3".
+  await page.getByRole('tab', { name: /^Share/ }).click();
+  const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
+  await page.getByRole('button', { name: 'Add photos, up to 100 at a time' }).filter({ visible: true }).first().click();
+  await (await chooser).setFiles([FIXTURE, FIXTURE, FIXTURE]);
+  await expect(page.getByText('1 of 3', { exact: true })).toBeVisible();
+  await page.screenshot({ path: path.join(shots, 'chase-1-of-3.png') });
+
+  // Grandma Jo (Easy view on for her): "Up to 10", if the demo lets her post.
+  await asJo(page);
+  if (await page.getByRole('tab', { name: /^Share/ }).count()) {
+    await startPage(10, 'jo-easy-view');
+  } else {
+    test.info().annotations.push({ type: 'SHARE-ST-8', description: 'Grandma Jo has no Share tab in the demo (viewer, RD-9); her "Up to 10" is not checked here.' });
+  }
+});
+
+// DARK-ELEV-6 (intake #155, studio DARK-5; written first by qa-tdd, Nov 23): in dark, raised things are a lighter
+// surface step, never a shadow. At a 390 px phone in dark, nothing visible on the demo's first screen draws a
+// box-shadow. The DemoBar's 1 px bottom line is an inset divider, not elevation, so inset-only shadows are allowed.
+// qa-tdd (Nov 23, green run): also scrolled a little so RD-82's pinned shade line (search-bar-shade) is on screen,
+// with the other direction: in light that shade line keeps its drop shadow (DARK-ELEV-3 in a real browser).
+const dropShadows = (page) => page.evaluate(() => [...document.querySelectorAll('body *')].flatMap((el) => {
+  const s = getComputedStyle(el);
+  if (s.boxShadow === 'none' || s.visibility === 'hidden' || s.display === 'none') return [];
+  const r = el.getBoundingClientRect();
+  if (r.width === 0 || r.height === 0 || r.bottom < 0 || r.top > innerHeight) return [];
+  // Split on commas outside rgb()/rgba(); keep only the drop (non-inset) shadows.
+  const drops = s.boxShadow.split(/,(?![^(]*\))/).filter((p) => !/\binset\b/.test(p));
+  if (drops.length === 0) return [];
+  const name = el.getAttribute('aria-label') || el.getAttribute('role') || el.getAttribute('data-testid') || el.tagName;
+  return [`${name}: ${s.boxShadow}`];
+}));
+const shadeShadow = (page) => page.getByTestId('search-bar-shade').first().evaluate((el) => getComputedStyle(el).boxShadow);
+test('DARK-ELEV-6 at 390 px dark: no visible element on the first screen has a drop shadow (DemoBar inset divider allowed)', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto('/');
+  await galleryLoaded(page);
+  expect(await dropShadows(page)).toEqual([]);
+  // Scrolled a little: the pinned shade line shows, still no drop shadow anywhere (floating tab bar included).
+  await page.mouse.move(195, 600);
+  await page.mouse.wheel(0, 300); // mouse.wheel fires RN-web's onScroll; scrollTo does not
+  await expect(page.getByTestId('search-bar-shade').first()).toBeAttached();
+  expect(await dropShadows(page)).toEqual([]);
+  expect(await shadeShadow(page)).toBe('none');
+  // The other direction: in light the same shade line keeps its soft drop shadow (light is unchanged).
+  await page.emulateMedia({ colorScheme: 'light' });
+  await expect.poll(() => shadeShadow(page)).not.toBe('none');
+});
+
+// EF-HE-1-AC1/AC2 (intake #162, SPEC-EVAL-FIXES): supersedes the ff4543e guard ("Open" shown, "Open the chat …" spoken).
+// Each Messages Open button now shows which chat it opens, and its accessible name is exactly the words shown.
+test('EF-HE-1-AC1 EF-HE-1-AC2 at 390 px: each Messages Open button shows distinct words and its accessible name is exactly them', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: /^Messages(,|$)/ }).click();
+  await expect(page.getByRole('heading', { name: 'Messages' })).toBeVisible();
+  const open = page.getByRole('button', { name: /^Open / });
+  await expect(open.first()).toBeVisible();
+  const seen = await open.evaluateAll((bs) => bs.map((b) => ({ name: b.getAttribute('aria-label'), shown: (b.innerText || '').replace(/\s+/g, ' ').trim() })));
+  expect(seen.length).toBeGreaterThan(1);
+  for (const s of seen) expect(s.name).toBe(s.shown);
+  const shown = seen.map((s) => s.shown);
+  expect(new Set(shown).size).toBe(shown.length);
+  await expect(page.getByRole('button', { name: /^Open the chat/ })).toHaveCount(0);
+});

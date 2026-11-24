@@ -36,16 +36,17 @@ export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { start
 
   useEffect(() => { void store.open(startAt); }, [store, startAt]);
 
-  // Android (Grandaddy, Pawpaw): the phone's Back button steps back inside Hearth, never out of it.
+  // Android (Grandaddy, Pawpaw): the phone's Back button steps back inside Hearth, never out of it: from a post or
+  // the year list to the photos here; from the photos, Feed's stack takes it back to Feed (ENG-R6).
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
       if (openId) setOpenId(null);
       else if (years) setYears(false);
-      else onClose();
+      else return false;
       return true;
     });
     return () => sub.remove();
-  }, [years, openId, onClose]);
+  }, [years, openId]);
 
   const openPost = (p: TimelinePost) => {
     app.feed?.adopt(p);

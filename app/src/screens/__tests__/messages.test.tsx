@@ -24,7 +24,7 @@ describe('MSG Messages screen', () => {
     expect(await screen.findByRole('header', { name: 'Messages' })).toBeTruthy();
     // AUD-14: titled by its people, never the group's name
     expect(screen.queryByText(/Grandparents/)).toBeNull();
-    fireEvent.press(await screen.findByRole('button', { name: 'Open the chat with Alex, Chase and Grandpa Earl' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Open chat with Alex, Chase and Grandpa Earl' } /* EF-HE-1 */));
     expect(await screen.findByText(/someone else in this chat opens Messages/, {}, slow)).toBeTruthy();
 
     await act(async () => { await chase.open(G); });   // Chase's phone lets her in
@@ -57,7 +57,7 @@ describe('MSG Messages screen', () => {
   it('MSG-1: a parent sees the group\'s own name', async () => {
     await renderApp(<MoreScreen />, { user: 'chase', fixture: { joIsMember: true } });
     fireEvent.press(await screen.findByRole('button', { name: 'Messages' }));
-    expect(await screen.findByRole('button', { name: "Open the chat Grandparents – Dad's side" })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: "Open Grandparents – Dad's side" } /* EF-HE-1 */)).toBeTruthy();
   });
 
   // RR-18 (recruiter-ready re-check, Oct 22): a chat counts the group plus the family's parents (REPLY-10), so

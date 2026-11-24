@@ -52,7 +52,7 @@ for (const size of SIZES) {
       };
 
       await page.goto('');
-      await expect(page.getByText('Bridge walk on the trail', { exact: true })).toBeVisible();
+      await expect(page.getByText(/First ride on the balance bike/).first()).toBeVisible();
       await shot('photos');
       // RD-47 (Nov 17): By date left Gallery's top bar; the months are the by-date view, so no by-date shot.
       await page.goto('photos');
@@ -62,7 +62,7 @@ for (const size of SIZES) {
       await page.goto('share');
       await shot('share-empty');
       const chooser = page.waitForEvent('filechooser');
-      await page.getByRole('button', { name: 'Pick photos from your phone' }).click();
+      await page.getByRole('button', { name: /^Add photos, up to \d+ at a time$/ }).click();
       await (await chooser).setFiles(PICTURE);
       await page.getByLabel('Add a note (optional)').fill('First snow!');
       await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
@@ -91,7 +91,7 @@ for (const size of SIZES) {
       await shot('not-found');
       await page.goto('');
       await resetDemo(page);
-      await expect(page.getByText(/You're Chase, a parent/)).toBeVisible();
+      await expect(page.getByText(/You're Kevin, a parent/)).toBeVisible();
       await ctx.close();
     });
   }

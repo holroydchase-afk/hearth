@@ -2,7 +2,7 @@
 
 How Chase turns "start a family" (migration 0024, DEC-55) on and off, deals with a family someone reports, and what
 has to be true before it goes on. The switch `start_family_open` ships **off** and stays off until Chase says
-"turn on start a family" (DEC-74). Spec: `docs/product/SPEC-START-FAMILY.md` section 8.
+"turn on start a family" (DEC-86). Spec: `docs/product/SPEC-START-FAMILY.md` section 8.
 
 Every script below runs from `backend/`, needs only `SUPABASE_ACCESS_TOKEN` (an environment secret, never in chat or
 git), goes through the Supabase Management API like `family-setup.sh`, and is a **dry run unless you add `--apply`**.

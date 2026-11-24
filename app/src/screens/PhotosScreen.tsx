@@ -6,6 +6,7 @@
 // photos since the last visit (RD-19..21), then the months mosaic (RD-44). Messages and Events moved to More (RD-15);
 // By date left Gallery (the months are the by-date view) and opens from Feed's Older photos card.
 // Feed is the existing FlatList (Instagram-style posts, 32 pt apart, no lines: RD-48..54).
+import { router } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, FlatList, RefreshControl, ScrollView, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,14 +19,13 @@ import { Button, Card, Loading, Notice, Txt } from '../ui/kit';
 import { andList } from '../ui/format';
 import { useTheme } from '../ui/theme';
 import { AppGate } from './AppGate';
+import { BirthdayCard, TodayLine } from './Birthdays';
 import { EventCard, EventsScreen, EventUpdate, type EventsView } from './EventsScreen';
 import { FOLD_AT, GalleryTopBar, LargeGreeting, SearchField, greeting, useFamilyName } from './GalleryTop';
 import { GalleryGrid, shadeLine } from './GalleryGrid';
 import { NewForYouRow, OneAtATime } from './NewForYou';
 import { PostCard } from './PostCard';
 import { QueueStatus } from './QueueStatus';
-import { SearchScreen } from './SearchScreen';
-import { TimelineScreen } from './TimelineScreen';
 import { YourName } from './YourName';
 import { useTabBarSpace } from '../ui/tabBarSpace';
 
@@ -42,18 +42,19 @@ function EarlierCard({ g, onOpen }: { g: EarlierGroup; onOpen: () => void }) {
 
 export type PhotosMode = 'feed' | 'gallery';
 
+// ENG-R6: Search (SEARCH-UI-1) and the timeline (BETA-TIME-2) are screens of their own, pushed on Gallery's and
+// Feed's stacks, so this list stays mounted under them (its scroll is kept) and Back returns to it.
+const openSearch = () => router.push('/gallery/search');
+const openTimeline = (startAt: string) => router.push({ pathname: '/feed/timeline', params: { startAt } });
+
 export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   const gallery = mode === 'gallery';
   const app = useApp();
   const state = useFeed();
-  const { c } = useTheme();
+  const { c, dark } = useTheme();
   const tabRoom = useTabBarSpace(); // RD-109: room under the web's floating tab bar
-  // BETA-TIME-2: the timeline opens in place; "Back to Gallery" returns here.
-  const [timeline, setTimeline] = useState<{ startAt: string | null } | null>(null);
   // EVT-3/4: the Events list or one event, opened in place; Back returns here.
   const [events, setEvents] = useState<EventsView | null>(null);
-  // SEARCH-UI-1: Search opens in place too; Back returns here.
-  const [search, setSearch] = useState(false);
   // OPEN-5 (GUX-R4, QA-R1): the last visit, read once when Photos loads. It is saved only once the first network load
   // succeeds, as the time that load started, so a failed or offline open never hides photos she hasn't seen.
   const me = app.session?.userId ?? null;
@@ -72,6 +73,17 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
     saved.current = me;
     void saveLastSeen(kv, me, fetchedAt);
   }, [kv, me, lastSeen, fetchedAt]);
+  // EF-HE-9 (B18): once the first network page is in, load older pages back to the last visit, so New for you
+  // counts every new post. Until then New for you waits, so its count never jumps.
+  const feedStore = app.feed;
+  const [backTo, setBackTo] = useState<string | null>(null);
+  const backKey = gallery && me && lastSeen?.user === me && lastSeen.at && fetchedAt ? `${me}|${lastSeen.at}|${fetchedAt}` : null;
+  useEffect(() => {
+    if (!backKey || !feedStore || !lastSeen?.at) return;
+    let live = true;
+    void feedStore.loadBackTo(lastSeen.at).finally(() => { if (live) setBackTo(backKey); });
+    return () => { live = false; };
+  }, [backKey, feedStore, lastSeen?.at]);
   // OPEN-7 / RD-21: the new posts one at a time, in place; Back and Done return here.
   const [walk, setWalk] = useState<string[] | null>(null);
   const closeWalk = useCallback(() => setWalk(null), []);
@@ -96,7 +108,6 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   }, [scrollY]);
   if (app.status !== 'ready' || !app.space || !app.feed) return <AppGate />;
   const feed = app.feed;
-  if (search) return <SearchScreen onClose={() => setSearch(false)} />;
   if (walk) {
     // GUX-R7: finishing the walk (Done) marks those posts seen here, so New for you and its "N new" chip go away.
     const finish = () => {
@@ -106,7 +117,6 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
     };
     return <OneAtATime postIds={walk} onClose={closeWalk} onDone={finish} />;
   }
-  if (timeline) return <TimelineScreen startAt={timeline.startAt} onClose={() => setTimeline(null)} backTo={gallery ? 'Gallery' : 'Feed'} />;
   if (events) {
     return (
       <EventsScreen
@@ -121,7 +131,9 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
     );
   }
   // OPEN-1: others' posts since the last visit on this phone; none on a first open (OPEN-5) or for my own posts.
-  const fresh = gallery && me && lastSeen?.user === me ? newForYou(state.posts, lastSeen.at, me) : [];
+  const oldest = state.posts[state.posts.length - 1];
+  const caughtUp = backTo === backKey || !state.hasMore || !oldest || !lastSeen?.at || Date.parse(oldest.published_at) <= Date.parse(lastSeen.at);
+  const fresh = gallery && me && lastSeen?.user === me && caughtUp ? newForYou(state.posts, lastSeen.at, me) : [];
   const senders = andList(state.posts.map((p) => p.author_name));
   // BETA-TIME-1: old photos added today don't take over the top; they go in a card.
   const earlier = earlierGroups(state.posts);
@@ -144,6 +156,8 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
       {/* RD-11: Gallery's large title is the greeting (shown once the name is known, so it never flips mid-read);
           Feed's title is "Feed" (GUX-R5), the tab's own word. UI-26 still holds: no "Check for new photos" button; pull down to refresh. */}
       {gallery ? null : <Txt variant="display" role="header">Feed</Txt>}
+      {/* CAL-16: on a day with a family date, one line at the top of Gallery ("Today is Grandma Jo's birthday"). */}
+      {gallery ? <TodayLine /> : null}
       {/* RD-18: Gallery has no "Sent by" line; the grid tiles and New for you name the senders. */}
       {senders && !gallery ? <Txt variant="muted">{`Sent by ${senders}`}</Txt> : null}
       {fresh.length && lastSeen?.at ? (
@@ -152,12 +166,14 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
       {/* SHARE-PC-11 (DEC-73): after a Send, Feed says who it went to, by name, until closed. */}
       {app.shared && !gallery ? <Notice tone="good" text={app.shared} onClose={() => app.setShared(null)} /> : null}
       {app.space.can_post ? <YourName /> : null}
+      {/* CAL-12/13: "When's your birthday?" until Save or Not now; it lives on Gallery so every way in reaches it. */}
+      {gallery ? <BirthdayCard /> : null}
       <QueueStatus />
       {app.pushAsk && state.posts.length ? <PushAsk /> : null}
       {state.notice ? <Notice text={state.notice} onClose={() => feed.clearNotice()} /> : null}
       {/* BETA-TIME-1 on Feed; on Gallery old photos sit in their own months in the grid (RD-18, QA-R2). */}
       {gallery ? null : earlier.map((g) => (
-        <EarlierCard key={g.authorId} g={g} onOpen={() => setTimeline({ startAt: startOfNextMonth(g.openAt) })} />
+        <EarlierCard key={g.authorId} g={g} onOpen={() => openTimeline(startOfNextMonth(g.openAt))} />
       ))}
     </View>
   );
@@ -206,8 +222,8 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
             style={{ backgroundColor: c.bg, paddingBottom: 8, marginBottom: -8, marginHorizontal: -16, paddingHorizontal: 16 }}
             onLayout={(e) => { setPinAt(e.nativeEvent.layout.height); fieldAt.current = e.nativeEvent.layout.y; }}
           >
-            <SearchField testID="search-field" onPress={() => setSearch(true)} />
-            {under && !monthPinned ? <View testID="search-bar-shade" pointerEvents="none" accessible={false} style={[shadeLine, { backgroundColor: c.line }]} /> : null}
+            <SearchField testID="search-field" onPress={openSearch} />
+            {under && !monthPinned ? <View testID="search-bar-shade" pointerEvents="none" accessible={false} style={[shadeLine(dark), { backgroundColor: c.line }]} /> : null}
           </View>
           {header}
           {empty}

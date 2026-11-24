@@ -23,6 +23,7 @@ import type {
   HeartState, InvitePreview, Reaction, ReactionCounts, ReactionState, ReactionSummary, PostViewers, MediaKind, MediaStatus, Role, Session, Space, UploadGrant, UploadItemSpec, ViewGrant,
   TimelineArgs, TimelinePost, TimelineYear, SearchArgs,
   ChatKind, ChatMember, ChatRow, ChatRowKind, ChatSummary, ClaimedKeyPackage,
+  FamilyDate, FamilyDateKind, SaveFamilyDateArgs,
 } from '../types';
 import { fromBase64, toBase64 } from '../../crypto/base64';
 import { randomBytes, uuid } from '../../crypto/random';
@@ -53,7 +54,7 @@ interface MediaRow {
   duration_ms: number | null; byte_size: number; thumb_byte_size: number; status: MediaStatus; dek: string;
   display_key: string; thumb_key: string; uploader: string;
 }
-interface CommentRec { id: string; post: string; author: string; body: string; created_at: string; client_id: string }
+interface CommentRec { id: string; post: string; author: string; body: string; created_at: string; client_id: string; deleted?: boolean }
 interface InviteRow {
   code: string; space: string; role: Role; circles: string[]; created_by: string; target_email: string | null;
   /** BETA-SMS-8: E.164, only that number may redeem. */
@@ -63,6 +64,20 @@ interface InviteRow {
   householdMeansEveryone?: boolean;
 }
 
+interface FamilyDateRow {
+  id: string; space: string; kind: FamilyDateKind; label: string | null; month: number; day: number;
+  member: string | null; created_by: string; created_at: string;
+}
+const DATE_KINDS: FamilyDateKind[] = ['birthday', 'anniversary', 'other'];
+const MONTH_DAYS = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+/** 0029 private.check_month_day: a real month and day (Feb 29 allowed). The error never repeats what was sent. */
+function checkMonthDay(month: number | null, day: number | null): void {
+  if (!Number.isInteger(month) || !Number.isInteger(day) || month! < 1 || month! > 12 || day! < 1 || day! > MONTH_DAYS[month! - 1]!) {
+    throw new ApiError('22023', 'that date is not on the calendar');
+  }
+}
+const MAX_FAMILY_DATES = 200;
+
 export interface FakeState {
   users: Record<string, UserRow>;
   /** deleted: spaces.deleted_at is set (0024 retires an empty family this way; the purge removes it later). */
@@ -70,7 +85,7 @@ export interface FakeState {
   members: MemberRow[];
   circles: Record<string, CircleRow>;
   /** `at`: when they were added (ISO); fixture rows have none and count as always there. */
-  circleMembers: { circle: string; user: string; at?: string }[];
+  circleMembers: { circle: string; user: string; at?: string; sees_from?: string | null }[];
   posts: Record<string, PostRow>;
   media: Record<string, MediaRow>;
   objects: Record<string, string>; // key -> base64 ciphertext
@@ -92,6 +107,8 @@ export interface FakeState {
   startedFamilies?: { space: string; by: string; client_id: string; at: string }[];
   /** 0024 private.rate_limit_events for action 'start_family': start times (ms) per user; retiring never resets them. */
   startEvents?: Record<string, number[]>;
+  /** 0029 life calendar: month and day only, family-wide (CAL-*). */
+  familyDates?: FamilyDateRow[];
   /** 0015 messenger relay: opaque base64 MLS bytes only. */
   chat?: {
     devices: Record<string, string>;
@@ -131,6 +148,25 @@ export const FIXTURE = {
   invites: { jo: 'GRANDMAJ23', expired: 'EXPRDEXPRD' },
 };
 
+/** VIS-11: the rows of backend/tests/vis_oracle/fixtures/seed-N.json (vis_oracle.fixture_json()). */
+export interface OracleFixtureRows {
+  users: { id: string; name: string }[];
+  spaces: { id: string; name: string; deleted: boolean; reply_audience: ReplyAudience }[];
+  members: { space: string; user: string; role: Role }[];
+  circles: { id: string; space: string; name: string; kind: CircleKind; deleted: boolean }[];
+  circle_members: { circle: string; user: string; sees_from: string | null }[];
+  posts: {
+    id: string; space: string; author: string; status: 'draft' | 'published'; deleted: boolean; published_at: string | null;
+    taken_at: string | null; title: string | null; caption: string | null; circles: string[];
+  }[];
+  comments: { id: string; post: string; author: string; body: string; created_at: string; deleted: boolean }[];
+  reactions: { post: string; user: string; emoji: Reaction; created_at: string }[];
+  family_dates: {
+    id: string; space: string; kind: FamilyDateKind; label: string | null; month: number; day: number;
+    member: string | null; created_by: string;
+  }[];
+}
+
 export interface FixtureOptions {
   /** Grandma Jo already joined (contract + screen tests) or still holds an invite (web smoke test). */
   joIsMember?: boolean;
@@ -140,6 +176,8 @@ export class FakeBackend {
   private listeners = new Set<() => void>();
   /** DEMO-1: the demo build seeds pictures asynchronously; app calls wait for it (tests leave it unset). */
   ready: Promise<void> | null = null;
+  /** DEMO-SAFARI-3: resolves once every save so far has landed; the demo waits on it before a reload. */
+  flush: (() => Promise<void>) | null = null;
   constructor(public state: FakeState, private persist?: (s: FakeState) => void) {}
 
   static empty(): FakeState {
@@ -180,6 +218,37 @@ export class FakeBackend {
     return new FakeBackend(s, persist);
   }
 
+  /** VIS-11: load the server oracle's generated family (backend/tests/vis_oracle/fixtures/seed-N.json) so the Fake
+   *  can be held to vis.can_see on the same rows (app/src/api/__tests__/visOracle.test.ts). Test use only. */
+  static fromOracleFixture(fx: OracleFixtureRows): FakeBackend {
+    const s = FakeBackend.empty();
+    for (const u of fx.users) s.users[u.id] = { id: u.id, email: `${u.id}@example.com`, name: u.name };
+    for (const sp of fx.spaces) {
+      s.spaces[sp.id] = { id: sp.id, name: sp.name, reply_audience: sp.reply_audience, deleted: sp.deleted };
+    }
+    for (const m of fx.members) s.members.push({ space: m.space, user: m.user, role: m.role, invited_by: null });
+    for (const c of fx.circles) {
+      s.circles[c.id] = { id: c.id, space: c.space, name: c.name, created_by: '', deleted: c.deleted, kind: c.kind };
+    }
+    for (const cm of fx.circle_members) s.circleMembers.push({ circle: cm.circle, user: cm.user, sees_from: cm.sees_from });
+    for (const p of fx.posts) {
+      s.posts[p.id] = {
+        id: p.id, space: p.space, author: p.author, caption: p.caption, status: p.status, deleted: p.deleted,
+        circles: [...p.circles], client_id: p.id, created_at: p.published_at ?? '2026-01-01T00:00:00.000Z',
+        published_at: p.published_at, taken_at: p.taken_at, title: p.title,
+      };
+    }
+    for (const c of fx.comments) {
+      s.comments[c.id] = { id: c.id, post: c.post, author: c.author, body: c.body, created_at: c.created_at, client_id: c.id, deleted: c.deleted };
+    }
+    for (const r of fx.reactions) s.hearts.push({ post: r.post, user: r.user, emoji: r.emoji });
+    s.familyDates = fx.family_dates.map((d) => ({
+      id: d.id, space: d.space, kind: d.kind, label: d.label, month: d.month, day: d.day, member: d.member,
+      created_by: d.created_by, created_at: '2026-01-01T00:00:00.000Z',
+    }));
+    return new FakeBackend(s);
+  }
+
   clientFor(userId: string | null, opts: { trackAppSession?: boolean; latencyMs?: number } = {}): HearthApi {
     return new FakeApi(this, userId, opts);
   }
@@ -211,11 +280,14 @@ export class FakeBackend {
   /** can_view_post(): author (while a member), or a member of a circle in the audience. */
   canView(user: string | null, p: PostRow | undefined): p is PostRow {
     if (!user || !p || p.deleted) return false;
+    if (this.state.spaces[p.space]?.deleted) return false; // VIS-11: nothing in a deleted family
     if (!this.member(p.space, user)) return false;
     if (p.author === user) return true;
     if (p.status !== 'published') return false;
     if (this.isPoster(p.space, user)) return true; // 0011 / SPEC-GROUPS: parents see every published post
-    return p.circles.some((c) => !this.state.circles[c]?.deleted && this.inCircle(c, user));
+    // VIS-11: a share-history cutoff (circle_members.sees_from) hides posts sent before it
+    return p.circles.some((c) => !this.state.circles[c]?.deleted && this.state.circleMembers.some((x) =>
+      x.circle === c && x.user === user && (!x.sees_from || (!!p.published_at && Date.parse(p.published_at) >= Date.parse(x.sees_from)))));
   }
   visiblePost(user: string | null, post: string): PostRow {
     const p = this.state.posts[post];
@@ -688,7 +760,7 @@ export class FakeBackend {
   getComments(user: string | null, post: string, limit = 50): CommentRow[] {
     const me = this.requireUser(user);
     const p = this.visiblePost(me, post); // get_comments raises P0002 like the server (0011)
-    return Object.values(this.state.comments).filter((c) => c.post === post && this.canSeeReply(me, p!, c.author))
+    return Object.values(this.state.comments).filter((c) => c.post === post && !c.deleted && this.canSeeReply(me, p!, c.author))
       .sort((a, b) => (a.created_at < b.created_at ? -1 : 1)).slice(0, Math.min(limit, 200))
       .map((c) => ({ comment_id: c.id, author_id: c.author, author_name: this.state.users[c.author]?.name ?? '', body: c.body, created_at: c.created_at }));
   }
@@ -959,6 +1031,103 @@ export class FakeBackend {
       .map((m) => ({ user_id: m.user, name: this.state.users[m.user]?.name ?? '?', role: m.role }));
   }
 
+  // ---------------- life calendar (0029, CAL-*) ----------------
+  private datesIn(space: string): FamilyDateRow[] {
+    // CAL-8: a member-linked date goes when that member leaves (the SQL's cascade).
+    return (this.state.familyDates ??= []).filter((d) => d.space === space && (!d.member || !!this.member(space, d.member)));
+  }
+  /** public.can_see_profile, minus the reply branch: yourself, a family shared where either of you is a parent, or a
+   *  live group shared. */
+  private seesProfile(me: string, them: string): boolean {
+    if (me === them) return true;
+    const parent = (r?: string) => r === 'owner' || r === 'adult';
+    const sharedFamily = this.state.members.some((a) => a.user === me && this.state.members.some((b) =>
+      b.space === a.space && b.user === them && (parent(a.role) || parent(b.role))));
+    return sharedFamily || this.state.circleMembers.some((a) => a.user === me && !this.state.circles[a.circle]?.deleted
+      && this.inCircle(a.circle, them));
+  }
+  /** private.may_see_family_date (PRIV-R2): a member's birthday follows who may see that member's name; a date with
+   *  no member goes to the family's parents and its Everyone group only. */
+  private seesDate(me: string, d: FamilyDateRow): boolean {
+    if (this.state.spaces[d.space]?.deleted || !this.member(d.space, me)) return false; // PRIV-R2: live families only
+    if (this.isPoster(d.space, me)) return true;
+    if (d.member) return this.seesProfile(me, d.member);
+    return Object.values(this.state.circles).some((c) => c.space === d.space && c.kind === 'everyone' && !c.deleted && this.inCircle(c.id, me));
+  }
+  private roomForDate(space: string): void {
+    if (this.datesIn(space).length >= MAX_FAMILY_DATES) throw new ApiError('UNKNOWN', 'this family already has 200 dates');
+  }
+
+  /** list_family_dates: every date in the family the caller may see (PRIV-R2), month then day, ties by id. */
+  familyDates(user: string | null, space: string): FamilyDate[] {
+    const me = this.requireUser(user);
+    if (!this.member(space, me)) return [];
+    return this.datesIn(space)
+      .filter((d) => this.seesDate(me, d))
+      .sort((a, b) => a.month - b.month || a.day - b.day || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
+      .map((d) => ({
+        id: d.id, kind: d.kind, label: d.label, month: d.month, day: d.day, member_id: d.member,
+        member_name: d.member ? this.state.users[d.member]?.name ?? null : null,
+      }));
+  }
+
+  /** set_my_birthday: any member, their own; both null clears. */
+  setMyBirthday(user: string | null, space: string, month: number | null, day: number | null): void {
+    const me = this.requireUser(user);
+    if (!this.member(space, me)) throw new ApiError('P0002', 'not found');
+    const rows = (this.state.familyDates ??= []);
+    const mine = rows.find((d) => d.space === space && d.member === me);
+    if (month === null && day === null) {
+      if (mine) this.state.familyDates = rows.filter((d) => d !== mine);
+    } else {
+      checkMonthDay(month, day);
+      if (mine) Object.assign(mine, { month, day });
+      else {
+        this.roomForDate(space);
+        rows.push({ id: uuid(), space, kind: 'birthday', label: null, month: month!, day: day!, member: me, created_by: me, created_at: this.now() });
+      }
+    }
+    this.changed();
+  }
+
+  /** save_family_date: parents only; id null adds; a member's birthday is one per member per family. */
+  saveFamilyDate(user: string | null, a: SaveFamilyDateArgs): string {
+    const me = this.requireUser(user);
+    if (!this.isPoster(a.space, me)) throw new ApiError('P0002', 'not found');
+    const rows = (this.state.familyDates ??= []);
+    const existing = a.id ? rows.find((d) => d.id === a.id && d.space === a.space) : undefined;
+    if (a.id && !existing) throw new ApiError('P0002', 'not found');
+    if (a.memberId && !this.member(a.space, a.memberId)) throw new ApiError('P0002', 'not found');
+    if (!DATE_KINDS.includes(a.kind)) throw new ApiError('22023', 'pick a kind');
+    let label = a.label?.trim() || null;
+    if (a.memberId) {
+      if (a.kind !== 'birthday') throw new ApiError('22023', 'only a birthday belongs to a member');
+      label = null;
+    } else if (!label || label.length > 60) throw new ApiError('22023', 'a name of 1 to 60 letters');
+    checkMonthDay(a.month, a.day);
+    const target = existing ?? (a.memberId ? rows.find((d) => d.space === a.space && d.member === a.memberId) : undefined);
+    if (target) {
+      Object.assign(target, { kind: a.kind, label, month: a.month, day: a.day, member: a.memberId });
+      this.changed();
+      return target.id;
+    }
+    this.roomForDate(a.space);
+    const id = uuid();
+    rows.push({ id, space: a.space, kind: a.kind, label, month: a.month, day: a.day, member: a.memberId, created_by: me, created_at: this.now() });
+    this.changed();
+    return id;
+  }
+
+  /** delete_family_date: parents any date; anyone their own birthday; otherwise "not found". */
+  deleteFamilyDate(user: string | null, id: string): void {
+    const me = this.requireUser(user);
+    const rows = (this.state.familyDates ??= []);
+    const d = rows.find((x) => x.id === id);
+    if (!d || !this.seesDate(me, d) || !(this.isPoster(d.space, me) || d.member === me)) throw new ApiError('P0002', 'not found');
+    this.state.familyDates = rows.filter((x) => x !== d);
+    this.changed();
+  }
+
   /** private.feature_on for each known feature: global switch AND family switch AND can(capability); a missing row is the default. */
   myFeatures(user: string | null, space: string): string[] {
     const me = this.requireUser(user);
@@ -1103,7 +1272,7 @@ export class FakeApi implements HearthApi {
   async getSession(): Promise<Session | null> {
     return this.run(() => {
       const u = this.userId ? this.be.state.users[this.userId] : undefined;
-      return u ? { userId: u.id, email: u.email } : null;
+      return u ? { userId: u.id, email: u.email, ...(u.phone ? { phone: u.phone } : {}) } : null;
     });
   }
   sendCode(email: string): Promise<void> {
@@ -1139,7 +1308,7 @@ export class FakeApi implements HearthApi {
         this.be.state.appSession = u.id;
         this.be.changed();
       }
-      return { userId: u.id, email: '' };
+      return { userId: u.id, email: '', phone: e164 };
     });
   }
   signOut(): Promise<void> {
@@ -1197,6 +1366,10 @@ export class FakeApi implements HearthApi {
   familyPeople = (space: string) => this.run(() => this.be.familyPeople(this.userId, space));
   myFeatures = (space: string) => this.run(() => this.be.myFeatures(this.userId, space));
   canStartFamily = () => this.run(() => this.be.canStartFamily(this.userId));
+  familyDates = (space: string) => this.run(() => this.be.familyDates(this.userId, space));
+  setMyBirthday = (space: string, month: number | null, day: number | null) => this.run(() => this.be.setMyBirthday(this.userId, space, month, day));
+  saveFamilyDate = (a: SaveFamilyDateArgs) => this.run(() => this.be.saveFamilyDate(this.userId, a));
+  deleteFamilyDate = (id: string) => this.run(() => this.be.deleteFamilyDate(this.userId, id));
   startFamily = (a: StartFamilyArgs) => this.run(() => this.be.startFamily(this.userId, a.clientId, a.name, a.sides));
   setFamilyFeature = (space: string, feature: string, enabled: boolean) =>
     this.run(() => this.be.setFamilyFeature(this.userId, space, feature, enabled));

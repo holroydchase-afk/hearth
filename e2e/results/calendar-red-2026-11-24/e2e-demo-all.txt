@@ -1,0 +1,221 @@
+Using src/app as the root directory for Expo Router.
+Starting Metro Bundler
+
+warning: Bundler cache is empty, rebuilding (this may take a minute)
+Web Bundled 15219ms node_modules/expo-router/entry.js (1329 modules)
+
+› Assets (22):
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/400Regular/AtkinsonHyperlegibleNext_400Regular.86635252a71fd7c43fd5b0c41bdc5d54.ttf (48KB)
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/500Medium/AtkinsonHyperlegibleNext_500Medium.2d5d6c0565845615ac6982fc8abf1095.ttf (48KB)
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/600SemiBold/AtkinsonHyperlegibleNext_600SemiBold.5cf92f89d6fa6a976d135e61e9ffde1f.ttf (48KB)
+node_modules/@expo-google-fonts/material-symbols/400Regular/MaterialSymbols_400Regular.6b4f0c2d698edccb36b0f132059c0205.ttf (972KB)
+node_modules/expo-router/assets/arrow_down.017bc6ba3fc25503e5eb5e53826d48a8.png (9.5KB)
+node_modules/expo-router/assets/error.d1ea1496f9057eb392d5bbf3732a61b7.png (469B)
+node_modules/expo-router/assets/file.19eeb73b9593a38f8e9f418337fc7d10.png (138B)
+node_modules/expo-router/assets/forward.d8b800c443b8972542883e0b9de2bdc6.png (188B)
+node_modules/expo-router/assets/pkg.ab19f4cbc543357183a20571f68380a3.png (364B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon-mask.0a328cd9c1afd0afe8e3b1ec5165b1b4.png (653B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon.35ba0eaec5a4f5ed12ca16fabeae451d.png (207B)
+node_modules/expo-router/assets/react-navigation/elements/clear-icon.c94f6478e7ae0cdd9f15de1fcb9e5e55.png (4 variations | 425B)
+node_modules/expo-router/assets/react-navigation/elements/close-icon.808e1b1b9b53114ec2838071a7e6daa7.png (4 variations | 235B)
+node_modules/expo-router/assets/react-navigation/elements/search-icon.286d67d3f74808a60a78d3ebf1a5fb57.png (928B)
+node_modules/expo-router/assets/sitemap.412dd9275b6b48ad28f5e3d81bb1f626.png (465B)
+node_modules/expo-router/assets/unmatched.20e71bdf79e3a97bf55fd9e164041578.png (4.8KB)
+
+› web bundles (36):
+_expo/static/css/native-tabs.module-78b0f59737571f455720970791a36bdd.css (2.5KB)
+_expo/static/js/web/__common-813972baf7abac30d0b87668ba79c788.js (633KB)
+_expo/static/js/web/__expo-metro-runtime-8c088df87a31e4e6accd81c554ec290d.js (3.8KB)
+_expo/static/js/web/_layout-16965db47d4ee884a8b8a45a2a7c640a.js (398KB)
+_expo/static/js/web/_layout-8dbe9a57e704f561e2e5b8f95ce938ed.js (320B)
+_expo/static/js/web/_layout-e1d7882b360a5d05ad8ec1f2a1a28f1b.js (320B)
+_expo/static/js/web/_layout-f1ecd826cf61933911d312da8a1bcc7e.js (55KB)
+_expo/static/js/web/_layout-f312d868019df407bbf14afbcf14422c.js (320B)
+_expo/static/js/web/[code]-831935f394af1097b4c24726dad6391b.js (4.1KB)
+_expo/static/js/web/[postId]-8f7397fea03b1443ae87e6e9fd069a3d.js (371B)
+_expo/static/js/web/+not-found-c263832e6b635988e8b982b2308c7480.js (747B)
+_expo/static/js/web/easy-view-a9d20f96244e497de6abd476cf624754.js (333B)
+_expo/static/js/web/ed448-fda36558dd89c13f0d7af659c46a1223.js (12KB)
+_expo/static/js/web/entry-3f64691b9e789dbd379535ceacd752c0.js (1.1MB)
+_expo/static/js/web/events-450508087c9fe0047fb720c3cf4d7439.js (311B)
+_expo/static/js/web/groups-2b7971c03c7daf1aa0f543987decca3d.js (12KB)
+_expo/static/js/web/groups-fdb259be52b221589b15ecd1927475bc.js (297B)
+_expo/static/js/web/help-3d21b28d7cafa59f56adb6277ef6c6a4.js (295B)
+_expo/static/js/web/help-74def7c9e4445bf0f714b521c674eba9.js (1.6KB)
+_expo/static/js/web/index-2619fb3c516bb9022a5dd3e2620d58ec.js (414B)
+_expo/static/js/web/index-33b241e4c53ff5b909b2a2d3dacf5dac.js (473B)
+_expo/static/js/web/index-64939970866cb6d32606f89f5b915d1a.js (414B)
+_expo/static/js/web/index-bd326d19f2512c707ce4e57ca03899fb.js (430B)
+_expo/static/js/web/index-cf94dd8414acb944b8a035c084af241e.js (529B)
+_expo/static/js/web/look-2a28b3cc63a38f51daef3509066da3e3.js (325B)
+_expo/static/js/web/me-2329a37bf1cf77f69e0bb462c5f7a047.js (3.1KB)
+_expo/static/js/web/me-d51a43618d533952e0f0c104e0c6674a.js (293B)
+_expo/static/js/web/messages-bdee93812a125809d59bb2844cc720be.js (236KB)
+_expo/static/js/web/mod-4aeed31ac0ccb926703ab53548e4a9c1.js (14KB)
+_expo/static/js/web/nist-282e0ff994bbba8fbcbbee385d8e77c2.js (21KB)
+_expo/static/js/web/photos-0bbd212ac02762fc316206ce3b52f129.js (279B)
+_expo/static/js/web/search-66c314c13b8a1300fbc84e53f442ff11.js (5.7KB)
+_expo/static/js/web/share-170c3929e8ea638be5bd7ce93b28f34e.js (20KB)
+_expo/static/js/web/sign-in-c1d09a90796d3d39a9c412e0606ff0ad.js (1.1KB)
+_expo/static/js/web/theme-eadeb3e6c9a89b485bb51b8b302b2ac2.js (327B)
+_expo/static/js/web/timeline-b9c976850d4f036e4f281c55d24b6ef7.js (528B)
+
+› Files (3):
+favicon.ico (15KB)
+index.html (1.6KB)
+metadata.json (49B)
+
+Exported: dist-demo
+
+Running 52 tests using 1 worker
+
+  ✘   1 e2e-web/demo-calendar.spec.js:26:1 › CAL-19 a fresh visit's Gallery says "Today is Grandma Jo's birthday" and See birthdays opens the list (16.6s)
+  ✘   2 e2e-web/demo-calendar.spec.js:35:1 › CAL-19 Birthdays lists Grandma Jo today, Grandpa Earl in 9 days, Mia's birthday and Chase and Alex's anniversary (16.7s)
+  ✘   3 e2e-web/demo-calendar.spec.js:45:1 › CAL-19 a returning visitor with a pre-calendar demo saved gets the dates too (17.6s)
+  ✘   4 e2e-web/demo-calendar.spec.js:54:1 › CAL-19 Grandma Jo's view: her only action on Birthdays is "Change my birthday" (17.6s)
+  ✓   5 e2e-web/demo-panel.spec.js:7:3 › TD-UX-R1 at 1280 x 800 the story panel's first and last lines can be seen (615ms)
+  ✓   6 e2e-web/demo-panel.spec.js:7:3 › TD-UX-R1 at 1280 x 720 the story panel's first and last lines can be seen (589ms)
+  ✓   7 e2e-web/demo-safari.spec.js:54:1 › DEMO-SAFARI-1 phone 390 px, Safari quota: Demo details, See it as Grandma Jo greets Jo; back to Chase works (3.4s)
+  ✓   8 e2e-web/demo-safari.spec.js:67:1 › DEMO-SAFARI-2 laptop 1280 px, Safari quota: Grandma Jo from the story panel, then back to Chase (3.3s)
+  ✓   9 e2e-web/demo-safari.spec.js:78:1 › DEMO-SAFARI-3 phone, Safari quota: Chase's new post to Dad's side survives a reload, and Grandma Jo sees it (6.5s)
+  ✓  10 e2e-web/demo-safari.spec.js:98:1 › DEMO-SAFARI-4 (no cap) after the demo loads, no localStorage key holds more than 200,000 characters (1.6s)
+  -  11 e2e-web/demo-screens.spec.js:18:1 › portfolio screenshots from the demo
+  -  12 e2e-web/demo-showcase.spec.js:33:5 › demo showcase phone light
+  -  13 e2e-web/demo-showcase.spec.js:33:5 › demo showcase phone dark
+  -  14 e2e-web/demo-showcase.spec.js:33:5 › demo showcase laptop light
+  -  15 e2e-web/demo-showcase.spec.js:33:5 › demo showcase laptop dark
+  ✓  16 e2e-web/demo.spec.js:50:1 › DEMO-1/2/3 opens straight into the sample family: no sign-in, pictures, a demo bar (1.6s)
+  ✓  17 e2e-web/demo.spec.js:62:1 › DEMO-10 RD-17 Grandma Jo's view hides the Mom's-side posts; the parent's view shows them again (5.1s)
+  ✓  18 e2e-web/demo.spec.js:81:1 › RR-14 add a photo, reload keeps it, Start over brings back the sample family (5.9s)
+  ✓  19 e2e-web/demo.spec.js:101:1 › FONT-5 the demo's heading and body words are Atkinson Hyperlegible Next, and the font really loaded (2.1s)
+  ✓  20 e2e-web/demo.spec.js:122:1 › DEMO-6 / NF-1 laptop shows the story panel beside the app; an unknown link shows plain words (1.9s)
+  ✓  21 e2e-web/demo.spec.js:135:1 › HARD-7 storage blocked (private window, strict cookie settings): the demo still opens with the sample family (1.5s)
+  ✓  22 e2e-web/demo.spec.js:151:1 › DEMO-BAR-LAPTOP-1 at 1280 px: no demo bar; Grandma Jo and Reset work from the story panel (4.2s)
+  ✓  23 e2e-web/demo.spec.js:173:3 › DEMO-BAR at 390 px: collapsed and slim, pushes the app down, Esc closes, Hearth's font and no accent badge (1.6s)
+  ✓  24 e2e-web/demo.spec.js:210:1 › DEMO-BAR no sideways scroll down to 320 px, back link still there (1.5s)
+  ✓  25 e2e-web/demo.spec.js:218:1 › DEMO-BAR Reset asks first: Keep changes nothing; Reset restores and says so once (3.6s)
+  ✓  26 e2e-web/demo.spec.js:242:1 › RD-102 RD-117 FRUIT-11 Paper by default; Chase picks each of the nine fruits, the last survives a reload; Grandma Jo stays Paper (18.3s)
+  ✓  27 e2e-web/demo.spec.js:331:1 › RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma Jo gets three tabs (5.1s)
+  ✓  28 e2e-web/demo.spec.js:372:1 › RD-18 RD-19 RD-20 RD-21 New for you and the grid at 360 px; a tap walks the new photos and Done comes back (1.8s)
+  ✓  29 e2e-web/demo.spec.js:400:1 › UX-R12 the demo greets the parent as Chase and "Kai" appears nowhere (1.6s)
+  ✓  30 e2e-web/demo.spec.js:413:3 › RD-44 UX-R13 months mosaic at a 360 px phone: one wide photo per month, then rounded squares that fill each row, inset 16 (2.0s)
+  ✓  31 e2e-web/demo.spec.js:413:3 › RD-44 UX-R13 months mosaic at a 390 px phone: one wide photo per month, then rounded squares that fill each row, inset 16 (2.0s)
+  ✓  32 e2e-web/demo.spec.js:466:1 › RD-47 a "Search photos" field under the greeting opens Search; By date and the view switch are gone (2.5s)
+  ✓  33 e2e-web/demo.spec.js:491:1 › UX-R1 focusing the walk's comment field hides the tab bar and keeps the field uncovered when the keyboard opens (2.0s)
+  ✓  34 e2e-web/demo.spec.js:515:1 › DEMO-FRESH-1 a browser that saved an older demo family sees the current one on its next visit (2.5s)
+  ✓  35 e2e-web/demo.spec.js:533:1 › R18 the current month title sticks under the pinned search field while Gallery scrolls (2.0s)
+  ✓  36 e2e-web/demo.spec.js:549:1 › RD-83 greeting, search bar and month title stay one pinned block after scrolling down and back at 393 px (2.4s)
+  ✓  37 e2e-web/demo.spec.js:590:1 › R23 Gallery, Share, Feed and More each have exactly one h1 (3.7s)
+  ✓  38 e2e-web/demo.spec.js:608:1 › UX-R27 every "can see this." line on Feed is one line at 390 px (2.4s)
+  ✓  39 e2e-web/demo.spec.js:641:1 › RD-80 RD-76 RD-77 Chase has icon-only tabs; Grandma Jo has words under the tabs and bigger text; back to Chase restores Off (6.0s)
+  ✓  40 e2e-web/demo.spec.js:672:1 › RD-80 RD-78 each person's Easy view pick is kept separately: Chase turns it On, Jo turns hers Off, Chase's stays On (7.8s)
+  ✓  41 e2e-web/demo.spec.js:701:1 › RD-92 RD-94 Paper, photo shadows and the reaction pop in the demo, light and dark, with reduced motion (7.3s)
+  ✓  42 e2e-web/demo.spec.js:809:1 › RD-117 RD-116 Avocado (Hass) light and dark; a picked ❤️ is a 2 px accent outline with an accent count, no fill, in every theme (16.5s)
+  ✓  43 e2e-web/demo.spec.js:909:1 › RD-108 RD-109 Chase gets the floating glass tab bar and Gallery clears it; Grandma Jo keeps the fixed bar (3.9s)
+  ✓  44 e2e-web/demo.spec.js:945:1 › DEMO-EASY-1 on a laptop, Grandma Jo's Easy view leaves the story panel the same size (2.4s)
+  ✓  45 e2e-web/demo.spec.js:960:1 › SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to ...", Feed says "Shared with ..."; Jo sees names only (6.5s)
+  ✓  46 e2e-web/demo.spec.js:1007:3 › GUX-R1 360 px: every face-tile name stays inside its own tile; 2 across; full names (2.5s)
+  ✓  47 e2e-web/demo.spec.js:1007:3 › GUX-R1 390 px: every face-tile name stays inside its own tile; 2 across; full names (2.1s)
+  ✓  48 e2e-web/demo.spec.js:1064:1 › RD-110 the glass bar shrinks on scroll down and comes back on scroll up or a tap; Grandma Jo's bar never shrinks (4.4s)
+  ✓  49 e2e-web/demo.spec.js:1104:1 › RD-110-R2 scrolling the laptop's story panel never shrinks the bar, and a sideways strip never brings it back (1.9s)
+  ✓  50 e2e-web/demo.spec.js:1133:1 › RD-110-R3 the bar shrunk on Share comes back whole on Feed after sending (3.7s)
+  ✓  51 e2e-web/demo.spec.js:1152:1 › SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded To:, no "Pick lots of photos"; Chase "Up to 100"; 3 photos show "1 of 3" (5.4s)
+  ✓  52 e2e-web/demo.spec.js:1249:1 › DARK-ELEV-6 at 390 px dark: no visible element on the first screen has a drop shadow (DemoBar inset divider allowed) (1.7s)
+
+
+  1) e2e-web/demo-calendar.spec.js:26:1 › CAL-19 a fresh visit's Gallery says "Today is Grandma Jo's birthday" and See birthdays opens the list 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText(/^Today is Grandma Jo[’']s birthday$/).visible()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText(/^Today is Grandma Jo[’']s birthday$/).visible() with timeout 15000ms
+      - waiting for getByText(/^Today is Grandma Jo[’']s birthday$/).visible()
+
+
+      27 |   await page.goto('/');
+      28 |   await galleryLoaded(page);
+    > 29 |   await expect(page.getByText(/^Today is Grandma Jo[’']s birthday$/).filter({ visible: true })).toBeVisible();
+         |                                                                                                 ^
+      30 |   await page.getByRole('button', { name: 'See birthdays' }).filter({ visible: true }).click();
+      31 |   await expect(page.getByRole('heading', { name: 'Birthdays and dates' })).toBeVisible();
+      32 |   expect(errors).toEqual([]);
+        at /home/user/Hearth/app/e2e-web/demo-calendar.spec.js:29:97
+
+    Error Context: test-results/e2e-demo-artifacts/demo-calendar-CAL-19-a-fre-7679d-ee-birthdays-opens-the-list/error-context.md
+
+  2) e2e-web/demo-calendar.spec.js:35:1 › CAL-19 Birthdays lists Grandma Jo today, Grandpa Earl in 9 days, Mia's birthday and Chase and Alex's anniversary 
+
+    TimeoutError: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Birthdays' }).visible()
+
+
+      14 | const openBirthdays = async (page) => {
+      15 |   await page.getByRole('tab', { name: /^More/ }).click();
+    > 16 |   await page.getByRole('button', { name: 'Birthdays' }).filter({ visible: true }).click({ timeout: 15_000 });
+         |                                                                                   ^
+      17 |   await expect(page.getByRole('heading', { name: 'Birthdays and dates' })).toBeVisible();
+      18 | };
+      19 | const errors = [];
+        at openBirthdays (/home/user/Hearth/app/e2e-web/demo-calendar.spec.js:16:83)
+        at /home/user/Hearth/app/e2e-web/demo-calendar.spec.js:38:3
+
+    Error Context: test-results/e2e-demo-artifacts/demo-calendar-CAL-19-Birth-3491e-hase-and-Alex-s-anniversary/error-context.md
+
+  3) e2e-web/demo-calendar.spec.js:45:1 › CAL-19 a returning visitor with a pre-calendar demo saved gets the dates too 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText(/^Today is Grandma Jo[’']s birthday$/).visible()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText(/^Today is Grandma Jo[’']s birthday$/).visible() with timeout 15000ms
+      - waiting for getByText(/^Today is Grandma Jo[’']s birthday$/).visible()
+
+
+      49 |   await page.reload();
+      50 |   await galleryLoaded(page);
+    > 51 |   await expect(page.getByText(/^Today is Grandma Jo[’']s birthday$/).filter({ visible: true })).toBeVisible();
+         |                                                                                                 ^
+      52 | });
+      53 |
+      54 | test("CAL-19 Grandma Jo's view: her only action on Birthdays is \"Change my birthday\"", async ({ page }) => {
+        at /home/user/Hearth/app/e2e-web/demo-calendar.spec.js:51:97
+
+    Error Context: test-results/e2e-demo-artifacts/demo-calendar-CAL-19-a-ret-90034-mo-saved-gets-the-dates-too/error-context.md
+
+  4) e2e-web/demo-calendar.spec.js:54:1 › CAL-19 Grandma Jo's view: her only action on Birthdays is "Change my birthday" 
+
+    TimeoutError: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Birthdays' }).visible()
+
+
+      14 | const openBirthdays = async (page) => {
+      15 |   await page.getByRole('tab', { name: /^More/ }).click();
+    > 16 |   await page.getByRole('button', { name: 'Birthdays' }).filter({ visible: true }).click({ timeout: 15_000 });
+         |                                                                                   ^
+      17 |   await expect(page.getByRole('heading', { name: 'Birthdays and dates' })).toBeVisible();
+      18 | };
+      19 | const errors = [];
+        at openBirthdays (/home/user/Hearth/app/e2e-web/demo-calendar.spec.js:16:83)
+        at /home/user/Hearth/app/e2e-web/demo-calendar.spec.js:61:3
+
+    Error Context: test-results/e2e-demo-artifacts/demo-calendar-CAL-19-Grand-599c6-days-is-Change-my-birthday-/error-context.md
+
+  4 failed
+    e2e-web/demo-calendar.spec.js:26:1 › CAL-19 a fresh visit's Gallery says "Today is Grandma Jo's birthday" and See birthdays opens the list 
+    e2e-web/demo-calendar.spec.js:35:1 › CAL-19 Birthdays lists Grandma Jo today, Grandpa Earl in 9 days, Mia's birthday and Chase and Alex's anniversary 
+    e2e-web/demo-calendar.spec.js:45:1 › CAL-19 a returning visitor with a pre-calendar demo saved gets the dates too 
+    e2e-web/demo-calendar.spec.js:54:1 › CAL-19 Grandma Jo's view: her only action on Birthdays is "Change my birthday" 
+  5 skipped
+  43 passed (4.0m)
+rc=1

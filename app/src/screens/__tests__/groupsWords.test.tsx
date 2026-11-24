@@ -34,7 +34,7 @@ describe('UX-G share sheet words (BETA-AUD-17)', () => {
   it('UX-G1 BETA-AUD-17 DEC-73 picking Everyone says "To: Everyone in the family" (never "Only Everyone")', async () => {
     const { be, api } = shapedApi();
     await renderApp(<ShareScreen />, { be, user: 'chase', deps: { api } });
-    fireEvent.press(await screen.findByRole('button', { name: /^Pick photos/ }));
+    fireEvent.press(await screen.findByRole('button', { name: /^Add photos/ }));
     fireEvent.press(await screen.findByLabelText('Everyone, 6 people, not picked'));
     expect(await screen.findByText('Everyone in the family')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Send to Everyone in the family' })).toBeTruthy();
@@ -44,7 +44,7 @@ describe('UX-G share sheet words (BETA-AUD-17)', () => {
   it('UX-G2 BETA-AUD-17 DEC-73 Everyone first, then the groups and households, events last', async () => {
     const { be, api } = shapedApi();
     await renderApp(<ShareScreen />, { be, user: 'chase', deps: { api } });
-    fireEvent.press(await screen.findByRole('button', { name: /^Pick photos/ }));
+    fireEvent.press(await screen.findByRole('button', { name: /^Add photos/ }));
     await screen.findByLabelText('Everyone, 6 people, not picked');
     expect(tileLabels().map((l) => l.split(',')[0])).toEqual(['Everyone', "Mom's side", "Pawpaw and Granny's house", 'Charleston trip']);
     expectGrandparentSafe();
@@ -55,7 +55,7 @@ describe('UX-G share sheet words (BETA-AUD-17)', () => {
     const real = be.mySpaces.bind(be);
     jest.spyOn(be, 'mySpaces').mockImplementation((u) => real(u).map((s) => ({ ...s, can_post: true })));
     await renderApp(<ShareScreen />, { be, user: 'ruth', deps: { api } });
-    fireEvent.press(await screen.findByRole('button', { name: /^Pick photos/ }));
+    fireEvent.press(await screen.findByRole('button', { name: /^Add photos/ }));
     await waitFor(() => expect(tileLabels().length).toBe(3));
     expect(tileLabels().filter((l) => /Everyone|Mom's side|house|Charleston/.test(l))).toEqual([]);
     expect(tileLabels()[0]).toMatch(/^Memaw, Pawpaw and 2 more, 4 people, not picked$/);

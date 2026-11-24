@@ -1,0 +1,317 @@
+DARK-ELEV red run, qa-tdd, 2026-11-23 (intake #155). Label: RED before fix (expected).
+
+== jest: cd app && npx jest --ci src/screens/__tests__/darkElevation.test.tsx ==
+  console.error
+    An update to Animated(View) inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      at node_modules/react-test-renderer/cjs/react-test-renderer.development.js:15383:19
+      at runWithFiberInDEV (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2506:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:15382:9)
+      at scheduleUpdateOnFiber (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:12986:9)
+      at dispatchReducerAction (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:6430:13)
+      at Object.scheduleUpdate [as current] (node_modules/react-native/src/private/animated/createAnimatedPropsHook.js:128:20)
+      at AnimatedProps._callback (node_modules/react-native/src/private/animated/createAnimatedPropsHook.js:68:36)
+      at AnimatedProps._callback [as update] (node_modules/react-native/Libraries/Animated/nodes/AnimatedProps.js:238:10)
+      at update (node_modules/react-native/Libraries/Animated/nodes/AnimatedValue.js:66:31)
+          at Set.forEach (<anonymous>)
+      at forEach (node_modules/react-native/Libraries/Animated/nodes/AnimatedValue.js:66:10)
+      at AnimatedValue.flushValue [as _updateValue] (node_modules/react-native/Libraries/Animated/nodes/AnimatedValue.js:310:7)
+      at TimingAnimation._updateValue [as _onUpdate] (node_modules/react-native/Libraries/Animated/nodes/AnimatedValue.js:270:14)
+      at TimingAnimation._onUpdate [as onUpdate] (node_modules/react-native/Libraries/Animated/animations/TimingAnimation.js:167:10)
+      at Timeout.callback [as _onTimeout] (node_modules/@react-native/jest-preset/jest/setup.js:61:31)
+
+  console.error
+    An update to Animated(View) inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      at node_modules/react-test-renderer/cjs/react-test-renderer.development.js:15383:19
+      at runWithFiberInDEV (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2506:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:15382:9)
+      at scheduleUpdateOnFiber (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:12986:9)
+      at dispatchReducerAction (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:6430:13)
+      at Object.scheduleUpdate [as current] (node_modules/react-native/src/private/animated/createAnimatedPropsHook.js:128:20)
+      at AnimatedProps._callback (node_modules/react-native/src/private/animated/createAnimatedPropsHook.js:68:36)
+      at AnimatedProps._callback [as update] (node_modules/react-native/Libraries/Animated/nodes/AnimatedProps.js:238:10)
+      at update (node_modules/react-native/Libraries/Animated/nodes/AnimatedValue.js:66:31)
+          at Set.forEach (<anonymous>)
+      at forEach (node_modules/react-native/Libraries/Animated/nodes/AnimatedValue.js:66:10)
+      at AnimatedValue.flushValue [as _updateValue] (node_modules/react-native/Libraries/Animated/nodes/AnimatedValue.js:310:7)
+      at TimingAnimation._updateValue [as _onUpdate] (node_modules/react-native/Libraries/Animated/nodes/AnimatedValue.js:270:14)
+      at TimingAnimation._onUpdate [as onUpdate] (node_modules/react-native/Libraries/Animated/animations/TimingAnimation.js:167:10)
+      at Timeout.callback [as _onTimeout] (node_modules/@react-native/jest-preset/jest/setup.js:61:31)
+
+FAIL src/screens/__tests__/darkElevation.test.tsx (13.966 s)
+  ● DARK-ELEV-2 the floating glass tab bar (RD-108) has no shadow in dark › DARK-ELEV-2 (paper, dark) no shadow; the see-through c.surface fill and a light border set it apart from the page
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+      Object {
+    -   "shadow": Object {},
+    +   "shadow": Object {
+    +     "boxShadow": "0 6px 24px rgba(0, 0, 0, 0.5)",
+    +   },
+        "theme": "paper",
+      }
+
+      83 |       const c = pal(true, theme);
+      84 |       const s = floatingBar(true, theme);
+    > 85 |       expect({ theme, shadow: shadowOf(s) }).toEqual({ theme, shadow: {} });
+         |                                              ^
+      86 |       // The fill is c.surface, see-through (rgba), and the surface step is what lifts it off c.bg.
+      87 |       expect(String(s.backgroundColor)).toMatch(/^rgba\(/);
+      88 |       expect(lum(String(s.backgroundColor))).toBeCloseTo(lum(c.surface), 5);
+
+      at Object.toEqual (src/screens/__tests__/darkElevation.test.tsx:85:46)
+
+  ● DARK-ELEV-2 the floating glass tab bar (RD-108) has no shadow in dark › DARK-ELEV-2 (avocado, dark) no shadow; the see-through c.surface fill and a light border set it apart from the page
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+      Object {
+    -   "shadow": Object {},
+    +   "shadow": Object {
+    +     "boxShadow": "0 6px 24px rgba(0, 0, 0, 0.5)",
+    +   },
+        "theme": "avocado",
+      }
+
+      83 |       const c = pal(true, theme);
+      84 |       const s = floatingBar(true, theme);
+    > 85 |       expect({ theme, shadow: shadowOf(s) }).toEqual({ theme, shadow: {} });
+         |                                              ^
+      86 |       // The fill is c.surface, see-through (rgba), and the surface step is what lifts it off c.bg.
+      87 |       expect(String(s.backgroundColor)).toMatch(/^rgba\(/);
+      88 |       expect(lum(String(s.backgroundColor))).toBeCloseTo(lum(c.surface), 5);
+
+      at Object.toEqual (src/screens/__tests__/darkElevation.test.tsx:85:46)
+
+  ● DARK-ELEV-2 the floating glass tab bar (RD-108) has no shadow in dark › DARK-ELEV-2 (pomegranate, dark) no shadow; the see-through c.surface fill and a light border set it apart from the page
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+      Object {
+    -   "shadow": Object {},
+    +   "shadow": Object {
+    +     "boxShadow": "0 6px 24px rgba(0, 0, 0, 0.5)",
+    +   },
+        "theme": "pomegranate",
+      }
+
+      83 |       const c = pal(true, theme);
+      84 |       const s = floatingBar(true, theme);
+    > 85 |       expect({ theme, shadow: shadowOf(s) }).toEqual({ theme, shadow: {} });
+         |                                              ^
+      86 |       // The fill is c.surface, see-through (rgba), and the surface step is what lifts it off c.bg.
+      87 |       expect(String(s.backgroundColor)).toMatch(/^rgba\(/);
+      88 |       expect(lum(String(s.backgroundColor))).toBeCloseTo(lum(c.surface), 5);
+
+      at Object.toEqual (src/screens/__tests__/darkElevation.test.tsx:85:46)
+
+  ● DARK-ELEV-3 RD-82's shade line is a plain hairline in dark › DARK-ELEV-3 shadeLine is a function of dark: shadeLine(dark: boolean)
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "function"
+    Received: "object"
+
+      110 | describe('DARK-ELEV-3 RD-82\'s shade line is a plain hairline in dark', () => {
+      111 |   it('DARK-ELEV-3 shadeLine is a function of dark: shadeLine(dark: boolean)', () => {
+    > 112 |     expect(typeof (grid as unknown as { shadeLine: unknown }).shadeLine).toBe('function');
+          |                                                                          ^
+      113 |   });
+      114 |
+      115 |   it('DARK-ELEV-3 (dark) shadeLine(true) is a hairline at the bottom edge with no shadow', () => {
+
+      at Object.toBe (src/screens/__tests__/darkElevation.test.tsx:112:74)
+
+  ● DARK-ELEV-3 RD-82's shade line is a plain hairline in dark › DARK-ELEV-3 (dark) shadeLine(true) is a hairline at the bottom edge with no shadow
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 4
+
+    - Object {}
+    + Object {
+    +   "shadowOpacity": 0.12,
+    +   "shadowRadius": 3,
+    + }
+
+      115 |   it('DARK-ELEV-3 (dark) shadeLine(true) is a hairline at the bottom edge with no shadow', () => {
+      116 |     const s = shade(true);
+    > 117 |     expect(shadowOf(s)).toEqual({});
+          |                         ^
+      118 |     expect(s.height).toBe(StyleSheet.hairlineWidth);
+      119 |     expect({ position: s.position, left: s.left, right: s.right }).toEqual({ position: 'absolute', left: 0, right: 0 });
+      120 |   });
+
+      at Object.toEqual (src/screens/__tests__/darkElevation.test.tsx:117:25)
+
+  ● DARK-ELEV-3 RD-82's shade line is a plain hairline in dark › DARK-ELEV-3 (dark Gallery, scrolled) the line under the pinned Search bar has no shadow and is c.line or c.tabLine
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 4
+
+    - Object {}
+    + Object {
+    +   "shadowOpacity": 0.12,
+    +   "shadowRadius": 3,
+    + }
+
+      150 |     const c = pal(true);
+      151 |     for (const s of await scrolledGallery(true)) {
+    > 152 |       expect(shadowOf(s)).toEqual({});
+          |                           ^
+      153 |       expect([c.line.toUpperCase(), c.tabLine.toUpperCase()]).toContain(String(s.backgroundColor).toUpperCase());
+      154 |     }
+      155 |   }, 20000);
+
+      at Object.toEqual (src/screens/__tests__/darkElevation.test.tsx:152:27)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● DARK-ELEV-4 the laptop demo frame (1280 px) lifts the phone column with a surface step, not a shadow, in dark › DARK-ELEV-4 (paper, dark) the phone column has no shadow, keeps its border, and is lighter than the page behind it
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+      Object {
+    -   "shadow": Object {},
+    +   "shadow": Object {
+    +     "boxShadow": "0 12px 40px rgba(0,0,0,0.18)",
+    +   },
+        "theme": "paper",
+      }
+
+      177 |       const c = pal(true, theme);
+      178 |       const { page, column } = frame(true, theme);
+    > 179 |       expect({ theme, shadow: shadowOf(column) }).toEqual({ theme, shadow: {} });
+          |                                                   ^
+      180 |       expect(Number(column.borderWidth ?? 0)).toBeGreaterThan(0);
+      181 |       expect(String(column.borderColor).toUpperCase()).toBe(c.line.toUpperCase());
+      182 |       expect({ theme, columnLighterThanPage: lum(String(column.backgroundColor)) > lum(String(page.backgroundColor)) })
+
+      at Object.toEqual (src/screens/__tests__/darkElevation.test.tsx:179:51)
+
+  ● DARK-ELEV-4 the laptop demo frame (1280 px) lifts the phone column with a surface step, not a shadow, in dark › DARK-ELEV-4 (avocado, dark) the phone column has no shadow, keeps its border, and is lighter than the page behind it
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+      Object {
+    -   "shadow": Object {},
+    +   "shadow": Object {
+    +     "boxShadow": "0 12px 40px rgba(0,0,0,0.18)",
+    +   },
+        "theme": "avocado",
+      }
+
+      177 |       const c = pal(true, theme);
+      178 |       const { page, column } = frame(true, theme);
+    > 179 |       expect({ theme, shadow: shadowOf(column) }).toEqual({ theme, shadow: {} });
+          |                                                   ^
+      180 |       expect(Number(column.borderWidth ?? 0)).toBeGreaterThan(0);
+      181 |       expect(String(column.borderColor).toUpperCase()).toBe(c.line.toUpperCase());
+      182 |       expect({ theme, columnLighterThanPage: lum(String(column.backgroundColor)) > lum(String(page.backgroundColor)) })
+
+      at Object.toEqual (src/screens/__tests__/darkElevation.test.tsx:179:51)
+
+  ● DARK-ELEV-4 the laptop demo frame (1280 px) lifts the phone column with a surface step, not a shadow, in dark › DARK-ELEV-4 (pomegranate, dark) the phone column has no shadow, keeps its border, and is lighter than the page behind it
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+      Object {
+    -   "shadow": Object {},
+    +   "shadow": Object {
+    +     "boxShadow": "0 12px 40px rgba(0,0,0,0.18)",
+    +   },
+        "theme": "pomegranate",
+      }
+
+      177 |       const c = pal(true, theme);
+      178 |       const { page, column } = frame(true, theme);
+    > 179 |       expect({ theme, shadow: shadowOf(column) }).toEqual({ theme, shadow: {} });
+          |                                                   ^
+      180 |       expect(Number(column.borderWidth ?? 0)).toBeGreaterThan(0);
+      181 |       expect(String(column.borderColor).toUpperCase()).toBe(c.line.toUpperCase());
+      182 |       expect({ theme, columnLighterThanPage: lum(String(column.backgroundColor)) > lum(String(page.backgroundColor)) })
+
+      at Object.toEqual (src/screens/__tests__/darkElevation.test.tsx:179:51)
+
+Test Suites: 1 failed, 1 total
+Tests:       9 failed, 8 passed, 17 total
+Snapshots:   0 total
+Time:        14.299 s
+Ran all test suites matching src/screens/__tests__/darkElevation.test.tsx.
+
+== measured dark surface vs bg (WCAG contrast ratio) ==
+paper #131210 -> #1C1A17 1.078
+avocado #2A2426 -> #322C2E 1.114
+pomegranate #170D10 -> #1E1215 1.046
+
+== playwright: cd app && npm run export:web:demo && node ../e2e/node_modules/@playwright/test/cli.js test -c e2e-web/playwright.demo.config.js -g DARK-ELEV-6 ==
+
+Running 1 test using 1 worker
+
+  ✘  1 e2e-web/demo.spec.js:1219:1 › DARK-ELEV-6 at 390 px dark: no visible element on the first screen has a drop shadow (DemoBar inset divider allowed) (1.7s)
+
+
+  1) e2e-web/demo.spec.js:1219:1 › DARK-ELEV-6 at 390 px dark: no visible element on the first screen has a drop shadow (DemoBar inset divider allowed) 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "tablist: rgba(0, 0, 0, 0.5) 0px 6px 24px 0px",
+    + ]
+
+      1232 |     return [`${name}: ${s.boxShadow}`];
+      1233 |   }));
+    > 1234 |   expect(shadowed).toEqual([]);
+           |                    ^
+      1235 | });
+      1236 |
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:1234:20
+
+    Error Context: test-results/e2e-demo-artifacts/demo-DARK-ELEV-6-at-390-px-2ecc0-oBar-inset-divider-allowed-/error-context.md
+
+  1 failed
+    e2e-web/demo.spec.js:1219:1 › DARK-ELEV-6 at 390 px dark: no visible element on the first screen has a drop shadow (DemoBar inset divider allowed) 

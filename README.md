@@ -1,16 +1,18 @@
 # Hearth (working name)
 
+[![ci](https://github.com/holroydchase-afk/hearth/actions/workflows/ci.yml/badge.svg)](https://github.com/holroydchase-afk/hearth/actions/workflows/ci.yml)
+
 **A private photo app for split families and for grandparents who stay off social media.** Every photo goes to an audience you pick, by name. Photos are encrypted on the phone and stored in the US. There are no ads, no trackers and no AI training.
 
 Built by Chase Holroyd, a product manager, as a working proof of concept: one person, a $20/month AI plan, and a team of Claude agents, test-first from day one.
 
 <p>
-  <img src="docs/portfolio/screens/iphone-gallery.jpg" width="200" alt="Gallery as the parent: a greeting, a search field, New for you with 2 new photos, then photos by month">
-  <img src="docs/portfolio/screens/iphone-feed-who-can-see.jpg" width="200" alt="Feed as the parent: a post with its reactions and the line Alex, Grandma Jo and 2 more can see this">
+  <img src="docs/portfolio/screens/iphone-gallery.jpg" width="200" alt="Gallery as the parent: a greeting, a search field, a birthday reminder, then New for you with 3 new photos">
+  <img src="docs/portfolio/screens/iphone-feed-who-can-see.jpg" width="200" alt="Feed as the parent: a post with its reactions and the line Alex, Grandma Jo and 1 more can see this">
   <img src="docs/portfolio/screens/iphone-grandma-jo-feed.jpg" width="200" alt="Feed as Grandma Jo: bigger text, no Share tab, and a line under the comment field that names who will read her comment">
 </p>
 
-<sub>Screens from the public demo, taken Nov 18, 2026. The family is made up; the photos are the founder's own, with location and camera data removed.</sub>
+<sub>Screens from the public demo, taken Nov 24, 2026. The family is made up; the demo shows free stock photos from Pexels, with all photo data removed.<br>Sample photos: Pexels (Elly Fairytale, Yan Krukov)</sub>
 
 **Try it, no sign-in:** [chaseholroyd.com/hearth](https://chaseholroyd.com/hearth/). It's a made-up family kept only in your browser. On a phone it's the app itself; on a laptop a short guide sits beside it. Open **Details** in the Demo bar and pick **See it as Grandma Jo** to see that each photo reaches only the people it was shared with.
 
@@ -87,4 +89,4 @@ Hearth is a working proof of concept, built in the open.
 | Built, switched off | Text message sign-in, video, and starting a family from the app |
 | Known limits | Speed on a phone hasn't been measured ([performance](docs/eng/PERFORMANCE.md)). No outside security review ([threat model](docs/architecture/04-threat-model.md)). Hearth's server holds the photo keys ([encryption and keys](docs/architecture/03-encryption-and-keys.md)) |
 
-License: AGPL-3.0 ([LICENSE](LICENSE)). The repo is public.
+License: AGPL-3.0 ([LICENSE](LICENSE)). The repo is public. [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Code of Conduct](CODE_OF_CONDUCT.md).

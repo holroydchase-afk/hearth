@@ -45,7 +45,8 @@ export async function renderApp(ui: ReactElement, opts: { user?: FixtureUser | n
     </AppProvider>,
   );
   if (opts.waitReady !== false && user) {
-    await waitFor(() => expect(screen.queryByTestId('app-loading')).toBeNull());
+    // ENG-R6: the stacked routes make first load slower on a busy 2-core CI runner; 1 s (the default) was too tight there.
+    await waitFor(() => expect(screen.queryByTestId('app-loading')).toBeNull(), { timeout: 5000 });
   }
   return { ...utils, be, api, nav, deps, kv };
 }

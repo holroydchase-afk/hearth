@@ -4,13 +4,13 @@
 // web, Material 3 on Android. Every tappable thing is a Button or Choice: it always has an
 // accessibilityLabel, a visible word (DS-3), and a 48 pt minimum target (DS-1).
 import { SymbolView } from 'expo-symbols';
-import React, { type ReactNode } from 'react';
+import React, { useRef, type ReactNode } from 'react';
 import {
-  ActivityIndicator, Modal, PanResponder, Platform, Pressable, type PanResponderCallbacks, ScrollView, StyleSheet, Switch, Text, TextInput, View,
+  ActivityIndicator, Animated, Modal, PanResponder, Platform, Pressable, type PanResponderCallbacks, ScrollView, StyleSheet, Switch, Text, TextInput, View,
   useWindowDimensions, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LABEL_SCALE_CAP, MIN_TARGET, RADIUS, WEIGHT, dialogRadius, iconSize, sheetShouldClose, useTheme } from './theme';
+import { LABEL_SCALE_CAP, MIN_TARGET, RADIUS, FONT, dialogRadius, iconSize, sheetShouldClose, useTheme } from './theme';
 import { useTypingField } from './typing';
 import { useTabBarSpace } from './tabBarSpace';
 
@@ -36,14 +36,14 @@ export function Txt({ variant = 'body', style, children, role, testID, numberOfL
   variant?: TxtVariant; style?: StyleProp<TextStyle>; children: ReactNode; role?: 'header' | 'alert' | 'text'; testID?: string; numberOfLines?: number;
 }) {
   const { c, t } = useTheme();
-  // RD-2: the phone's own font (no fontFamily). Body and muted Regular; strong (names) and title Semibold;
-  // display is the large title, Semibold too (RD-55: no Bold anywhere).
+  // FONT-2 (DEC-78): Atkinson Hyperlegible Next, the weight carried by the family. Body and muted Regular; strong
+  // (names) and title SemiBold; display is the large title, SemiBold too (RD-55: no Bold anywhere).
   const v: Record<TxtVariant, TextStyle> = {
-    body: { fontSize: t.base, lineHeight: t.line, color: c.ink },
-    strong: { fontWeight: WEIGHT.semibold, fontSize: t.base, lineHeight: t.line, color: c.ink },
-    muted: { fontSize: t.base, lineHeight: t.line, color: c.muted },
-    title: { fontWeight: WEIGHT.semibold, fontSize: t.title, lineHeight: Math.round(t.title * 1.25), color: c.ink },
-    display: { fontWeight: WEIGHT.semibold, fontSize: t.display, lineHeight: Math.round(t.display * 1.2), color: c.ink },
+    body: { fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line, color: c.ink },
+    strong: { fontFamily: FONT.semibold, fontSize: t.base, lineHeight: t.line, color: c.ink },
+    muted: { fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line, color: c.muted },
+    title: { fontFamily: FONT.semibold, fontSize: t.title, lineHeight: Math.round(t.title * 1.25), color: c.ink },
+    display: { fontFamily: FONT.semibold, fontSize: t.display, lineHeight: Math.round(t.display * 1.2), color: c.ink },
   };
   return (
     <Text
@@ -117,7 +117,7 @@ export function Button({ label, text, onPress, variant = 'primary', disabled, so
       {busy ? <ActivityIndicator color={fg} /> : null}
       {icon && !busy ? <SystemIcon icon={icon} color={selected ? c.accent : fg} /> : null}
       {typeof (text ?? label) === 'string' ? (
-        <Text style={{ color: selected ? c.ink : fg, fontWeight: WEIGHT.semibold, fontSize: t.base, textAlign: 'center' }}>{text ?? label}</Text>
+        <Text style={{ color: selected ? c.ink : fg, fontFamily: FONT.semibold, fontSize: t.base, textAlign: 'center' }}>{text ?? label}</Text>
       ) : (
         text
       )}
@@ -142,7 +142,7 @@ export function IconButton({ label, text, icon, onPress, testID }: { label: stri
     >
       <SystemIcon icon={icon} color={c.ink} size={28} />
       {/* HIG-3: a toolbar word stops growing at 1.5x so the row still fits at the largest text size. */}
-      <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.ink, fontSize: t.base }}>{text}</Text>
+      <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.ink, fontFamily: FONT.regular, fontSize: t.base }}>{text}</Text>
     </Pressable>
   );
 }
@@ -165,7 +165,7 @@ export function BackButton({ to, onPress, label, ink }: {
       style={({ pressed }) => [styles.back, { opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
     >
       <SystemIcon icon={{ sf: 'chevron.backward', md: 'arrow_back' }} color={color} />
-      <Text style={{ color, fontSize: t.base, lineHeight: t.line }}>{to}</Text>
+      <Text style={{ color, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line }}>{to}</Text>
     </Pressable>
   );
 }
@@ -186,9 +186,9 @@ export function MenuRow({ text, icon, count, value, onPress, testID }: { text: s
       style={({ pressed }) => [styles.menuRow, { opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
     >
       <SystemIcon icon={icon} color={c.ink} size={26} />
-      <Text style={{ flex: 1, color: c.ink, fontSize: t.base, lineHeight: t.line }}>{text}</Text>
-      {count ? <Text style={{ color: c.accent, fontSize: t.base, fontWeight: WEIGHT.semibold }}>{count}</Text> : null}
-      {value ? <Text style={{ color: c.muted, fontSize: t.base }}>{value}</Text> : null}
+      <Text style={{ flex: 1, color: c.ink, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line }}>{text}</Text>
+      {count ? <Text style={{ color: c.accent, fontSize: t.base, fontFamily: FONT.semibold }}>{count}</Text> : null}
+      {value ? <Text style={{ color: c.muted, fontFamily: FONT.regular, fontSize: t.base }}>{value}</Text> : null}
       <SystemIcon icon={CHEVRON} color={c.muted} size={18} />
     </Pressable>
   );
@@ -226,7 +226,10 @@ export function Choice({ label, title, detail, checked, onPress, kind }: {
         <Txt variant="strong">{title}</Txt>
         {detail ? <Txt variant="muted">{detail}</Txt> : null}
       </View>
-      {kind === 'radio' && checked ? <SystemIcon icon={{ sf: 'checkmark', md: 'check' }} color={c.accent} size={22} /> : null}
+      {/* EF-HE-2: an empty ring when not picked (muted, 3:1+), a filled accent ring when picked. */}
+      {kind === 'radio' ? (
+        <SystemIcon icon={checked ? { sf: 'checkmark.circle.fill', md: 'radio_button_checked' } : { sf: 'circle', md: 'radio_button_unchecked' }} color={checked ? c.accent : c.muted} size={26} />
+      ) : null}
       {kind === 'switch' ? (
         <View style={styles.switchBox} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           <SwitchWord on={checked} />
@@ -261,7 +264,7 @@ export function FaceTile({ name, count, faces, picked, onPress, across }: {
         <View style={styles.faceStack}>
           {faces.slice(0, 3).map((f, i) => (
             <View key={`${f}-${i}`} style={[styles.faceDot, { backgroundColor: c.line, borderColor: c.bg, marginLeft: i ? -10 : 0 }]}>
-              <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.ink, fontSize: t.base, fontWeight: WEIGHT.semibold }}>{initial(f)}</Text>
+              <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.ink, fontSize: t.base, fontFamily: FONT.semibold }}>{initial(f)}</Text>
             </View>
           ))}
         </View>
@@ -273,8 +276,8 @@ export function FaceTile({ name, count, faces, picked, onPress, across }: {
         ) : null}
       </View>
       {/* GUX-R1: the whole name, never cut; a word too long for even a 2-across tile breaks rather than spill out. */}
-      <Text style={[{ alignSelf: 'stretch', color: c.ink, fontSize: t.base, lineHeight: t.line, fontWeight: WEIGHT.semibold, textAlign: 'center' }, breakLongWords]}>{name}</Text>
-      <Text style={{ color: c.muted, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{`${count} ${count === 1 ? 'person' : 'people'}`}</Text>
+      <Text style={[{ alignSelf: 'stretch', color: c.ink, fontSize: t.base, lineHeight: t.line, fontFamily: FONT.semibold, textAlign: 'center' }, breakLongWords]}>{name}</Text>
+      <Text style={{ color: c.muted, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{`${count} ${count === 1 ? 'person' : 'people'}`}</Text>
     </Pressable>
   );
 }
@@ -286,18 +289,47 @@ export function AddTile({ label, onPress }: { label: string; onPress: () => void
     <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
       style={({ pressed }) => [styles.addTile, { borderColor: c.line, opacity: pressed ? 0.7 : 1 }]}>
       <SystemIcon icon={{ sf: 'plus', md: 'add' }} color={c.accent} />
-      <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.accent, fontSize: t.base, fontWeight: WEIGHT.semibold }}>Add</Text>
+      <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ color: c.accent, fontSize: t.base, fontFamily: FONT.semibold }}>Add</Text>
     </Pressable>
   );
 }
+/** SHARE-ST-11 / SHARE-ST-12 / SHARE-ST-17 (DEC-79 B+): the empty postcard's photo spot, the one way to start a post.
+ *  A 4:3 dashed accent outline on the card (no tint), set 12 pt in, holding a 72 pt accent-tint circle with the
+ *  add-photo symbol, the title in the accent and a muted helper. A press shrinks it to 0.98 for 120 ms, unless the
+ *  phone's Reduce Motion is on. No fixed height, so the words never get cut at bigger text sizes. */
+const SPOT = { corner: 14, circle: 72 } as const;
+export function AddPhotoSpot({ label, title, helper, onPress }: { label: string; title: string; helper: string; onPress: () => void }) {
+  const { c, t, reduceMotion } = useTheme();
+  const scale = useRef(new Animated.Value(1)).current;
+  const to = (toValue: number) => {
+    if (reduceMotion) return;
+    Animated.timing(scale, { toValue, duration: 120, useNativeDriver: Platform.OS !== 'web' }).start();
+  };
+  return (
+    <Animated.View style={[styles.spotWrap, { transform: [{ scale }] }]}>
+      <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} onPressIn={() => to(0.98)} onPressOut={() => to(1)}
+        style={[styles.spot, { borderColor: c.accent }]}>
+        <View style={[styles.spotCircle, { backgroundColor: c.accentSoft }]}>
+          {/* A fixed 32 pt symbol: it sits in a fixed 72 pt circle, so it does not grow with the text (the words do). */}
+          <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+            <SymbolView name={{ ios: 'photo.badge.plus', android: 'add_photo_alternate', web: 'add_photo_alternate' } as never} size={32} tintColor={c.accent} />
+          </View>
+        </View>
+        <Text style={{ color: c.accent, fontFamily: FONT.semibold, fontSize: t.title, lineHeight: Math.round(t.title * 1.25), textAlign: 'center' }}>{title}</Text>
+        <Text style={{ color: c.muted, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{helper}</Text>
+      </Pressable>
+    </Animated.View>
+  );
+}
+
 /** GUX-R1: on the web a word wider than its box would spill out; phones already break it. */
 const breakLongWords = (Platform.OS === 'web' ? { overflowWrap: 'anywhere' } : {}) as TextStyle;
 /** The first letter of the last word: "Grandma Jo" is J, "Chase" is C. */
-const initial = (name: string) => (name.trim().split(/\s+/).pop() ?? '?').charAt(0).toUpperCase() || '?';
+export const initial = (name: string) => (name.trim().split(/\s+/).pop() ?? '?').charAt(0).toUpperCase() || '?';
 
 function SwitchWord({ on }: { on: boolean }) {
   const { c, t } = useTheme();
-  return <Text style={{ color: c.ink, fontSize: t.base, fontWeight: WEIGHT.semibold }}>{on ? 'On' : 'Off'}</Text>;
+  return <Text style={{ color: c.ink, fontSize: t.base, fontFamily: FONT.semibold }}>{on ? 'On' : 'Off'}</Text>;
 }
 
 /** UX-R31: on the web a rounded field draws its own focus ring: a 2 pt accent edge that follows its corners (the
@@ -335,7 +367,7 @@ export function Field(props: TextInputProps & { label: string; underline?: boole
         onFocus={(e) => { typing.onFocus(); onFocus?.(e); }}
         onBlur={(e) => { typing.onBlur(); onBlur?.(e); }}
         style={[
-          { minHeight: 56, color: c.ink, paddingHorizontal: 14, paddingVertical: 12, fontSize: t.base, ...box },
+          { minHeight: 56, color: c.ink, paddingHorizontal: 14, paddingVertical: 12, fontFamily: FONT.regular, fontSize: t.base, ...box },
           style,
         ]}
       />
@@ -357,10 +389,12 @@ export function GroupedSection({ children, style, testID }: { children: ReactNod
   return <View testID={testID} style={[styles.card, { backgroundColor: c.surface }, look, style]}>{children}</View>;
 }
 
-export function Screen({ children, scroll = true, testID }: { children: ReactNode; scroll?: boolean; testID?: string }) {
+/** `footer` (GUX-R1): a screen's one main action, fixed under the scrolling words and above the tab bar, so it is on
+ *  screen without scrolling (a form's Save). */
+export function Screen({ children, scroll = true, testID, footer }: { children: ReactNode; scroll?: boolean; testID?: string; footer?: ReactNode }) {
   const { c } = useTheme();
   const under = useTabBarSpace(); // RD-109: room under a floating tab bar
-  const room = under ? { paddingBottom: 32 + under } : null;
+  const room = under && !footer ? { paddingBottom: 32 + under } : null;
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }} testID={testID}>
       {scroll ? (
@@ -368,6 +402,9 @@ export function Screen({ children, scroll = true, testID }: { children: ReactNod
       ) : (
         <View style={[styles.screen, { flex: 1 }, room]}>{children}</View>
       )}
+      {footer ? (
+        <View style={[styles.footer, { backgroundColor: c.bg, borderTopColor: c.line, paddingBottom: 12 + under }]}>{footer}</View>
+      ) : null}
     </SafeAreaView>
   );
 }
@@ -399,11 +436,11 @@ export function AlertDialog({ title, body, keep, destroy, onKeep, onDestroy }: {
   title: string; body?: string; keep: string; destroy: string; onKeep: () => void; onDestroy: () => void;
 }) {
   const { c, t, os } = useTheme();
-  const words = (label: string, color: string, weight: '400' | '600', onPress: () => void, first: boolean) => (
+  const words = (label: string, color: string, family: string, onPress: () => void, first: boolean) => (
     <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
       style={({ pressed }) => [styles.alertBtn, first ? { borderRightWidth: StyleSheet.hairlineWidth, borderRightColor: c.line } : null,
         { backgroundColor: pressed ? c.fill : 'transparent' }]}>
-      <Text style={{ color, fontWeight: weight, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{label}</Text>
+      <Text style={{ color, fontFamily: family, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{label}</Text>
     </Pressable>
   );
   return (
@@ -411,12 +448,12 @@ export function AlertDialog({ title, body, keep, destroy, onKeep, onDestroy }: {
       <View style={[styles.scrim, { backgroundColor: c.scrim }]}>
         <View accessibilityViewIsModal style={[styles.alert, { backgroundColor: c.surface, borderRadius: dialogRadius(os) }]}>
           <View style={styles.alertWords}>
-            <Text accessibilityRole="header" style={{ color: c.ink, fontWeight: WEIGHT.semibold, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{title}</Text>
-            {body ? <Text style={{ color: c.ink, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{body}</Text> : null}
+            <Text accessibilityRole="header" style={{ color: c.ink, fontFamily: FONT.semibold, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{title}</Text>
+            {body ? <Text style={{ color: c.ink, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line, textAlign: 'center' }}>{body}</Text> : null}
           </View>
           <View style={[styles.alertRow, { borderTopColor: c.line }]}>
-            {words(keep, c.ink, WEIGHT.semibold, onKeep, true)}
-            {words(destroy, c.dangerText, WEIGHT.regular, onDestroy, false)}
+            {words(keep, c.ink, FONT.semibold, onKeep, true)}
+            {words(destroy, c.dangerText, FONT.regular, onDestroy, false)}
           </View>
         </View>
       </View>
@@ -473,10 +510,16 @@ const styles = StyleSheet.create({
   faceRing: { alignSelf: 'stretch', minHeight: 64, borderRadius: RADIUS.pill, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 },
   faceStack: { flexDirection: 'row', justifyContent: 'center' },
   faceDot: { width: 36, height: 36, borderRadius: RADIUS.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+  // SHARE-ST-11 / SHARE-ST-12 (Chase's B+ reference, DEC-79): the photo spot's 14 pt corners and 72 pt circle are set by
+  // the spec, not the RADIUS tokens (engineer, flagged for qa-tdd and the design system: DSG-2 style hand-typed corner).
+  spotWrap: { marginHorizontal: 12, marginTop: 12 },
+  spot: { alignSelf: 'stretch', aspectRatio: 4 / 3, minHeight: MIN_TARGET, borderWidth: 2, borderStyle: 'dashed', borderRadius: SPOT.corner, alignItems: 'center', justifyContent: 'center', gap: 8, padding: 12 },
+  spotCircle: { width: SPOT.circle, height: SPOT.circle, borderRadius: SPOT.circle / 2, alignItems: 'center', justifyContent: 'center' },
   addTile: { minWidth: 64, minHeight: 64, borderRadius: RADIUS.medium, borderWidth: 2, borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 },
   faceTick: { position: 'absolute', top: -6, right: -4, borderRadius: RADIUS.pill, borderWidth: 2, width: 28, height: 28, alignItems: 'center', justifyContent: 'center' },
   card: { padding: 14, gap: 12 },
   screen: { padding: 16, gap: 16, paddingBottom: 32 },
+  footer: { paddingHorizontal: 16, paddingTop: 12, gap: 8, borderTopWidth: StyleSheet.hairlineWidth },
   loading: { alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 },
   notice: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: RADIUS.medium, borderWidth: 1, padding: 12 },
   scrim: { flex: 1, justifyContent: 'center', padding: 16 },

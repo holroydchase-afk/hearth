@@ -41,8 +41,19 @@ describe('tabs', () => {
   });
 
   it('RD-107 the iPhone\'s own bar is icons only with spoken names and the system\'s glass (no Hearth color behind it); Android keeps its words rule and page color', () => {
-    expect(nativeTabLook('ios', false)).toEqual({ labelHidden: true, themedBackground: false });
-    expect(nativeTabLook('android', false)).toEqual({ labelHidden: false, themedBackground: true });
-    expect(nativeTabLook('android', true)).toEqual({ labelHidden: false, themedBackground: true });
+    expect(nativeTabLook('ios', false)).toMatchObject({ labelHidden: true, themedBackground: false });
+    expect(nativeTabLook('android', false)).toMatchObject({ labelHidden: false, themedBackground: true });
+    expect(nativeTabLook('android', true)).toMatchObject({ labelHidden: false, themedBackground: true });
+  });
+
+  it('RD-110 the iPhone\'s own bar shrinks to its glass oval on scroll down and comes back on scroll up (Chase, Nov 19, DEC-75); Android\'s never shrinks', () => {
+    expect(nativeTabLook('ios', false).minimize).toBe('onScrollDown');
+    expect(nativeTabLook('android', false).minimize).toBe('never');
+    expect(nativeTabLook('android', true).minimize).toBe('never');
+  });
+
+  // RD-110-R5: Easy view never shrinks, even if the phone's own bar were ever used with it on (DS-5).
+  it('RD-110-R5 with Easy view On the phone\'s own bar never shrinks', () => {
+    expect(nativeTabLook('ios', true).minimize).toBe('never');
   });
 });

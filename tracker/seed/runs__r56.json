@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-23T05:00:00-05:00",
+ "label": "Share start B+ (DEC-79 amended, SHARE-ST-1..18): all app suites 3x (green)",
+ "passed": 5163,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs each at 99eb9cd on claude/project-thread-4ulu9i: jest 1678 passed (1 skipped, 1 todo) x3, typecheck clean x3, check-expo-go OK x3 (SDK 58), e2e:demo 38 passed (5 skipped) x3 with dist-demo rebuilt each run incl. SHARE-ST-8 and SHARE-PC-13 (the engineer's one-off 15 s timeout did not repeat), e2e:web 5 passed (6 skipped, env-gated) x3. qa-tdd reviewed the engineer's test edits (shareStart relativeCanPost and hidden-element reads, ST-12 icon size set, VID-21 label regex, demo SHARE-ST-8): no criterion weakened; VID-21's regex could pin the exact video label (QA-R1, P2, T29). Screenshots 393x852 dsf 2 in /mnt/project-files/design/share-start-b-plus-2026-11-23/ (parent light, dark, after a send with 'Last shared', Easy view stand-in; Grandma Jo has no Share tab in the demo, RD-9). Backend SQL and Deno not run (no backend change); phones not run. e2e/results/share-start-b-plus-green-2026-11-23.txt"
+}

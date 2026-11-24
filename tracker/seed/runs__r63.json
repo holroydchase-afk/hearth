@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-23T17:00:00-05:00",
+ "label": "Theme picker P2s (GUX-R30..R33, R76): tests written first (red); T33 site test fix green 3x",
+ "passed": 137,
+ "failed": 10,
+ "results": {},
+ "note": "Red on purpose, 1 run at d70610c plus new screens/__tests__/guxThemePicker.test.tsx and GUX-R33 retargets (themes.test.tsx, demo.spec.js WORD.paper = 'Paper (standard)'). jest 2 files: 10 failed, 137 passed: GUX-R30 x3 (no swatch-<theme>-fill part), GUX-R32 (no note starting 'Only this phone changes.' above the rows; today's note sits below), GUX-R33 + 5 retargeted RD-97/FRUIT-6/FRUIT-7 (row reads 'Paper', label 'Paper theme'). GUX-R31 guard green in all 10 themes x light/dark (Delete post has words + trash icon; alert says Delete). GUX-R32 second sentence not encoded: a second owner keeps their own theme (guard passes). Full jest 10 failed / 2183 passed, typecheck clean. T33: site.spec.js DEMO-5 red 3/3 before (cloud), 8 passed x3 after against chaseholroyd.com/hearth. Not run: e2e:demo with the retarget (needs the build). e2e/results/gux-theme-picker-red-2026-11-23.txt, e2e/results/t33-site-demo5-2026-11-23.txt"
+}

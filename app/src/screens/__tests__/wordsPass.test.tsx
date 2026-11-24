@@ -20,7 +20,7 @@ describe('WORDS grandparent-ux words pass', () => {
   // the To: line names who gets it, by name, once picked.
   it('WORDS-1 DEC-73 the note never promises "Grandma will see this": the To: line names the people picked', async () => {
     await renderApp(<ShareScreen />, { user: 'chase' });
-    fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }));
+    fireEvent.press(await screen.findByRole('button', { name: /^Add photos, up to \d+ at a time$/ }));
     await screen.findByRole('header', { name: 'New post' });
     const note = screen.getByLabelText('Add a note (optional)');
     expect(String(note.props.placeholder ?? '')).not.toMatch(/will see|Grandma|Gammy/);
@@ -52,7 +52,7 @@ describe('WORDS grandparent-ux words pass', () => {
   // alone and "3 people" on its own line, never "name · 3 people".
   it('WORDS-4 DEC-73 a group tile on Share shows its name alone, with "3 people" under it', async () => {
     await renderApp(<ShareScreen />, { user: 'chase' });
-    fireEvent.press(await screen.findByRole('button', { name: 'Pick photos from your phone' }));
+    fireEvent.press(await screen.findByRole('button', { name: /^Add photos, up to \d+ at a time$/ }));
     const tile = await screen.findByLabelText(`${DAD}, 3 people, not picked`);
     expect(within(tile).getByText(DAD)).toBeTruthy();
     expect(within(tile).getByText('3 people')).toBeTruthy();

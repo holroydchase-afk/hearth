@@ -108,7 +108,7 @@ Verdict: OK. Rung: same stack (Postgres RPCs + RLS, one migration). No new vendo
 Rule 6: the same PR updates `docs/architecture/` 04 and 05 (new private table, cap, revoke) and their "Last checked".
 
 ## 8. Before the switch goes on (Nov 19, START-ON)
-Chase, Nov 19: keep the switched-off features ("We need to keep the switched off features"; DEC-74). This section is what's left before `start_family_open` can be turned on. Turning it on still needs Chase's words.
+Chase, Nov 19: keep the switched-off features ("We need to keep the switched off features"; DEC-86). This section is what's left before `start_family_open` can be turned on. Turning it on still needs Chase's words.
 
 | ID | Type | Pri | Given / When / Then |
 |---|---|---|---|

@@ -130,7 +130,8 @@ describe('MOMENT: one compact card per upload', () => {
     await waitFor(() => expect(words('Love it')).toBe('❤️')); // a zero shows no number (RD-53)
   });
 
-  it('LIVE-3 my reaction shows as a soft fill, not a heavy outlined pill (Chase, Nov 5)', async () => {
+  // Retargeted Nov 20 for DEC-76 / RD-114: spec 1k supersedes LIVE-3's "no outline"; a pick is a 2 pt accent outline, no fill.
+  it('LIVE-3 RD-114 my reaction shows as a 2 pt outline with no fill (DEC-76, Nov 20)', async () => {
     const { be, id } = await one();
     await renderApp(<PhotosScreen />, { be, user: 'jo' });
     const card = await screen.findByTestId(`post-${id}`);
@@ -138,8 +139,8 @@ describe('MOMENT: one compact card per upload', () => {
     fireEvent.press(within(row).getByRole('button', { name: 'Love it' }));
     await waitFor(() => expect(within(row).getByRole('button', { name: 'Love it' }).props.accessibilityState.selected).toBe(true));
     const s = StyleSheet.flatten(within(row).getByRole('button', { name: 'Love it' }).props.style);
-    expect(s.borderWidth ?? 0).toBe(0);
-    expect(s.backgroundColor).not.toBe('transparent');
+    expect(s.borderWidth).toBe(2);
+    expect(s.backgroundColor === undefined || s.backgroundColor === 'transparent').toBe(true);
   });
 
   // Updated Nov 17 for RD-53 (B3): the four stay in their fixed order, each with its count; no "most first" chip line.

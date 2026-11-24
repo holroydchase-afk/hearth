@@ -5,4 +5,11 @@ ok   - QA-ALL-1: a skipped suite is named with why
 ok   - QA-ALL-1: skips alone don't fail the run (a sandbox without Deno can still pass)
 ok   - QA-ALL-1: the summary counts passed and skipped
 ok   - QA-ALL-1: test-all.sh uses the helper
-TEST-ALL RESULT: 7 passed, 0 failed
+ok   - QA-R1: test-all.sh runs the app's Jest
+ok   - QA-R1: test-all.sh runs the app's typecheck
+ok   - QA-R1: test-all.sh runs the demo and core-loop browser tests
+ok   - QA-R2: pull requests run the app's browser tests in CI
+ok   - QA-R3: qa-tdd's 3x rerun on CI includes the app's Jest
+ok   - ENG-R8: app e2e scripts don't hard-code one machine's browser path
+ok   - ENG-R8: e2e/package.json is the repo's license, not npm init's
+TEST-ALL RESULT: 14 passed, 0 failed

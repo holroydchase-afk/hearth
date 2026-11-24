@@ -480,6 +480,7 @@
    "status": "fixed",
    "title": "Removed members can still edit captions on their old posts",
    "tests": [
+    "CAPTIONS-028",
     "SQL-115"
    ],
    "found": "2026-10-15",
@@ -506,7 +507,23 @@
    "severity": "Low",
    "status": "fixed",
    "title": "Free-tier video cap is per space; someone can make extra spaces (fixed Oct 29: counted per person, migration 0020)",
-   "tests": [],
+   "tests": [
+    "SQL-095",
+    "VIDEO-CAP-001",
+    "VIDEO-CAP-002",
+    "VIDEO-CAP-003",
+    "VIDEO-CAP-004",
+    "VIDEO-CAP-005",
+    "VIDEO-CAP-006",
+    "VIDEO-CAP-007",
+    "VIDEO-CAP-008",
+    "VIDEO-CAP-009",
+    "VIDEO-CAP-010",
+    "VIDEO-CAP-011",
+    "VIDEO-CAP-012",
+    "VIDEO-CAP-013",
+    "VIDEO-CAP-014"
+   ],
    "found": "2026-10-15",
    "fixed": "2026-10-29"
   },
@@ -1011,11 +1028,27 @@
    "kind": "bug",
    "layer": "app",
    "severity": "Low",
-   "status": "open",
-   "title": "QA-R2 (OPEN-1/7/8): New for you only looks at the posts already loaded (the first page of 20). With more than 20 new posts since the last visit, the card's senders and the one-at-a-time view leave out the oldest new ones and don't start at the oldest. No test yet",
-   "tests": [],
+   "status": "fixed",
+   "title": "QA-R2 (OPEN-1/7/8): New for you only looks at the posts already loaded (the first page of 20). With more than 20 new posts since the last visit, the card's senders and the one-at-a-time view leave out the oldest new ones and don't start at the oldest. EF-HE-9 (intake #162, Nov 24): fixed at 88e605c by FeedStore.loadBackTo; with B26 fixed at d8115ee, closed by run r71 (green 3x). Tests: evalFindings.test.tsx, feed/__tests__/loadBackTo.test.ts",
+   "tests": [
+    "app/src/feed/__tests__/loadBackTo.test.ts",
+    "app/src/screens/__tests__/evalFindings.test.tsx"
+   ],
    "found": "2026-11-11",
-   "fixed": null
+   "fixed": "2026-11-24"
+  },
+  {
+   "id": "B26",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "QA-R1 (eval findings run r76, Nov 24): a refresh that answers while a loadMore page (a scroll, or B18's loadBackTo walk) is in flight lets the stale page append after the new first page: with 6 new posts on the server the feed skips 6 posts between the first page and the old page 2, and later pages continue from the bottom, so the hole stays until the next refresh. New for you can undercount the same way. Fixed at d8115ee (a refresh generation: loadMorePage drops a page started before the latest refresh, loadBackTo walks on from the new first page); closed by run r71 (green 3x). Test: app/src/feed/__tests__/loadBackTo.test.ts 'a refresh that lands mid-walk'",
+   "tests": [
+    "app/src/feed/__tests__/loadBackTo.test.ts"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
   },
   {
    "id": "T14",
@@ -1170,6 +1203,86 @@
    "fixed": null
   },
   {
+   "id": "T25",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "QA-R1 (Hass Avocado run, Nov 20): 3 tests still assumed GUX-R15's filled picked capsule, superseded by DEC-76 / SPEC-REDESIGN 1k. Retargeted: moments.test.tsx LIVE-3 now expects a 2 pt outline and no fill (RD-114); warmPaper.test.tsx RD-89 compares padding + border per side, since RD-116 absorbs the 1 to 2 pt border change in padding; reviewRound2.test.tsx R21 had the border sign wrong (the emoji starts after margin + border + padding), so it read 14 instead of 16. jest green x3 on those",
+   "tests": [
+    "app/src/screens/__tests__/moments.test.tsx",
+    "app/src/screens/__tests__/reviewRound2.test.tsx",
+    "app/src/screens/__tests__/warmPaper.test.tsx"
+   ],
+   "found": "2026-11-20",
+   "fixed": "2026-11-20"
+  },
+  {
+   "id": "T26",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "QA-R2 (Hass Avocado run, Nov 20): flaky, unrelated to DEC-76. app/src/screens/__tests__/smsSignIn.test.tsx BETA-SMS-4 'names only the last 4 digits...' failed in jest run 2 of 3: it reads 'You can ask for a new code in (60|59) seconds.' on real timers, and under full-suite load more than a second passes, so it shows 58 or less. Fix: fake timers before sending the code (as the 61 s check below it does), or accept 5x. Fixed Nov 20 (qa-tdd): the test now runs on jest fake timers, reads exactly 60, advances 1 s and reads 59 (proves the countdown). Red shown with 2.1 s of simulated load (58 seconds): e2e/results/t26-sms4-red-2026-11-20.txt. Test: that file",
+   "tests": [
+    "app/src/screens/__tests__/smsSignIn.test.tsx"
+   ],
+   "found": "2026-11-20",
+   "fixed": "2026-11-20"
+  },
+  {
+   "id": "T27",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (T26 fix run, Nov 20): under 3x CPU oversubscription (8 busy loops on 4 cores) the full jest run failed app/src/screens/__tests__/oldTabLinks.test.tsx B19 '/me opens More -> Me for a parent and a viewer' once: a queryByRole header that should be null found a View. Not seen in 3 normal runs. Likely cause: the loop renders twice (chase then jo) and the second render is read before the first unmount settles, or More opens a row after a load. Check under load before calling it fixed. Test: that file",
+   "tests": [
+    "app/src/screens/__tests__/oldTabLinks.test.tsx"
+   ],
+   "found": "2026-11-20",
+   "fixed": null
+  },
+  {
+   "id": "T28",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "QA-R1 (DEC-78 font green run, Nov 21): app/e2e-web/demo.spec.js RD-117/RD-116 timed out on 'More' tab in all 3 demo runs with the Atkinson font, passed at 8a118b3 without it. Cause: the taller lines put the heart lower, so tapping it scrolls Feed and the glass bar shrinks to 'Feed, show all tabs' (RD-110, intended); pick() assumed the full bar. Fixed Nov 21 (qa-tdd): pick() taps the shrunk oval first (RD-110-R1). Red and green in e2e/results/font-green-2026-11-21.txt. Test: that file",
+   "tests": [
+    "app/e2e-web/demo.spec.js"
+   ],
+   "found": "2026-11-21",
+   "fixed": "2026-11-21"
+  },
+  {
+   "id": "T29",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "QA-R1 (Share start B+ green run r56, Nov 23): app/src/screens/__tests__/video.test.tsx VID-21 finds the Add photos target by /^Add photos( or videos)?, up to 100 at a time$/ although the test turns video_posting on, so a regression to the plain 'Add photos' label with videos on would pass. Pin the exact 'Add photos or videos, up to 100 at a time' (SHARE-ST-2). Test: that file",
+   "tests": [
+    "app/src/screens/__tests__/video.test.tsx"
+   ],
+   "found": "2026-11-23",
+   "fixed": null
+  },
+  {
+   "id": "T32",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "Fruit themes green phase (DEC-80, Nov 23): app/e2e-web/demo.spec.js RD-102/FRUIT-11 toGallery and pick tapped the Gallery/More tab while scrolling the 10-row Theme list had shrunk the glass bar (RD-110), so the tab click timed out on Fig. Fix: restore the bar first (the T28 'show all tabs' tap) in both helpers; no expectation changed. Test: that file",
+   "tests": [
+    "app/e2e-web/demo.spec.js"
+   ],
+   "found": "2026-11-23",
+   "fixed": "2026-11-23"
+  },
+  {
    "id": "B15",
    "kind": "bug",
    "layer": "backend",
@@ -1178,6 +1291,152 @@
    "title": "QA-R1 (BETA-SMS): a phone-only account's placeholder name falls back to its phone number (tg_handle_new_user, 0007: coalesce(email, phone)), so the family would see the number as a name and in notices. Test: backend/tests/sms_test.sql",
    "tests": [],
    "found": "2026-10-15",
+   "fixed": null
+  },
+  {
+   "id": "B21",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R6 (Share start final green run r57, Nov 23): on Share start a parent's To: group names (GUX-R3, 2 lines) still end with '…' after 2 lines when the family has many groups, so the last groups are cut off with no way to see them on that line. Not covered by a test yet (SHARE-ST-15 checks only 3 groups). Where: app/src/screens/ShareScreen.tsx",
+   "tests": [],
+   "found": "2026-11-23",
+   "fixed": null
+  },
+  {
+   "id": "T30",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "QA-R2 (DEMO-SAFARI green gate, Nov 21): e2e:demo RD-117 failed 1 of 3 with page.reload: Not attached to an active page, because the DEMO-SAFARI fix made Reset wait for saves before navigating and resetDemo() returned at the click. Fixed Nov 21: resetDemo() waits for 'Sample data restored.'; demo.spec.js 3x green (102/102). Test: app/e2e-web/demo.spec.js",
+   "tests": [
+    "app/e2e-web/demo.spec.js"
+   ],
+   "found": "2026-11-21",
+   "fixed": "2026-11-21"
+  },
+  {
+   "id": "B22",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R3 (DEMO-SAFARI green gate, Nov 21): Reset demo clears localStorage but leaves photo bytes in IndexedDB (hearth.demoObjects) until the next load starts a fresh family. Local only, nothing leaves the device. Fix: startOver() clears the store before navigating. No test yet.",
+   "tests": [],
+   "found": "2026-11-21",
+   "fixed": null
+  },
+  {
+   "id": "B23",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (dark elevation red run, Nov 23, intake #155): in dark the surface step that now replaces shadows is small: c.surface vs c.bg contrast is 1.078:1 (Paper), 1.114:1 (Avocado), 1.046:1 (Pomegranate), so the laptop phone column and the glass tab bar barely lift off the page in dark (see /mnt/project-files/design/dark-elevation-2026-11-23/after-1280-dark.png). DARK-ELEV-1 only checks lighter (ratio > 1). Design call for grandparent-ux: pick a minimum step and pin it in DARK-ELEV-1. Where: app/src/ui/theme.ts",
+   "tests": [],
+   "found": "2026-11-23",
+   "fixed": null
+  },
+  {
+   "id": "T31",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "QA-R2 (dark elevation green run, Nov 23): app/e2e-web/demo.spec.js DARK-ELEV-6 scanned the first screen only, so RD-82's pinned shade line (shown after a scroll) was not checked in a real browser, and light was not checked. (Reported SKIPPED by the engineer: not reproduced; it runs in the only demo project at 390x844; the 5 skipped are the env-gated screenshot specs.) Fixed: explicit 390x844, scroll 300 px and re-scan, shade box-shadow none in dark and set in light. Red on 1341595 (tab bar, then shade line); green x3",
+   "tests": [
+    "app/e2e-web/demo.spec.js"
+   ],
+   "found": "2026-11-23",
+   "fixed": "2026-11-23"
+  },
+  {
+   "id": "T33",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "app/e2e-web/site.spec.js DEMO-5 'Grandma's view and Start over' raced the now-async Grandma Jo switch (#144): Details opened before the reload finished, so 'You're Grandma Jo' was not found. Failed 3/3 against the live site from the cloud env (passed locally and on CI). Fixed Nov 23: wait for the reloaded 'Good ..., Grandma Jo' heading before Details, and for 'Good ..., Chase' after resetDemo's reload; no expectation weakened. Red 1/8 failed x2, then 8 passed x3 against chaseholroyd.com/hearth. Same pattern still in demo.spec.js (lines ~66, ~318), passing locally. Test: that file",
+   "tests": [
+    "app/e2e-web/site.spec.js"
+   ],
+   "found": "2026-11-23",
+   "fixed": "2026-11-23"
+  },
+  {
+   "id": "T34",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R2 (T33 run, Nov 23): app/e2e-web/site.spec.js DEMO-5 'a cold load of /hearth/groups' failed 1 of 5 runs against the live site (line 43: a failed own request or page error), passed the other 4. Likely a slow or dropped request through the cloud proxy, not reproduced; error text not kept. Next: rerun with --repeat-each 10 and keep the failed list. Test: that file",
+   "tests": [
+    "app/e2e-web/site.spec.js"
+   ],
+   "found": "2026-11-23",
+   "fixed": null
+  },
+  {
+   "id": "T36",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "DEMO-PHOTO swap (Nov 24): app/e2e-web/demo.spec.js UX-R1 opened the walk with '2 new' / 'New photos: 1 of 2' (the old photo set); the newest post is now Alex's 3-photo bike post (DEMO-PHOTO-12), so '3 new' and 'New photos: 1 of 1' (the walk counts posts, as the New-for-you test already asserts). R18 scrolled a fixed 1200 px, which with the new photos lands exactly on the November/October boundary; it now scrolls 200 px into the second month's section, measured from its title. Intent unchanged. Test: that file",
+   "tests": [
+    "app/e2e-web/demo.spec.js"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
+   "id": "T37",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "Demo-site publish (demo-site.yml run 45430430863, Nov 24) failed its pre-publish check app/e2e-web/site.spec.js: 3 tests still expected the old demo after DEMO-PHOTO (DEC-82). DEMO-5 Start over greeted 'Chase' and read \"You're Chase, a parent\" (now Kevin, DEMO-PHOTO-10); DEMO-LIVE-2 searched 'lake' (now 'orchard': only post 1's title says it; search reads title, caption, sender); DEMO-NEW-5 walked '1 of 2' then Next to '2 of 2' (now one new post: '1 of 1', the bike title shows, no Next new photo, Done back to Kevin's Gallery, as demo.spec.js asserts). Intent unchanged, no check removed. No other publish or live check named the old demo. Test: that file",
+   "tests": [
+    "app/e2e-web/site.spec.js"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
+   "id": "B24",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (life calendar review green run r68, Nov 24): the birthday privacy line 'Your family will see the month and day. Never the year.' (Gallery card and the Add my birthday form) and 'Saved. Your family will see December 8.' say the whole family sees your birthday. Under PRIV-R2 a member's birthday follows can_see_profile: parents plus people who share a group with you, so in a split family a viewer outside your groups does not see it. Overclaims the audience (safe direction, no leak), but it is untrue and can cause needless worry (A1). Words for grandparent-ux/staff-pm, then a failing test for the new words. 'Only your family can see these.' (subline) and 'It's removed for everyone in the family.' (delete) are accurate. Where: app/src/screens/Birthdays.tsx (PRIVACY, save notice). No test yet.",
+   "tests": [],
+   "found": "2026-11-24",
+   "fixed": null
+  },
+  {
+   "id": "T35",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "qa-tdd test bug (life calendar green run, Nov 24): app/src/screens/__tests__/calendar.test.tsx CAL-14 'icon and the word' counted Text nodes for the icon, but the row's icon is a SymbolView, which renders no Text under jest. It stayed red against a correct build (6fd4b91). Fixed: assert a non-chevron SymbolView inside the Birthdays row, as RD-15 does; no expectation weakened (word still checked). Green x3. Test: that file",
+   "tests": [
+    "app/src/screens/__tests__/calendar.test.tsx"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
+   "id": "T38",
+   "kind": "test fix",
+   "layer": "backend",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (VIS review, Nov 24): VIS-7's every-row parity check in backend/tests/vis_core_test.sql reaches only the 13 of 34 kinds with a uuid id. The other 21 (composite keys like post_audience, reaction, media_key, circle_member; bigint ids like chat_message, comment_mode_log) are pinned by name but get no per-row can_see vs RLS comparison; VIS-4 still checks their select policies. Fix: compare those rows through their item/owner column instead of id",
+   "tests": [],
+   "found": "2026-11-24",
    "fixed": null
   }
  ]

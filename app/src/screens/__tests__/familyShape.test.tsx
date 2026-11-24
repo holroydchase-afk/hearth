@@ -150,17 +150,19 @@ describe('BETA-REPLY-11 the comment box names who will read it', () => {
   });
 });
 
-describe('BETA-BULK-3 "Pick lots of photos" is for parents only (Oct 17 decision)', () => {
+// Retargeted Nov 21 by qa-tdd for DEC-79 (SHARE-ST-2/5): there is no "Pick lots of photos" any more; a parent's one
+// Add photos target reads "up to 100", a relative's "up to 10", and bulk review is never reachable for a relative.
+describe('BETA-BULK-3 SHARE-ST-5 bulk (up to 100) is for parents only (Oct 17 decision)', () => {
   const pickBulk = jest.fn(async () => ({ assets: [] }));
 
-  it('BETA-BULK-3 Chase (owner) gets "Pick lots of photos"', async () => {
+  it('BETA-BULK-3 SHARE-ST-2 Chase (owner) gets "Add photos, up to 100 at a time"', async () => {
     await renderApp(<ShareScreen />, { user: 'chase', deps: { pickBulk } });
-    expect(await screen.findByRole('button', { name: 'Pick up to 100 photos at once' })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'Add photos, up to 100 at a time' })).toBeTruthy();
   });
 
   it('BETA-BULK-3 Alex (parent) gets it too', async () => {
     await renderApp(<ShareScreen />, { user: 'alex', deps: { pickBulk } });
-    expect(await screen.findByRole('button', { name: 'Pick up to 100 photos at once' })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'Add photos, up to 100 at a time' })).toBeTruthy();
   });
 
   it('BETA-BULK-3 a relative allowed to post (milestone 4) never gets a bulk picker', async () => {
@@ -168,8 +170,9 @@ describe('BETA-BULK-3 "Pick lots of photos" is for parents only (Oct 17 decision
     const real = be.mySpaces.bind(be);
     jest.spyOn(be, 'mySpaces').mockImplementation((u) => real(u).map((s) => ({ ...s, can_post: true })));
     await renderApp(<ShareScreen />, { be, user: 'ruth', deps: { pickBulk } });
-    expect(await screen.findByRole('header', { name: 'Share photos' })).toBeTruthy();
-    expect(screen.queryByRole('button', { name: 'Pick up to 100 photos at once' })).toBeNull();
+    expect(await screen.findByRole('header', { name: 'New post' })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'Add photos, up to 10 at a time' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Add photos, up to 100 at a time' })).toBeNull();
     expect(screen.queryByText('Lots of photos?')).toBeNull();
   });
 });

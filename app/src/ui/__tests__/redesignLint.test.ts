@@ -5,6 +5,7 @@
 // an off-scale corner. Each failure lists file:line so the fix is easy to find.
 import fs from 'fs';
 import path from 'path';
+import FRUIT from './fixtures/fruit-palettes.json';
 
 const SRC = path.join(__dirname, '..', '..');
 
@@ -50,24 +51,32 @@ function buttons(): { at: string; props: string }[] {
 }
 
 describe('RD 1a source scans', () => {
-  it('RD-2 Atkinson is no longer loaded anywhere in the app', () => {
-    expect(find(/atkinson-hyperlegible|AtkinsonHyperlegible/i)).toEqual([]);
-    expect(find(/useFonts\s*\(/)).toEqual([]);
+  // qa-tdd, Nov 21: reversed by DEC-78 (FONT-1). Atkinson comes back, imported only in theme.ts and loaded only by
+  // the root layout's useFonts; screens use FONT.* and never name the files themselves.
+  it('RD-2 → FONT-1 Atkinson is imported only by theme.ts and useFonts runs only in the root layout', () => {
+    expect(find(/@expo-google-fonts\/atkinson-hyperlegible-next/i).map((l) => l.split(':')[0])).toEqual(expect.arrayContaining(['ui/theme.ts']));
+    expect(find(/@expo-google-fonts\/atkinson-hyperlegible-next/i, sources(), (f) => f === 'ui/theme.ts')).toEqual([]);
+    expect(find(/useFonts\s*\(/).map((l) => l.split(':')[0])).toEqual(['app/_layout.tsx']);
   });
 
   // Updated Nov 17 for RD-55 (DEC-65): no Bold anywhere, the large title included; Medium is allowed for names (RD-48).
   it('RD-2 RD-55 no Bold or heavier weight anywhere (WEIGHT.bold, 700, 800, 900, "bold")', () => {
     expect(find(/WEIGHT\.bold|fontWeight:\s*['"](700|800|900|bold)['"]/, sources(), (f) => f === 'ui/theme.ts')).toEqual([]);
+    // FONT-1 (DEC-78): no Bold Atkinson family either, theme.ts included.
+    expect(find(/FONT\.bold|AtkinsonHyperlegibleNext_(700|800|900)\w*/)).toEqual([]);
   });
 
   it('RD-3 no component hard-codes an accent hex (old or new); theme.ts is the only home', () => {
-    const accents = ['B23A1E', 'FF8A65', '2E7D4F', '6FCF97', '8E3A8F', 'D9A0E0', 'A4421F', 'F4A47F', '2D6A4E', '8FD1AE', '5A3EA6', 'C5B3F5', 'AD371D', '276B43', '3B6120', 'B4D16A', 'A3172F', 'FF8597']; // engineer, flagged for qa-tdd: RD-86's darker Ember and Forest; qa-tdd: RD-95's Avocado and Pomegranate
+    const accents = ['B23A1E', 'FF8A65', '2E7D4F', '6FCF97', '8E3A8F', 'D9A0E0', 'A4421F', 'F4A47F', '2D6A4E', '8FD1AE', '5A3EA6', 'C5B3F5', 'AD371D', '276B43', '3B6120', 'B4D16A', 'A3172F', 'FF8597', '2F5419', '7ED69B', 'B3D25B']; // qa-tdd Nov 20: RD-111/RD-112's Hass Avocado (and the rejected #B3D25B); engineer, flagged for qa-tdd: RD-86's darker Ember and Forest; qa-tdd: RD-95's Avocado and Pomegranate
+    // qa-tdd, Nov 23: FRUIT-1/2 (DEC-80) add the nine fruits' accents (from the fixture); theme.ts stays the only home.
+    for (const f of Object.values(FRUIT as unknown as Record<string, { light: { accent: string }; dark: { accent: string } }>)) accents.push(f.light.accent.slice(1), f.dark.accent.slice(1));
     expect(find(new RegExp(`#(${accents.join('|')})\\b`, 'i'), sources(), (f) => f === 'ui/theme.ts')).toEqual([]);
   });
 
-  it('RD-4 the accent is used only by the tab bar, the kit (switch On, link words, main tap word or chip), New for you and the new-message dot', () => {
+  it('RD-4 RD-114 the accent is used only by the tab bar, the kit (switch On, link words, main tap word or chip), New for you, the new-message dot and the picked reaction (PostCard)', () => {
     // Allowed homes for c.accent. Anything else (avatar letters, event card borders, video pills, spinners) is ink.
-    const allowed = new Set(['ui/theme.ts', 'ui/kit.tsx', 'screens/TabBar.tsx', 'app/(tabs)/_layout.tsx', 'screens/NewForYou.tsx', 'demo/DemoBar.tsx']);
+    // qa-tdd, Nov 20: RD-114 (DEC-76) adds the picked reaction's outline and count in PostCard.tsx.
+    const allowed = new Set(['ui/theme.ts', 'ui/kit.tsx', 'screens/TabBar.tsx', 'app/(tabs)/_layout.tsx', 'screens/NewForYou.tsx', 'demo/DemoBar.tsx', 'screens/PostCard.tsx']);
     expect(find(/\bc\.accent\b(?!Ink|Soft)/, sources(), (f) => allowed.has(f))).toEqual([]);
   });
 
@@ -76,7 +85,8 @@ describe('RD 1a source scans', () => {
   });
 
   it('RD-6 outline symbols only: no SF ".fill" names and no filled Material names', () => {
-    expect(find(/sf:\s*['"][\w.]+\.fill['"]|ios:\s*['"][\w.]+\.fill['"]/)).toEqual([]);
+    // EF-HE-2 (SPEC-EVAL-FIXES): the one exception is the shared radio's picked ring, a filled accent circle in the kit.
+    expect(find(/sf:\s*['"][\w.]+\.fill['"]|ios:\s*['"][\w.]+\.fill['"]/).filter((h) => !/^ui\/kit\.tsx:\d+ sf: 'checkmark\.circle\.fill'$/.test(h))).toEqual([]);
     expect(find(/md:\s*['"]\w+_filled['"]/)).toEqual([]);
     // Regular weight: no symbol asks for a heavier weight.
     expect(find(/<SymbolView[^>]*weight=\{?['"](medium|semibold|bold|heavy|black)['"]/)).toEqual([]);
@@ -100,6 +110,7 @@ describe('RD 1a source scans', () => {
       if (file === 'ui/kit.tsx' && /\{yes\}/.test(b.props)) continue; // Confirm's yes: checked for Delete/Leave below
       if (/danger/.test(variant) && /\b(Delete|Leave)\b/.test(words)) continue;
       if (file === 'demo/DemoBar.tsx' && /danger/.test(variant) && words === 'Reset') continue; // the demo's delete-everything confirm
+      if (file === 'screens/GroupsScreen.tsx' && variant === 'primary' && words === 'New group') continue; // EF-HE-5-AC2: a deliberate DS-9 primary
       offenders.push(`${b.at} ${variant} "${words.slice(0, 50)}"`);
     }
     expect(offenders).toEqual([]);

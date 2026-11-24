@@ -40,6 +40,9 @@ const SAME = 'Your comment goes to the same people.';
 
 type Inst = ReturnType<typeof screen.getByTestId>;
 const flat = (s: unknown) => (StyleSheet.flatten((typeof s === 'function' ? (s as (p: object) => unknown)({ pressed: false }) : s) as never) ?? {}) as Record<string, unknown>;
+/** FONT-3 (DEC-78, qa-tdd Nov 21): the weight is carried by the Atkinson family (Android can't synthesize it), so
+ *  read it from the family name; a Text with no Atkinson family reports that instead of a weight. */
+const famWeight = (s: Record<string, unknown>) => /^AtkinsonHyperlegibleNext_(\d00)/.exec(String(s.fontFamily ?? ''))?.[1] ?? `no Atkinson family (fontWeight ${String(s.fontWeight ?? 'none')})`;
 const isHost = (n: Inst) => typeof n.type === 'string';
 const num = (...v: unknown[]) => Number(v.find((x) => typeof x === 'number') ?? 0);
 const TRANSPARENT = /^(transparent|rgba\(\s*\d+,\s*\d+,\s*\d+,\s*0\s*\))$/;
@@ -58,7 +61,7 @@ function textOf(n: Inst): string {
 function wordsStyle(b: Inst, name: string) {
   const t = (b.findAll((n: Inst) => n.type === Text) as Inst[]).find((x) => textOf(x) === name);
   const s = t ? flat(t.props.style) : {};
-  return { color: s.color, weight: String(s.fontWeight ?? '400') };
+  return { color: s.color, weight: famWeight(s) };
 }
 const kvFor = (user: string, opts: { bigText?: boolean; look?: 'system' | 'light' | 'dark' } = {}) => memoryKV({
   [SEEN(user)]: new Date(Date.now() + HOUR).toISOString(),
@@ -198,7 +201,7 @@ describe('UX-R28 (P2) RD-71 the title opens the description, in Medium; never a 
     expect({
       heading: within(card).queryByRole('header', { name: 'Pumpkin patch' }) !== null,
       starts: textOf(desc).startsWith('Pumpkin patch'),
-      weight: titleText ? String(flat(titleText.props.style).fontWeight) : 'no title in the description',
+      weight: titleText ? famWeight(flat(titleText.props.style)) : 'no title in the description',
       afterName: firstTitle > order.indexOf(within(card).getByTestId(`card-head-${id}`)),
       caption: textOf(desc).includes('First snow!'),
     }).toEqual({ heading: false, starts: true, weight: '500', afterName: true, caption: true });

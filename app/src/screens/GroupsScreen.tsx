@@ -49,7 +49,7 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
   const [circles, setCircles] = useState<Circle[] | null>(null);
   const [renaming, setRenaming] = useState<string | null>(null);
   const [name, setName] = useState('');
-  const [invite, setInvite] = useState<{ circle: string; link: string; code: string } | null>(null);
+  const [invite, setInvite] = useState<{ circle: string; link: string; code: string; byPhone?: boolean } | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [asking, setAsking] = useState<string | null>(null); // circle id whose invite form is open
   const [inviteName, setInviteName] = useState('');
@@ -169,14 +169,14 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
           ...(everyone && alsoEveryone && everyone.circle_id !== id ? [everyone.circle_id] : []),
         ],
       });
-      setInvite({ circle: id, link: r.link, code: r.code });
+      setInvite({ circle: id, link: r.link, code: r.code, byPhone: !!phone });
       closeForm();
     } catch (e) {
       setNotice(messageFor(e, { action: 'invite' }));
     }
   };
 
-  const text = (link: string, code: string) => { void app.deps.openUrl(inviteSmsUrl(myName, link, code)); };
+  const text = (link: string, code: string, byPhone: boolean) => { void app.deps.openUrl(inviteSmsUrl(myName, link, code, byPhone)); };
 
   // UX-G4: the server takes an invite only to a household, or (until 0012) a group with nothing under it.
   const invitable = (g: Circle) =>
@@ -186,7 +186,8 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
     <Screen>
       {onBack ? <BackButton to="More" onPress={onBack} /> : null}
       <Txt variant="display" role="header">Your groups</Txt>
-      <Txt variant="muted">Each photo goes only to the groups you pick. People never see group names.</Txt>
+      {/* EF-HE-5: honest about who sees group names (DEC-49). */}
+      <Txt variant="muted">Each photo goes only to the groups you pick. Only parents see these names; everyone else sees people's names.</Txt>
       {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
       {circles === null ? <Loading words="Loading your groups…" /> : null}
       {draft ? (
@@ -239,7 +240,8 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
           <Button label="Cancel" variant="secondary" onPress={() => setDraft(null)} />
         </Card>
       ) : (
-        <Button variant="secondary" label="New group" onPress={() => { closeForm(); setDraft(NEW_GROUP); }} />
+        // EF-HE-5: the one filled main button here (DS-9); Rename and Invite stay secondary.
+        <Button label="New group" onPress={() => { closeForm(); setDraft(NEW_GROUP); }} />
       )}
       {/* one main action per screen: while making a group, the list waits */}
       {(draft ? [] : circles ?? []).map((g) => (
@@ -287,7 +289,7 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
             <Button label={`Rename ${g.name}`} text="Rename" variant="secondary" onPress={() => { setRenaming(g.circle_id); setName(g.name); }} />
           )}
           {invite?.circle === g.circle_id ? (
-            <InviteReady link={invite.link} code={invite.code} onText={() => text(invite.link, invite.code)} />
+            <InviteReady link={invite.link} code={invite.code} onText={() => text(invite.link, invite.code, !!invite.byPhone)} />
           ) : asking === g.circle_id ? (
             <>
               <Txt variant="title" role="header">{`Invite someone to ${g.name}`}</Txt>

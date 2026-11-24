@@ -17,12 +17,13 @@ Chase's family is "distributed": divorces, remarriages, step-grandparents, relat
 **4. Claim only what's true today.** The app promises "stored in the US", not "never leaves the US", because push notifications and vendor support cross borders. A claims register lists what marketing may say and why it's true. The audience is privacy-literate and will check.
 
 **5. Test-driven product management.** Engineers write the failing test first. Hearth does the same for product calls: every decision gets one Green or Red row per relative persona, from the great-grandparent who won't install anything to the cousin who will. A Red needs a mitigation or an explicit override, and CI fails if the check is missing.
+**A deeper look:** [Easy view](EASY-VIEW.md), one switch that gives grandparents words and bigger text and gives parents the phone's clean standard bar, set by role so nobody has to find it.
 
 ## How the work runs
 
 - **An agent team with lanes:** staff PM, QA, app engineer, architect, a designer for the grandparents, UX reviewer for public work, privacy and security, positioning, and a story keeper that logs decisions. The founder writes goals and makes calls. Agents work one lane at a time, test-first, and open pull requests. Docs and test changes merge once CI is green; anything a user or the public demo would see waits for the founder's word (DEC-48).
 - **Night shift:** before bed, one instruction schedules an unattended 2:15am run. On the first night it reviewed the app from the code, ranked 14 items, and shipped parallel uploads, a fix for the photo framing the founder had reported, and a cipher switch. It also checked the messenger's encryption against the RFC 9180 test vectors.
-- **Decision log:** 67 decisions, each with what it beat and why. That makes the story retellable and reviewable.
+- **Decision log:** 77 decisions, each with what it beat and why. That makes the story retellable and reviewable.
 
 ## Results so far
 

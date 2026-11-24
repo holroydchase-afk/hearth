@@ -49,16 +49,16 @@ export function MessagesScreen({ onClose, backTo = 'Gallery' }: { onClose: () =>
         <Card key={c.circle_id}>
           <Txt variant="title">{c.title}</Txt>
           <Txt variant="muted">{c.kind === 'event' ? `Event · ${people(c.member_count)}` : people(c.member_count)}</Txt>
-          <Button label={chatOpenLabel(c)} text="Open" variant="secondary" onPress={() => setOpen(c)} />
+          <Button label={chatOpenLabel(c)} variant="secondary" onPress={() => setOpen(c)} />
         </Card>
       ))}
     </Shell>
   );
 }
 
-/** "Open the chat with Alex and Grandpa Earl" for people; "Open the chat Charleston trip" for a named group or event. */
+/** EF-HE-1: shown and spoken. "Open Charleston trip" for a named group or event; "Open chat with Alex and Grandpa Earl" for people. */
 export function chatOpenLabel(c: ChatSummary): string {
-  return c.named ? `Open the chat ${c.title}` : `Open the chat with ${c.title}`;
+  return c.named ? `Open ${c.title}` : `Open chat with ${c.title}`;
 }
 
 function ChatScreen({ chat, client, onClose }: { chat: ChatSummary; client: ChatClient; onClose: () => void }) {

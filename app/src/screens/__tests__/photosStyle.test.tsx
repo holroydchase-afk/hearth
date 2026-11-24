@@ -34,6 +34,9 @@ const light = (): Colors => paletteFor(Platform.OS as 'ios', false);
 
 type Inst = ReturnType<typeof screen.getByTestId>;
 const flat = (s: unknown) => (StyleSheet.flatten((typeof s === 'function' ? (s as (p: object) => unknown)({ pressed: false }) : s) as never) ?? {}) as Record<string, unknown>;
+/** FONT-3 (DEC-78, qa-tdd Nov 21): the weight is carried by the Atkinson family (Android can't synthesize it), so
+ *  read it from the family name; a Text with no Atkinson family reports that instead of a weight. */
+const famWeight = (s: Record<string, unknown>) => /^AtkinsonHyperlegibleNext_(\d00)/.exec(String(s.fontFamily ?? ''))?.[1] ?? `no Atkinson family (fontWeight ${String(s.fontWeight ?? 'none')})`;
 const isHost = (n: Inst) => typeof n.type === 'string';
 const hostOrder = (root: Inst = screen.UNSAFE_root as unknown as Inst) => root.findAll(isHost) as Inst[];
 function textOf(n: Inst): string {
@@ -121,7 +124,7 @@ describe('RD-44 Gallery is a months mosaic, like the newest Apple Photos', () =>
     const month = within(grid).getByRole('header', { name: 'October 2025' });
     const words = month.findAll((n: Inst) => n.type === Text && textOf(n) === 'October 2025')[0] ?? month;
     const s = flat(words.props.style);
-    expect({ weight: String(s.fontWeight), size: s.fontSize }).toEqual({ weight: '600', size: 24 });
+    expect({ weight: famWeight(s), size: s.fontSize }).toEqual({ weight: '600', size: 24 });
   });
 
   it('RD-44 every tile has 16 pt corners, 8 pt gaps and sits inside the 16 pt margins (not edge to edge)', async () => {
@@ -329,7 +332,7 @@ describe('RD-48 a Feed post in Instagram\'s order', () => {
     const s = flat(name.props.style);
     // R22 (review round 2): Jo has Bigger text on (viewer default), so the name matches the words' size, not a fixed 17.
     const body = flat(within(card).getByText('First snow!').props.style).fontSize;
-    expect({ weight: String(s.fontWeight), size: s.fontSize }).toEqual({ weight: '500', size: body });
+    expect({ weight: famWeight(s), size: s.fontSize }).toEqual({ weight: '500', size: body });
     expect(within(head).queryByTestId(`when-${id}`)).toBeNull();
   });
 
@@ -531,12 +534,12 @@ describe('RD-55 lighter type: no Bold anywhere', () => {
     const h = screen.getByRole('header', { name: GREETING });
     const t = (h.type as unknown) === Text || (h.type as unknown) === 'Text' ? h : h.findAll((n: Inst) => n.type === Text)[0]!;
     const s = flat(t.props.style);
-    expect({ weight: String(s.fontWeight), size: s.fontSize }).toEqual({ weight: '600', size: 34 });
+    expect({ weight: famWeight(s), size: s.fontSize }).toEqual({ weight: '600', size: 34 });
   });
 
   it('RD-55 the kit\'s large title (display) is Semibold', async () => {
     render(<Txt variant="display">Large title</Txt>);
-    expect(String(flat(screen.getByText('Large title').props.style).fontWeight)).toBe('600');
+    expect(famWeight(flat(screen.getByText('Large title').props.style))).toBe('600');
   });
 
   it('RD-55 nothing on Gallery or Feed is Bold (700 or heavier)', async () => {
@@ -545,7 +548,7 @@ describe('RD-55 lighter type: no Bold anywhere', () => {
     const r = await renderApp(<GalleryScreen />, { be, user: 'jo' });
     await screen.findByRole('header', { name: GREETING }, slow);
     const heavy = () => (screen.UNSAFE_root.findAll((n: Inst) => n.type === Text) as Inst[])
-      .map((n) => ({ words: textOf(n), w: String(flat(n.props.style).fontWeight ?? '400') }))
+      .map((n) => { const st = flat(n.props.style); return { words: textOf(n), w: String(/_(\d00)/.exec(String(st.fontFamily ?? ''))?.[1] ?? st.fontWeight ?? '400') }; })
       .filter((x) => /^(700|800|900|bold)$/.test(x.w));
     expect(heavy()).toEqual([]);
     r.unmount();

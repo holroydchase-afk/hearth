@@ -36,13 +36,14 @@ Studio standard: follow holroydchase-afk/studio-agents docs/studio-standard.md; 
 
 ## Layout
 - `backend/`: Supabase.
-  - `supabase/migrations/0001`–`0026`: RLS, RPCs, triggers, notification outbox (0003), error reports (0006), family shape (0011), groups v2 (0013), messenger relay (0015), video (0020), start a family (0024), search (0025), text sign-in (0026). What is live on the hosted project: `docs/eng/DEPLOYS.md`.
+  - `supabase/migrations/0001`–`0029`: RLS, RPCs, triggers, notification outbox (0003), error reports (0006), family shape (0011), groups v2 (0013), messenger relay (0015), video (0020), start a family (0024), search (0025), text sign-in (0026), group names (0027), no passwords (0028), life calendar (0029), visibility core + registry (0031, 0032; 0030 is video fixes). What is live on the hosted project: `docs/eng/DEPLOYS.md`.
   - `scripts/`: `deploy.sh` (one-command deploy, `--dry-run`), `family-setup.sh` (fresh family in the 0011 shape + invites, through the Management API, token only), `family-setup.sql` (v1, psql; superseded for fresh setups), `family-setup-v2.sql` (re-seed into the family shape; dry run by default).
   - `functions/notify/`: Deno TS; Expo Push + Resend sender, run by a 1-minute cron.
   - `functions/sign-media/`: Deno TS; presigned Backblaze B2 URLs and per-item keys.
   - `tests/`: SQL, perf, integration (PostgREST harness).
 - `app/`: Expo SDK 58, TypeScript strict, `HearthApi` with a Supabase and a Fake implementation, upload queue, media pipeline.
 - `packages/messenger/`: `@holroyd/messenger`, the shared MLS messenger library (AGPL-3.0-or-later; Relay, Roster, Store; Supabase relay template). Hearth's `app/src/messenger/` is its adapter. Crew Clock is the next user (DEC-42).
+- `packages/visibility/`: `@holroyd/visibility`, the reusable visibility core (registry of kinds, `can_see`, narrowing hooks, conformance kit; no product words). Hearth instantiates it in migrations 0031/0032 (R77, DEC-83).
 - `prototype/`, `e2e/`: the clickable HTML prototype and its Playwright tests. Throwaway.
 - `tracker/`: Hearth Test Log seed builder.
 - `.claude/agents/`: the specialist agents. See "Chief of staff and agent roster" below.
@@ -61,6 +62,10 @@ The main session is Chase's **chief of staff**: it doesn't do specialist work it
 | README, landing or portfolio copy; a name or tagline; after a milestone, the "why I built it" story | `positioning` |
 | Any screen, word, notification, email or guide a relative will see (Hearth's own designer; it outranks `ux-reviewer` there, which keeps the public demo and recruiters) | `grandparent-ux` |
 | End of any turn where Chase made a call, a plan changed or a lesson was learned (runs in the background) | `story-keeper` |
+
+**Open every thread the same way.** The first message to Chase is the intro naming the work, then one plan line, before any other work: "Hi Chase, I'm Hearth's chief of staff for <the work>." then "Building it now. First the staff PM writes up the spec, then tests, then the build. I'll post the PR when it's ready." (For a question or review: "Looking into it now. I'll come back with the answer.") Then run it in that order and keep the checklist in step: staff-pm spec (in `docs/product/SPEC-<NAME>.md` or the PR body), qa-tdd failing tests, engineer build, qa-tdd green 3x plus reviews, PR posted. Details: studio-standard.md section 2a.
+
+**Agents come from studio-agents, never your own copy.** Whenever Chase says "agent" (or a lane needs one), look in holroydchase-afk/studio-agents first: `ls .claude/agents/` and `~/.claude/agents/`, then the studio-agents repo itself. If a matching agent exists, use it as written. If none exists, recommend a new one for studio-agents in one line (name, lane, why) and carry on with the nearest studio agent; never write your own agent file in this repo (Hearth facts go in `docs/eng/AGENT-NOTES.md`). Run qa-tdd as the failing-tests step on every code change without being told; "qa-tdd skipped" is only allowed as exactly `qa-tdd skipped: docs only` or `qa-tdd skipped: config only`, and agents-check fails any other on a code PR (AGENTSKIP-1..4).
 
 **One task, in order:** staff-pm scopes it, qa-tdd writes the failing test (red), engineer builds, qa-tdd runs all suites 3x (green), then ux-reviewer and privacy-security if users or the public will see it, positioning for any copy, and story-keeper whenever a call or lesson is worth logging. Review findings get IDs (`<CODE>-R<n>`, P0 to P2) and each fix gets its own failing test first.
 
@@ -111,6 +116,7 @@ Chase is a full-time dad with limited time. These rules apply to every session.
 - When something truly needs Chase (a purchase, a login, a decision), make it a single step: give the exact link, the exact text to paste, or a one-word question with your recommendation.
 - Never hand Chase a multi-step chore you could shrink to one step, or a copy-and-paste you could avoid by saving the result somewhere you can reach.
 - Pick sensible defaults and keep going instead of asking.
+- Self-check before any ask: Chase never updates settings, environments or repos by hand. Before asking him to do anything, ask yourself: Can I do it myself? Can a thread or an MCP/tool do it so he only taps Allow (for example update_environment for allowed hosts)? Can it be a card with a button? If he must type, is it one code box to copy (one per paste, click path above it)? Only then ask, in the lightest form. If a host is blocked, request it via the environment tool; a copy box is the fallback.
 - If Chase is about to make a mistake (wasted money or time, a risky or irreversible step, a worse option than an obvious alternative), say so plainly and briefly before going along with it.
 
 ### Token hygiene

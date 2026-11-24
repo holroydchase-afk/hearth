@@ -46,3 +46,27 @@ Deno.test("BETA-SMS-7: the [auth.sms] template, with code 123456, is Hearth's wo
   const bad = [...text].filter((ch) => !GSM7.includes(ch));
   assert(bad.length === 0, `all GSM-7 (not: ${bad.join(" ")})`);
 });
+
+// TS-GUX-R1 (grandparent-ux, Nov 19 text sign-in review): the exact words, in config.toml AND in the custom-template
+// request filed with Twilio (docs/eng/SMS-PROVIDER.md), so the live text and the email teach one rule.
+const TS_GUX_R1 = "Hearth code: 123456. Only type it into Hearth. Never read this code to anyone who calls or texts you, even family.";
+function gsm7Segment(text: string) {
+  assert(text.length <= 160, `at most 160 characters (got ${text.length})`);
+  const bad = [...text].filter((ch) => !GSM7.includes(ch));
+  assert(bad.length === 0, `all GSM-7 (not: ${bad.join(" ")})`);
+}
+Deno.test("TS-GUX-R1 / BETA-SMS-7: the [auth.sms] template, with code 123456, is exactly the R1 words", () => {
+  const block = read("config.toml").split("[auth.sms]")[1]?.split("\n[")[0] ?? "";
+  const tpl = /^template = "(.*)"$/m.exec(block)?.[1] ?? "";
+  const text = tpl.replace(/\{\{ \.Code \}\}/g, "123456");
+  assert(text === TS_GUX_R1, `config.toml text is the R1 words (got "${text}")`);
+  gsm7Segment(text);
+});
+Deno.test("TS-GUX-R1 / BETA-SMS-7: SMS-PROVIDER.md's Twilio template request body is exactly the R1 words", () => {
+  const doc = Deno.readTextFileSync(new URL("../../../docs/eng/SMS-PROVIDER.md", import.meta.url));
+  const body = /Template request body[^\n]*\n```\n(.*)\n```/.exec(doc)?.[1] ?? "";
+  assert(body !== "", "SMS-PROVIDER.md has a template request body block");
+  const text = body.replace(/\{\{\s*code\s*\}\}/g, "123456");
+  assert(text === TS_GUX_R1, `request body is the R1 words (got "${text}")`);
+  gsm7Segment(text);
+});

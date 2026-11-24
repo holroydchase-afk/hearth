@@ -6,8 +6,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { Text } from 'react-native';
 import { memoryKV } from '../../platform/kv';
-import { MoreScreen } from '../../screens/MoreScreen';
-import { MeScreen } from '../../screens/MeScreen';
+import { MoreScreen } from '../../test/redesignScreens'; // ENG-R6: More at /more, under expo-router
 import { loadPrefs } from '../../state/prefs';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
 import { isDark, statusBarStyle, useTheme } from '../theme';
@@ -67,15 +66,15 @@ describe('DS-10 light and dark screens', () => {
     await waitFor(() => expect(probe()).toMatch(/^light /));
   });
 
-  // GUX-R10 (Nov 16): Help no longer repeats Light or dark (it's a row in More); Me keeps it after Bigger text.
-  // engineer, flagged for qa-tdd: Easy view (RD-78) takes Bigger text's place on Me.
-  it('DS-10: the choice sits right after Easy view, in plain words, on Me', async () => {
-    await renderApp(<MeScreen />, { user: 'chase' });
+  // GUX-R10 (Nov 16): Help no longer repeats Light or dark (it's a row in More). EF-HE-4 (Chase, Nov 24): Me no
+  // longer shows it either, so DS-10 checks the Light or dark page in More.
+  it('DS-10: the choice is in plain words on the Light or dark page in More', async () => {
+    await renderApp(<MoreScreen />, { user: 'jo' }); // jo: More's own Theme row (owner only) would match /theme/
+    fireEvent.press(await screen.findByRole('button', { name: /^Light or dark(,|$)/ }));
     await screen.findByRole('radio', { name: 'Light screen' });
     const words = screenWords();
     expect(words).not.toMatch(/\b(theme|mode|appearance|system|settings)\b/i);
-    expect(words.indexOf('Easy view')).toBeGreaterThanOrEqual(0);
-    expect(words.indexOf('Easy view')).toBeLessThan(words.indexOf('Light or dark screen'));
+    expect(words).toContain('Light or dark screen');
     expectGrandparentSafe();
   });
 });

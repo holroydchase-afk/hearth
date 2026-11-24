@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 import React, { useEffect, useState } from 'react';
+import { last4 } from '../api/phone';
 import { DEMO_MODE } from '../demo/flags';
 import { useApp } from '../state/AppContext';
 import { BackButton, GroupedSection, Screen, Txt } from '../ui/kit';
 import { AppGate } from './AppGate';
 import { NoticeTiming } from './NoticeTiming';
 import { ProblemDetailsCard } from './ProblemDetails';
-import { DeleteAccount, EasyView, HowToTell, LightOrDark, PhotoHelpers, Privacy, ReplyAudience, SignOut } from './Preferences';
+import { DeleteAccount, HowToTell, PhotoHelpers, Privacy, ReplyAudience, SignOut } from './Preferences';
 
 /** `onBack`: opened from More (RD-15), so a "‹ More" back button (spoken "Back to More") sits above the title (GUX-R1). */
 export function MeScreen({ onBack }: { onBack?: () => void } = {}) {
@@ -26,7 +27,12 @@ function WhoYouAre() {
     app.deps.api.myProfile().then((p) => { if (live) setName(p.display_name); }).catch(() => {});
     return () => { live = false; };
   }, [app.deps.api]);
-  if (!DEMO_MODE) return <Txt>{`Signed in as ${app.session?.email ?? ''}`}</Txt>;
+  if (!DEMO_MODE) {
+    const s = app.session;
+    // TD-UX-R7b: a phone-only account is named by the last 4 digits only, never the whole number.
+    if (s && !s.email && s.phone) return <Txt>{`Signed in with the mobile number ending ${last4(s.phone)}`}</Txt>;
+    return <Txt>{`Signed in as ${s?.email ?? ''}`}</Txt>;
+  }
   return <Txt>{name ? `You're ${name}, in the made-up sample family.` : "You're in the made-up sample family."}</Txt>;
 }
 
@@ -41,9 +47,7 @@ function MeReady({ onBack }: { onBack?: () => void }) {
         {/* RD-15: viewers reach Me from More too, so say what each can do. */}
         <Txt variant="muted">{app.space?.can_post ? 'You can share photos and choose who sees them.' : 'You can look at photos and write back.'}</Txt>
       </GroupedSection>
-      <EasyView heading />
-      <LightOrDark />
-      {/* RD-15 / RD-97: Theme lives in More (owner only). */}
+      {/* EF-HE-4 (Chase, Nov 24): Easy view and Light or dark live only in More, like Theme (RD-97). */}
       <HowToTell />
       <ReplyAudience />
       <PhotoHelpers />

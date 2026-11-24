@@ -227,7 +227,8 @@ enable_signup = true
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
-enable_confirmations = false
+# Hearth: on, so /signup {email, password} never returns a session without a mailed code (TS-SEC-R1).
+enable_confirmations = true
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
 secure_password_change = false
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
@@ -276,8 +277,8 @@ enable_signup = false
 # which beats the phone-bound invite. Set "Enable phone confirmations" on hosted too (tests/auth_config_test.sh).
 enable_confirmations = true
 # Template for sending OTP to users (BETA-SMS-7: code first for autofill, one GSM-7 segment, no curly quotes).
-# With Twilio Verify (SMS-PROVIDER.md) Twilio's own template sends the text; keep its words the same.
-template = "Hearth code: {{ .Code }}. Never read this code to anyone, even family. Hearth will never call you for it."
+# With Twilio Verify (SMS-PROVIDER.md) Twilio's own template sends the text; keep its words the same (TS-GUX-R1).
+template = "Hearth code: {{ .Code }}. Only type it into Hearth. Never read this code to anyone who calls or texts you, even family."
 # Controls the minimum amount of time that must pass before sending another sms otp.
 # Hearth: 60s, matching the app's "Send a new code" wait (SPEC-SMS-SIGN-IN §3.4) and
 # limiting SMS pumping. Set the same on hosted when texts go on.

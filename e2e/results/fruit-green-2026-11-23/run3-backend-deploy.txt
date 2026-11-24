@@ -1,0 +1,21 @@
+ok   - DEPLOY-1 dry run exits 0 without any secrets
+ok   - DEPLOY-1 dry run uses no db push
+ok   - DEPLOY-1 dry run uses no psql
+ok   - DEPLOY-1 dry run sends migrations and cron to database/query
+ok   - DEPLOY-1 dry run lists every migration
+ok   - DEPLOY-1 dry run calls nothing
+ok   - DEPLOY-1 deploy succeeds with only SUPABASE_ACCESS_TOKEN
+ok   - DEPLOY-1 never calls psql
+ok   - DEPLOY-1 never calls db push or link
+ok   - DEPLOY-1 still deploys both functions
+ok   - DEPLOY-1 every SQL call is a POST to database/query
+ok   - DEPLOY-1 skips a migration already applied (0001)
+ok   - DEPLOY-1 applies each pending migration and records it
+ok   - DEPLOY-1 each migration runs in one transaction
+ok   - DEPLOY-1 cron step goes through the API
+ok   - DEPLOY-1 never prints the token
+ok   - DEPLOY-2 function deploys bundle server-side (--use-api, no Docker)
+ok   - DEPLOY-3 a rejected migration stops the deploy
+ok   - DEPLOY-3 a rejected migration names the file and shows the API error
+ok   - DEPLOY-3 a rejected migration never prints the token
+deploy: 20 passed, 0 failed

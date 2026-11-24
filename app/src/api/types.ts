@@ -232,6 +232,8 @@ export interface Session {
   userId: string;
   /** '' for a phone-only account (text sign-in, BETA-SMS). */
   email: string;
+  /** E.164 (+1XXXXXXXXXX) for a text sign-in account (TD-UX-R7b). Personal data: never log it. */
+  phone?: string;
 }
 
 // ---- sign-media (shapes from backend/supabase/functions/sign-media/index.ts) ----
@@ -325,3 +327,15 @@ export interface ChatMember { user_id: string; name: string; signature_key: stri
 export type ChatRowKind = 'commit' | 'welcome' | 'message';
 export interface ChatRow { id: number; sender_id: string | null; kind: ChatRowKind; epoch: number; body: string; created_at: string }
 export interface ClaimedKeyPackage { user_id: string; key_package: string }
+
+/** Life calendar (0029, SPEC-LIFE-CALENDAR, CAL-*). Month and day only: never a year or an age (CAL-9).
+ *  label is null for a member's own birthday (member_name is their current name); otherwise 1 to 60 characters. */
+export type FamilyDateKind = 'birthday' | 'anniversary' | 'other';
+export interface FamilyDate {
+  id: string; kind: FamilyDateKind; label: string | null; month: number; day: number;
+  member_id: string | null; member_name: string | null;
+}
+/** save_family_date: id null adds; memberId links a member's birthday (then label is ignored). Parents only. */
+export interface SaveFamilyDateArgs {
+  space: string; id: string | null; kind: FamilyDateKind; label: string | null; month: number; day: number; memberId: string | null;
+}

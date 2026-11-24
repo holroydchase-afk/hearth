@@ -13,7 +13,8 @@ import { Button, Field, Notice, Txt } from '../ui/kit';
 export const BAD_NUMBER = 'Please type a US mobile number, like 304-555-0100.';
 
 export function TextCodeFlow({ onSignedIn, onUseEmail, inviter }: {
-  onSignedIn: () => Promise<void>;
+  /** Gets the last 4 digits of the number it signed in with (TS-GUX-R6; never the full number). */
+  onSignedIn: (numberEnding: string) => Promise<void>;
   /** Switch to email; `note` says why (texts not working, BETA-SMS-6). Absent: a phone invite that only a number
    *  can open (GUX-R1), so no "Use email instead" and texts-off says who to ask. */
   onUseEmail?: (note?: string) => void;
@@ -65,7 +66,7 @@ export function TextCodeFlow({ onSignedIn, onUseEmail, inviter }: {
     setMsg(null);
     try {
       await deps.api.verifyTextCode(sentTo, code.replace(/\D/g, ''));
-      await onSignedIn();
+      await onSignedIn(last4(sentTo));
     } catch (e) {
       setMsg(messageFor(e, { inviter, via: 'text' }));
     } finally {

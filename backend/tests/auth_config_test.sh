@@ -19,6 +19,16 @@ section auth.sms.twilio_verify | grep -qx 'enabled = false'; ok $? "PRIV-R1 the 
 ! section auth.sms.twilio_verify | grep -E '^(account_sid|message_service_sid|auth_token) = ' | grep -vq '"env('; ok $? "PRIV-R1 Twilio credentials only from env(), never a value in git"
 ! grep -qx '\[auth.sms.test_otp\]' "$CFG"; ok $? "PRIV-R1 the fixed test code stays commented out (it would be a backdoor if it shipped)"
 
+# TS-SEC-R1 (docs/reviews/2026-11-19-text-sign-in/sec.md, docs/eng/AUTH-NO-PASSWORDS.md): with email confirmations off,
+# POST /auth/v1/signup {email, password} returns a live session for any address without touching the inbox. The
+# 0028 trigger blanks the hash but not that session, so "Confirm email" must be on locally and on hosted.
+section auth.email | grep -qx 'enable_confirmations = true'; ok $? "TS-SEC-R1 [auth.email] enable_confirmations = true (no email account without a mailed code)"
+# deploy.sh step 5's PATCH config/auth body: run its python generator as written and read the JSON it sends.
+AUTH_PY=$(awk '/^AUTH_JSON=\$\(python3 -I - <<.PY.$/{on=1;next} /^PY$/{on=0} on' scripts/deploy.sh)
+AUTH_BODY=$(python3 -I -c "$AUTH_PY" 2>/dev/null)
+printf '%s' "$AUTH_BODY" | python3 -I -c 'import json,sys; sys.exit(0 if json.load(sys.stdin).get("mailer_autoconfirm", None) is False else 1)' 2>/dev/null
+ok $? "TS-SEC-R1 deploy.sh's PATCH config/auth body sends \"mailer_autoconfirm\": false (hosted Confirm email on)"
+
 echo
 echo "AUTH CONFIG TEST RESULT: $PASS passed, $FAIL failed"
 [ "$FAIL" = 0 ]

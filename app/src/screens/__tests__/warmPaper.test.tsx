@@ -241,7 +241,15 @@ function spyAnimated(neverFinish = false) {
 const heart = (card: Inst) => within(card).getByRole('button', { name: 'Love it' });
 const others = (card: Inst) => ['Haha', 'Like it', 'Hooray'].map((l) => within(card).getByRole('button', { name: l }));
 const LAYOUT = /^(width|height|min|max|margin|padding|flex|gap|fontSize|lineHeight|position|top|left|right|bottom|aspectRatio)/;
-const layoutOf = (n: Inst) => Object.fromEntries(Object.entries(flat(n.props.style)).filter(([k]) => LAYOUT.test(k)));
+// Retargeted Nov 20 for DEC-76 / RD-116: the 1 to 2 pt border change is absorbed in padding, so compare padding + border.
+const layoutOf = (n: Inst) => {
+  const s = flat(n.props.style);
+  const v = (...x: unknown[]) => Number(x.find((y) => typeof y === 'number') ?? 0);
+  const box = (side: 'Left' | 'Right' | 'Top' | 'Bottom', axis: 'Horizontal' | 'Vertical') =>
+    v(s[`padding${side}`], s[`padding${axis}`], s.padding) + v(s[`border${side}Width`], s.borderWidth);
+  const rest = Object.fromEntries(Object.entries(s).filter(([k]) => LAYOUT.test(k) && !/^padding/.test(k)));
+  return { ...rest, box: [box('Left', 'Horizontal'), box('Right', 'Horizontal'), box('Top', 'Vertical'), box('Bottom', 'Vertical')] };
+};
 /** Every node in the heart button whose transform has a scale, and what it holds. */
 function scaled(btn: Inst) {
   return (btn.findAll(isHost) as Inst[]).concat(isHost(btn) ? [btn] : []).flatMap((n) => {

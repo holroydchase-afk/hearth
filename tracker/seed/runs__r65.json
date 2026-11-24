@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-24T12:00:00-05:00",
+ "label": "Life calendar v1 (CAL-1..19, DEC-81): tests written first (red)",
+ "passed": 0,
+ "failed": 113,
+ "results": {},
+ "note": "Red on purpose, 1 run at ff4543e plus the new tests (no implementation). backend/tests/family_dates_test.sql (registered in run.sh): 1 passed, 77 failed, each at the missing 0029 (relation public.family_dates / function list_family_dates, set_my_birthday, save_family_date, delete_family_date does not exist); the 1 pass is CAL-7's rename setup. The same file ran 78/78 against a throwaway reference 0029 in the scratchpad (not committed), so the tests can be met. app jest: calendar.contract.test.ts 13 failed (FakeApi: the four methods are not functions; SupabaseApi stub; API.md has no Life calendar (0029) section), screens/__tests__/calendar.test.tsx 17 failed (no birthday-card, no Birthdays row on More, seeding methods missing), demo/__tests__/calendarDemo.test.ts 3 failed (no demo dates; seed version still 659ibx); full jest 33 failed / 2193 passed, typecheck clean. contract-real.sh (local PostgREST): 10 calendar SupabaseApi tests failed (methods missing), other contract tests pass. e2e:demo demo-calendar.spec.js 4 failed (no Today line, no Birthdays row); the other 43 demo tests pass. Backend: every other suite passes. Not run: e2e:web, Deno, phones (CAL-20 and CAL-21 are manual). e2e/results/calendar-red-2026-11-24/"
+}
