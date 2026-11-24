@@ -75,8 +75,8 @@ describe('RD 1a the look: black and white with one accent', () => {
   it('RD-2 → FONT-2 Atkinson Hyperlegible Next is a dependency and every kit Text asks for an Atkinson family', () => {
     expect(Object.keys(pkg.dependencies).filter((d) => d.startsWith('@expo-google-fonts/'))).toEqual(['@expo-google-fonts/atkinson-hyperlegible-next']);
     render(<>
-      <Txt>Body words</Txt><Txt variant="muted">Quiet words</Txt><Txt variant="strong">Grandma Jo</Txt>
-      <Txt variant="title">A title</Txt><Txt variant="display">Large title</Txt>
+      <Txt>Body words</Txt><Txt tone="muted">Quiet words</Txt><Txt variant="headline">Grandma Jo</Txt>
+      <Txt variant="title2">A title</Txt><Txt variant="largeTitle">Large title</Txt>
       <Button label="Send" onPress={() => {}} />
     </>);
     for (const w of ['Body words', 'Quiet words', 'Grandma Jo', 'A title', 'Large title', 'Send']) {
@@ -89,8 +89,8 @@ describe('RD 1a the look: black and white with one accent', () => {
   // qa-tdd, Nov 21 (DEC-78): the weight is now the Atkinson family, not fontWeight (Android can't synthesize it).
   it('RD-2 RD-55 → FONT-2 Regular or SemiBold family only; the large title is SemiBold too (no Bold anywhere)', () => {
     render(<>
-      <Txt>Body words</Txt><Txt variant="muted">Quiet words</Txt><Txt variant="strong">Grandma Jo</Txt>
-      <Txt variant="title">A title</Txt><Txt variant="display">Large title</Txt>
+      <Txt>Body words</Txt><Txt tone="muted">Quiet words</Txt><Txt variant="headline">Grandma Jo</Txt>
+      <Txt variant="title2">A title</Txt><Txt variant="largeTitle">Large title</Txt>
       <Button label="Send" onPress={() => {}} />
     </>);
     const fam = (t: string) => String(StyleSheet.flatten(screen.getByText(t).props.style).fontFamily);

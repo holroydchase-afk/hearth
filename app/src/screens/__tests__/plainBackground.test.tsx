@@ -146,7 +146,9 @@ describe('RD-34 content screens sit on the plain background, no grey card fill',
       fireEvent.press(await screen.findByRole('button', { name: /^Add photos, up to \d+ at a time$/ }, slow));
       await screen.findByRole('header', { name: 'New post' }, slow);
       await screen.findByLabelText(/^Grandparents – Dad's side, 3 people, not picked$/, {}, slow);
-      expect(greyBoxes(pal(dark))).toEqual([`View#share-card bg ${pal(dark).surface}`]);
+      // Retargeted Nov 24 by engineer for GUX-W2, flagged for qa-tdd: the paper stamp (c.surface) rides on the filled
+      // postcard's big photo, inside the card; it is part of the postcard, not a grey box on the page.
+      expect(greyBoxes(pal(dark))).toEqual([`View#share-card bg ${pal(dark).surface}`, `View#share-stamp bg ${pal(dark).surface}`]);
     });
 
     // qa-tdd, Nov 18: RD-104 (DEC-68, Chase) sets the tab bar apart on c.surface with a c.line top border; it is no
@@ -215,6 +217,10 @@ const GREY_ALLOWED: Record<string, Record<string, string>> = {
     Confirm: 'dialog layered on top',
     AlertDialog: 'iOS-style alert layered on top (RD-67)',
     BottomSheet: 'sheet layered on top',
+    // engineer, flagged for qa-tdd: SHARE-ST-20 asks for the 76 pt c.surface circle in the empty postcard's photo spot,
+    // and option A's stamp sits on the card's paper (c.surface) over the accent tint (SHARE-ST-22).
+    AddPhotoCard: 'the empty postcard (DEC-79 round 3): its photo spot\'s surface circle (SHARE-ST-20)',
+    PostcardStamp: 'the empty postcard\'s stamp, on the card\'s paper (SHARE-ST-22)',
   },
   'screens/PostCard.tsx': {
     ReplyBox: 'the reply text field',
@@ -224,6 +230,8 @@ const GREY_ALLOWED: Record<string, Record<string, string>> = {
   'screens/GalleryTop.tsx': { SearchField: 'the "Search photos" field (RD-47), a field like the reply field' },
   'screens/TabBar.tsx': { HearthTabBar: 'the tab bar, set apart from the page on c.surface (RD-104)' },
   'screens/ShareScreen.tsx': { ShareScreen: 'the postcard (DEC-73, SHARE-PC-1; engineer, flagged for qa-tdd) and its Add tile, a button' },
+  // engineer, flagged for qa-tdd: SHARE-ST-31 (option A) puts the kind tiles and a kind's empty card on c.surface.
+  'screens/ShareKinds.tsx': { KindsRow: 'the Event / News / Saying tiles under the postcard (SHARE-ST-31)', KindCard: 'a kind\'s empty postcard face (SHARE-ST-31)' },
   'demo/DemoBar.tsx': { DemoBar: 'demo chrome, outside the app' },
   'demo/DemoFrame.tsx': { DemoFrame: 'demo chrome, outside the app' },
 };

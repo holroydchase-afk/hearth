@@ -88,9 +88,9 @@ export function MorePreference({ which }: { which: 'easyView' | 'look' | 'theme'
   return (
     <Screen>
       <BackButton to="More" onPress={backToMore} />
-      <Txt variant="display" role="header">{title}</Txt>
+      <Txt variant="title1" role="header">{title}</Txt>
       {/* GUX-R32: the "this phone only" note sits above the list, so it is read before a pick. */}
-      {which === 'theme' ? <Txt variant="muted">Only this phone changes. Other people keep their own colors.</Txt> : null}
+      {which === 'theme' ? <Txt tone="muted">Only this phone changes. Other people keep their own colors.</Txt> : null}
       {which === 'easyView' ? <EasyView /> : which === 'look' ? <LightOrDark heading={false} /> : <ThemePicker heading={false} />}
     </Screen>
   );
@@ -107,7 +107,7 @@ export function MoreScreen() {
 
   return (
     <Screen>
-      <Txt variant="display" role="header">More</Txt>
+      <Txt variant="largeTitle" role="header">More</Txt>
       <View>
         {moreRowsFor(app.space.role).filter((r) => r.id !== 'birthdays' || calendar.status !== 'missing').map((r, i) => (
           <React.Fragment key={r.id}>

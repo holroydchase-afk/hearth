@@ -18,7 +18,7 @@ export function EasyView({ heading = false }: { heading?: boolean }) {
   const { prefs, setPrefs } = useApp();
   return (
     <GroupedSection>
-      {heading ? <Txt variant="title" role="header">Easy view</Txt> : null}
+      {heading ? <Txt variant="title2" role="header">Easy view</Txt> : null}
       <Txt>Bigger words, and a word under each button at the bottom of the screen.</Txt>
       {/* GUX-R11: the same radio rows as Light or dark (kit Choice): an accent check on the picked one, 48 pt+. */}
       {EASY.map((k) => (
@@ -39,7 +39,7 @@ export function LightOrDark({ heading = true }: { heading?: boolean }) {
   const { prefs, setPrefs } = useApp();
   return (
     <GroupedSection>
-      {heading ? <Txt variant="title" role="header">Light or dark screen</Txt> : null}
+      {heading ? <Txt variant="title2" role="header">Light or dark screen</Txt> : null}
       {LOOKS.map((l) => (
         <Choice key={l.id} kind="radio" label={l.title} title={l.title} detail={l.detail} checked={prefs.look === l.id} onPress={() => setPrefs({ look: l.id })} />
       ))}
@@ -69,7 +69,7 @@ export function ThemePicker({ heading = true }: { heading?: boolean }) {
   if (!space || space.role !== 'owner') return null;
   return (
     <GroupedSection>
-      {heading ? <Txt variant="title" role="header">Theme</Txt> : null}
+      {heading ? <Txt variant="title2" role="header">Theme</Txt> : null}
       {THEMES.map((k) => {
         const on = prefs.theme === k.id;
         const swatch = paletteFor('ios', dark, k.id);
@@ -120,7 +120,7 @@ export function HowToTell() {
   const phoneOnly = isPhoneOnly(session);
   return (
     <GroupedSection>
-      <Txt variant="title" role="header">How should we tell you about new photos?</Txt>
+      <Txt variant="title2" role="header">How should we tell you about new photos?</Txt>
       {phoneOnly ? <Txt>You sign in with a text, so Hearth tells you about new photos on this phone, not by email.</Txt> : null}
       {CHOICES.filter((c) => !phoneOnly || c.id === 'push').map((c) => (
         <Choice
@@ -155,8 +155,8 @@ export function PhotoHelpers() {
   if (!space || space.role !== 'owner') return null;
   return (
     <GroupedSection>
-      <Txt variant="title" role="header">Photo helpers</Txt>
-      <Txt variant="muted">When anyone picks 4 or more photos to send, Hearth can set some aside first. Each one has a Put back button. Nothing is deleted from the phone. These switches are for the whole family.</Txt>
+      <Txt variant="title2" role="header">Photo helpers</Txt>
+      <Txt tone="muted">When anyone picks 4 or more photos to send, Hearth can set some aside first. Each one has a Put back button. Nothing is deleted from the phone. These switches are for the whole family.</Txt>
       {HELPERS.map((h) => {
         const on = features.includes(h.feature);
         return (
@@ -187,7 +187,7 @@ export function PhotoHelpers() {
 export function Privacy({ who }: { who: string | null }) {
   return (
     <GroupedSection>
-      <Txt variant="title" role="header">Keeping your photos private</Txt>
+      <Txt variant="title2" role="header">Keeping your photos private</Txt>
       <Txt>Your photos stay in the United States.</Txt>
       <Txt>No one outside the family can see them. No ads, no strangers.</Txt>
       <Txt>No computer program learns from your photos.</Txt>
@@ -265,8 +265,8 @@ export function ReplyAudience() {
   };
   return (
     <GroupedSection>
-      <Txt variant="title" role="header">Who reads what family members write</Txt>
-      <Txt variant="muted">For comments and hearts. The kids' parents read them all, and your own replies reach everyone the photo went to. People in the same household, or in the same event, read each other's.</Txt>
+      <Txt variant="title2" role="header">Who reads what family members write</Txt>
+      <Txt tone="muted">For comments and hearts. The kids' parents read them all, and your own replies reach everyone the photo went to. People in the same household, or in the same event, read each other's.</Txt>
       <Choice kind="radio" label="The parents, plus their own household and events (safest)" title="The parents, plus their own household and events (safest)" detail="A grandparent's comment reaches you, the other parent, and their own household. Never the other side." checked={choice === 'parents'} onPress={() => pick('parents')} />
       <Choice kind="radio" label="Everyone the photo was shared with" title="Everyone the photo was shared with" detail="Divorced grandparents on the same photo will read each other's comments." checked={choice === 'everyone'} onPress={() => pick('everyone')} />
       {failed ? <Notice text="Didn't save. Check your internet and try again." /> : null}

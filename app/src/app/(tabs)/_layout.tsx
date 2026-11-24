@@ -8,7 +8,7 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { AppGate } from '../../screens/AppGate';
 import { useNewMessages } from '../../messenger/newMessages';
-import { HearthTabBar, NATIVE_TAB_OPTIONS, TAB_ICONS, floatingTabBar, nativeLabelMode, nativeTabLook, tabsFor, usesNativeTabs, type TabName } from '../../screens/TabBar';
+import { HearthTabBar, TAB_ICONS, floatingTabBar, nativeLabelMode, nativeTabLabelStyle, nativeTabLook, tabsFor, usesNativeTabs, type TabName } from '../../screens/TabBar';
 import { useApp } from '../../state/AppContext';
 import { TabBarSpaceContext, TAB_BAR_FLOAT_SPACE } from '../../ui/tabBarSpace';
 import { useTheme } from '../../ui/theme';
@@ -28,11 +28,12 @@ export default function TabsLayout() {
 
   if (usesNativeTabs(Platform.OS, easyView)) {
     const look = nativeTabLook(Platform.OS, easyView);
+    const label = { fontSize: nativeTabLabelStyle(easyView).fontSize }; // TYPE-6: caption1
     return (
       <NativeTabs
         minimizeBehavior={look.minimize}
         labelVisibilityMode={nativeLabelMode(easyView)}
-        labelStyle={{ default: { ...NATIVE_TAB_OPTIONS.labelStyle, color: c.muted }, selected: { ...NATIVE_TAB_OPTIONS.labelStyle, color: c.accent } }}
+        labelStyle={{ default: { ...label, color: c.muted }, selected: { ...label, color: c.accent } }}
         tintColor={c.accent}
         backgroundColor={look.themedBackground ? c.bg : undefined}
       >

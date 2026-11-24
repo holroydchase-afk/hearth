@@ -41,11 +41,11 @@ function MeReady({ onBack }: { onBack?: () => void }) {
   return (
     <Screen>
       {onBack ? <BackButton to="More" onPress={onBack} /> : null}
-      <Txt variant="display" role="header">Me</Txt>
+      <Txt variant="title1" role="header">Me</Txt>
       <GroupedSection>
         <WhoYouAre />
         {/* RD-15: viewers reach Me from More too, so say what each can do. */}
-        <Txt variant="muted">{app.space?.can_post ? 'You can share photos and choose who sees them.' : 'You can look at photos and write back.'}</Txt>
+        <Txt tone="muted">{app.space?.can_post ? 'You can share photos and choose who sees them.' : 'You can look at photos and write back.'}</Txt>
       </GroupedSection>
       {/* EF-HE-4 (Chase, Nov 24): Easy view and Light or dark live only in More, like Theme (RD-97). */}
       <HowToTell />

@@ -87,7 +87,7 @@ export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { start
   const header = (
     <View style={{ gap: 12 }}>
       <BackButton to={backTo} onPress={onClose} />
-      <Txt variant="display" role="header">Photos by date</Txt>
+      <Txt variant="title1" role="header">Photos by date</Txt>
       {years ? null : <Button variant="secondary" label="Pick a year" onPress={showYears} />}
       {!years && state.startAt ? (
         <Button label="Show the newest photos first" text="Show the newest first" variant="secondary" onPress={() => void store.open(null)} />
@@ -105,7 +105,7 @@ export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { start
           ListHeaderComponent={
             <View style={{ gap: 12 }}>
               {header}
-              <Txt variant="title" role="header">Which year?</Txt>
+              <Txt variant="title2" role="header">Which year?</Txt>
               <Button label="Go back to the photos" text="Go back" variant="secondary" onPress={() => setYears(false)} />
             </View>
           }
@@ -117,7 +117,7 @@ export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { start
               onPress={() => openYear(item.year)}
             />
           )}
-          ListEmptyComponent={state.years === null ? <Loading words="Loading the years…" /> : <Txt variant="muted">No photos yet.</Txt>}
+          ListEmptyComponent={state.years === null ? <Loading words="Loading the years…" /> : <Txt tone="muted">No photos yet.</Txt>}
           contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 32 + under }}
         />
       </SafeAreaView>
@@ -132,11 +132,11 @@ export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { start
         keyExtractor={(r) => r.key}
         renderItem={({ item }) =>
           item.type === 'month'
-            ? <Txt variant="display" role="header" style={{ marginTop: 8 }}>{item.label}</Txt>
+            ? <Txt variant="title1" role="header" style={{ marginTop: 8 }}>{item.label}</Txt>
             : <TimelineCard post={item.post} onOpen={() => openPost(item.post)} />}
         ListHeaderComponent={header}
         ListEmptyComponent={
-          !state.loaded ? <Loading words="Loading the photos…" /> : <Txt variant="muted">No photos from before then.</Txt>
+          !state.loaded ? <Loading words="Loading the photos…" /> : <Txt tone="muted">No photos from before then.</Txt>
         }
         ListFooterComponent={
           state.hasMore ? (
@@ -161,8 +161,8 @@ export function TimelineCard({ post, onOpen }: { post: TimelinePost; onOpen: () 
   return (
     <Card testID={`timeline-${post.post_id}`} style={{ padding: 0, overflow: 'hidden' }}>
       <View style={{ padding: 16, gap: 4 }}>
-        <Txt variant="strong">{post.author_name}</Txt>
-        <Txt variant="muted">{when}</Txt>
+        <Txt variant="headline">{post.author_name}</Txt>
+        <Txt tone="muted">{when}</Txt>
       </View>
       {shown.map((m) => (
         <View
@@ -178,7 +178,7 @@ export function TimelineCard({ post, onOpen }: { post: TimelinePost; onOpen: () 
         {ready.length > SHOW_INLINE && !all ? (
           <Button label={`Show all ${photos(ready.length)}`} variant="secondary" onPress={() => setAll(true)} />
         ) : null}
-        {post.title ? <Txt variant="title" role="header">{post.title}</Txt> : null}
+        {post.title ? <Txt variant="title2" role="header">{post.title}</Txt> : null}
         {post.caption ? <Txt>{post.caption}</Txt> : null}
         <Button label={`Open ${post.author_name}'s post to love it or write back`} text="Open this post" variant="secondary" onPress={onOpen} />
       </View>

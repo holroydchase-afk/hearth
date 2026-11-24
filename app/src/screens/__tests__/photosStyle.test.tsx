@@ -117,14 +117,16 @@ describe('RD-44 Gallery is a months mosaic, like the newest Apple Photos', () =>
     expect(tiles.slice(1, 4).map(idOf).sort()).toEqual([...mediaOf(be, b), mediaOf(be, a)[1]!].sort());
   });
 
-  it('RD-44 the month title is its own header ("October 2025"), Semibold 24 pt, never Bold', async () => {
+  // qa-tdd, Nov 24 (TYPE-6, DEC-84): the month name is title2, 22 pt in Standard; Jo (a viewer) has Easy view on by
+  // default, so 26 here.
+  it('RD-44 TYPE-6 the month title is its own header ("October 2025"), Semibold title2 (Jo\'s Easy view: 26 pt), never Bold', async () => {
     const { be, kv } = await october();
     await gallery(be, kv);
     const grid = screen.getByTestId('gallery-grid');
     const month = within(grid).getByRole('header', { name: 'October 2025' });
     const words = month.findAll((n: Inst) => n.type === Text && textOf(n) === 'October 2025')[0] ?? month;
     const s = flat(words.props.style);
-    expect({ weight: famWeight(s), size: s.fontSize }).toEqual({ weight: '600', size: 24 });
+    expect({ weight: famWeight(s), size: s.fontSize }).toEqual({ weight: '600', size: 26 });
   });
 
   it('RD-44 every tile has 16 pt corners, 8 pt gaps and sits inside the 16 pt margins (not edge to edge)', async () => {
@@ -528,17 +530,18 @@ describe('RD-54 C1: a rounded mosaic of at most 4 photos', () => {
 
 // =================================================================================================================
 describe('RD-55 lighter type: no Bold anywhere', () => {
-  it('RD-55 the greeting (large title) is 34 pt Semibold, not Bold', async () => {
+  // qa-tdd, Nov 24 (TYPE-6, DEC-84): largeTitle is 34 in Standard and 38 in Easy view (Jo's default as a viewer).
+  it('RD-55 TYPE-6 the greeting (largeTitle) is Semibold, not Bold: 38 pt in Jo\'s Easy view', async () => {
     const { be, kv } = await october();
     await gallery(be, kv);
     const h = screen.getByRole('header', { name: GREETING });
     const t = (h.type as unknown) === Text || (h.type as unknown) === 'Text' ? h : h.findAll((n: Inst) => n.type === Text)[0]!;
     const s = flat(t.props.style);
-    expect({ weight: famWeight(s), size: s.fontSize }).toEqual({ weight: '600', size: 34 });
+    expect({ weight: famWeight(s), size: s.fontSize }).toEqual({ weight: '600', size: 38 });
   });
 
-  it('RD-55 the kit\'s large title (display) is Semibold', async () => {
-    render(<Txt variant="display">Large title</Txt>);
+  it('RD-55 TYPE-4 the kit\'s largeTitle is Semibold', async () => {
+    render(<Txt variant="largeTitle">Large title</Txt>);
     expect(famWeight(flat(screen.getByText('Large title').props.style))).toBe('600');
   });
 

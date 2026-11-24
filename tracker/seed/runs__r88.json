@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-25T08:00:00-05:00",
+ "label": "Merge origin/main (#136, #182, #181) plus T39 test fix: app suites 3x (green)",
+ "passed": 7536,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs at 75bbb34 (merge 168cbc2 plus the T39 test fix), one export:web:demo and one export:web:fake first, --trace off. jest 2445 passed (1 skipped, 1 todo) x3; typecheck clean x3; check-expo-go OK (SDK 58) x3; e2e:demo 61 passed (5 skipped) x3; e2e:web 6 passed (6 skipped) x3. T39 (QA-R13) fixed in the test only: SHARE-PC-13 now waits for the new post (the only one reading 'Just now'; seed posts are 3+ hours old) and checks it is first and holds 'Open photo 1 of 3'. A first try of the fix with the 15 s default failed once in e2e:demo run 2 of an earlier, stopped 3x (page snapshot: Feed still 'Sending 1 of 3...', so the in-browser send was slow under load, not stuck); the wait for the post is now 60 s, inside the 90 s test limit. That stopped attempt is not counted. B28..B30 close on this clean 3x. Not run: backend SQL, Deno, prototype e2e (no backend or prototype change), phones. e2e/results/type-scale-merge-green-2026-11-24.txt"
+}

@@ -76,9 +76,9 @@ export function DemoBar({ be, reload, startOver, open, restored = false }: {
           style={styles.toggle}
         >
           <View testID="demo-badge" style={[styles.badge, { borderColor: c.ink, backgroundColor: 'transparent' }]}>
-            <Txt variant="strong" style={styles.badgeText}>DEMO</Txt>
+            <Txt variant="headline" style={styles.badgeText}>DEMO</Txt>
           </View>
-          {note && <Txt variant="muted" numberOfLines={1} style={styles.note}>{note}</Txt>}
+          {note && <Txt tone="muted" numberOfLines={1} style={styles.note}>{note}</Txt>}
           <View style={styles.details}>
             <Txt style={{ color: c.ink }}>Details</Txt>
             <View aria-hidden style={expanded ? styles.chevronOpen : undefined}><SystemIcon icon={{ sf: 'chevron.down', md: 'expand_more' }} color={c.ink} size={16} /></View>
@@ -87,9 +87,9 @@ export function DemoBar({ be, reload, startOver, open, restored = false }: {
       </View>
       {expanded && (
         <View nativeID={DRAWER_ID} testID="demo-drawer" style={[styles.drawer, { borderTopColor: c.line }]}>
-          {restored && <Txt variant="strong">Sample data restored.</Txt>}
+          {restored && <Txt variant="headline">Sample data restored.</Txt>}
           <Txt style={styles.copy}>{COPY}</Txt>
-          <Txt variant="muted" style={styles.copy}>{PHOTO_CREDIT}</Txt>
+          <Txt tone="muted" style={styles.copy}>{PHOTO_CREDIT}</Txt>
           <DemoActions be={be} reload={reload} startOver={startOver} />
           <View style={styles.actions}>
             <Pressable role="link" aria-label="Back to the Hearth case study" onPress={() => open(PORTFOLIO_URL)} style={styles.link}>

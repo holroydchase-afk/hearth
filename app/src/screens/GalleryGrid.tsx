@@ -16,7 +16,7 @@ import { Animated, Platform, Pressable, StyleSheet, Text, View, type LayoutChang
 import type { FeedPost } from '../api/HearthApi';
 import { galleryMonths, mosaicRows, type GridMonth, type GridTile } from '../feed/gallery';
 import { useNav } from '../state/nav';
-import { GALLERY_TYPE, MIN_TARGET, RADIUS, SPACE, FONT, photoShadow, useTheme } from '../ui/theme';
+import { MIN_TARGET, RADIUS, SPACE, FONT, photoShadow, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
 
 const GAP = SPACE.sm;
@@ -70,7 +70,7 @@ function Month({ m, stick, relayout, pinAt, onPin }: {
   m: GridMonth; stick: { scrollY: Animated.Value; gridY: number; pinAt: number } | null; relayout: number; pinAt: number;
   onPin: (key: string, on: boolean) => void;
 }) {
-  const { c, t, dark } = useTheme();
+  const { c, type, dark } = useTheme();
   const nav = useNav();
   const { ref, place: box, onLayout } = usePlace(relayout);
   const [headH, setHeadH] = useState(0);
@@ -119,14 +119,14 @@ function Month({ m, stick, relayout, pinAt, onPin }: {
         onLayout={(e) => setHeadH(e.nativeEvent.layout.height)}
         style={[styles.head, { backgroundColor: c.bg }, WEB ? sticky : { transform: [{ translateY: shift }] }]}
       >
-        <Text style={{ fontSize: GALLERY_TYPE.month, lineHeight: 30, fontFamily: FONT.semibold, color: c.ink }}>{m.title}</Text>
+        <Text style={{ ...type.title2, color: c.ink }}>{m.title}</Text>
         {/* RD-82 / RD-83: while this title is pinned, the bar's shade sits under it (the bottom of the pinned block). */}
         {pinned ? <View testID="search-bar-shade" pointerEvents="none" accessible={false} style={[shadeLine(dark), { backgroundColor: c.line }]} /> : null}
       </Animated.View>
       {m.groups.map((g) => (
         <View key={g.key} style={{ gap: GAP }}>
           {/* RD-56: the group's date, once ("Oct 17", "Nov 11–15"); each tile's spoken label has the full date. */}
-          <Text style={{ fontSize: t.base, lineHeight: t.line, fontFamily: FONT.medium, color: c.ink }}>{g.label}</Text>
+          <Text testID="gallery-day-label" style={{ ...type.subheadline, fontFamily: FONT.semibold, color: c.ink }}>{g.label}</Text>
           {mosaicRows(g.tiles, ACROSS).map((row) => (
             row[0]!.wide ? tile(row[0]!) : (
               <View key={row[0]!.mediaId} testID="gallery-grid-row" style={styles.row}>

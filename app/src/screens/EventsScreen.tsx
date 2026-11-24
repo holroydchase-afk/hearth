@@ -21,7 +21,7 @@ export function EventCard({ eventId, eventName, post, onOpen }: { eventId: strin
   const { c } = useTheme();
   return (
     <View testID={`event-card-${eventId}`} style={{ gap: 12, padding: 12, borderRadius: RADIUS.medium, borderWidth: 1, borderColor: c.line, backgroundColor: c.bg }}>
-      <Txt variant="display" role="header">{eventName}</Txt>
+      <Txt variant="title1" role="header">{eventName}</Txt>
       <PostCard post={post} />
       <Button variant="secondary" label={`Open ${eventName}`} onPress={onOpen} />
     </View>
@@ -32,7 +32,7 @@ export function EventCard({ eventId, eventName, post, onOpen }: { eventId: strin
 export function EventUpdate({ eventId, eventName, photoCount, onOpen }: { eventId: string; eventName: string; photoCount: number; onOpen: () => void }) {
   return (
     <Card testID={`event-update-${eventId}`}>
-      <Txt variant="strong">{updateWords(photoCount, eventName)}</Txt>
+      <Txt variant="headline">{updateWords(photoCount, eventName)}</Txt>
       <Button label={`Open ${eventName} to see the new photos`} text="See the new photos" variant="secondary" onPress={onOpen} />
     </Card>
   );
@@ -75,23 +75,23 @@ export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, on
         keyExtractor={(e) => e.eventId}
         renderItem={({ item }) => (
           <Card testID={`event-${item.eventId}`}>
-            <Txt variant="title" role="header">{item.eventName}</Txt>
-            <Txt variant="muted">{eventCountWords(item)}</Txt>
+            <Txt variant="title2" role="header">{item.eventName}</Txt>
+            <Txt tone="muted">{eventCountWords(item)}</Txt>
             <Button variant="secondary" label={`Open ${item.eventName}`} onPress={() => onOpen(item.eventId)} />
           </Card>
         )}
         ListHeaderComponent={
           <View style={{ gap: 12 }}>
             <BackButton to={backTo} onPress={onClose} />
-            <Txt variant="display" role="header">Events</Txt>
+            <Txt variant="title1" role="header">Events</Txt>
           </View>
         }
         ListEmptyComponent={
           // EF-HE-6: say what an event is; parents also read how to make one (the real labels).
           <View style={{ gap: 8 }}>
-            <Txt variant="strong">No events yet.</Txt>
-            <Txt variant="muted">An event is photos from one day, like a birthday or a trip. When someone adds you to one, it shows up here.</Txt>
-            {isParent ? <Txt variant="muted">To make one, open Groups in More, tap New group, and tick "This group is for an event."</Txt> : null}
+            <Txt variant="headline">No events yet.</Txt>
+            <Txt tone="muted">An event is photos from one day, like a birthday or a trip. When someone adds you to one, it shows up here.</Txt>
+            {isParent ? <Txt tone="muted">To make one, open Groups in More, tap New group, and tick "This group is for an event."</Txt> : null}
           </View>
         }
         ListFooterComponent={more ?? undefined}
@@ -109,7 +109,7 @@ function Moment({ row, swipeId, posts }: { row: Extract<EventTimelineRow, { type
   return (
     <Card testID={`moment-${swipeId}`} style={{ padding: 0, overflow: 'hidden' }}>
       <View style={{ padding: 14 }}>
-        <Txt variant="strong">{row.line}</Txt>
+        <Txt variant="headline">{row.line}</Txt>
       </View>
       <PhotoSwipe
         id={swipeId}
@@ -119,7 +119,7 @@ function Moment({ row, swipeId, posts }: { row: Extract<EventTimelineRow, { type
           const caption = posts.find((p) => p.post_id === it.postId)?.caption;
           return (
             <View style={{ gap: 4, alignItems: 'center' }}>
-              {photo ? <Txt variant="muted">{`From ${photo.from}`}</Txt> : null}
+              {photo ? <Txt tone="muted">{`From ${photo.from}`}</Txt> : null}
               {caption ? <Txt>{caption}</Txt> : null}
             </View>
           );
@@ -158,13 +158,13 @@ function EventTimeline({ posts, fromList, more, onOpen, onClose }: {
         renderItem={({ item }) =>
           item.type === 'moment'
             ? <Moment row={item} swipeId={swipeId(item.key)} posts={posts} />
-            : <Txt variant="title" role="header">{item.label}</Txt>}
+            : <Txt variant="title2" role="header">{item.label}</Txt>}
         ListHeaderComponent={
           <View style={{ gap: 12 }}>
             {fromList
               ? <BackButton to="Events" label="Back to events" onPress={() => onOpen(null)} />
               : <BackButton to="Gallery" onPress={onClose} />}
-            <Txt variant="display" role="header">{name}</Txt>
+            <Txt variant="title1" role="header">{name}</Txt>
             {/* EVT-8: buttons, not gestures. */}
             {people.length > 1 ? (
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
@@ -176,7 +176,7 @@ function EventTimeline({ posts, fromList, more, onOpen, onClose }: {
             ) : null}
           </View>
         }
-        ListEmptyComponent={<Txt variant="muted">No photos here yet.</Txt>}
+        ListEmptyComponent={<Txt tone="muted">No photos here yet.</Txt>}
         ListFooterComponent={(more as React.ReactElement | null) ?? undefined}
         contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 + under }}
         removeClippedSubviews={false}
