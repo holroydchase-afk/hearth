@@ -39,7 +39,7 @@ Illustration only; not a migration. Hearth's existing tables stay; the core read
 ```sql
 -- Registry: one row per relation an app user can touch.
 create table vis.kinds (
-  kind          text primary key,               -- 'item', 'photo', 'reply', 'shared_date', ...
+  kind          text primary key,               -- 'item', 'photo', 'reply', 'event', ...
   relation      regclass not null unique,       -- the table or view
   reach         text not null check (reach in ('item','person','container','self','admin','server')),
   item_column   name,                           -- for reach 'item': the column holding the item id
@@ -104,9 +104,9 @@ create table vis.link_members (link_id uuid references vis.links, user_id uuid, 
 --   'server'    -> false
 
 -- Fungible: one call registers a kind, enables and forces RLS, and writes the select policy.
--- select vis.attach('public.post_dates', 'shared_date', item_column => 'post_id');
---   => revoke all on public.post_dates from anon, authenticated; grant select (<needed columns>) to authenticated
---      create policy vis_select on public.post_dates for select to authenticated
+-- select vis.attach('public.post_events', 'event', item_column => 'post_id');
+--   => revoke all on public.post_events from anon, authenticated; grant select (<needed columns>) to authenticated
+--      create policy vis_select on public.post_events for select to authenticated
 --        using (vis.sees_item((select auth.uid()), post_id) and <narrow_fn, if any>);
 -- Hooks narrow only if they are the same policy's AND. Postgres ORs permissive policies, so a
 -- second permissive select policy on the table would widen it. The gate allows exactly one
@@ -132,7 +132,7 @@ RLS policies call the reach's rule directly (inlinable, fast). `vis.can_see` is 
 
 | Reach | Hearth relations |
 |---|---|
-| `item` | `posts` (the item), `media_items`, `media_keys`, `post_children`, `comments` and `reactions` (narrow: `private.group_reply_ok`), `post_audiences` (narrow: author and parents; others see names via `post_viewers`), future `post_dates` and news |
+| `item` | `posts` (the item), `media_items`, `media_keys`, `post_children`, `comments` and `reactions` (narrow: `private.group_reply_ok`), `post_audiences` (narrow: author and parents; others see names via `post_viewers`), future `post_events`, `post_sayings` and news |
 | `person` | `profiles`, `children` (guardians, parents, or a tagged post), `child_guardians`, `family_dates` (0029, rule `private.vis_sees_family_date`: the person rule for a member's birthday, parents and the Everyone group for other dates; VIS-18) |
 | `container` | `circles` (0027), `circle_members`, `circle_people`, `circle_links`, `chat_groups`, `chat_messages`, `chat_key_packages` (via `chat_claim`) |
 | `self` | `push_tokens`, `notification_prefs`, `account_exports`, `chat_devices`, `post_views` |

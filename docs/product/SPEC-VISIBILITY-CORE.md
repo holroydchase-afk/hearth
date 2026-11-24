@@ -17,7 +17,7 @@ What changes:
 4. **User error is caught twice.** Before: the To: names, nothing pre-picked (DEC-73/79), and a confirm when you **widen** a post after sending. After: a 2-minute "Take back" before any notice goes out, plus a nightly check of the live data.
 5. **Fungible, and reusable.** Every content kind (photo, video, news, date, kinds not invented yet) is one registry row plus a table pointing at a post. Zero new visibility rules; a test proves it with a throwaway kind. The core has no Hearth words in it, so other studio apps can use it (`@holroyd/visibility`, like `@holroyd/messenger`).
 6. **The co-parent bridge** (anchor feature, phased): two family spaces open a narrow, two-key link about one child. Only the two named parents read across it. Nobody is ever asked "who sees this?"; a parent picks the other home (for example "Dad's home") on To: like any group.
-7. **One Share composer.** The postcard stays the only way in. It gains two worded choices beside "Add photos": "Write news" (a big announcement, words only) and "Add a date". Each is one post with one audience, picked the same way.
+7. **One Share composer.** The postcard stays the only way in. Photos come first, with Event, News (a big announcement, words only) and Saying ("kids say the darndest things") beside it. Each is one post with one audience, picked the same way, and the list stays open: a new kind needs no new rule.
 
 **What you won't be asked again:** "who should see X?" for any new content. New content attaches to a post and gets that post's audience, or it attaches to a person and follows who can see that person. Only a brand-new kind of reach (for example "everyone except Gigi") comes back to you, and that is a product call, not a plumbing question.
 
@@ -122,22 +122,19 @@ The postcard (DEC-73, DEC-79, SHARE-ST-1..18) stays the one way in. Every kind i
 | Kind | What's on the card | Stored as |
 |---|---|---|
 | Photos and videos | Today's card | `posts.kind = 'photos'` + `media_items` (video stays behind `feature_on`) |
-| Big news | Large words, no photo ("Write news") | `posts.kind = 'news'`, caption required, no media |
-| An event (a date) | Title, date, optional place and photo ("Add a date") | `posts.kind = 'date'` + `post_dates` row (child of the post, Post class) |
-| A saying | A quote card, "kids say the darndest things" style: the words, who said it, their age then ("Share a saying") | `posts.kind = 'saying'` + `post_sayings` row (child of the post, Post class) |
+| News | Large words, no photo ("Share news") | `posts.kind = 'news'`, caption required, no media |
+| Event | What's happening, when, optional place ("Add an event") | `posts.kind = 'event'` + `post_events` row (child of the post, Post class) |
+| A saying | A quote card, "kids say the darndest things" style: the words, who said it, their age then ("Add a saying") | `posts.kind = 'saying'` + `post_sayings` row (child of the post, Post class) |
 
 **Open-ended by design (Chase, Nov 24: "flexible for other types - events, announcements, a sayings card").** A new kind is one `posts.kind` value plus, if it needs fields, one child table attached with `vis.attach` (VIS-19): no new visibility rule, no new To: step. The Share start (thread "Redo the Share screen") owns the picker UI; this section is the contract it builds on.
 
-The empty postcard shows "Add photos" as the big target (unchanged), with two worded buttons under it, "Write news" and "Add a date". **Parents only (owner/adult) until the grandparent test passes;** anyone else sees today's card with no change (GUX-VC-R1). Exact layout (GUX-VC-R1):
-- Two full-width rows stacked under the card (not side by side, so the words never clip at Android 200% or iOS's largest size), each at least 48pt tall with 12pt between, an outline icon beside the words (DS-3), secondary gray capsules, not filled (DS-9).
-- "Write news" with the helper line "Big words, no photo"; "Add a date" with the helper line "A day to remember, like a game or a visit" (17pt muted; so nobody reads "Add a date" as dating a photo). Spoken: "Write news, big words, no photo"; "Add a date, a day to remember".
-- Picking one swaps the photo spot for that kind's fields; the stamp, note and To: stay. To:'s hint follows the kind: "To: you pick after your words" (news), "To: you pick after the date" (date), and GUX-R1's tap hint becomes "Write your news first, then pick who sees it." / "Fill in the date first, then pick who sees it." (GUX-VC-R5).
-- News fields: a label above the box, "Your news" (never placeholder-only words, which vanish as you type). Date fields: "What's happening?", "When?" (the phone's own date picker, then the date written out, "Saturday, March 3"), "Where? (optional)", "Add a photo (optional)".
-- A "Start over" text button (top left, 48pt) goes back to the empty postcard; if anything is typed it asks "Throw away this news?" with "Keep writing" and "Throw away" (GUX-VC-R5).
+Kind names on screen (thread "Redo the Share screen", tester https://claude.ai/artifact/HekNBZ4bAMgpUqReeHgnTS, Nov 24): **Photos, Event, News, Saying**. Spoken labels: "Add photos", "Add an event", "Share news", "Add a saying". **No helper lines** (Chase: let the design carry it; supersedes GUX-VC-R1's helper lines). The photo postcard stays first; Event, News and Saying sit in a row under it. **Parents only (owner/adult) until the grandparent test passes;** anyone else sees today's card with no change. Text sizes follow the phone's standard (17 body, 22 title). The Share thread owns the exact look; this spec owns kinds, fields and audience.
+- Fields: **Event:** "What's happening", "When" (the phone's own date picker), "Where (optional)". **News:** one big field, "Your news". **Saying:** "What they said", "Who said it", "Age" (optional, their age then).
+- Picking a kind swaps the photo spot for that kind's fields; the note and To: stay. To: comes after the content, nothing pre-picked. A "Start over" button returns to the empty postcard, asking first if anything is typed (GUX-VC-R5).
 
-To: works the same for all three, after the content, nothing pre-picked. Feed shows news as a large-type card (22pt SemiBold, the "Add photos" size) and dates as a date card with "Add to my calendar" (opens the phone's own add-event screen, so no calendar permission prompt; GUX-VC-R9); both use the same "who can see this" line, people's names for relatives, never group titles.
+To: works the same for all three, after the content, nothing pre-picked. Feed shows news as a large-type card (22pt title size), sayings as a quote card, and events as an event card with "Add to my calendar" (opens the phone's own add-event screen, so no calendar permission prompt; GUX-VC-R9); both use the same "who can see this" line, people's names for relatives, never group titles.
 
-Shared dates and life-calendar dates are different things: a shared date ("Gammy's 80th, Mar 3, at the church") is a post and follows its audience. A life-calendar date (a birthday) belongs to a person and follows `can_see_profile`. Both are registered; neither raises a new question.
+Events and life-calendar dates are different things: an event ("Gammy's 80th, Mar 3, at the church") is a post and follows its audience. A life-calendar date (a birthday) belongs to a person and follows `can_see_profile`. Both are registered; neither raises a new question.
 
 ## Phases and acceptance criteria
 
@@ -182,14 +179,14 @@ Each phase is a small PR: qa-tdd red first, then engineer. Migrations are 0031 a
 
 | ID | Type | Given / When / Then |
 |---|---|---|
-| SHARE-U-1 | auto | Given the empty postcard, When it renders for a parent (owner/adult), Then "Add photos" is the big target and "Write news" and "Add a date" sit below it as two stacked full-width rows with their helper lines, each 48pt+, 17pt+, words inside at the largest text (GUX-VC-R1) |
-| SHARE-U-2 | auto | Given anyone who is not a parent (can post or not), When Share opens, Then neither "Write news" nor "Add a date" is on the page (GUX-VC-R1) |
+| SHARE-U-1 | auto | Given the empty postcard, When it renders for a parent (owner/adult), Then "Add photos" is the big target and Event, News and Saying sit below it as two stacked full-width rows with their helper lines, each 48pt+, 17pt+, words inside at the largest text (GUX-VC-R1) |
+| SHARE-U-2 | auto | Given anyone who is not a parent (can post or not), When Share opens, Then neither Event, News nor Saying is on the page (GUX-VC-R1) |
 | SHARE-U-8 | auto | Given news or date picked, When the card renders, Then To:'s hint and the tap hint name that kind's step ("after your words", "after the date"), never "after your photos", and "Start over" returns to the empty postcard, asking first if anything is typed (GUX-VC-R5) |
 | SHARE-U-9 | auto | Given a post inside its hold, When its card renders for the author, Then it shows "Only you can see this for now. Sending in 2 minutes." and "Take back"; tapping it shows "Taken back. Nobody saw it." with no second confirm (GUX-VC-R2) |
 | SHARE-U-10 | auto | Given a widening change, When the dialog shows, Then its buttons read "Yes, send to them" and "Don't add them" and "See all N names" lists every new person (GUX-VC-R3) |
 | SHARE-U-3 | auto | Given any kind, When To: opens, Then nothing is pre-picked and the flow equals SHARE-ST's |
 | SHARE-U-4 | auto | Given a news post with words and no media, When published, Then the server accepts it, it has an audience, and VIS-8 covers it |
-| SHARE-U-5 | auto | Given a date post, When a person outside its audience reads the feed, calendar or search, Then they get nothing (registry kind `shared_date`, Post class) |
+| SHARE-U-5 | auto | Given an event post, When a person outside its audience reads the feed, calendar or search, Then they get nothing (registry kind `event`, Post class) |
 | SHARE-U-6 | auto | Given a news or date post, When anyone in its audience opens Feed, Then they see a large-type card with the "who can see this" names line |
 | SHARE-U-7 | manual | Given Mom on her own phone, When she shares a photo, news and a date, Then each takes under 60 s with no help |
 
@@ -252,7 +249,7 @@ Open:
 - **GUX-VC-R7 (P1, with PRIV-VC-R10):** recommend a bridged post can't also go to a relatives' group (To: greys the groups out with "Dad's home posts go only to Dad"). Needs Chase.
 - **GUX-VC-R8 (P1, before B1):** bridge setup and the receiving parent's yes screen are undesigned; also whether a re-share to the receiver's family tells the author. Confirm with a co-parent.
 - **GUX-VC-R9 (P2):** "Add to my calendar" on Android/web and in email; and news/date posts on the frame (skip words-only posts, or a large-type picture). Decide in Phase 4.
-- **GUX-VC-R10 (P2, confirm with a relative):** is "Write news" the word a parent would use (vs "Share news")? Add to the next UAT session.
+- **GUX-VC-R10 (P2, confirm with a relative):** is "News" (spoken "Share news") the word a parent would use (vs "Share news")? Add to the next UAT session.
 
 ## Privacy review (privacy-security, Nov 24, 2026)
 
@@ -275,7 +272,7 @@ Open (before Phase 6; none block Phases 1 to 4):
 ## Open questions for Chase (only the ones that change your goal)
 
 1. **Go on Phases 1, 1b and 2 now, before the beta?** Recommendation: yes (no screen changes; they replace R51 and make every later feature safe by default). Phase 3 after R62. It's the honest version of "data can't leak".
-2. **Add "Write news" and "Add a date" to the postcard?** This reopens DEC-79's "one way in". Recommendation: yes, parents only until the grandparent test, because most grandparents can't post anyway.
+2. **Add Event, News and Saying to the postcard?** This reopens DEC-79's "one way in". Recommendation: yes, parents only until the grandparent test, because most grandparents can't post anyway.
 3. **Co-parent bridge after the beta, and bring back a co-parent persona first?** Recommendation: yes to both. Nobody in the WV beta is a split parent pair, so B1 has no tester before Nov 22; the model and the BR tests are designed now so nothing built before then blocks it.
 4. **2-minute "Take back" delays every notice by up to 2 minutes.** Recommendation: yes; a grandparent won't notice 2 minutes, and a wrong send is the worst error we have.
 
