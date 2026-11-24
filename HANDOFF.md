@@ -11,6 +11,9 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 24: visibility core designed (R77; design only, awaits Chase's go)
+- `docs/product/SPEC-VISIBILITY-CORE.md` + `docs/architecture/07-visibility-model.md`: one registered core for every kind (fungible, generic `@holroyd/visibility`), CI gate, oracle (folds R51), user-error catches, co-parent bridge (after the beta), one composer. Open: Chase's go on Phases 1, 1b, 2.
+
 ## Nov 23: dark mode elevation by surface step (intake #155, R75; branch claude/project-thread-6ew09x, PR)
 - **Ask (Product Studio intake):** in dark mode, show elevation with a lighter surface instead of a shadow (DARK-5).
 - **Done, test-first:** qa-tdd red DARK-ELEV-1..6 (`darkElevation.test.tsx`, demo e2e DARK-ELEV-6), then the build: `shadeLine(dark)` (GalleryGrid, PhotosScreen) has no shadow in dark; the floating tab bar drops its dark shadow; the laptop demo's phone column sits on `c.surface` with no shadow in dark. Light unchanged. Green 3x (r60). Before/after shots: /mnt/project-files/design/dark-elevation-2026-11-23/.
