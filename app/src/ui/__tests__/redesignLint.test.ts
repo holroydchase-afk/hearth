@@ -77,7 +77,19 @@ describe('RD 1a source scans', () => {
     // Allowed homes for c.accent. Anything else (avatar letters, event card borders, video pills, spinners) is ink.
     // qa-tdd, Nov 20: RD-114 (DEC-76) adds the picked reaction's outline and count in PostCard.tsx.
     const allowed = new Set(['ui/theme.ts', 'ui/kit.tsx', 'screens/TabBar.tsx', 'app/(tabs)/_layout.tsx', 'screens/NewForYou.tsx', 'demo/DemoBar.tsx', 'screens/PostCard.tsx']);
-    expect(find(/\bc\.accent\b(?!Ink|Soft)/, sources(), (f) => allowed.has(f))).toEqual([]);
+    // QA-R4 (PR #174 fix round, qa-tdd Nov 24): ShareKinds.tsx is no longer allowed whole; SHARE-ST-31's kind icon
+    // color is its one exception (checked in the QA-R4 test below).
+    expect(find(/\bc\.accent\b(?!Ink|Soft)/, sources(), (f) => allowed.has(f) || f === 'screens/ShareKinds.tsx')).toEqual([]);
+  });
+
+  it('QA-R4 RD-4 ShareKinds.tsx uses the accent only for the kind icon (SystemIcon color), nowhere else: no other c.accent, no tone="accent"', () => {
+    const file = sources().filter((f) => rel(f) === 'screens/ShareKinds.tsx');
+    expect(file).toHaveLength(1);
+    const uses = find(/\bc\.accent\b(?!Ink|Soft)/, file);
+    const text = fs.readFileSync(file[0]!, 'utf8').split('\n');
+    const notIcon = uses.filter((u) => !/<SystemIcon\b[^>]*\bcolor=\{c\.accent\}/.test(text[parseInt(u.split(':')[1]!, 10) - 1] ?? ''));
+    expect(notIcon).toEqual([]);
+    expect(find(/tone=["']accent["']|tone=\{["']accent["']\}/, file)).toEqual([]);
   });
 
   it('RD-4 a spinner is never the accent color', () => {
@@ -107,6 +119,8 @@ describe('RD 1a source scans', () => {
       if (SIGN_IN.has(file)) continue;
       // DEC-73 (SHARE-PC-10; engineer, flagged for qa-tdd): the postcard's pinned "Send to <names>" replaces Post.
       if (file === 'screens/ShareScreen.tsx' && /\bPost\b|Send to|Pick who gets it/.test(words) && /primary/.test(variant)) continue;
+      // SHARE-ST-31 (engineer, flagged for qa-tdd): a kind's card shows the same disabled "Pick who gets it".
+      if (file === 'screens/ShareKinds.tsx' && words === 'Pick who gets it' && /primary/.test(variant)) continue;
       if (file === 'ui/kit.tsx' && /\{yes\}/.test(b.props)) continue; // Confirm's yes: checked for Delete/Leave below
       if (/danger/.test(variant) && /\b(Delete|Leave)\b/.test(words)) continue;
       if (file === 'demo/DemoBar.tsx' && /danger/.test(variant) && words === 'Reset') continue; // the demo's delete-everything confirm

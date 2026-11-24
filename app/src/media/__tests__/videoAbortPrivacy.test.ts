@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// PRIV-R1 (P1) / PRIV-R2 (P2), privacy-security review of DEC-86 autoplay: a decrypted video file must never stay on
+// PRIV-R1 (P1) / PRIV-R2 (P2), privacy-security review of DEC-87 autoplay: a decrypted video file must never stay on
 // the phone after a Feed card lets it go, and one caller's abort must not break another caller's shared download.
 import { FakeBackend, FIXTURE } from '../../api/fake/FakeBackend';
 import { seedVideoPost } from '../../test/seed';

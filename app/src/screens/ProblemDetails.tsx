@@ -42,7 +42,7 @@ export function ProblemDetailsCard() {
   if (!debugEnabled()) return null;
   return (
     <Card testID="problem-details">
-      <Txt variant="title">Problem details</Txt>
+      <Txt variant="title2">Problem details</Txt>
       {list.length === 0 ? <Txt>No problems so far.</Txt> : list.map((e, i) => <Entry key={`${e.time}-${i}`} e={e} />)}
       {list.length ? <CopyForClaude text={problemText(list)} /> : null}
     </Card>

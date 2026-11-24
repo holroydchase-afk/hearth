@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// DEC-86 (SPEC-MEDIA 5): More → "Videos and data". Two choices, kept on this phone only (one key, no account id in
+// DEC-87 (SPEC-MEDIA 5): More → "Videos and data". Two choices, kept on this phone only (one key, no account id in
 // it, never sent to the server): "Play videos as I scroll" (default on) and "Save data" (null until the sign-up
 // question is answered on this phone).
 import type { KV } from '../platform/kv';

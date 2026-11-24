@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-25T02:30:00-05:00",
- "label": "DEC-86 video autoplay and Save data + PRIV-R1/R2 fixes: all suites 3x via test-all.sh (flaky: SHARE-PC-13 1 of 3)",
- "passed": 10833,
- "failed": 1,
+ "at": "2026-11-25T01:30:00-05:00",
+ "label": "Wordless Share start (SHARE-ST-19..27, DEC-79 option A): app suites 3x (red: FONT-2)",
+ "passed": 6846,
+ "failed": 3,
  "results": {},
- "note": "FLAKY, not green. 3 runs of bash test-all.sh at 623388c (Postgres 16 started first): runs 1 and 2 23 suites passed, 0 failed, 2 skipped; run 3 22 passed, 1 failed (app e2e demo: SHARE-PC-13 at demo.spec.js:988, T41). jest 2288 passed (1 skipped, 1 todo) x3, typecheck clean x3, e2e:web 5 passed x3, e2e:demo 50 / 50 / 49+1 failed, prototype e2e 33 x3, backend SQL 1318 passed x3, check-agents and check-persona-checks pass x3. Skipped: Supabase starter invites (no template), Deno (not installed). QA-R4 open: AUTO-2, AUTO-4, DATA-1 have no web e2e. e2e/results/dec82-all-3x-2026-11-25/"
+ "note": "3 runs at 37cbe7f. jest 2227 passed, 1 failed (1 skipped, 1 todo) x3, identical: FONT-2 (ui/__tests__/font.test.tsx) flags kit.tsx:341-342, PostcardStamp's two <Text style={mark}> with the family set through a variable the static scan cannot see (B25). typecheck clean x3, check-expo-go OK (SDK 58) x3, e2e:demo 50 passed (5 skipped) x3 on a fresh export:web:demo incl. GUX-R2 calendar (did not repeat the engineer's one failure), e2e:web 5 passed (6 skipped) x3. Reviewed the engineer's test edits: shareStart SHARE-ST-24 Reduce Motion reset and the plainBackground allowlist (AddPhotoCard circle, PostcardStamp) keep their criteria; demo.spec.js SHARE-ST-8 word filter drops any token with no letter or digit, slightly wider than the private-use glyph it targets (QA-R2 P2). Not run: backend SQL and Deno (no backend change), prototype e2e, phones (SHARE-ST-9 manual). e2e/results/share-start-wordless-green-2026-11-24.txt"
 }

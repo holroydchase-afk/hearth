@@ -10,8 +10,8 @@ import { contrast, paletteFor } from '../theme';
 describe('A11Y sweep', () => {
   it('A11Y-1: the screen title is the only level-1 heading; card and section titles are level 2', () => {
     render(<>
-      <Txt variant="display" role="header">Photos of Mia and Leo</Txt>
-      <Txt variant="title" role="header">Mia's 5th birthday</Txt>
+      <Txt variant="largeTitle" role="header">Photos of Mia and Leo</Txt>
+      <Txt variant="title2" role="header">Mia's 5th birthday</Txt>
       <Txt>Pumpkin patch day</Txt>
     </>);
     expect(screen.getByText('Photos of Mia and Leo').props['aria-level']).toBe(1);

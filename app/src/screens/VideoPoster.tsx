@@ -6,7 +6,7 @@
 // photo's does, and a separate "Play" button sits at its bottom left; the two are siblings, never one inside the
 // other, so a screen reader reaches both. Play opens the full-screen VideoPlayer in place; Close comes back here.
 // Only the thumb is fetched here: the video itself loads when Play is tapped, and nothing plays before that.
-// DEC-86 (SPEC-MEDIA 5, 5.1): the exception is a Feed card the list picked for autoplay (AutoplayContext): it fetches
+// DEC-87 (SPEC-MEDIA 5, 5.1): the exception is a Feed card the list picked for autoplay (AutoplayContext): it fetches
 // the video and plays it in the card, muted and looping, while the list is still. Its word button reads "Play with
 // sound"; that button, or tapping the playing video, opens the full-screen player with sound. When it stops being
 // the picked one, it pauses, any unfinished download is stopped and the decrypted file is let go.
@@ -16,7 +16,7 @@ import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } fro
 import { AutoplayContext } from '../feed/autoplay';
 import { useApp } from '../state/AppContext';
 import { Button, SystemIcon } from '../ui/kit';
-import { FONT, MIN_TARGET, RADIUS, useTheme } from '../ui/theme';
+import { MIN_TARGET, RADIUS, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
 import { VideoPlayer } from './VideoPlayer';
 
@@ -29,7 +29,7 @@ export function VideoPoster({ postId, mediaId, fit = 'cover', style, onOpen, ope
   onOpen?: () => void;
   openLabel?: string;
 }) {
-  const { t } = useTheme();
+  const { type } = useTheme();
   const auto = useContext(AutoplayContext);
   const [playing, setPlaying] = useState(false);
   // The full player was opened from the quiet one: the card keeps its file (and stays mounted, paused) till it closes.
@@ -49,7 +49,7 @@ export function VideoPoster({ postId, mediaId, fit = 'cover', style, onOpen, ope
           <View style={styles.middle} pointerEvents="none">
             <View style={[styles.pill, { backgroundColor: 'rgba(0,0,0,0.72)' }]}>
               <SystemIcon icon={PLAY_ICON} color="#FFFFFF" />
-              <Text style={{ color: '#FFFFFF', fontFamily: FONT.semibold, fontSize: t.base }}>Play</Text>
+              <Text style={{ color: '#FFFFFF', ...type.headline }}>Play</Text>
             </View>
           </View>
         </Pressable>

@@ -28,7 +28,7 @@ const ROWS: Row[] = [
   { id: 'birthdays', text: 'Birthdays', icon: { sf: 'gift', md: 'cake' }, path: '/more/birthdays' },
   { id: 'easyView', text: 'Easy view', icon: { sf: 'textformat.size', md: 'format_size' }, path: '/more/easy-view' },
   { id: 'look', text: 'Light or dark', icon: { sf: 'sun.max', md: 'contrast' }, path: '/more/look' },
-  // DEC-86 (SPEC-MEDIA 5.1): right after Light or dark, for every role.
+  // DEC-87 (SPEC-MEDIA 5.1): right after Light or dark, for every role.
   { id: 'videosData', text: 'Videos and data', icon: { sf: 'play.rectangle', md: 'data_saver_on' }, path: '/more/videos-data' },
   { id: 'theme', text: 'Theme', icon: { sf: 'paintpalette', md: 'palette' }, path: '/more/theme' },
   { id: 'me', text: 'Me', icon: { sf: 'person.crop.circle', md: 'account_circle' }, path: '/more/me' },
@@ -90,20 +90,20 @@ export function MorePreference({ which }: { which: 'easyView' | 'look' | 'theme'
   return (
     <Screen>
       <BackButton to="More" onPress={backToMore} />
-      <Txt variant="display" role="header">{title}</Txt>
+      <Txt variant="title1" role="header">{title}</Txt>
       {/* GUX-R32: the "this phone only" note sits above the list, so it is read before a pick. */}
-      {which === 'theme' ? <Txt variant="muted">Only this phone changes. Other people keep their own colors.</Txt> : null}
+      {which === 'theme' ? <Txt tone="muted">Only this phone changes. Other people keep their own colors.</Txt> : null}
       {which === 'easyView' ? <EasyView /> : which === 'look' ? <LightOrDark heading={false} /> : <ThemePicker heading={false} />}
     </Screen>
   );
 }
 
-/** More → Videos and data (DEC-86, SPEC-MEDIA 5.1). */
+/** More → Videos and data (DEC-87, SPEC-MEDIA 5.1). */
 export function MoreVideosData() {
   return (
     <Screen>
       <BackButton to="More" onPress={backToMore} />
-      <Txt variant="display" role="header">Videos and data</Txt>
+      <Txt variant="title1" role="header">Videos and data</Txt>
       <VideosAndData />
     </Screen>
   );
@@ -120,7 +120,7 @@ export function MoreScreen() {
 
   return (
     <Screen>
-      <Txt variant="display" role="header">More</Txt>
+      <Txt variant="largeTitle" role="header">More</Txt>
       <View>
         {moreRowsFor(app.space.role).filter((r) => r.id !== 'birthdays' || calendar.status !== 'missing').map((r, i) => (
           <React.Fragment key={r.id}>

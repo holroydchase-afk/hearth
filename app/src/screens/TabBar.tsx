@@ -12,7 +12,7 @@ import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-na
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Role } from '../api/HearthApi';
 import { useTyping } from '../ui/typing';
-import { FONT, LABEL_SCALE_CAP, MIN_TARGET, iconSize, typeScale, useTheme } from '../ui/theme';
+import { LABEL_SCALE_CAP, MIN_TARGET, iconSize, textStyle, useTheme, type TextStyleSpec } from '../ui/theme';
 
 export type TabName = 'gallery' | 'share' | 'feed' | 'more';
 export interface TabDef { name: TabName; label: string }
@@ -97,8 +97,13 @@ function alpha(hex: string, a: number): string {
 export const NATIVE_TAB_OPTIONS = {
   minimizeBehavior: 'never', // DS-5: iOS 26 can shrink the bar on scroll; the way back stays visible
   labelVisibilityMode: 'labeled', // DS-5: Android shows every label, not only the selected one
-  labelStyle: { fontSize: 17 }, // DS-2: platform tab labels are 10–12 pt; FONT-2 (DEC-78) Atkinson Hyperlegible Next
 } as const;
+
+/** TYPE-6 (SPEC-TYPE): the phone's own tab words are caption1: 12 / 16 with Easy view off (Material's own 12 sp),
+ *  17 / 22 with it on (TYPE-3: Easy view keeps everything 17+). */
+export function nativeTabLabelStyle(easyView: boolean): TextStyleSpec {
+  return textStyle('caption1', easyView);
+}
 
 /** RD-76: Android's own bar shows its words only with Easy view On; the word stays the tab's spoken name. */
 export function nativeLabelMode(easyView: boolean): 'labeled' | 'unlabeled' {
@@ -131,7 +136,6 @@ export function HearthTabBar({ role, current, onNavigate, newMessages = 0, float
   const [autoMin, autoExpand] = useMinimizeOnScroll(floating && minimized === undefined, current, barRef);
   const small = floating && (minimized ?? autoMin);
   const expand = onExpand ?? autoExpand;
-  const t = typeScale(easyView);
   const insets = useSafeAreaInsets();
   const { fontScale } = useWindowDimensions();
   // UX-R1 / RD-35: while a text field is focused the bar is not drawn, so the field can sit right above the keyboard.
@@ -179,7 +183,7 @@ export function HearthTabBar({ role, current, onNavigate, newMessages = 0, float
               {/* RD-14: the dot is spoken through the tab's name ("More, new message"), so it is only drawn. */}
               {dot ? <View testID="more-dot" accessible={false} style={[styles.dot, { backgroundColor: c.accent, borderColor: c.bg }]} /> : null}
             </View>
-            {easyView ? <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ fontSize: t.base, fontFamily: on ? FONT.semibold : FONT.regular, color }}>{tab.label}</Text> : null}
+            {easyView ? <Text maxFontSizeMultiplier={LABEL_SCALE_CAP} style={{ ...textStyle('caption1', easyView, on), color }}>{tab.label}</Text> : null}
           </Pressable>
         );
       })}

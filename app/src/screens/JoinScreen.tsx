@@ -23,7 +23,7 @@ export function JoinScreen({ code }: { code: string }) {
   // TS-GUX-R6: the last 4 digits of the number a phone invite didn't open for (never the full number).
   const [triedNumber, setTriedNumber] = useState<string | null>(null);
   const started = useRef(false);
-  // DATA-1 (DEC-86): a phone never asked about its data plan asks once, before Gallery.
+  // DATA-1 (DEC-87): a phone never asked about its data plan asks once, before Gallery.
   const asked = useRef(app.dataPrefs.saveData !== null);
   asked.current = app.dataPrefs.saveData !== null;
   const opened = () => (asked.current ? nav.goPhotos() : setStep('askData'));
@@ -94,18 +94,18 @@ export function JoinScreen({ code }: { code: string }) {
 
   return (
     <Screen>
-      <Txt variant="display" role="header">Hearth</Txt>
+      <Txt variant="title1" role="header">Hearth</Txt>
       {step === 'checking' || step === 'joining' ? <Loading words={step === 'checking' ? 'Checking your invite…' : 'Opening the photos…'} /> : null}
       {step === 'preview' && preview ? (
         <Card>
-          <Txt variant="title">{`${preview.inviter_name} invited you to see the family photos.`}</Txt>
+          <Txt variant="title2">{`${preview.inviter_name} invited you to see the family photos.`}</Txt>
           <Txt>No password. Free.</Txt>
           <Button label="See the photos" onPress={() => setStep('signin')} />
         </Card>
       ) : null}
       {step === 'signin' ? (
         <Card>
-          <Txt variant="title">{`Photos from ${who ?? 'your family'}`}</Txt>
+          <Txt variant="title2">{`Photos from ${who ?? 'your family'}`}</Txt>
           <Txt>{textsOn() ? "We'll send you a 6-number code." : "Type your email. We'll send you a 6-number code."}</Txt>
           {/* BETA-SMS-9: ask the way the invite was made (texts on); texts off, today's email flow */}
           <SignInFlow inviter={who} start={preview?.sign_in_with ?? 'either'} only onSignedIn={(email, end) => redeem(who, email, end ?? null)} />
@@ -113,21 +113,21 @@ export function JoinScreen({ code }: { code: string }) {
       ) : null}
       {step === 'bad' && triedEmail ? (
         <Card>
-          <Txt variant="title">{`This invite didn't open for ${triedEmail}.`}</Txt>
+          <Txt variant="title2">{`This invite didn't open for ${triedEmail}.`}</Txt>
           <Txt>{`It may be old or already used, or ${who ?? 'your family'} sent it to a different email. Try that email, or ask ${who ?? 'the person who invited you'} for a new invite.`}</Txt>
           <Button label="Try a different email" onPress={() => { void app.signOut().then(() => { setTriedEmail(null); setStep('signin'); }); }} />
         </Card>
       ) : null}
       {step === 'bad' && triedNumber ? (
         <Card>
-          <Txt variant="title">{`This invite didn't open for the number ending in ${triedNumber}.`}</Txt>
+          <Txt variant="title2">{`This invite didn't open for the number ending in ${triedNumber}.`}</Txt>
           <Txt>{`It may be old or already used, or ${who ?? 'your family'} sent it to a different number. Try your other number, or ask ${who ?? 'the person who invited you'} for a new invite.`}</Txt>
           <Button label="Try a different number" onPress={() => { void app.signOut().then(() => { setTriedNumber(null); setStep('signin'); }); }} />
         </Card>
       ) : null}
       {step === 'bad' && msg && !triedEmail && !triedNumber ? (
         <Card>
-          <Txt variant="title">{msg}</Txt>
+          <Txt variant="title2">{msg}</Txt>
           {retry ? <Button label="Try again" onPress={retry} /> : <Txt>That's okay, it happens.</Txt>}
           {/* UX-G9: signed in, she still needs a way on (Photos; with no family yet it offers the code entry). */}
           {retry ? null : app.session ? <Button label="Go to Gallery" onPress={nav.goPhotos} /> : <Button label="I already have Hearth. Sign in." text="Sign in" variant="secondary" onPress={() => nav.goSignIn()} />}

@@ -41,7 +41,7 @@ export const cardAspect = (m: Pick<Media, 'width' | 'height'> | undefined) =>
 export function PhotoSwipe(props: Props) {
   const nav = useNav();
   const { c } = useTheme();
-  const saveData = useSaveData(); // DEC-86: thumbnails only until a photo is opened
+  const saveData = useSaveData(); // DEC-87: thumbnails only until a photo is opened
   const postId = 'items' in props ? props.id : props.postId;
   const items: SwipeItem[] = 'items' in props ? props.items : props.media.map((media, index) => ({ postId: props.postId, index, media }));
   const media = items.map((i) => i.media);
@@ -137,7 +137,7 @@ export function PhotoSwipe(props: Props) {
       />
       <View style={{ paddingHorizontal: 14, paddingTop: 12, gap: 8 }}>
         {n > 1 ? <View accessible accessibilityLabel={`Photo ${pos + 1} of ${n}`} accessibilityLiveRegion="polite" style={{ alignItems: 'center' }}>
-          <Txt variant="strong">{`${pos + 1} of ${n}`}</Txt>
+          <Txt variant="headline">{`${pos + 1} of ${n}`}</Txt>
         </View> : null}
         {below && items[pos] ? below(items[pos]!) : null}
         <View style={{ flexDirection: 'row', gap: 12 }}>

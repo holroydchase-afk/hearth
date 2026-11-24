@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-25T00:30:00-05:00",
+ "label": "DEC-87 privacy review (PRIV-R1 P1, PRIV-R2 P2): tests written first (red, 1 run)",
+ "passed": 2285,
+ "failed": 3,
+ "results": {},
+ "note": "Red on purpose, 1 run at 5fc2881 plus media/__tests__/videoAbortPrivacy.test.ts: PRIV-R1a (abort then releaseVideo: videoFiles.remove never called, the decrypted .mp4 stays), PRIV-R1b (abort during write: file not removed), PRIV-R2 (a no-signal caller sharing a download started by a signalled caller is rejected when it aborts) fail; PRIV-R2 reverse-order guard passes. Full jest 3 failed / 2285 passed, typecheck clean. e2e/results/priv-r1-r2-red-2026-11-24/"
+}

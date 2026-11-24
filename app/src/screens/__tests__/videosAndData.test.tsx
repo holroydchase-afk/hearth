@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// DEC-86 (SPEC-MEDIA 5, 5.1 final words): More → "Videos and data" (AUTO-1, DATA-2, AUTO-5's reduce-motion line), the
+// DEC-87 (SPEC-MEDIA 5, 5.1 final words): More → "Videos and data" (AUTO-1, DATA-2, AUTO-5's reduce-motion line), the
 // prepaid question at sign-up (DATA-1), and neither setting ever leaving the phone (DATA-6).
 //
 // Seams for the engineer:

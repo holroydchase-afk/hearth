@@ -13,14 +13,14 @@ import { SignInFlow } from './SignInFlow';
 export function SignInScreen({ start }: { start?: SignInWith } = {}) {
   const app = useApp();
   const nav = useNav();
-  // DATA-1 (DEC-86): a first sign-in on a phone never asked about its data plan asks once, before Gallery.
+  // DATA-1 (DEC-87): a first sign-in on a phone never asked about its data plan asks once, before Gallery.
   const [ask, setAsk] = useState(false);
   const asked = useRef(app.dataPrefs.saveData !== null);
   asked.current = app.dataPrefs.saveData !== null;
   if (ask) return <DataQuestion onDone={nav.goPhotos} />;
   return (
     <Screen>
-      <Txt variant="display" role="header">Welcome to Hearth</Txt>
+      <Txt variant="title1" role="header">Welcome to Hearth</Txt>
       <Txt>{textsOn()
         ? "Private photos of the family. We'll send you a 6-number code. No password."
         : "Private photos of the family. Type your email. We'll send you a 6-number code. No password."}</Txt>

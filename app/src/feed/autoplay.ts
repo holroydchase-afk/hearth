@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// DEC-86 (SPEC-MEDIA 5): Feed videos play quietly, one at a time, once she stops on one. The phone's own list does
+// DEC-87 (SPEC-MEDIA 5): Feed videos play quietly, one at a time, once she stops on one. The phone's own list does
 // the dwell (a card 80%+ on screen and the list still for 1 s, and only after she has scrolled once), so nothing
 // downloads while she scrolls past. The list moving again pauses the video at once; it plays again once the list
 // has been still for the same 1 s. Feed only: the Gallery grid never autoplays (no provider there).

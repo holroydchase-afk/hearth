@@ -16,7 +16,7 @@ import { useApp } from '../state/AppContext';
 import { Button, Txt } from '../ui/kit';
 import { LookContext, useTheme } from '../ui/theme';
 
-/** keepFile (DEC-86): opened from a Feed video already playing quietly, whose card still owns the decrypted file and
+/** keepFile (DEC-87): opened from a Feed video already playing quietly, whose card still owns the decrypted file and
  *  lets it go when it stops; so closing this doesn't delete the file under it. */
 export function VideoPlayer(props: { postId: string; mediaId: string; onClose: () => void; keepFile?: boolean }) {
   return (

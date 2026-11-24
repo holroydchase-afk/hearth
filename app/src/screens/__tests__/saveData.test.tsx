@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// DEC-86 (SPEC-MEDIA 5) Save data's full list: (1) no autoplay (autoplay.test.tsx AUTO-5), (2) Feed cards and the
+// DEC-87 (SPEC-MEDIA 5) Save data's full list: (1) no autoplay (autoplay.test.tsx AUTO-5), (2) Feed cards and the
 // Timeline load the small thumbnail only until a photo is opened (DATA-3), (3) the viewer doesn't fetch the next
 // photo's full size before the swipe (DATA-4). With Save data off nothing changes (DATA-5 controls, green today).
 //

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// DEC-86 (SPEC-MEDIA 5): the pure parts of Feed autoplay and Save data, red until the engineer adds them.
+// DEC-87 (SPEC-MEDIA 5): the pure parts of Feed autoplay and Save data, red until the engineer adds them.
 //
 // Seams (loaded at run time so typecheck stays clean before they exist):
 //   src/feed/autoplay.ts    export const AUTOPLAY_VIEWABILITY = { itemVisiblePercentThreshold: 80, minimumViewTime: 1000, waitForInteraction: true }

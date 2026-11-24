@@ -200,7 +200,7 @@ export class MediaCache {
    */
   videoUri(postId: string, mediaId: string, opts: { signal?: AbortSignal } = {}): Promise<string> {
     const { signal } = opts;
-    // AUTO-3 (DEC-86): a Feed video scrolled away stops; nothing is written and the failure is never kept.
+    // AUTO-3 (DEC-87): a Feed video scrolled away stops; nothing is written and the failure is never kept.
     if (signal?.aborted) return Promise.reject(abortError());
     const job = this.videos.get(mediaId) ?? this.startVideo(postId, mediaId);
     job.waiters++;
