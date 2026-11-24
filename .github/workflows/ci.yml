@@ -69,6 +69,25 @@ jobs:
       - run: bash docs/supabase-starter/tests/scripts_test.sh
       - run: bash docs/supabase-starter/tests/run-with-template.sh studio-agents/templates/supabase
 
+  # Every SQL suite on plain Postgres 16 (backend/tests/run.sh, the local command), including the life calendar's
+  # (family_dates_test.sql). PRIV-R5 there opens a second session with dblink, from Postgres's contrib modules.
+  backend-sql:
+    name: Backend SQL suites (plain Postgres 16)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v5
+      - name: Postgres (preinstalled on the runner) with contrib (dblink)
+        run: |
+          ls "$(pg_config --sharedir)/extension/dblink.control" || (sudo apt-get update && sudo apt-get install -y postgresql-contrib)
+          sudo systemctl start postgresql.service
+          sudo -u postgres createuser -s "$USER"
+          sudo -u postgres createdb "$USER"
+      - run: bash tests/run.sh
+
   # ---------------------------------------------------------------------------
   # Backend on a REAL local Supabase stack (S16): Postgres + GoTrue + PostgREST + Kong.
   # ---------------------------------------------------------------------------

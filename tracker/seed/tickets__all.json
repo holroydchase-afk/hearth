@@ -1361,6 +1361,30 @@
    ],
    "found": "2026-11-23",
    "fixed": null
+  },
+  {
+   "id": "B24",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (life calendar review green run r68, Nov 24): the birthday privacy line 'Your family will see the month and day. Never the year.' (Gallery card and the Add my birthday form) and 'Saved. Your family will see December 8.' say the whole family sees your birthday. Under PRIV-R2 a member's birthday follows can_see_profile: parents plus people who share a group with you, so in a split family a viewer outside your groups does not see it. Overclaims the audience (safe direction, no leak), but it is untrue and can cause needless worry (A1). Words for grandparent-ux/staff-pm, then a failing test for the new words. 'Only your family can see these.' (subline) and 'It's removed for everyone in the family.' (delete) are accurate. Where: app/src/screens/Birthdays.tsx (PRIVACY, save notice). No test yet.",
+   "tests": [],
+   "found": "2026-11-24",
+   "fixed": null
+  },
+  {
+   "id": "T35",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "qa-tdd test bug (life calendar green run, Nov 24): app/src/screens/__tests__/calendar.test.tsx CAL-14 'icon and the word' counted Text nodes for the icon, but the row's icon is a SymbolView, which renders no Text under jest. It stayed red against a correct build (6fd4b91). Fixed: assert a non-chevron SymbolView inside the Birthdays row, as RD-15 does; no expectation weakened (word still checked). Green x3. Test: that file",
+   "tests": [
+    "app/src/screens/__tests__/calendar.test.tsx"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
   }
  ]
 }

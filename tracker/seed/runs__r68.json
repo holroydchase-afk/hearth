@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-24T23:30:00-05:00",
+ "label": "Life calendar review fixes (GUX-R1..R9, R11; PRIV-R1..R3, R5): all suites 3x via test-all.sh (green)",
+ "passed": 10923,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs of bash test-all.sh at d062ac8 plus the subline change ('Only your family can see these.' in Birthdays.tsx, CAL-14, spec) and qa-tdd's matching CAL-19 e2e:demo assertion: 23 suites passed, 0 failed, 2 skipped (starter invites: no STUDIO_SUPABASE_TEMPLATE; Deno: not installed, CI runs them) x3, identical. jest 2235 passed (1 skipped, 1 todo), typecheck clean, e2e:demo 50 passed (5 skipped screenshot specs), e2e:web 5, prototype e2e 33, backend SQL 1318 passed (family_dates 101/101; this is the CI backend-sql job's command, bash tests/run.sh, on local Postgres 16 with dblink). passed = 3 x (2235 + 50 + 5 + 33 + 1318). One earlier test-all run (before the e2e fix) failed e2e:demo CAL-19 deterministically: it still asserted the old subline 'Everyone in the family sees these.' (test missed in the copy change, not a flake; pre-run files kept). Accepted the engineer's setup edit in family_dates_test.sql (seed.sql's Everyone circles marked kind 'everyone', as 0011's backfill does for real data; no assertion changed). Open: QA-R1 P2, 'Your family will see ...' birthday lines overclaim the audience under PRIV-R2. Not run: contract-real, Deno, starter invites, phones (CAL manual cases). e2e/results/calendar-review-green-2026-11-24/"
+}
