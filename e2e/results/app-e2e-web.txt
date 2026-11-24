@@ -1,0 +1,87 @@
+Using src/app as the root directory for Expo Router.
+Starting Metro Bundler
+
+warning: Bundler cache is empty, rebuilding (this may take a minute)
+Web Bundled 14950ms node_modules/expo-router/entry.js (1331 modules)
+
+› Assets (22):
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/400Regular/AtkinsonHyperlegibleNext_400Regular.86635252a71fd7c43fd5b0c41bdc5d54.ttf (48KB)
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/500Medium/AtkinsonHyperlegibleNext_500Medium.2d5d6c0565845615ac6982fc8abf1095.ttf (48KB)
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/600SemiBold/AtkinsonHyperlegibleNext_600SemiBold.5cf92f89d6fa6a976d135e61e9ffde1f.ttf (48KB)
+node_modules/@expo-google-fonts/material-symbols/400Regular/MaterialSymbols_400Regular.6b4f0c2d698edccb36b0f132059c0205.ttf (972KB)
+node_modules/expo-router/assets/arrow_down.017bc6ba3fc25503e5eb5e53826d48a8.png (9.5KB)
+node_modules/expo-router/assets/error.d1ea1496f9057eb392d5bbf3732a61b7.png (469B)
+node_modules/expo-router/assets/file.19eeb73b9593a38f8e9f418337fc7d10.png (138B)
+node_modules/expo-router/assets/forward.d8b800c443b8972542883e0b9de2bdc6.png (188B)
+node_modules/expo-router/assets/pkg.ab19f4cbc543357183a20571f68380a3.png (364B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon-mask.0a328cd9c1afd0afe8e3b1ec5165b1b4.png (653B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon.35ba0eaec5a4f5ed12ca16fabeae451d.png (207B)
+node_modules/expo-router/assets/react-navigation/elements/clear-icon.c94f6478e7ae0cdd9f15de1fcb9e5e55.png (4 variations | 425B)
+node_modules/expo-router/assets/react-navigation/elements/close-icon.808e1b1b9b53114ec2838071a7e6daa7.png (4 variations | 235B)
+node_modules/expo-router/assets/react-navigation/elements/search-icon.286d67d3f74808a60a78d3ebf1a5fb57.png (928B)
+node_modules/expo-router/assets/sitemap.412dd9275b6b48ad28f5e3d81bb1f626.png (465B)
+node_modules/expo-router/assets/unmatched.20e71bdf79e3a97bf55fd9e164041578.png (4.8KB)
+
+› web bundles (37):
+_expo/static/css/native-tabs.module-78b0f59737571f455720970791a36bdd.css (2.5KB)
+_expo/static/js/web/__common-ed6d88ae0ec60bb60d1e978d53abc137.js (645KB)
+_expo/static/js/web/__expo-metro-runtime-8c088df87a31e4e6accd81c554ec290d.js (3.8KB)
+_expo/static/js/web/_layout-31fdb5ecb18265c0bb0a51351a2810da.js (393KB)
+_expo/static/js/web/_layout-3c087573f01f889295373118d7905e50.js (320B)
+_expo/static/js/web/_layout-3e4495a0bdc504ebde98a8b9e52f593f.js (55KB)
+_expo/static/js/web/_layout-519a210856f1063acc2da7bd5481138a.js (320B)
+_expo/static/js/web/_layout-edfeffbfaabe2b5ad2e095cd24e6d1a0.js (320B)
+_expo/static/js/web/[code]-3014a86d178881b374485ac02cdf1ef6.js (4.1KB)
+_expo/static/js/web/[postId]-78501c11abfd6be5da1cd1179267c3bb.js (371B)
+_expo/static/js/web/+not-found-d3ff987ed1e5f808fb5245f5da5fcbf4.js (747B)
+_expo/static/js/web/birthdays-2d092e60266b46197242e67135eeb8e5.js (333B)
+_expo/static/js/web/easy-view-0493452abff1f47737ecd2dd483b51fe.js (333B)
+_expo/static/js/web/ed448-3131d2815ab6b436d3a9885c2db6be1b.js (12KB)
+_expo/static/js/web/entry-7e5db13d101886df5f28fc017f20f8ae.js (1.1MB)
+_expo/static/js/web/events-ec0265dde54542ffbc3918653ce5e3c7.js (311B)
+_expo/static/js/web/groups-772524de26726270a27bf8546d17ced8.js (297B)
+_expo/static/js/web/groups-f43c4f26c906daac3c0f1905da923b98.js (12KB)
+_expo/static/js/web/help-088feced50a18c2e5452a4b703f39159.js (295B)
+_expo/static/js/web/help-d834a1d4980130ba76d69ff7cdf5e687.js (1.6KB)
+_expo/static/js/web/index-9d152c403895456a7d7e4b53fa2a446f.js (430B)
+_expo/static/js/web/index-b06e0b498753b0879f94ee6d1c489021.js (414B)
+_expo/static/js/web/index-c7d08ba0a194a34076fc619799d07d76.js (529B)
+_expo/static/js/web/index-eda8c7b7aa991c6bc40bca7edc3bf1d2.js (414B)
+_expo/static/js/web/index-f53f4c2bdcdf4e57e7ca0d3f93ee481f.js (473B)
+_expo/static/js/web/look-d5ae73c3e1528ceab5a3306358921170.js (325B)
+_expo/static/js/web/me-242706900a0f7cdc4985ec5c80d5f022.js (3.1KB)
+_expo/static/js/web/me-f5e72a17f578370db3974c9ddc1492d3.js (293B)
+_expo/static/js/web/messages-160f0ddec779479f064a87b912f2e4c1.js (236KB)
+_expo/static/js/web/mod-59287ce8887f83daf17e79ecc1a5a5c1.js (14KB)
+_expo/static/js/web/nist-886ad583efe6b071a72cd004b21bcedf.js (21KB)
+_expo/static/js/web/photos-fa031f7575cdece8bab5adc2eb0f0910.js (279B)
+_expo/static/js/web/search-baf1e5a13fb197c1ce6f6c0e2bb767da.js (5.7KB)
+_expo/static/js/web/share-4643df2bae0af8c8b81e02e473120d4b.js (20KB)
+_expo/static/js/web/sign-in-d7e8dddbc0899876bf27c463b3da0f4a.js (1.1KB)
+_expo/static/js/web/theme-170b25fcbf484c1a04bde01d32857f66.js (327B)
+_expo/static/js/web/timeline-90ede0e1d244a0daa065a777250e1eb1.js (528B)
+
+› Files (3):
+favicon.ico (15KB)
+index.html (1.6KB)
+metadata.json (49B)
+
+Exported: dist-fake
+
+Running 11 tests using 1 worker
+
+  ✓   1 e2e-web/core-loop.spec.js:44:1 › core loop: share → Jo sees it → Ruth does not → heart → comment → delete (21.0s)
+  ✓   2 e2e-web/invite-link.spec.js:15:1 › ONB-4 a link from "Make the invite" opens the "invited you" preview in the web build (5.3s)
+  ✓   3 e2e-web/messages.spec.js:5:1 › MSG-4 the bundled app makes an MLS group and sends a sealed message (3.3s)
+PERF-FEED-1 cold start to first photo: 909, 917, 921 ms (median 917 ms)
+  ✓   4 e2e-web/perf.spec.js:10:1 › PERF-FEED-1 cold start to the first photo on screen is under 2 s (5.7s)
+  -   5 e2e-web/showcase.spec.js:21:5 › showcase phone light
+  -   6 e2e-web/showcase.spec.js:21:5 › showcase phone dark
+  -   7 e2e-web/showcase.spec.js:21:5 › showcase laptop light
+  -   8 e2e-web/showcase.spec.js:21:5 › showcase laptop dark
+  -   9 e2e-web/snapshot.spec.js:16:3 › snapshot (iphone)
+  -  10 e2e-web/snapshot.spec.js:16:3 › snapshot (android)
+  ✓  11 e2e-web/video.spec.js:39:1 › VID-18 a video post shows its poster with a Play word button on Photos and the post screen; Play opens the player (4.8s)
+
+  6 skipped
+  5 passed (40.9s)

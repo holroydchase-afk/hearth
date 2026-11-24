@@ -6,6 +6,7 @@
 // (familyDates, setMyBirthday, saveFamilyDate; see src/api/contract/calendar.contract.test.ts for the shape).
 // Hooks for the engineer: the Gallery card is testID "birthday-card"; everything else is found by role and words.
 import { fireEvent, screen, waitFor, within } from '@testing-library/react-native';
+import { SymbolView } from 'expo-symbols';
 import React from 'react';
 import { StyleSheet, Text, TextInput } from 'react-native';
 import { ApiError, type HearthApi } from '../../api/HearthApi';
@@ -152,7 +153,9 @@ describe('CAL-14/15 More → Birthdays', () => {
     await renderApp(<MoreScreen />, { user: 'jo' });
     const row = await screen.findByRole('button', { name: 'Birthdays' }, slow);
     expect(within(row).getByText('Birthdays')).toBeTruthy();
-    expect(within(row).UNSAFE_queryAllByType(Text).length).toBeGreaterThan(1); // the icon glyph beside the word
+    // T35 (qa-tdd test bug): SymbolView renders no Text under jest, so look for the icon itself, not a glyph.
+    const icons = within(row).UNSAFE_queryAllByType(SymbolView).map((s) => (s.props as { name: { ios: string } }).name.ios);
+    expect(icons.filter((n) => !/chevron/.test(n)).length).toBeGreaterThanOrEqual(1); // an icon beside the word, not just the chevron
   });
 
   it('CAL-14 "Birthdays and dates" lists every date soonest first from today, in words, with Today / Tomorrow / In N days up to 30', async () => {

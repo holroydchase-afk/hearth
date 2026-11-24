@@ -1361,6 +1361,19 @@
    ],
    "found": "2026-11-23",
    "fixed": null
+  },
+  {
+   "id": "T35",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "qa-tdd test bug (life calendar green run, Nov 24): app/src/screens/__tests__/calendar.test.tsx CAL-14 'icon and the word' counted Text nodes for the icon, but the row's icon is a SymbolView, which renders no Text under jest. It stayed red against a correct build (6fd4b91). Fixed: assert a non-chevron SymbolView inside the Birthdays row, as RD-15 does; no expectation weakened (word still checked). Green x3. Test: that file",
+   "tests": [
+    "app/src/screens/__tests__/calendar.test.tsx"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
   }
  ]
 }
