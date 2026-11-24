@@ -420,7 +420,7 @@ language sql stable security definer set search_path = '' as $$
   )
 $$;
 
--- ---------- NOTIFY-K (GUX-VC-R11, R88): notices name the kind ----------
+-- ---------- NOTIFY-K (GUX-VC-R11, R89): notices name the kind ----------
 -- 0033's claim_notification_batches plus two last columns: kind_counts (new posts per kind, {} for replies only) and
 -- post_kinds (the kinds of every post the batch is about, replies included). Counts and kinds only: never a caption,
 -- what, when, where, saying, who or age. functions/notify words each kind (SPEC-VISIBILITY-CORE "Notices").

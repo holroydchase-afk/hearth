@@ -16,9 +16,9 @@ import { useApp, useFeed } from '../state/AppContext';
 import { BackButton, MenuLine, MenuRow, Screen, Txt, type Icon } from '../ui/kit';
 import { AppGate } from './AppGate';
 import { EventsScreen, type EventsView } from './EventsScreen';
-import { EasyView, LightOrDark, ThemePicker } from './Preferences';
+import { EasyView, LightOrDark, ThemePicker, VideosAndData } from './Preferences';
 
-export type RowId = 'messages' | 'groups' | 'events' | 'birthdays' | 'easyView' | 'look' | 'theme' | 'me' | 'help';
+export type RowId = 'messages' | 'groups' | 'events' | 'birthdays' | 'easyView' | 'look' | 'videosData' | 'theme' | 'me' | 'help';
 interface Row { id: RowId; text: string; icon: Icon; path: string }
 
 const ROWS: Row[] = [
@@ -28,6 +28,8 @@ const ROWS: Row[] = [
   { id: 'birthdays', text: 'Birthdays', icon: { sf: 'gift', md: 'cake' }, path: '/more/birthdays' },
   { id: 'easyView', text: 'Easy view', icon: { sf: 'textformat.size', md: 'format_size' }, path: '/more/easy-view' },
   { id: 'look', text: 'Light or dark', icon: { sf: 'sun.max', md: 'contrast' }, path: '/more/look' },
+  // DEC-87 (SPEC-MEDIA 5.1): right after Light or dark, for every role.
+  { id: 'videosData', text: 'Videos and data', icon: { sf: 'play.rectangle', md: 'data_saver_on' }, path: '/more/videos-data' },
   { id: 'theme', text: 'Theme', icon: { sf: 'paintpalette', md: 'palette' }, path: '/more/theme' },
   { id: 'me', text: 'Me', icon: { sf: 'person.crop.circle', md: 'account_circle' }, path: '/more/me' },
   { id: 'help', text: 'Help', icon: { sf: 'questionmark.circle', md: 'help' }, path: '/more/help' },
@@ -96,6 +98,17 @@ export function MorePreference({ which }: { which: 'easyView' | 'look' | 'theme'
   );
 }
 
+/** More → Videos and data (DEC-87, SPEC-MEDIA 5.1). */
+export function MoreVideosData() {
+  return (
+    <Screen>
+      <BackButton to="More" onPress={backToMore} />
+      <Txt variant="title1" role="header">Videos and data</Txt>
+      <VideosAndData />
+    </Screen>
+  );
+}
+
 /** The More menu (the first screen of More's stack). */
 export function MoreScreen() {
   const app = useApp();
@@ -116,7 +129,7 @@ export function MoreScreen() {
             text={r.text}
             icon={r.icon}
             count={r.id === 'messages' && news.total > 0 ? `${news.total} new` : null}
-            value={r.id === 'easyView' ? (app.prefs.easyView ? 'On' : 'Off') : null}
+            value={r.id === 'easyView' ? (app.prefs.easyView ? 'On' : 'Off') : r.id === 'videosData' && app.dataPrefs.saveData === true ? 'Saving data' : null}
             onPress={() => router.push(r.path)}
           />
           </React.Fragment>

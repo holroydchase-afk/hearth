@@ -11,6 +11,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, FlatList, RefreshControl, ScrollView, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useApp, useFeed } from '../state/AppContext';
+import { autoplayOn } from '../state/dataPrefs';
+import { AutoplayContext, useAutoplay } from '../feed/autoplay';
 import { loadLastSeen, saveLastSeen } from '../state/lastSeen';
 import { photosRows, type PhotosRow } from '../feed/events';
 import { newForYou } from '../feed/newForYou';
@@ -51,7 +53,9 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   const gallery = mode === 'gallery';
   const app = useApp();
   const state = useFeed();
-  const { c, dark } = useTheme();
+  const { c, dark, reduceMotion } = useTheme();
+  // DEC-87 (SPEC-MEDIA 5): Feed only; the Gallery grid never autoplays.
+  const autoplay = useAutoplay(!gallery && autoplayOn(app.dataPrefs, reduceMotion));
   const tabRoom = useTabBarSpace(); // RD-109: room under the web's floating tab bar
   // EVT-3/4: the Events list or one event, opened in place; Back returns here.
   const [events, setEvents] = useState<EventsView | null>(null);
@@ -238,7 +242,9 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
+      <AutoplayContext.Provider value={autoplay.now}>
       <FlatList
+        {...autoplay.listProps}
         scrollEventThrottle={16}
         data={rows}
         keyExtractor={(r) => r.key}
@@ -256,6 +262,7 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
         automaticallyAdjustKeyboardInsets // UX-R1: on iPhone the comment field scrolls up above the keyboard
         removeClippedSubviews={false}
       />
+      </AutoplayContext.Provider>
     </SafeAreaView>
   );
 }

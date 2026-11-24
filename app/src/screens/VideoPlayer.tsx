@@ -16,7 +16,9 @@ import { useApp } from '../state/AppContext';
 import { Button, Txt } from '../ui/kit';
 import { LookContext, useTheme } from '../ui/theme';
 
-export function VideoPlayer(props: { postId: string; mediaId: string; onClose: () => void }) {
+/** keepFile (DEC-87): opened from a Feed video already playing quietly, whose card still owns the decrypted file and
+ *  lets it go when it stops; so closing this doesn't delete the file under it. */
+export function VideoPlayer(props: { postId: string; mediaId: string; onClose: () => void; keepFile?: boolean }) {
   return (
     <LookContext.Provider value="dark">
       <DarkPlayer {...props} />
@@ -24,7 +26,7 @@ export function VideoPlayer(props: { postId: string; mediaId: string; onClose: (
   );
 }
 
-function DarkPlayer({ postId, mediaId, onClose }: { postId: string; mediaId: string; onClose: () => void }) {
+function DarkPlayer({ postId, mediaId, onClose, keepFile = false }: { postId: string; mediaId: string; onClose: () => void; keepFile?: boolean }) {
   const { media, helper } = useApp();
   const { c } = useTheme();
   const [uri, setUri] = useState<string | null>(null);
@@ -41,7 +43,7 @@ function DarkPlayer({ postId, mediaId, onClose }: { postId: string; mediaId: str
   }, [media, postId, mediaId, attempt]);
 
   // The decrypted file goes when the player closes.
-  useEffect(() => () => media?.releaseVideo(mediaId), [media, mediaId]);
+  useEffect(() => () => { if (!keepFile) media?.releaseVideo(mediaId); }, [media, mediaId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const tryAgain = () => {
     media?.releaseVideo(mediaId);

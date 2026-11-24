@@ -28,6 +28,40 @@ export function EasyView({ heading = false }: { heading?: boolean }) {
   );
 }
 
+/** DEC-87 (SPEC-MEDIA 5.1, final words): two switches, saved on this phone only. While Save data is on (or the
+ *  phone is set to reduce motion) the autoplay switch shows Off, can't be tapped and says why; its own saved choice
+ *  stays underneath, so turning Save data off puts it back. */
+export function VideosAndData() {
+  const { dataPrefs, setDataPrefs } = useApp();
+  const { reduceMotion } = useTheme();
+  const saving = dataPrefs.saveData === true;
+  const blocked = saving || reduceMotion;
+  const line = saving ? 'Off while Save data is on.'
+    : reduceMotion ? 'Off because your phone is set to reduce motion.'
+      : 'Videos in the Feed play quietly, without sound. Tap one to hear it.';
+  return (
+    <GroupedSection>
+      <Choice
+        kind="switch"
+        label="Play videos as I scroll"
+        title="Play videos as I scroll"
+        detail={line}
+        checked={dataPrefs.autoplay && !blocked}
+        disabled={blocked}
+        onPress={() => setDataPrefs({ autoplay: !dataPrefs.autoplay })}
+      />
+      <Choice
+        kind="switch"
+        label="Save data"
+        title="Save data"
+        detail="For prepaid or small phone plans. Videos wait until you tap Play, and photos load smaller until you open them."
+        checked={saving}
+        onPress={() => setDataPrefs({ saveData: !saving })}
+      />
+    </GroupedSection>
+  );
+}
+
 const LOOKS: { id: ScreenLook; title: string; detail: string }[] = [
   { id: 'system', title: 'Same as my phone (Recommended)', detail: 'Light in the day, dark at night if your phone does that.' },
   { id: 'light', title: 'Light screen', detail: 'Dark words on a white screen.' },

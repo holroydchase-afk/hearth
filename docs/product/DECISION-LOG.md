@@ -626,5 +626,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** level 5 needs a parent to start a family without Chase's script, and strangers starting families need a way to reach Hearth and a way to stop abuse first.
 - **Source:** `docs/product/SPEC-START-FAMILY.md` section 8; persona check `decisions/2026-11-19-keep-start-a-family.md`; answers PM-R5 in `docs/reviews/2026-11-19-tech-debt/pm.md`
 
+### DEC-87 · Video autoplay as a setting, default on, plus "Save data" at sign-up (AUTO-1..9, DATA-1..8)
+- **When / status:** Nov 24 · Chase (asked Nov 17 for social-media "starts playing as you scroll"): "I like the effect. Make it a setting, default to on. We can have a sign up choice that's like limit data use. And then we can turn off auto play stuff. Etc", then "Like old people have [prepaid] phones. Prepaid" · Specced, failing tests next
+- **Chose:** on the Feed only, after the person pauses (80% on screen, list still 1 s; Chase: "some one second or something scroll pause, then it plays"; nothing downloads before) the video in view plays silently, one at a time, pauses on scroll-away, loops, never jumps to the next; tap opens the full-screen player with sound. "Play videos as I scroll" in More, default on; off under reduce motion. Sign-up asks one plain prepaid question; "Save data" (default off, changeable in More) turns off autoplay, full-size photos on Feed cards and Timeline, and the viewer's look-ahead.
+- **Over:** CF-08's "no autoplay" calm feed (staff-pm had flagged the data cost: encrypted videos download and decrypt whole); a Wi-Fi-only autoplay rule; following Android Data Saver; autoplay on Gallery.
+- **Because:** Chase likes the effect and the family knows it from social apps; the prepaid question protects the relatives with small data plans in one tap.
+- **Source:** `docs/product/SPEC-MEDIA.md` section 5; CF-08 updated; persona check `decisions/2026-11-24-autoplay-save-data.md` (LG and AG Red, mitigated). TRACKER R88. Waits on video being on (R27).
+
 ---
-Last updated: Nov 24, 2026 (DEC-86; DEC-84)
+Last updated: Nov 25, 2026 (DEC-87; DEC-86; DEC-84)

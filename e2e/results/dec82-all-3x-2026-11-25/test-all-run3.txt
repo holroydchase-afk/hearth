@@ -1,0 +1,23 @@
+SYNC AGENTS RESULT: 16 passed, 0 failed
+AGENT RUNS RESULT: 20 passed, 0 failed
+AGENTS SKIP RESULT: 8 passed, 0 failed
+PERSONA CHECK RESULT: 14 passed, 0 failed
+# 9 passed, 0 failed
+LOG CHECK RESULT: 13 passed, 0 failed
+SPDX CHECK RESULT: 3 passed, 0 failed
+GRANDPARENT GUIDE RESULT: 4 passed, 0 failed
+TEST-ALL RESULT: 14 passed, 0 failed
+TEST-TOTALS RESULT: 4 passed, 0 failed
+eas: 12 passed, 0 failed
+SITE ANALYTICS RESULT: 10 passed, 0 failed
+SITE META RESULT: 15 passed, 0 failed
+  33 passed (11.5s)
+  49 passed (3.8m)
+  5 passed (50.6s)
+deploy: 20 passed, 0 failed
+psql:../packages/messenger/relay/test.sql:123: NOTICE:  RELAY RESULT: 24 passed, 0 failed
+starter scripts: 17 passed, 0 failed
+FAILED: app e2e demo
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SKIPPED: Deno functions (Deno isn't installed; CI runs them)
+SUITES: 22 passed, 1 failed, 2 skipped

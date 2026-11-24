@@ -8,6 +8,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { FeedPost } from '../api/HearthApi';
+import { useSaveData } from '../state/AppContext';
 import { useNav } from '../state/nav';
 import { MIN_TARGET, RADIUS, SPACE, photoShadow, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
@@ -43,6 +44,7 @@ export function collageTiles(n: number, single = 4 / 3): { aspect: number; wide:
 export function PhotoCollage({ postId, media, from }: { postId: string; media: CollageMedia[]; from?: string }) {
   const nav = useNav();
   const { c, type, dark } = useTheme();
+  const saveData = useSaveData(); // DEC-87: thumbnails only until a photo is opened
   const n = media.length;
   const { big, small, more } = collageShape(n);
 
@@ -72,7 +74,7 @@ export function PhotoCollage({ postId, media, from }: { postId: string; media: C
             onPress={() => nav.openViewer(pid, at)}
             style={[styles.tile, { backgroundColor: c.photo }, style]}
           >
-            <MediaImage postId={pid} mediaId={m.media_id} fit="cover" full={m.kind !== 'video'} compact={i >= big} style={{ flex: 1 }} />
+            <MediaImage postId={pid} mediaId={m.media_id} fit="cover" full={m.kind !== 'video' && !saveData} compact={i >= big} style={{ flex: 1 }} />
             {extra ? (
               <View style={styles.more} pointerEvents="none">
                 <Text style={[styles.moreText, type.headline]}>{`+${extra}`}</Text>

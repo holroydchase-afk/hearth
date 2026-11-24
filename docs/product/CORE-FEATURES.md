@@ -27,7 +27,7 @@ Owner: staff-pm. Written Oct 15, 2026. Beta scope and its tests stay in `docs/pr
 | ID | Feature | Persona | Done when | Phase |
 |---|---|---|---|---|
 | CF-07 | **Invite-only, no public anything.** No profiles, search, discovery, followers or share-to-public. An invite works only for the person it was addressed to | Megan, June | BETA-JOIN-3/4 green; no public URL returns content (security test) | Beta |
-| CF-08 | **A calm, finite feed.** Newest first, no ranking, no autoplay, no counts visible to non-audience; reaching the end says "You're all caught up" | June, Kim | No ranking code exists; the "caught up" state is tested | Beta |
+| CF-08 | **A calm, finite feed.** Newest first, no ranking, silent one-at-a-time video autoplay as a setting (default on; off with Save data or reduce motion; DEC-87), no counts visible to non-audience; reaching the end says "You're all caught up" | June, Kim | No ranking code exists; the "caught up" state is tested; AUTO-1..9, DATA-1..8 pass | Beta |
 | CF-09 | **Quiet notices.** One notice per post (not per photo), batched within 10 min; each person picks push, a daily email or a weekly email | Kim, Megan | BETA-NOTIFY-4/5 pass; ≤1 notice per recipient per 10 min | Beta |
 
 ## 3. No AI training on kids' photos
