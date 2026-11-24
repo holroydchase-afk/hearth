@@ -524,10 +524,10 @@ TIMELINE RESULT: 39 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('ce7f4e76-3aa5-4fad-afc4-28bb888c23d1'))
-psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('5ecdcaac-9149-4a2b-82cf-26b80369c070'))
-psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('c8a872fd-6e8c-4a3f-8247-c1be3bfed7a0'))
-psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '974ac1be-a308-43df-8d77-8cf83672da6e')
+psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('81ff16a8-b597-46ed-94f6-627c29da099a'))
+psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('3d5f725b-e378-4a80-847b-d34d806a9fc2'))
+psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('07b5eb32-f27e-4fca-8f79-86c288074ccf'))
+psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '52cb21d7-d69c-402a-9aba-29c9f2984390')
   n  | result |                                                                                  description                                                                                   
 -----+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    1 | ok     | BETA-AUD-11 shape: circles.kind exists (everyone | group | household | event)
@@ -1728,7 +1728,7 @@ VIS CALENDAR RESULT: 8 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-Time: 0.079 ms
+Time: 0.081 ms
 
 VIS ORACLE MATRIX seed=42 seconds=14
          path         |        kind         | checked | wrong_yes | wrong_no 
@@ -1976,14 +1976,17 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
  79 | ok     | SHARE-U-14 an adult (second parent) gets post_kinds in my_features
  80 | ok     | SHARE-U-14 an adult (second parent) can post news
  81 | ok     | SHARE-U-14 the family turns post_kinds off again: the adult is refused (42501)  [42501 post_kinds_off]
- 82 | NOT OK | R83 claim_notification_batches carries post_kinds for each batch
- 83 | NOT OK | R83 Grandma Rivera's batch with the news and event posts says their kinds are news and event
+ 82 | ok     | R83 claim_notification_batches carries post_kinds for each batch
+ 83 | ok     | R83 Grandma Rivera's batch with the news and event posts says their kinds are news and event
  84 | ok     | R83 the claimed batches carry the kind only, never the words, what or saying
+ 85 | ok     | NOTIFY-K-3 Grandma Rivera's batch counts its new posts per kind (news and event), and the counts add up to post_count
+ 86 | ok     | NOTIFY-K-1 the claimed batches carry no event day, place, child's name or news words
+ 87 | ok     | NOTIFY-K-4 setup: Grandma Rivera replies to the news post
+ 88 | ok     | NOTIFY-K-4 Alex's reply batch names the kind replied on (news) with no new-post counts
+ 89 | ok     | NOTIFY-K-4 the reply batch carries no reply words
 
 
-POST KINDS RESULT: 82 passed, 2 failed
-SOME TESTS FAILED
-psql:tests/post_kinds_test.sql:383: ERROR:  division by zero
+POST KINDS RESULT: 89 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
@@ -1991,9 +1994,9 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
 Narrowing for Chase (readable before 0011 only through "members see each other's replies"):
      reader     |  kind   |                                 reply_id                                  
 ----------------+---------+---------------------------------------------------------------------------
- Grandma Rivera | comment | 172e75b4-877a-4197-8ac3-5a3e0b4f56f7
+ Grandma Rivera | comment | 73024e7d-f0b5-44b3-891d-39d0d476160d
  Grandma Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a2
- Grandpa Rivera | comment | 19502315-b50f-4e0e-9650-1a5117e05c03
+ Grandpa Rivera | comment | e62a1ef8-8e08-4582-8ef9-2b42b7378da7
  Grandpa Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a1
 
  n  | result |                                                     description                                                      
@@ -2104,8 +2107,8 @@ ok      SETUP-API: before Chase has an account it says "sign in once in the app"
 ok      SETUP-API: ... and changes nothing
 ok      SETUP-API: fresh setup runs without error
         | Family "Chase's kids" is ready: Everyone, Chase's side, Mom's side, 7 houses, 2 events.
-        | Test viewer invite (account B): code VXTRFJE2GJ, works once until Dec 01, link https://thefreighttrains-team-hearth.expo.app/join/581f3014550a7c3f492ea8b0c76d960617c4d440
-        | Mom's poster invite: code Z4KDSYJ5HZ, works once until Dec 01, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/ff329539fc38825515d90414802404cbd8af6fe0
+        | Test viewer invite (account B): code SAPFB9MXGY, works once until Dec 01, link https://thefreighttrains-team-hearth.expo.app/join/8ccb27d7e70a16482a49286f0d7dc8b89fa4bb62
+        | Mom's poster invite: code HX9N8FJJF9, works once until Dec 01, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/99f200d92898ac5dfcbe10fb4a65d53e429cc3ac
 ok      SETUP-API: Chase owns one family, named as given (an apostrophe in the name is kept, not a SQL error)
 ok      SETUP-API: one Everyone
 ok      SETUP-API: the set groups are Chase's side and Mom's side (no v1 groups to retire later)

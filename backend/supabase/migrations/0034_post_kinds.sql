@@ -420,6 +420,129 @@ language sql stable security definer set search_path = '' as $$
   )
 $$;
 
+-- ---------- NOTIFY-K (GUX-VC-R11, R83): notices name the kind ----------
+-- 0033's claim_notification_batches plus two last columns: kind_counts (new posts per kind, {} for replies only) and
+-- post_kinds (the kinds of every post the batch is about, replies included). Counts and kinds only: never a caption,
+-- what, when, where, saying, who or age. functions/notify words each kind (SPEC-VISIBILITY-CORE "Notices").
+drop function public.claim_notification_batches(timestamptz);
+create function public.claim_notification_batches(p_now timestamptz default now())
+returns table (
+  recipient_id      uuid,
+  channel           text,
+  actor_names       text[],
+  post_ids          uuid[],
+  latest_post_id    uuid,
+  post_count        int,
+  comment_count     int,
+  heart_count       int,
+  outbox_ids        uuid[],
+  push_tokens       text[],
+  email             text,
+  is_batch          boolean,
+  photo_count       int,
+  taken_from        timestamptz,
+  taken_to          timestamptz,
+  kind_counts       jsonb,
+  post_kinds        text[]
+)
+language sql security definer set search_path = '' as $$
+  with cand as (
+    select o.id, o.recipient_id, o.post_id, o.actor_id, o.kind, o.created_at, p.batch_id, p.taken_at, p.kind as post_kind,
+           ( p.deleted_at is null and p.status = 'published'
+             and case when o.kind = 'post' then private.sees_post(o.recipient_id, p.id)
+                      else o.recipient_id = p.author_id and private.sees_post(o.recipient_id, p.id) end ) as valid,
+           coalesce(np.push, true) as want_push,
+           coalesce(np.email_digest, 'off') as digest,
+           exists (select 1 from public.push_tokens t where t.user_id = o.recipient_id) as has_token,
+           exists (select 1 from auth.users u where u.id = o.recipient_id and nullif(btrim(u.email), '') is not null) as has_email
+    from public.notification_outbox o
+    join public.posts p on p.id = o.post_id
+    left join public.notification_prefs np on np.user_id = o.recipient_id and np.space_id = p.space_id
+    where o.sent_at is null
+      -- BETA-BULK-6: hold an unfinished bulk batch (under 30 minutes old)
+      and not (o.kind = 'post' and p.batch_id is not null
+               and (select count(*) from public.posts b
+                    where b.author_id = p.author_id and b.batch_id = p.batch_id and b.status = 'published') < p.batch_size
+               and (select min(o2.created_at) from public.notification_outbox o2
+                    join public.posts b2 on b2.id = o2.post_id
+                    where b2.author_id = p.author_id and b2.batch_id = p.batch_id and o2.kind = 'post')
+                   > p_now - interval '30 minutes')
+    for update of o skip locked
+  ), classified as (
+    select c.*,
+           case when not c.valid then 'none'
+                when c.want_push and c.has_token then 'push'
+                when (c.want_push or c.digest <> 'off') and c.has_email then 'email'
+                else 'none' end as ch
+    from cand c
+  ), clock as (
+    select (p_now at time zone 'America/New_York') as l
+  ), slots as (
+    select (case when l >= date_trunc('day', l) + interval '18 hours' then date_trunc('day', l) + interval '18 hours'
+                 else date_trunc('day', l) - interval '6 hours' end) at time zone 'America/New_York' as evening,
+           (case when l >= date_trunc('day', l) - extract(dow from l) * interval '1 day' + interval '8 hours'
+                 then date_trunc('day', l) - extract(dow from l) * interval '1 day' + interval '8 hours'
+                 else date_trunc('day', l) - extract(dow from l) * interval '1 day' - interval '7 days' + interval '8 hours'
+            end) at time zone 'America/New_York' as sunday
+    from clock
+  ), windowed as (
+    select k.*,
+           case when k.ch = 'push' then p_now - interval '10 minutes'
+                when k.digest = 'weekly' and not k.want_push then (select sunday from slots)
+                else (select evening from slots) end as since
+    from classified k
+  ), ready as (
+    select g.recipient_id, g.ch
+    from (select w.recipient_id, w.ch, max(w.since) as since,
+                 bool_or(w.ch = 'push' or w.created_at <= w.since) as due
+          from windowed w where w.ch <> 'none' group by 1, 2) g
+    where g.due
+      and not exists (select 1 from public.notification_outbox s
+                      where s.recipient_id = g.recipient_id and s.channel = g.ch
+                        and s.sent_at >= g.since)
+  ), mark as (
+    update public.notification_outbox o
+    set sent_at = p_now, channel = w.ch
+    from windowed w
+    where o.id = w.id
+      and (w.ch = 'none' or exists (select 1 from ready r where r.recipient_id = w.recipient_id and r.ch = w.ch))
+    returning o.id
+  )
+  select w.recipient_id,
+         w.ch,
+         array_agg(distinct pr.display_name order by pr.display_name),
+         array_agg(distinct w.post_id order by w.post_id),
+         (array_agg(w.post_id order by w.created_at desc))[1],
+         (count(distinct w.post_id) filter (where w.kind = 'post'))::int,
+         (count(*) filter (where w.kind = 'comment'))::int,
+         (count(*) filter (where w.kind = 'heart'))::int,
+         array_agg(w.id order by w.id),
+         case when w.ch = 'push'
+              then coalesce((select array_agg(t.expo_token order by t.expo_token)
+                             from public.push_tokens t where t.user_id = w.recipient_id), '{}')
+              else '{}'::text[] end,
+         case when w.ch = 'email' then (select u.email from auth.users u where u.id = w.recipient_id) end,
+         coalesce(bool_and(w.batch_id is not null) filter (where w.kind = 'post'), false),
+         (select count(*)::int from public.media_items m
+           where m.post_id = any (array_agg(w.post_id) filter (where w.kind = 'post'))
+             and m.kind = 'photo' and m.upload_status = 'ready'),
+         min(w.taken_at) filter (where w.kind = 'post'),
+         max(w.taken_at) filter (where w.kind = 'post'),
+         -- 0034 (NOTIFY-K): new posts per kind and the kinds of every post the batch is about. Counts and kinds only.
+         coalesce((select jsonb_object_agg(x.k, x.n) from (
+                     select pk.k, count(distinct pk.post_id)::int as n
+                       from unnest(array_agg(w.post_kind) filter (where w.kind = 'post'),
+                                   array_agg(w.post_id) filter (where w.kind = 'post')) pk(k, post_id)
+                      group by pk.k) x), '{}'::jsonb),
+         array_agg(distinct w.post_kind order by w.post_kind)
+  from windowed w
+  join ready r on r.recipient_id = w.recipient_id and r.ch = w.ch
+  join public.profiles pr on pr.id = w.actor_id
+  group by w.recipient_id, w.ch
+$$;
+revoke execute on function public.claim_notification_batches(timestamptz) from public, anon, authenticated;
+grant execute on function public.claim_notification_batches(timestamptz) to service_role;
+
 -- ---------- the registry (tests/vis_registry_test.sql is the gate) ----------
 insert into vis.functions (fn, kind, note) values
   ('public.create_post(uuid,uuid,text,uuid[],timestamp with time zone,uuid[],uuid,integer,text,text,jsonb)', null,
