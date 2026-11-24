@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-25T01:30:00-05:00",
- "label": "Wordless Share start (SHARE-ST-19..27, DEC-79 option A): app suites 3x (red: FONT-2)",
- "passed": 6846,
- "failed": 3,
+ "at": "2026-11-24T23:59:30-05:00",
+ "label": "Demo photo swap (DEMO-PHOTO, DEC-82, GUX-DP-AC1..6): final pre-PR gate, all suites 3x via test-all.sh incl. backend SQL (green)",
+ "passed": 10989,
+ "failed": 0,
  "results": {},
- "note": "3 runs at 37cbe7f. jest 2227 passed, 1 failed (1 skipped, 1 todo) x3, identical: FONT-2 (ui/__tests__/font.test.tsx) flags kit.tsx:341-342, PostcardStamp's two <Text style={mark}> with the family set through a variable the static scan cannot see (B25). typecheck clean x3, check-expo-go OK (SDK 58) x3, e2e:demo 50 passed (5 skipped) x3 on a fresh export:web:demo incl. GUX-R2 calendar (did not repeat the engineer's one failure), e2e:web 5 passed (6 skipped) x3. Reviewed the engineer's test edits: shareStart SHARE-ST-24 Reduce Motion reset and the plainBackground allowlist (AddPhotoCard circle, PostcardStamp) keep their criteria; demo.spec.js SHARE-ST-8 word filter drops any token with no letter or digit, slightly wider than the private-use glyph it targets (QA-R2 P2). Not run: backend SQL and Deno (no backend change), prototype e2e, phones (SHARE-ST-9 manual). e2e/results/share-start-wordless-green-2026-11-24.txt"
+ "note": "3 runs of bash test-all.sh on the uncommitted DEMO-PHOTO build after r69 (changed since: seed.ts and DemoBar.tsx words, app/e2e-web/demo-screens.spec.js picture path, README, T36 dates, regenerated screenshots; GUX-DP-AC1..6 in): 23 suites passed, 0 failed, 2 skipped (starter invites: no STUDIO_SUPABASE_TEMPLATE; Deno: not installed, CI runs them) x3, identical. jest 2254 passed (1 skipped, 1 todo), typecheck clean, e2e:demo 53 passed, e2e:web 5, prototype e2e 33, backend SQL 1318 passed (local Postgres 16, started by qa-tdd), Supabase starter scripts 17, deploy script 20, each x3. passed = 3 x (2254 + 53 + 5 + 33 + 1318). One earlier attempt failed backend SQL and starter scripts on the environment only (Postgres had no 'root' role, so psql could not connect; no test ran against the build); qa-tdd added the role and reran all 3; that attempt is kept as env-attempt-no-root-role.txt. No flakes. Not run: Deno, starter invites, contract-real, phones. e2e/results/demo-photos-green-2026-11-24/"
 }

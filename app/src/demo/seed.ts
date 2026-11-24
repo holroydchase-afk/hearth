@@ -11,9 +11,10 @@ import { loadLastSeen, saveLastSeen } from '../state/lastSeen';
 const F = FIXTURE;
 const DAY = 864e5;
 
-/** DEMO-3 / DEC-64 (Chase, Nov 17): the parent is Chase, the founder's own first name, by his call; everyone else is made up and no surname appears. */
+/** DEMO-3, DEMO-PHOTO-9 (DEC-82, Nov 24; was DEC-64): the parent is "Kevin", since the stock photos show a model; everyone
+ *  is made up and no surname appears. The fixture's user id keeps its old key. */
 export const DEMO_NAMES: Record<string, string> = {
-  [F.users.chase.id]: 'Chase',
+  [F.users.chase.id]: 'Kevin',
   [F.users.alex.id]: 'Alex',
 };
 
@@ -27,32 +28,35 @@ export interface DemoPost {
   pictures: string[];
   to: 'everyone' | 'dadSide' | 'momSide';
   daysAgo: number;
-  /** DEMO-NEW-2: who sent it; Chase (the visitor) when left out. */
+  /** DEMO-NEW-2: who sent it; Kevin (the visitor) when left out. */
   from?: 'alex';
   hearts: Who[];
   replies: { who: Who; body: string }[];
 }
 
-/** Oldest first. Grandma Jo is on Dad's side, so she never sees the Mom's-side posts (DEMO-10). */
+/** DEMO-PHOTO-8 (SPEC-DEMO-PHOTOS): oldest first, three seasons of free Pexels stock photos. Same-day posts keep the
+ *  table's order by a small offset. Grandma Jo is on Dad's side, so she never sees the Mom's-side post (DEMO-10). */
 export const DEMO_POSTS: DemoPost[] = [
-  { title: 'Beach weekend', caption: 'Found these on my phone from August', pictures: ['beach', 'dunes'], to: 'everyone', daysAgo: 24,
-    hearts: ['jo', 'ruth', 'earl'], replies: [{ who: 'ruth', body: 'Look at that sky!' }] },
-  { caption: 'Leo and his cousin met a mammoth at the museum', pictures: ['museum'], to: 'everyone', daysAgo: 19,
-    hearts: ['jo', 'ruth', 'earl', 'alex'], replies: [{ who: 'jo', body: 'Look at those tusks! Tell him Grandma says hi.' }] },
-  { caption: 'He went down the big slide all by himself', pictures: ['playground'], to: 'dadSide', daysAgo: 15,
-    hearts: ['earl', 'jo'], replies: [{ who: 'earl', body: "Next time I'll push him on the swings." }] },
-  { caption: 'Watering the flowers on a foggy morning', pictures: ['porch'], to: 'momSide', daysAgo: 12,
-    hearts: ['ruth'], replies: [{ who: 'ruth', body: 'Your grandpa would love that garden.' }] },
-  { caption: 'Bike day at the lake', pictures: ['bike'], to: 'momSide', daysAgo: 9, hearts: ['ruth'], replies: [] },
-  { title: 'Splash pad', caption: 'Life jackets on and in all afternoon', pictures: ['splash'], to: 'everyone', daysAgo: 6,
-    hearts: ['jo', 'ruth', 'earl', 'alex'], replies: [{ who: 'jo', body: 'Those two are best buddies!' }, { who: 'ruth', body: 'Looks like a perfect day.' }] },
-  { caption: 'Bridge walk on the trail', pictures: ['bridge'], to: 'dadSide', daysAgo: 2,
-    hearts: ['jo'], replies: [{ who: 'jo', body: 'Hold on to that railing!' }] },
-  // DEMO-NEW-2: Alex's posts since the demo's last visit, so the New for you card has something to show.
-  { title: 'Fall colors', caption: 'We drove up to the overlook. The leaves are turning', pictures: ['overlook'], to: 'everyone', daysAgo: 1.6, from: 'alex',
-    hearts: ['ruth'], replies: [{ who: 'ruth', body: 'Bring the boys by on Sunday!' }] },
-  { caption: 'One big hug before the drive home', pictures: ['hug'], to: 'everyone', daysAgo: 0.8, from: 'alex',
-    hearts: ['jo', 'earl'], replies: [] },
+  { title: 'Apple blossoms at the orchard', caption: 'Everything was in bloom, and the kids ran the whole time.',
+    pictures: ['orchard-4543640', 'orchard-4543633', 'orchard-4543718', 'orchard-4543714', 'orchard-4543720', 'orchard-4543719'],
+    to: 'everyone', daysAgo: 190, from: 'alex',
+    hearts: ['jo', 'ruth', 'earl'], replies: [{ who: 'ruth', body: 'Look at all those blossoms!' }, { who: 'jo', body: 'So pretty. Save me some apples this fall.' }] },
+  { title: 'Shoulder rides all afternoon', caption: 'Nobody wanted to walk', pictures: ['orchard-4543671', 'orchard-4543672', 'orchard-4543642'],
+    to: 'dadSide', daysAgo: 189.9,
+    hearts: ['jo', 'earl'], replies: [{ who: 'jo', body: 'Your dad used to carry you just like that.' }] },
+  { caption: 'My two sweethearts', pictures: ['orchard-4543661'], to: 'momSide', daysAgo: 189.8, from: 'alex',
+    hearts: ['ruth'], replies: [{ who: 'ruth', body: 'Three of my favorite faces.' }] },
+  { title: 'Pancake morning', caption: 'Aunt Bea taught the kids to make pancakes', pictures: ['baking-3807194', 'baking-3807115', 'baking-3806951', 'baking-3807313'],
+    to: 'dadSide', daysAgo: 40,
+    hearts: ['jo', 'earl'], replies: [{ who: 'earl', body: 'Save me a stack next time.' }] },
+  { caption: 'Then we all sat down for tea and pancakes.', pictures: ['baking-3807394'], to: 'everyone', daysAgo: 39.9,
+    hearts: ['jo', 'ruth', 'earl', 'alex'], replies: [{ who: 'jo', body: 'What a sweet morning.' }] },
+  // DEMO-NEW-2, DEMO-PHOTO-12: Alex's post since the demo's last visit, so New for you opens on the bike ride.
+  { title: 'First ride on the balance bike', caption: 'All the way down the path on the first try',
+    pictures: ['bike-6209917', 'bike-6209856', 'bike-6209923'], to: 'everyone', daysAgo: 2, from: 'alex',
+    hearts: ['jo', 'ruth', 'earl'], replies: [{ who: 'ruth', body: 'Look at that little yellow coat go!' }, { who: 'jo', body: 'Watch out, world!' }] },
+  { caption: 'A ride under the big yellow tree', pictures: ['bike-6209901'], to: 'dadSide', daysAgo: 1.2,
+    hearts: ['jo'], replies: [{ who: 'jo', body: "That's a lot of leaves!" }] },
 ];
 
 /** CAL-19: the demo family's dates. Grandma Jo's and Grandpa Earl's birthdays are counted from the visit (days from
@@ -61,7 +65,7 @@ export const DEMO_DATES = {
   members: [{ who: 'jo', inDays: 0 }, { who: 'earl', inDays: 9 }] as { who: 'jo' | 'earl'; inDays: number }[],
   labelled: [
     { kind: 'birthday', label: 'Mia', month: 3, day: 14 },
-    { kind: 'anniversary', label: 'Chase and Alex', month: 6, day: 20 },
+    { kind: 'anniversary', label: 'Kevin and Alex', month: 6, day: 20 },
   ] as { kind: 'birthday' | 'anniversary'; label: string; month: number; day: number }[],
 };
 
@@ -89,7 +93,7 @@ const iso = (t: number) => new Date(t).toISOString();
 
 /** Seeds the demo family into a fixture backend (made with joIsMember: true). */
 export async function seedDemo(be: FakeBackend, load: (name: string) => Promise<DemoPicture>, kv?: KV): Promise<void> {
-  // DEMO-NEW-1: a last visit 3 days ago for Chase and Grandma Jo, written first so Photos reads it; a saved one is kept.
+  // DEMO-NEW-1: a last visit 3 days ago for Kevin and Grandma Jo, written first so Photos reads it; a saved one is kept.
   if (kv) {
     const last = new Date(Date.now() - DEMO_LAST_VISIT_DAYS * DAY).toISOString();
     for (const u of [F.users.chase.id, F.users.jo.id]) {

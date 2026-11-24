@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-25T03:30:00-05:00",
- "label": "Wordless Share start (SHARE-ST-19..27, GUX-W1..W5, FONT-2/B25, DEC-79 option A): app suites 3x (green)",
- "passed": 6867,
- "failed": 0,
+ "at": "2026-11-24T23:55:00-05:00",
+ "label": "Wordless Share start (SHARE-ST-19..27, DEC-79 round 3, option A): tests written first (red, 1 run)",
+ "passed": 18,
+ "failed": 28,
  "results": {},
- "note": "3 runs at 91e424a, identical. jest 2234 passed (1 skipped, 1 todo) x3 incl. FONT-2 (B25 closed) and GUX-W1..W5; typecheck clean x3; check-expo-go OK (SDK 58) x3; e2e:demo 50 passed (5 skipped) x3 on one fresh export:web:demo; e2e:web 5 passed (6 skipped) x3. Closes r70 QA-R1 (B25) and QA-R2 (SHARE-ST-8 filter narrowed to private-use glyphs in 19f7c98). Reviewed the engineer's plainBackground.test.tsx RD-34 Share edit: still an exact list, so any other grey box fails; the added share-stamp entry is the c.surface stamp inside share-card on the big photo (GUX-W2), so the criterion holds; it does not assert the stamp is a descendant of share-card (QA-R1 P2). Not run: backend SQL and Deno (no backend change), prototype e2e, phones (SHARE-ST-9 manual). e2e/results/share-start-wordless-final-green-2026-11-24.txt"
+ "note": "Red on purpose, 1 run at ee9a496 plus test edits only (no product code). app/src/screens/__tests__/shareStart.test.tsx: 27 failed, 18 passed of 45. Red for the right reason: no share-spot / share-stamp inside the spot / share-note-rule x2 / share-to-rule / bare 'To:'; the subline, 'Up to N at a time', 'Add a note (optional)', 'To: you pick after your photos', group names and 'Last shared' still show; the card is not the one button (taps on the card's padding open nothing; the note and To: Pressables are extra stops). Removed as superseded: SHARE-ST-3, SHARE-ST-10..16, GUX-R1, R2, R3, R5; SHARE-ST-2 and SHARE-ST-4's Cancel case retargeted (words 'Add photos' only, 4:3 on share-spot, 'To:'). Still passing guards: SHARE-ST-1, SHARE-ST-4..7, SHARE-ST-17, SHARE-ST-18, GUX-R4. e2e:demo (demo build) demo.spec.js SHARE-ST-8 retargeted as SHARE-ST-8 SHARE-ST-27: 1 failed (missing testIDs, old words in the card, no tap target on a ruled line); the rest of e2e:demo not run. Not run: full jest, typecheck beyond this file (clean), e2e:web, backend, phones (SHARE-ST-9 manual). e2e/results/share-start-wordless-red-2026-11-24.txt"
 }
