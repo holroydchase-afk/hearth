@@ -221,3 +221,28 @@ describe('Start a family entry (BETA-START-2, -5, -8)', () => {
     expect(screen.queryByRole('button', { name: START })).toBeNull();
   });
 });
+
+// SPEC-START-FAMILY 8: nobody can start a family with no way to reach Hearth.
+const EMAIL = 'help@example.test';
+
+describe('START-ON-2 no help email, no start button', () => {
+  const START = "I'm a parent: start a family";
+  const open = (be: FakeBackend) => { be.state.featureFlags = { ...be.state.featureFlags, start_family_open: true }; return be; };
+
+  it('START-ON-2 with no help email the start button is hidden even when can_start_family() is true', async () => {
+    const be = open(FakeBackend.withFixture());
+    const api = be.clientFor(null, { trackAppSession: true });
+    const asked = jest.spyOn(api, 'canStartFamily').mockResolvedValue(true);
+    await renderApp(<AppGate />, { be, user: 'newbie', waitReady: false, deps: { api, helpEmail: null } });
+    expect(await screen.findByLabelText('Invite code')).toBeTruthy();
+    await waitFor(() => expect(asked).toHaveBeenCalled());
+    await new Promise((r) => setTimeout(r, 50));
+    expect(screen.queryByRole('button', { name: START })).toBeNull();
+  });
+
+  it('START-ON-2 with a help email and can_start_family() true the start button shows (other direction)', async () => {
+    const be = open(FakeBackend.withFixture());
+    await renderApp(<AppGate />, { be, user: 'newbie', waitReady: false, deps: { helpEmail: EMAIL } });
+    expect(await screen.findByRole('button', { name: START })).toBeTruthy();
+  });
+});

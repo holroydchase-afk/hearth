@@ -2,6 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
+import { FIXTURE } from '../../api/fake/FakeBackend';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
 import { HelpScreen } from '../HelpScreen';
 import { MeScreen } from '../MeScreen';
@@ -62,5 +63,46 @@ describe('Me tab (posters)', () => {
     fireEvent.press(screen.getByRole('button', { name: 'Sign out of Hearth' }));
     expect(screen.getByText('Sign out of Hearth?')).toBeTruthy();
     expectGrandparentSafe();
+  });
+});
+
+// SPEC-START-FAMILY 8: the abuse contact (PRIV-R7, GUX-R3). deps.helpEmail comes from EXPO_PUBLIC_HEARTH_HELP_EMAIL;
+// tests use a fake address only.
+const EMAIL = 'help@example.test';
+
+describe('START-ON-1 Help has a "Something wrong?" section with Email Hearth', () => {
+  for (const user of ['jo', 'chase'] as const) {
+    it(`START-ON-1 ${user === 'chase' ? 'the owner' : 'a viewer'} sees "Something wrong?" and Email Hearth opens mailto: the help address`, async () => {
+      const { deps } = await renderApp(<HelpScreen />, { user, deps: { helpEmail: EMAIL } });
+      expect(await screen.findByText('Something wrong?')).toBeTruthy();
+      // GUX-R1: the address is in words too, so it works with no mail app and can be read aloud.
+      expect(screen.getByText('Our address is help@example.test.')).toBeTruthy();
+      const btn = screen.getByRole('button', { name: 'Email Hearth' });
+      fireEvent.press(btn);
+      await waitFor(() => expect(deps.openUrl).toHaveBeenCalledWith(expect.stringMatching(/^mailto:help@example\.test(\?|$)/)));
+      expectGrandparentSafe();
+    });
+  }
+
+  it('START-ON-1 the mail carries no family name, user id, email or group name', async () => {
+    const { deps } = await renderApp(<HelpScreen />, { user: 'jo', deps: { helpEmail: EMAIL } });
+    fireEvent.press(await screen.findByRole('button', { name: 'Email Hearth' }));
+    await waitFor(() => expect(deps.openUrl).toHaveBeenCalled());
+    const url = (deps.openUrl as jest.Mock).mock.calls.map((c) => String(c[0])).find((u) => u.startsWith('mailto:'))!;
+    expect(url).toBeDefined();
+    const plain = decodeURIComponent(url).toLowerCase();
+    const banned = [
+      FIXTURE.space.name, FIXTURE.space.id,
+      ...Object.values(FIXTURE.users).flatMap((u) => [u.id, u.email, u.name]),
+      ...Object.values(FIXTURE.circles).flatMap((c) => [c.id, c.name]),
+    ];
+    for (const b of banned) expect({ b, found: plain.includes(b.toLowerCase()) }).toEqual({ b, found: false });
+  });
+
+  it('START-ON-1 with no help email the section is not shown (no dead row)', async () => {
+    await renderApp(<HelpScreen />, { user: 'jo', deps: { helpEmail: null } });
+    await screen.findByText('How should we tell you about new photos?');
+    expect(screen.queryByText('Something wrong?')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Email Hearth' })).toBeNull();
   });
 });

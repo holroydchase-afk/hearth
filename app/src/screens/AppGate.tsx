@@ -19,6 +19,8 @@ export function AppGate() {
   const [starting, setStarting] = useState(false);
   const noSpace = app.status === 'noSpace';
   const api = app.deps.api;
+  // START-ON-2: nobody starts a family while there is no way to reach Hearth (no help email in this build).
+  const startable = canStart && !!app.deps.helpEmail;
   useEffect(() => {
     if (!noSpace) return;
     let live = true;
@@ -62,7 +64,7 @@ export function AppGate() {
       </Screen>
     );
   }
-  if (starting && canStart) return <StartFamily onUseCode={() => setStarting(false)} />;
+  if (starting && startable) return <StartFamily onUseCode={() => setStarting(false)} />;
   return (
     <Screen>
       <Card>
@@ -77,7 +79,7 @@ export function AppGate() {
             <Button label="Use email instead" variant="secondary" onPress={() => { void app.signOut().then(() => nav.goSignIn({ with: 'email' })); }} />
           </>
         ) : null}
-        {canStart ? <Button label="I'm a parent: start a family" variant="secondary" onPress={() => setStarting(true)} /> : null}
+        {startable ? <Button label="I'm a parent: start a family" variant="secondary" onPress={() => setStarting(true)} /> : null}
         <Button label="Sign out of Hearth" variant="secondary" onPress={() => void app.signOut()} />
       </Card>
     </Screen>
