@@ -11,8 +11,9 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
-## Nov 24: visibility core designed (R77; design only, awaits Chase's go)
-- `docs/product/SPEC-VISIBILITY-CORE.md` + `docs/architecture/07-visibility-model.md`: one registered core for every kind (fungible, generic `@holroyd/visibility`), CI gate, oracle (folds R51), user-error catches, co-parent bridge (after the beta), one composer. Open: Chase's go on Phases 1, 1b, 2.
+## Nov 24: visibility core Phases 1 and 1b built (R77, DEC-81; branch claude/project-thread-jtelk5, local commit, not deployed)
+- Done: migrations 0030 (generic `vis` core, verbatim copy of `packages/visibility/core/supabase.sql`) and 0031 (Hearth adapter, registry of all 34 tables, 71 functions, 2 edge functions, RLS forced, anon grants revoked); no behavior change. qa-tdd's VIS-1..7, 19..24 green; all backend suites green. Next exact step: qa-tdd green 3x plus privacy-security review, then PR; Phase 2 (oracle, VIS-8..12) after. Deploy refuses (0031 guard) if the hosted table owner doesn't bypass RLS.
+- Design: `docs/product/SPEC-VISIBILITY-CORE.md` + `docs/architecture/07-visibility-model.md`.
 
 ## Nov 24: public repo standards (intake #163, R76; branch claude/project-thread-6ew09x, PR)
 - **Ask (Product Studio scorecard):** engineers and hiring managers judge the public repo's layout.

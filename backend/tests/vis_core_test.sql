@@ -35,7 +35,8 @@ create function tests.vis7(p_reach text) returns text language plpgsql as $f$
 declare k record; u uuid; r record; got boolean; want boolean; bad int := 0; checked int := 0; first text;
 begin
   for k in select * from vis.kinds where reach = p_reach
-             and exists (select 1 from pg_attribute a where a.attrelid = relation and a.attname = 'id' and not a.attisdropped)
+             and exists (select 1 from pg_attribute a where a.attrelid = relation and a.attname = 'id' and not a.attisdropped
+                           and a.atttypid = 'uuid'::regtype)   -- can_see takes a uuid; bigint-id kinds (comment_mode_log) can't be addressed
            order by kind loop
     for r in execute format('select id::text as id%s from %s',
                             case when k.item_column is not null then format(', %I::uuid as item', k.item_column) else ', null::uuid as item' end

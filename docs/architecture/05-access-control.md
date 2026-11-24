@@ -87,11 +87,16 @@ A relative's profile (display name) is visible to the people they share a family
 
 A group's or event's chat holds the group's members plus the family's parents; households have no chat. Anyone else gets "not found". Relatives see a plain group's chat titled by its people, not its name. Details in [06-messenger.md](06-messenger.md); tests in `backend/tests/chat_test.sql`.
 
+## The visibility registry (Built locally, migrations 0030 and 0031)
+
+Every table an app user could reach is listed once in `vis.kinds` with one reach (item, person, container, self, admin, server), every `security definer` function the app can call is listed in `vis.functions` (with its kind, or on an allowlist that names the reason), and both edge functions are listed in `vis.edge_functions` (`notify` says why it skips the caller's token). `backend/tests/vis_registry_test.sql` reads the live catalog after every migration and fails CI, naming the table or function, when anything is missing; `backend/tests/vis_gate_test.sh` proves it bites. RLS is now forced on every public table (the owner bypasses RLS, so nothing changed; 0031 refuses to run otherwise), and `anon` holds no table grant. `vis.can_see(user, kind, id)` answers for any registered row and `vis.sees_item` is the generic twin of `private.sees_post`; both are server side only (no app role can call them, and the `vis` schema isn't exposed by the API). Nothing reads them yet: every policy still calls `private.sees_post` directly. Model and remaining phases: [07-visibility-model.md](07-visibility-model.md).
+
 ## How it's tested (Built)
 
 - `backend/tests/rls_test.sql` (120 checks), `backend/tests/groups_test.sql` (167) and `backend/tests/groups_v2_test.sql` (108): each rule in both directions, the allowed person sees it and the excluded person doesn't, including grandparent and co-parent separation. The v2 suite also checks that `get_comments`, table RLS, `reply_ok`, the feed counts and `reply_scope` agree for every person and every reply.
 - `backend/tests/aud16/` (BETA-AUD-16): a who-sees-what snapshot before 0011 and after; 0011 changed nobody's access. `backend/tests/grp1/` (GRP-1) does the same for 0013, including who reads every reply.
 - `backend/tests/privacy_audit_test.sql`: the invite rate limit keeps no raw IP address (PRIV-1); S11 and S13 above.
+- `backend/tests/vis_core_test.sql` (VIS-7, 22, 24): `vis.can_see` equals today's rule for every user and every row of every registered kind, and `vis.sees_item` equals `private.sees_post` for every user and post.
 - CI runs the SQL suites on a real local Supabase stack (`backend/tests/run_supabase.sh`), not only on a stand-in.
 
 ## What Hearth's server can see
@@ -107,4 +112,4 @@ RLS limits what each family member's app can read. It does not limit Hearth's se
 - **Planned:** event dates (`starts_on`, `ends_on`) exist in the schema but the app doesn't use them yet.
 
 ---
-Last checked against code: 2026-11-19, migration 0027 (circles_select and export_my_data keep group names with the parents).
+Last checked against code: 2026-11-24, migrations 0001 to 0028, 0030 and 0031 (visibility registry and gate; 0029 is the life-calendar branch, not read).

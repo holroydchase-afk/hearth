@@ -119,5 +119,7 @@ insert into public.comments (post_id, author_id, body) values
 insert into public.post_views (post_id, user_id) values
   ('55555555-0000-0000-0000-0000000000a1', 'a0000000-0000-0000-0000-0000000000a1'),
   ('55555555-0000-0000-0000-0000000000b1', 'b0000000-0000-0000-0000-0000000000b1');
+-- Grandma Rivera asked for a copy of her data (a self-reach row for VIS-7).
+insert into public.account_exports (user_id) values ('a0000000-0000-0000-0000-0000000000a1');
 
 commit;

@@ -1,6 +1,6 @@
 # Spec: one visibility core, the co-parent bridge, and one Share composer
 
-Status: **design, awaits Chase's go** (Nov 24, 2026). TRACKER R77. Persona check: `decisions/2026-11-24-visibility-core.md`. Data model: `docs/architecture/07-visibility-model.md`. Design only: no code, no migration, no package files yet.
+Status: **Phases 1 and 1b built locally** (Nov 24, 2026; Chase "Ok agreed to all", DEC-81; migrations 0030 and 0031, `packages/visibility/core`; not deployed). Phase 2 next; bridge after the beta. TRACKER R77. Persona check: `decisions/2026-11-24-visibility-core.md`. Data model: `docs/architecture/07-visibility-model.md` (its names win: `vis.kinds`, `vis.can_see`, `vis.sees_item`, `vis.attach`).
 
 **Simple for the user, sophisticated underneath.** One core decides who sees every row of every kind. Families never see it; they pick names on a postcard. The headline feature it unlocks is the **co-parent bridge**: two homes sharing their child's photos and dates on purpose, with each side's relatives kept apart.
 
@@ -49,20 +49,20 @@ Self, Parents and Server are plumbing. (Generic names in 07: item, person, conta
 
 ### C2. The registry
 
-One table, `private.vis_registry(kind, relation, reach_class, rule_fn, parent_kind, note)`, one row per table, view, RPC that returns rows, storage bucket and edge function. Example rows: `post | public.posts | post | private.sees_post | null`, `media_item | public.media_items | post | private.sees_post | post`, `life_date | public.life_dates | person | public.can_see_profile | profile`.
+Three tables in the `vis` schema (07): `vis.kinds(kind, relation, reach, item_column, owner_column, rule_fn, narrow_fn, note)`, one row per table or view; `vis.functions(fn, kind, note)` for security definer functions (kind null = allowlisted with a reason); `vis.edge_functions(name, kind, note)`. Example rows: `post | public.posts | item | item_column id`, `media_item | public.media_items | item | item_column post_id | narrow private.vis_media_ok`, `profile | public.profiles | person | rule private.vis_sees_person`.
 
-One function reads it: `private.can_see(user, kind, id) → boolean`. It looks up the kind, finds the parent if there is one, and calls that class's rule. RLS policies keep calling the rule directly (fast, and the planner can inline it); `can_see` is what tests, the oracle, `sign-media`, `notify` and export call, so they can't drift from RLS.
+One function reads it: `vis.can_see(user, kind, id) → boolean`. It looks up the kind, finds the item through `item_column` (item reach) or calls the kind's rule, then ANDs any hook. RLS policies keep calling the rule directly (fast, and the planner can inline it); `can_see` is what tests, the oracle, `sign-media`, `notify` and export call, so they can't drift from RLS.
 
 How existing rules fold in: nothing is rewritten. `sees_post`, `group_reply_ok`, `can_see_profile`, `can_see_circle`, `can_send_to` and `feature_on` stay as they are. The registry **names** them and the tests prove every reader uses them.
 
 ### C3. Default deny and the coverage gate (the part that ends the question)
 
 A CI test, `backend/tests/vis_registry_test.sql`, reads the live catalog after all migrations:
-- every table in `public` and every storage bucket is in the registry, or the build fails with "`<table>` has no reach class: add a vis_registry row";
+- every table in `public` and every storage bucket is in the registry, or the build fails with "`<table>` has no reach class: add a vis_registry row" (the registry is `vis.kinds`);
 - every registered table has RLS on and forced, and no policy for `authenticated` is `using (true)`;
 - every policy on a Post-class table calls its class's rule (checked from `pg_policies`);
 - every `security definer` function in `public` that returns rows is registered, and its body calls its rule (text check, with a short allowlist that names a reason);
-- every edge function folder is listed (checked by a shell step that lists `backend/functions/`), and any `verify_jwt = false` names a reason;
+- every edge function folder is listed (checked by a shell step, `backend/tests/vis_gate_test.sh`, that lists `backend/supabase/functions/`), and any `verify_jwt = false` names a reason;
 - the same checks cover every schema PostgREST exposes (not only `public`), every view (must be `security_invoker`), materialized views (none exposed), all functions `authenticated` can execute (not only row-returning ones), policies `TO public`, column grants, the Realtime publication (no presence) and `storage.objects` policies (PRIV-VC-R2; full list in 07);
 - each Post-class table has exactly one permissive select policy; any other is restrictive, so nothing can OR a wider rule in (PRIV-VC-R4).
 
@@ -70,7 +70,7 @@ So a feature can still be built wrong, but it **can't merge** wrong.
 
 ### C4. The oracle (R51, folded in)
 
-`backend/tests/vis_oracle/`: a seeded generator builds families (two households, overlapping groups, events, removed members, demoted parents, a co-parent in the other space, share-history cutoffs, deleted posts). For every person × every item × every read path it compares the answer to `private.can_see`. Read paths: table selects, `get_feed`, `get_timeline`, `search_posts`, `post_viewers`, `get_comments`, `reply_readers`, `sign-media`, the notice outbox, `export_my_data`, chat. A wrong "yes" is P0; a wrong "no" is P1. Fixed seed on every PR, a random seed nightly, results matrix dated in `backend/tests/results/`.
+`backend/tests/vis_oracle/`: a seeded generator builds families (two households, overlapping groups, events, removed members, demoted parents, a co-parent in the other space, share-history cutoffs, deleted posts). For every person × every item × every read path it compares the answer to `vis.can_see`. Read paths: table selects, `get_feed`, `get_timeline`, `search_posts`, `post_viewers`, `get_comments`, `reply_readers`, `sign-media`, the notice outbox, `export_my_data`, chat. A wrong "yes" is P0; a wrong "no" is P1. Fixed seed on every PR, a random seed nightly, results matrix dated in `backend/tests/results/`.
 
 The app's Fake backend runs the same fixtures, so the demo can't show what the real server wouldn't.
 
@@ -151,8 +151,8 @@ Each phase is a small PR: qa-tdd red first, then engineer. Migrations start at 0
 | VIS-3 | auto | Given every registered table, When the catalog is read, Then RLS is enabled and forced and no `authenticated` policy is `using (true)` |
 | VIS-4 | auto | Given every Post-class table, When `pg_policies` is read, Then each select policy calls `private.sees_post` (directly or via `reply_ok`) |
 | VIS-5 | auto | Given every `security definer` row-returning function in `public`, When its body is read, Then it is registered and calls its rule, or sits on the allowlist with a reason |
-| VIS-6 | auto | Given `backend/functions/`, When CI lists it, Then every folder is in the registry |
-| VIS-7 | auto | Given the fixture family, When `private.can_see(u, kind, id)` runs for every user and row, Then it equals the class rule for each |
+| VIS-6 | auto | Given `backend/supabase/functions/`, When CI lists it, Then every folder is in the registry |
+| VIS-7 | auto | Given the fixture family, When `vis.can_see(u, kind, id)` runs for every user and row, Then it equals the class rule for each |
 
 **Phase 2: oracle across readers (R51, about 3 sessions)**
 
@@ -277,4 +277,4 @@ Open (before Phase 6; none block Phases 1 to 4):
 4. **2-minute "Take back" delays every notice by up to 2 minutes.** Recommendation: yes; a grandparent won't notice 2 minutes, and a wrong send is the worst error we have.
 
 ---
-Last checked against code: 2026-11-24, migrations 0001 to 0028 on main (0029 life calendar on its own branch, not read).
+Last checked against code: 2026-11-24, migrations 0001 to 0028, 0030 and 0031 (0029 life calendar on its own branch, not read).

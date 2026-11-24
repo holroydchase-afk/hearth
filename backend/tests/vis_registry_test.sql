@@ -94,6 +94,7 @@ select tests.ok_each($$select quote_ident(n.nspname) || '.' || quote_ident(c.rel
 
 -- ---------- VIS-4 every item-reach table reads through the one rule, in exactly one permissive select policy ----------
 -- Item tables app users can't select at all (media_keys today: service role only) need no select policy.
+-- "Can select" counts column grants too (posts has only column grants since 0009), so posts is never skipped.
 -- Accepted calls: private.sees_post / vis.sees_item directly, or the two wrappers that call it
 -- (public.can_view_post -> sees_post; private.reply_visible -> private.reply_ok -> sees_post).
 select tests.ok_sql($$select position('sees_post' in prosrc) > 0 from pg_proc where oid = 'public.can_view_post(uuid)'::regprocedure$$,
@@ -102,13 +103,13 @@ select tests.ok_sql($$select position('sees_post' in prosrc) > 0 from pg_proc wh
                     'VIS-4 the wrapper private.reply_ok (behind reply_visible) calls private.sees_post');
 select tests.ok_each($$select quote_ident(n.nspname) || '.' || quote_ident(c.relname) from vis.kinds k join pg_class c on c.oid = k.relation join pg_namespace n on n.oid = c.relnamespace
                          where k.reach = 'item' and c.relkind in ('r', 'p')
-                           and has_table_privilege('authenticated', k.relation, 'select') order by 1$$,
+                           and has_any_column_privilege('authenticated', k.relation, 'select') order by 1$$,
   $$select (select count(*) from pg_policies p where format('%%I.%%I', p.schemaname, p.tablename)::regclass = %L::regclass
              and p.permissive = 'PERMISSIVE' and p.cmd in ('SELECT', 'ALL')) = 1$$,
   'VIS-4 %s has exactly one permissive select policy (PRIV-VC-R4)');
 select tests.ok_each($$select quote_ident(n.nspname) || '.' || quote_ident(c.relname) from vis.kinds k join pg_class c on c.oid = k.relation join pg_namespace n on n.oid = c.relnamespace
                          where k.reach = 'item' and c.relkind in ('r', 'p')
-                           and has_table_privilege('authenticated', k.relation, 'select') order by 1$$,
+                           and has_any_column_privilege('authenticated', k.relation, 'select') order by 1$$,
   $$select coalesce(bool_and(p.qual ~ '(sees_post|sees_item|can_view_post|reply_visible)\('), false)
       from pg_policies p where format('%%I.%%I', p.schemaname, p.tablename)::regclass = %L::regclass and p.cmd in ('SELECT', 'ALL')$$,
   'VIS-4 every select policy on %s calls private.sees_post (directly or via a wrapper)');
