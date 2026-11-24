@@ -136,7 +136,7 @@ To: works the same for all three, after the content, nothing pre-picked. Feed sh
 
 Events and life-calendar dates are different things: an event ("Gammy's 80th, Mar 3, at the church") is a post and follows its audience. A life-calendar date (a birthday) belongs to a person and follows `can_see_profile`. Both are registered; neither raises a new question.
 
-### Notices (GUX-VC-R11, P1, TRACKER R88)
+### Notices (GUX-VC-R11, P1, TRACKER R89)
 
 Today every new post is announced as "shared new photos" (`notify/index.ts`, `summary()`). Each kind needs its own words before `post_kinds` is on. Rules, same as the photo notice: the person's name as this recipient sees it (`actor_names`, joined by `joinNames`), never a group title; **no words from the post**: no news text, no event title, day, time or place, no saying, no child's name or age (the privacy note at the top of `notify/index.ts`; nothing in the logs). Calm and guilt-free (A1, A2): no "don't miss", no "big", no countdown, no "you haven't seen". Push title stays `From <names> on Hearth` (BETA-NOTIFY-7). Email subject is `<line> on Hearth`; the email body is `<line>.` then the existing "Open Hearth to see/read it" line (20px).
 

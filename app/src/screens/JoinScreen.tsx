@@ -8,9 +8,10 @@ import { messageFor } from '../errors/messages';
 import { useApp } from '../state/AppContext';
 import { useNav } from '../state/nav';
 import { Button, Card, Loading, Screen, Txt } from '../ui/kit';
+import { DataQuestion } from './DataQuestion';
 import { SignInFlow } from './SignInFlow';
 
-type Step = 'checking' | 'preview' | 'signin' | 'joining' | 'bad';
+type Step = 'checking' | 'preview' | 'signin' | 'joining' | 'bad' | 'askData';
 
 export function JoinScreen({ code }: { code: string }) {
   const app = useApp();
@@ -22,6 +23,10 @@ export function JoinScreen({ code }: { code: string }) {
   // TS-GUX-R6: the last 4 digits of the number a phone invite didn't open for (never the full number).
   const [triedNumber, setTriedNumber] = useState<string | null>(null);
   const started = useRef(false);
+  // DATA-1 (DEC-87): a phone never asked about its data plan asks once, before Gallery.
+  const asked = useRef(app.dataPrefs.saveData !== null);
+  asked.current = app.dataPrefs.saveData !== null;
+  const opened = () => (asked.current ? nav.goPhotos() : setStep('askData'));
   // HARD-10: with no signal nothing retries on its own, so say so and offer Try again.
   const [retry, setRetry] = useState<(() => void) | null>(null);
   const offline = (e: unknown, again: () => void) => {
@@ -41,14 +46,14 @@ export function JoinScreen({ code }: { code: string }) {
     try {
       await app.deps.api.redeemInvite(code);
       await app.reload();
-      nav.goPhotos();
+      opened();
     } catch (e) {
       if (offline(e, () => void redeem(inviter, email, numberEnding))) return;
       // Already in the family (tapped the link twice): just show the photos.
       const spaces = await app.deps.api.mySpaces().catch(() => []);
       if (isApiError(e) && e.code === '22023' && spaces.length > 0) {
         await app.reload();
-        nav.goPhotos();
+        opened();
         return;
       }
       // UX-G8: signed in, she never saw the preview; ask it for the inviter's name (redeem's answer can't say:
@@ -85,6 +90,7 @@ export function JoinScreen({ code }: { code: string }) {
   }
 
   const who = preview?.inviter_name ?? null;
+  if (step === 'askData') return <DataQuestion onDone={nav.goPhotos} />;
 
   return (
     <Screen>

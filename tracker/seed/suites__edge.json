@@ -167,35 +167,35 @@
   },
   {
    "id": "EDGE-24",
-   "title": "R88 push for a news, event or saying post never mentions photos and still names who sent it",
+   "title": "R89 push for a news, event or saying post never mentions photos and still names who sent it",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-25",
-   "title": "R88 email for a news, event or saying post never mentions photos and still names who sent it",
+   "title": "R89 email for a news, event or saying post never mentions photos and still names who sent it",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-26",
-   "title": "R88 each kind gets its own wording (not one generic line for all three)",
+   "title": "R89 each kind gets its own wording (not one generic line for all three)",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-27",
-   "title": "R88 a photos batch (post_kinds ['photos']) keeps today's words",
+   "title": "R89 a photos batch (post_kinds ['photos']) keeps today's words",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-28",
-   "title": "R88 the kind wording carries no caption, what, where or saying words (the batch has none to give)",
+   "title": "R89 the kind wording carries no caption, what, where or saying words (the batch has none to give)",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"

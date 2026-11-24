@@ -2017,9 +2017,9 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
  79 | ok     | SHARE-U-14 an adult (second parent) gets post_kinds in my_features
  80 | ok     | SHARE-U-14 an adult (second parent) can post news
  81 | ok     | SHARE-U-14 the family turns post_kinds off again: the adult is refused (42501)  [42501 post_kinds_off]
- 82 | ok     | R88 claim_notification_batches carries post_kinds for each batch
- 83 | ok     | R88 Grandma Rivera's batch with the news and event posts says their kinds are news and event
- 84 | ok     | R88 the claimed batches carry the kind only, never the words, what or saying
+ 82 | ok     | R89 claim_notification_batches carries post_kinds for each batch
+ 83 | ok     | R89 Grandma Rivera's batch with the news and event posts says their kinds are news and event
+ 84 | ok     | R89 the claimed batches carry the kind only, never the words, what or saying
  85 | ok     | NOTIFY-K-3 Grandma Rivera's batch counts its new posts per kind (news and event), and the counts add up to post_count
  86 | ok     | NOTIFY-K-1 the claimed batches carry no event day, place, child's name or news words
  87 | ok     | NOTIFY-K-4 setup: Grandma Rivera replies to the news post

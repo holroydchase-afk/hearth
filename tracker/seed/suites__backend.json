@@ -11972,21 +11972,21 @@
   },
   {
    "id": "POST-KINDS-082",
-   "title": "R88 claim_notification_batches carries post_kinds for each batch",
+   "title": "R89 claim_notification_batches carries post_kinds for each batch",
    "area": "Post-Kinds",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "POST-KINDS-083",
-   "title": "R88 Grandma Rivera's batch with the news and event posts says their kinds are news and event",
+   "title": "R89 Grandma Rivera's batch with the news and event posts says their kinds are news and event",
    "area": "Post-Kinds",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "POST-KINDS-084",
-   "title": "R88 the claimed batches carry the kind only, never the words, what or saying",
+   "title": "R89 the claimed batches carry the kind only, never the words, what or saying",
    "area": "Post-Kinds",
    "tickets": [],
    "where": "backend/tests/"
