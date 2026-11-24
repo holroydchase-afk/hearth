@@ -28,6 +28,9 @@ suite "app jest" quiet e2e/results/app-jest.txt bash -c 'cd app && npx jest --ci
 suite "app typecheck" quiet e2e/results/app-typecheck.txt bash -c 'cd app && npm run -s typecheck'
 suite "app e2e demo" quiet e2e/results/app-e2e-demo.txt bash -c 'cd app && npm run -s e2e:demo'
 suite "app e2e web" quiet e2e/results/app-e2e-web.txt bash -c 'cd app && npm run -s e2e:web'
+# INTAKE-80: React Compiler. The bundle check reads the exports the two e2e suites above just built.
+suite "compiler bundle" quiet e2e/results/compiler-bundle.txt bash app/scripts/check-compiler-bundle.sh
+suite "compiler rules" quiet e2e/results/compiler-rules.txt node app/scripts/compiler-check.js
 suite "deploy script" quiet e2e/results/backend-deploy.txt bash -c 'cd backend && bash tests/deploy/deploy_test.sh'
 if pg_isready -q 2>/dev/null; then
   suite "backend SQL" quiet e2e/results/backend-sql.txt bash -c 'cd backend && bash tests/run.sh'

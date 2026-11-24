@@ -52,7 +52,7 @@ for (const size of SIZES) {
       };
 
       await page.goto('');
-      await expect(page.getByText('Bridge walk on the trail', { exact: true })).toBeVisible();
+      await expect(page.getByText(/First ride on the balance bike/).first()).toBeVisible();
       await shot('photos');
       // RD-47 (Nov 17): By date left Gallery's top bar; the months are the by-date view, so no by-date shot.
       await page.goto('photos');
@@ -91,7 +91,7 @@ for (const size of SIZES) {
       await shot('not-found');
       await page.goto('');
       await resetDemo(page);
-      await expect(page.getByText(/You're Chase, a parent/)).toBeVisible();
+      await expect(page.getByText(/You're Kevin, a parent/)).toBeVisible();
       await ctx.close();
     });
   }

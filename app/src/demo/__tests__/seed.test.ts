@@ -61,16 +61,33 @@ describe('DEMO-1..3, DEMO-10 sample-data demo', () => {
     expect(plain).toEqual((await picture(first.pictures[0]!)).display);
   });
 
-  // Updated Nov 17 (UX-R12, Chase's own call for his public demo): the parent is "Chase", the founder's first name;
-  // everyone else stays made up (Mia and Leo, Alex, Grandma Jo) and no surname appears.
-  it('DEMO-3 UX-R12 the demo parent is "Chase"; the rest are made-up names and no surname or "Kai" appears', async () => {
+  // Updated Nov 24 (DEMO-PHOTO-9, DEC-82; was UX-R12 "Chase", DEC-64): the stock photos show a model, so the parent is
+  // "Kevin"; everyone else stays made up (Mia and Leo, Alex, Grandma Jo) and no surname appears.
+  it('DEMO-3 DEMO-PHOTO-9 the demo parent is "Kevin"; the rest are made-up names and no surname, "Chase" or "Kai" appears', async () => {
     const be = await seeded();
     const names = Object.values(be.state.users).map((u) => u.name);
-    expect(names).toEqual(expect.arrayContaining(['Chase', 'Alex', 'Grandma Jo']));
-    expect(be.state.users[F.users.chase.id]!.name).toBe('Chase');
-    expect(JSON.stringify(be.state.users)).not.toMatch(/\bKai\b|Holroyd/i);
+    expect(names).toEqual(expect.arrayContaining(['Kevin', 'Alex', 'Grandma Jo']));
+    expect(be.state.users[F.users.chase.id]!.name).toBe('Kevin');
+    expect(be.state.users[F.users.chase.id]!.email).toBe('kevin@example.com');
+    expect(JSON.stringify(be.state.users)).not.toMatch(/\bKai\b|Holroyd|Chase/i);
     expect(Object.values(DEMO_NAMES)).not.toContain('Kai');
     expect(be.state.spaces[F.space.id]!.name).toBe('Mia and Leo');
+  });
+
+  it('DEMO-PHOTO-9 no seeded caption, title or reply says "Chase"', async () => {
+    const be = await seeded();
+    const words = [...Object.values(be.state.posts).flatMap((p) => [p.caption ?? '', p.title ?? '']), ...Object.values(be.state.comments).map((c) => c.body)];
+    expect(words.filter((w) => /Chase/i.test(w))).toEqual([]);
+  });
+
+  it("DEMO-PHOTO-11 Grandma Jo gets posts 1, 2, 4, 5, 6 and 7 (18 photos), never Mom's-side post 3", async () => {
+    const be = await seeded();
+    const hers = be.getFeed(F.users.jo.id, { space: F.space.id, limit: 50 });
+    const want = [0, 1, 3, 4, 5, 6].map((i) => DEMO_POSTS[i]!.caption);
+    expect(hers.map((p) => p.caption).sort()).toEqual([...want].sort());
+    expect(hers.reduce((n, p) => n + p.media.length, 0)).toBe(18);
+    expect(hers.map((p) => p.caption)).not.toContain(DEMO_POSTS[2]!.caption);
+    expect(DEMO_POSTS[2]!.pictures).toEqual(['orchard-4543661']);
   });
 
   it('DEMO-10 Grandma Jo\'s view shows only what was shared with her groups; back to the parent shows all', async () => {
@@ -88,7 +105,7 @@ describe('DEMO-1..3, DEMO-10 sample-data demo', () => {
 
   it('DEMO-2 a picture that fails to load skips its post; the rest still show', async () => {
     const be = FakeBackend.withFixture({ joIsMember: true });
-    await seedDemo(be, (name) => (name === 'playground' ? Promise.reject(new Error('offline')) : picture(name)));
+    await seedDemo(be, (name) => (name === 'orchard-4543661' ? Promise.reject(new Error('offline')) : picture(name)));
     const feed = be.getFeed(F.users.chase.id, { space: F.space.id, limit: 50 });
     expect(feed).toHaveLength(DEMO_POSTS.length - 1);
     expect((await be.clientFor(null, { trackAppSession: true }).getSession())?.userId).toBe(F.users.chase.id);
@@ -111,7 +128,7 @@ describe('DEMO-1..3, DEMO-10 sample-data demo', () => {
 
 // DEMO-NEW-1..4 (TRACKER R45 step 2, plan gap G1/G5): a first-time visitor sees the New for you card (DEC-58).
 describe('DEMO-NEW New for you in the demo', () => {
-  it('DEMO-NEW-1 seeding sets a last visit 3 days ago for Chase and Grandma Jo, on this browser only', async () => {
+  it('DEMO-NEW-1 seeding sets a last visit 3 days ago for the parent and Grandma Jo, on this browser only', async () => {
     const be = FakeBackend.withFixture({ joIsMember: true });
     const kv = memoryKV();
     const before = Date.now();
@@ -130,28 +147,82 @@ describe('DEMO-NEW New for you in the demo', () => {
     expect(await loadLastSeen(kv, F.users.chase.id)).toBe('2026-01-02T03:04:05.000Z');
   });
 
-  it('DEMO-NEW-2 Chase has 2+ new photos from Alex, and Grandma Jo has new ones too', async () => {
+  // Updated Nov 24 (DEMO-PHOTO-12): the parent's new photos are Alex's one balance-bike post of 3; counts photos, not posts.
+  it('DEMO-NEW-2 the parent has 2+ new photos, all from Alex, and Grandma Jo has new ones too', async () => {
     const be = FakeBackend.withFixture({ joIsMember: true });
     const kv = memoryKV();
     await seedDemo(be, picture, kv);
-    const kai = F.users.chase.id, jo = F.users.jo.id;
-    const kaiNew = newForYou(be.getFeed(kai, { space: F.space.id, limit: 50 }), await loadLastSeen(kv, kai), kai);
-    expect(kaiNew.length).toBeGreaterThanOrEqual(2);
-    expect(kaiNew.every((p) => p.author_id === F.users.alex.id)).toBe(true);
+    const kevin = F.users.chase.id, jo = F.users.jo.id;
+    const kevinNew = newForYou(be.getFeed(kevin, { space: F.space.id, limit: 50 }), await loadLastSeen(kv, kevin), kevin);
+    expect(kevinNew.reduce((n, p) => n + p.media.length, 0)).toBeGreaterThanOrEqual(2);
+    expect(kevinNew.every((p) => p.author_id === F.users.alex.id)).toBe(true);
     const joNew = newForYou(be.getFeed(jo, { space: F.space.id, limit: 50 }), await loadLastSeen(kv, jo), jo);
     expect(joNew.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('DEMO-NEW-3 no drawing is used by two posts (the wall shows each picture once)', () => {
+  it("DEMO-PHOTO-12 a fresh visit's New for you starts with Alex's balance bike post and its 3 photos", async () => {
+    const be = FakeBackend.withFixture({ joIsMember: true });
+    const kv = memoryKV();
+    await seedDemo(be, picture, kv);
+    const kevin = F.users.chase.id;
+    const first = newForYou(be.getFeed(kevin, { space: F.space.id, limit: 50 }), await loadLastSeen(kv, kevin), kevin)[0];
+    expect(first?.author_id).toBe(F.users.alex.id);
+    expect([first?.title, first?.caption]).toContain('First ride on the balance bike');
+    expect(first?.media).toHaveLength(3);
+  });
+
+  it('DEMO-NEW-3 no picture is used by two posts (the wall shows each picture once)', () => {
     const all = DEMO_POSTS.flatMap((p) => p.pictures);
     expect(new Set(all).size).toBe(all.length);
   });
 
-  it('DEMO-NEW-4 every drawing a post uses ships in public/demo-pictures', () => {
+  it('DEMO-NEW-4 every picture a post uses ships in public/demo-pictures', () => {
     const dir = path.join(__dirname, '../../../public/demo-pictures');
     for (const name of DEMO_POSTS.flatMap((p) => p.pictures)) {
       expect(fs.existsSync(path.join(dir, `${name}.jpg`))).toBe(true);
       expect(fs.existsSync(path.join(dir, `${name}-thumb.jpg`))).toBe(true);
     }
+  });
+});
+
+// GUX-DP-AC1..AC6 (grandparent-ux review of the demo words, Nov 24; SPEC-DEMO-PHOTOS "Demo words"): every word a
+// visitor reads in the demo sounds like a real grandparent, says what the photo shows, and stays short.
+describe('GUX-DP demo words', () => {
+  const post = (n: number) => DEMO_POSTS[n - 1]!;
+  const reply = (n: number, who: string) => post(n).replies.filter((r) => r.who === who).map((r) => r.body);
+
+  it('GUX-DP-AC1 post 6: Nana Ruth says "Look at that little yellow coat go!" and no reply says "smile"', () => {
+    expect(reply(6, 'ruth')).toEqual(['Look at that little yellow coat go!']);
+    expect(DEMO_POSTS.flatMap((p) => p.replies.map((r) => r.body)).filter((b) => /smile/i.test(b))).toEqual([]);
+  });
+
+  it('GUX-DP-AC2 post 7: caption "A ride under the big yellow tree", Jo "That\'s a lot of leaves!", no "leaf pile"', () => {
+    expect(post(7).caption).toBe('A ride under the big yellow tree');
+    expect(reply(7, 'jo')).toEqual(["That's a lot of leaves!"]);
+    expect(DEMO_POSTS.map((p) => p.caption).filter((c) => /leaf pile/i.test(c))).toEqual([]);
+  });
+
+  it('GUX-DP-AC3 post 3: Nana Ruth says "Three of my favorite faces."', () => {
+    expect(reply(3, 'ruth')).toEqual(['Three of my favorite faces.']);
+  });
+
+  it('GUX-DP-AC4 post 2: Grandma Jo says "Your dad used to carry you just like that."', () => {
+    expect(reply(2, 'jo')).toEqual(['Your dad used to carry you just like that.']);
+  });
+
+  it('GUX-DP-AC5 post 1 and post 5 captions read as a moment, not a label', () => {
+    expect(post(1).caption).toBe('Everything was in bloom, and the kids ran the whole time.');
+    expect(post(5).caption).toBe('Then we all sat down for tea and pancakes.');
+  });
+
+  it('GUX-DP-AC6 every seeded caption, title and reply is 60 characters or less, without "Chase" or "circle"', async () => {
+    const be = await seeded();
+    const words = [
+      ...DEMO_POSTS.flatMap((p) => [p.caption, p.title ?? '', ...p.replies.map((r) => r.body)]),
+      ...Object.values(be.state.posts).flatMap((p) => [p.caption ?? '', p.title ?? '']),
+      ...Object.values(be.state.comments).map((c) => c.body),
+    ];
+    expect(words.filter((w) => [...w].length > 60)).toEqual([]);
+    expect(words.filter((w) => /Chase|circle/i.test(w))).toEqual([]);
   });
 });

@@ -10,7 +10,7 @@ import { AlertDialog, BottomSheet, Button, Card, Field, Notice, SystemIcon, Txt,
 import { useTypingField } from '../ui/typing';
 import { haptic } from '../platform/haptics';
 import { andList, initialOf, people, relativeTime, shortDate } from '../ui/format';
-import { MIN_TARGET, RADIUS, SPACE, FONT, useTheme } from '../ui/theme';
+import { EMOJI_GLYPH, MIN_TARGET, RADIUS, SPACE, FONT, TYPE, useTheme } from '../ui/theme';
 import { PhotoCollage } from './PhotoCollage';
 
 /** MOMENT-1..8 (UAT 9): one upload as one compact card, like a standard photo feed. Who and when, the caption,
@@ -28,7 +28,7 @@ const NO_COMMENTS: CommentView[] = [];
 export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
   const { feed, session } = useApp();
   const comments = useFeedSelect((s) => s.comments[post.post_id]); // ENG-R3: this post's comments only
-  const { c, t, reduceMotion } = useTheme();
+  const { c, reduceMotion } = useTheme();
   const ready = post.media.filter((m) => m.status === 'ready');
   const mine = post.author_id === session?.userId;
   const [sheet, setSheet] = useState<'comments' | 'more' | 'delete' | 'words' | null>(null);
@@ -84,7 +84,6 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
             emoji={e}
             n={counts[e] ?? 0}
             on={mineNow === e}
-            first={e === REACTIONS[0]}
             onPress={() => { haptic('tap'); void feed?.react(post.post_id, e); }}
           />
         ))}
@@ -92,8 +91,8 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
       <View style={styles.words}>
         {/* RD-71 (UX-R28): no heading above the words; the title opens the description in Medium. */}
         {post.title || post.caption ? <Caption testID={`desc-${post.post_id}`} titleID={`post-title-${post.post_id}`} title={post.title ?? null} text={post.caption ?? ''} /> : null}
-        {/* RD-51: "Just now", "3 hours ago", "Yesterday", "Nov 3"; CAP-6's "· Edited" after it. */}
-        <Txt variant="muted" testID={`when-${post.post_id}`}>{when}</Txt>
+        {/* TYPE-6: the date is subheadline (secondary words); who sees it stays body (A1). RD-51: "Just now", "3 hours ago", "Yesterday", "Nov 3"; CAP-6's "· Edited" after it. */}
+        <Txt variant="subheadline" tone="muted" testID={`when-${post.post_id}`}>{when}</Txt>
         {/* WHO-6 / DEC-60: the quiet privacy line stays on every post. */}
         {viewers ? <WhoLine post={post} viewers={viewers} me={session?.userId} onPress={() => setWhoOpen(true)} /> : null}
       </View>
@@ -112,7 +111,7 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
         <Modal visible animationType={reduceMotion ? 'fade' : 'slide'} presentationStyle="pageSheet" onRequestClose={() => setSheet(null)}>
           <SafeAreaView testID={`comments-${post.post_id}`} style={{ flex: 1, backgroundColor: c.bg }}>
             <View style={styles.sheetHead}>
-              <Txt variant="title" role="header" style={{ flex: 1 }}>Comments</Txt>
+              <Txt variant="title2" role="header" style={{ flex: 1 }}>Comments</Txt>
               <Button label="Close comments" text="Close" variant="secondary" onPress={() => setSheet(null)} />
             </View>
             <ScrollView contentContainerStyle={{ padding: 16, gap: 12 }}>
@@ -203,7 +202,7 @@ function WhoSheet({ post, viewers, me, onClose }: { post: FeedPost; viewers: Vie
   const { c } = useTheme();
   return (
     <BottomSheet testID={`who-sheet-${post.post_id}`} onClose={onClose}>
-          <Txt variant="title" role="header">Who can see this</Txt>
+          <Txt variant="title2" role="header">Who can see this</Txt>
           <View style={styles.people}>
             {ordered(viewers, me).map((p) => (
               <View key={p.id} testID={`person-${p.id}`} style={[styles.person, { backgroundColor: c.fill }]}>
@@ -235,7 +234,7 @@ function MoreMenu({ visible, post, mine, onDelete, onChangeWords, onClose }: {
     : post.viewers?.length ? `${whoCanSee(post.viewers, session?.userId)}.` : 'Shared with you.';
   return (
     <BottomSheet testID={`more-${post.post_id}`} onClose={onClose}>
-          {mine ? null : <Txt variant="title" role="header">Who can see this</Txt>}
+          {mine ? null : <Txt variant="title2" role="header">Who can see this</Txt>}
           <Txt style={{ color: c.ink }}>{audience}</Txt>
           {mine ? (
             <View>
@@ -253,12 +252,12 @@ function MoreMenu({ visible, post, mine, onDelete, onChangeWords, onClose }: {
 
 /** RD-57: one plain menu row: an outline icon, then the words at the left, 48 pt+ tall, on the sheet's own color. */
 function SheetRow({ label, icon, color, onPress }: { label: string; icon: { sf: string; md: string }; color: string; onPress: () => void }) {
-  const { t } = useTheme();
+  const { type } = useTheme();
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
       style={({ pressed }) => [styles.sheetRow, { opacity: pressed ? 0.6 : 1 }]}>
       <SystemIcon icon={icon} color={color} />
-      <Text style={{ flex: 1, color, fontFamily: FONT.regular, fontSize: t.base, lineHeight: t.line }}>{label}</Text>
+      <Text style={{ flex: 1, color, ...type.body }}>{label}</Text>
     </Pressable>
   );
 }
@@ -285,8 +284,8 @@ function WordsSheet({ post, onClose }: { post: FeedPost; onClose: () => void }) 
     <Modal visible animationType={reduceMotion ? 'fade' : 'slide'} presentationStyle="pageSheet" onRequestClose={onClose}>
       <SafeAreaView testID={`words-${post.post_id}`} style={{ flex: 1, backgroundColor: c.bg }}>
         <ScrollView contentContainerStyle={{ padding: 16, gap: 16 }} keyboardShouldPersistTaps="handled">
-          <Txt variant="title" role="header">Change the words</Txt>
-          <Txt variant="muted">The photos stay as they are. Nobody gets a notice.</Txt>
+          <Txt variant="title2" role="header">Change the words</Txt>
+          <Txt tone="muted">The photos stay as they are. Nobody gets a notice.</Txt>
           <Field label="Title (optional)" value={title} onChangeText={setTitle} maxLength={80} />
           <Field label="What's happening?" value={caption} onChangeText={setCaption} multiline maxLength={2000} />
           {error ? <Notice text={error} /> : null}
@@ -312,10 +311,10 @@ function CommentList({ post, list }: { post: FeedPost; list: CommentView[] }) {
       {list.map((c) => (
         <View key={c.client_id ?? c.comment_id} style={{ gap: 4 }}>
           <Txt numberOfLines={list.length === 1 ? 2 : undefined}><Txt style={{ fontFamily: FONT.medium }}>{c.author_name}</Txt>{` ${c.body}`}</Txt>
-          {c.status === 'sending' ? <Txt variant="muted">Sending…</Txt> : null}
+          {c.status === 'sending' ? <Txt tone="muted">Sending…</Txt> : null}
           {c.status === 'failed' ? (
             <>
-              <Txt variant="muted">Didn't send.</Txt>
+              <Txt tone="muted">Didn't send.</Txt>
               <Button label="Try sending this again" text="Try again" variant="secondary" onPress={() => void feed?.retryComment(post.post_id, c.client_id!)} />
             </>
           ) : null}
@@ -329,7 +328,7 @@ function CommentList({ post, list }: { post: FeedPost; list: CommentView[] }) {
  *  as one row: the "Add a comment…" field with Post beside it (MOMENT-4, UX-R5/R6, DEC-63). */
 function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
   const { feed, session, deps } = useApp();
-  const { c, t, os } = useTheme();
+  const { c, type, os } = useTheme();
   // REPLY-11 (0011): the server names exactly who will read my reply; until it answers (or if the call fails)
   // the box falls back to the reply_scope words.
   const [names, setNames] = useState<string[] | null>(null);
@@ -401,22 +400,23 @@ function ReplyBox({ post, mine }: { post: FeedPost; mine: boolean }) {
           maxLength={500}
           // UX-R36/R40: a 1.3x line (22 at 17 pt, 28 at 21 pt) in (48 - line)/2 padding keeps the field 48 tall and
           // the words centered on Post at default and Bigger text.
-          style={{ flex: 1, minHeight: MIN_TARGET, color: c.ink, paddingLeft: SPACE.lg, paddingRight: SPACE.sm, paddingVertical: (MIN_TARGET - commentLine(t.base)) / 2, fontFamily: FONT.regular, fontSize: t.base, lineHeight: commentLine(t.base), borderWidth: 0, ...noWebOutline() }}
+          style={{ flex: 1, minHeight: MIN_TARGET, color: c.ink, paddingLeft: SPACE.lg, paddingRight: SPACE.sm, paddingVertical: (MIN_TARGET - commentLine(type.body.fontSize)) / 2, fontFamily: FONT.regular, fontSize: type.body.fontSize, lineHeight: commentLine(type.body.fontSize), borderWidth: 0, ...noWebOutline() }}
         />
         {/* UX-R6 / RD-59: Post is a text button inside the field, grey and off while empty, accent once there are words. */}
         <Button variant="quiet" label="Post" onPress={() => void send()} disabled={!draft.trim()} style={styles.post} />
       </View>
       {/* BETA-REPLY-6: say who can read it, matching the server (everyone the post was shared with). */}
-      {words ? <Txt variant="muted">{words}</Txt> : null}
+      {words ? <Txt tone="muted">{words}</Txt> : null}
     </View>
   );
 }
 
 /** UX-R40: the comment line is at least 1.3x the text, rounded up to an even number so the padding is whole. */
-const commentLine = (size: number) => 2 * Math.ceil(Math.round(1.3 * size) / 2);
 
 /** CAP-4: past about 4 lines the caption folds, with a worded Read more / Show less (no tap on the text needed). */
 const FOLD_LINES = 4;
+/** UX-R40: the reply field's line is 1.3x its size, rounded up to even (22 at 17, 28 at 21), so it centers on Post. */
+const commentLine = (size: number) => 2 * Math.ceil(Math.round(1.3 * size) / 2);
 const foldable = (t: string) => t.split('\n').length > FOLD_LINES || t.length > 220;
 
 /** UX-R32: the description is just the words (the sender's name is on the row above). RD-71 (UX-R28): a post with
@@ -447,11 +447,14 @@ function Caption({ title, text, testID, titleID }: { title: string | null; text:
  *  RD-90: with Reduce Motion on, no pop; the picked outline just appears. Chase, Nov 18: the count's width is kept even
  *  at 0, so the first "1" doesn't widen the button. */
 const POP = { up: 100, down: 120 } as const;
-function ReactionButton({ emoji, n, on, first, onPress }: { emoji: Reaction; n: number; on: boolean; first: boolean; onPress: () => void }) {
-  const { c, t, reduceMotion } = useTheme();
+/** REACT-13b: on the web the color emoji fonts come first, so the browser draws the phone-style emoji at the size asked
+ *  for instead of falling back from the text font. iPhone and Android keep the phone's own emoji font (REACT-11). */
+const EMOJI_FONTS_WEB = '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
+function ReactionButton({ emoji, n, on, onPress }: { emoji: Reaction; n: number; on: boolean; onPress: () => void }) {
+  const { c, type, reduceMotion } = useTheme();
   const { fontScale } = useWindowDimensions();
   // One tabular digit is about 0.6 of the text size on every phone font; 0.7 leaves room.
-  const slot = Math.ceil(t.base * 0.7 * Math.max(fontScale || 1, 1));
+  const slot = Math.ceil(type.subheadline.fontSize * 0.7 * Math.max(fontScale || 1, 1));
   const scale = useRef(new Animated.Value(1)).current;
   const press = () => {
     if (!on && !reduceMotion) {
@@ -474,15 +477,15 @@ function ReactionButton({ emoji, n, on, first, onPress }: { emoji: Reaction; n: 
       onPress={press}
       // RD-114 (DEC-76, Chase Nov 20: no "lighter oval"): picked is a 2 pt accent outline with an accent count, no
       // fill; unpicked a 1 pt c.line outline. RD-116: padding gives back the extra 1 pt, so the box never changes size.
-      style={({ pressed }) => [styles.react, first ? styles.firstReact : null, on ? styles.reactOn : styles.reactOff, { borderColor: on ? c.accent : c.line, opacity: pressed ? 0.7 : 1 }]}
+      style={({ pressed }) => [styles.react, on ? styles.reactOn : styles.reactOff, { borderColor: on ? c.accent : c.line, opacity: pressed ? 0.7 : 1 }]}
     >
-      <Animated.View style={{ transform: [{ scale }] }}>
-        <Text style={styles.emoji}>{emoji}</Text>
+      <Animated.View style={[styles.emojiBox, { transform: [{ scale }] }]}>
+        <Text style={[styles.emoji, Platform.OS === 'web' ? { fontFamily: EMOJI_FONTS_WEB } : null]}>{emoji}</Text>
       </Animated.View>
       {/* Chase, Nov 18: the count's slot keeps its width at 0 (an empty space as wide as one digit), so the first
           "1" doesn't widen the button or move its neighbours. */}
       {n ? (
-        <Text style={[styles.count, { color: on ? c.accent : c.ink, fontSize: t.base, minWidth: slot }]}>{String(n)}</Text>
+        <Text testID="reaction-count" style={[styles.count, { color: on ? c.accent : c.ink, fontSize: type.subheadline.fontSize, lineHeight: type.subheadline.lineHeight, minWidth: slot * String(n).length }]}>{String(n)}</Text>
       ) : (
         <View testID="count-slot" style={{ width: slot }} />
       )}
@@ -504,11 +507,11 @@ const styles = StyleSheet.create({
   caption: { gap: SPACE.xs },
   fold: { alignSelf: 'flex-start', paddingHorizontal: 0 },
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.xs, paddingHorizontal: SPACE.lg },
-  // RD-64 (R21): the first emoji's glyph sits on the 16 pt edge; its tap area and highlight reach 8 pt past it.
-  firstReact: { marginLeft: -SPACE.sm },
+  // REACT-13c (Chase, Nov 24): since RD-114 drew outlines, the first pill's outline sits on the 16 pt edge, lined up
+  // with the photo; RD-64's -8 pt pull made it stick out past the photo.
   react: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, borderRadius: RADIUS.pill, backgroundColor: 'transparent' },
   // RD-116: border + padding is 8 pt a side either way (1 + 7 unpicked, 2 + 6 picked), so the box never changes
-  // size and, with firstReact's -8, the first emoji still sits on the 16 pt edge (RD-64).
+  // size.
   reactOff: { borderWidth: 1, paddingHorizontal: SPACE.sm - 1, paddingVertical: 1 },
   reactOn: { borderWidth: 2, paddingHorizontal: SPACE.sm - 2, paddingVertical: 0 },
   count: { fontFamily: FONT.regular, fontVariant: ['tabular-nums'] },
@@ -517,8 +520,12 @@ const styles = StyleSheet.create({
   who: { minHeight: MIN_TARGET, justifyContent: 'flex-start', paddingTop: SPACE.sm, alignSelf: 'stretch' },
   face: { width: 36, height: 36, borderRadius: RADIUS.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   // FIRSTMIN-1: two letters ("GJ") fit the 32 pt inside the ring at 17 pt with slightly tighter tracking.
-  faceText: { fontFamily: FONT.semibold, fontSize: 17, lineHeight: 20, letterSpacing: -0.5 },
-  emoji: { fontSize: 22, lineHeight: 28, textAlign: 'center' },
+  // TYPE-6: headline at its Standard size in both views (the 36 pt ring does not grow with Easy view).
+  faceText: { ...TYPE.standard.headline, letterSpacing: -0.5 },
+  // REACT-13a (Chase, Nov 24: blurry 😂 👍 🎉): the emoji sits in a whole-point 28 x 28 box, so every pill is a whole
+  // number of points wide and starts on a whole pixel. Phone emoji are pictures; on a fractional pixel they resample soft.
+  emojiBox: { width: 28, height: 28, alignItems: 'center', justifyContent: 'center' },
+  emoji: { ...EMOJI_GLYPH, width: 28, height: 28, textAlign: 'center' },
   people: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.sm },
   person: { flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, borderRadius: RADIUS.pill, paddingLeft: SPACE.xs, paddingRight: SPACE.md, minHeight: MIN_TARGET },
   newest: { paddingTop: SPACE.sm, paddingHorizontal: SPACE.lg, gap: SPACE.sm },

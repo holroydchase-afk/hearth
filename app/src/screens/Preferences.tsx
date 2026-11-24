@@ -18,12 +18,46 @@ export function EasyView({ heading = false }: { heading?: boolean }) {
   const { prefs, setPrefs } = useApp();
   return (
     <GroupedSection>
-      {heading ? <Txt variant="title" role="header">Easy view</Txt> : null}
+      {heading ? <Txt variant="title2" role="header">Easy view</Txt> : null}
       <Txt>Bigger words, and a word under each button at the bottom of the screen.</Txt>
       {/* GUX-R11: the same radio rows as Light or dark (kit Choice): an accent check on the picked one, 48 pt+. */}
       {EASY.map((k) => (
         <Choice key={k.id} kind="radio" label={k.title} title={k.title} checked={prefs.easyView === (k.id === 'on')} onPress={() => setPrefs({ easyView: k.id === 'on' })} />
       ))}
+    </GroupedSection>
+  );
+}
+
+/** DEC-87 (SPEC-MEDIA 5.1, final words): two switches, saved on this phone only. While Save data is on (or the
+ *  phone is set to reduce motion) the autoplay switch shows Off, can't be tapped and says why; its own saved choice
+ *  stays underneath, so turning Save data off puts it back. */
+export function VideosAndData() {
+  const { dataPrefs, setDataPrefs } = useApp();
+  const { reduceMotion } = useTheme();
+  const saving = dataPrefs.saveData === true;
+  const blocked = saving || reduceMotion;
+  const line = saving ? 'Off while Save data is on.'
+    : reduceMotion ? 'Off because your phone is set to reduce motion.'
+      : 'Videos in the Feed play quietly, without sound. Tap one to hear it.';
+  return (
+    <GroupedSection>
+      <Choice
+        kind="switch"
+        label="Play videos as I scroll"
+        title="Play videos as I scroll"
+        detail={line}
+        checked={dataPrefs.autoplay && !blocked}
+        disabled={blocked}
+        onPress={() => setDataPrefs({ autoplay: !dataPrefs.autoplay })}
+      />
+      <Choice
+        kind="switch"
+        label="Save data"
+        title="Save data"
+        detail="For prepaid or small phone plans. Videos wait until you tap Play, and photos load smaller until you open them."
+        checked={saving}
+        onPress={() => setDataPrefs({ saveData: !saving })}
+      />
     </GroupedSection>
   );
 }
@@ -39,7 +73,7 @@ export function LightOrDark({ heading = true }: { heading?: boolean }) {
   const { prefs, setPrefs } = useApp();
   return (
     <GroupedSection>
-      {heading ? <Txt variant="title" role="header">Light or dark screen</Txt> : null}
+      {heading ? <Txt variant="title2" role="header">Light or dark screen</Txt> : null}
       {LOOKS.map((l) => (
         <Choice key={l.id} kind="radio" label={l.title} title={l.title} detail={l.detail} checked={prefs.look === l.id} onPress={() => setPrefs({ look: l.id })} />
       ))}
@@ -69,7 +103,7 @@ export function ThemePicker({ heading = true }: { heading?: boolean }) {
   if (!space || space.role !== 'owner') return null;
   return (
     <GroupedSection>
-      {heading ? <Txt variant="title" role="header">Theme</Txt> : null}
+      {heading ? <Txt variant="title2" role="header">Theme</Txt> : null}
       {THEMES.map((k) => {
         const on = prefs.theme === k.id;
         const swatch = paletteFor('ios', dark, k.id);
@@ -120,7 +154,7 @@ export function HowToTell() {
   const phoneOnly = isPhoneOnly(session);
   return (
     <GroupedSection>
-      <Txt variant="title" role="header">How should we tell you about new photos?</Txt>
+      <Txt variant="title2" role="header">How should we tell you about new photos?</Txt>
       {phoneOnly ? <Txt>You sign in with a text, so Hearth tells you about new photos on this phone, not by email.</Txt> : null}
       {CHOICES.filter((c) => !phoneOnly || c.id === 'push').map((c) => (
         <Choice
@@ -155,8 +189,8 @@ export function PhotoHelpers() {
   if (!space || space.role !== 'owner') return null;
   return (
     <GroupedSection>
-      <Txt variant="title" role="header">Photo helpers</Txt>
-      <Txt variant="muted">When anyone picks 4 or more photos to send, Hearth can set some aside first. Each one has a Put back button. Nothing is deleted from the phone. These switches are for the whole family.</Txt>
+      <Txt variant="title2" role="header">Photo helpers</Txt>
+      <Txt tone="muted">When anyone picks 4 or more photos to send, Hearth can set some aside first. Each one has a Put back button. Nothing is deleted from the phone. These switches are for the whole family.</Txt>
       {HELPERS.map((h) => {
         const on = features.includes(h.feature);
         return (
@@ -187,7 +221,7 @@ export function PhotoHelpers() {
 export function Privacy({ who }: { who: string | null }) {
   return (
     <GroupedSection>
-      <Txt variant="title" role="header">Keeping your photos private</Txt>
+      <Txt variant="title2" role="header">Keeping your photos private</Txt>
       <Txt>Your photos stay in the United States.</Txt>
       <Txt>No one outside the family can see them. No ads, no strangers.</Txt>
       <Txt>No computer program learns from your photos.</Txt>
@@ -265,8 +299,8 @@ export function ReplyAudience() {
   };
   return (
     <GroupedSection>
-      <Txt variant="title" role="header">Who reads what family members write</Txt>
-      <Txt variant="muted">For comments and hearts. The kids' parents read them all, and your own replies reach everyone the photo went to. People in the same household, or in the same event, read each other's.</Txt>
+      <Txt variant="title2" role="header">Who reads what family members write</Txt>
+      <Txt tone="muted">For comments and hearts. The kids' parents read them all, and your own replies reach everyone the photo went to. People in the same household, or in the same event, read each other's.</Txt>
       <Choice kind="radio" label="The parents, plus their own household and events (safest)" title="The parents, plus their own household and events (safest)" detail="A grandparent's comment reaches you, the other parent, and their own household. Never the other side." checked={choice === 'parents'} onPress={() => pick('parents')} />
       <Choice kind="radio" label="Everyone the photo was shared with" title="Everyone the photo was shared with" detail="Divorced grandparents on the same photo will read each other's comments." checked={choice === 'everyone'} onPress={() => pick('everyone')} />
       {failed ? <Notice text="Didn't save. Check your internet and try again." /> : null}

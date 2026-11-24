@@ -13,6 +13,7 @@ import type { KV } from '../platform/kv';
 import type { PickedAsset } from '../share/bulk';
 import { BigTextContext, LookContext, PhoneA11yContext, ThemeContext, nativeScheme, type PhoneA11y } from '../ui/theme';
 import { UploadQueue, type Job, type Prepared, type QueueItem } from '../upload/queue';
+import { defaultDataPrefs, loadDataPrefs, saveDataPrefs, type DataPrefs } from './dataPrefs';
 import { defaultPrefs, loadPrefs, savePrefs, serverPrefs, type NotifyChoice, type Prefs } from './prefs';
 
 export interface AppDeps {
@@ -20,6 +21,9 @@ export interface AppDeps {
   kv: KV;
   /** Phone number behind "Call Chase" (EXPO_PUBLIC_HELP_PHONE). */
   helpPhone?: string | null;
+  /** START-ON-1/2: where "Email Hearth" writes to (EXPO_PUBLIC_HEARTH_HELP_EMAIL). Absent or null: Help has no
+   *  "Something wrong?" section and nobody can start a family. */
+  helpEmail?: string | null;
   prepare: (item: QueueItem) => Promise<Prepared>;
   /** videos: offer videos too (only when the server says video_posting is on: FLAG-5). */
   pickPhotos: (opts: { videos: boolean }) => Promise<{ items: QueueItem[] } | { denied: true }>;
@@ -67,6 +71,11 @@ export interface AppValue {
   /** SHARE-PC-11 (DEC-73): "Shared with <names>." after a Send, shown on Feed until closed or the next Send. */
   shared: string | null;
   setShared: (line: string | null) => void;
+  /** DEC-87 (SPEC-MEDIA 5): Videos and data, this phone's own (never per account, never sent anywhere). Read
+   *  before the first screen shows, signed in or not. */
+  dataPrefs: DataPrefs;
+  /** Changes it at once and saves it on this phone only. */
+  setDataPrefs: (p: Partial<DataPrefs>) => void;
 }
 
 const Ctx = createContext<AppValue | null>(null);
@@ -75,6 +84,11 @@ export function useApp(): AppValue {
   const v = useContext(Ctx);
   if (!v) throw new Error('AppProvider missing');
   return v;
+}
+
+/** DEC-87 (SPEC-MEDIA 5): Save data is on, so Feed cards and the Timeline show thumbnails until a photo is opened. */
+export function useSaveData(): boolean {
+  return useContext(Ctx)?.dataPrefs.saveData === true;
 }
 
 const EMPTY_FEED: FeedState = { posts: [], status: 'loading', loaded: false, hasMore: false, notice: null, comments: {}, drafts: {}, opened: {}, fetchedAt: null };
@@ -152,12 +166,28 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
     if (who) void deps.kv.setItem(pushSkipKey(who), '1').catch(() => {});
   }, [deps.kv]);
   const a11y = usePhoneA11y();
+  const [dataPrefs, setDataPrefsState] = useState<DataPrefs>(defaultDataPrefs);
+  const dataPrefsRef = useRef<DataPrefs | null>(null);
+  const setDataPrefs = useCallback((p: Partial<DataPrefs>) => {
+    const next = { ...(dataPrefsRef.current ?? defaultDataPrefs()), ...p };
+    dataPrefsRef.current = next;
+    setDataPrefsState(next);
+    void saveDataPrefs(deps.kv, next);
+  }, [deps.kv]);
 
   const load = useCallback(async () => {
     live.current.queue?.stop();
     // PRIV-R1: wipe any decrypted video a crash left behind before anything else, whoever is (or isn't) signed in.
     // load() runs again only from signed-out, sign-in or the offline screen, where no player is open (privacy review PRIV-R2).
     deps.videoFiles?.clear?.().catch(() => {});
+    if (!dataPrefsRef.current) {
+      // DEC-87: read once, before any screen leaves 'loading', so Save data holds from the first photo.
+      const dp = await loadDataPrefs(deps.kv);
+      if (!dataPrefsRef.current) {
+        dataPrefsRef.current = dp;
+        setDataPrefsState(dp);
+      }
+    }
     const session = await deps.api.getSession().catch(() => null);
     if (!session) {
       setS(SIGNED_OUT);
@@ -304,7 +334,9 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
     skipPushAsk,
     shared: s.status === 'ready' ? shared : null,
     setShared,
-  }), [s, deps, setPrefs, saveNotify, setFamilyFeature, load, signOut, pushAsk, askPush, skipPushAsk, shared]);
+    dataPrefs,
+    setDataPrefs,
+  }), [dataPrefs, setDataPrefs, s, deps, setPrefs, saveNotify, setFamilyFeature, load, signOut, pushAsk, askPush, skipPushAsk, shared]);
 
   return (
     <Ctx.Provider value={value}>

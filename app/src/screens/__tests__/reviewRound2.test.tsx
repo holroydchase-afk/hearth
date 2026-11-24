@@ -370,13 +370,13 @@ describe('R20 (P2) a photo still loading in a small square says so without clipp
 
 // =================================================================================================================
 describe('R21 (P2) the reaction row starts at the 16 pt content edge', () => {
-  it('R21 the first emoji sits 16 pt in, like the name, the photos and the words', async () => {
+  // REACT-13c (Chase, Nov 24) retargets RD-64: since RD-114 drew pill outlines, the first pill's OUTLINE sits on the
+  // 16 pt edge, lined up with the photo (the glyph used to, which pushed the outline 8 pt past the photo).
+  it('R21 / REACT-13c the first reaction pill\'s outline sits 16 pt in, like the name, the photos and the words', async () => {
     const { id, card } = await feedCard('jo');
     const row = within(card).getByTestId(`actions-${id}`);
     const first = within(row).getAllByRole('button')[0]!;
-    const s = flat(first.props.style);
-    // Fixed Nov 20 (test bug, DEC-76): the emoji starts after margin + border + padding, so the border adds, not subtracts.
-    expect(inset(first, card, true) + num(s.borderLeftWidth, s.borderWidth)).toBe(16);
+    expect(inset(first, card, false)).toBe(16);
   });
 });
 

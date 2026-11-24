@@ -103,9 +103,10 @@ describe('RD-77 Easy view On: a word under every tab, bigger text', () => {
 describe('RD-78 More → Easy view', () => {
   it.each([
     // engineer, flagged for qa-tdd: CAL-14 adds Birthdays after Events for every role.
-    ['chase', 'Off', ['Messages', 'Groups', 'Events', 'Birthdays', 'Easy view', 'Light or dark', 'Theme', 'Me', 'Help']],
-    ['alex', 'Off', ['Messages', 'Groups', 'Events', 'Birthdays', 'Easy view', 'Light or dark', 'Me', 'Help']],
-    ['jo', 'On', ['Messages', 'Events', 'Birthdays', 'Easy view', 'Light or dark', 'Me', 'Help']],
+    // engineer, flagged for qa-tdd: DEC-87 (SPEC-MEDIA 5.1) puts "Videos and data" right after Light or dark for every role.
+    ['chase', 'Off', ['Messages', 'Groups', 'Events', 'Birthdays', 'Easy view', 'Light or dark', 'Videos and data', 'Theme', 'Me', 'Help']],
+    ['alex', 'Off', ['Messages', 'Groups', 'Events', 'Birthdays', 'Easy view', 'Light or dark', 'Videos and data', 'Me', 'Help']],
+    ['jo', 'On', ['Messages', 'Events', 'Birthdays', 'Easy view', 'Light or dark', 'Videos and data', 'Me', 'Help']],
   ] as const)('RD-78 %s\'s More has "Easy view" where Bigger text was, with %s in words', async (user, state, rows) => {
     await renderApp(<MoreScreen />, { waitReady: false, user });
     await screen.findByRole('header', { name: 'More' }, slow);

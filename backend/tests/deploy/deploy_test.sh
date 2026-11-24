@@ -36,7 +36,10 @@ if [[ -n ${STUB_FAIL_ON:-} && $data == *"$STUB_FAIL_ON"* ]]; then
   (( fwb )) && echo '{"message":"ERROR: 42P01: relation \"stub_missing\" does not exist"}'
   exit 22
 fi
-if [[ $data == *schema_migrations* && $data == *"select version"* ]]; then echo '[{"version":"0001"}]'; else echo '[]'; fi
+if [[ $data == *schema_migrations* && $data == *"select version"* ]]; then echo '[{"version":"0001"}]';
+# ARCH-VC-R2: the owners-bypass-RLS preflight. STUB_OWNERS is the JSON rows the API returns.
+elif [[ $data == *rolbypassrls* ]]; then echo "${STUB_OWNERS:-[]}";
+else echo '[]'; fi
 STUB
 printf '#!/usr/bin/env bash\necho "$*" >> "$STUB_CLI"\n' > "$T/bin/fakecli"
 printf '#!/usr/bin/env bash\necho psql >> "$STUB_CLI"; exit 1\n' > "$T/bin/psql"
@@ -88,6 +91,42 @@ check "DEPLOY-3 a rejected migration stops the deploy" '(( FRC != 0 )) && [[ ! -
 check "DEPLOY-3 a rejected migration names the file and shows the API error" \
   '[[ $FOUT == *0003_notifications.sql* && $FOUT == *"stub_missing"* ]]'
 check "DEPLOY-3 a rejected migration never prints the token" '[[ $FOUT != *$TOKEN* ]]'
+
+# ---- ARCH-VC-R2 (P1, architect review): the dry run checks that every public table's owner bypasses RLS ----
+# 0032 forces RLS on every public table; on an owner without rolbypassrls (or superuser) that would hide rows from
+# every security definer function. The dry run must ask the hosted database (one read-only query) and say pass/fail.
+# Contract for the engineer: with a token, --dry-run POSTs one read-only query to database/query that reads
+# pg_roles.rolbypassrls (and rolsuper) for the owners of public tables (relkind r/p), prints a line containing
+# "RLS owners: pass" or "RLS owners: FAIL" naming each table and owner that doesn't bypass, and exits non-zero on FAIL.
+# Without a token it prints "RLS owners: skipped" and the reason (no SUPABASE_ACCESS_TOKEN), and still calls nothing.
+rm -rf "$T/log" "$T/cli"; mkdir -p "$T/log"
+GOOD='[{"rel":"public.posts","owner":"postgres","bypasses":true},{"rel":"public.family_dates","owner":"postgres","bypasses":true}]'
+POUT=$(env -u SUPABASE_DB_PASSWORD -u SUPABASE_DB_URL SUPABASE_ACCESS_TOKEN=$TOKEN STUB_OWNERS="$GOOD" \
+  PATH="$T/bin:$PATH" STUB_LOG="$T/log" STUB_CLI="$T/cli" SUPABASE_CLI=fakecli \
+  DEPLOY_ENV_FILE="$T/env" bash scripts/deploy.sh --dry-run 2>&1); PRC=$?
+PSQL=$(cat "$T"/log/* 2>/dev/null)
+check "ARCH-VC-R2 dry run with a token queries rolbypassrls for public table owners" \
+  '[[ $PSQL == *rolbypassrls* && $PSQL == *relowner* && $PSQL == *public* ]]'
+check "ARCH-VC-R2 that query is read-only (no create, alter, insert, update, delete, grant)" \
+  '[[ -n $PSQL ]] && ! grep -Eiq "\b(create|alter|insert|update|delete|drop|grant|revoke)\b" <<< "$PSQL"'
+check "ARCH-VC-R2 every owner bypasses RLS: the dry run prints pass and exits 0" \
+  '(( PRC == 0 )) && [[ $POUT == *"RLS owners: pass"* ]]'
+check "ARCH-VC-R2 the dry run still changes nothing (no CLI call, no migration recorded)" \
+  '[[ ! -e $T/cli ]] && ! grep -q "insert into supabase_migrations" <<< "$PSQL"'
+check "ARCH-VC-R2 the dry run never prints the token" '[[ $POUT != *$TOKEN* ]]'
+
+rm -rf "$T/log" "$T/cli"; mkdir -p "$T/log"
+BADROWS='[{"rel":"public.posts","owner":"postgres","bypasses":true},{"rel":"public.family_dates","owner":"app_owner","bypasses":false}]'
+FOUT2=$(env -u SUPABASE_DB_PASSWORD -u SUPABASE_DB_URL SUPABASE_ACCESS_TOKEN=$TOKEN STUB_OWNERS="$BADROWS" \
+  PATH="$T/bin:$PATH" STUB_LOG="$T/log" STUB_CLI="$T/cli" SUPABASE_CLI=fakecli \
+  DEPLOY_ENV_FILE="$T/env" bash scripts/deploy.sh --dry-run 2>&1); FRC2=$?
+check "ARCH-VC-R2 an owner that doesn't bypass RLS: the dry run prints FAIL and exits non-zero" \
+  '(( FRC2 != 0 )) && [[ $FOUT2 == *"RLS owners: FAIL"* ]]'
+check "ARCH-VC-R2 the FAIL names the table and its owner" \
+  '[[ $FOUT2 == *public.family_dates* && $FOUT2 == *app_owner* ]]'
+
+check "ARCH-VC-R2 without a token the dry run says the owner check was skipped and why" \
+  '[[ $DRY_OUT == *"RLS owners: skipped"* && $DRY_OUT == *SUPABASE_ACCESS_TOKEN* ]]'
 
 echo "deploy: $PASS passed, $FAIL failed"
 (( FAIL == 0 ))

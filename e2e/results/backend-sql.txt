@@ -524,10 +524,10 @@ TIMELINE RESULT: 39 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('32273be1-e1cf-443e-b3ae-9fda67561c7e'))
-psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('313ecaa2-4179-4c11-84f8-a98b03ff54f4'))
-psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('1aafe2d6-df06-4bc9-815a-a0c4a163f7b3'))
-psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '02cc3d5b-cd0a-4ed3-a7c4-8dd57c55a60b')
+psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('8dba5e7f-cecf-4472-9a62-efc6a2999206'))
+psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('0fab9a1c-50f0-4aab-bbdc-db776d06561d'))
+psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('29955cd1-8425-4f94-9b24-13323fa7a1eb'))
+psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = 'c7c78a6d-9189-4edd-b195-cbb18cfc5bc4')
   n  | result |                                                                                  description                                                                                   
 -----+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    1 | ok     | BETA-AUD-11 shape: circles.kind exists (everyone | group | household | event)
@@ -1022,13 +1022,13 @@ CAPTIONS RESULT: 32 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
- n  | result |                                                description                                                 
-----+--------+------------------------------------------------------------------------------------------------------------
+ n  | result |                                               description                                               
+----+--------+---------------------------------------------------------------------------------------------------------
   1 | ok     | S14 setup: Alex has a second free space and a post in it
   2 | ok     | S14-1 Alex sends 4 more videos in space A (5 of 10 this month)
   3 | ok     | S14-1 and 5 in his new space (10 of 10)
-  4 | ok     | S14-1 the 11th video is refused even in a brand-new space (ENG-R11: HF002)  [HF002 free_video_cap_reached]
-  5 | ok     | S14-1 and in the first space too (ENG-R11: HF002)  [HF002 free_video_cap_reached]
+  4 | ok     | S14-1 the 11th video is refused even in a brand-new space  [P0001 free_video_cap_reached]
+  5 | ok     | S14-1 and in the first space too  [P0001 free_video_cap_reached]
   6 | ok     | S14-2 the new space's quota shows Alex's own 10 of 10, not a fresh 0
   7 | ok     | S14-2 and so does space A
   8 | ok     | S14-3 the refused video made no media row
@@ -1041,44 +1041,6 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
 
 
 VIDEO CAP RESULT: 14 passed, 0 failed
-psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
-psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
-psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
- n  | result |                                                  description                                                  
-----+--------+---------------------------------------------------------------------------------------------------------------
-  1 | ok     | ENG-R2 setup: Alex's count this month is readable
-  2 | ok     | ENG-R2-1 a video upload restarted 3x (drafts thrown away while pending) counts once
-  3 | ok     | ENG-R2-2 setup: preparing a video counts it
-  4 | ok     | ENG-R2-2 sign-media marks the upload failed
-  5 | ok     | ENG-R2-2 a failed video gives the month's count back
-  6 | ok     | ENG-R2-3 Alex deletes his failed video row
-  7 | ok     | ENG-R2-3 deleting an already-failed video does not give it back a second time
-  8 | ok     | ENG-R2-4 Alex deletes a pending video row
-  9 | ok     | ENG-R2-4 a pending video that is deleted gives its count back
- 10 | ok     | ENG-R2-5 setup: the video uploaded (ready)
- 11 | ok     | ENG-R2-5 deleting an uploaded video (post deleted, row purged) keeps it counted
- 12 | ok     | ENG-R2-6 Alex sends videos up to 10 this month
- 13 | ok     | ENG-R2-6 the 11th is still refused (free_video_cap_reached)
- 14 | ok     | ENG-R2-6 the counter stops at 10
- 15 | ok     | ENG-R2-6 once one of the 10 fails, Alex can send one more
- 16 | ok     | ENG-R2-6 and then he is at the cap again
- 17 | ok     | ENG-R2-7 marking a video failed when the counter is already 0 does not error
- 18 | ok     | ENG-R2-7 nor does deleting a pending one
- 19 | ok     | ENG-R2-7 the counter stays at 0, never negative
- 20 | ok     | ENG-R2-8 a paid family's video can fail
- 21 | ok     | ENG-R2-8 and still has no free-cap usage row
- 22 | ok     | ENG-R11 the free video cap is refused with SQLSTATE HF002, not generic P0001  [HF002 free_video_cap_reached]
- 23 | ok     | ENG-R11 the message is still free_video_cap_reached
- 24 | ok     | SEC-R7 PUBLIC has no EXECUTE on private.videos_this_month(uuid)
- 25 | ok     | SEC-R7 authenticated has no EXECUTE on private.videos_this_month(uuid)
- 26 | ok     | SEC-R7 anon has no EXECUTE on private.videos_this_month(uuid)
- 27 | ok     | SEC-R7 Blair can't read Alex's video count directly  [42501 permission denied for function videos_this_month]
- 28 | ok     | SEC-R7 Alex still sees his own count through space_upload_quota
- 29 | ok     | PRIV-R1 authenticated has no privilege on private.video_refundable
- 30 | ok     | PRIV-R1 anon has no privilege on private.video_refundable
-
-
-VIDEO REFUND RESULT: 30 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
@@ -1421,13 +1383,503 @@ FAMILY DATES RESULT: 101 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
+  n  | result |                                                                                       description                                                                                        
+-----+--------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+   1 | ok     | VIS-1 the registry vis.kinds exists
+   2 | ok     | VIS-1 public.account_exports has a reach class: add a vis_registry row
+   3 | ok     | VIS-1 public.chat_devices has a reach class: add a vis_registry row
+   4 | ok     | VIS-1 public.chat_groups has a reach class: add a vis_registry row
+   5 | ok     | VIS-1 public.chat_key_packages has a reach class: add a vis_registry row
+   6 | ok     | VIS-1 public.chat_messages has a reach class: add a vis_registry row
+   7 | ok     | VIS-1 public.child_guardians has a reach class: add a vis_registry row
+   8 | ok     | VIS-1 public.children has a reach class: add a vis_registry row
+   9 | ok     | VIS-1 public.circle_links has a reach class: add a vis_registry row
+  10 | ok     | VIS-1 public.circle_members has a reach class: add a vis_registry row
+  11 | ok     | VIS-1 public.circle_people has a reach class: add a vis_registry row
+  12 | ok     | VIS-1 public.circles has a reach class: add a vis_registry row
+  13 | ok     | VIS-1 public.client_errors has a reach class: add a vis_registry row
+  14 | ok     | VIS-1 public.comment_mode_log has a reach class: add a vis_registry row
+  15 | ok     | VIS-1 public.comments has a reach class: add a vis_registry row
+  16 | ok     | VIS-1 public.family_dates has a reach class: add a vis_registry row
+  17 | ok     | VIS-1 public.household_members has a reach class: add a vis_registry row
+  18 | ok     | VIS-1 public.households has a reach class: add a vis_registry row
+  19 | ok     | VIS-1 public.invite_circles has a reach class: add a vis_registry row
+  20 | ok     | VIS-1 public.invites has a reach class: add a vis_registry row
+  21 | ok     | VIS-1 public.media_items has a reach class: add a vis_registry row
+  22 | ok     | VIS-1 public.media_keys has a reach class: add a vis_registry row
+  23 | ok     | VIS-1 public.notification_outbox has a reach class: add a vis_registry row
+  24 | ok     | VIS-1 public.notification_prefs has a reach class: add a vis_registry row
+  25 | ok     | VIS-1 public.post_audiences has a reach class: add a vis_registry row
+  26 | ok     | VIS-1 public.post_children has a reach class: add a vis_registry row
+  27 | ok     | VIS-1 public.post_views has a reach class: add a vis_registry row
+  28 | ok     | VIS-1 public.posts has a reach class: add a vis_registry row
+  29 | ok     | VIS-1 public.profiles has a reach class: add a vis_registry row
+  30 | ok     | VIS-1 public.push_tokens has a reach class: add a vis_registry row
+  31 | ok     | VIS-1 public.reactions has a reach class: add a vis_registry row
+  32 | ok     | VIS-1 public.space_children has a reach class: add a vis_registry row
+  33 | ok     | VIS-1 public.space_features has a reach class: add a vis_registry row
+  34 | ok     | VIS-1 public.space_members has a reach class: add a vis_registry row
+  35 | ok     | VIS-1 public.spaces has a reach class: add a vis_registry row
+  36 | ok     | VIS-1 public.storage_purge_queue has a reach class: add a vis_registry row
+  37 | ok     | VIS-1 every storage bucket has a reach class (no storage schema in this build)
+  38 | ok     | VIS-1 public.account_exports is in reach self (07 mapping)
+  39 | ok     | VIS-1 public.chat_devices is in reach self (07 mapping)
+  40 | ok     | VIS-1 public.chat_groups is in reach container (07 mapping)
+  41 | ok     | VIS-1 public.chat_key_packages is in reach container (07 mapping)
+  42 | ok     | VIS-1 public.chat_messages is in reach container (07 mapping)
+  43 | ok     | VIS-1 public.child_guardians is in reach person (07 mapping)
+  44 | ok     | VIS-1 public.children is in reach person (07 mapping)
+  45 | ok     | VIS-1 public.circle_links is in reach container (07 mapping)
+  46 | ok     | VIS-1 public.circle_members is in reach container (07 mapping)
+  47 | ok     | VIS-1 public.circle_people is in reach container (07 mapping)
+  48 | ok     | VIS-1 public.circles is in reach container (07 mapping)
+  49 | ok     | VIS-1 public.client_errors is in reach server (07 mapping)
+  50 | ok     | VIS-1 public.comment_mode_log is in reach admin (07 mapping)
+  51 | ok     | VIS-1 public.comments is in reach item (07 mapping)
+  52 | ok     | VIS-1 public.household_members is in reach admin (07 mapping)
+  53 | ok     | VIS-1 public.households is in reach admin (07 mapping)
+  54 | ok     | VIS-1 public.invite_circles is in reach admin (07 mapping)
+  55 | ok     | VIS-1 public.invites is in reach admin (07 mapping)
+  56 | ok     | VIS-1 public.media_items is in reach item (07 mapping)
+  57 | ok     | VIS-1 public.media_keys is in reach item (07 mapping)
+  58 | ok     | VIS-1 public.notification_outbox is in reach server (07 mapping)
+  59 | ok     | VIS-1 public.notification_prefs is in reach self (07 mapping)
+  60 | ok     | VIS-1 public.post_audiences is in reach item (07 mapping)
+  61 | ok     | VIS-1 public.post_children is in reach item (07 mapping)
+  62 | ok     | VIS-1 public.post_views is in reach self (07 mapping)
+  63 | ok     | VIS-1 public.posts is in reach item (07 mapping)
+  64 | ok     | VIS-1 public.profiles is in reach person (07 mapping)
+  65 | ok     | VIS-1 public.push_tokens is in reach self (07 mapping)
+  66 | ok     | VIS-1 public.reactions is in reach item (07 mapping)
+  67 | ok     | VIS-1 public.space_children is in reach admin (07 mapping)
+  68 | ok     | VIS-1 public.space_features is in reach admin (07 mapping)
+  69 | ok     | VIS-1 public.space_members is in reach admin (07 mapping)
+  70 | ok     | VIS-1 public.spaces is in reach admin (07 mapping)
+  71 | ok     | VIS-1 public.storage_purge_queue is in reach server (07 mapping)
+  72 | ok     | VIS-1 every registry row says why it is in its reach (note)
+  73 | ok     | VIS-3 public.account_exports has RLS enabled and forced
+  74 | ok     | VIS-3 public.chat_devices has RLS enabled and forced
+  75 | ok     | VIS-3 public.chat_groups has RLS enabled and forced
+  76 | ok     | VIS-3 public.chat_key_packages has RLS enabled and forced
+  77 | ok     | VIS-3 public.chat_messages has RLS enabled and forced
+  78 | ok     | VIS-3 public.child_guardians has RLS enabled and forced
+  79 | ok     | VIS-3 public.children has RLS enabled and forced
+  80 | ok     | VIS-3 public.circle_links has RLS enabled and forced
+  81 | ok     | VIS-3 public.circle_members has RLS enabled and forced
+  82 | ok     | VIS-3 public.circle_people has RLS enabled and forced
+  83 | ok     | VIS-3 public.circles has RLS enabled and forced
+  84 | ok     | VIS-3 public.client_errors has RLS enabled and forced
+  85 | ok     | VIS-3 public.comment_mode_log has RLS enabled and forced
+  86 | ok     | VIS-3 public.comments has RLS enabled and forced
+  87 | ok     | VIS-3 public.family_dates has RLS enabled and forced
+  88 | ok     | VIS-3 public.household_members has RLS enabled and forced
+  89 | ok     | VIS-3 public.households has RLS enabled and forced
+  90 | ok     | VIS-3 public.invite_circles has RLS enabled and forced
+  91 | ok     | VIS-3 public.invites has RLS enabled and forced
+  92 | ok     | VIS-3 public.media_items has RLS enabled and forced
+  93 | ok     | VIS-3 public.media_keys has RLS enabled and forced
+  94 | ok     | VIS-3 public.notification_outbox has RLS enabled and forced
+  95 | ok     | VIS-3 public.notification_prefs has RLS enabled and forced
+  96 | ok     | VIS-3 public.post_audiences has RLS enabled and forced
+  97 | ok     | VIS-3 public.post_children has RLS enabled and forced
+  98 | ok     | VIS-3 public.post_views has RLS enabled and forced
+  99 | ok     | VIS-3 public.posts has RLS enabled and forced
+ 100 | ok     | VIS-3 public.profiles has RLS enabled and forced
+ 101 | ok     | VIS-3 public.push_tokens has RLS enabled and forced
+ 102 | ok     | VIS-3 public.reactions has RLS enabled and forced
+ 103 | ok     | VIS-3 public.space_children has RLS enabled and forced
+ 104 | ok     | VIS-3 public.space_features has RLS enabled and forced
+ 105 | ok     | VIS-3 public.space_members has RLS enabled and forced
+ 106 | ok     | VIS-3 public.spaces has RLS enabled and forced
+ 107 | ok     | VIS-3 public.storage_purge_queue has RLS enabled and forced
+ 108 | ok     | VIS-3 no materialized view in an exposed schema (PRIV-VC-R2)
+ 109 | ok     | VIS-3 no policy for authenticated, anon or public is using (true)
+ 110 | ok     | VIS-3 anon has no table privilege on any exposed relation (PRIV-VC-R2)
+ 111 | ok     | VIS-3 server-reach public.client_errors has no select policy for app users
+ 112 | ok     | VIS-3 server-reach public.notification_outbox has no select policy for app users
+ 113 | ok     | VIS-3 server-reach public.storage_purge_queue has no select policy for app users
+ 114 | ok     | VIS-4 the wrapper can_view_post calls private.sees_post
+ 115 | ok     | VIS-4 the wrapper private.reply_ok (behind reply_visible) calls private.sees_post
+ 116 | ok     | VIS-4 public.comments has exactly one permissive select policy (PRIV-VC-R4)
+ 117 | ok     | VIS-4 public.media_items has exactly one permissive select policy (PRIV-VC-R4)
+ 118 | ok     | VIS-4 public.post_audiences has exactly one permissive select policy (PRIV-VC-R4)
+ 119 | ok     | VIS-4 public.post_children has exactly one permissive select policy (PRIV-VC-R4)
+ 120 | ok     | VIS-4 public.posts has exactly one permissive select policy (PRIV-VC-R4)
+ 121 | ok     | VIS-4 public.reactions has exactly one permissive select policy (PRIV-VC-R4)
+ 122 | ok     | VIS-4 every select policy on public.comments calls private.sees_post (directly or via a wrapper)
+ 123 | ok     | VIS-4 every select policy on public.media_items calls private.sees_post (directly or via a wrapper)
+ 124 | ok     | VIS-4 every select policy on public.post_audiences calls private.sees_post (directly or via a wrapper)
+ 125 | ok     | VIS-4 every select policy on public.post_children calls private.sees_post (directly or via a wrapper)
+ 126 | ok     | VIS-4 every select policy on public.posts calls private.sees_post (directly or via a wrapper)
+ 127 | ok     | VIS-4 every select policy on public.reactions calls private.sees_post (directly or via a wrapper)
+ 128 | ok     | VIS-5 the function registry vis.functions exists
+ 129 | ok     | VIS-5 add_comment(uuid,uuid,text) is registered in vis.functions (or allowlisted with a reason)
+ 130 | ok     | VIS-5 add_people_from(uuid,uuid,text) is registered in vis.functions (or allowlisted with a reason)
+ 131 | ok     | VIS-5 can(uuid,text) is registered in vis.functions (or allowlisted with a reason)
+ 132 | ok     | VIS-5 can_comment_in_space(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 133 | ok     | VIS-5 can_post_in_space(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 134 | ok     | VIS-5 can_see_circle(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 135 | ok     | VIS-5 can_see_profile(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 136 | ok     | VIS-5 can_see_reply(uuid,uuid) is registered in vis.functions (or allowlisted with a reason)
+ 137 | ok     | VIS-5 can_send_to(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 138 | ok     | VIS-5 can_start_family() is registered in vis.functions (or allowlisted with a reason)
+ 139 | ok     | VIS-5 can_view_post(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 140 | ok     | VIS-5 chat_claim(uuid,uuid[]) is registered in vis.functions (or allowlisted with a reason)
+ 141 | ok     | VIS-5 chat_fetch(uuid,bigint,integer) is registered in vis.functions (or allowlisted with a reason)
+ 142 | ok     | VIS-5 chat_key_package_count() is registered in vis.functions (or allowlisted with a reason)
+ 143 | ok     | VIS-5 chat_list(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 144 | ok     | VIS-5 chat_publish_device(text,text[]) is registered in vis.functions (or allowlisted with a reason)
+ 145 | ok     | VIS-5 chat_roster(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 146 | ok     | VIS-5 chat_send(uuid,text,bigint,text,uuid) is registered in vis.functions (or allowlisted with a reason)
+ 147 | ok     | VIS-5 chat_start(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 148 | ok     | VIS-5 child_birth_date(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 149 | ok     | VIS-5 create_invite(uuid,member_role,uuid[],invite_channel,text,text,interval,integer,text,text) is registered in vis.functions (or allowlisted with a reason)
+ 150 | ok     | VIS-5 create_level(uuid,text,text) is registered in vis.functions (or allowlisted with a reason)
+ 151 | ok     | VIS-5 create_post(uuid,uuid,text,uuid[],timestamp with time zone,uuid[],uuid,integer,text) is registered in vis.functions (or allowlisted with a reason)
+ 152 | ok     | VIS-5 delete_comment(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 153 | ok     | VIS-5 delete_family_date(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 154 | ok     | VIS-5 delete_post(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 155 | ok     | VIS-5 edit_post_words(uuid,text,text) is registered in vis.functions (or allowlisted with a reason)
+ 156 | ok     | VIS-5 export_my_data() is registered in vis.functions (or allowlisted with a reason)
+ 157 | ok     | VIS-5 get_comments(uuid,integer) is registered in vis.functions (or allowlisted with a reason)
+ 158 | ok     | VIS-5 get_feed(uuid,timestamp with time zone,uuid,integer) is registered in vis.functions (or allowlisted with a reason)
+ 159 | ok     | VIS-5 get_timeline(uuid,timestamp with time zone,uuid,integer) is registered in vis.functions (or allowlisted with a reason)
+ 160 | ok     | VIS-5 get_timeline_years(uuid,text) is registered in vis.functions (or allowlisted with a reason)
+ 161 | ok     | VIS-5 invite_preview(text) is registered in vis.functions (or allowlisted with a reason)
+ 162 | ok     | VIS-5 is_child_guardian(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 163 | ok     | VIS-5 is_circle_member(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 164 | ok     | VIS-5 is_household_member(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 165 | ok     | VIS-5 is_post_author(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 166 | ok     | VIS-5 is_space_manager(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 167 | ok     | VIS-5 is_space_member(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 168 | ok     | VIS-5 is_space_owner(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 169 | ok     | VIS-5 link_level(uuid,uuid,text) is registered in vis.functions (or allowlisted with a reason)
+ 170 | ok     | VIS-5 list_family_dates(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 171 | ok     | VIS-5 mark_seen(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 172 | ok     | VIS-5 my_circles(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 173 | ok     | VIS-5 my_features(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 174 | ok     | VIS-5 my_profile() is registered in vis.functions (or allowlisted with a reason)
+ 175 | ok     | VIS-5 my_spaces() is registered in vis.functions (or allowlisted with a reason)
+ 176 | ok     | VIS-5 place_person(uuid,uuid,text) is registered in vis.functions (or allowlisted with a reason)
+ 177 | ok     | VIS-5 post_viewers(uuid[]) is registered in vis.functions (or allowlisted with a reason)
+ 178 | ok     | VIS-5 publish_post(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 179 | ok     | VIS-5 reaction_summary(uuid[]) is registered in vis.functions (or allowlisted with a reason)
+ 180 | ok     | VIS-5 redeem_invite(text) is registered in vis.functions (or allowlisted with a reason)
+ 181 | ok     | VIS-5 register_push_token(text,text) is registered in vis.functions (or allowlisted with a reason)
+ 182 | ok     | VIS-5 rename_circle(uuid,text) is registered in vis.functions (or allowlisted with a reason)
+ 183 | ok     | VIS-5 reply_readers(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 184 | ok     | VIS-5 reply_scope(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 185 | ok     | VIS-5 report_client_error(text,text,text,text,text) is registered in vis.functions (or allowlisted with a reason)
+ 186 | ok     | VIS-5 request_account_deletion() is registered in vis.functions (or allowlisted with a reason)
+ 187 | ok     | VIS-5 request_account_export() is registered in vis.functions (or allowlisted with a reason)
+ 188 | ok     | VIS-5 retire_level(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 189 | ok     | VIS-5 save_family_date(uuid,uuid,text,text,integer,integer,uuid) is registered in vis.functions (or allowlisted with a reason)
+ 190 | ok     | VIS-5 search_posts(uuid,text,uuid,timestamp with time zone,timestamp with time zone,timestamp with time zone,uuid,integer) is registered in vis.functions (or allowlisted with a reason)
+ 191 | ok     | VIS-5 set_comment_mode(uuid,text) is registered in vis.functions (or allowlisted with a reason)
+ 192 | ok     | VIS-5 set_my_birthday(uuid,integer,integer) is registered in vis.functions (or allowlisted with a reason)
+ 193 | ok     | VIS-5 set_my_name(text) is registered in vis.functions (or allowlisted with a reason)
+ 194 | ok     | VIS-5 set_notification_prefs(uuid,boolean,text) is registered in vis.functions (or allowlisted with a reason)
+ 195 | ok     | VIS-5 set_reaction(uuid,text) is registered in vis.functions (or allowlisted with a reason)
+ 196 | ok     | VIS-5 set_reply_audience(uuid,text) is registered in vis.functions (or allowlisted with a reason)
+ 197 | ok     | VIS-5 space_role(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 198 | ok     | VIS-5 space_upload_quota(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 199 | ok     | VIS-5 start_family(uuid,text,text[]) is registered in vis.functions (or allowlisted with a reason)
+ 200 | ok     | VIS-5 toggle_heart(uuid) is registered in vis.functions (or allowlisted with a reason)
+ 201 | ok     | VIS-5 unlink_level(uuid,uuid) is registered in vis.functions (or allowlisted with a reason)
+ 202 | ok     | VIS-5 unplace_person(uuid,uuid) is registered in vis.functions (or allowlisted with a reason)
+ 203 | ok     | VIS-5 add_comment(uuid,uuid,text) calls its reach's rule
+ 204 | ok     | VIS-5 can_see_circle(uuid) calls its reach's rule
+ 205 | ok     | VIS-5 can_see_reply(uuid,uuid) calls its reach's rule
+ 206 | ok     | VIS-5 can_send_to(uuid) calls its reach's rule
+ 207 | ok     | VIS-5 can_view_post(uuid) calls its reach's rule
+ 208 | ok     | VIS-5 chat_list(uuid) calls its reach's rule
+ 209 | ok     | VIS-5 chat_publish_device(text,text[]) calls its reach's rule
+ 210 | ok     | VIS-5 chat_roster(uuid) calls its reach's rule
+ 211 | ok     | VIS-5 create_invite(uuid,member_role,uuid[],invite_channel,text,text,interval,integer,text,text) calls its reach's rule
+ 212 | ok     | VIS-5 create_level(uuid,text,text) calls its reach's rule
+ 213 | ok     | VIS-5 delete_family_date(uuid) calls its reach's rule
+ 214 | ok     | VIS-5 delete_post(uuid) calls its reach's rule
+ 215 | ok     | VIS-5 edit_post_words(uuid,text,text) calls its reach's rule
+ 216 | ok     | VIS-5 get_comments(uuid,integer) calls its reach's rule
+ 217 | ok     | VIS-5 list_family_dates(uuid) calls its reach's rule
+ 218 | ok     | VIS-5 mark_seen(uuid) calls its reach's rule
+ 219 | ok     | VIS-5 my_circles(uuid) calls its reach's rule
+ 220 | ok     | VIS-5 my_spaces() calls its reach's rule
+ 221 | ok     | VIS-5 post_viewers(uuid[]) calls its reach's rule
+ 222 | ok     | VIS-5 publish_post(uuid) calls its reach's rule
+ 223 | ok     | VIS-5 reaction_summary(uuid[]) calls its reach's rule
+ 224 | ok     | VIS-5 register_push_token(text,text) calls its reach's rule
+ 225 | ok     | VIS-5 rename_circle(uuid,text) calls its reach's rule
+ 226 | ok     | VIS-5 reply_readers(uuid) calls its reach's rule
+ 227 | ok     | VIS-5 reply_scope(uuid) calls its reach's rule
+ 228 | ok     | VIS-5 request_account_export() calls its reach's rule
+ 229 | ok     | VIS-5 save_family_date(uuid,uuid,text,text,integer,integer,uuid) calls its reach's rule
+ 230 | ok     | VIS-5 set_notification_prefs(uuid,boolean,text) calls its reach's rule
+ 231 | ok     | VIS-5 set_reaction(uuid,text) calls its reach's rule
+ 232 | ok     | VIS-5 set_reply_audience(uuid,text) calls its reach's rule
+ 233 | ok     | VIS-5 space_upload_quota(uuid) calls its reach's rule
+ 234 | ok     | VIS-5 toggle_heart(uuid) calls its reach's rule
+ 235 | ok     | VIS-5 every allowlisted function names its reason
+ 236 | ok     | PRIV-VC-B2 my_spaces is registered with kind space (its rule: the caller is a live member, is_space_member or my_space_ids)
+ 237 | ok     | PRIV-VC-B2 public.my_spaces() is registered with a kind and rule-checked, not allowlisted
+ 238 | ok     | PRIV-VC-B2 public.my_circles(uuid) is registered with a kind and rule-checked, not allowlisted
+ 239 | ok     | PRIV-VC-B2 public.chat_roster(uuid) is registered with a kind and rule-checked, not allowlisted
+ 240 | ok     | VIS-5 list_family_dates is registered with kind family_date, not allowlisted (it returns other people's dates)
+
+
+VIS REGISTRY RESULT: 240 passed, 0 failed
+psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
+psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
+psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
+ n  | result |                                            description                                            
+----+--------+---------------------------------------------------------------------------------------------------
+  1 | ok     | VIS-7 Grandma Rivera, in the post's group, can see post a1 through can_see
+  2 | ok     | VIS-7 Alex, its author, can see post a1 through can_see
+  3 | ok     | VIS-7 Aunt Jo, same family but not in the group, can't see post a1 (false, not null)
+  4 | ok     | VIS-7 Blair, the other home, can't see post a1 (false, not null)
+  5 | ok     | VIS-7 an unregistered kind is seen by nobody (default deny, false not an error)
+  6 | ok     | VIS-7 every user and item-reach row: can_see equals the item rule  [ok]
+  7 | ok     | VIS-7 every user and person-reach row: can_see equals the person rule  [ok]
+  8 | ok     | VIS-7 every user and container-reach row: can_see equals the container rule  [ok]
+  9 | ok     | VIS-7 every user and self-reach row: can_see equals the self rule  [ok]
+ 10 | ok     | VIS-7 every user and admin-reach row: can_see equals the admin rule  [ok]
+ 11 | ok     | VIS-7 every user and server-reach row: can_see equals the server rule  [ok]
+ 12 | ok     | VIS-7 the fixture's family dates are checked in both directions (seen and not seen)  [ok]
+ 13 | ok     | VIS-7 the fixture's children are checked in both directions (seen and not seen)
+ 14 | ok     | VIS-7 Blair (guardian) sees Kit; Grandma Rivera (other family only) does not
+ 15 | ok     | VIS-18 every user and family: list_family_dates returns exactly the dates can_see allows  [ok]
+ 16 | ok     | VIS-7 the kinds can_see can't address by id (no uuid id) are exactly the 21 reviewed ones
+ 17 | ok     | R80 Alex's export has none of the dates he created in a deleted family (family C)
+ 18 | ok     | R80 ...and still has the date he created in his live family (A's anniversary)
+ 19 | ok     | R80 Grandma Rivera's export keeps her own birthday from deleted family C (her own data)
+ 20 | ok     | VIS-22 vis.sees_item equals private.sees_post for every user and every post in the fixtures
+ 21 | ok     | VIS-22 ...and the comparison is not vacuous (someone sees something)
+ 22 | ok     | VIS-22 ...and someone is kept out of something
+ 23 | ok     | VIS-24 private.sees_post(uuid,uuid) exists
+ 24 | ok     | VIS-24 vis.sees_item(uuid,uuid) exists
+ 25 | ok     | VIS-24 vis.can_see(uuid,text,uuid) exists
+ 26 | ok     | VIS-24 private.sees_post(uuid,uuid) lives in a schema PostgREST does not expose
+ 27 | ok     | VIS-24 vis.sees_item(uuid,uuid) lives in a schema PostgREST does not expose
+ 28 | ok     | VIS-24 vis.can_see(uuid,text,uuid) lives in a schema PostgREST does not expose
+ 29 | ok     | VIS-24 signed out (anon) can't execute private.sees_post(uuid,uuid)
+ 30 | ok     | VIS-24 signed out (anon) can't execute vis.sees_item(uuid,uuid)
+ 31 | ok     | VIS-24 signed out (anon) can't execute vis.can_see(uuid,text,uuid)
+ 32 | ok     | VIS-24 private.sees_post(uuid,uuid) pins search_path to empty
+ 33 | ok     | VIS-24 vis.sees_item(uuid,uuid) pins search_path to empty
+ 34 | ok     | VIS-24 vis.can_see(uuid,text,uuid) pins search_path to empty
+ 35 | ok     | VIS-24 a signed-in user (authenticated) can't execute vis.can_see
+ 36 | ok     | VIS-24 no wrapper named sees_post, sees_item or can_see sits in an exposed schema
+ 37 | ok     | PRIV-VC-B1 the private.vis_* viewer-id rules are exactly the nine pinned ones
+ 38 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_comment_ok(uuid,uuid)
+ 39 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_media_ok(uuid,uuid)
+ 40 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_child(uuid,uuid)
+ 41 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_circle(uuid,uuid)
+ 42 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_family_date(uuid,uuid)
+ 43 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_household(uuid,uuid)
+ 44 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_invite(uuid,uuid)
+ 45 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_person(uuid,uuid)
+ 46 | ok     | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_space(uuid,uuid)
+ 47 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_comment_ok(uuid,uuid)
+ 48 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_media_ok(uuid,uuid)
+ 49 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_child(uuid,uuid)
+ 50 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_circle(uuid,uuid)
+ 51 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_family_date(uuid,uuid)
+ 52 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_household(uuid,uuid)
+ 53 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_invite(uuid,uuid)
+ 54 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_person(uuid,uuid)
+ 55 | ok     | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_space(uuid,uuid)
+ 56 | ok     | PRIV-VC-B1 private.vis_comment_ok(uuid,uuid) pins search_path to empty
+ 57 | ok     | PRIV-VC-B1 private.vis_media_ok(uuid,uuid) pins search_path to empty
+ 58 | ok     | PRIV-VC-B1 private.vis_sees_child(uuid,uuid) pins search_path to empty
+ 59 | ok     | PRIV-VC-B1 private.vis_sees_circle(uuid,uuid) pins search_path to empty
+ 60 | ok     | PRIV-VC-B1 private.vis_sees_family_date(uuid,uuid) pins search_path to empty
+ 61 | ok     | PRIV-VC-B1 private.vis_sees_household(uuid,uuid) pins search_path to empty
+ 62 | ok     | PRIV-VC-B1 private.vis_sees_invite(uuid,uuid) pins search_path to empty
+ 63 | ok     | PRIV-VC-B1 private.vis_sees_person(uuid,uuid) pins search_path to empty
+ 64 | ok     | PRIV-VC-B1 private.vis_sees_space(uuid,uuid) pins search_path to empty
+ 65 | ok     | VIS-24 Aunt Jo asking can_see whether Grandma sees a post is refused (42501), not answered
+
+
+VIS CORE RESULT: 65 passed, 0 failed
+psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
+psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
+psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
+ n | result |                                          description                                           
+---+--------+------------------------------------------------------------------------------------------------
+ 1 | ok     | VIS-18 public.family_dates is registered as kind family_date in reach person
+ 2 | ok     | VIS-18 family_date's rule reuses the person rule (private.vis_sees_person), no new person rule
+ 3 | ok     | VIS-18 every user and every family date: can_see equals the RLS select (PRIV-R2)  [ok]
+ 4 | ok     | VIS-18 Blair can't see Partner Sky's birthday in A (can't see Sky's name)
+ 5 | ok     | VIS-18 Blair can't see A's anniversary (not in A's Everyone group)
+ 6 | ok     | VIS-18 Blair sees Alex's birthday in A (a parent of A)
+ 7 | ok     | VIS-18 Grandma Rivera sees A's anniversary (in A's Everyone group)
+ 8 | ok     | VIS-18 Grandma Rivera can't see B's reunion (not in family B)
+
+
+VIS CALENDAR RESULT: 8 passed, 0 failed
+psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
+psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
+psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
+Time: 0.077 ms
+
+VIS ORACLE MATRIX seed=42 seconds=9
+         path         |        kind         | checked | wrong_yes | wrong_no 
+----------------------+---------------------+---------+-----------+----------
+ chat_roster          | chat_group          |     600 |         0 |        0
+ chat_roster:people   | profile             |     156 |         0 |        0
+ comments             | comment             |     680 |         0 |        0
+ comments             | post                |    1220 |         0 |        0
+ export               | comment             |      41 |         0 |        0
+ export               | family_date         |      15 |         0 |        0
+ export               | post                |    1380 |         0 |        0
+ family_dates         | family_date         |     220 |         0 |        0
+ feed                 | post                |    1220 |         0 |        0
+ post_audiences_table | post                |     185 |         0 |        0
+ post_by_id           | post                |    1380 |         0 |        0
+ post_viewers         | post                |    1220 |         0 |        0
+ post_viewers:names   | post                |     980 |         0 |        0
+ reactions            | post                |     460 |         0 |        0
+ reactions_table      | post                |      55 |         0 |        0
+ reply_readers        | post                |    1220 |         0 |        0
+ search               | post                |    1220 |         0 |        0
+ sign_media           | media_item          |     940 |         0 |        0
+ sign_media           | post                |    1380 |         0 |        0
+ table                | account_export      |      20 |         0 |        0
+ table                | child               |      20 |         0 |        0
+ table                | circle              |     600 |         0 |        0
+ table                | comment             |     820 |         0 |        0
+ table                | family_date         |     220 |         0 |        0
+ table                | household           |      80 |         0 |        0
+ table                | media_item          |    1000 |         0 |        0
+ table                | notification_outbox |    5160 |         0 |        0
+ table                | post                |    1380 |         0 |        0
+ table                | profile             |     400 |         0 |        0
+ table                | push_token          |     120 |         0 |        0
+ table                | space               |     120 |         0 |        0
+ timeline             | post                |    1220 |         0 |        0
+
+VIS ORACLE MISMATCHES (first 50: user, kind, path, id)
+ user | kind | path | id | mismatch 
+------+------+------+----+----------
+
+VIS-9 DIFFERENCES (first 30: user, probe, hidden post answer vs missing post answer)
+                 user                 |    probe    |                 post                 | sig |        ghost_sig         
+--------------------------------------+-------------+--------------------------------------+-----+--------------------------
+ 34f54546-a518-42cc-87fb-c86c29b7bd4f | delete_post | dd8edb8f-94cb-465e-8626-e8123897d0d4 | ok: | err:P0002:post not found
+ 361ca342-c99a-4ffb-8f19-b2cae815fe42 | delete_post | d8aa0a66-eb23-46ea-828c-88a8a73b122f | ok: | err:P0002:post not found
+ ea92df82-2e11-4388-89f4-da059e06747a | delete_post | 053be082-8505-4d70-8762-d09ebe86880b | ok: | err:P0002:post not found
+ f92e6ddb-1a7e-47c6-811f-180be5634efc | delete_post | 04479d36-78e7-49ba-8da8-4a8c3bb2bf67 | ok: | err:P0002:post not found
+
+ n  | result |                                                                      description                                                                       
+----+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------
+  1 | ok     | VIS-8 harness: tests/vis_oracle/generate.sql defines vis_oracle.generate(seed integer)
+  2 | ok     | VIS-11 harness: tests/vis_oracle/generate.sql defines vis_oracle.fixture_json()
+  3 | ok     | VIS-8 fixed seed: generate(42) twice gives the same rows, ids and times
+  4 | ok     | VIS-8 fixed seed: a different seed gives a different family
+  5 | ok     | VIS-11 fixture_json() is the same for the same seed
+  6 | ok     | VIS-11 backend/tests/vis_oracle/fixtures/seed-42.json equals vis_oracle.fixture_json() for seed 42 (regenerate it with nightly.sh --seed 42 --fixture)
+  7 | ok     | VIS-8 shape: at least two generated households
+  8 | ok     | VIS-8 shape: at least three live generated families
+  9 | ok     | VIS-8 shape: a deleted family (its members must see nothing in it)
+ 10 | ok     | VIS-8 shape: at least 12 generated people
+ 11 | ok     | VIS-8 shape: personas only (PERSONAS.md nicknames, emails at example.com)
+ 12 | ok     | VIS-8 shape: a co-parent: a parent in one family who is a relative in the other
+ 13 | ok     | VIS-8 shape: overlapping groups (someone in two groups of one family)
+ 14 | ok     | VIS-8 shape: a removed member (wrote a post, no longer in that family)
+ 15 | ok     | VIS-8 shape: a demoted parent (wrote posts, now a relative in a family where relatives can't post)
+ 16 | ok     | VIS-8 shape: a share-history cutoff with posts on both sides of it
+ 17 | ok     | VIS-8 shape: at least 40 live posts, a deleted post and a draft
+ 18 | ok     | VIS-8 shape: Everyone, household, event and plain groups, and a retired group
+ 19 | ok     | VIS-8 shape: a post sent only to a group that was retired since
+ 20 | ok     | VIS-8 shape: at least 10 replies and a deleted reply
+ 21 | ok     | VIS-8 shape: at least 10 reactions
+ 22 | ok     | VIS-8 shape: one family keeps replies with the parents, another opens them to everyone
+ 23 | ok     | VIS-8 shape: ready and unfinished media
+ 24 | ok     | VIS-8 shape: a words-only post (SHARE-U-4)
+ 25 | ok     | VIS-8 shape: life-calendar birthdays and a family date with no member
+ 26 | ok     | VIS-8 shape: at least two chats
+ 27 | ok     | VIS-8 shape: pending notices to people who can be reached (push token or email)
+ 28 | ok     | VIS-8 table (post) equals vis.can_see for every person: 1380 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 29 | ok     | VIS-8 table (comment) equals vis.can_see for every person: 820 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 30 | ok     | VIS-8 table (media_item) equals vis.can_see for every person: 1000 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 31 | ok     | VIS-8 table (profile) equals vis.can_see for every person: 400 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 32 | ok     | VIS-8 table (circle) equals vis.can_see for every person: 600 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 33 | ok     | VIS-8 table (space) equals vis.can_see for every person: 120 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 34 | ok     | VIS-8 table (family_date) equals vis.can_see for every person: 220 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 35 | ok     | VIS-8 table (notification_outbox) equals vis.can_see for every person: 5160 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 36 | ok     | VIS-8 post_audiences_table (post) equals vis.can_see for every person: 185 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 37 | ok     | VIS-8 feed (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 38 | ok     | VIS-8 timeline (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 39 | ok     | VIS-8 search (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 40 | ok     | VIS-8 post_by_id (post) equals vis.can_see for every person: 1380 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 41 | ok     | VIS-8 comments (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 42 | ok     | VIS-8 comments (comment) equals vis.can_see for every person: 680 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 43 | ok     | VIS-8 reply_readers (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 44 | ok     | VIS-8 reactions (post) equals vis.can_see for every person: 460 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 45 | ok     | VIS-8 reactions_table (post) equals vis.can_see for every person: 55 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 46 | ok     | VIS-8 post_viewers (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 47 | ok     | VIS-8 post_viewers:names (post) equals vis.can_see for every person: 980 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 48 | ok     | VIS-8 sign_media (post) equals vis.can_see for every person: 1380 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 49 | ok     | VIS-8 sign_media (media_item) equals vis.can_see for every person: 940 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 50 | ok     | VIS-8 family_dates (family_date) equals vis.can_see for every person: 220 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 51 | ok     | VIS-8 chat_roster (chat_group) equals vis.can_see for every person: 600 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 52 | ok     | VIS-8 chat_roster:people (profile) equals vis.can_see for every person: 156 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 53 | ok     | VIS-8 export (post) equals vis.can_see for every person: 1380 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 54 | ok     | VIS-8 export (comment) equals vis.can_see for every person: 41 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 55 | ok     | VIS-8 table (account_export) equals vis.can_see for every person: 20 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 56 | ok     | VIS-8 table (child) equals vis.can_see for every person: 20 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 57 | ok     | VIS-8 table (household) equals vis.can_see for every person: 80 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 58 | ok     | VIS-8 table (push_token) equals vis.can_see for every person: 120 pairs, 0 wrong yes (P0), 0 wrong no (P1)
+ 59 | ok     | VIS-8 feed was checked both ways (someone allowed, someone excluded)
+ 60 | ok     | VIS-8 timeline was checked both ways (someone allowed, someone excluded)
+ 61 | ok     | VIS-8 search was checked both ways (someone allowed, someone excluded)
+ 62 | ok     | VIS-8 post_by_id was checked both ways (someone allowed, someone excluded)
+ 63 | ok     | VIS-8 comments was checked both ways (someone allowed, someone excluded)
+ 64 | ok     | VIS-8 post_viewers was checked both ways (someone allowed, someone excluded)
+ 65 | ok     | VIS-8 sign_media was checked both ways (someone allowed, someone excluded)
+ 66 | ok     | VIS-8 family_dates was checked both ways (someone allowed, someone excluded)
+ 67 | ok     | VIS-8 chat_roster was checked both ways (someone allowed, someone excluded)
+ 68 | ok     | VIS-9 can_view_post: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 69 | ok     | VIS-9 get_comments: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 70 | ok     | VIS-9 reply_readers: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 71 | ok     | VIS-9 reply_scope: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 72 | ok     | VIS-9 post_viewers: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 73 | ok     | VIS-9 reaction_summary: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 74 | ok     | VIS-9 mark_seen: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 75 | ok     | VIS-9 toggle_heart: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 76 | ok     | VIS-9 set_reaction: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 77 | ok     | VIS-9 add_comment: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 78 | ok     | VIS-9 edit_post_words: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 79 | ok     | VIS-9 delete_post: a post you can't see answers like one that doesn't exist (1191 hidden pairs, 0 differ)
+ 80 | ok     | VIS-9 publish_post: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 81 | ok     | VIS-9 set_post_audience: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 82 | ok     | VIS-9 posts: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 83 | ok     | VIS-9 media_items: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 84 | ok     | VIS-9 comments: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 85 | ok     | VIS-9 reactions: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 86 | ok     | VIS-9 post_audiences: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)
+ 87 | ok     | VIS-9 exception: deleting your own already-deleted post again is a no-op that returns nothing (BETA-AUD-5; 4 pairs)
+ 88 | ok     | VIS-9 exception stays narrow: someone else's deleted post still says not found (P0002) to a non-author
+ 89 | ok     | VIS-9 exception stays narrow: a non-author calling delete_post on any post hidden from them gets not found (P0002)
+ 90 | ok     | VIS-9 exception covers delete_post only
+ 91 | ok     | VIS-9 a post that doesn't exist reads as P0002, false or empty for every person
+ 92 | ok     | VIS-10 setup: relatives taken out of a post's groups after the notice was written can no longer see it
+ 93 | ok     | VIS-10 the send claimed notices (the check below is not vacuous)
+ 94 | ok     | VIS-10 every notice sent (new posts, replies, reactions) names only posts its recipient can see at send time
+ 95 | ok     | VIS-10 a relative removed before the send, and a post deleted before the send, get no notice
+
+
+VIS ORACLE RESULT: 95 passed, 0 failed
+psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
+psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
+psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
 
 Narrowing for Chase (readable before 0011 only through "members see each other's replies"):
      reader     |  kind   |                                 reply_id                                  
 ----------------+---------+---------------------------------------------------------------------------
- Grandma Rivera | comment | dc2b2595-2678-4d0c-a37d-a73edd4ae725
+ Grandma Rivera | comment | a5e4ea9d-1f54-40b9-945e-0bdd0920c8da
  Grandma Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a2
- Grandpa Rivera | comment | 6ad94773-ede7-49e4-bea5-2979d31ba487
+ Grandpa Rivera | comment | 351dab39-3f32-4188-94d6-c4931a3d62e2
  Grandpa Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a1
 
  n  | result |                                                     description                                                      
@@ -1538,8 +1990,8 @@ ok      SETUP-API: before Chase has an account it says "sign in once in the app"
 ok      SETUP-API: ... and changes nothing
 ok      SETUP-API: fresh setup runs without error
         | Family "Chase's kids" is ready: Everyone, Chase's side, Mom's side, 7 houses, 2 events.
-        | Test viewer invite (account B): code 3MPQZV6XQW, works once until Dec 01, link https://thefreighttrains-team-hearth.expo.app/join/655b6b5e2820a41f6f988327f290cc0dd03ec9f6
-        | Mom's poster invite: code ZV438R2FRJ, works once until Dec 01, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/51da24c78964e4b595136392439d3efe4beb1b60
+        | Test viewer invite (account B): code KFNTBA9NJR, works once until Dec 01, link https://thefreighttrains-team-hearth.expo.app/join/05d4a543415ad31d8e105115f5885ad1cea7cbf7
+        | Mom's poster invite: code ZRH52X49SV, works once until Dec 01, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/213d744b263e39f14dbc95a5b26411491a6d2425
 ok      SETUP-API: Chase owns one family, named as given (an apostrophe in the name is kept, not a SQL error)
 ok      SETUP-API: one Everyone
 ok      SETUP-API: the set groups are Chase's side and Mom's side (no v1 groups to retire later)
@@ -1598,7 +2050,7 @@ ok      QA-3: a visible post with a photo not ready counts as missing, and says 
 SENT-RECEIVED RESULT: 20 passed, 0 failed
 ok      D1 smoke: backend/scripts/smoke-check.sh exists
 ok      D1 smoke: without SUPABASE_ACCESS_TOKEN it stops and names the secret
-        | ok    all 30 migrations applied
+        | ok    all 32 migrations applied
         | ok    RLS is on for every public table
         | ok    cron job hearth-notify
         | ok    cron job hearth-purge-client-errors
@@ -1610,7 +2062,7 @@ ok      D1 smoke: without SUPABASE_ACCESS_TOKEN it stops and names the secret
         | SMOKE RESULT: 9 ok, 0 failed
 ok      D1 smoke: a healthy project passes (exit 0)
 ok      D1 smoke: ends with "SMOKE RESULT: N ok, 0 failed"
-ok      D1 smoke: says all 30 local migrations are applied
+ok      D1 smoke: says all 32 local migrations are applied
 ok      D1 smoke: never prints a secret value
 ok      D1 smoke: never prints the token
 ok      D1 smoke: its SQL runs inside a read-only transaction (no write attempted)
@@ -1619,7 +2071,7 @@ ok      D1 smoke: the token goes in the Authorization header
 ok      D1 smoke: no psql, no unexpected endpoint
 ok      D1 smoke: changes nothing
 ok      ONB-3 smoke: hosted invite_link_base is checked and reads as ok
-ok      D1 smoke: a migration not applied on hosted fails and names it (0030)
+ok      D1 smoke: a migration not applied on hosted fails and names it (0033)
 ok      D1 smoke: a public table without RLS fails and names it
 ok      D1 smoke: a missing cron job fails and names it
 ok      D1 smoke: a missing edge function fails and names it
@@ -1645,3 +2097,31 @@ ok      TS-SEC-R1 deploy.sh's PATCH config/auth body sends "mailer_autoconfirm":
 
 AUTH CONFIG TEST RESULT: 6 passed, 0 failed
 psql:../packages/messenger/relay/test.sql:123: NOTICE:  RELAY RESULT: 24 passed, 0 failed
+ok      VIS-2 control: the gate passes on main's migrations
+ok      VIS-2 a scratch table with no registry row fails the gate, naming public.vis_scratch_unregistered
+ok      VIS-23 a second permissive select policy on public.posts fails the gate (PRIV-VC-R4)
+ok      VIS-6 edge function notify is in vis.edge_functions
+ok      VIS-6 notify has verify_jwt = false and names a reason
+ok      VIS-6 edge function sign-media is in vis.edge_functions
+ok      VIS-6 no registered edge function is missing its folder
+ok      VIS-24 config.toml [api] schemas exposes neither vis nor private (schemas = ["public", "graphql_public"])
+VIS GATE RESULT: 8 passed, 0 failed
+psql:../packages/visibility/core/test.sql:180: NOTICE:  VIS CORE KIT RESULT: 30 passed, 0 failed
+ok      VIS-21 the vis template exists (supabase.sql)
+ok      VIS-21 no product words (family, circle, post, Gammy, Hearth) in the template
+ok      VIS-21 the word check catches 'posts' and lets 'Postgres'/'PostgREST' through
+VIS-21 RESULT: 3 passed, 0 failed
+ok      ARCH-VC-R1 supabase/migrations/0031_vis_core.sql below its header is ../packages/visibility/core/supabase.sql verbatim
+ok      ARCH-VC-R1 bites: a scratch change to the package alone fails the check
+ok      ARCH-VC-R1 bites: a scratch edit to migration 0031 alone fails the check
+ok      ARCH-VC-R1 a missing migration fails the check, not passes it
+VIS CORE COPY RESULT: 4 passed, 0 failed
+ok      VIS-12 tests/vis_oracle/nightly.sh exists
+ok      VIS-12 --seed 4242 writes a dated matrix: tests/results/vis-oracle-2026-11-24-seed4242.txt
+ok      VIS-12 the matrix names its seed
+ok      VIS-12 the matrix has path, kind, checked, wrong_yes, wrong_no
+ok      VIS-12 the matrix has a row for every read path
+ok      VIS-12 the matrix carries no email or other personal text
+ok      VIS-12 the matrix ends with the suite's result line
+ok      VIS-12 the job's exit code follows the oracle (exit 0)
+VIS-12 nightly: 8 passed, 0 failed

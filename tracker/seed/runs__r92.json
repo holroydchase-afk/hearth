@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-25T04:00:00-05:00",
+ "label": "T41 isolation: SHARE-PC-13 10x on the branch and on main, plus full demo e2e 2x each (not reproduced)",
+ "passed": 120,
+ "failed": 0,
+ "results": {},
+ "note": "SHARE-PC-13 --repeat-each 10: branch (dist-demo from 623388c) 10 passed, main a32609b (scratch worktree, own export) 10 passed. Full playwright.demo.config: branch 50 passed x2, main 50 passed x2. The r91 run-3 failure did not recur on either; cause unconfirmed (likely load). T41 stays open. e2e/results/share-pc-13-isolate-2026-11-25/"
+}

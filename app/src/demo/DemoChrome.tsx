@@ -56,7 +56,7 @@ export function DemoChrome({ children }: { children: ReactNode }) {
         open={open}
         controls={(
           <View style={{ gap: 8 }}>
-            {restored && <Txt variant="strong">Sample data restored.</Txt>}
+            {restored && <Txt variant="headline">Sample data restored.</Txt>}
             <DemoActions be={be} reload={goPhotos} startOver={() => void startOver(be)} />
           </View>
         )}

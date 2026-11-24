@@ -1,0 +1,737 @@
+FAIL src/demo/__tests__/realPhotos.test.ts
+  ● DEMO-PHOTO stock photos in the public demo › DEMO-PHOTO-4 public/demo-pictures holds exactly the 19 stock photos, each with a thumb, and none of the Nov 16 set
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 38
+    + Received  + 20
+
+      Array [
+    -   "baking-3806951-thumb.jpg",
+    -   "baking-3806951.jpg",
+    -   "baking-3807115-thumb.jpg",
+    -   "baking-3807115.jpg",
+    -   "baking-3807194-thumb.jpg",
+    -   "baking-3807194.jpg",
+    -   "baking-3807313-thumb.jpg",
+    -   "baking-3807313.jpg",
+    -   "baking-3807394-thumb.jpg",
+    -   "baking-3807394.jpg",
+    -   "bike-6209856-thumb.jpg",
+    -   "bike-6209856.jpg",
+    -   "bike-6209901-thumb.jpg",
+    -   "bike-6209901.jpg",
+    -   "bike-6209917-thumb.jpg",
+    -   "bike-6209917.jpg",
+    -   "bike-6209923-thumb.jpg",
+    -   "bike-6209923.jpg",
+    -   "orchard-4543633-thumb.jpg",
+    -   "orchard-4543633.jpg",
+    -   "orchard-4543640-thumb.jpg",
+    -   "orchard-4543640.jpg",
+    -   "orchard-4543642-thumb.jpg",
+    -   "orchard-4543642.jpg",
+    -   "orchard-4543661-thumb.jpg",
+    -   "orchard-4543661.jpg",
+    -   "orchard-4543671-thumb.jpg",
+    -   "orchard-4543671.jpg",
+    -   "orchard-4543672-thumb.jpg",
+    -   "orchard-4543672.jpg",
+    -   "orchard-4543714-thumb.jpg",
+    -   "orchard-4543714.jpg",
+    -   "orchard-4543718-thumb.jpg",
+    -   "orchard-4543718.jpg",
+    -   "orchard-4543719-thumb.jpg",
+    -   "orchard-4543719.jpg",
+    -   "orchard-4543720-thumb.jpg",
+    -   "orchard-4543720.jpg",
+    +   "beach-thumb.jpg",
+    +   "beach.jpg",
+    +   "bike-thumb.jpg",
+    +   "bike.jpg",
+    +   "bridge-thumb.jpg",
+    +   "bridge.jpg",
+    +   "dunes-thumb.jpg",
+    +   "dunes.jpg",
+    +   "hug-thumb.jpg",
+    +   "hug.jpg",
+    +   "museum-thumb.jpg",
+    +   "museum.jpg",
+    +   "overlook-thumb.jpg",
+    +   "overlook.jpg",
+    +   "playground-thumb.jpg",
+    +   "playground.jpg",
+    +   "porch-thumb.jpg",
+    +   "porch.jpg",
+    +   "splash-thumb.jpg",
+    +   "splash.jpg",
+      ]
+
+      55 |     expect(NAMES).toHaveLength(19);
+      56 |     const jpgs = fs.readdirSync(DIR).filter((f) => f.toLowerCase().endsWith('.jpg')).sort();
+    > 57 |     expect(jpgs).toEqual(NAMES.flatMap((n) => [`${n}.jpg`, `${n}-thumb.jpg`]).sort());
+         |                  ^
+      58 |     for (const old of OLD) {
+      59 |       expect(jpgs).not.toContain(`${old}.jpg`);
+      60 |       expect(jpgs).not.toContain(`${old}-thumb.jpg`);
+
+      at Object.toEqual (src/demo/__tests__/realPhotos.test.ts:57:18)
+
+  ● DEMO-PHOTO stock photos in the public demo › DEMO-PHOTO-5 none of the 38 files carries APP1 (EXIF/XMP), APP2 or APP13, and no GPS tag before the image data
+
+    ENOENT: no such file or directory, open '/home/user/Hearth/app/public/demo-pictures/orchard-4543640.jpg'
+
+      48 |   throw new Error('no size');
+      49 | }
+    > 50 | const read = (f: string) => fs.readFileSync(path.join(DIR, f));
+         |                                ^
+      51 | const longSide = (s: { width: number; height: number }) => Math.max(s.width, s.height);
+      52 |
+      53 | describe('DEMO-PHOTO stock photos in the public demo', () => {
+
+      at readFileSync (src/demo/__tests__/realPhotos.test.ts:50:32)
+      at Object.read (src/demo/__tests__/realPhotos.test.ts:67:31)
+
+  ● DEMO-PHOTO stock photos in the public demo › DEMO-PHOTO-6 each display file is 1200 px on its long side, each thumb 400 px, at the same shape (within 1%)
+
+    ENOENT: no such file or directory, open '/home/user/Hearth/app/public/demo-pictures/orchard-4543640.jpg'
+
+      48 |   throw new Error('no size');
+      49 | }
+    > 50 | const read = (f: string) => fs.readFileSync(path.join(DIR, f));
+         |                                ^
+      51 | const longSide = (s: { width: number; height: number }) => Math.max(s.width, s.height);
+      52 |
+      53 | describe('DEMO-PHOTO stock photos in the public demo', () => {
+
+      at readFileSync (src/demo/__tests__/realPhotos.test.ts:50:32)
+      at Object.read (src/demo/__tests__/realPhotos.test.ts:78:26)
+
+  ● DEMO-PHOTO stock photos in the public demo › DEMO-PHOTO-7 DEMO_PICTURE_SIZES has one entry per shipped picture, each matching the file's real size
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 19
+    + Received  + 10
+
+      Array [
+    -   "baking-3806951",
+    -   "baking-3807115",
+    -   "baking-3807194",
+    -   "baking-3807313",
+    -   "baking-3807394",
+    -   "bike-6209856",
+    -   "bike-6209901",
+    -   "bike-6209917",
+    -   "bike-6209923",
+    -   "orchard-4543633",
+    -   "orchard-4543640",
+    -   "orchard-4543642",
+    -   "orchard-4543661",
+    -   "orchard-4543671",
+    -   "orchard-4543672",
+    -   "orchard-4543714",
+    -   "orchard-4543718",
+    -   "orchard-4543719",
+    -   "orchard-4543720",
+    +   "beach",
+    +   "bike",
+    +   "bridge",
+    +   "dunes",
+    +   "hug",
+    +   "museum",
+    +   "overlook",
+    +   "playground",
+    +   "porch",
+    +   "splash",
+      ]
+
+      85 |
+      86 |   it('DEMO-PHOTO-7 DEMO_PICTURE_SIZES has one entry per shipped picture, each matching the file\'s real size', () => {
+    > 87 |     expect(Object.keys(DEMO_PICTURE_SIZES).sort()).toEqual([...NAMES].sort());
+         |                                                    ^
+      88 |     for (const n of NAMES) expect({ n, ...DEMO_PICTURE_SIZES[n] }).toEqual({ n, ...jpegSize(read(`${n}.jpg`)) });
+      89 |   });
+      90 |
+
+      at Object.toEqual (src/demo/__tests__/realPhotos.test.ts:87:52)
+
+  ● DEMO-PHOTO stock photos in the public demo › DEMO-PHOTO-8 DEMO_POSTS is the 7 posts of the table in order: sender, group, pictures, day bucket; 19 pictures, each once
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 24
+    + Received  + 27
+
+      Array [
+        Object {
+    -     "from": "Alex",
+    +     "from": "Kevin",
+          "pictures": Array [
+    -       "orchard-4543640",
+    -       "orchard-4543633",
+    -       "orchard-4543718",
+    -       "orchard-4543714",
+    -       "orchard-4543720",
+    -       "orchard-4543719",
+    +       "beach",
+    +       "dunes",
+    +     ],
+    +     "to": "everyone",
+    +   },
+    +   Object {
+    +     "from": "Kevin",
+    +     "pictures": Array [
+    +       "museum",
+          ],
+          "to": "everyone",
+        },
+        Object {
+          "from": "Kevin",
+          "pictures": Array [
+    -       "orchard-4543671",
+    -       "orchard-4543672",
+    -       "orchard-4543642",
+    +       "playground",
+          ],
+          "to": "dadSide",
+        },
+        Object {
+    -     "from": "Alex",
+    +     "from": "Kevin",
+          "pictures": Array [
+    -       "orchard-4543661",
+    +       "porch",
+          ],
+          "to": "momSide",
+        },
+        Object {
+          "from": "Kevin",
+          "pictures": Array [
+    -       "baking-3807194",
+    -       "baking-3807115",
+    -       "baking-3806951",
+    -       "baking-3807313",
+    +       "bike",
+          ],
+    -     "to": "dadSide",
+    +     "to": "momSide",
+        },
+        Object {
+          "from": "Kevin",
+          "pictures": Array [
+    -       "baking-3807394",
+    +       "splash",
+          ],
+          "to": "everyone",
+        },
+        Object {
+    +     "from": "Kevin",
+    +     "pictures": Array [
+    +       "bridge",
+    +     ],
+    +     "to": "dadSide",
+    +   },
+    +   Object {
+          "from": "Alex",
+          "pictures": Array [
+    -       "bike-6209917",
+    -       "bike-6209856",
+    -       "bike-6209923",
+    +       "overlook",
+          ],
+          "to": "everyone",
+        },
+        Object {
+    -     "from": "Kevin",
+    +     "from": "Alex",
+          "pictures": Array [
+    -       "bike-6209901",
+    +       "hug",
+          ],
+    -     "to": "dadSide",
+    +     "to": "everyone",
+        },
+      ]
+
+      91 |   it('DEMO-PHOTO-8 DEMO_POSTS is the 7 posts of the table in order: sender, group, pictures, day bucket; 19 pictures, each once', () => {
+      92 |     const got = DEMO_POSTS.map((p) => ({ from: p.from === 'alex' ? 'Alex' : 'Kevin', to: p.to, pictures: p.pictures }));
+    > 93 |     expect(got).toEqual(TABLE.map((r) => ({ from: r.from, to: r.to, pictures: [...r.pictures] })));
+         |                 ^
+      94 |     for (const [i, r] of TABLE.entries()) {
+      95 |       const p = DEMO_POSTS[i]!;
+      96 |       const inBucket = r.days === 0 ? p.daysAgo > 0 && p.daysAgo <= 2.5 : Math.abs(p.daysAgo - r.days) <= 2;
+
+      at Object.toEqual (src/demo/__tests__/realPhotos.test.ts:93:17)
+
+  ● DEMO-PHOTO stock photos in the public demo › DEMO-PHOTO-9 the parent is "Kevin", and no demo name, caption, title, reply or date label says "Chase"
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "Kevin"
+    Received: "Chase"
+
+      108 |   it('DEMO-PHOTO-9 the parent is "Kevin", and no demo name, caption, title, reply or date label says "Chase"', () => {
+      109 |     const parent = Object.entries(DEMO_NAMES).find(([, n]) => n !== 'Alex');
+    > 110 |     expect(parent?.[1]).toBe('Kevin');
+          |                         ^
+      111 |     const words = [
+      112 |       ...Object.values(DEMO_NAMES),
+      113 |       ...DEMO_POSTS.flatMap((p) => [p.caption, p.title ?? '', ...p.replies.map((r) => r.body)]),
+
+      at Object.toBe (src/demo/__tests__/realPhotos.test.ts:110:25)
+
+  ● DEMO-PHOTO stock photos in the public demo › DEMO-PHOTO-13 the seed version moves on from the Nov 16 family, so a returning browser drops it and its bytes
+
+    expect(received).not.toBe(expected) // Object.is equality
+
+    Expected: not "u4ie58"
+
+      121 |     // demoSeedVersion() on main before DEMO-PHOTO (Nov 24, with CAL-19 dates) and before CAL-19.
+      122 |     for (const old of ['u4ie58', '659ibx']) {
+    > 123 |       expect(demoSeedVersion()).not.toBe(old);
+          |                                     ^
+      124 |       const m = new Map<string, string>([['hearth.fakeBackend.v1', '{"old":1}'], ['hearth.prefs.v1.u1', '{}'], [DEMO_SEED_KEY, old], ['role-radar.jobs', '[]']]);
+      125 |       const ls = {
+      126 |         get length() { return m.size; },
+
+      at toBe (src/demo/__tests__/realPhotos.test.ts:123:37)
+      at Object._loop (src/demo/__tests__/realPhotos.test.ts:122:43)
+
+  ● DEMO-PHOTO stock photos in the public demo › DEMO-PHOTO-14 CREDITS.md names Pexels, both photographers with their prefixes, and the license; README carries the credit line
+
+    ENOENT: no such file or directory, open '/home/user/Hearth/app/public/demo-pictures/CREDITS.md'
+
+      136 |
+      137 |   it('DEMO-PHOTO-14 CREDITS.md names Pexels, both photographers with their prefixes, and the license; README carries the credit line', () => {
+    > 138 |     const credits = fs.readFileSync(path.join(DIR, 'CREDITS.md'), 'utf8');
+          |                        ^
+      139 |     expect(credits).toMatch(/Pexels/);
+      140 |     expect(credits).toMatch(/license/i);
+      141 |     expect(credits).toMatch(/free to use/i);
+
+      at Object.readFileSync (src/demo/__tests__/realPhotos.test.ts:138:24)
+
+  ● DEMO-PHOTO stock photos in the public demo › DEMO-PHOTO-18 README, CASE-STUDY and code comments never say the demo photos are the founder's or Chase's own
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 5
+
+    - Array []
+    + Array [
+    +   "README.md:15",
+    +   "app/src/demo/pictures.ts:4",
+    +   "app/scripts/make-demo-pictures.py:1",
+    + ]
+
+      160 |     for (const d of ['src', 'e2e-web', 'scripts']) walk(path.join(ROOT, 'app', d));
+      161 |     const hits = files.flatMap((f) => fs.readFileSync(f, 'utf8').split('\n').map((l, i) => ({ f: path.relative(ROOT, f), line: i + 1, l })).filter((x) => own.test(x.l)));
+    > 162 |     expect(hits.map((h) => `${h.f}:${h.line}`)).toEqual([]);
+          |                                                 ^
+      163 |   });
+      164 | });
+      165 |
+
+      at Object.toEqual (src/demo/__tests__/realPhotos.test.ts:162:49)
+
+FAIL src/demo/__tests__/calendarDemo.test.ts
+  ● CAL-19 the demo family has dates › CAL-19 DEMO-PHOTO-9 a made-up kid's birthday (Mia) and Kevin and Alex's anniversary
+
+    expect(received).toHaveLength(expected)
+
+    Expected length: 1
+    Received length: 0
+    Received array:  []
+
+      35 |     const rows = await demoDates();
+      36 |     expect(rows.filter((r) => r.kind === 'birthday' && r.member_id === null && /^Mia\b/.test(r.label ?? ''))).toHaveLength(1);
+    > 37 |     expect(rows.filter((r) => r.kind === 'anniversary' && /^Kevin and Alex\b/.test(r.label ?? ''))).toHaveLength(1);
+         |                                                                                                     ^
+      38 |   });
+      39 |
+      40 |   it('CAL-19 the demo seed version moves on from the pre-calendar one, so returning visitors get the dates', () => {
+
+      at Object.toHaveLength (src/demo/__tests__/calendarDemo.test.ts:37:101)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● CAL-19 the demo family has dates › DEMO-PHOTO-13 the demo seed version moves on from the Nov 16 photo family (with CAL-19 dates)
+
+    expect(received).not.toBe(expected) // Object.is equality
+
+    Expected: not "u4ie58"
+
+      43 |
+      44 |   it('DEMO-PHOTO-13 the demo seed version moves on from the Nov 16 photo family (with CAL-19 dates)', () => {
+    > 45 |     expect(demoSeedVersion()).not.toBe('u4ie58'); // demoSeedVersion() on main before DEMO-PHOTO (Nov 24)
+         |                                   ^
+      46 |   });
+      47 | });
+      48 |
+
+      at Object.toBe (src/demo/__tests__/calendarDemo.test.ts:45:35)
+
+FAIL src/demo/__tests__/seed.test.ts
+  ● DEMO-1..3, DEMO-10 sample-data demo › DEMO-3 DEMO-PHOTO-9 the demo parent is "Kevin"; the rest are made-up names and no surname, "Chase" or "Kai" appears
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: ArrayContaining ["Kevin", "Alex", "Grandma Jo"]
+    Received: ["Chase", "Alex", "Grandma Jo", "Nana Ruth", "Grandpa Earl", "Aunt Kim", "Tammy"]
+
+      67 |     const be = await seeded();
+      68 |     const names = Object.values(be.state.users).map((u) => u.name);
+    > 69 |     expect(names).toEqual(expect.arrayContaining(['Kevin', 'Alex', 'Grandma Jo']));
+         |                   ^
+      70 |     expect(be.state.users[F.users.chase.id]!.name).toBe('Kevin');
+      71 |     expect(be.state.users[F.users.chase.id]!.email).toBe('kevin@example.com');
+      72 |     expect(JSON.stringify(be.state.users)).not.toMatch(/\bKai\b|Holroyd|Chase/i);
+
+      at Object.toEqual (src/demo/__tests__/seed.test.ts:69:19)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● DEMO-1..3, DEMO-10 sample-data demo › DEMO-PHOTO-11 Grandma Jo gets posts 1, 2, 4, 5, 6 and 7 (18 photos), never Mom's-side post 3
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 2
+    + Received  + 3
+
+      Array [
+    -   "Bike day at the lake",
+        "Bridge walk on the trail",
+        "Found these on my phone from August",
+    +   "He went down the big slide all by himself",
+        "Leo and his cousin met a mammoth at the museum",
+        "Life jackets on and in all afternoon",
+    -   "Watering the flowers on a foggy morning",
+    +   "One big hug before the drive home",
+    +   "We drove up to the overlook. The leaves are turning",
+      ]
+
+      85 |     const hers = be.getFeed(F.users.jo.id, { space: F.space.id, limit: 50 });
+      86 |     const want = [0, 1, 3, 4, 5, 6].map((i) => DEMO_POSTS[i]!.caption);
+    > 87 |     expect(hers.map((p) => p.caption).sort()).toEqual([...want].sort());
+         |                                               ^
+      88 |     expect(hers.reduce((n, p) => n + p.media.length, 0)).toBe(18);
+      89 |     expect(hers.map((p) => p.caption)).not.toContain(DEMO_POSTS[2]!.caption);
+      90 |     expect(DEMO_POSTS[2]!.pictures).toEqual(['orchard-4543661']);
+
+      at Object.toEqual (src/demo/__tests__/seed.test.ts:87:47)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● DEMO-1..3, DEMO-10 sample-data demo › DEMO-2 a picture that fails to load skips its post; the rest still show
+
+    expect(received).toHaveLength(expected)
+
+    Expected length: 8
+    Received length: 9
+    Received array:  [{"audience": null, "author_id": "00000000-0000-4000-8000-000000000002", "author_name": "Alex", "caption": "One big hug before the drive home", "comment_count": 0, "event_id": null, "event_name": null, "heart_count": 2, "i_hearted": false, "media": [{"duration_ms": null, "height": 900, "kind": "photo", "media_id": "f7a78f2d-5c70-4730-a610-f6befbac6464", "status": "ready", "width": 1200}], "post_id": "ffddaf26-2409-4bd4-8508-30ad8c3d39f7", "published_at": "2026-11-23T06:49:41.377Z", "reach_count": null, "reply_scope": "everyone", "seen_count": null, "taken_at": "2026-11-23T06:49:41.377Z", "title": null, "words_edited_at": null}, {"audience": null, "author_id": "00000000-0000-4000-8000-000000000002", "author_name": "Alex", "caption": "We drove up to the overlook. The leaves are turning", "comment_count": 1, "event_id": null, "event_name": null, "heart_count": 1, "i_hearted": false, "media": [{"duration_ms": null, "height": 900, "kind": "photo", "media_id": "ee55a710-2bf4-40e9-b09f-c3cf9cc4c469", "status": "ready", "width": 1200}], "post_id": "32a7bbd8-e751-4c07-b12d-79e7ad361720", "published_at": "2026-11-22T11:37:41.377Z", "reach_count": null, "reply_scope": "everyone", "seen_count": null, "taken_at": "2026-11-22T11:37:41.377Z", "title": "Fall colors", "words_edited_at": null}, {"audience": [{"circle_id": "00000000-0000-4000-8000-000000000201", "member_count": 3, "name": "Grandparents – Dad's side"}], "author_id": "00000000-0000-4000-8000-000000000001", "author_name": "Chase", "caption": "Bridge walk on the trail", "comment_count": 1, "event_id": null, "event_name": null, "heart_count": 1, "i_hearted": false, "media": [{"duration_ms": null, "height": 900, "kind": "photo", "media_id": "3882c5a4-f4e8-4a70-959e-ba20e50ab2a3", "status": "ready", "width": 1200}], "post_id": "8d153918-1ad1-43eb-b6ee-6bd61089c0c2", "published_at": "2026-11-22T02:01:41.377Z", "reach_count": 2, "reply_scope": "everyone", "seen_count": 0, "taken_at": "2026-11-22T02:01:41.377Z", "title": null, "words_edited_at": null}, {"audience": [{"circle_id": "00000000-0000-4000-8000-000000000200", "member_count": 5, "name": "Everyone"}], "author_id": "00000000-0000-4000-8000-000000000001", "author_name": "Chase", "caption": "Life jackets on and in all afternoon", "comment_count": 2, "event_id": null, "event_name": null, "heart_count": 4, "i_hearted": false, "media": [{"duration_ms": null, "height": 900, "kind": "photo", "media_id": "a7639190-a755-4889-b368-c56f3533c083", "status": "ready", "width": 1200}], "post_id": "5c066155-ef35-405c-a780-861e5124ccb6", "published_at": "2026-11-18T02:01:41.377Z", "reach_count": 4, "reply_scope": "everyone", "seen_count": 0, "taken_at": "2026-11-18T02:01:41.377Z", "title": "Splash pad", "words_edited_at": null}, {"audience": [{"circle_id": "00000000-0000-4000-8000-000000000202", "member_count": 3, "name": "Grandparents – Mom's side"}], "author_id": "00000000-0000-4000-8000-000000000001", "author_name": "Chase", "caption": "Bike day at the lake", "comment_count": 0, "event_id": null, "event_name": null, "heart_count": 1, "i_hearted": false, "media": [{"duration_ms": null, "height": 900, "kind": "photo", "media_id": "6cfe98b3-d841-421d-9b53-f6e9772b0c64", "status": "ready", "width": 1200}], "post_id": "9c40b9ef-c2bb-48cb-9a00-d10241d1fe1c", "published_at": "2026-11-15T02:01:41.377Z", "reach_count": 2, "reply_scope": "everyone", "seen_count": 0, "taken_at": "2026-11-15T02:01:41.377Z", "title": null, "words_edited_at": null}, {"audience": [{"circle_id": "00000000-0000-4000-8000-000000000202", "member_count": 3, "name": "Grandparents – Mom's side"}], "author_id": "00000000-0000-4000-8000-000000000001", "author_name": "Chase", "caption": "Watering the flowers on a foggy morning", "comment_count": 1, "event_id": null, "event_name": null, "heart_count": 1, "i_hearted": false, "media": [{"duration_ms": null, "height": 900, "kind": "photo", "media_id": "9f1cd25c-d6a2-4618-9c88-496bcd11427e", "status": "ready", "width": 1200}], "post_id": "5a067fac-e4a1-4f9f-9b45-d1266da2aafb", "published_at": "2026-11-12T02:01:41.377Z", "reach_count": 2, "reply_scope": "everyone", "seen_count": 0, "taken_at": "2026-11-12T02:01:41.377Z", "title": null, "words_edited_at": null}, {"audience": [{"circle_id": "00000000-0000-4000-8000-000000000201", "member_count": 3, "name": "Grandparents – Dad's side"}], "author_id": "00000000-0000-4000-8000-000000000001", "author_name": "Chase", "caption": "He went down the big slide all by himself", "comment_count": 1, "event_id": null, "event_name": null, "heart_count": 2, "i_hearted": false, "media": [{"duration_ms": null, "height": 900, "kind": "photo", "media_id": "e0529b6a-1ab7-441e-9365-58a75233446d", "status": "ready", "width": 1200}], "post_id": "729d4f26-f36a-4fcf-a530-b600ba6041e3", "published_at": "2026-11-09T02:01:41.377Z", "reach_count": 2, "reply_scope": "everyone", "seen_count": 0, "taken_at": "2026-11-09T02:01:41.377Z", "title": null, "words_edited_at": null}, {"audience": [{"circle_id": "00000000-0000-4000-8000-000000000200", "member_count": 5, "name": "Everyone"}], "author_id": "00000000-0000-4000-8000-000000000001", "author_name": "Chase", "caption": "Leo and his cousin met a mammoth at the museum", "comment_count": 1, "event_id": null, "event_name": null, "heart_count": 4, "i_hearted": false, "media": [{"duration_ms": null, "height": 900, "kind": "photo", "media_id": "dd3963db-809c-4e90-89de-dd824bf1fbcb", "status": "ready", "width": 1200}], "post_id": "f6a56b65-54e5-41e3-8653-6e5fd6681c3b", "published_at": "2026-11-05T02:01:41.377Z", "reach_count": 4, "reply_scope": "everyone", "seen_count": 0, "taken_at": "2026-11-05T02:01:41.377Z", "title": null, "words_edited_at": null}, {"audience": [{"circle_id": "00000000-0000-4000-8000-000000000200", "member_count": 5, "name": "Everyone"}], "author_id": "00000000-0000-4000-8000-000000000001", "author_name": "Chase", "caption": "Found these on my phone from August", "comment_count": 1, "event_id": null, "event_name": null, "heart_count": 3, "i_hearted": false, "media": [{"duration_ms": null, "height": 900, "kind": "photo", "media_id": "a781538d-049b-4753-a02d-795380061dd2", "status": "ready", "width": 1200}, {"duration_ms": null, "height": 900, "kind": "photo", "media_id": "28348368-b6f2-45cf-9caf-fa832aaa6469", "status": "ready", "width": 1200}], "post_id": "bbed7094-2852-4ec0-88a3-aad2c5b92c99", "published_at": "2026-10-31T02:01:41.377Z", "reach_count": 4, "reply_scope": "everyone", "seen_count": 0, "taken_at": "2026-10-31T02:01:41.377Z", "title": "Beach weekend", "words_edited_at": null}]
+
+      108 |     await seedDemo(be, (name) => (name === 'orchard-4543661' ? Promise.reject(new Error('offline')) : picture(name)));
+      109 |     const feed = be.getFeed(F.users.chase.id, { space: F.space.id, limit: 50 });
+    > 110 |     expect(feed).toHaveLength(DEMO_POSTS.length - 1);
+          |                  ^
+      111 |     expect((await be.clientFor(null, { trackAppSession: true }).getSession())?.userId).toBe(F.users.chase.id);
+      112 |   });
+      113 |
+
+      at Object.toHaveLength (src/demo/__tests__/seed.test.ts:110:18)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● DEMO-NEW New for you in the demo › DEMO-PHOTO-12 a fresh visit's New for you starts with Alex's balance bike post and its 3 photos
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected value: "First ride on the balance bike"
+    Received array: ["Fall colors", "We drove up to the overlook. The leaves are turning"]
+
+      168 |     const first = newForYou(be.getFeed(kevin, { space: F.space.id, limit: 50 }), await loadLastSeen(kv, kevin), kevin)[0];
+      169 |     expect(first?.author_id).toBe(F.users.alex.id);
+    > 170 |     expect([first?.title, first?.caption]).toContain('First ride on the balance bike');
+          |                                            ^
+      171 |     expect(first?.media).toHaveLength(3);
+      172 |   });
+      173 |
+
+      at Object.toContain (src/demo/__tests__/seed.test.ts:170:44)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+FAIL src/demo/__tests__/demoBar.test.tsx
+  ● DEMO-BAR studio demo bar › DEMO-10 DEMO-PHOTO-10 the drawer switches to Grandma Jo's view and back to Kevin's in one tap
+
+    Unable to find an element with text: You're Kevin, a parent.
+
+    [36m<View[39m
+      [33maria-label[39m=[32m"Demo"[39m
+      [33mrole[39m=[32m"region"[39m
+      [33mtestID[39m=[32m"demo-bar"[39m
+    [36m>[39m
+      [36m<View[39m
+        [33mtestID[39m=[32m"demo-bar-row"[39m
+      [36m>[39m
+        [36m<View[39m
+          [33maccessibilityLabel[39m=[32m"Back to the portfolio"[39m
+          [33maccessible[39m=[32m{true}[39m
+          [33mrole[39m=[32m"link"[39m
+        [36m>[39m
+          [36m<Text>[39m
+            [0m← Portfolio[0m
+          [36m</Text>[39m
+        [36m</View>[39m
+        [36m<View[39m
+          [33maccessibilityLabel[39m=[32m"Demo details"[39m
+          [33maccessibilityState[39m=[32m{
+            {
+              "expanded": true,
+            }
+          }[39m
+          [33maccessible[39m=[32m{true}[39m
+          [33mrole[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<View[39m
+            [33mtestID[39m=[32m"demo-badge"[39m
+          [36m>[39m
+            [36m<Text>[39m
+              [0mDEMO[0m
+            [36m</Text>[39m
+          [36m</View>[39m
+          [36m<Text>[39m
+            [0mSample data · changes stay in this browser[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mDetails[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maria-hidden[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</View>[39m
+      [36m<View[39m
+        [33mnativeID[39m=[32m"demo-details"[39m
+        [33mtestID[39m=[32m"demo-drawer"[39m
+      [36m>[39m
+        [36m<Text>[39m
+          [0mThis is the real Hearth, running on made-up sample data. Anything you change is saved only in this browser and is never sent anywhere. Reset demo puts the sample data back.[0m
+        [36m</Text>[39m
+        [36m<View>[39m
+          [36m<Text>[39m
+            [0mYou're Chase, a parent.[0m
+          [36m</Text>[39m
+          [36m<View[39m
+            [33maccessibilityLabel[39m=[32m"See the photos as Grandma Jo sees them"[39m
+            [33maccessibilityRole[39m=[32m"button"[39m
+            [33maccessibilityState[39m=[32m{
+              {
+                "busy": false,
+                "disabled": false,
+                "selected": false,
+              }
+            }[39m
+            [33maccessible[39m=[32m{true}[39m
+          [36m>[39m
+            [36m<Text>[39m
+              [0mSee it as Grandma Jo[0m
+            [36m</Text>[39m
+          [36m</View>[39m
+          [36m<View[39m
+            [33maccessibilityLabel[39m=[32m"Reset demo"[39m
+            [33maccessible[39m=[32m{true}[39m
+            [33mrole[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<Text>[39m
+              [0mReset demo[0m
+            [36m</Text>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+        [36m<View>[39m
+          [36m<View[39m
+            [33maccessibilityLabel[39m=[32m"Back to the Hearth case study"[39m
+            [33maccessible[39m=[32m{true}[39m
+            [33mrole[39m=[32m"link"[39m
+          [36m>[39m
+            [36m<Text>[39m
+              [0m← Back to the Hearth case study[0m
+            [36m</Text>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</View>[39m
+    [36m</View>[39m
+
+      122 |     const { be, reload } = await setup();
+      123 |     fireEvent.press(toggle(false));
+    > 124 |     expect(screen.getByText("You're Kevin, a parent.")).toBeTruthy();
+          |                   ^
+      125 |     fireEvent.press(screen.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }));
+      126 |     expect(be.state.appSession).toBe(FIXTURE.users.jo.id);
+      127 |     expect(reload).toHaveBeenCalledTimes(1);
+
+      at Object.getByText (src/demo/__tests__/demoBar.test.tsx:124:19)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● DEMO-BAR studio demo bar › DEMO-PHOTO-9 no word in the demo bar or its drawer says "Chase", as the parent or as Grandma Jo
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "You're Chase, a parent.",
+    + ]
+
+      154 |     };
+      155 |     fireEvent.press(toggle(false));
+    > 156 |     expect(words().filter((w) => /Chase/.test(w))).toEqual([]);
+          |                                                    ^
+      157 |     screen.unmount();
+      158 |     be.state.appSession = FIXTURE.users.jo.id;
+      159 |     render(<DemoBar be={be} reload={jest.fn()} startOver={jest.fn()} open={jest.fn()} />);
+
+      at Object.toEqual (src/demo/__tests__/demoBar.test.tsx:156:52)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● DEMO-BAR studio demo bar › DEMO-PHOTO-14 Details carries the photo credit line once
+
+    Unable to find an element with text: Sample photos: Pexels (Elly Fairytale, Yan Krukov)
+
+    [36m<View[39m
+      [33maria-label[39m=[32m"Demo"[39m
+      [33mrole[39m=[32m"region"[39m
+      [33mtestID[39m=[32m"demo-bar"[39m
+    [36m>[39m
+      [36m<View[39m
+        [33mtestID[39m=[32m"demo-bar-row"[39m
+      [36m>[39m
+        [36m<View[39m
+          [33maccessibilityLabel[39m=[32m"Back to the portfolio"[39m
+          [33maccessible[39m=[32m{true}[39m
+          [33mrole[39m=[32m"link"[39m
+        [36m>[39m
+          [36m<Text>[39m
+            [0m← Portfolio[0m
+          [36m</Text>[39m
+        [36m</View>[39m
+        [36m<View[39m
+          [33maccessibilityLabel[39m=[32m"Demo details"[39m
+          [33maccessibilityState[39m=[32m{
+            {
+              "expanded": true,
+            }
+          }[39m
+          [33maccessible[39m=[32m{true}[39m
+          [33mrole[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<View[39m
+            [33mtestID[39m=[32m"demo-badge"[39m
+          [36m>[39m
+            [36m<Text>[39m
+              [0mDEMO[0m
+            [36m</Text>[39m
+          [36m</View>[39m
+          [36m<Text>[39m
+            [0mSample data · changes stay in this browser[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mDetails[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maria-hidden[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</View>[39m
+      [36m<View[39m
+        [33mnativeID[39m=[32m"demo-details"[39m
+        [33mtestID[39m=[32m"demo-drawer"[39m
+      [36m>[39m
+        [36m<Text>[39m
+          [0mThis is the real Hearth, running on made-up sample data. Anything you change is saved only in this browser and is never sent anywhere. Reset demo puts the sample data back.[0m
+        [36m</Text>[39m
+        [36m<View>[39m
+          [36m<Text>[39m
+            [0mYou're Chase, a parent.[0m
+          [36m</Text>[39m
+          [36m<View[39m
+            [33maccessibilityLabel[39m=[32m"See the photos as Grandma Jo sees them"[39m
+            [33maccessibilityRole[39m=[32m"button"[39m
+            [33maccessibilityState[39m=[32m{
+              {
+                "busy": false,
+                "disabled": false,
+                "selected": false,
+              }
+            }[39m
+            [33maccessible[39m=[32m{true}[39m
+          [36m>[39m
+            [36m<Text>[39m
+              [0mSee it as Grandma Jo[0m
+            [36m</Text>[39m
+          [36m</View>[39m
+          [36m<View[39m
+            [33maccessibilityLabel[39m=[32m"Reset demo"[39m
+            [33maccessible[39m=[32m{true}[39m
+            [33mrole[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<Text>[39m
+              [0mReset demo[0m
+            [36m</Text>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+        [36m<View>[39m
+          [36m<View[39m
+            [33maccessibilityLabel[39m=[32m"Back to the Hearth case study"[39m
+            [33maccessible[39m=[32m{true}[39m
+            [33mrole[39m=[32m"link"[39m
+          [36m>[39m
+            [36m<Text>[39m
+              [0m← Back to the Hearth case study[0m
+            [36m</Text>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</View>[39m
+    [36m</View>[39m
+
+      165 |     await setup();
+      166 |     fireEvent.press(toggle(false));
+    > 167 |     expect(screen.getAllByText('Sample photos: Pexels (Elly Fairytale, Yan Krukov)')).toHaveLength(1);
+          |                   ^
+      168 |   });
+      169 | });
+      170 |
+
+      at Object.getAllByText (src/demo/__tests__/demoBar.test.tsx:167:19)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 4 failed, 4 total
+Tests:       18 failed, 25 passed, 43 total
+Snapshots:   0 total
+Time:        5.281 s
+Ran all test suites matching src/demo/__tests__/realPhotos.test.ts|src/demo/__tests__/seed.test.ts|src/demo/__tests__/demoBar.test.tsx|src/demo/__tests__/calendarDemo.test.ts.

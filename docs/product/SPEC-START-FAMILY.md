@@ -106,3 +106,18 @@ Verdict: OK. Rung: same stack (Postgres RPCs + RLS, one migration). No new vendo
 - `app/src/screens/__tests__/join.test.tsx` covers START-2, 5 and 8 (button order, hidden when `canStartFamily` is false). The new `app/src/screens/__tests__/startFamily.test.tsx` covers the three screens and Two sides (START-4 UI).
 
 Rule 6: the same PR updates `docs/architecture/` 04 and 05 (new private table, cap, revoke) and their "Last checked".
+
+## 8. Before the switch goes on (Nov 19, START-ON)
+Chase, Nov 19: keep the switched-off features ("We need to keep the switched off features"; DEC-86). This section is what's left before `start_family_open` can be turned on. Turning it on still needs Chase's words.
+
+| ID | Type | Pri | Given / When / Then |
+|---|---|---|---|
+| START-ON-1 | auto | P0 | *(PRIV-R7, GUX-R3)* **Given** a help email is set (`EXPO_PUBLIC_HEARTH_HELP_EMAIL`, never in the repo), **When** anyone opens Help (owner included), **Then** a "Something wrong?" section says how to reach Hearth about a problem or someone misusing it, with an **Email Hearth** button that opens `mailto:` that address. The mail carries no family name, user id, email or group name. **Given** no help email, **Then** the section is not shown (no dead row). |
+| START-ON-2 | auto | P0 | **Given** no help email is set, **When** the no-family screen renders, **Then** "I'm a parent: start a family" is hidden even if `can_start_family()` is true, so nobody can start a family with no way to reach Hearth. |
+| START-ON-3 | auto | P0 | *(PRIV-R7)* **Given** a family's space id, **When** Chase runs `backend/scripts/suspend-family.sh --space <id>` (dry run by default, `--apply` to change; token only, like `family-setup.sh`), **Then** it sets `spaces.deleted_at` (no new migration), so the family is not found for every member (rule 2) and uploads to it are refused; `--undo` within 30 days brings it back unchanged; the dry run and `--apply` both say that `purge_soft_deleted` removes it for good after 30 days; `--known` sets `started_families.known_at` to lift the cap. Output carries only the space id: no names or emails. |
+| START-ON-4 | auto | P1 | **Given** the switch, **When** Chase runs `backend/scripts/start-family-switch.sh on|off|status` (dry run by default), **Then** only `start_family_open` changes and `status` prints on or off. |
+| START-ON-5 | auto | P1 | *(QA-R2)* A Playwright walk on the web build with the fake backend: a signed-in account with no family taps "I'm a parent: start a family", Start a new family, names it, picks Two sides, starts it, makes the first invite and lands on Gallery in the new family. |
+| START-ON-6 | auto | P1 | *(QA-R1)* The 0024 contract cases (BETA-START-1, 5, 8, 11) run on the real PostgREST harness with a starter user and a service-only switch flip, instead of being skipped. |
+| START-ON-7 | doc | P1 | `docs/eng/RUNBOOK-START-FAMILY.md`: turn on, turn off, suspend and undo, mark known, ban an account in the Supabase dashboard, and the go-live checklist (help email set, preview republished, PRIV-R5 legal review, BETA-START-9 cold test). Same PR (rule 6): `docs/architecture/04` gains the abuse contact and suspend path, with its "Last checked". |
+
+Still Chase's, not code: the help email (one step), the 18+ and legal review (PRIV-R5, milestone 7), BETA-START-9 with a parent who isn't Chase, and the words "turn on start a family".

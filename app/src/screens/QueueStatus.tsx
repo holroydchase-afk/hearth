@@ -26,10 +26,10 @@ export function QueueStatus() {
         const waiting = jobs.some((j) => j.batchId === b && j.state === 'failed-retryable');
         return (
           <Card key={b} testID={`batch-${b}`}>
-            <Txt variant="strong">
+            <Txt variant="headline">
               {!waiting ? batchLabel(p) : p.done > 0 ? `Sent ${p.done} of ${photos(p.total)}. Waiting to send the rest.` : `${photos(p.total)} waiting to send`}
             </Txt>
-            {waiting ? <Txt variant="muted">We'll keep trying. You can close Hearth; it will finish when you open it again.</Txt> : null}
+            {waiting ? <Txt tone="muted">We'll keep trying. You can close Hearth; it will finish when you open it again.</Txt> : null}
           </Card>
         );
       })}
@@ -37,8 +37,8 @@ export function QueueStatus() {
         const what = j.caption ? `"${j.caption}"` : photos(j.items.length);
         return (
           <Card key={j.id} testID={`job-${j.id}`}>
-            <Txt variant="strong">{`${what}: ${jobLabel(j)}`}</Txt>
-            {j.state === 'failed-retryable' ? <Txt variant="muted">We'll keep trying. You can close Hearth; it will finish when you open it again.</Txt> : null}
+            <Txt variant="headline">{`${what}: ${jobLabel(j)}`}</Txt>
+            {j.state === 'failed-retryable' ? <Txt tone="muted">We'll keep trying. You can close Hearth; it will finish when you open it again.</Txt> : null}
             {j.state === 'failed' ? (
               <>
                 <Txt>{messageFor(new ApiError(j.errorCode ?? 'UNKNOWN'), { inviter: helper, action: 'post' })}</Txt>

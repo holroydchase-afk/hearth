@@ -20,7 +20,7 @@ export function inviteSmsUrl(myName: string | null, link: string, code: string, 
 export function InviteReady({ link, code, onText }: { link: string; code: string; onText: () => void }) {
   return (
     <Card>
-      <Txt variant="strong">Invite ready</Txt>
+      <Txt variant="headline">Invite ready</Txt>
       <Txt selectable>{link}</Txt>
       <Txt selectable>{`Or they can type this invite code in Hearth: ${code.slice(0, 5)} ${code.slice(5)}`}</Txt>
       <Txt>Works for 30 days.</Txt>
@@ -35,7 +35,7 @@ export function PastPhotosChoice({ history, onPick, allDetail, need }: {
 }) {
   return (
     <>
-      <Txt variant="title" role="header">Should they see photos already shared?</Txt>
+      <Txt variant="title2" role="header">Should they see photos already shared?</Txt>
       <Choice kind="radio" label="Share all past photos" title="Share all past photos" detail={allDetail} checked={history === 'all'} onPress={() => onPick('all')} />
       <Choice
         kind="radio"
@@ -45,7 +45,7 @@ export function PastPhotosChoice({ history, onPick, allDetail, need }: {
         checked={history === 'new'}
         onPress={() => onPick('new')}
       />
-      {need ? <Txt variant="strong">Pick one above first.</Txt> : null}
+      {need ? <Txt variant="headline">Pick one above first.</Txt> : null}
     </>
   );
 }

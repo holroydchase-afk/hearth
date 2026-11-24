@@ -1,6 +1,6 @@
 # 7. Visibility model: one core for routing, visibility and permissions
 
-**Status: Planned** (`docs/product/SPEC-VISIBILITY-CORE.md`, TRACKER R77; design only, no migration yet). What is **Built** today is in [05-access-control.md](05-access-control.md); this section says how that engine becomes one generic, registered core that every kind of data goes through, including data shared between two family spaces.
+**Status: Phase 1 and 1b Built locally** (migrations 0031 and 0032, `packages/visibility/core`, DEC-83; not deployed). The registry, the gate, `vis.sees_item`, `vis.can_see` and `vis.attach` exist; nothing reads them yet, so access is unchanged and [05-access-control.md](05-access-control.md) still describes what decides it. **Planned:** the oracle (Phase 2), swapping `sees_post` for `sees_item`, and links (the co-parent bridge, after the beta). Spec: `docs/product/SPEC-VISIBILITY-CORE.md`, TRACKER R77.
 
 ## Terms
 
@@ -39,7 +39,7 @@ Illustration only; not a migration. Hearth's existing tables stay; the core read
 ```sql
 -- Registry: one row per relation an app user can touch.
 create table vis.kinds (
-  kind          text primary key,               -- 'item', 'photo', 'reply', 'shared_date', ...
+  kind          text primary key,               -- 'item', 'photo', 'reply', 'event', ...
   relation      regclass not null unique,       -- the table or view
   reach         text not null check (reach in ('item','person','container','self','admin','server')),
   item_column   name,                           -- for reach 'item': the column holding the item id
@@ -104,9 +104,9 @@ create table vis.link_members (link_id uuid references vis.links, user_id uuid, 
 --   'server'    -> false
 
 -- Fungible: one call registers a kind, enables and forces RLS, and writes the select policy.
--- select vis.attach('public.post_dates', 'shared_date', item_column => 'post_id');
---   => revoke all on public.post_dates from anon, authenticated; grant select (<needed columns>) to authenticated
---      create policy vis_select on public.post_dates for select to authenticated
+-- select vis.attach('public.post_events', 'event', item_column => 'post_id');
+--   => revoke all on public.post_events from anon, authenticated; grant select (<needed columns>) to authenticated
+--      create policy vis_select on public.post_events for select to authenticated
 --        using (vis.sees_item((select auth.uid()), post_id) and <narrow_fn, if any>);
 -- Hooks narrow only if they are the same policy's AND. Postgres ORs permissive policies, so a
 -- second permissive select policy on the table would widen it. The gate allows exactly one
@@ -118,12 +118,22 @@ RLS policies call the reach's rule directly (inlinable, fast). `vis.can_see` is 
 
 **What the gate must read to be enforceable (PRIV-VC-R2).** Not only `public` tables: every schema PostgREST exposes (`config.toml` `[api] schemas`, today `public` and `graphql_public`); every view (must be `security_invoker = true` or it bypasses RLS) and materialized view (none allowed in an exposed schema; they have no RLS); every function executable by `anon` or `authenticated`, not only row-returning ones (a void function can still write across tenants or answer "forbidden" where it should say "not found"), each `security definer` one with `search_path = ''` and execute revoked from `public` and `anon`; policies granted `TO public` as well as `TO authenticated`; table grants to `anon` (none) and `authenticated` (registered columns only); every table in the `supabase_realtime` publication, and no Realtime presence anywhere (presence is "who is online", an A2 leak); `storage.objects` policies per bucket; and each edge function's `verify_jwt` (false only with a registered reason, as `notify` has today).
 
+## What was built differs from the sketch (Phase 1 and 1b)
+
+- `vis.kinds` has one more column, `rule_fn`: for the person, container and admin reaches, the product's rule for that kind as `fn(user, id) -> boolean`. Hearth's are copies of today's RLS rules with the user as a parameter (`private.vis_sees_person`, `vis_sees_circle`, `vis_sees_space`, `vis_sees_invite`, `vis_sees_household`); VIS-7 proves each equals what RLS returns. No `rule_fn` means `can_see` says no.
+- `item_column` may be null for an item kind no app user reads (`media_keys`); `can_see` says no for it.
+- `can_see` answers only for rows with a uuid `id`. Rows without one (reactions, post_children, post_audiences, the membership tables) are answered by their table's one policy, and `can_see` says no. A rule or hook that errors makes `can_see` say no.
+- Policies written by `vis.attach` call `vis.viewer_sees_item(item)`, which passes `auth.uid()` itself, so no app role can execute a function that takes a user id (PRIV-VC-R3). `attach` refuses a table that already has a permissive select policy and a hook that isn't stable `(uuid, uuid) -> boolean`.
+- Hooks registered today: `private.vis_media_ok` (pending uploads only to their uploader) and `private.vis_comment_ok` (reply settings, through `private.reply_ok`). `children` uses the person rule, which says no for a child: default deny until the oracle adds a child rule.
+- `vis.links` and `vis.link_members` are not built (bridge after the beta).
+- 0032 also forces RLS on every public table (refusing to run if the owner doesn't bypass RLS) and revokes any table grant from `anon`.
+
 ## How Hearth's tables map (Phase 1 confirms each row: VIS-1)
 
 | Reach | Hearth relations |
 |---|---|
-| `item` | `posts` (the item), `media_items`, `media_keys`, `post_children`, `comments` and `reactions` (narrow: `private.group_reply_ok`), `post_audiences` (narrow: author and parents; others see names via `post_viewers`), future `post_dates` and news |
-| `person` | `profiles`, `children` (guardians, parents, or a tagged post), `child_guardians`, life-calendar dates (0029 branch) |
+| `item` | `posts` (the item), `media_items`, `media_keys`, `post_children`, `comments` and `reactions` (narrow: `private.group_reply_ok`), `post_audiences` (narrow: author and parents; others see names via `post_viewers`), future `post_events`, `post_sayings` and news |
+| `person` | `profiles`, `children` (guardians, parents, or a tagged post), `child_guardians`, `family_dates` (0029, rule `private.vis_sees_family_date`: the person rule for a member's birthday, parents and the Everyone group for other dates; VIS-18) |
 | `container` | `circles` (0027), `circle_members`, `circle_people`, `circle_links`, `chat_groups`, `chat_messages`, `chat_key_packages` (via `chat_claim`) |
 | `self` | `push_tokens`, `notification_prefs`, `account_exports`, `chat_devices`, `post_views` |
 | `admin` | `spaces` settings, `space_members` (members see who's in the family), `space_features`, `space_children`, `invites`, `invite_circles`, `comment_mode_log`, `households`, `household_members` |
@@ -156,7 +166,7 @@ Unchanged by this model: RLS limits what each member's app reads, not the servic
 
 ## Reuse beyond Hearth
 
-Following `packages/messenger` (DEC-42): the generic core is proposed as `packages/visibility` (`@holroyd/visibility`): the `vis` schema template, the rule and dispatch functions, `vis.attach`, and a conformance test kit (unregistered relation fails; a throwaway kind needs no new policy; every reader agrees with `can_see`). Hearth's migrations instantiate it with its four adapter views and two hooks. Moving it to a studio-wide repo is Product Studio's call later, by intake.
+Following `packages/messenger` (DEC-42): the generic core is `packages/visibility/core` (`@holroyd/visibility`, Built: `supabase.sql`, copied verbatim into migration 0031): the `vis` schema template, the rule and dispatch functions, `vis.attach`, and a conformance test kit (unregistered relation fails; a throwaway kind needs no new policy; every reader agrees with `can_see`). Hearth's migrations instantiate it with its four adapter views and two hooks. Moving it to a studio-wide repo is Product Studio's call later, by intake.
 
 ## Limits
 
@@ -168,4 +178,4 @@ Following `packages/messenger` (DEC-42): the generic core is proposed as `packag
 - Privacy review findings: `docs/product/SPEC-VISIBILITY-CORE.md`, "Privacy review".
 
 ---
-Last checked against code: 2026-11-24, migrations 0001 to 0028 on main (design only; nothing here is Built).
+Last checked against code: 2026-11-24, migrations 0001 to 0029, 0031 and 0032 on branch claude/project-thread-jtelk5 (0029 life calendar registered, VIS-18; 0030 is the video-fixes branch, not merged).

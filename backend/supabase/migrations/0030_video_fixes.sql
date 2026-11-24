@@ -1,4 +1,4 @@
--- 0030: video fixes from the Nov 19 tech-debt review, before video is switched on (DEC-82). Tests: tests/video_refund_test.sql,
+-- 0030: video fixes from the Nov 19 tech-debt review, before video is switched on (DEC-88). Tests: tests/video_refund_test.sql,
 -- tests/video_cap_test.sql.
 --   ENG-R2  The free cap (0020) counted attempts, so a video that never finished uploading still used up one of the
 --           month's 10: the upload queue's restart() throws its draft away and prepares a new one, so one video could

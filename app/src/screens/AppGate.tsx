@@ -19,6 +19,8 @@ export function AppGate() {
   const [starting, setStarting] = useState(false);
   const noSpace = app.status === 'noSpace';
   const api = app.deps.api;
+  // START-ON-2: nobody starts a family while there is no way to reach Hearth (no help email in this build).
+  const startable = canStart && !!app.deps.helpEmail;
   useEffect(() => {
     if (!noSpace) return;
     let live = true;
@@ -36,15 +38,15 @@ export function AppGate() {
   if (app.status === 'signedOut') {
     return (
       <Screen>
-        <Txt variant="display" role="header">Hearth</Txt>
+        <Txt variant="title1" role="header">Hearth</Txt>
         <Txt>Private photos for your family. Only people your family invites can see them.</Txt>
         <Card>
-          <Txt variant="title">New here?</Txt>
+          <Txt variant="title2">New here?</Txt>
           <Txt>Your family sends an invite by text or email. Tap the link in it, or type its code here.</Txt>
           {typing ? <InviteCodeEntry /> : <Button label="I have an invite code" onPress={() => setTyping(true)} />}
         </Card>
         <Card>
-          <Txt variant="title">Been here before?</Txt>
+          <Txt variant="title2">Been here before?</Txt>
           <Button label="Sign in" variant="secondary" onPress={() => nav.goSignIn()} />
         </Card>
       </Screen>
@@ -55,21 +57,21 @@ export function AppGate() {
     return (
       <Screen>
         <Card>
-          <Txt variant="title" role="header">Can't reach Hearth</Txt>
+          <Txt variant="title2" role="header">Can't reach Hearth</Txt>
           <Txt>Check that your phone has Wi-Fi or a signal, then try again.</Txt>
           <Button label="Try again" onPress={() => void app.reload()} />
         </Card>
       </Screen>
     );
   }
-  if (starting && canStart) return <StartFamily onUseCode={() => setStarting(false)} />;
+  if (starting && startable) return <StartFamily onUseCode={() => setStarting(false)} />;
   return (
     <Screen>
       <Card>
-        <Txt variant="title" role="header">Almost there</Txt>
+        <Txt variant="title2" role="header">Almost there</Txt>
         <Txt>You're signed in, but you're not part of a family on Hearth yet. Type the invite code from your family's text or email.</Txt>
         <InviteCodeEntry />
-        <Txt variant="muted">No code? Ask the person who invited you to send a new one.</Txt>
+        <Txt tone="muted">No code? Ask the person who invited you to send a new one.</Txt>
         {/* BETA-SMS-12: a relative who used to sign in by email isn't stranded in an empty text account. */}
         {isPhoneOnly(app.session) ? (
           <>
@@ -77,7 +79,7 @@ export function AppGate() {
             <Button label="Use email instead" variant="secondary" onPress={() => { void app.signOut().then(() => nav.goSignIn({ with: 'email' })); }} />
           </>
         ) : null}
-        {canStart ? <Button label="I'm a parent: start a family" variant="secondary" onPress={() => setStarting(true)} /> : null}
+        {startable ? <Button label="I'm a parent: start a family" variant="secondary" onPress={() => setStarting(true)} /> : null}
         <Button label="Sign out of Hearth" variant="secondary" onPress={() => void app.signOut()} />
       </Card>
     </Screen>
