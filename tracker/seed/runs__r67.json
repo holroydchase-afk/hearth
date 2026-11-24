@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-24T06:00:00-05:00",
+ "label": "Eval findings (intake #162): app suites 3x after the B24 fix (green; backend, prototype and starter reused from r66)",
+ "passed": 6816,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs at d8115ee (only app/src/feed/store.ts and HANDOFF changed since r66): jest 2223 passed (1 skipped, 1 todo) including loadBackTo.test.ts 5 passed (the B24 refresh-mid-walk test now green), typecheck clean, Expo Go check OK, e2e:demo 44 passed, e2e:web 5 passed, each x3. No flake (one e2e:demo run 3 was cut off by the agent's time limit before any result and was rerun in full). Reused from r66 at 88e605c, no files changed in those areas: backend SQL 1217 passed x3, Supabase starter scripts 17 passed x3, prototype e2e 33 passed x3. Skipped: Supabase starter invites (no template), Deno (not installed). Reviewed the fix: the refresh generation drops a stale page and its error; no new race found. Closed: B18, B24. e2e/results/eval-findings-green-2026-11-24.txt"
+}

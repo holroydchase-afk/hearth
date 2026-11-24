@@ -1028,27 +1028,27 @@
    "kind": "bug",
    "layer": "app",
    "severity": "Low",
-   "status": "open",
-   "title": "QA-R2 (OPEN-1/7/8): New for you only looks at the posts already loaded (the first page of 20). With more than 20 new posts since the last visit, the card's senders and the one-at-a-time view leave out the oldest new ones and don't start at the oldest. EF-HE-9 (intake #162, Nov 24): fixed at 88e605c by FeedStore.loadBackTo; its test passes 3x. Stays open until B24 (a refresh during that walk leaves a hole) is fixed. Tests: evalFindings.test.tsx, feed/__tests__/loadBackTo.test.ts",
+   "status": "fixed",
+   "title": "QA-R2 (OPEN-1/7/8): New for you only looks at the posts already loaded (the first page of 20). With more than 20 new posts since the last visit, the card's senders and the one-at-a-time view leave out the oldest new ones and don't start at the oldest. EF-HE-9 (intake #162, Nov 24): fixed at 88e605c by FeedStore.loadBackTo; with B24 fixed at d8115ee, closed by run r67 (green 3x). Tests: evalFindings.test.tsx, feed/__tests__/loadBackTo.test.ts",
    "tests": [
     "app/src/feed/__tests__/loadBackTo.test.ts",
     "app/src/screens/__tests__/evalFindings.test.tsx"
    ],
    "found": "2026-11-11",
-   "fixed": null
+   "fixed": "2026-11-24"
   },
   {
    "id": "B24",
    "kind": "bug",
    "layer": "app",
    "severity": "Medium",
-   "status": "open",
-   "title": "QA-R1 (eval findings run r66, Nov 24): a refresh that answers while a loadMore page (a scroll, or B18's loadBackTo walk) is in flight lets the stale page append after the new first page: with 6 new posts on the server the feed skips 6 posts between the first page and the old page 2, and later pages continue from the bottom, so the hole stays until the next refresh. New for you can undercount the same way. Likely fix: a refresh generation that makes loadMorePage drop an answer started before the latest refresh. Test: app/src/feed/__tests__/loadBackTo.test.ts 'a refresh that lands mid-walk'",
+   "status": "fixed",
+   "title": "QA-R1 (eval findings run r66, Nov 24): a refresh that answers while a loadMore page (a scroll, or B18's loadBackTo walk) is in flight lets the stale page append after the new first page: with 6 new posts on the server the feed skips 6 posts between the first page and the old page 2, and later pages continue from the bottom, so the hole stays until the next refresh. New for you can undercount the same way. Fixed at d8115ee (a refresh generation: loadMorePage drops a page started before the latest refresh, loadBackTo walks on from the new first page); closed by run r67 (green 3x). Test: app/src/feed/__tests__/loadBackTo.test.ts 'a refresh that lands mid-walk'",
    "tests": [
     "app/src/feed/__tests__/loadBackTo.test.ts"
    ],
    "found": "2026-11-24",
-   "fixed": null
+   "fixed": "2026-11-24"
   },
   {
    "id": "T14",
