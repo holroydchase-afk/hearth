@@ -73,9 +73,12 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
           <SystemIcon icon={{ sf: 'ellipsis', md: 'more_horiz' }} color={c.ink} size={24} />
         </Pressable>
       </View>
-      {/* RD-54: the photos inset 16 pt with 16 pt corners, like Gallery. */}
+      {/* RD-54: the photos inset 16 pt with 16 pt corners, like Gallery. SHARE-U-20: news, an event or a saying is
+          large words instead, with no photo frame. */}
       <View style={styles.inset}>
-        <PhotoCollage postId={post.post_id} media={ready} from={`${post.author_name}, ${shortDate(post.published_at)}`} />
+        {isWordsKind(post) ? <KindBody post={post} /> : (
+          <PhotoCollage postId={post.post_id} media={ready} from={`${post.author_name}, ${shortDate(post.published_at)}`} />
+        )}
       </View>
       <View testID={`actions-${post.post_id}`} style={styles.actions}>
         {REACTIONS.map((e) => (
@@ -90,7 +93,7 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
       </View>
       <View style={styles.words}>
         {/* RD-71 (UX-R28): no heading above the words; the title opens the description in Medium. */}
-        {post.title || post.caption ? <Caption testID={`desc-${post.post_id}`} titleID={`post-title-${post.post_id}`} title={post.title ?? null} text={post.caption ?? ''} /> : null}
+        {(post.title || post.caption) && post.kind !== 'news' ? <Caption testID={`desc-${post.post_id}`} titleID={`post-title-${post.post_id}`} title={post.title ?? null} text={post.caption ?? ''} /> : null}
         {/* TYPE-6: the date is subheadline (secondary words); who sees it stays body (A1). RD-51: "Just now", "3 hours ago", "Yesterday", "Nov 3"; CAP-6's "· Edited" after it. */}
         <Txt variant="subheadline" tone="muted" testID={`when-${post.post_id}`}>{when}</Txt>
         {/* WHO-6 / DEC-60: the quiet privacy line stays on every post. */}
@@ -145,6 +148,33 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
     </Card>
   );
 });
+
+const isWordsKind = (p: FeedPost) => p.kind === 'news' || p.kind === 'event' || p.kind === 'saying';
+
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+/** SHARE-U-20: an event's day (YYYY-MM-DD, no time zone) as "October 31", with the year when it isn't this year. */
+export function eventDay(when: string, now = new Date()): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(when);
+  if (!m) return when;
+  const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const day = `${MONTHS[mo - 1] ?? ''} ${d}`;
+  return y === now.getFullYear() ? day : `${day}, ${y}`;
+}
+
+/** SHARE-U-20: the words of a news, event or saying post, large (title2), with the event's day and place or who said it. */
+function KindBody({ post }: { post: FeedPost }) {
+  const e = post.kind === 'event' ? post.event : null;
+  const y = post.kind === 'saying' ? post.saying : null;
+  const main = post.kind === 'news' ? post.caption ?? '' : e ? e.what : y ? `\u201c${y.words}\u201d` : '';
+  return (
+    <View testID={`kind-${post.post_id}`} style={styles.kindBody}>
+      <Txt variant="title2" selectable>{main}</Txt>
+      {e ? <Txt>{[eventDay(e.when), e.where].filter(Boolean).join(' \u00b7 ')}</Txt> : null}
+      {y ? <Txt tone="muted">{`\u2014 ${y.who}${y.age != null ? `, age ${y.age}` : ''}`}</Txt> : null}
+    </View>
+  );
+}
 
 /** WHO-6/9: "You, Alex, Chase and 2 others can see this". You first, then names in order; past `most` names
  *  the rest are counted, so a big family stays one line. */
@@ -504,6 +534,7 @@ const styles = StyleSheet.create({
   name: { fontFamily: FONT.medium },
   more: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, alignItems: 'center', justifyContent: 'center' },
   inset: { paddingHorizontal: SPACE.lg },
+  kindBody: { gap: SPACE.sm, paddingVertical: SPACE.sm },
   caption: { gap: SPACE.xs },
   fold: { alignSelf: 'flex-start', paddingHorizontal: 0 },
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.xs, paddingHorizontal: SPACE.lg },

@@ -450,8 +450,12 @@ export function Loading({ words }: { words: string }) {
 export function Notice({ text, onClose, tone = 'info' }: { text: string; onClose?: () => void; tone?: 'info' | 'good' }) {
   const { c } = useTheme();
   return (
-    <View accessibilityRole="alert" style={[styles.notice, { backgroundColor: tone === 'good' ? c.safeSoft : c.accentSoft, borderColor: c.line }]}>
-      <Txt style={{ flex: 1, color: tone === 'good' ? c.safe : c.ink }}>{text}</Txt>
+    // SHARE-U-22: the words sit in one accessible alert element, so a screen reader (and a test) finds them as one
+    // thing while the OK button stays its own; the box is a polite live region for Android.
+    <View accessibilityLiveRegion="polite" style={[styles.notice, { backgroundColor: tone === 'good' ? c.safeSoft : c.accentSoft, borderColor: c.line }]}>
+      <View accessible accessibilityRole="alert" style={{ flex: 1 }}>
+        <Txt style={{ color: tone === 'good' ? c.safe : c.ink }}>{text}</Txt>
+      </View>
       {onClose ? <Button label="OK, hide this message" text="OK" variant="secondary" onPress={onClose} /> : null}
     </View>
   );

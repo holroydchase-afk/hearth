@@ -26,7 +26,8 @@ import { useTabBarSpace } from '../ui/tabBarSpace';
 import { AppGate } from './AppGate';
 import { BatchReview } from './BatchReview';
 import { QueueStatus } from './QueueStatus';
-import { KindCard, KindsRow, showsKinds, type PostKind } from './ShareKinds';
+import { uuid } from '../crypto/random';
+import { AGE_NOT_NUMBER, KindCard, KindsRow, kindDetails, kindFilled, kindSendMessage, showsKinds, type KindWords, type PostKind } from './ShareKinds';
 
 const MAX = 10;
 const DENIED = 'Hearth needs your OK to see your photos. Tap "Allow" when your phone asks.';
@@ -52,8 +53,13 @@ export function ShareScreen() {
   const [gridW, setGridW] = useState<number | null>(null); // GUX-R1: the tile row's drawn width, once laid out
   // CAP-9 / QA-R3: bulk review keeps its one Title box for now; new single posts have no title (DEC-73).
   const [title, setTitle] = useState('');
-  // SHARE-ST-31: the kind picked from the row under the empty postcard (its empty card face; nothing is saved yet).
+  // SHARE-ST-31: the kind picked from the row under the empty postcard, and SHARE-U-17..19 its words, whether its
+  // who-gets-it tiles are open, and one client id per draft (reused on a double tap or a Send again, so one post).
   const [kind, setKind] = useState<PostKind | null>(null);
+  const [kindWords, setKindWords] = useState<KindWords>({});
+  const [kindTo, setKindTo] = useState(false);
+  const draft = useRef<{ clientId: string; made: boolean } | null>(null);
+  const sending = useRef(false);
   // SHARE-PC-2: which picked photo is the big one.
   const [cur, setCur] = useState(0);
   // SHARE-PC-9: my own name, so the To: line names the others, not me.
@@ -173,7 +179,47 @@ export function ShareScreen() {
   const toLine = recipientsLine(list, chosen, myName);
   const ready = items.length > 0 && chosen.length > 0 && !!toLine;
 
-  const reset = () => { setItems([]); setNote(''); setChosen([]); setCur(0); setNotice(null); setKind(null); };
+  const reset = () => {
+    setItems([]); setNote(''); setChosen([]); setCur(0); setNotice(null); setKind(null);
+    setKindWords({}); setKindTo(false); draft.current = null;
+  };
+  const pickKind = (k: PostKind) => { setKind(k); setKindWords({}); setKindTo(false); setChosen([]); draft.current = null; };
+  const typeKind = (label: string, text: string) => {
+    setKindWords((o) => ({ ...o, [label]: text }));
+    // Words changed after a draft was made: the next Send makes a new draft, so the family never gets the old words.
+    if (draft.current?.made) draft.current = null;
+  };
+  const kindOk = !!kind && kindFilled(kind, kindWords);
+  const kindReady = kindOk && kindTo && chosen.length > 0 && !!toLine;
+
+  // SHARE-U-19: one post of this kind, no media: createPost then publishPost; Share empties and Feed shows it.
+  // SHARE-U-22: a refusal says the words were kept, by error.code; the card and every word stay.
+  const sendKind = async () => {
+    if (!kind || !kindReady || !userId || sending.current) return;
+    const details = kindDetails(kind, kindWords);
+    if (details === 'age') { setNotice(AGE_NOT_NUMBER); return; }
+    sending.current = true;
+    setBusy(true);
+    setNotice(null);
+    try {
+      draft.current ??= { clientId: uuid(), made: false };
+      const d = draft.current;
+      const id = await app.deps.api.createPost({ ...details, clientId: d.clientId, space: app.space!.space_id, circleIds: chosen, title: null, takenAt: null });
+      d.made = true;
+      await app.deps.api.publishPost(id);
+      await saveLastAudience(app.deps.kv, userId, chosen).catch(() => {});
+      app.setShared(`Shared with ${toLine}.`);
+      reset();
+      void app.feed?.refresh().catch(() => {});
+      nav.goFeed();
+    } catch (e) {
+      setNotice(kindSendMessage(e));
+      scroller.current?.scrollTo({ y: 0, animated: true });
+    } finally {
+      sending.current = false;
+      setBusy(false);
+    }
+  };
 
   // SHARE-PC-11: Send goes through today's upload queue, then Feed shows the post on top and "Shared with <names>."
   const send = async () => {
@@ -245,6 +291,29 @@ export function ShareScreen() {
     fontSize: type.headline.fontSize, fontScale: win.fontScale ?? 1, bigText,
   });
 
+  // SHARE-PC-5..9: To: names the people; the tiles fill it in. Nothing is picked to start (SHARE-PC-7). The kind cards
+  // use the same tiles once "Pick who gets it" opens them (SHARE-U-18).
+  const toSection = (
+    <View testID="share-to" style={styles.to}>
+      <View style={styles.toLine}>
+        <Text style={{ color: c.muted, ...type.body }}>To:</Text>
+        {toLine ? <Text style={{ flexShrink: 1, color: c.ink, ...type.headline }}>{toLine}</Text> : null}
+      </View>
+      {circles === null ? <Loading words="Loading your groups…" /> : null}
+      {circles?.length === 0 && !notice ? (
+        <View style={styles.inset}>
+          <Txt variant="headline">{isParent ? 'There is no group to send to yet. Make one on the Groups tab.' : `There is no group to send to yet. Ask ${app.helper ?? 'a parent'} to add you to one.`}</Txt>
+        </View>
+      ) : null}
+      <View style={styles.grid} onLayout={(e) => setGridW(Math.max(0, e.nativeEvent.layout.width - 20))}>
+        {list.map((g) => (
+          <FaceTile key={g.circle_id} name={tileName(g, myName, isParent)} count={g.member_count} faces={othersIn(g, myName)}
+            picked={chosen.includes(g.circle_id)} onPress={() => toggle(g.circle_id)} across={across} />
+        ))}
+      </View>
+    </View>
+  );
+
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={os === 'ios' ? 'padding' : undefined}>
@@ -259,12 +328,12 @@ export function ShareScreen() {
 
           {/* SHARE-PC-1: one card holds the post as the family will see it, and who it goes to. */}
           {/* GUX-T2: the empty postcard sits right under "New post", the kinds row right under it. */}
-          {!big && kind ? <KindCard kind={kind} /> : null}
+          {!big && kind ? <KindCard kind={kind} values={kindWords} onChange={typeKind} to={kindTo ? toSection : undefined} /> : null}
           {!big && !kind ? (
             <View testID="share-empty-wrap" style={styles.emptyWrap}>
               {emptyCard}
               {/* SHARE-ST-30..33: Event, News and Saying under the postcard, for parents with post_kinds on. */}
-              {showsKinds(app.features, app.space?.role) ? <KindsRow onPick={setKind} /> : null}
+              {showsKinds(app.features, app.space?.role) ? <KindsRow onPick={pickKind} /> : null}
             </View>
           ) : null}
           {!big ? null : (
@@ -311,33 +380,23 @@ export function ShareScreen() {
                 <View style={[styles.dash, { borderColor: c.line }]} />
               </View>
 
-              {/* SHARE-PC-5..9: To: names the people; the tiles fill it in. Nothing is picked to start (SHARE-PC-7). */}
-              <View testID="share-to" style={styles.to}>
-                <View style={styles.toLine}>
-                  <Text style={{ color: c.muted, ...type.body }}>To:</Text>
-                  {toLine ? <Text style={{ flexShrink: 1, color: c.ink, ...type.headline }}>{toLine}</Text> : null}
-                </View>
-                {circles === null ? <Loading words="Loading your groups…" /> : null}
-                {circles?.length === 0 && !notice ? (
-                  <View style={styles.inset}>
-                    <Txt variant="headline">{isParent ? 'There is no group to send to yet. Make one on the Groups tab.' : `There is no group to send to yet. Ask ${app.helper ?? 'a parent'} to add you to one.`}</Txt>
-                  </View>
-                ) : null}
-                <View style={styles.grid} onLayout={(e) => setGridW(Math.max(0, e.nativeEvent.layout.width - 20))}>
-                  {list.map((g) => (
-                    <FaceTile key={g.circle_id} name={tileName(g, myName, isParent)} count={g.member_count} faces={othersIn(g, myName)}
-                      picked={chosen.includes(g.circle_id)} onPress={() => toggle(g.circle_id)} across={across} />
-                  ))}
-                </View>
-              </View>
+              {toSection}
           </View>
           )}
         </ScrollView>
 
         {/* SHARE-PC-10: pinned under the page, above the keyboard and the tab bar. Not on the empty postcard (SHARE-ST-3). */}
-        {empty ? null : (
+        {/* SHARE-U-17..19: a kind card uses the same pinned button: "Pick who gets it" opens the tiles once the
+            required fields hold words, then "Send to <names>" sends it. */}
+        {empty && !kind ? null : (
           <View style={[styles.dock, { backgroundColor: c.bg, borderTopColor: c.line, paddingBottom: 12 + under }]}>
-            <Button label={ready ? `Send to ${toLine}` : 'Pick who gets it'} onPress={() => void send()} disabled={!ready} busy={busy} />
+            {kind && !big ? (
+              <Button label={kindReady ? `Send to ${toLine}` : 'Pick who gets it'} busy={busy}
+                disabled={kindTo ? !kindReady : !kindOk}
+                onPress={() => { if (kindTo) void sendKind(); else setKindTo(true); }} />
+            ) : (
+              <Button label={ready ? `Send to ${toLine}` : 'Pick who gets it'} onPress={() => void send()} disabled={!ready} busy={busy} />
+            )}
           </View>
         )}
       </KeyboardAvoidingView>
