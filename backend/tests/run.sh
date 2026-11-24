@@ -25,6 +25,7 @@
 #   tests/vis_gate_test.sh    VIS-2, 6, 23, 24: the gate bites (scratch table, second policy), edge functions, API schemas
 #   ../packages/visibility/core/test.sql  VIS-19, 20, 23: the generic core's conformance kit, with a toy product (rolls back)
 #   ../packages/visibility/core/no_product_words_test.sh  VIS-21: no Hearth words in the generic template
+#   tests/vis_core_copy_test.sh  ARCH-VC-R1: 0031_vis_core.sql = packages/visibility/core/supabase.sql below its header
 #   ../packages/messenger/relay/test.sql  RELAY-1..9: the shared messenger library's relay template
 #   tests/aud16/  BETA-AUD-16: snapshot on 0001-0010, apply 0011+, diff (0011 must change nobody's access)
 #   tests/grp1/   GRP-1/GRP-2: snapshot on 0001-0012, apply 0013+, diff (0013 must change nobody's access)
@@ -97,4 +98,6 @@ bash tests/vis_gate_test.sh || STATUS=1
 dropdb --if-exists "$DB"; createdb "$DB"
 psql -d "$DB" -v ON_ERROR_STOP=1 -X -q -f ../packages/visibility/core/test.sql >/dev/null || { echo "visibility kit: FAILED" >&2; STATUS=1; }
 bash ../packages/visibility/core/no_product_words_test.sh || STATUS=1
+# ARCH-VC-R1: migration 0031 is the package's supabase.sql verbatim below its header (and the check bites)
+bash tests/vis_core_copy_test.sh || STATUS=1
 exit $STATUS

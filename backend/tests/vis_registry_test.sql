@@ -147,6 +147,14 @@ select tests.ok_each($$select f.fn::text from vis.functions f join vis_definer_f
   'VIS-5 %s calls its reach''s rule');
 select tests.ok_sql($$select coalesce(bool_and(length(btrim(note)) > 0), true) from vis.functions where kind is null$$,
                     'VIS-5 every allowlisted function names its reason');
+-- PRIV-VC-B2 (P2, privacy review Nov 24): my_spaces (family names and counts), my_circles (group names) and
+-- chat_roster (members and their keys) return other people's data, so none is a "caller's own rows" allowlist
+-- entry. Each must be registered with a kind (space, circle, chat_group are the likely ones), which puts it under
+-- the "calls its reach's rule" check above.
+select tests.ok_sql(format($$select coalesce((select kind is not null from vis.functions where fn = %L::regprocedure), false)$$, fn),
+                    format('PRIV-VC-B2 %s is registered with a kind and rule-checked, not allowlisted', fn))
+  from unnest(array['public.my_spaces()', 'public.my_circles(uuid)', 'public.chat_roster(uuid)']) fn;
+
 -- VIS-5 QA-R (Nov 24, 2026): list_family_dates returns other people's birthdays and names, so it is not a
 -- "caller's own rows" allowlist entry. It must be registered with kind family_date, so the rule check above
 -- covers it (vis_core_test.sql's VIS-18 list parity proves its rows equal vis.can_see).
