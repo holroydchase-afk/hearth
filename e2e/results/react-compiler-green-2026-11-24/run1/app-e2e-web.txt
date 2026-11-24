@@ -1,0 +1,89 @@
+Using src/app as the root directory for Expo Router.
+React Compiler enabled
+Starting Metro Bundler
+
+warning: Bundler cache is empty, rebuilding (this may take a minute)
+Web Bundled 21010ms ../../Hearth/app/node_modules/expo-router/entry.js (1334 modules)
+
+› Assets (22):
+../../Hearth/app/node_modules/@expo-google-fonts/atkinson-hyperlegible-next/400Regular/AtkinsonHyperlegibleNext_400Regular.86635252a71fd7c43fd5b0c41bdc5d54.ttf (48KB)
+../../Hearth/app/node_modules/@expo-google-fonts/atkinson-hyperlegible-next/500Medium/AtkinsonHyperlegibleNext_500Medium.2d5d6c0565845615ac6982fc8abf1095.ttf (48KB)
+../../Hearth/app/node_modules/@expo-google-fonts/atkinson-hyperlegible-next/600SemiBold/AtkinsonHyperlegibleNext_600SemiBold.5cf92f89d6fa6a976d135e61e9ffde1f.ttf (48KB)
+../../Hearth/app/node_modules/@expo-google-fonts/material-symbols/400Regular/MaterialSymbols_400Regular.6b4f0c2d698edccb36b0f132059c0205.ttf (972KB)
+../../Hearth/app/node_modules/expo-router/assets/arrow_down.017bc6ba3fc25503e5eb5e53826d48a8.png (9.5KB)
+../../Hearth/app/node_modules/expo-router/assets/error.d1ea1496f9057eb392d5bbf3732a61b7.png (469B)
+../../Hearth/app/node_modules/expo-router/assets/file.19eeb73b9593a38f8e9f418337fc7d10.png (138B)
+../../Hearth/app/node_modules/expo-router/assets/forward.d8b800c443b8972542883e0b9de2bdc6.png (188B)
+../../Hearth/app/node_modules/expo-router/assets/pkg.ab19f4cbc543357183a20571f68380a3.png (364B)
+../../Hearth/app/node_modules/expo-router/assets/react-navigation/elements/back-icon-mask.0a328cd9c1afd0afe8e3b1ec5165b1b4.png (653B)
+../../Hearth/app/node_modules/expo-router/assets/react-navigation/elements/back-icon.35ba0eaec5a4f5ed12ca16fabeae451d.png (207B)
+../../Hearth/app/node_modules/expo-router/assets/react-navigation/elements/clear-icon.c94f6478e7ae0cdd9f15de1fcb9e5e55.png (4 variations | 425B)
+../../Hearth/app/node_modules/expo-router/assets/react-navigation/elements/close-icon.808e1b1b9b53114ec2838071a7e6daa7.png (4 variations | 235B)
+../../Hearth/app/node_modules/expo-router/assets/react-navigation/elements/search-icon.286d67d3f74808a60a78d3ebf1a5fb57.png (928B)
+../../Hearth/app/node_modules/expo-router/assets/sitemap.412dd9275b6b48ad28f5e3d81bb1f626.png (465B)
+../../Hearth/app/node_modules/expo-router/assets/unmatched.20e71bdf79e3a97bf55fd9e164041578.png (4.8KB)
+
+› web bundles (38):
+_expo/static/css/native-tabs.module-d7f6e8f3258dd68c48f5421bb4fa8b37.css (2.5KB)
+_expo/static/js/web/__common-933d94cd4ab6989c460e44aff5601b89.js (696KB)
+_expo/static/js/web/__expo-metro-runtime-8c088df87a31e4e6accd81c554ec290d.js (3.8KB)
+_expo/static/js/web/_layout-0123fc14b6deac280fc128a538211fb1.js (320B)
+_expo/static/js/web/_layout-2143faf3538b91dcc9392e9480e4f4a4.js (320B)
+_expo/static/js/web/_layout-8277fbd8e8c7a3ba951b657781ca15ee.js (57KB)
+_expo/static/js/web/_layout-8fbcee7e1f6d6aea649a6decaa43625f.js (320B)
+_expo/static/js/web/_layout-b91d68442bb69390e512fe57ad645a43.js (394KB)
+_expo/static/js/web/[code]-1b6b030956227bef2d53180c1b3ce53a.js (4.2KB)
+_expo/static/js/web/[postId]-22feb3ea755ea5dc9f320c4ee7f87510.js (467B)
+_expo/static/js/web/+not-found-31ca00c7aa074396c52236e04f6669fb.js (912B)
+_expo/static/js/web/birthdays-89c9bf3540640577d4d106f3b426c8da.js (557B)
+_expo/static/js/web/birthdays-fe8029a4f22d4a12c82f00abfaecd0e2.js (444B)
+_expo/static/js/web/easy-view-c16065174784b27b4956b22813b05f8c.js (444B)
+_expo/static/js/web/ed448-d4437d53aaebf90f880985787ee12319.js (12KB)
+_expo/static/js/web/entry-c80c645ee0c1e7da405cbc6f1460a4e5.js (1.1MB)
+_expo/static/js/web/events-d15f035ec964245aa76c9c7f08342866.js (422B)
+_expo/static/js/web/groups-472f57d62622bb4b2de2e9c6bf47fb7b.js (12KB)
+_expo/static/js/web/groups-6aba4caf3fc1fc72bb4ee15130cf5187.js (404B)
+_expo/static/js/web/help-7ea3a0d53674ada6d2bf4ba06668cfac.js (2.5KB)
+_expo/static/js/web/help-af65ea6fe96fe0af89439b61199d5d4d.js (402B)
+_expo/static/js/web/index-3abf2fe201103e3321b35e766d1877b7.js (700B)
+_expo/static/js/web/index-7cf923dd123386381f82808d9aebe2bb.js (525B)
+_expo/static/js/web/index-8d172d77c4c75b47ee9ab1f4bbf7bb17.js (473B)
+_expo/static/js/web/index-b448afc511a0196750a7444c5f2ad183.js (600B)
+_expo/static/js/web/index-f65df131454515a72230affce9faa2f6.js (640B)
+_expo/static/js/web/look-0f53242223371f67ec43426671ff406b.js (436B)
+_expo/static/js/web/me-26ad02b8b89585bee5fce58ecf7bc5f2.js (4.7KB)
+_expo/static/js/web/me-a2b88c207da707278772854adf2ac705.js (400B)
+_expo/static/js/web/messages-68a330b81b7cf8e7e8e84f23ed9423f5.js (238KB)
+_expo/static/js/web/mod-f8c0483d9388fc9361323b742a0c6dd0.js (14KB)
+_expo/static/js/web/nist-b004752fd5af469adc149c74801da757.js (21KB)
+_expo/static/js/web/photos-d3285596a2ee4f11771a0c4939967aad.js (386B)
+_expo/static/js/web/search-52071e6586341dc9fbd43b1dbb4e119f.js (5.8KB)
+_expo/static/js/web/share-73008fb587a9287b75c495f318420d3f.js (22KB)
+_expo/static/js/web/sign-in-0db29b7504439b0a9d0ed35dfbce39ae.js (1.5KB)
+_expo/static/js/web/theme-b4fc70790fb4179baefef5b1987da648.js (438B)
+_expo/static/js/web/timeline-ab20aad36d1c6b46c5592f4a73202afe.js (693B)
+
+› Files (3):
+favicon.ico (15KB)
+index.html (1.6KB)
+metadata.json (49B)
+
+Exported: dist-fake
+
+Running 11 tests using 1 worker
+
+  ✓   1 e2e-web/core-loop.spec.js:44:1 › core loop: share → Jo sees it → Ruth does not → heart → comment → delete (20.7s)
+  ✓   2 e2e-web/invite-link.spec.js:15:1 › ONB-4 a link from "Make the invite" opens the "invited you" preview in the web build (5.5s)
+  ✓   3 e2e-web/messages.spec.js:5:1 › MSG-4 the bundled app makes an MLS group and sends a sealed message (2.8s)
+PERF-FEED-1 cold start to first photo: 908, 921, 940 ms (median 921 ms)
+  ✓   4 e2e-web/perf.spec.js:10:1 › PERF-FEED-1 cold start to the first photo on screen is under 2 s (5.4s)
+  -   5 e2e-web/showcase.spec.js:21:5 › showcase phone light
+  -   6 e2e-web/showcase.spec.js:21:5 › showcase phone dark
+  -   7 e2e-web/showcase.spec.js:21:5 › showcase laptop light
+  -   8 e2e-web/showcase.spec.js:21:5 › showcase laptop dark
+  -   9 e2e-web/snapshot.spec.js:16:3 › snapshot (iphone)
+  -  10 e2e-web/snapshot.spec.js:16:3 › snapshot (android)
+  ✓  11 e2e-web/video.spec.js:39:1 › VID-18 a video post shows its poster with a Play word button on Photos and the post screen; Play opens the player (4.5s)
+
+  6 skipped
+  5 passed (39.8s)
