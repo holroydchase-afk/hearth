@@ -55,8 +55,8 @@ describe('FONT Atkinson Hyperlegible Next everywhere (DEC-78)', () => {
 
   it('FONT-2 every Txt variant and the kit Button render in Atkinson, weight from the family (body/muted Regular; strong, title, large title, Button SemiBold)', () => {
     render(<>
-      <Txt>Body words</Txt><Txt variant="muted">Quiet words</Txt><Txt variant="strong">Grandma Jo</Txt>
-      <Txt variant="title">A title</Txt><Txt variant="display">Large title</Txt>
+      <Txt>Body words</Txt><Txt tone="muted">Quiet words</Txt><Txt variant="headline">Grandma Jo</Txt>
+      <Txt variant="title2">A title</Txt><Txt variant="largeTitle">Large title</Txt>
       <Button label="Send" onPress={() => {}} />
     </>);
     const want: Record<string, string> = {

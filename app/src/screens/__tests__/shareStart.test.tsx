@@ -505,7 +505,9 @@ describe('SHARE-ST-19 "New post" with no subline', () => {
 
 describe('SHARE-ST-20 the photo spot: accent tint, no border, a surface circle, "Add photos"', () => {
   for (const dark of [false, true]) {
-    it(`SHARE-ST-20 (${dark ? 'dark' : 'light'}) 4:3, 14 px corners, 12 px in, accent tint fill, no border; 76 px surface circle with the icon; "Add photos" 22 pt SemiBold accent; no "Up to N"`, async () => {
+    // Retargeted Nov 24 for round 4 (SHARE-ST-29, DEC-84): the circle is 52 px (radius 26) and "Add photos" is headline
+    // (17 / 22 SemiBold) in the accent; was 76 px and 22 pt.
+    it(`SHARE-ST-20 SHARE-ST-29 (${dark ? 'dark' : 'light'}) 4:3, 14 px corners, 12 px in, accent tint fill, no border; 52 px surface circle with the icon; "Add photos" headline 17 / 22 SemiBold accent; no "Up to N"`, async () => {
       await start({ kv: prefs('chase', { look: dark ? 'dark' : 'light' }) });
       const c = pal(dark);
       const btn = target(100);
@@ -517,20 +519,23 @@ describe('SHARE-ST-20 the photo spot: accent tint, no border, a surface circle, 
       expect(anyDashed).toBe(false);
       const card = screen.getByTestId('share-card');
       expect({ left: inset(spot, card, 'Left'), right: inset(spot, card, 'Right'), top: inset(spot, card, 'Top') }).toEqual({ left: 12, right: 12, top: 12 });
-      const circle = (spot.findAll(isHost) as Inst[]).find((x) => { const z = flat(x.props.style); return z.width === 76 && z.height === 76; });
-      expect(circle && { radius: flat(circle.props.style).borderRadius, fill: flat(circle.props.style).backgroundColor }).toEqual({ radius: 38, fill: c.surface });
+      const circle = (spot.findAll(isHost) as Inst[]).find((x) => { const z = flat(x.props.style); return z.width === 52 && z.height === 52; });
+      expect(circle && { radius: flat(circle.props.style).borderRadius, fill: flat(circle.props.style).backgroundColor }).toEqual({ radius: 26, fill: c.surface });
       expect(circle!.findAll((x: Inst) => x.props.name !== undefined && x.props.tintColor !== undefined).length).toBeGreaterThan(0);
       const title = titlesIn(spot)[0];
       const ts = flat(title?.props.style);
-      expect({ size: ts.fontSize, font: ts.fontFamily, color: ts.color }).toEqual({ size: 22, font: FONT.semibold, color: c.accent });
+      expect({ size: ts.fontSize, line: ts.lineHeight, font: ts.fontFamily, color: ts.color }).toEqual({ size: 17, line: 22, font: FONT.semibold, color: c.accent });
       expect(screen.queryByText(/Up to \d+ at a time/, HIDDEN)).toBeNull();
     });
   }
 
-  it('SHARE-ST-20 Easy view: "Add photos" is larger than 22 pt', async () => {
+  // Retargeted Nov 24 (SHARE-ST-29): Easy view is headline's 21 / 26 and a 60 px circle (was "larger than 22").
+  it('SHARE-ST-20 SHARE-ST-29 Easy view: "Add photos" is 21 / 26; the circle is 60 px', async () => {
     await start({ kv: prefs('chase', { easyView: true }) });
     const title = titlesIn(spotOf())[0];
-    expect(Number(flat(title?.props.style).fontSize)).toBeGreaterThan(22);
+    expect({ size: flat(title?.props.style).fontSize, line: flat(title?.props.style).lineHeight }).toEqual({ size: 21, line: 26 });
+    const circle = (spotOf().findAll(isHost) as Inst[]).find((x) => { const z = flat(x.props.style); return z.width === 60 && z.height === 60; });
+    expect(circle && flat(circle.props.style).borderRadius).toBe(30);
   });
 });
 
@@ -807,4 +812,161 @@ describe('GUX-W5 P2 the filled note field has no example hint', () => {
     expect(screen.UNSAFE_queryAllByType(TextInput).filter((x) => /Like:/.test(String(x.props.placeholder ?? '')))).toHaveLength(0);
     expect(allWords()).not.toMatch(/Like:/);
   });
+});
+
+// ===== Round 4, A with standard iPhone sizes plus the kinds row (Chase, Nov 24, DEC-84): SHARE-ST-28..33 =====
+// docs/product/SPEC-REDESIGN.md 1j-2 round 4 and docs/product/SPEC-TYPE.md. Written first (red), Nov 24, by qa-tdd.
+// They win over SHARE-ST-19's large title and SHARE-ST-20's 76 px circle / 22 pt words (retargeted above).
+// CONTRACT for the engineer (on top of typeScale.test.tsx's header):
+//   - "New post": Txt variant "title2", role header, in the GUX-W3 row.
+//   - Empty card: circle 52 x 52 (Easy view 60 x 60), borderRadius half, c.surface; the add-photo SystemIcon size 26
+//     (Easy view 30) before iconSize's phone scale; "Add photos" headline (17 / 22, Easy 21 / 26) in c.accent.
+//   - Feature switch: the kinds row shows only when app.features includes 'post_kinds' AND app.space.role is 'owner'
+//     or 'adult'. Off, or anyone else: no testID "share-kinds" and none of the three labels anywhere.
+//   - testID "share-kinds": a host View after (not inside) "share-card" in the empty start; flexDirection 'row' with
+//     Easy view off, 'column' with it on. In it, in order, three Pressables, testID "share-kind-event" / "-news" /
+//     "-saying", role button, labels "Add an event", "Share news", "Add a saying"; each backgroundColor c.surface,
+//     borderRadius 16, minHeight >= 48 (Easy view >= 60), flex 1 when in a row (equal widths); in Easy view each
+//     tile is flexDirection 'row' (icon left of the word) and full width (alignSelf 'stretch' or width '100%' or no
+//     fixed width). Each holds an icon (name + tintColor props) and one Text, testID "share-kind-word-<kind>",
+//     "Event" / "News" / "Saying", subheadline (15 / 20; Easy 19 / 24), no numberOfLines, no adjustsFontSizeToFit.
+//   - Tapping a tile shows that kind's empty card face (tester option A), testID "share-kind-card-<kind>", in place
+//     of the empty photo card and the kinds row; "New post" stays. Fields (TextInput, accessibilityLabel):
+//     event "What's happening", "When", "Where, optional"; news "Your news"; saying "What they said",
+//     "Who said it", "Age then, optional". Each card shows "To:" and a disabled button "Pick who gets it".
+//     Nothing is sent or created by the tap.
+const KINDS = [
+  { k: 'event', word: 'Event', label: 'Add an event', fields: ["What's happening", 'When', 'Where, optional'] },
+  { k: 'news', word: 'News', label: 'Share news', fields: ['Your news'] },
+  { k: 'saying', word: 'Saying', label: 'Add a saying', fields: ['What they said', 'Who said it', 'Age then, optional'] },
+] as const;
+/** The post_kinds switch on for everyone the server would ask about (the screen must still gate by role). */
+function kindsOn(be = FakeBackend.withFixture()): FakeBackend {
+  const real = be.myFeatures.bind(be);
+  jest.spyOn(be, 'myFeatures').mockImplementation((u, sp) => [...real(u, sp), 'post_kinds'].sort());
+  return be;
+}
+const order = (a: Inst, b: Inst) => {
+  const all = screen.UNSAFE_root.findAll(isHost) as Inst[];
+  return all.indexOf(a) < all.indexOf(b);
+};
+const noKinds = () => {
+  expect(screen.queryByTestId('share-kinds', HIDDEN)).toBeNull();
+  for (const K of KINDS) expect({ K: K.k, found: screen.queryByRole('button', { name: K.label }) !== null }).toEqual({ K: K.k, found: false });
+  expect(allWords()).not.toMatch(/\b(Event|News|Saying)\b/);
+};
+
+describe('SHARE-ST-28 "New post" is title2', () => {
+  for (const easy of [false, true]) {
+    it(`SHARE-ST-28 (${easy ? 'Easy view' : 'Standard'}) "New post" is ${easy ? '26 / 32' : '22 / 28'} SemiBold, a header, in the GUX-W3 row`, async () => {
+      await start({ kv: prefs('chase', { easyView: easy }) });
+      const h = screen.getByRole('header', { name: 'New post' });
+      const st = flat(h.props.style);
+      expect({ size: st.fontSize, line: st.lineHeight, font: st.fontFamily }).toEqual({ size: easy ? 26 : 22, line: easy ? 32 : 28, font: FONT.semibold });
+    });
+  }
+});
+
+describe('SHARE-ST-29 the empty card at standard sizes', () => {
+  it('SHARE-ST-29 the add-photo icon in the circle is 26 (30 in Easy view)', async () => {
+    for (const easy of [false, true]) {
+      const r = await start({ kv: prefs('chase', { easyView: easy }) });
+      const want = easy ? 60 : 52;
+      const circle = (spotOf().findAll(isHost) as Inst[]).find((x) => { const z = flat(x.props.style); return z.width === want && z.height === want; });
+      const icon = circle?.findAll((x: Inst) => x.props.tintColor !== undefined && typeof x.props.size === 'number')[0];
+      expect({ easy, size: icon?.props.size }).toEqual({ easy, size: easy ? 30 : 26 });
+      r.unmount();
+    }
+  });
+});
+
+describe('SHARE-ST-30 post_kinds off: no kind tiles for anyone', () => {
+  for (const user of ['chase', 'alex', 'ruth'] as const) {
+    it(`SHARE-ST-30 ${user}: the switch off (default), no Event, News or Saying tile`, async () => {
+      await start({ user, be: user === 'ruth' ? relativeCanPost() : undefined });
+      noKinds();
+      expect(target()).toBeTruthy();
+    });
+  }
+});
+
+describe('SHARE-ST-31 post_kinds on, a parent: three tiles under the postcard', () => {
+  for (const user of ['chase', 'alex'] as const) {
+    it(`SHARE-ST-31 ${user}: "share-kinds" after the card, a row of Event, News, Saying; surface, 16 px corners, >= 48 pt, equal widths; subheadline words; spoken labels`, async () => {
+      await start({ user, be: kindsOn(), kv: prefs(user, { easyView: false }) });
+      const c = pal(false);
+      const row = await screen.findByTestId('share-kinds', {}, slow);
+      const card = screen.getByTestId('share-card');
+      expect({ inside: within(row, card), after: order(card, row), dir: flat(row.props.style).flexDirection }).toEqual({ inside: false, after: true, dir: 'row' });
+      const tiles = KINDS.map((K) => screen.getByTestId(`share-kind-${K.k}`));
+      expect(tiles.every((t) => within(t, row))).toBe(true);
+      expect(order(tiles[0]!, tiles[1]!) && order(tiles[1]!, tiles[2]!)).toBe(true);
+      for (const [i, K] of KINDS.entries()) {
+        const t = tiles[i]!;
+        expect(screen.getByRole('button', { name: K.label })).toBe(t);
+        const st = flat(t.props.style);
+        expect({ k: K.k, fill: st.backgroundColor, radius: st.borderRadius, tall: Number(st.minHeight ?? st.height ?? 0) >= 48, flex: st.flex })
+          .toEqual({ k: K.k, fill: c.surface, radius: 16, tall: true, flex: 1 });
+        expect(t.findAll((x: Inst) => x.props.name !== undefined && x.props.tintColor !== undefined).length).toBeGreaterThan(0);
+        const w = screen.getByTestId(`share-kind-word-${K.k}`);
+        const ws = flat(w.props.style);
+        expect({ k: K.k, words: wordsIn(w) || String(w.props.children), size: ws.fontSize, line: ws.lineHeight, lines: w.props.numberOfLines, shrink: w.props.adjustsFontSizeToFit ?? false })
+          .toEqual({ k: K.k, words: K.word, size: 15, line: 20, lines: undefined, shrink: false });
+        expect(within(w, t)).toBe(true);
+      }
+      expectGrandparentSafe();
+    });
+  }
+});
+
+describe('SHARE-ST-32 post_kinds on, a parent with Easy view: the tiles stack', () => {
+  it('SHARE-ST-32 one tile per row, full width, icon left of the word, >= 60 pt; same order and labels; words 19 / 24, never cut', async () => {
+    await start({ be: kindsOn(), kv: prefs('chase', { easyView: true }) });
+    const row = await screen.findByTestId('share-kinds', {}, slow);
+    expect(flat(row.props.style).flexDirection).toBe('column');
+    const tiles = KINDS.map((K) => screen.getByTestId(`share-kind-${K.k}`));
+    expect(order(tiles[0]!, tiles[1]!) && order(tiles[1]!, tiles[2]!)).toBe(true);
+    for (const [i, K] of KINDS.entries()) {
+      const t = tiles[i]!;
+      expect(screen.getByRole('button', { name: K.label })).toBe(t);
+      const st = flat(t.props.style);
+      const full = st.alignSelf === 'stretch' || st.width === '100%' || (st.width === undefined && st.alignSelf === undefined);
+      expect({ k: K.k, dir: st.flexDirection, tall: Number(st.minHeight ?? st.height ?? 0) >= 60, full }).toEqual({ k: K.k, dir: 'row', tall: true, full: true });
+      const w = screen.getByTestId(`share-kind-word-${K.k}`);
+      const ws = flat(w.props.style);
+      expect({ size: ws.fontSize, line: ws.lineHeight, lines: w.props.numberOfLines, shrink: w.props.adjustsFontSizeToFit ?? false }).toEqual({ size: 19, line: 24, lines: undefined, shrink: false });
+    }
+  });
+});
+
+describe('SHARE-ST-33 post_kinds on, not a parent: no tiles', () => {
+  for (const user of ['ruth', 'jo'] as const) {
+    it(`SHARE-ST-33 ${user}: the switch on, still no kind tile; the postcard alone`, async () => {
+      await start({ user, be: kindsOn(relativeCanPost()) });
+      await waitFor(() => expect(screen.getByTestId('share-card')).toBeTruthy(), slow);
+      noKinds();
+      expect(target()).toBeTruthy();
+    });
+  }
+});
+
+describe('SHARE-ST-31 / SHARE-ST-33 a tap on a kind shows its empty card face (tester option A)', () => {
+  for (const K of KINDS) {
+    it(`SHARE-ST-31 "${K.label}" opens the ${K.k} card: its fields, "To:", a disabled "Pick who gets it"; the photo card and kinds row step aside; nothing sent`, async () => {
+      const { be } = await start({ be: kindsOn() });
+      const before = Object.keys(be.state.posts).length;
+      fireEvent.press(await screen.findByRole('button', { name: K.label }, slow));
+      const face = await screen.findByTestId(`share-kind-card-${K.k}`, {}, slow);
+      const labels = (face.findAll((x: Inst) => x.type === TextInput) as Inst[]).map((x) => x.props.accessibilityLabel);
+      for (const f of K.fields) expect({ f, found: labels.includes(f) }).toEqual({ f, found: true });
+      expect(wordsIn(face).split(' ')).toContain('To:');
+      const pick = screen.getByRole('button', { name: 'Pick who gets it' });
+      expect(pick.props.accessibilityState?.disabled ?? pick.props['aria-disabled']).toBe(true);
+      expect(screen.getByRole('header', { name: 'New post' })).toBeTruthy();
+      expect(screen.queryByTestId('share-kinds', HIDDEN)).toBeNull();
+      expect(screen.queryByRole('button', { name: /^Add photos( or videos)?, up to \d+ at a time$/ })).toBeNull();
+      expect(Object.keys(be.state.posts).length).toBe(before);
+      expectGrandparentSafe();
+    });
+  }
 });

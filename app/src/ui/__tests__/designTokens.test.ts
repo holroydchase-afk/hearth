@@ -30,8 +30,10 @@ describe('DS-TOKENS portable design tokens', () => {
     expect(t.font.family).toMatch(/^Atkinson Hyperlegible Next\b/);
     expect(Object.values(t.font.weight).every((w) => [400, 500, 600].includes(w as number))).toBe(true);
     expect(Object.values(t.font.weight)).toEqual(expect.arrayContaining([400, 600]));
-    expect(t.type.default.base).toBe(17);
-    expect(t.type.large.base).toBe(21);
+    // TYPE-12 (DEC-84): the named styles in both sets replace default.base / large.base.
+    const type = t.type as unknown as Record<string, Record<string, { fontSize: number }>>;
+    expect(type.standard?.body?.fontSize).toBe(17);
+    expect(type.easy?.body?.fontSize).toBe(21);
     expect(t.space.lg).toBe(16);
     expect(t.radius.pill).toBe(999);
     expect(t.target.min).toBe(48);
