@@ -1,0 +1,29 @@
+# Studio security kit (studio-agents templates/security). GitHub Actions get weekly update
+# PRs, minor and patch grouped. npm folders get security fixes only
+# (open-pull-requests-limit 0), because Expo SDK versions must come from `npx expo install`
+# (CLAUDE.md rule 8), not from version bumps. Security PRs appear once Dependabot security
+# updates is on in Settings.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+  - package-ecosystem: npm
+    directory: "/app"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+  - package-ecosystem: npm
+    directory: "/e2e"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+  - package-ecosystem: npm
+    directory: "/packages/messenger"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0

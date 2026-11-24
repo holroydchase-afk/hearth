@@ -1,5 +1,7 @@
 # Hearth (working name)
 
+[![ci](https://github.com/holroydchase-afk/hearth/actions/workflows/ci.yml/badge.svg)](https://github.com/holroydchase-afk/hearth/actions/workflows/ci.yml)
+
 **A private photo app for split families and for grandparents who stay off social media.** Every photo goes to an audience you pick, by name. Photos are encrypted on the phone and stored in the US. There are no ads, no trackers and no AI training.
 
 Built by Chase Holroyd, a product manager, as a working proof of concept: one person, a $20/month AI plan, and a team of Claude agents, test-first from day one.
@@ -87,4 +89,4 @@ Hearth is a working proof of concept, built in the open.
 | Built, switched off | Text message sign-in, video, and starting a family from the app |
 | Known limits | Speed on a phone hasn't been measured ([performance](docs/eng/PERFORMANCE.md)). No outside security review ([threat model](docs/architecture/04-threat-model.md)). Hearth's server holds the photo keys ([encryption and keys](docs/architecture/03-encryption-and-keys.md)) |
 
-License: AGPL-3.0 ([LICENSE](LICENSE)). The repo is public.
+License: AGPL-3.0 ([LICENSE](LICENSE)). The repo is public. [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Code of Conduct](CODE_OF_CONDUCT.md).
