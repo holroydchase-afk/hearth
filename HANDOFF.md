@@ -14,7 +14,7 @@ blockers:
 ## Nov 24: visibility core designed (R77; design only, awaits Chase's go)
 - `docs/product/SPEC-VISIBILITY-CORE.md` + `docs/architecture/07-visibility-model.md`: one registered core for every kind (fungible, generic `@holroyd/visibility`), CI gate, oracle (folds R51), user-error catches, co-parent bridge (after the beta), one composer. Open: Chase's go on Phases 1, 1b, 2.
 
-## Nov 24: public repo standards (intake #163, R76; branch claude/project-thread-6ew09x, PR)
+## Nov 24: public repo standards (intake #163, R79 (was R76, clashed with fruit themes); branch claude/project-thread-6ew09x, PR)
 - **Ask (Product Studio scorecard):** engineers and hiring managers judge the public repo's layout.
 - **Done:** CONTRIBUTING.md (test-first, privacy rules), CODE_OF_CONDUCT.md, SECURITY.md (private reporting, no overclaims), `.github/pull_request_template.md` with the `Agents:` line, bug and feature issue templates, `.github/dependabot.yml` (Actions weekly; npm in app, e2e and messenger security-only so Expo versions still come from `expo install`), CI badge and links in the README. Config only.
 - **Left:** repo description and topics (Chase pastes one line in Settings), Dependabot security updates switch (Settings), root clutter (moving HANDOFF/CLAUDE/tracker needs the studio rule paths changed in the same PR; not done).
