@@ -47,7 +47,7 @@
       "expo-status-bar",
       ["expo-splash-screen", { "image": "./assets/splash-icon.png", "resizeMode": "contain", "backgroundColor": "#F7F7F4", "dark": { "image": "./assets/splash-icon.png", "backgroundColor": "#131210" } }]
     ],
-    "experiments": { "typedRoutes": false },
+    "experiments": { "typedRoutes": false, "reactCompiler": true },
     "owner": "thefreighttrains-team",
     "runtimeVersion": { "policy": "sdkVersion" },
     "updates": { "url": "https://u.expo.dev/676e8cec-57a6-472f-9086-9a9318eaf556" },
