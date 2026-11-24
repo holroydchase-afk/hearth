@@ -1,4 +1,4 @@
-qa-tdd, 2026-11-24, at 3eb777d + VIS-9 author no-op exception, VIS-7 child both ways (Kit), R80 export red
+qa-tdd, 2026-11-24, at 3eb777d + VIS-9 author no-op exception, VIS-7 child both ways (Kit), R82 export red
 == test-all.sh run 1
 FAILED: backend SQL
 SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
@@ -69,6 +69,6 @@ Tests:       130 skipped, 90 passed, 220 total
  88 | NOT OK | VIS-9 exception stays narrow: someone else's deleted post still says not found (P0002) to a non-author
  89 | NOT OK | VIS-9 exception stays narrow: a non-author calling delete_post on any post hidden from them gets not found (P0002)
 VIS ORACLE RESULT: 92 passed, 3 failed
-== R80 red (vis_core_test.sql)
- 17 | NOT OK | R80 Alex's export has none of the dates he created in a deleted family (family C)
- 18 | ok     | R80 ...and still has the date he created in his live family (A's anniversary)
+== R82 red (vis_core_test.sql)
+ 17 | NOT OK | R82 Alex's export has none of the dates he created in a deleted family (family C)
+ 18 | ok     | R82 ...and still has the date he created in his live family (A's anniversary)

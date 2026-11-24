@@ -10,7 +10,7 @@
 --         answers "not found" there, the same as chat_list already did.
 --   QA-R4 (P2, part) public.is_post_author needs a live family, so post_audiences_select and set_post_audience
 --         stop telling the author that their post in a deleted family exists. In a live family it is unchanged.
---   R80 (QA-R6, P2) export_my_data leaves out life-calendar dates the caller added in a deleted family (0029 took
+--   R82 (QA-R6, P2) export_my_data leaves out life-calendar dates the caller added in a deleted family (0029 took
 --         every date with created_by = caller). Only that branch changes; your own birthday stays in your export.
 -- Not here: delete_post's repeat call on your own deleted post stays a no-op for its author (BETA-AUD-5; VIS-9's
 -- named exception).
@@ -174,7 +174,7 @@ language sql security definer set search_path = '' as $$
   group by w.recipient_id, w.ch
 $$;
 
--- ---------- R80 (QA-R6): no dates you added in a deleted family in your export ----------
+-- ---------- R82 (QA-R6): no dates you added in a deleted family in your export ----------
 -- 0029's export_my_data with one change in family_dates.
 create or replace function public.export_my_data() returns jsonb
 language sql stable security definer set search_path = '' as $$
@@ -203,7 +203,7 @@ language sql stable security definer set search_path = '' as $$
     'comments', (select coalesce(jsonb_agg(to_jsonb(c)), '[]') from public.comments c where c.author_id = auth.uid()),
     'reactions',(select coalesce(jsonb_agg(to_jsonb(r)), '[]') from public.reactions r where r.user_id = auth.uid()),
     'notification_prefs', (select coalesce(jsonb_agg(to_jsonb(n)), '[]') from public.notification_prefs n where n.user_id = auth.uid()),
-    -- PRIV-R3: your own birthdays and the dates you added; nobody else's. R80 (QA-R6): dates you added count only
+    -- PRIV-R3: your own birthdays and the dates you added; nobody else's. R82 (QA-R6): dates you added count only
     -- in a live family (a deleted family's dates are not yours to carry out); your own birthday is unchanged.
     'family_dates', (select coalesce(jsonb_agg(jsonb_build_object('id', d.id, 'space_id', d.space_id, 'kind', d.kind,
                        'label', d.label, 'month', d.month, 'day', d.day, 'member_id', d.member_id,

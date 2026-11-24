@@ -586,6 +586,13 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** grandparents who avoid social media miss Facebook's birthday nudges; Hearth can tell the family on the day without ads or trackers. Month and day are enough to say "today".
 - **Source:** `docs/product/SPEC-LIFE-CALENDAR.md`; persona check `decisions/2026-11-24-life-calendar.md` (LG and SG Red, mitigated). TRACKER R78.
 
+### DEC-82 · The public demo uses Pexels stock photos; the demo parent is Kevin (DEMO-PHOTO-4..18)
+- **When / status:** Nov 23-24 · Chase: "go" on stock photos from Pexels and a demo parent named Kevin, the dad in the photos · Specced, failing tests next
+- **Chose:** 19 free Pexels photos (orchard and baking by Elly Fairytale, bike by Yan Krukov) in 7 posts across May, October and this week; cleaned (no metadata), 1200px display and 400px thumbs; credited in `app/public/demo-pictures/CREDITS.md`, the demo's Details and the README. The signed-in parent is "Kevin"; Alex is mom, Grandma Jo is Kevin's mom (Dad's side). "Chase" is never the demo parent. The Nov 16 photos leave main; no history rewrite.
+- **Over:** Chase's own photos (DEC-62) and "Chase" as the demo parent (DEC-64); keeping "Chase" with stock photos (a visitor would read the model as Chase).
+- **Because:** Chase's family stays out of the public demo, and the name matches the man in the pictures. Demo content only, no change for a relative using the app, so no persona check (as DEC-62).
+- **Source:** `docs/product/SPEC-DEMO-PHOTOS.md`; TRACKER R79. Supersedes DEC-62 and DEC-64.
+
 ### DEC-83 · Build the visibility core now; bridge after the beta; 2-minute Take back; news and dates for parents (R77, VIS-*, SHARE-U-*)
 - **When / status:** Nov 24 · Chase, on the four open questions in `SPEC-VISIBILITY-CORE.md`: "Ok agreed to all" · Phases 1 and 1b built (migrations 0031, 0032), Phase 2 next
 - **Chose:** build Phases 1, 1b and 2 (registry, coverage gate, generic `@holroyd/visibility` core, oracle) now, before the beta; the co-parent bridge after the beta, with a co-parent persona brought back first; a 2-minute "Take back" hold before any notice goes out; "Write news" and "Add a date" on the postcard for parents only until the grandparent test. That last one reopens DEC-79's "one way in".

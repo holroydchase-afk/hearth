@@ -211,22 +211,22 @@ select tests.ok_sql($$select coalesce(string_agg(kind, ',' order by kind), '') =
                                           and not a.attisdropped and a.atttypid = 'uuid'::regtype)$$,
                     'VIS-7 the kinds can_see can''t address by id (no uuid id) are exactly the 21 reviewed ones');
 
--- ---------- R80 (QA-R6, P2): the export leaves out dates you created in a deleted family ----------
+-- ---------- R82 (QA-R6, P2): the export leaves out dates you created in a deleted family ----------
 -- export_my_data (0029) takes every date with created_by = you, so Alex's export still carries the dates he
 -- added in family C after C was deleted. Both directions: his live family's dates stay in it.
 :as_alex_export
 select tests.ok_sql($$select jsonb_typeof(public.export_my_data()->'family_dates') = 'array'
                          and not exists (select 1 from jsonb_array_elements(public.export_my_data()->'family_dates') x
                                           where x->>'space_id' = '22222222-0000-0000-0000-00000000000c')$$,
-                    'R80 Alex''s export has none of the dates he created in a deleted family (family C)');
+                    'R82 Alex''s export has none of the dates he created in a deleted family (family C)');
 select tests.ok_sql($$select exists (select 1 from jsonb_array_elements(public.export_my_data()->'family_dates') x
                                       where x->>'id' = '77777777-0000-0000-0000-0000000000a5')$$,
-                    'R80 ...and still has the date he created in his live family (A''s anniversary)');
+                    'R82 ...and still has the date he created in his live family (A''s anniversary)');
 -- Closed (chief of staff, Nov 24): your own birthday stays in your own export, even from a deleted family.
 reset role; select set_config('request.jwt.claim.sub', 'a0000000-0000-0000-0000-0000000000a1', false); set role authenticated;
 select tests.ok_sql($$select exists (select 1 from jsonb_array_elements(public.export_my_data()->'family_dates') x
                                       where x->>'id' = '77777777-0000-0000-0000-0000000000c1')$$,
-                    'R80 Grandma Rivera''s export keeps her own birthday from deleted family C (her own data)');
+                    'R82 Grandma Rivera''s export keeps her own birthday from deleted family C (her own data)');
 reset role;
 select set_config('request.jwt.claim.sub', '', false);
 
