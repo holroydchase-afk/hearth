@@ -1,0 +1,204 @@
+[harness] downloading PostgREST v12.2.3
+[harness] building database hearth_it
+NOTICE:  database "hearth_it" does not exist, skipping
+psql:/home/user/Hearth/backend/supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
+psql:/home/user/Hearth/backend/supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
+psql:/home/user/Hearth/backend/supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
+[harness] starting PostgREST on :3001
+[harness] ready: http://127.0.0.1:3001 (state in /home/user/Hearth/backend/tests/integration/.state)
+FAIL src/api/contract/calendar.contract.test.ts
+  ● SupabaseApi life calendar contract (CAL) › CAL-1 a member gets every date in the family, sorted by month then day
+
+    TypeError: parent.saveFamilyDate is not a function
+
+      68 |   });
+      69 |   const add = async (a: Omit<SaveFamilyDateArgs, 'space' | 'id'>) => {
+    > 70 |     const id = await parent.saveFamilyDate({ space: h.spaceId, id: null, ...a });
+         |                             ^
+      71 |     made.push(id);
+      72 |     return id;
+      73 |   };
+
+      at saveFamilyDate (src/api/contract/calendar.contract.test.ts:70:29)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12
+      at apply (src/api/contract/calendar.contract.test.ts:69:12)
+      at Object.add (src/api/contract/calendar.contract.test.ts:77:11)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● SupabaseApi life calendar contract (CAL) › CAL-2 signed out: no dates come back
+
+    TypeError: anon.familyDates is not a function
+
+       98 |   it('CAL-2 signed out: no dates come back', async () => {
+       99 |     const anon = cal(h.anon());
+    > 100 |     const r = await anon.familyDates(h.spaceId).then((rows) => rows.length, (e) => (e instanceof ApiError ? e.code : String(e)));
+          |                          ^
+      101 |     expect([0, '42501', 'AUTH']).toContain(r);
+      102 |   });
+      103 |
+
+      at Object.familyDates (src/api/contract/calendar.contract.test.ts:100:26)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● SupabaseApi life calendar contract (CAL) › CAL-3 any member (a viewer too) saves their own birthday; a second call changes it; null and null clears it
+
+    TypeError: viewer.setMyBirthday is not a function
+
+      105 |     const me = (await viewer.getSession())!.userId;
+      106 |     const mineNow = async () => (await other.familyDates(h.spaceId)).filter((r) => r.member_id === me && r.kind === 'birthday');
+    > 107 |     await viewer.setMyBirthday(h.spaceId, 12, 8);
+          |                  ^
+      108 |     expect(await mineNow()).toEqual([expect.objectContaining({ month: 12, day: 8, member_id: me })]);
+      109 |     await viewer.setMyBirthday(h.spaceId, 12, 9);
+      110 |     expect(await mineNow()).toEqual([expect.objectContaining({ month: 12, day: 9 })]);
+
+      at Object.setMyBirthday (src/api/contract/calendar.contract.test.ts:107:18)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SupabaseApi life calendar contract (CAL) › CAL-4 Feb 30, Apr 31, month 13 and day 0 fail with 22023 and store nothing; Feb 29 is accepted
+
+    TypeError: viewer.setMyBirthday is not a function
+
+      116 |     const me = (await viewer.getSession())!.userId;
+      117 |     for (const [m, d] of [[2, 30], [4, 31], [13, 1], [1, 0]] as const) {
+    > 118 |       expect({ m, d, code: await code(viewer.setMyBirthday(h.spaceId, m, d)) }).toEqual({ m, d, code: '22023' });
+          |                                              ^
+      119 |       expect({ m, d, code: await code(parent.saveFamilyDate({ space: h.spaceId, id: null, kind: 'other', label: 'Bad day', month: m, day: d, memberId: null })) })
+      120 |         .toEqual({ m, d, code: '22023' });
+      121 |     }
+
+      at Object.setMyBirthday (src/api/contract/calendar.contract.test.ts:118:46)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SupabaseApi life calendar contract (CAL) › CAL-5 a viewer can't add, change or delete someone else's date (P0002) and nothing changes
+
+    TypeError: parent.saveFamilyDate is not a function
+
+      68 |   });
+      69 |   const add = async (a: Omit<SaveFamilyDateArgs, 'space' | 'id'>) => {
+    > 70 |     const id = await parent.saveFamilyDate({ space: h.spaceId, id: null, ...a });
+         |                             ^
+      71 |     made.push(id);
+      72 |     return id;
+      73 |   };
+
+      at saveFamilyDate (src/api/contract/calendar.contract.test.ts:70:29)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12
+      at apply (src/api/contract/calendar.contract.test.ts:69:12)
+      at Object.add (src/api/contract/calendar.contract.test.ts:129:22)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● SupabaseApi life calendar contract (CAL) › CAL-5 a viewer may delete her own birthday
+
+    TypeError: viewer.setMyBirthday is not a function
+
+      138 |   it('CAL-5 a viewer may delete her own birthday', async () => {
+      139 |     const me = (await viewer.getSession())!.userId;
+    > 140 |     await viewer.setMyBirthday(h.spaceId, 5, 5);
+          |                  ^
+      141 |     const mine = (await viewer.familyDates(h.spaceId)).find((r) => r.member_id === me)!;
+      142 |     await viewer.deleteFamilyDate(mine.id);
+      143 |     expect((await viewer.familyDates(h.spaceId)).find((r) => r.member_id === me)).toBeUndefined();
+
+      at Object.setMyBirthday (src/api/contract/calendar.contract.test.ts:140:18)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SupabaseApi life calendar contract (CAL) › CAL-6 a parent adds, changes and deletes any date; labels over 60 or blank (no member) fail 22023
+
+    TypeError: parent.saveFamilyDate is not a function
+
+      68 |   });
+      69 |   const add = async (a: Omit<SaveFamilyDateArgs, 'space' | 'id'>) => {
+    > 70 |     const id = await parent.saveFamilyDate({ space: h.spaceId, id: null, ...a });
+         |                             ^
+      71 |     made.push(id);
+      72 |     return id;
+      73 |   };
+
+      at saveFamilyDate (src/api/contract/calendar.contract.test.ts:70:29)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12
+      at apply (src/api/contract/calendar.contract.test.ts:69:12)
+      at Object.add (src/api/contract/calendar.contract.test.ts:148:23)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● SupabaseApi life calendar contract (CAL) › CAL-7 a member's own birthday shows their current name after they rename
+
+    TypeError: viewer.setMyBirthday is not a function
+
+      172 |     const t = stamp();
+      173 |     try {
+    > 174 |       await viewer.setMyBirthday(h.spaceId, 7, 7);
+          |                    ^
+      175 |       await viewer.setMyName(`Gammy ${t}`);
+      176 |       expect((await parent.familyDates(h.spaceId)).find((r) => r.member_id === me)).toMatchObject({ member_name: `Gammy ${t}` });
+      177 |     } finally {
+
+      at Object.setMyBirthday (src/api/contract/calendar.contract.test.ts:174:20)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SupabaseApi life calendar contract (CAL) › CAL-9 no row carries a year or an age
+
+    TypeError: viewer.setMyBirthday is not a function
+
+      181 |
+      182 |   it('CAL-9 no row carries a year or an age', async () => {
+    > 183 |     await viewer.setMyBirthday(h.spaceId, 12, 8);
+          |                  ^
+      184 |     await add({ kind: 'anniversary', label: `Anniv ${stamp()}`, month: 6, day: 20, memberId: null });
+      185 |     const rows = await viewer.familyDates(h.spaceId);
+      186 |     expect(rows.length).toBeGreaterThan(0);
+
+      at Object.setMyBirthday (src/api/contract/calendar.contract.test.ts:183:18)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● CAL-11 the app and its contract › CAL-11 SupabaseApi calls the four 0029 RPCs with the spec's parameter names
+
+    TypeError: api.familyDates is not a function
+
+      203 |     const client = { rpc: async (name: string, args: Record<string, unknown>) => { calls.push([name, args]); return { data: name === 'list_family_dates' ? [] : name === 'save_family_date' ? 'new-id' : null, error: null }; } };
+      204 |     const api = cal(new SupabaseApi({ url: 'http://127.0.0.1:9', anonKey: 'anon', client: client as never, accessToken: async () => null }));
+    > 205 |     expect(await api.familyDates('S')).toEqual([]);
+          |                      ^
+      206 |     await api.setMyBirthday('S', 12, 8);
+      207 |     await api.setMyBirthday('S', null, null);
+      208 |     expect(await api.saveFamilyDate({ space: 'S', id: null, kind: 'birthday', label: 'Mia', month: 3, day: 14, memberId: null })).toBe('new-id');
+
+      at Object.familyDates (src/api/contract/calendar.contract.test.ts:205:22)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+Test Suites: 1 failed, 1 skipped, 2 passed, 3 of 4 total
+Tests:       10 failed, 130 skipped, 80 passed, 220 total
+Snapshots:   0 total
+Time:        4.307 s
+Ran all test suites matching src/api/contract|src/api/contract/calendar.contract.test.ts with tests matching "SupabaseApi".

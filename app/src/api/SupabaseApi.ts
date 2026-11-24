@@ -15,6 +15,7 @@ import type {
   HeartState, InvitePreview, Reaction, ReactionState, ReactionSummary, PostViewers, Session, Space, UploadGrant, UploadItemSpec, ViewGrant,
   TimelineArgs, TimelinePost, TimelineYear, SearchArgs,
   ChatMember, ChatRow, ChatRowKind, ChatSummary, ClaimedKeyPackage,
+  FamilyDate, SaveFamilyDateArgs,
 } from './types';
 import { toApiError } from '../errors/messages';
 import { JOIN_LINK_BASE } from './links';
@@ -58,6 +59,22 @@ export class SupabaseApi implements HearthApi {
       throw toApiError(e);
     }
     if (res.error) throw toApiError(res.error);
+    return res.data as T;
+  }
+
+  /** CAL-17: like rpc, but "no such function" (PGRST202, 42883: a server without 0029) is MISSING, so the app can
+   *  hide the calendar quietly. Other RPCs keep that as UNKNOWN (REACT-1). */
+  private async rpcOrMissing<T>(name: string, args: Record<string, unknown>): Promise<T> {
+    let res: { data: unknown; error: unknown };
+    try {
+      res = (await this.o.client.rpc(name, args)) as { data: unknown; error: unknown };
+    } catch (e) {
+      throw toApiError(e);
+    }
+    if (res.error) {
+      const code = String((res.error as { code?: unknown }).code ?? '');
+      throw code === 'PGRST202' || code === '42883' ? new ApiError('MISSING') : toApiError(res.error);
+    }
     return res.data as T;
   }
 
@@ -297,6 +314,18 @@ export class SupabaseApi implements HearthApi {
   chatFetch = (circle: string, after: number, limit = 200) =>
     this.rpc<ChatRow[]>('chat_fetch', { p_circle: circle, p_after: after, p_limit: limit })
       .then((r) => (r ?? []).map((x) => ({ ...x, id: Number(x.id), epoch: Number(x.epoch) })));
+
+  // ---- life calendar (0029) ----
+  familyDates = (space: string) =>
+    this.rpcOrMissing<FamilyDate[]>('list_family_dates', { p_space: space })
+      .then((r) => (r ?? []).map((x) => ({ ...x, month: Number(x.month), day: Number(x.day) })));
+  setMyBirthday = (space: string, month: number | null, day: number | null) =>
+    this.rpcOrMissing<void>('set_my_birthday', { p_space: space, p_month: month, p_day: day }).then(() => undefined);
+  saveFamilyDate = (a: SaveFamilyDateArgs) =>
+    this.rpcOrMissing<string>('save_family_date', {
+      p_space: a.space, p_id: a.id, p_kind: a.kind, p_label: a.label, p_month: a.month, p_day: a.day, p_member: a.memberId,
+    });
+  deleteFamilyDate = (id: string) => this.rpcOrMissing<void>('delete_family_date', { p_id: id }).then(() => undefined);
 
   // ---- sign-media ----
   signUpload = (post: string, items: UploadItemSpec[]) => this.fnCall<UploadGrant>('POST', '', { action: 'upload', post_id: post, items });

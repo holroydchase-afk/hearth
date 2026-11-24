@@ -7526,6 +7526,713 @@
    "where": "backend/tests/"
   },
   {
+   "id": "FAMILY-DATES-001",
+   "title": "CAL-9 public.family_dates exists (migration 0029)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-002",
+   "title": "CAL-9 family_dates has id, space_id, kind, label, month, day, member_id, created_by, created_at, updated_at",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-003",
+   "title": "CAL-9 no year, age or birth-date column",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-004",
+   "title": "CAL-9 the four calendar RPCs exist, one of each",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-005",
+   "title": "CAL-9 no calendar RPC takes or returns a year or an age (argument and output names)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-006",
+   "title": "CAL-9 every calendar RPC is security definer with search_path = ''",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-007",
+   "title": "CAL-2 RLS is on for family_dates",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-008",
+   "title": "CAL-5 no direct writes: only the RPCs change dates",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-009",
+   "title": "CAL-11 signed-in accounts can call all four RPCs",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-010",
+   "title": "CAL-3 Grandma (a viewer) saves her birthday, December 8",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-011",
+   "title": "CAL-3 one birthday row, linked to Grandma, in family A",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-012",
+   "title": "CAL-3 she changes it to December 9",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-013",
+   "title": "CAL-3 a second call changes the row, never adds a second",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-014",
+   "title": "CAL-3 null and null clears it",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-015",
+   "title": "CAL-3 ...and her birthday is gone",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-016",
+   "title": "CAL-4 February 30 is refused (22023)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-017",
+   "title": "CAL-4 April 31 is refused (22023)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-018",
+   "title": "CAL-4 month 13 is refused (22023)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-019",
+   "title": "CAL-4 day 0 is refused (22023)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-020",
+   "title": "CAL-4 month 0 is refused (22023)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-021",
+   "title": "CAL-4 January 32 is refused (22023)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-022",
+   "title": "CAL-4 a refused change leaves her December 8 as it was",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-023",
+   "title": "CAL-4 a parent adding February 30 is refused too (22023)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-024",
+   "title": "CAL-4 ...and nothing is stored",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-025",
+   "title": "CAL-4 February 29 is accepted",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-026",
+   "title": "CAL-4 ...and stored as February 29",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-027",
+   "title": "CAL-6 the owner adds a kid's birthday with a label and gets its id back",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-028",
+   "title": "CAL-6 the owner adds an anniversary",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-029",
+   "title": "CAL-6 an adult adds \"something else\"",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-030",
+   "title": "CAL-6 the label is stored trimmed, with who added it",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-031",
+   "title": "CAL-6 the owner changes Mia's birthday to March 15",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-032",
+   "title": "CAL-6 ...the same row changed; no second Mia",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-033",
+   "title": "CAL-6 the owner deletes the anniversary",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-034",
+   "title": "CAL-6 ...and it is gone",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-035",
+   "title": "CAL-6 a parent enters Grandma Chen's birthday for her (no label: it is hers)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-036",
+   "title": "CAL-6 one birthday per member per family: a second one for Grandma Chen never makes two rows",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-037",
+   "title": "CAL-6 a label over 60 characters is refused (22023)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-038",
+   "title": "CAL-6 a label of exactly 60 characters is fine",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-039",
+   "title": "CAL-6 a blank label with no member is refused (22023)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-040",
+   "title": "CAL-6 no label and no member is refused (22023)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-041",
+   "title": "CAL-6 ...and nothing refused was stored",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-042",
+   "title": "CAL-1 a viewer lists every date in family A",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-043",
+   "title": "CAL-1 sorted by month, then day",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-044",
+   "title": "CAL-1 nothing from family B comes back",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-045",
+   "title": "CAL-1 Grandma Chen's birthday shows once in A (her B one stays in B)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-046",
+   "title": "CAL-2 RLS: Grandma Rivera (not in B) reads no B rows from the table either",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-047",
+   "title": "CAL-1 a member of B sees B's date",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-048",
+   "title": "CAL-2 someone in no family lists A's dates and gets zero rows",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-049",
+   "title": "CAL-2 ...and reads no rows from the table",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-050",
+   "title": "CAL-2 deleting a date in A from outside is not found (P0002)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-051",
+   "title": "CAL-2 changing a date in A from outside is not found (P0002)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-052",
+   "title": "CAL-2 an unknown id is not found the same way (P0002)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-053",
+   "title": "CAL-2 someone outside can't put a birthday in A (P0002)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-054",
+   "title": "CAL-2 Grandpa Rivera (in A, not in B) lists B and gets zero rows",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-055",
+   "title": "CAL-2 ...and B's date id is not found to him (P0002)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-056",
+   "title": "CAL-2 signed out: zero rows (or not callable at all)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-057",
+   "title": "CAL-2 Mia's birthday is untouched",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-058",
+   "title": "CAL-5 a viewer adding a date is not found (P0002)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-059",
+   "title": "CAL-5 a viewer changing Mia's birthday is not found (P0002)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-060",
+   "title": "CAL-5 a viewer deleting Mia's birthday is not found (P0002)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-061",
+   "title": "CAL-5 a viewer deleting another member's birthday is not found (P0002)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-062",
+   "title": "CAL-5 a direct insert is refused (42501)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-063",
+   "title": "CAL-5 ...and nothing changed",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-064",
+   "title": "CAL-5 a viewer may delete her own birthday",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-065",
+   "title": "CAL-5 ...and it is gone",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-066",
+   "title": "CAL-7 Grandpa Rivera renames himself Pawpaw",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-067",
+   "title": "CAL-7 his birthday now shows the name Pawpaw to everyone",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-068",
+   "title": "CAL-8 Grandma Chen leaves A: her birthday is gone from A's list",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-069",
+   "title": "CAL-8 ...and from the table",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-070",
+   "title": "CAL-8 ...her birthday in B stays",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-071",
+   "title": "CAL-18 a refused label is not repeated in the error",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-072",
+   "title": "CAL-18 the calendar RPCs log nothing (no raise log/notice/info/warning)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-073",
+   "title": "CAL-18 no notice in the outbox carries a date's label",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-074",
+   "title": "PRIV-R2 setup: Partner Sky's birthday, the anniversary and the reunion are in family A",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-075",
+   "title": "PRIV-R1 signed-in accounts have no select on family_dates.created_at, updated_at or created_by",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-076",
+   "title": "PRIV-R1 ...nor does anon",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-077",
+   "title": "PRIV-R1 list_family_dates no longer orders (or ties) by created_at, nor reads updated_at or created_by",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-078",
+   "title": "PRIV-R1 a member selecting created_at is refused (42501)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-079",
+   "title": "PRIV-R1 a member selecting updated_at is refused (42501)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-080",
+   "title": "PRIV-R1 a member selecting created_by is refused (42501)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-081",
+   "title": "PRIV-R1 ...while the date columns themselves still read (allowed direction)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-082",
+   "title": "PRIV-R2 the co-parent (viewer in A, not in its Everyone group) does not list the new partner's birthday",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-083",
+   "title": "PRIV-R2 ...nor the anniversary or the \"something else\" date, not even their labels",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-084",
+   "title": "PRIV-R2 RLS: the co-parent reads none of those rows from the table directly",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-085",
+   "title": "PRIV-R2 allowed: the co-parent still sees Alex's birthday (a parent she can see) and her own",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-086",
+   "title": "PRIV-R2 the co-parent deleting the partner's birthday is not found (P0002)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-087",
+   "title": "PRIV-R2 the co-parent deleting the anniversary is not found (P0002)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-088",
+   "title": "PRIV-R2 the co-parent changing the anniversary is not found (P0002)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-089",
+   "title": "PRIV-R2 allowed: Grandma Rivera (in A's Everyone group) lists the partner's birthday, the anniversary and the reunion",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-090",
+   "title": "PRIV-R2 allowed: ...and reads them from the table",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-091",
+   "title": "PRIV-R2 allowed: the owner lists all three",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-092",
+   "title": "PRIV-R3 Grandpa's export holds his own birthday (February 29) under family_dates",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-093",
+   "title": "PRIV-R3 Alex's export holds the dates he added (Mia, the anniversary)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-094",
+   "title": "PRIV-R3 ...and Grandma Rivera's export has none of the dates others added or others' birthdays",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-095",
+   "title": "PRIV-R5 save_family_date waits on the family's spaces row lock before adding (got: waited)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-096",
+   "title": "PRIV-R5 set_my_birthday waits on it too before adding (got: waited)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-097",
+   "title": "CAL-10 setup: family A holds 200 dates",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-098",
+   "title": "CAL-10 the 201st date is refused (P0001)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-099",
+   "title": "CAL-10 ...with a plain message (no database words)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-100",
+   "title": "CAL-10 a member's own birthday is refused too when the family is full (P0001)",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "FAMILY-DATES-101",
+   "title": "CAL-10 ...and nothing was stored",
+   "area": "Family-Dates",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
    "id": "AUD-16-001",
    "title": "BETA-AUD-16: migration 0011 was applied (circles.kind exists), so the diffs below compare before/after 0011",
    "area": "Groups, households, events",

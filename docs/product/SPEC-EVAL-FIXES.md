@@ -1,4 +1,4 @@
-# SPEC-EVAL-FIXES: intake #162 eval findings (R78)
+# SPEC-EVAL-FIXES: intake #162 eval findings (R80)
 
 Staff PM, Nov 24, 2026. Chase's rule: accessibility is high priority. One small app PR. The evidence from before the fix is in qa-tdd's run at main `ff4543e` (`e2e/results/eval-findings-red-2026-11-24.txt`; the before screenshots are outside the repo). This PR doesn't change the data model, the server or the RLS rules.
 
