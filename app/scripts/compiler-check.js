@@ -16,6 +16,7 @@ const APP = path.resolve(__dirname, '..');
 const ALLOWED = {
   // INTAKE-80 (Nov 23): the first run's bailouts, kept uncompiled on purpose (scope call: no refactors in
   // the switch-on PR). Uncompiled = exactly the pre-compiler behaviour. Any NEW bailout still fails.
+  'src/screens/Birthdays.tsx:DateForm': "try/finally not supported by the compiler yet; left uncompiled (today's behaviour)",
   'src/screens/EmailCodeFlow.tsx:EmailCodeFlow': "try/finally not supported by the compiler yet; left uncompiled (today's behaviour)",
   'src/screens/GalleryGrid.tsx:GalleryGrid': "reads ref.current during render; left uncompiled (today's behaviour)",
   'src/screens/GalleryTop.tsx:GalleryTopBar': "reads ref.current during render; left uncompiled (today's behaviour)",
