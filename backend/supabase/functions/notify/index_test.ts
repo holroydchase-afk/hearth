@@ -239,3 +239,48 @@ Deno.test("BETA-SMS-13: an email batch with a null address is skipped; the run s
   assert(resend.every((c) => !JSON.stringify(c.body).includes("null")), "no email is addressed to null");
   eq(calls.filter((c) => c.url.includes("release")).length, 0, "nothing released for retry");
 });
+
+// ---------- R83: news, event and saying notices never say "shared new photos" (written first, Nov 24, qa-tdd) ----------
+// claim_notification_batches gains post_kinds (0034's posts.kind of the batch's new posts). The exact words come from
+// grandparent-ux; these checks hold only that each kind gets its own, true wording, still naming who sent it.
+// The cast keeps this file type-checking before Batch has the field, so only the R83 tests go red.
+const withKinds = (b: Batch, kinds: string[]): Batch => ({ ...b, post_kinds: kinds } as Batch);
+const NOT_PHOTOS = ["news", "event", "saying"];
+
+Deno.test("R83 push for a news, event or saying post never mentions photos and still names who sent it", () => {
+  for (const k of NOT_PHOTOS) {
+    const [m] = buildPush(withKinds(pushBatch(), [k]));
+    assert(m, `${k}: a push is sent`);
+    assert(!/photo/i.test(`${m.title} ${m.body}`), `${k}: push says photos: ${JSON.stringify(m.body)}`);
+    assert(m.body.includes("Alex"), `${k}: push names the sender`);
+    eq(m.data, { post_id: P1 }, `${k}: data is the post id only`);
+  }
+});
+
+Deno.test("R83 email for a news, event or saying post never mentions photos and still names who sent it", () => {
+  for (const k of NOT_PHOTOS) {
+    const e = buildEmail(withKinds(emailBatch(), [k]))!;
+    assert(e, `${k}: an email is built`);
+    assert(!/photo/i.test(`${e.subject} ${e.text} ${e.html}`), `${k}: email says photos: ${JSON.stringify(e.subject)}`);
+    assert(e.subject.includes("Alex"), `${k}: subject names the sender`);
+  }
+});
+
+Deno.test("R83 each kind gets its own wording (not one generic line for all three)", () => {
+  const bodies = NOT_PHOTOS.map((k) => buildPush(withKinds(pushBatch(), [k]))[0].body);
+  eq(new Set(bodies).size, 3, `three different push bodies: ${JSON.stringify(bodies)}`);
+});
+
+Deno.test("R83 a photos batch (post_kinds ['photos']) keeps today's words", () => {
+  eq(buildPush(withKinds(pushBatch(), ["photos"]))[0].body, "Alex shared new photos. Tap to see them.", "photos body");
+  eq(buildEmail(withKinds(emailBatch(), ["photos"]))!.subject, "Alex shared new photos on Hearth", "photos subject");
+});
+
+Deno.test("R83 the kind wording carries no caption, what, where or saying words (the batch has none to give)", () => {
+  for (const k of NOT_PHOTOS) {
+    const [m] = buildPush(withKinds(pushBatch(), [k]));
+    const e = buildEmail(withKinds(emailBatch(), [k]))!;
+    eq(Object.keys(m).sort(), ["body", "data", "sound", "title", "to"], `${k}: no extra push fields`);
+    assert(!/<img/i.test(e.html), `${k}: no image in the email`);
+  }
+});

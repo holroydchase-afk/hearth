@@ -1,0 +1,9 @@
+{
+ "suite": "backend",
+ "at": "2026-11-24T23:00:00-05:00",
+ "label": "News, Event and Saying posts (0034, SHARE-U-4, 5, 11..15) 3x green; R83 notice words written first (red, on purpose)",
+ "passed": 13140,
+ "failed": 15,
+ "results": {},
+ "note": "3 runs of bash test-all.sh at 1c36369 (engineer's 0034) plus qa-tdd's R83 tests, identical each time: 22 suites passed, 2 failed (backend SQL, Deno functions: R83 only), 1 skipped (starter invites: no template). Per run: backend SQL 1875 passed, 2 failed (post_kinds_test.sql 82/2: claim_notification_batches has no post_kinds); Deno 47 passed, 3 failed (notify index_test.ts R83: news, event and saying notices still say 'shared new photos'); jest 2276 passed (1 skipped, 1 todo), typecheck clean, e2e:demo 53, e2e:web 5, prototype 33; contract-real 91 passed, 149 skipped by filter (SHARE-U: 1 ran, 9 skip because the real harness can't flip the global post_kinds switch, T39). Every SHARE-U-4, 5, 11..15 check green 3x; no test loosened since bcaabd4 (only generate.sql and seed-42.json changed under tests). passed = 3 x (1875 + 47 + 2276 + 53 + 5 + 33 + 91). Deno 2.9.6 from npm (deno.land blocked here). Not run: starter invites, phones, UI (none yet). backend/tests/results/post-kinds-3x-r83-red-2026-11-24.txt"
+}

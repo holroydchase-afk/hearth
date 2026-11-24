@@ -347,6 +347,27 @@ update public.space_features set enabled = false where space_id = :sa and featur
 select tests.throws_code($$select tests.mk('saying', null, '{"words":"Crunchy water","who":"Mia"}')$$,
   'SHARE-U-14 the family turns post_kinds off again: the adult is refused (42501)', '42501');
 
+-- ======================================================================================================
+-- R83 notices for news, event and saying posts never say "shared new photos" (written first, Nov 24, qa-tdd).
+-- Contract: claim_notification_batches gains a last column post_kinds text[]: the distinct posts.kind of the
+-- batch's new posts (null or empty for a reply/reaction-only batch). The sender (functions/notify) words the
+-- notice from it; the words themselves come from grandparent-ux (index_test.ts R83 checks only that they fit).
+-- The kind is coarse (four values), never a caption, what, where or saying.
+-- ======================================================================================================
+:as_admin
+delete from public.notification_prefs where user_id = 'a0000000-0000-0000-0000-0000000000a1';
+insert into public.push_tokens (user_id, expo_token, platform)
+  values ('a0000000-0000-0000-0000-0000000000a1', 'ExponentPushToken[r83-gammy]', 'ios') on conflict do nothing;
+create table tests.r83 as select to_jsonb(b) as j from public.claim_notification_batches(now() + interval '2 days') b;
+select tests.ok_sql($$select count(*) > 0 from tests.r83 where j ? 'post_kinds'$$,
+  'R83 claim_notification_batches carries post_kinds for each batch');
+select tests.ok_sql(format($$select exists (select 1 from tests.r83 where j ->> 'recipient_id' = 'a0000000-0000-0000-0000-0000000000a1'
+                                              and j -> 'post_ids' ? %L and j -> 'post_kinds' ? 'news' and j -> 'post_kinds' ? 'event')$$, tests.v('news')),
+  'R83 Grandma Rivera''s batch with the news and event posts says their kinds are news and event');
+select tests.ok_sql($$select bool_and(position('Thanksgiving' in j::text) = 0 and position('Picnic' in j::text) = 0
+                                      and position('picnic' in j::text) = 0 and position('hair went on vacation' in j::text) = 0) from tests.r83$$,
+  'R83 the claimed batches carry the kind only, never the words, what or saying');
+
 -- ---------- report ----------
 \o
 \pset format aligned

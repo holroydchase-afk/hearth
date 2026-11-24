@@ -1,10 +1,100 @@
-[0m[38;5;245mrunning 3 tests from ./supabase/functions/sign-media/index_test.ts[0m
-upload then view round-trips the data key; URLs are 10-minute SigV4 ... [0m[32mok[0m [0m[38;5;245m(69ms)[0m
-view denied -> 404, no key lookups ... [0m[32mok[0m [0m[38;5;245m(381µs)[0m
-exif not stripped -> 422; no auth -> 401 ... [0m[32mok[0m [0m[38;5;245m(442µs)[0m
+[0m[38;5;245mrunning 28 tests from ./supabase/functions/notify/index_test.ts[0m
+names: 1, 2, 3 and 4+ people read naturally ... [0m[32mok[0m [0m[38;5;245m(559µs)[0m
+BETA-NOTIFY-2: push says who and opens the post; no image, caption or child's name ... [0m[32mok[0m [0m[38;5;245m(253µs)[0m
+BETA-NOTIFY-4: 3 posts in one batch are 1 push that opens the newest ... [0m[32mok[0m [0m[38;5;245m(95µs)[0m
+BETA-REPLY-3: replies read as replies ... [0m[32mok[0m [0m[38;5;245m(71µs)[0m
+BETA-NOTIFY-5: email links to the post and carries no photo or caption ... [0m[32mok[0m [0m[38;5;245m(824µs)[0m
+email: names are HTML-escaped ... [0m[32mok[0m [0m[38;5;245m(135µs)[0m
+BETA-NOTIFY-7: push and email name the real sender, never a generic notice ... [0m[32mok[0m [0m[38;5;245m(176µs)[0m
+BETA-NOTIFY-7: an email never goes out without a real person's name ... [0m[32mok[0m [0m[38;5;245m(82µs)[0m
+email: with no website yet (APP_LINK_BASE unset), there is no dead link, just plain words ... [0m[32mok[0m [0m[38;5;245m(183µs)[0m
+email: a reply email says 'see it', new photos say 'see them' ... [0m[32mok[0m [0m[38;5;245m(18ms)[0m
+BETA-NOTIFY-7: a sender name can't break the email subject either ... [0m[32mok[0m [0m[38;5;245m(278µs)[0m
+BETA-NOTIFY-7: a sender name can't break the email From header ... [0m[32mok[0m [0m[38;5;245m(215µs)[0m
+security: only the service role (cron) may run the sender ... [0m[32mok[0m [0m[38;5;245m(12ms)[0m
+run: claims, sends 1 push and 1 email, reports counts only ... [0m[32mok[0m [0m[38;5;245m(2ms)[0m
+run: a failed Expo call puts those notices back for the next run ...
+[0m[38;5;245m------- output -------[0m
+notify: 1 batch(es) failed, released for retry
+[0m[38;5;245m----- output end -----[0m
+run: a failed Expo call puts those notices back for the next run ... [0m[32mok[0m [0m[38;5;245m(1ms)[0m
+run: a failed Resend call puts the email back ...
+[0m[38;5;245m------- output -------[0m
+notify: 1 batch(es) failed, released for retry
+[0m[38;5;245m----- output end -----[0m
+run: a failed Resend call puts the email back ... [0m[32mok[0m [0m[38;5;245m(4ms)[0m
+run: DeviceNotRegistered tokens are forgotten ... [0m[32mok[0m [0m[38;5;245m(510µs)[0m
+privacy: the sender never logs tokens, emails or URLs ... [0m[32mok[0m [0m[38;5;245m(498µs)[0m
+BETA-BULK-6: a bulk import push reads 'Alex added 48 photos from July 2024' (full month: grandparent-ux) ... [0m[32mok[0m [0m[38;5;245m(20ms)[0m
+BETA-BULK-6: a batch across months or years names the span; no dates, no month ... [0m[32mok[0m [0m[38;5;245m(778µs)[0m
+BETA-BULK-6: the month follows Eastern time (a Jul 31, 11 pm photo is July) ... [0m[32mok[0m [0m[38;5;245m(385µs)[0m
+BETA-BULK-6: an ordinary post batch still says 'shared new photos' ... [0m[32mok[0m [0m[38;5;245m(122µs)[0m
+BETA-SMS-13: an email batch with a null address is skipped; the run still sends the push and succeeds ... [0m[32mok[0m [0m[38;5;245m(532µs)[0m
+R83 push for a news, event or saying post never mentions photos and still names who sent it ... [0m[31mFAILED[0m [0m[38;5;245m(1ms)[0m
+R83 email for a news, event or saying post never mentions photos and still names who sent it ... [0m[31mFAILED[0m [0m[38;5;245m(605µs)[0m
+R83 each kind gets its own wording (not one generic line for all three) ... [0m[31mFAILED[0m [0m[38;5;245m(486µs)[0m
+R83 a photos batch (post_kinds ['photos']) keeps today's words ... [0m[32mok[0m [0m[38;5;245m(139µs)[0m
+R83 the kind wording carries no caption, what, where or saying words (the batch has none to give) ... [0m[32mok[0m [0m[38;5;245m(229µs)[0m
+[0m[38;5;245mrunning 14 tests from ./supabase/functions/sign-media/index_test.ts[0m
+upload then view round-trips the data key; URLs are 10-minute SigV4 ... [0m[32mok[0m [0m[38;5;245m(62ms)[0m
+view denied -> 404, no key lookups ... [0m[32mok[0m [0m[38;5;245m(757µs)[0m
+exif not stripped -> 422; no auth -> 401 ... [0m[32mok[0m [0m[38;5;245m(405µs)[0m
+FLAG-4 video_posting off -> sign-media refuses a video upload (403 video_posting_off), signs nothing ... [0m[32mok[0m [0m[38;5;245m(596µs)[0m
+QA-R4 upload takes 1..20 items: 0 and 21 are 400, nothing signed or stored ... [0m[32mok[0m [0m[38;5;245m(612µs)[0m
+QA-R4 free video cap -> 402 free_video_cap_reached, no key stored ... [0m[32mok[0m [0m[38;5;245m(372µs)[0m
+QA-R4 not the author (42501) -> 403 forbidden; bad row (23514) -> 400 invalid ... [0m[32mok[0m [0m[38;5;245m(324µs)[0m
+QA-R4 expired session (PGRST301) -> 401, never 500 ... [0m[32mok[0m [0m[38;5;245m(263µs)[0m
+QA-R4 an unknown database error is 500 'internal' and logs no message text ... [0m[32mok[0m [0m[38;5;245m(332µs)[0m
+QA-R4 finalize marks ok only when both objects exist at the promised sizes ... [0m[32mok[0m [0m[38;5;245m(4ms)[0m
+QA-R4 finalize takes 1..20 uuids; anything else is 400 and checks nothing ... [0m[32mok[0m [0m[38;5;245m(392µs)[0m
+QA-R4 finalize skips rows that aren't the caller's pending rows ... [0m[32mok[0m [0m[38;5;245m(183µs)[0m
+QA-R4 CORS: only a listed origin is echoed; preflight is 204 without auth ... [0m[32mok[0m [0m[38;5;245m(2ms)[0m
+QA-R4 bad requests: missing post_id 400, unknown action 400, PUT 405 ... [0m[32mok[0m [0m[38;5;245m(313µs)[0m
 [0m[38;5;245mrunning 2 tests from ./supabase/functions/sign-media/sigv4_test.ts[0m
 matches AWS documented presigned GET example ... [0m[32mok[0m [0m[38;5;245m(2ms)[0m
-uriEncode keeps unreserved, encodes others ... [0m[32mok[0m [0m[38;5;245m(78µs)[0m
+uriEncode keeps unreserved, encodes others ... [0m[32mok[0m [0m[38;5;245m(64µs)[0m
+[0m[38;5;245mrunning 6 tests from ./tests/templates/templates_test.ts[0m
+JOIN-2: magic_link email has the code, plain words, and no link ... [0m[32mok[0m [0m[38;5;245m(794µs)[0m
+JOIN-2: confirmation email has the code, plain words, and no link ... [0m[32mok[0m [0m[38;5;245m(196µs)[0m
+JOIN-2: config.toml uses both templates with a code in the subject ... [0m[32mok[0m [0m[38;5;245m(251µs)[0m
+BETA-SMS-7: the [auth.sms] template, with code 123456, is Hearth's words in one GSM-7 segment ... [0m[32mok[0m [0m[38;5;245m(247µs)[0m
+TS-GUX-R1 / BETA-SMS-7: the [auth.sms] template, with code 123456, is exactly the R1 words ... [0m[32mok[0m [0m[38;5;245m(17ms)[0m
+TS-GUX-R1 / BETA-SMS-7: SMS-PROVIDER.md's Twilio template request body is exactly the R1 words ... [0m[32mok[0m [0m[38;5;245m(361µs)[0m
 
-[0m[32mok[0m | 5 passed | 0 failed [0m[38;5;245m(147ms)[0m
+[0m[1m[37m[41m ERRORS [0m
 
+R83 push for a news, event or saying post never mentions photos and still names who sent it [0m[38;5;245m=> ./supabase/functions/notify/index_test.ts:250:6[0m
+[0m[1m[31merror[0m: Error: news: push says photos: "Alex shared new photos. Tap to see them."
+function assert(cond: unknown, msg: string): asserts cond { if (!cond) throw new Error(msg); }
+[0m[31m                                                                             ^[0m
+    at [0m[1m[3massert[0m ([0m[2m[38;5;245mfile:///home/user/Hearth/backend/[0m[0m[36msupabase/functions/notify/index_test.ts[0m:[0m[33m28[0m:[0m[33m78[0m)
+    at [0m[2m[38;5;245mfile:///home/user/Hearth/backend/[0m[0m[36msupabase/functions/notify/index_test.ts[0m:[0m[33m254[0m:[0m[33m5[0m
+
+R83 email for a news, event or saying post never mentions photos and still names who sent it [0m[38;5;245m=> ./supabase/functions/notify/index_test.ts:260:6[0m
+[0m[1m[31merror[0m: Error: news: email says photos: "Alex shared new photos on Hearth"
+function assert(cond: unknown, msg: string): asserts cond { if (!cond) throw new Error(msg); }
+[0m[31m                                                                             ^[0m
+    at [0m[1m[3massert[0m ([0m[2m[38;5;245mfile:///home/user/Hearth/backend/[0m[0m[36msupabase/functions/notify/index_test.ts[0m:[0m[33m28[0m:[0m[33m78[0m)
+    at [0m[2m[38;5;245mfile:///home/user/Hearth/backend/[0m[0m[36msupabase/functions/notify/index_test.ts[0m:[0m[33m264[0m:[0m[33m5[0m
+
+R83 each kind gets its own wording (not one generic line for all three) [0m[38;5;245m=> ./supabase/functions/notify/index_test.ts:269:6[0m
+[0m[1m[31merror[0m: Error: three different push bodies: ["Alex shared new photos. Tap to see them.","Alex shared new photos. Tap to see them.","Alex shared new photos. Tap to see them."]
+  got 1
+  want 3
+  if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error(`${msg}\n  got ${JSON.stringify(a)}\n  want ${JSON.stringify(b)}`);
+[0m[31m                                                     ^[0m
+    at [0m[1m[3meq[0m ([0m[2m[38;5;245mfile:///home/user/Hearth/backend/[0m[0m[36msupabase/functions/notify/index_test.ts[0m:[0m[33m30[0m:[0m[33m54[0m)
+    at [0m[2m[38;5;245mfile:///home/user/Hearth/backend/[0m[0m[36msupabase/functions/notify/index_test.ts[0m:[0m[33m271[0m:[0m[33m3[0m
+
+[0m[1m[37m[41m FAILURES [0m
+
+R83 push for a news, event or saying post never mentions photos and still names who sent it [0m[38;5;245m=> ./supabase/functions/notify/index_test.ts:250:6[0m
+R83 email for a news, event or saying post never mentions photos and still names who sent it [0m[38;5;245m=> ./supabase/functions/notify/index_test.ts:260:6[0m
+R83 each kind gets its own wording (not one generic line for all three) [0m[38;5;245m=> ./supabase/functions/notify/index_test.ts:269:6[0m
+
+[0m[31mFAILED[0m | 47 passed | 3 failed [0m[38;5;245m(375ms)[0m
+
+[0m[1m[31merror[0m: Test failed
+
+Stack backtrace:
+   0: <unknown>

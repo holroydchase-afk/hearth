@@ -6,35 +6,350 @@
  "cases": [
   {
    "id": "EDGE-01",
-   "title": "upload then view round-trips the data key; URLs are 10-minute SigV4",
+   "title": "names: 1, 2, 3 and 4+ people read naturally",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-02",
-   "title": "view denied -> 404, no key lookups",
+   "title": "BETA-NOTIFY-2: push says who and opens the post; no image, caption or child's name",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-03",
-   "title": "exif not stripped -> 422; no auth -> 401",
+   "title": "BETA-NOTIFY-4: 3 posts in one batch are 1 push that opens the newest",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-04",
-   "title": "matches AWS documented presigned GET example",
+   "title": "BETA-REPLY-3: replies read as replies",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-05",
+   "title": "BETA-NOTIFY-5: email links to the post and carries no photo or caption",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-06",
+   "title": "email: names are HTML-escaped",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-07",
+   "title": "BETA-NOTIFY-7: push and email name the real sender, never a generic notice",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-08",
+   "title": "BETA-NOTIFY-7: an email never goes out without a real person's name",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-09",
+   "title": "email: with no website yet (APP_LINK_BASE unset), there is no dead link, just plain words",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-10",
+   "title": "email: a reply email says 'see it', new photos say 'see them'",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-11",
+   "title": "BETA-NOTIFY-7: a sender name can't break the email subject either",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-12",
+   "title": "BETA-NOTIFY-7: a sender name can't break the email From header",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-13",
+   "title": "security: only the service role (cron) may run the sender",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-14",
+   "title": "run: claims, sends 1 push and 1 email, reports counts only",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-15",
+   "title": "run: a failed Expo call puts those notices back for the next run",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-16",
+   "title": "run: a failed Resend call puts the email back",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-17",
+   "title": "run: DeviceNotRegistered tokens are forgotten",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-18",
+   "title": "privacy: the sender never logs tokens, emails or URLs",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-19",
+   "title": "BETA-BULK-6: a bulk import push reads 'Alex added 48 photos from July 2024' (full month: grandparent-ux)",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-20",
+   "title": "BETA-BULK-6: a batch across months or years names the span; no dates, no month",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-21",
+   "title": "BETA-BULK-6: the month follows Eastern time (a Jul 31, 11 pm photo is July)",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-22",
+   "title": "BETA-BULK-6: an ordinary post batch still says 'shared new photos'",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-23",
+   "title": "BETA-SMS-13: an email batch with a null address is skipped; the run still sends the push and succeeds",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-24",
+   "title": "R83 push for a news, event or saying post never mentions photos and still names who sent it",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-25",
+   "title": "R83 email for a news, event or saying post never mentions photos and still names who sent it",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-26",
+   "title": "R83 each kind gets its own wording (not one generic line for all three)",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-27",
+   "title": "R83 a photos batch (post_kinds ['photos']) keeps today's words",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-28",
+   "title": "R83 the kind wording carries no caption, what, where or saying words (the batch has none to give)",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-29",
+   "title": "upload then view round-trips the data key; URLs are 10-minute SigV4",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-30",
+   "title": "view denied -> 404, no key lookups",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-31",
+   "title": "exif not stripped -> 422; no auth -> 401",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-32",
+   "title": "FLAG-4 video_posting off -> sign-media refuses a video upload (403 video_posting_off), signs nothing",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-33",
+   "title": "QA-R4 upload takes 1..20 items: 0 and 21 are 400, nothing signed or stored",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-34",
+   "title": "QA-R4 free video cap -> 402 free_video_cap_reached, no key stored",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-35",
+   "title": "QA-R4 not the author (42501) -> 403 forbidden; bad row (23514) -> 400 invalid",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-36",
+   "title": "QA-R4 expired session (PGRST301) -> 401, never 500",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-37",
+   "title": "QA-R4 an unknown database error is 500 'internal' and logs no message text",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-38",
+   "title": "QA-R4 finalize marks ok only when both objects exist at the promised sizes",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-39",
+   "title": "QA-R4 finalize takes 1..20 uuids; anything else is 400 and checks nothing",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-40",
+   "title": "QA-R4 finalize skips rows that aren't the caller's pending rows",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-41",
+   "title": "QA-R4 CORS: only a listed origin is echoed; preflight is 204 without auth",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-42",
+   "title": "QA-R4 bad requests: missing post_id 400, unknown action 400, PUT 405",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-43",
+   "title": "matches AWS documented presigned GET example",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-44",
    "title": "uriEncode keeps unreserved, encodes others",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-45",
+   "title": "JOIN-2: magic_link email has the code, plain words, and no link",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-46",
+   "title": "JOIN-2: confirmation email has the code, plain words, and no link",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-47",
+   "title": "JOIN-2: config.toml uses both templates with a code in the subject",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-48",
+   "title": "BETA-SMS-7: the [auth.sms] template, with code 123456, is Hearth's words in one GSM-7 segment",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-49",
+   "title": "TS-GUX-R1 / BETA-SMS-7: the [auth.sms] template, with code 123456, is exactly the R1 words",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-50",
+   "title": "TS-GUX-R1 / BETA-SMS-7: SMS-PROVIDER.md's Twilio template request body is exactly the R1 words",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
