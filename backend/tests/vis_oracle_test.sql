@@ -170,6 +170,14 @@ select tests.ok_sql($$select count(*) filter (where upload_status = 'ready') >= 
 select tests.ok_sql($$select exists (select 1 from public.posts p where tests.vo_new('post', p.id) and p.status = 'published'
                        and not exists (select 1 from public.media_items m where m.post_id = p.id))$$,
   'VIS-8 shape: a words-only post (SHARE-U-4)');
+-- SHARE-U-4/5/15 (Phase 4, migration 0034): the generated families also hold news, event and saying posts, so the
+-- table path below checks post_events and post_sayings rows for every person (no new rule: they follow the post)
+select tests.ok_sql($$select count(distinct p.kind) filter (where p.kind in ('news','event','saying')) = 3
+                      from public.posts p where tests.vo_new('post', p.id) and p.status = 'published' and p.deleted_at is null$$,
+  'VIS-8 shape: live news, event and saying posts (SHARE-U-4, posts.kind)');
+select tests.ok_sql($$select (select count(*) from public.post_events e where tests.vo_new('post', e.post_id)) >= 2
+                         and (select count(*) from public.post_sayings s where tests.vo_new('post', s.post_id)) >= 2$$,
+  'VIS-8 shape: at least two event rows and two saying rows (SHARE-U-15)');
 select tests.ok_sql($$select count(*) filter (where member_id is not null) >= 2 and count(*) filter (where member_id is null) >= 1
                       from public.family_dates where tests.vo_new('family_date', id)$$,
   'VIS-8 shape: life-calendar birthdays and a family date with no member');
@@ -461,6 +469,15 @@ select tests.ok_sql(format($q$select coalesce((select checked > 0 and wrong_yes 
                ('post_viewers','post'), ('post_viewers:names','post'), ('sign_media','post'), ('sign_media','media_item'),
                ('family_dates','family_date'), ('chat_roster','chat_group'), ('chat_roster:people','profile'),
                ('export','post'), ('export','comment')) x(path, kind);
+-- SHARE-U-15: the two child kinds of 0034 were checked, both ways, through the table path (found by relation, so the
+-- kind names are the engineer's)
+select tests.ok_sql(format($q$select coalesce((select m.checked > 0 and m.wrong_yes = 0 and m.wrong_no = 0
+                                                 and exists (select 1 from tests.vo_cmp c where c.path = 'table' and c.kind = m.kind and c.want)
+                                                 and exists (select 1 from tests.vo_cmp c where c.path = 'table' and c.kind = m.kind and not c.want)
+                                               from tests.vo_matrix m join vis.kinds k on k.kind = m.kind
+                                              where m.path = 'table' and k.relation = to_regclass(%L)), false)$q$, x.rel),
+                    format('VIS-8 table (%s) equals vis.can_see for every person, both ways (SHARE-U-15)', x.rel))
+  from (values ('public.post_events'), ('public.post_sayings')) x(rel);
 -- every other kind the table path reached
 select tests.ok_sql(format($q$select wrong_yes = 0 and wrong_no = 0 from tests.vo_matrix where path = 'table' and kind = %L$q$, m.kind),
                     format('VIS-8 table (%s) equals vis.can_see for every person: %s pairs, %s wrong yes (P0), %s wrong no (P1)',

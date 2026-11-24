@@ -23,6 +23,7 @@
 #   tests/vis_core_test.sql   VIS-7, 22, 24: vis.can_see / vis.sees_item agree with today's rules, never callable from the app
 #   tests/vis_calendar_test.sql  VIS-18: the life calendar (0029) is a Person-class kind; can_see equals its RLS (Phase 5)
 #   tests/vis_oracle_test.sql  VIS-8..11: the oracle across readers, fixed seed 42 (Phase 2, R51; generator tests/vis_oracle/generate.sql, migration 0033)
+#   tests/post_kinds_test.sql  SHARE-U-4, 5, 11..15: News, Event and Saying posts, parents only behind post_kinds (SPEC-VISIBILITY-CORE Phase 4, migration 0034)
 #   tests/vis_oracle_nightly_test.sh  VIS-12: the nightly job (tests/vis_oracle/nightly.sh) writes a dated matrix
 #   tests/vis_gate_test.sh    VIS-2, 6, 23, 24: the gate bites (scratch table, second policy), edge functions, API schemas
 #   ../packages/visibility/core/test.sql  VIS-19, 20, 23: the generic core's conformance kit, with a toy product (rolls back)
@@ -47,7 +48,7 @@ for suite in tests/rls_test.sql tests/api_test.sql tests/notify_test.sql tests/s
              tests/photo_helpers_test.sql tests/reactions_test.sql tests/captions_test.sql tests/video_cap_test.sql tests/viewers_test.sql \
              tests/start_family_test.sql tests/search_test.sql tests/sms_test.sql tests/group_names_test.sql tests/auth_no_passwords_test.sql \
              tests/family_dates_test.sql tests/vis_registry_test.sql tests/vis_core_test.sql tests/vis_calendar_test.sql \
-             tests/vis_oracle_test.sql; do
+             tests/vis_oracle_test.sql tests/post_kinds_test.sql; do
   dropdb --if-exists "$DB"
   createdb "$DB"
   files=(-f tests/supabase_stub.sql)
