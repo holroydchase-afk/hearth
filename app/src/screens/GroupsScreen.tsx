@@ -186,7 +186,8 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
     <Screen>
       {onBack ? <BackButton to="More" onPress={onBack} /> : null}
       <Txt variant="display" role="header">Your groups</Txt>
-      <Txt variant="muted">Each photo goes only to the groups you pick. People never see group names.</Txt>
+      {/* EF-HE-5: honest about who sees group names (DEC-49). */}
+      <Txt variant="muted">Each photo goes only to the groups you pick. Only parents see these names; everyone else sees people's names.</Txt>
       {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
       {circles === null ? <Loading words="Loading your groups…" /> : null}
       {draft ? (
@@ -239,7 +240,8 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
           <Button label="Cancel" variant="secondary" onPress={() => setDraft(null)} />
         </Card>
       ) : (
-        <Button variant="secondary" label="New group" onPress={() => { closeForm(); setDraft(NEW_GROUP); }} />
+        // EF-HE-5: the one filled main button here (DS-9); Rename and Invite stay secondary.
+        <Button label="New group" onPress={() => { closeForm(); setDraft(NEW_GROUP); }} />
       )}
       {/* one main action per screen: while making a group, the list waits */}
       {(draft ? [] : circles ?? []).map((g) => (

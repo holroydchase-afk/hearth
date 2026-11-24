@@ -600,5 +600,19 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** the gate makes every later feature safe by default with no screen changes, so it is cheapest before more kinds land; nobody in the WV beta can test the bridge; a wrong send is the worst error, and a grandparent won't notice 2 minutes; most grandparents can't post anyway.
 - **Source:** `docs/product/SPEC-VISIBILITY-CORE.md` (open questions 1 to 4), `docs/architecture/07-visibility-model.md`; persona check `decisions/2026-11-24-visibility-core.md`. Amends DEC-79's one way in (parents only).
 
+### DEC-85 · Easy view and Light or dark live only in More (EF-HE-4)
+- **When / status:** Nov 24 · Chase, decision card "Take Easy view and Light or dark off Me, keeping them only in More?": "Yes, only in More" · Built (intake #162 PR)
+- **Chose:** Me drops both sections; each keeps its own More row and page.
+- **Over:** both places (RD-78 added them to Me).
+- **Because:** the eval found the duplicates; one place per setting makes phone help one sentence for a grandparent.
+- **Source:** persona check `decisions/2026-11-24-settings-only-in-more.md`; `SPEC-EVAL-FIXES.md`. Amends RD-78.
+
+### DEC-86 · Keep Start a family switched off and get it ready to turn on (START-ON-1..7)
+- **When / status:** Nov 19 · Chase: "We need to keep the switched off features. Start a thread for each" · Code side in progress; turning it on waits on Chase
+- **Chose:** keep DEC-55's Start a family in the repo with `start_family_open` off, and finish what turning it on needs: an Email Hearth row in Help, a suspend-a-family script and runbook, a switch script, a browser walk and real-server contract tests.
+- **Over:** parking the code until a relative asks (tech-debt review PM-R5); deleting it.
+- **Because:** level 5 needs a parent to start a family without Chase's script, and strangers starting families need a way to reach Hearth and a way to stop abuse first.
+- **Source:** `docs/product/SPEC-START-FAMILY.md` section 8; persona check `decisions/2026-11-19-keep-start-a-family.md`; answers PM-R5 in `docs/reviews/2026-11-19-tech-debt/pm.md`
+
 ---
-Last updated: Nov 24, 2026 (DEC-83)
+Last updated: Nov 24, 2026 (DEC-86)

@@ -524,10 +524,10 @@ TIMELINE RESULT: 39 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('5551cab7-369d-41f2-82ca-4ddb0e3cfc31'))
-psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('4607f6ab-9abd-48ea-9044-41192ae789c8'))
-psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('20b280e1-8c66-4a5e-960f-f349a80b98f7'))
-psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '1038bc66-c654-4460-87d7-9e01c9a46f4b')
+psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('2c74fb51-8e2d-43fb-9863-f3d2b8b48bc3'))
+psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('576bef15-b376-4ade-9c9b-1c22ee7e518a'))
+psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('a3ea8540-ec5c-4e8b-b11b-68c9427c4083'))
+psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '795d19f6-1259-4820-abf8-bc21d4bb2734')
   n  | result |                                                                                  description                                                                                   
 -----+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    1 | ok     | BETA-AUD-11 shape: circles.kind exists (everyone | group | household | event)
@@ -1155,6 +1155,47 @@ START FAMILY RESULT: 88 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
+psql:scripts/suspend-family.sql:83: ERROR:  No family has space id 99999999-0000-0000-0000-000000000099 (or it was purged for good). Nothing changed.
+CONTEXT:  PL/pgSQL function pg_temp_3.hearth_suspend_family(text,text,text) line 20 at RAISE
+ n  | result |                                           description                                            
+----+--------+--------------------------------------------------------------------------------------------------
+  1 | ok     | START-ON-3 backend/scripts/suspend-family.sql exists
+  2 | ok     | START-ON-4 backend/scripts/start-family-switch.sql exists
+  3 | ok     | START-ON-3 setup: Pat started a family with a post, Quinn joined
+  4 | ok     | START-ON-3 suspend without apply (the dry run) leaves the family alone
+  5 | ok     | START-ON-3 suspend with apply sets spaces.deleted_at to now
+  6 | ok     | START-ON-3 only the named family changes (Alex's family untouched)
+  7 | ok     | START-ON-3 Alex's family is not suspended
+  8 | ok     | START-ON-3 suspended: the owner (Pat) no longer finds the family or its post (rule 2: not found)
+  9 | ok     | START-ON-3 suspended: the family is not in Pat's my_spaces()
+ 10 | ok     | START-ON-3 suspended: Pat's upload to the family is refused  [42501 cannot upload to this post]
+ 11 | ok     | START-ON-3 suspended: a member (Quinn) no longer finds the post
+ 12 | ok     | START-ON-3 suspended: another family (Alex) still sees its own posts
+ 13 | ok     | START-ON-3 within 30 days purge_soft_deleted keeps the suspended family (undo still possible)
+ 14 | ok     | START-ON-3 undo without apply (the dry run) leaves it suspended
+ 15 | ok     | START-ON-3 undo with apply clears spaces.deleted_at
+ 16 | ok     | START-ON-3 after undo the family is unchanged (members, groups, posts, media, invites)
+ 17 | ok     | START-ON-3 after undo Quinn sees the post again
+ 18 | ok     | START-ON-3 after undo Pat can upload again
+ 19 | ok     | START-ON-3 setup: an app-started family starts not known (capped)
+ 20 | ok     | START-ON-3 known without apply (the dry run) leaves the cap on
+ 21 | ok     | START-ON-3 known with apply sets started_families.known_at (cap lifted)
+ 22 | ok     | START-ON-3 known does not suspend the family
+ 23 | ok     | START-ON-3 an unknown space id suspends nothing
+ 24 | ok     | START-ON-4 on without apply (the dry run) leaves the switch off
+ 25 | ok     | START-ON-4 on with apply turns start_family_open on
+ 26 | ok     | START-ON-4 no other feature flag changes
+ 27 | ok     | START-ON-4 no family is made or removed
+ 28 | ok     | START-ON-4 status changes nothing (still on)
+ 29 | ok     | START-ON-4 off with apply turns start_family_open off
+ 30 | ok     | START-ON-4 still no other feature flag changes
+ 31 | ok     | START-ON-4 turning it off leaves existing families as they were
+
+
+SUSPEND FAMILY RESULT: 31 passed, 0 failed
+psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
+psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
+psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
  n  | result |                                               description                                               
 ----+--------+---------------------------------------------------------------------------------------------------------
   1 | ok     | SEARCH-1 Grandma finds the bike ride by typing "bike"
@@ -1728,9 +1769,9 @@ VIS CALENDAR RESULT: 8 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-Time: 0.105 ms
+Time: 0.062 ms
 
-VIS ORACLE MATRIX seed=42 seconds=15
+VIS ORACLE MATRIX seed=42 seconds=13
          path         |        kind         | checked | wrong_yes | wrong_no 
 ----------------------+---------------------+---------+-----------+----------
  chat_roster          | chat_group          |     600 |         0 |        0
@@ -1976,9 +2017,9 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
  79 | ok     | SHARE-U-14 an adult (second parent) gets post_kinds in my_features
  80 | ok     | SHARE-U-14 an adult (second parent) can post news
  81 | ok     | SHARE-U-14 the family turns post_kinds off again: the adult is refused (42501)  [42501 post_kinds_off]
- 82 | ok     | R83 claim_notification_batches carries post_kinds for each batch
- 83 | ok     | R83 Grandma Rivera's batch with the news and event posts says their kinds are news and event
- 84 | ok     | R83 the claimed batches carry the kind only, never the words, what or saying
+ 82 | ok     | R85 claim_notification_batches carries post_kinds for each batch
+ 83 | ok     | R85 Grandma Rivera's batch with the news and event posts says their kinds are news and event
+ 84 | ok     | R85 the claimed batches carry the kind only, never the words, what or saying
  85 | ok     | NOTIFY-K-3 Grandma Rivera's batch counts its new posts per kind (news and event), and the counts add up to post_count
  86 | ok     | NOTIFY-K-1 the claimed batches carry no event day, place, child's name or news words
  87 | ok     | NOTIFY-K-4 setup: Grandma Rivera replies to the news post
@@ -1994,9 +2035,9 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
 Narrowing for Chase (readable before 0011 only through "members see each other's replies"):
      reader     |  kind   |                                 reply_id                                  
 ----------------+---------+---------------------------------------------------------------------------
- Grandma Rivera | comment | ba2d20dd-8f66-4911-bc5b-7e826cf534b6
+ Grandma Rivera | comment | 31c7d56c-5f30-46d6-949a-6de35010dfcc
  Grandma Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a2
- Grandpa Rivera | comment | 1fa9db40-9fa7-44cc-9b65-d7e10d59cb52
+ Grandpa Rivera | comment | 22116295-1e8e-4329-b082-c4ee242c6475
  Grandpa Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a1
 
  n  | result |                                                     description                                                      
@@ -2107,8 +2148,8 @@ ok      SETUP-API: before Chase has an account it says "sign in once in the app"
 ok      SETUP-API: ... and changes nothing
 ok      SETUP-API: fresh setup runs without error
         | Family "Chase's kids" is ready: Everyone, Chase's side, Mom's side, 7 houses, 2 events.
-        | Test viewer invite (account B): code DPKTQ4HS4J, works once until Dec 01, link https://thefreighttrains-team-hearth.expo.app/join/b7a75bf20eb9c5d1c0b027863143658a41394681
-        | Mom's poster invite: code Y4NGBDBXRQ, works once until Dec 01, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/89ac6c68c8ed38c2713e24638b7b8feb24fa6d08
+        | Test viewer invite (account B): code SH6D8DHK44, works once until Dec 01, link https://thefreighttrains-team-hearth.expo.app/join/42ce80c580a5e410c76a572514d952f37f9563f7
+        | Mom's poster invite: code 45PANZ23N9, works once until Dec 01, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/2504c041c667cce4f11a332f23bad271daaa2ad7
 ok      SETUP-API: Chase owns one family, named as given (an apostrophe in the name is kept, not a SQL error)
 ok      SETUP-API: one Everyone
 ok      SETUP-API: the set groups are Chase's side and Mom's side (no v1 groups to retire later)
@@ -2205,6 +2246,63 @@ ok      PRIV-1 smoke: IP addresses in Supabase Auth's audit log are a warning wi
 ok      PRIV-1 smoke: ... and the address itself is never printed
 
 SMOKE CHECK TEST RESULT: 28 passed, 0 failed
+ok      START-ON setup: Pat started a family (got '17e2ae11-ee0d-477e-9472-3635433ff116')
+ok      START-ON-3 backend/scripts/suspend-family.sh exists
+ok      START-ON-3 without SUPABASE_ACCESS_TOKEN it stops and names the secret
+ok      START-ON-3 without --space it stops, says what's missing and sends nothing
+ok      START-ON-3 a --space that isn't a uuid is refused before anything is sent
+ok      START-ON-3 an unknown option is refused before anything is sent
+ok      START-ON-3 --undo and --known together are refused (one action at a time)
+ok      START-ON-3 the dry run runs without error
+        | Dry run: would suspend family 17e2ae11-ee0d-477e-9472-3635433ff116. Nothing changed. Add --apply to suspend it.
+        | --undo brings it back unchanged. purge_soft_deleted can remove families suspended over 30 days ago, but it is not scheduled, so nothing (photos included) is deleted on its own.
+ok      START-ON-3 without --apply nothing changes (dry run is the default)
+ok      START-ON-3 the dry run says it is a dry run and to add --apply
+ok      START-ON-3 the dry run names purge_soft_deleted and 30 days
+ok      SEC-R1 the dry run says the purge is not scheduled, never that it runs on its own
+ok      START-ON-3 the dry run names the space id
+ok      START-ON-3 the dry run prints no family, side or member name and no email
+ok      START-ON-3 --apply runs without error
+        | Suspended family 17e2ae11-ee0d-477e-9472-3635433ff116: every member now finds nothing and uploads to it are refused.
+        | --undo brings it back unchanged. purge_soft_deleted can remove families suspended over 30 days ago, but it is not scheduled, so nothing (photos included) is deleted on its own.
+        | To undo: bash scripts/suspend-family.sh --space 17e2ae11-ee0d-477e-9472-3635433ff116 --undo --apply
+ok      START-ON-3 --apply suspends the family (spaces.deleted_at set)
+ok      START-ON-3 --apply names purge_soft_deleted and 30 days
+ok      SEC-R1 --apply says the purge is not scheduled
+ok      START-ON-3 --apply says how to undo
+ok      START-ON-3 --apply prints no family, side or member name and no email
+ok      START-ON-3 one Management API request (got 1)
+ok      START-ON-3 the token goes in the Authorization header
+ok      START-ON-3 the token is never printed
+ok      START-ON-3 --undo without --apply is a dry run (still suspended)
+ok      START-ON-3 --undo --apply runs without error
+ok      START-ON-3 --undo --apply brings the family back
+ok      START-ON-3 --undo prints no family, side or member name and no email
+ok      START-ON-3 --known without --apply is a dry run (cap still on)
+ok      START-ON-3 --known --apply runs without error
+ok      START-ON-3 --known --apply lifts the cap and does not suspend
+ok      START-ON-3 --known prints no family, side or member name and no email
+ok      START-ON-3 an unknown space id fails and changes nothing
+ok      START-ON-3 --print-sql works without the token
+ok      START-ON-3 --print-sql sends nothing
+ok      START-ON-3 --print-sql shows the SQL with the psql variables filled in as quoted literals
+ok      START-ON-3 psql is never called
+ok      START-ON-4 backend/scripts/start-family-switch.sh exists
+ok      START-ON-4 with no argument it stops, says on|off|status and sends nothing
+ok      START-ON-4 an argument other than on, off or status is refused
+ok      START-ON-4 without SUPABASE_ACCESS_TOKEN it stops and names the secret
+ok      START-ON-4 status runs without error
+ok      START-ON-4 status prints off while it is off
+ok      START-ON-4 on without --apply is a dry run (still off) and says to add --apply
+ok      START-ON-4 on --apply runs without error
+ok      START-ON-4 on --apply turns it on
+ok      START-ON-4 status prints on while it is on
+ok      START-ON-4 status changes nothing
+ok      START-ON-4 off --apply turns it off
+ok      START-ON-4 the token is never printed
+ok      START-ON-4 psql is never called
+
+START-ON SCRIPTS RESULT: 50 passed, 0 failed
 ok      PRIV-R1 [auth.sms] enable_confirmations = true (no phone account without a texted code)
 ok      PRIV-R1 the text provider ships off (SPEC-SMS-SIGN-IN 3.1)
 ok      PRIV-R1 Twilio credentials only from env(), never a value in git
