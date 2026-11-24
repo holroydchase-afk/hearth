@@ -131,7 +131,13 @@ select tests.ok_each($$select f.fn::text from vis.functions f join vis_definer_f
                          where f.kind is not null order by 1$$,
   $$select case k.reach
            when 'item'      then p.prosrc ~ '(sees_post|sees_item|can_view_post|reply_ok|reply_visible|can_see)\('
+           -- person: can_see_profile directly, or the life calendar's wrapper private.may_see_family_date, accepted
+           -- only while its own body calls can_see_profile (as VIS-4 accepts can_view_post because it calls sees_post).
            when 'person'    then p.prosrc ~ '(can_see_profile|can_see)\('
+                                 or (p.prosrc ~ 'may_see_family_date\('
+                                     and coalesce((select w.prosrc ~ 'can_see_profile\(' from pg_proc w
+                                                    where w.proname = 'may_see_family_date'
+                                                      and w.pronamespace = 'private'::regnamespace), false))
            when 'container' then p.prosrc ~ '(can_see_circle|is_circle_member|is_space_manager|my_circle_ids|my_managed_circle_ids|can_see)\('
            when 'self'      then p.prosrc ~ 'auth\.uid\(\)'
            when 'admin'     then p.prosrc ~ '(is_space_manager|is_space_owner|can|my_managed_space_ids|my_owned_space_ids)\('
