@@ -21,13 +21,13 @@ test('portfolio screenshots from the demo', async ({ page }) => {
 
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/');
-  await expect(page.getByText('Bridge walk on the trail', { exact: true })).toBeVisible();
+  await expect(page.getByText(/First ride on the balance bike/).first()).toBeVisible();
   await shot('laptop-01-demo');
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.reload();
   let hide = await page.addStyleTag({ content: HIDE_BAR });
-  await expect(page.getByText('Bridge walk on the trail', { exact: true })).toBeVisible();
+  await expect(page.getByText(/First ride on the balance bike/).first()).toBeVisible();
   await shot('iphone-01-photos');
 
   await page.getByRole('tab', { name: 'Share' }).click();

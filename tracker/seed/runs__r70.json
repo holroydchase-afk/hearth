@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-24T23:59:30-05:00",
+ "label": "Demo photo swap (DEMO-PHOTO, DEC-82, GUX-DP-AC1..6): final pre-PR gate, all suites 3x via test-all.sh incl. backend SQL (green)",
+ "passed": 10989,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs of bash test-all.sh on the uncommitted DEMO-PHOTO build after r69 (changed since: seed.ts and DemoBar.tsx words, app/e2e-web/demo-screens.spec.js picture path, README, T36 dates, regenerated screenshots; GUX-DP-AC1..6 in): 23 suites passed, 0 failed, 2 skipped (starter invites: no STUDIO_SUPABASE_TEMPLATE; Deno: not installed, CI runs them) x3, identical. jest 2254 passed (1 skipped, 1 todo), typecheck clean, e2e:demo 53 passed, e2e:web 5, prototype e2e 33, backend SQL 1318 passed (local Postgres 16, started by qa-tdd), Supabase starter scripts 17, deploy script 20, each x3. passed = 3 x (2254 + 53 + 5 + 33 + 1318). One earlier attempt failed backend SQL and starter scripts on the environment only (Postgres had no 'root' role, so psql could not connect; no test ran against the build); qa-tdd added the role and reran all 3; that attempt is kept as env-attempt-no-root-role.txt. No flakes. Not run: Deno, starter invites, contract-real, phones. e2e/results/demo-photos-green-2026-11-24/"
+}
