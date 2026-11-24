@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-24T00:30:00-05:00",
+ "label": "Eval findings (intake #162, EF-HE-1/2/4/5/6/9, B18): tests written first (red)",
+ "passed": 6,
+ "failed": 19,
+ "results": {},
+ "note": "Red on purpose, 1 run at 8f768cb: app/src/screens/__tests__/evalFindings.test.tsx 19 failed, 6 passed (EF-HE-1 Open names, EF-HE-2 empty rings, EF-HE-4 settings only in More, EF-HE-5 Groups line and New group, EF-HE-6 Events words, EF-HE-9 B18 25 new posts). Then qa-tdd's review test app/src/feed/__tests__/loadBackTo.test.ts at 88e605c: 4 passed, 1 failed (B24: a refresh mid-walk leaves a 6-post hole), same in 4 runs. e2e/results/eval-findings-red-2026-11-24.txt, e2e/results/eval-findings-qa-r1-red-2026-11-24.txt"
+}
