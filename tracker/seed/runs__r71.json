@@ -1,9 +1,9 @@
 {
- "suite": "backend",
- "at": "2026-11-24T12:00:00-05:00",
- "label": "Visibility core Phase 1 and 1b (VIS-1..7, VIS-19..24): tests written first (red, on purpose)",
- "passed": 1239,
- "failed": 212,
+ "suite": "app",
+ "at": "2026-11-24T23:59:45-05:00",
+ "label": "T37 demo-site pre-publish check (site.spec.js) on the new demo: red, then green 3x",
+ "passed": 42,
+ "failed": 0,
  "results": {},
- "note": "3 runs of bash backend/tests/run.sh at db3a556 plus qa-tdd's new tests, identical each time. Every existing suite still passes (1226 checks incl. RELAY 24), unchanged by these tests. Red for the right reason, the vis registry and functions don't exist yet: vis_registry_test 6/180 (VIS-1, 3, 4, 5), vis_core_test 5/24 (VIS-7, 22, 24), vis_gate_test 1/7 (VIS-2, 6, 23, 24), VIS-21 word check 1/1, and the conformance kit (packages/visibility/core/test.sql, VIS-19, 20, 23) stops at its missing template. VIS-18 waits for the 0029 life-calendar branch; not written. backend/tests/results/vis-core-red-2026-11-24.txt"
+ "note": "npm run e2e:site (build-demo.sh, then site.spec.js on the local /demo/hearth build, cloud Chromium) at a2492cf. Red first, 1 run: 11 passed, 3 failed (DEMO-5 Start over waited for 'Good ..., Chase'; DEMO-LIVE-2 'lake' found nothing; DEMO-NEW-5 no 'New photos: 1 of 2'), the same 3 as CI run 45430430863. After the T37 test fix: 14 passed x3, identical. passed = 3 x 14. Also 1 run under CI's Pages path (build-demo.sh /hearth, SITE_BASE=/hearth): 14 passed. Not run: the live check on chaseholroyd.com/hearth (needs the publish). e2e/results/site-demo-kevin-2026-11-24-*.txt"
 }
