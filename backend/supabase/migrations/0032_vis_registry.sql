@@ -132,7 +132,25 @@ revoke all on function private.vis_sees_person(uuid, uuid), private.vis_sees_fam
   private.vis_media_ok(uuid, uuid), private.vis_comment_ok(uuid, uuid)
   from public, anon, authenticated;
 
--- ---------- 2b. PRIV-VC-B2: chat_roster names the container rule ----------
+-- ---------- 2b. QA-R5 / PRIV-VC-B2: my_spaces names the space rule ----------
+-- 0009's my_spaces with one added filter, s.id = any (private.my_space_ids()). It can't change a row: the query
+-- already keeps only the caller's own memberships in live families, which is exactly the set my_space_ids returns.
+-- The explicit call lets VIS-5 check it against the space rule instead of allowlisting it.
+create or replace function public.my_spaces()
+returns table (space_id uuid, name text, role public.member_role, inviter_name text, can_post boolean, reply_audience text)
+language sql stable security definer set search_path = '' as $$
+  select s.id, s.name, sm.role, inv.display_name,
+         case sm.role when 'viewer' then s.viewers_can_post else true end,
+         s.reply_audience
+  from public.space_members sm
+  join public.spaces s on s.id = sm.space_id and s.deleted_at is null
+  left join public.profiles inv on inv.id = sm.invited_by
+  where sm.user_id = auth.uid()
+    and s.id = any ((select private.my_space_ids())::uuid[])
+  order by sm.joined_at, s.id
+$$;
+
+-- ---------- 2c. PRIV-VC-B2: chat_roster names the container rule ----------
 -- 0015's chat_roster with one added check: after chat_member_since (the caller is in private.chat_people: the
 -- group's members plus the family's parents), public.can_see_circle must also say yes. It does for everyone
 -- chat_people lets in, except in a deleted family, where the answer becomes "not found" (only ever narrower).
@@ -262,6 +280,8 @@ insert into vis.functions (fn, kind, note) values
   ('public.chat_publish_device(text,text[])', 'chat_device', 'publishes your own device key only'),
   ('public.list_family_dates(uuid)', 'family_date',
    'other members'' dates and names, only where private.may_see_family_date (can_see_profile for a member''s birthday); VIS-18 holds its rows equal to vis.can_see'),
+  ('public.my_spaces()', 'space',
+   'families the caller is a live member of (names, role, inviter''s name): the space rule, private.my_space_ids (QA-R5, PRIV-VC-B2)'),
   ('public.my_circles(uuid)', 'space',
    'group names and members for parents only: the admin rule (private.my_managed_space_ids, as circles_select; PRIV-VC-B2)'),
   ('public.chat_roster(uuid)', 'chat_group',
@@ -287,7 +307,6 @@ insert into vis.functions (fn, kind, note) values
   ('public.my_profile()', null, 'the caller''s own profile only'),
   ('public.set_my_birthday(uuid,integer,integer)', null, 'writes the caller''s own birthday only (auth.uid(), a member of that family)'),
   ('public.set_my_name(text)', null, 'changes the caller''s own name only'),
-  ('public.my_spaces()', null, 'families the caller is a member of'),
   ('public.my_features(uuid)', null, 'feature switches via private.feature_on for a family the caller is in'),
   ('public.request_account_deletion()', null, 'deletes the caller''s own account only'),
   ('public.export_my_data()', null, 'the caller''s own data; group names only where private.may_see_circle_name says so (SEC-R1)'),
