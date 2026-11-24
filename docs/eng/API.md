@@ -142,6 +142,20 @@ Birthdays and important dates, **month and day only**: no year column, and no RP
 
 When a member leaves a family, their member-linked dates there go with them (cascade from `space_members`). `export_my_data` gains `family_dates`: your own birthdays and the dates you added (PRIV-R3). The write RPCs lock the family's `spaces` row before the 200 count (PRIV-R5).
 
+## News, Event and Saying posts (0034, SPEC-VISIBILITY-CORE "One Share composer" Phase 4; tests `backend/tests/post_kinds_test.sql`, `app/src/api/contract/postKinds.contract.test.ts`)
+Every post has a `kind`: `photos` (every older post, and the default), `news`, `event` or `saying`. The new kinds are for **parents only** (owner, adult) and only while feature `post_kinds` is on (`private.feature_on`: Hearth's global switch AND the family's switch AND `can(space, 'post_kinds')`); it ships off and a missing row is off. Otherwise `42501` with message `post_kinds_off` (photos are never affected). One post, one audience, the same group checks as photos. **No new visibility rule:** an event's and a saying's fields live in `public.post_events` / `public.post_sayings`, attached with `vis.attach` as item kinds of the post (one read policy, `vis.viewer_sees_item(post_id)`); app users read them under RLS and never write them.
+
+| RPC / table | Args | Returns | Notes |
+|---|---|---|---|
+| `create_post` (0034 adds) | `+ p_kind text = 'photos', p_details jsonb = null` | `post_id` | `photos`: `p_details` must be null. `news`: the words are `p_caption`, trimmed, required; no details. `event`: `{"what": text (1-200), "when": "YYYY-MM-DD" (a real date), "where": text (optional, 1-200)}`. `saying`: `{"words": text (1-2000), "who": text (1-80), "age": integer 0-120 (optional)}`. Anything missing, blank or malformed, or an unknown kind: `23514`. Idempotent on `(author, p_client_id)`: a retry writes no second event or saying row. The app sends `p_kind` / `p_details` only for the new kinds, so a photos post still matches an older server. |
+| `publish_post` (0034 changes) | same | — | A news, event or saying draft publishes with **no media** (and `post_kinds` is re-checked: `42501`); a photos draft still needs ready media (`23514`). |
+| `prepare_media_upload` (0034 changes) | same | same | On a news, event or saying post: `23514`. A direct `media_items` insert gets the same refusal. |
+| `get_feed`, `get_timeline`, `search_posts` (0034 add) | same | `+ kind text` (last column) | Search still matches title, caption and the sender's name (a news post's words are its caption). |
+| `post_events` (table, select) | `post_id=in.(…)` | `id, post_id, what, on_date, place` | Read under RLS; the app maps `on_date` → `when`, `place` → `where`. |
+| `post_sayings` (table, select) | `post_id=in.(…)` | `id, post_id, words, who, age` | Read under RLS. |
+
+`export_my_data`: each of the caller's own posts carries `kind` and its `event` / `saying` fields; nobody else's ever does. A news post can't lose its words (`edit_post_words` to blank: `23514`).
+
 ## Messenger relay (0015, SPEC-MESSENGER; contract tests `app/src/api/contract/chat.contract.test.ts`)
 
 Bodies, key packages and signing keys are base64 MLS bytes the server never opens. Every call on a chat the caller isn't in (not a member, not a parent, a household, deleted, or no such circle) is `P0002`.

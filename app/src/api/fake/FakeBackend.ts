@@ -24,6 +24,7 @@ import type {
   TimelineArgs, TimelinePost, TimelineYear, SearchArgs,
   ChatKind, ChatMember, ChatRow, ChatRowKind, ChatSummary, ClaimedKeyPackage,
   FamilyDate, FamilyDateKind, SaveFamilyDateArgs,
+  PostKind, PostEvent, PostSaying,
 } from '../types';
 import { fromBase64, toBase64 } from '../../crypto/base64';
 import { randomBytes, uuid } from '../../crypto/random';
@@ -48,6 +49,10 @@ interface PostRow {
   title?: string | null;
   /** 0021 (CAP-6): when the sender last changed the words. */
   words_edited_at?: string | null;
+  /** 0034 (SHARE-U): the kind (missing = photos) and an event's or a saying's fields (post_events / post_sayings). */
+  kind?: PostKind;
+  event?: PostEvent | null;
+  saying?: PostSaying | null;
 }
 interface MediaRow {
   id: string; post: string; position: number; kind: MediaKind; mime: string; width: number; height: number;
@@ -122,8 +127,10 @@ export interface FakeState {
 const defaultMode = (k: CircleKind | undefined): CommentMode => (k === 'household' ? 'always' : k === 'event' ? 'on_group_posts' : 'private');
 const MODES: CommentMode[] = ['private', 'on_group_posts', 'always'];
 /** private.feature_capability: who may use each feature (parents only to start; the fake's posters are the parents). */
-const FEATURE_CAPABILITY: Record<string, 'use_video' | 'post'> = {
+const FEATURE_CAPABILITY: Record<string, 'use_video' | 'post' | 'post_kinds'> = {
   video_posting: 'use_video', photo_helpers_duplicates: 'post', photo_helpers_screens_blur: 'post',
+  // 0034: News, Event and Saying posts; parents only, off by default (a missing row is off)
+  post_kinds: 'post_kinds',
 };
 /** private.feature_default_on (0016): a missing row means off for add-ons, on for off-switches (HELP-R4). */
 const FEATURE_DEFAULT_ON = new Set(['photo_helpers_duplicates', 'photo_helpers_screens_blur']);
@@ -158,6 +165,8 @@ export interface OracleFixtureRows {
   posts: {
     id: string; space: string; author: string; status: 'draft' | 'published'; deleted: boolean; published_at: string | null;
     taken_at: string | null; title: string | null; caption: string | null; circles: string[];
+    /** 0034: present in fixtures made after the post kinds landed; missing = photos. */
+    kind?: PostKind;
   }[];
   comments: { id: string; post: string; author: string; body: string; created_at: string; deleted: boolean }[];
   reactions: { post: string; user: string; emoji: Reaction; created_at: string }[];
@@ -235,7 +244,7 @@ export class FakeBackend {
       s.posts[p.id] = {
         id: p.id, space: p.space, author: p.author, caption: p.caption, status: p.status, deleted: p.deleted,
         circles: [...p.circles], client_id: p.id, created_at: p.published_at ?? '2026-01-01T00:00:00.000Z',
-        published_at: p.published_at, taken_at: p.taken_at, title: p.title,
+        published_at: p.published_at, taken_at: p.taken_at, title: p.title, kind: p.kind ?? 'photos',
       };
     }
     for (const c of fx.comments) {
@@ -596,6 +605,9 @@ export class FakeBackend {
         reply_scope: this.replyScope(me, p),
         taken_at: p.taken_at ?? null,
         ...this.postEvent(me, p),
+        kind: p.kind ?? 'photos',
+        event: p.kind === 'event' ? (p.event ?? null) : null,
+        saying: p.kind === 'saying' ? (p.saying ?? null) : null,
       };
   }
 
@@ -611,6 +623,7 @@ export class FakeBackend {
     const me = this.requireUser(user);
     if ((a.batchId == null) !== (a.batchSize == null)) throw new ApiError('23514', 'batch id and size go together');
     if (a.batchSize != null && (a.batchSize < 1 || a.batchSize > 100)) throw new ApiError('23514', 'a batch is 1 to 100 posts');
+    const fields = this.kindFields(me, a);
     const existing = Object.values(this.state.posts).find((p) => p.author === me && p.client_id === a.clientId);
     if (existing) return existing.id;
     if (!this.member(a.space, me)) throw new ApiError('42501', 'not a member');
@@ -624,9 +637,35 @@ export class FakeBackend {
       id, space: a.space, author: me, caption: a.caption?.trim() || null, status: 'draft', deleted: false,
       circles: [...new Set(a.circleIds)], client_id: a.clientId, created_at: this.now(), published_at: null,
       taken_at: a.takenAt ? new Date(a.takenAt).toISOString() : null, batch_id: a.batchId ?? null, batch_size: a.batchSize ?? null, title,
+      ...fields,
     };
     this.changed();
     return id;
+  }
+
+  /** create_post's p_kind / p_details rules (0034): 42501 unless a parent with post_kinds on; 23514 for a broken field. */
+  private kindFields(me: string, a: CreatePostArgs): Pick<PostRow, 'kind' | 'event' | 'saying'> {
+    const kind = a.kind ?? 'photos';
+    if (!['photos', 'news', 'event', 'saying'].includes(kind)) throw new ApiError('23514', 'unknown post kind');
+    if (kind === 'photos') return { kind };
+    if (!this.myFeatures(me, a.space).includes('post_kinds')) throw new ApiError('42501', 'post_kinds_off');
+    const blank = (v: unknown) => typeof v !== 'string' || !v.trim();
+    if (kind === 'news') {
+      if (blank(a.caption)) throw new ApiError('23514', 'news needs words');
+      return { kind };
+    }
+    if (kind === 'event') {
+      const e = a.event;
+      if (!e || blank(e.what) || [...e.what.trim()].length > 200) throw new ApiError('23514', 'an event needs what');
+      const ok = typeof e.when === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(e.when)
+        && new Date(`${e.when}T00:00:00Z`).toISOString().slice(0, 10) === e.when;
+      if (!ok) throw new ApiError('23514', 'an event needs a real date');
+      return { kind, event: { what: e.what.trim(), when: e.when, where: e.where?.trim() || null } };
+    }
+    const y = a.saying;
+    if (!y || blank(y.words) || blank(y.who)) throw new ApiError('23514', 'a saying needs the words and who');
+    if (y.age != null && (!Number.isInteger(y.age) || y.age < 0 || y.age > 120)) throw new ApiError('23514', 'age 0..120');
+    return { kind, saying: { words: y.words.trim(), who: y.who.trim(), age: y.age ?? null } };
   }
 
   authorPost(user: string | null, post: string): PostRow {
@@ -641,8 +680,14 @@ export class FakeBackend {
     const p = this.authorPost(user, post);
     if (p.status === 'published') return;
     const media = Object.values(this.state.media).filter((m) => m.post === post);
-    // Backend 0002: at least one media item, and all of them ready.
-    if (!media.length || media.some((m) => m.status !== 'ready')) throw new ApiError('23514', 'media not ready');
+    if ((p.kind ?? 'photos') !== 'photos') {
+      // 0034: news, events and sayings publish with no media, while post_kinds is still on for the author
+      if (!this.myFeatures(p.author, p.space).includes('post_kinds')) throw new ApiError('42501', 'post_kinds_off');
+      if (media.length) throw new ApiError('23514', 'no photos on this kind');
+    } else if (!media.length || media.some((m) => m.status !== 'ready')) {
+      // Backend 0002: at least one media item, and all of them ready.
+      throw new ApiError('23514', 'media not ready');
+    }
     p.status = 'published';
     p.published_at = this.now();
     this.changed();
@@ -666,6 +711,7 @@ export class FakeBackend {
     const c = caption?.trim() || null;
     if (t && [...t].length > 80) throw new ApiError('23514', 'a title is 80 characters at most');
     if (c && [...c].length > 2000) throw new ApiError('23514', 'a caption is 2000 characters at most');
+    if (row.kind === 'news' && !c) throw new ApiError('23514', 'news needs words'); // 0034 posts_news_has_words
     row.title = t;
     row.caption = c;
     row.words_edited_at = this.now();
@@ -1151,6 +1197,8 @@ export class FakeBackend {
     if (!Array.isArray(items) || items.length < 1 || items.length > 20) throw new ApiError('23514', 'items 1..20');
     if (items.some((i) => i?.exif_stripped !== true)) throw new ApiError('EXIF', 'exif_not_stripped');
     const p = this.authorPost(me, post);
+    // 0034: no media on a news, event or saying post (the media_items trigger)
+    if ((p.kind ?? 'photos') !== 'photos') throw new ApiError('23514', 'a news, event or saying post has no photos');
     const base = Object.values(this.state.media).filter((m) => m.post === post).length;
     const out = items.map((it, idx) => {
       const id = uuid();

@@ -39,6 +39,13 @@ export interface SupabaseApiOptions {
   fetchImpl?: typeof fetch;
 }
 
+/** create_post's p_details for a kind (0034): news has none; an event's where and a saying's age are null when blank. */
+function kindDetails(a: CreatePostArgs): Record<string, unknown> | null {
+  if (a.kind === 'event') return a.event ? { what: a.event.what, when: a.event.when, where: a.event.where ?? null } : null;
+  if (a.kind === 'saying') return a.saying ? { words: a.saying.words, who: a.saying.who, age: a.saying.age ?? null } : null;
+  return null;
+}
+
 const one = <T>(d: unknown): T => (Array.isArray(d) ? d[0] : d) as T;
 
 const HTTP_CODES: Record<number, ApiErrorCode> = { 400: '23514', 401: 'AUTH', 402: 'VIDEO_CAP', 403: '42501', 404: 'P0002', 422: 'EXIF', 429: '54000' };
@@ -171,17 +178,17 @@ export class SupabaseApi implements HearthApi {
     this.rpc<FeedPost[]>('get_feed', {
       p_space: a.space, p_before_ts: a.beforeTs ?? null, p_before_id: a.beforeId ?? null,
       p_limit: Math.max(1, Math.min(50, a.limit ?? 20)),
-    }).then((d) => d ?? []);
+    }).then((d) => this.withKindFields(d ?? []));
   getTimeline = (a: TimelineArgs) =>
     this.rpc<TimelinePost[]>('get_timeline', {
       p_space: a.space, p_before_at: a.beforeAt ?? null, p_before_id: a.beforeId ?? null,
       p_limit: Math.max(1, Math.min(50, a.limit ?? 20)),
-    }).then((d) => d ?? []);
+    }).then((d) => this.withKindFields(d ?? []));
   searchPosts = (a: SearchArgs) =>
     this.rpc<TimelinePost[]>('search_posts', {
       p_space: a.space, p_query: a.words ?? null, p_author: a.author ?? null, p_from: a.from ?? null, p_until: a.until ?? null,
       p_before_at: a.beforeAt ?? null, p_before_id: a.beforeId ?? null, p_limit: Math.max(1, Math.min(50, a.limit ?? 20)),
-    }).then((d) => d ?? []);
+    }).then((d) => this.withKindFields(d ?? []));
   getTimelineYears = (space: string, tz?: string) =>
     this.rpc<TimelineYear[]>('get_timeline_years', { p_space: space, p_tz: tz ?? 'UTC' }).then((d) => d ?? []);
   // Batch and title args only when set, so an ordinary post still matches an older create_post.
@@ -191,8 +198,35 @@ export class SupabaseApi implements HearthApi {
       ...(a.batchId != null || a.batchSize != null ? { p_batch_id: a.batchId ?? null, p_batch_size: a.batchSize ?? null } : {}),
       // CAP-1: only when there is one, so an untitled post still matches a pre-0019 create_post.
       ...(a.title?.trim() ? { p_title: a.title.trim() } : {}),
+      // SHARE-U-4/11/13 (0034): only for news, events and sayings, so a photos post still matches an older create_post.
+      ...(a.kind && a.kind !== 'photos' ? { p_kind: a.kind, p_details: kindDetails(a) } : {}),
     });
   publishPost = (p: string) => this.rpc<void>('publish_post', { p_post: p });
+  /** SHARE-U-11/13 (0034): an event's or a saying's fields, read under RLS (the post's own rule, vis.attach). Rows of
+   *  other kinds pass through; nothing is fetched when the page has no event or saying. */
+  private async withKindFields<T extends FeedPost>(rows: T[]): Promise<T[]> {
+    const ids = (k: string) => rows.filter((r) => r.kind === k).map((r) => r.post_id);
+    const read = async <R>(table: string, cols: string, postIds: string[]): Promise<R[]> => {
+      if (!postIds.length) return [];
+      let res: { data: unknown; error: unknown };
+      try {
+        res = (await this.o.client.from(table).select(cols).in('post_id', postIds)) as { data: unknown; error: unknown };
+      } catch (e) {
+        throw toApiError(e);
+      }
+      if (res.error) throw toApiError(res.error);
+      return (res.data ?? []) as R[];
+    };
+    const [events, sayings] = await Promise.all([
+      read<{ post_id: string; what: string; on_date: string; place: string | null }>('post_events', 'post_id, what, on_date, place', ids('event')),
+      read<{ post_id: string; words: string; who: string; age: number | null }>('post_sayings', 'post_id, words, who, age', ids('saying')),
+    ]);
+    if (!events.length && !sayings.length) return rows;
+    const ev = new Map(events.map((e) => [e.post_id, { what: e.what, when: e.on_date, where: e.place ?? null }]));
+    const sy = new Map(sayings.map((x) => [x.post_id, { words: x.words, who: x.who, age: x.age ?? null }]));
+    return rows.map((r) => (r.kind === 'event' ? { ...r, event: ev.get(r.post_id) ?? null }
+      : r.kind === 'saying' ? { ...r, saying: sy.get(r.post_id) ?? null } : r));
+  }
   deletePost = (p: string) => this.rpc<void>('delete_post', { p_post: p });
   editPostWords = (p: string, title: string | null, caption: string | null) =>
     this.rpc<string>('edit_post_words', { p_post: p, p_title: title, p_caption: caption });

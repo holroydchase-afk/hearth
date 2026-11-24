@@ -125,6 +125,7 @@ RLS policies call the reach's rule directly (inlinable, fast). `vis.can_see` is 
 - `can_see` answers only for rows with a uuid `id`. Rows without one (reactions, post_children, post_audiences, the membership tables) are answered by their table's one policy, and `can_see` says no. A rule or hook that errors makes `can_see` say no.
 - Policies written by `vis.attach` call `vis.viewer_sees_item(item)`, which passes `auth.uid()` itself, so no app role can execute a function that takes a user id (PRIV-VC-R3). `attach` refuses a table that already has a permissive select policy and a hook that isn't stable `(uuid, uuid) -> boolean`.
 - Hooks registered today: `private.vis_media_ok` (pending uploads only to their uploader) and `private.vis_comment_ok` (reply settings, through `private.reply_ok`). `children` uses the person rule, which says no for a child: default deny until the oracle adds a child rule.
+- First product use of `vis.attach` (0034, Phase 4): `post_events` and `post_sayings` are fungible item kinds of the post with no new rule; VIS-8 checks both tables for every person in the seed-42 oracle.
 - `vis.links` and `vis.link_members` are not built (bridge after the beta).
 - 0032 also forces RLS on every public table (refusing to run if the owner doesn't bypass RLS) and revokes any table grant from `anon`.
 
@@ -132,7 +133,7 @@ RLS policies call the reach's rule directly (inlinable, fast). `vis.can_see` is 
 
 | Reach | Hearth relations |
 |---|---|
-| `item` | `posts` (the item), `media_items`, `media_keys`, `post_children`, `comments` and `reactions` (narrow: `private.group_reply_ok`), `post_audiences` (narrow: author and parents; others see names via `post_viewers`), future `post_events`, `post_sayings` and news |
+| `item` | `posts` (the item), `media_items`, `media_keys`, `post_children`, `comments` and `reactions` (narrow: `private.group_reply_ok`), `post_audiences` (narrow: author and parents; others see names via `post_viewers`), `post_events` and `post_sayings` (0034, through `vis.attach`: no rule, no hook; news is a `posts.kind` with no child table) |
 | `person` | `profiles`, `children` (guardians, parents, or a tagged post), `child_guardians`, `family_dates` (0029, rule `private.vis_sees_family_date`: the person rule for a member's birthday, parents and the Everyone group for other dates; VIS-18) |
 | `container` | `circles` (0027), `circle_members`, `circle_people`, `circle_links`, `chat_groups`, `chat_messages`, `chat_key_packages` (via `chat_claim`) |
 | `self` | `push_tokens`, `notification_prefs`, `account_exports`, `chat_devices`, `post_views` |
@@ -189,4 +190,4 @@ Following `packages/messenger` (DEC-42): the generic core is `packages/visibilit
 - Privacy review findings: `docs/product/SPEC-VISIBILITY-CORE.md`, "Privacy review".
 
 ---
-Last checked against code: 2026-11-24, migrations 0001 to 0029, 0031 and 0032 on branch claude/project-thread-jtelk5 (0029 life calendar registered, VIS-18; 0030 is the video-fixes branch, not merged).
+Last checked against code: 2026-11-24, migrations 0001 to 0029 and 0031 to 0034 on branch claude/project-thread-jtelk5 (0034 attaches post_events and post_sayings; 0029 life calendar registered, VIS-18; 0030 is the video-fixes branch, not merged).
