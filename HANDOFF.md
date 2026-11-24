@@ -13,7 +13,7 @@ blockers:
 
 ## Nov 24: React Compiler on (intake #80, R84; branch claude/project-thread-6ew09x, PR)
 - **Done, test-first:** red checks INTAKE-80-1..3 first (`app/src/__tests__/reactCompiler.test.ts`, `app/scripts/check-compiler-bundle.sh`, `app/scripts/compiler-check.js`, wired into `test-all.sh`), then app.json `expo.experiments.reactCompiler: true` and `npx expo install babel-plugin-react-compiler`. 24 bailouts (23 components; try/finally, refs read in render, manual memo deps) stay uncompiled, which is today's behaviour; each is allowlisted with its reason.
-- **Status:** qa-tdd green 3x (r78): test-all 25 suites, jest 2238, e2e:demo 50, e2e:web 5, backend SQL 1318; bundles show 148/159 memo-cache markers.
+- **Status:** qa-tdd green 3x (r79): test-all 25 suites, jest 2238, e2e:demo 50, e2e:web 5, backend SQL 1318; bundles show 148/159 memo-cache markers.
 - **Next:** merge on green (Chase, Nov 24: "merge on green in right order", after #178); open Expo Go once with the compiler on; B27 fix bailouts one at a time.
 
 ## Nov 24: eval fixes built (intake #162, R83, SPEC-EVAL-FIXES section 1 + EF-HE-4; branch claude/project-thread-6ew09x, PR #172)
@@ -36,7 +36,8 @@ blockers:
 - **Done, test-first (engineer):** 19 stock photos built from the cleaned 2000 px set into `app/public/demo-pictures/` (1200 px display, 400 px thumbs, ImageMagick `-strip`, q80; no APP1/APP2/APP13), the Nov 16 set deleted, `CREDITS.md` added, `DEMO_PICTURE_SIZES` set to the real sizes. `seed.ts`: parent "Kevin", the 7 spec posts (190 / 40 / this week; post 4 titled "Pancake morning", captions for 3, 5, 7 engineer-written), anniversary "Kevin and Alex", seed version moves. Demo bar says Kevin and carries the credit line in Details; the laptop story panel carries it too. README line 15, `pictures.ts`, `make-demo-pictures.py`: no "founder's own" wording.
 - **Open:** e2e:demo 51 passed, 2 failed on stale test data for qa-tdd: UX-R1 still clicks "2 new" / "New photos: 1 of 2" (now 3 new, DEMO-PHOTO-12); R18 scrolls 1200 px, which now lands on the November/October section edge so no month title sits in the band. README screens and `og-hearth.png` still show the old photos (DEMO-PHOTO-15, retake). `/mnt/project-files/demo/DEMO-SCRIPT.md` not changed.
 - **Next exact step:** qa-tdd fixes UX-R1 and R18 data, green 3x; privacy-security (metadata), grandparent-ux (captions); retake screens.
-- **T37 (after #173, Nov 24):** demo-site publish run 45430430863 failed its pre-publish `site.spec.js` on old demo text; qa-tdd updated it (Kevin, search "orchard", New for you 1 of 1 then Done), `npm run e2e:site` red 3 then green 14 x3 (r71). Next: PR, then the publish reruns.
+- **T37 (after #173, Nov 24):** demo-site publish run 45430430863 failed its pre-publish `site.spec.js` on old demo text; qa-tdd updated it (Kevin, search "orchard", New for you 1 of 1 then Done), `npm run e2e:site` red 3 then green 14 x3 (r71). PR #179 merged, live 3077ff5 checked fresh+returning 390/1280, Jo sees Dad's side only.
+- **T40 (live check, Nov 24):** laptop "Try this" step 3 still said search "lake" (finds nothing now); now "orchard", with a guard test that the hinted word finds a demo post. qa-tdd red then green 3x (r72, r78).
 - **Portfolio / public presence:** the public demo shows free Pexels stock photos and a made-up parent "Kevin" once this merges; no photo of Chase's family remains on main.
 
 ## Nov 24: life calendar review fixes built (PRIV-R1..R3, R5; GUX-R1..R11; branch claude/project-thread-ov6z2y)
