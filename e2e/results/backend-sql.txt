@@ -524,10 +524,10 @@ TIMELINE RESULT: 39 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('81ff16a8-b597-46ed-94f6-627c29da099a'))
-psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('3d5f725b-e378-4a80-847b-d34d806a9fc2'))
-psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('07b5eb32-f27e-4fca-8f79-86c288074ccf'))
-psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '52cb21d7-d69c-402a-9aba-29c9f2984390')
+psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('5551cab7-369d-41f2-82ca-4ddb0e3cfc31'))
+psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('4607f6ab-9abd-48ea-9044-41192ae789c8'))
+psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('20b280e1-8c66-4a5e-960f-f349a80b98f7'))
+psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '1038bc66-c654-4460-87d7-9e01c9a46f4b')
   n  | result |                                                                                  description                                                                                   
 -----+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    1 | ok     | BETA-AUD-11 shape: circles.kind exists (everyone | group | household | event)
@@ -1728,9 +1728,9 @@ VIS CALENDAR RESULT: 8 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-Time: 0.081 ms
+Time: 0.105 ms
 
-VIS ORACLE MATRIX seed=42 seconds=14
+VIS ORACLE MATRIX seed=42 seconds=15
          path         |        kind         | checked | wrong_yes | wrong_no 
 ----------------------+---------------------+---------+-----------+----------
  chat_roster          | chat_group          |     600 |         0 |        0
@@ -1994,9 +1994,9 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
 Narrowing for Chase (readable before 0011 only through "members see each other's replies"):
      reader     |  kind   |                                 reply_id                                  
 ----------------+---------+---------------------------------------------------------------------------
- Grandma Rivera | comment | 73024e7d-f0b5-44b3-891d-39d0d476160d
+ Grandma Rivera | comment | ba2d20dd-8f66-4911-bc5b-7e826cf534b6
  Grandma Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a2
- Grandpa Rivera | comment | e62a1ef8-8e08-4582-8ef9-2b42b7378da7
+ Grandpa Rivera | comment | 1fa9db40-9fa7-44cc-9b65-d7e10d59cb52
  Grandpa Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a1
 
  n  | result |                                                     description                                                      
@@ -2107,8 +2107,8 @@ ok      SETUP-API: before Chase has an account it says "sign in once in the app"
 ok      SETUP-API: ... and changes nothing
 ok      SETUP-API: fresh setup runs without error
         | Family "Chase's kids" is ready: Everyone, Chase's side, Mom's side, 7 houses, 2 events.
-        | Test viewer invite (account B): code SAPFB9MXGY, works once until Dec 01, link https://thefreighttrains-team-hearth.expo.app/join/8ccb27d7e70a16482a49286f0d7dc8b89fa4bb62
-        | Mom's poster invite: code HX9N8FJJF9, works once until Dec 01, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/99f200d92898ac5dfcbe10fb4a65d53e429cc3ac
+        | Test viewer invite (account B): code DPKTQ4HS4J, works once until Dec 01, link https://thefreighttrains-team-hearth.expo.app/join/b7a75bf20eb9c5d1c0b027863143658a41394681
+        | Mom's poster invite: code Y4NGBDBXRQ, works once until Dec 01, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/89ac6c68c8ed38c2713e24638b7b8feb24fa6d08
 ok      SETUP-API: Chase owns one family, named as given (an apostrophe in the name is kept, not a SQL error)
 ok      SETUP-API: one Everyone
 ok      SETUP-API: the set groups are Chase's side and Mom's side (no v1 groups to retire later)
