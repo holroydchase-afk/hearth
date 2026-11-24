@@ -17,6 +17,7 @@
 #   tests/sms_test.sql        BETA-SMS-8, -9, -13, -15: phone invites, sign_in_with, push-only phone accounts, no numbers kept (SPEC-SMS-SIGN-IN)
 #   tests/group_names_test.sql  SEC-R1: a group's name stays with the parents, also through the raw API and the export (migration 0027)
 #   tests/auth_no_passwords_test.sql  TS-SEC-R1: no password hash ever stays in auth.users (migration 0028, docs/eng/AUTH-NO-PASSWORDS.md)
+#   tests/family_dates_test.sql  CAL-1..10, CAL-18: the life calendar, birthdays and dates (SPEC-LIFE-CALENDAR, migration 0029)
 #   tests/search_test.sql  SEARCH-1..14: find posts by words, sender and dates, only ones you can see (SPEC-SEARCH, migration 0025)
 #   ../packages/messenger/relay/test.sql  RELAY-1..9: the shared messenger library's relay template
 #   tests/aud16/  BETA-AUD-16: snapshot on 0001-0010, apply 0011+, diff (0011 must change nobody's access)
@@ -29,7 +30,8 @@ STATUS=0
 for suite in tests/rls_test.sql tests/api_test.sql tests/notify_test.sql tests/setup_test.sql tests/reply_test.sql tests/timeline_test.sql \
              tests/groups_test.sql tests/timeline_future_test.sql tests/privacy_audit_test.sql tests/groups_v2_test.sql tests/chat_test.sql \
              tests/photo_helpers_test.sql tests/reactions_test.sql tests/captions_test.sql tests/video_cap_test.sql tests/viewers_test.sql \
-             tests/start_family_test.sql tests/search_test.sql tests/sms_test.sql tests/group_names_test.sql tests/auth_no_passwords_test.sql; do
+             tests/start_family_test.sql tests/search_test.sql tests/sms_test.sql tests/group_names_test.sql tests/auth_no_passwords_test.sql \
+             tests/family_dates_test.sql; do
   dropdb --if-exists "$DB"
   createdb "$DB"
   files=(-f tests/supabase_stub.sql)
