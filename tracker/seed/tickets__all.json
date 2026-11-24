@@ -1483,52 +1483,52 @@
    "kind": "bug",
    "layer": "app",
    "severity": "High",
-   "status": "open",
+   "status": "fixed",
    "title": "GUX-T2 P1 (PR #174 fix round, Nov 24): Share's empty postcard is vertically centered (ShareScreen styles.emptyWrap justifyContent center), leaving a 125 px gap under the 'New post' row at 390 x 844 (light and dark). Must sit right under the header (<= 32 px). Tests: app/src/screens/__tests__/shareStart.test.tsx GUX-T2, app/e2e-web/demo.spec.js GUX-T2",
    "tests": [
     "app/src/screens/ShareScreen.tsx"
    ],
    "found": "2026-11-24",
-   "fixed": null
+   "fixed": "2026-11-24"
   },
   {
    "id": "B29",
    "kind": "bug",
    "layer": "app",
    "severity": "Low",
-   "status": "open",
+   "status": "fixed",
    "title": "GUX-T6 P2 (PR #174 fix round, Nov 24): on the demo at 390 x 844 Gallery's birthday card 'Not now' starts under the floating tab bar, and the least scroll that reveals it (keyboard focus, screen reader) leaves it under the bar (bottom 844 vs bar top 764). The scroll content has room (paddingBottom 32 + tab bar), but the web scroll area needs its bottom inset as scroll padding. Test: app/e2e-web/demo.spec.js GUX-T6",
    "tests": [
     "app/src/screens/PhotosScreen.tsx"
    ],
    "found": "2026-11-24",
-   "fixed": null
+   "fixed": "2026-11-24"
   },
   {
    "id": "B30",
    "kind": "bug",
    "layer": "app",
    "severity": "Low",
-   "status": "open",
+   "status": "fixed",
    "title": "QA-R4 P2 (PR #174 fix round, Nov 24): RD-4 allowlisted all of ShareKinds.tsx for the accent; narrowed to the kind icon's color, the test finds the Saying card's opening quote mark drawn with tone=\"accent\" (ShareKinds.tsx:58). Either ink/muted for the mark, or a named RD-4 exception. Test: app/src/ui/__tests__/redesignLint.test.ts QA-R4",
    "tests": [
     "app/src/screens/ShareKinds.tsx"
    ],
    "found": "2026-11-24",
-   "fixed": null
+   "fixed": "2026-11-24"
   },
   {
    "id": "T39",
    "kind": "test fix",
    "layer": "app",
    "severity": "Low",
-   "status": "open",
+   "status": "fixed",
    "title": "QA-R13 (PR #174 fix round green run r87, Nov 24): app/e2e-web/demo.spec.js SHARE-PC-13 failed once in run 1 of e2e:demo (toBeVisible, element(s) not found, a soft expect at line 1057 or 1073; the page had reached Grandma Jo) and passed in runs 2 and 3 and 5 of 5 alone. Likely cause: under full-suite load the Feed's first post is not yet showing 'Open photo 1 of 3' within the 5 s default after Send (soft expect, no wait for the upload). Fix the test (wait on the post, or name which expect), not the app. e2e/results/type-scale-fixes-green-2026-11-24.txt",
    "tests": [
     "app/e2e-web/demo.spec.js"
    ],
    "found": "2026-11-24",
-   "fixed": null
+   "fixed": "2026-11-24"
   }
  ]
 }
