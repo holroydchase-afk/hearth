@@ -48,7 +48,7 @@ Chase, Nov 24 (rapid messages): "Life calendar" / "Capture birthdays" / "And imp
 
 ## Words (grandparent-ux to confirm before build)
 - Card: **When's your birthday?** / "Your family will see the month and day. Never the year." / **Save** / **Not now**.
-- More row: **Birthdays**. Screen title: **Birthdays and dates**. Under it: "Everyone in the family sees these."
+- More row: **Birthdays**. Screen title: **Birthdays and dates**. Under it: "Only your family can see these."
 - Buttons: **Add my birthday**, **Change my birthday**, **Add a date**, **Change**, **Delete**. Gallery line button: **See birthdays**.
 - "Group" never appears here.
 - Review words (grandparent-ux, Nov 24): the card is short, "Add my birthday" opens the form on Birthdays with Save fixed at the bottom (GUX-R1); "Saved. Your family will see December 8." at the top of Birthdays (GUX-R2); "Happy birthday, Grandma Jo!" on your own day (GUX-R4); "Today: Family reunion" for something else (GUX-R6); the form's back reads "Birthdays" (GUX-R7); "The dates can't load right now. Try again in a minute, or ask Chase." (GUX-R9); "Whose birthday?" and "It's removed for everyone in the family." (GUX-R11).

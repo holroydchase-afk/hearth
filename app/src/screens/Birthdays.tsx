@@ -253,7 +253,7 @@ export function BirthdaysScreen({ backTo = 'More', onBack = backToMore, startMin
       <Txt variant="display" role="header">Birthdays and dates</Txt>
       {/* GUX-R2: "Saved. Your family will see December 8." at the top, in view (the list opens scrolled to the top) */}
       {notice ? <Notice tone="good" text={notice} onClose={() => setNotice(null)} /> : null}
-      <Txt variant="muted">Everyone in the family sees these.</Txt>
+      <Txt variant="muted">Only your family can see these.</Txt>
       {cal.status === 'missing' ? <Txt>Birthdays aren't ready on Hearth yet. They're coming soon.</Txt> : null}
       {cal.status === 'loading' ? <Loading words="Loading the dates…" /> : null}
       {cal.status === 'error' ? (

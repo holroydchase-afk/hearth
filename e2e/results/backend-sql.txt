@@ -524,10 +524,10 @@ TIMELINE RESULT: 39 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('4267671c-7a55-4e63-a667-0d73915c27ff'))
-psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('538a17e2-88c8-4b5c-94bd-bafe42ab0ba2'))
-psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('2fdc1523-186a-4561-b948-dd8d523236df'))
-psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '8ace13a3-fc63-41bf-a412-75967dba5f8a')
+psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('08557e90-24b5-44ca-b8c6-11e5eefad033'))
+psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('64d176f4-6bdd-49ef-b93a-d195f4d1a2aa'))
+psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('6f3121ac-92a7-43f9-a193-e8cc64d20f56'))
+psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = 'bcd1144b-60d2-4972-bfd4-50df6ba09701')
   n  | result |                                                                                  description                                                                                   
 -----+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    1 | ok     | BETA-AUD-11 shape: circles.kind exists (everyone | group | household | event)
@@ -1387,9 +1387,9 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
 Narrowing for Chase (readable before 0011 only through "members see each other's replies"):
      reader     |  kind   |                                 reply_id                                  
 ----------------+---------+---------------------------------------------------------------------------
- Grandma Rivera | comment | 4f266a75-2348-4d34-b8cf-907f0dc3f04d
+ Grandma Rivera | comment | ce007052-1e96-49b6-a438-2afdc93bc504
  Grandma Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a2
- Grandpa Rivera | comment | e619bfdb-d654-4a1d-9640-e2e0b34e1723
+ Grandpa Rivera | comment | a38cf9b9-4eb5-42c2-881c-4a11fe570ba8
  Grandpa Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a1
 
  n  | result |                                                     description                                                      
@@ -1500,8 +1500,8 @@ ok      SETUP-API: before Chase has an account it says "sign in once in the app"
 ok      SETUP-API: ... and changes nothing
 ok      SETUP-API: fresh setup runs without error
         | Family "Chase's kids" is ready: Everyone, Chase's side, Mom's side, 7 houses, 2 events.
-        | Test viewer invite (account B): code YG74VN6HCK, works once until Nov 30, link https://thefreighttrains-team-hearth.expo.app/join/b73639dd0a72a361ebc0595c6e3f280886dee936
-        | Mom's poster invite: code RGWM3ST2YF, works once until Nov 30, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/4627d5430f430052c5e1a906832aa748c7967660
+        | Test viewer invite (account B): code R46Y8FZQ8P, works once until Nov 30, link https://thefreighttrains-team-hearth.expo.app/join/54d548e4f860efa07fa56cbe17d7fae762fd5fc3
+        | Mom's poster invite: code J5N95CH2WS, works once until Nov 30, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/f6e863dd85968729b94e19030f050e9d69b16b57
 ok      SETUP-API: Chase owns one family, named as given (an apostrophe in the name is kept, not a SQL error)
 ok      SETUP-API: one Everyone
 ok      SETUP-API: the set groups are Chase's side and Mom's side (no v1 groups to retire later)

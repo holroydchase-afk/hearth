@@ -186,7 +186,7 @@ describe('CAL-14/15 More → Birthdays', () => {
     atDate(2025, 12, 1);
     const be = await seeded();
     await openBirthdays(be, 'chase');
-    expect(screen.getByText('Everyone in the family sees these.')).toBeTruthy();
+    expect(screen.getByText('Only your family can see these.')).toBeTruthy();
     const words = screenWords();
     const at = ['Grandpa Earl', 'Grandma Jo', 'Mia', 'Party', 'Chase and Alex', 'Family reunion'].map((w) => ({ w, i: words.indexOf(w) }));
     expect(at.filter((x) => x.i < 0)).toEqual([]);

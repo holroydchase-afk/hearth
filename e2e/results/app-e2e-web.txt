@@ -2,7 +2,7 @@ Using src/app as the root directory for Expo Router.
 Starting Metro Bundler
 
 warning: Bundler cache is empty, rebuilding (this may take a minute)
-Web Bundled 15258ms node_modules/expo-router/entry.js (1332 modules)
+Web Bundled 14885ms node_modules/expo-router/entry.js (1332 modules)
 
 › Assets (22):
 node_modules/@expo-google-fonts/atkinson-hyperlegible-next/400Regular/AtkinsonHyperlegibleNext_400Regular.86635252a71fd7c43fd5b0c41bdc5d54.ttf (48KB)
@@ -24,12 +24,12 @@ node_modules/expo-router/assets/unmatched.20e71bdf79e3a97bf55fd9e164041578.png (
 
 › web bundles (38):
 _expo/static/css/native-tabs.module-78b0f59737571f455720970791a36bdd.css (2.5KB)
-_expo/static/js/web/__common-c5c651105961909d44e1ec8adf55a30e.js (645KB)
+_expo/static/js/web/__common-5c5761f983d94fb89804f9a98eb1ecd6.js (645KB)
 _expo/static/js/web/__expo-metro-runtime-8c088df87a31e4e6accd81c554ec290d.js (3.8KB)
 _expo/static/js/web/_layout-30155ba6537bab7ebf84b572f403b72c.js (320B)
+_expo/static/js/web/_layout-88edeaa945a23e08a79f2ea593128910.js (55KB)
 _expo/static/js/web/_layout-8c033f3abffcd203d6d7bd9142dda719.js (393KB)
 _expo/static/js/web/_layout-93c0fa4f560577662d04d3a7e6224fc8.js (320B)
-_expo/static/js/web/_layout-e070e51b84b84e1cd34227e794c16cdc.js (55KB)
 _expo/static/js/web/_layout-e9e078cac3efb72b82faf45d3b1b5c35.js (320B)
 _expo/static/js/web/[code]-039efdd9268d025ba60283a0fe31b587.js (4.1KB)
 _expo/static/js/web/[postId]-be2433d7a6bdf80fabd992e299aeb59e.js (371B)
@@ -38,7 +38,7 @@ _expo/static/js/web/birthdays-2d06bea3d77459f57bf0189bd05960fd.js (482B)
 _expo/static/js/web/birthdays-c484cb78da6b9f52f76851be765aafbd.js (333B)
 _expo/static/js/web/easy-view-cc84376a13165fe3bec7b848b087450b.js (333B)
 _expo/static/js/web/ed448-0b0aa5aa2eee07132cc2146684fbfc13.js (12KB)
-_expo/static/js/web/entry-6ae29f3822f7c5e8c15707069067dad0.js (1.1MB)
+_expo/static/js/web/entry-a30f98318207415f11f77953f8a3f3ab.js (1.1MB)
 _expo/static/js/web/events-cc9c118131665bbfc9b81ebabf6a341e.js (311B)
 _expo/static/js/web/groups-47552636f6b3c6241f91a1c2ec2e4af4.js (12KB)
 _expo/static/js/web/groups-9f99b3db4b5d89bd78356ac7cb970ae9.js (297B)
@@ -71,18 +71,18 @@ Exported: dist-fake
 
 Running 11 tests using 1 worker
 
-  ✓   1 e2e-web/core-loop.spec.js:44:1 › core loop: share → Jo sees it → Ruth does not → heart → comment → delete (20.1s)
+  ✓   1 e2e-web/core-loop.spec.js:44:1 › core loop: share → Jo sees it → Ruth does not → heart → comment → delete (20.7s)
   ✓   2 e2e-web/invite-link.spec.js:15:1 › ONB-4 a link from "Make the invite" opens the "invited you" preview in the web build (5.4s)
   ✓   3 e2e-web/messages.spec.js:5:1 › MSG-4 the bundled app makes an MLS group and sends a sealed message (3.3s)
-PERF-FEED-1 cold start to first photo: 916, 922, 926 ms (median 922 ms)
-  ✓   4 e2e-web/perf.spec.js:10:1 › PERF-FEED-1 cold start to the first photo on screen is under 2 s (5.6s)
+PERF-FEED-1 cold start to first photo: 909, 912, 914 ms (median 912 ms)
+  ✓   4 e2e-web/perf.spec.js:10:1 › PERF-FEED-1 cold start to the first photo on screen is under 2 s (5.7s)
   -   5 e2e-web/showcase.spec.js:21:5 › showcase phone light
   -   6 e2e-web/showcase.spec.js:21:5 › showcase phone dark
   -   7 e2e-web/showcase.spec.js:21:5 › showcase laptop light
   -   8 e2e-web/showcase.spec.js:21:5 › showcase laptop dark
   -   9 e2e-web/snapshot.spec.js:16:3 › snapshot (iphone)
   -  10 e2e-web/snapshot.spec.js:16:3 › snapshot (android)
-  ✓  11 e2e-web/video.spec.js:39:1 › VID-18 a video post shows its poster with a Play word button on Photos and the post screen; Play opens the player (4.9s)
+  ✓  11 e2e-web/video.spec.js:39:1 › VID-18 a video post shows its poster with a Play word button on Photos and the post screen; Play opens the player (4.8s)
 
   6 skipped
-  5 passed (40.1s)
+  5 passed (40.6s)

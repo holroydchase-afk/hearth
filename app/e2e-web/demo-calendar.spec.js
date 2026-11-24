@@ -38,7 +38,7 @@ test('CAL-19 Birthdays lists Grandma Jo today, Grandpa Earl in 9 days, Mia\'s bi
   await page.goto('/');
   await galleryLoaded(page);
   await openBirthdays(page);
-  await expect(page.getByText('Everyone in the family sees these.').filter({ visible: true })).toBeVisible();
+  await expect(page.getByText('Only your family can see these.').filter({ visible: true })).toBeVisible();
   for (const t of [/Grandma Jo/, /Grandpa Earl/, /Mia[’']s birthday/, /Chase and Alex[’']s anniversary/, /^Today$/, /^In 9 days$/]) {
     await expect(page.getByText(t).filter({ visible: true }).first()).toBeVisible();
   }
