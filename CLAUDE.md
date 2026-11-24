@@ -95,7 +95,7 @@ The main session is Chase's **chief of staff**: it doesn't do specialist work it
    - Never log keys, URLs or captions.
    - No real family names, surnames or private family details in the repo (it's public). Use the kids' nicknames (Gammy, Pawpaw, Mom…) from `docs/product/PERSONAS.md`.
 3. **Grandparent UX.**
-   - Text 17pt+ and 48pt tap targets.
+   - Text uses the named iPhone text styles (SPEC-TYPE): reading text is Body 17; smaller styles (callout..caption2) only for secondary words with Easy view off; Easy view keeps everything 17+. Tap targets 48pt.
    - Verb labels and words under icons; no gesture-only actions. Exception: the tab bar is icon-only (spoken names kept, 48pt) unless Easy view is on; it is on by default for viewers (grandparents), off for parents (DEC-66).
    - Words: group (not circle); tabs Gallery, Share, Feed, More (Chase, Nov 14, DEC-59; replaces "Photos, not feed").
 4. **Deep, not wide.** Nothing outside BETA-SPEC without the staff-pm's call. New ideas go in the `docs/product/ANCHORS.md` ideas log, not straight into code.

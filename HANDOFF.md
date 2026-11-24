@@ -11,6 +11,8 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 24: named type scale at iPhone sizes specced (Chase, DEC-84, R82, TYPE-1..14, SHARE-ST-28..34; branch claude/project-thread-4ulu9i)
+- Done (docs only): `SPEC-TYPE.md` (Apple's 11 styles, Easy view xxLarge min 17, map of every use, lint), Share start A at standard sizes + parents-only kinds row behind `post_kinds` (off) in `SPEC-REDESIGN.md` 1j-2 round 4, persona check `decisions/2026-11-24-type-scale.md` (SG Red, mitigated), CLAUDE.md rule 3 and DS-2 reworded. Next: qa-tdd red in `typeLint.test.ts`, `designSystem.test.tsx` (DS-2 rewrite), `designTokens.test.ts`, `shareStart.test.tsx`.
 ## Nov 24: Share start goes wordless specced (Chase, DEC-79 round 3, R81, SHARE-ST-19..27; branch claude/project-thread-4ulu9i)
 - Done (docs only): option A "Quiet postcard" from the quiet tester specced as SHARE-ST-19..27 in `SPEC-REDESIGN.md` 1j-2, DEC-79 amended, persona check `decisions/2026-11-24-share-start-wordless.md` (LG Red, mitigated). Pending Chase's pick on the card, A recommended. Next: qa-tdd red in `shareStart.test.tsx` and `demo.spec.js`.
 ## Nov 24: demo photos to Pexels stock, demo parent Kevin (DEC-82, R79, DEMO-PHOTO-4..18; branch claude/project-thread-dp2r8b)
