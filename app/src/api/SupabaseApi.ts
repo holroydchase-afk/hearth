@@ -163,7 +163,7 @@ export class SupabaseApi implements HearthApi {
   async signOut(): Promise<void> {
     // WEB-APP-7 (QA-R2): offline with an expired token, supabase-js can't refresh, returns an error and keeps
     // the session. Sign-out must still remove it on this device; the server isn't told, so its refresh session stays open
-    // until revoked (only the 1-hour access token expires; PRIV-WEB-R4, TRACKER R89).
+    // until revoked (only the 1-hour access token expires; PRIV-WEB-R4, TRACKER R91).
     let failed = false;
     try {
       const { error } = await this.o.client.auth.signOut();

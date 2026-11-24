@@ -614,7 +614,7 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** level 5 needs a parent to start a family without Chase's script, and strangers starting families need a way to reach Hearth and a way to stop abuse first.
 - **Source:** `docs/product/SPEC-START-FAMILY.md` section 8; persona check `decisions/2026-11-19-keep-start-a-family.md`; answers PM-R5 in `docs/reviews/2026-11-19-tech-debt/pm.md`
 
-### DEC-87 · Web app for Android Chrome first; Hearth runs on web, iPhone and Android
+### DEC-88 · Web app for Android Chrome first; Hearth runs on web, iPhone and Android
 - **When / status:** Nov 24 · Chase: "go" on the web app plan · Specced (`SPEC-WEB-APP.md`, HRT-WEB.1..5); PR 1 (staying signed in, WEB-APP-1..12) next
 - **Chose:** a Chrome web app so the two Android beta grandparents use Hearth before a native Android build, in this order: staying signed in on the web, add to home screen plus Android-size screen checks, photo sharing on web (EXIF/GPS stripped in the browser, upload survives Chrome closing), email notices (Chrome push later), Save to my phone as a download (video off). $0, no domain yet.
 - **Over:** waiting for a native Android build (ANCHORS milestone 5, "once the iPhone side is solid"); leaving the Android grandpas out of the beta.
@@ -622,4 +622,4 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Source:** `docs/product/SPEC-WEB-APP.md`; persona check `decisions/2026-11-24-web-app.md`. Pulls part of ANCHORS milestone 5 forward through the web; the native Android build stays milestone 5.
 
 ---
-Last updated: Nov 24, 2026 (DEC-87)
+Last updated: Nov 24, 2026 (DEC-88)

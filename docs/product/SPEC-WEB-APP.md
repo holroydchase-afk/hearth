@@ -1,6 +1,6 @@
 # Spec: Hearth web app for Android Chrome
 
-Status: Chase's go, Nov 24, 2026 (DEC-87) · Owner: staff-pm · Persona check: `decisions/2026-11-24-web-app.md` · TRACKER R87, R88
+Status: Chase's go, Nov 24, 2026 (DEC-88) · Owner: staff-pm · Persona check: `decisions/2026-11-24-web-app.md` · TRACKER R89, R90
 
 ## The bet
 
@@ -40,7 +40,7 @@ Each later task gets its own WEB-APP criteria, written by staff-pm before its PR
 | WEB-APP-4 | Given a stored session, when the sealing key is created, then it is a non-extractable AES-GCM `CryptoKey` (`extractable === false`) held in IndexedDB, never in `localStorage` | auto (jest) |
 | WEB-APP-5 | Given a person who was signed in under the old plain-text web storage, when they open the new build, then they stay signed in, the value is re-stored sealed, and the plain-text copy is gone | auto (jest) |
 | WEB-APP-6 | Given a signed-in person, when they sign out, then the sealed session, the messenger store and the IndexedDB key are all removed, and a reload shows the sign-in screen | auto (jest + e2e:web) |
-| WEB-APP-7 | Given a signed-in person who is offline, when they sign out, then the local session is still removed and a reload shows the sign-in screen (only the 1-hour access token expires on its own; the refresh session stays open on the server until it is revoked, PRIV-WEB-R4, TRACKER R89) | auto (jest) |
+| WEB-APP-7 | Given a signed-in person who is offline, when they sign out, then the local session is still removed and a reload shows the sign-in screen (only the 1-hour access token expires on its own; the refresh session stays open on the server until it is revoked, PRIV-WEB-R4, TRACKER R91) | auto (jest) |
 | WEB-APP-8 | Given a browser that blocks IndexedDB or WebCrypto (private window, strict settings), when a person signs in, then Hearth works for that visit from memory, writes nothing in plain text, and does not crash (HARD-7 behaviour kept) | auto (jest) |
 | WEB-APP-9 | Given a sealed value that won't open (key gone, value tampered), when Hearth starts, then it treats the person as signed out and clears the leftovers; no error screen | auto (jest) |
 | WEB-APP-10 | Given the iPhone or Android native build, when this PR lands, then `secureSession.ts` is unchanged and its existing tests pass (Keychain/Keystore key, AsyncStorage blob) | auto (jest; diff shows no native change) |
