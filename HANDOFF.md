@@ -6,9 +6,9 @@ milestone: HRT-M1
 now: tech-debt review Nov 19 (docs/reviews/2026-11-19-tech-debt/): fixing the P0s and P1s in small PRs (TRACKER R62). Main has everything through #124 (demo bar), live
 next: R62 fixes in order (offline family load, demo panel, privacy, UX, perf, CI); then R51 audience-leak eval, R53 operations. Share redo and PR 125 continue in their own threads
 waiting_on_chase:
-  - New Supabase access token in the Hearth cloud environment (SUPABASE_ACCESS_TOKEN); Chase already said "deploy" (Nov 19), so the next session deploys 0026+0027+0028 and Confirm email
+  - Supabase dashboard: check Authentication > Providers > Email has "Confirm email" ON (TS-SEC-R1). The new token gets 403 on the auth-config API, so deploy.sh couldn't set or read it
 blockers:
-  - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
+  - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
 ## Nov 25: duplicate-number check (NUM-1..6; branch claude/project-thread-hl5ax4, not pushed)
