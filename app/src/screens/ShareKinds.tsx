@@ -34,7 +34,7 @@ export function KindsRow({ onPick }: { onPick: (k: PostKind) => void }) {
           onPress={() => onPick(K.kind)}
           style={({ pressed }) => [easy ? styles.tileEasy : styles.tile, { backgroundColor: c.surface, opacity: pressed ? 0.7 : 1 }, photoShadow(dark)]}>
           <SystemIcon icon={K.icon} color={c.accent} size={easy ? 30 : 26} />
-          <Text testID={`share-kind-word-${K.kind}`} style={{ ...type.subheadline, color: c.ink, textAlign: easy ? 'left' : 'center' }}>{K.word}</Text>
+          <Text testID={`share-kind-word-${K.kind}`} style={{ ...type.headline, color: c.ink, textAlign: easy ? 'left' : 'center' }}>{K.word}</Text>
         </Pressable>
       ))}
     </View>
@@ -44,8 +44,9 @@ export function KindsRow({ onPick }: { onPick: (k: PostKind) => void }) {
 export type KindWords = Record<string, string>;
 
 /** Each kind's fields, in order; the required ones must hold words (spaces alone don't count). SHARE-U-17. */
-const FIELDS: Record<PostKind, { label: string; required: boolean; multiline?: boolean }[]> = {
-  event: [{ label: "What's happening", required: true }, { label: 'When', required: true }, { label: 'Where, optional', required: false }],
+// GUX-SK-R1: the event's day is "What day" (was "When"), with an example of how to type it.
+const FIELDS: Record<PostKind, { label: string; required: boolean; multiline?: boolean; placeholder?: string }[]> = {
+  event: [{ label: "What's happening", required: true }, { label: 'What day', required: true, placeholder: 'Like 2026-12-24' }, { label: 'Where, optional', required: false }],
   news: [{ label: 'Your news', required: true, multiline: true }],
   saying: [{ label: 'What they said', required: true, multiline: true }, { label: 'Who said it', required: true }, { label: 'Age then, optional', required: false }],
 };
@@ -57,36 +58,65 @@ export function kindFilled(kind: PostKind, v: KindWords): boolean {
   return FIELDS[kind].every((f) => !f.required || has(v[f.label]));
 }
 
-/** SHARE-U-19: the createPost fields for this kind (news words are the caption), or 'age' when the age isn't a number. */
-export function kindDetails(kind: PostKind, v: KindWords): Pick<CreatePostArgs, 'kind' | 'caption' | 'event' | 'saying'> | 'age' {
+/** GUX-SK-R3: the one line under a kind card while "Pick who gets it" is off, saying what to fill in. */
+export const KIND_HINT: Record<PostKind, string> = {
+  event: "Fill in What's happening and What day to go on.",
+  saying: 'Fill in What they said and Who said it to go on.',
+  news: 'Write your news to go on.',
+};
+
+/** GUX-SK-R1: a real calendar day typed as YYYY-MM-DD (2026-02-30 and 2026-13-40 are not). */
+export function realDay(s: string): boolean {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  if (!m) return false;
+  const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const t = new Date(Date.UTC(y, mo - 1, d));
+  return t.getUTCFullYear() === y && t.getUTCMonth() === mo - 1 && t.getUTCDate() === d;
+}
+
+/** SHARE-U-19: the createPost fields for this kind (news words are the caption), or 'age' when the age isn't a number,
+ *  or 'day' when the event's day isn't a real YYYY-MM-DD date (GUX-SK-R1). */
+export function kindDetails(kind: PostKind, v: KindWords): Pick<CreatePostArgs, 'kind' | 'caption' | 'event' | 'saying'> | 'age' | 'day' {
   const t = (l: string) => (v[l] ?? '').trim();
   if (kind === 'news') return { kind, caption: t('Your news') };
-  if (kind === 'event') return { kind, caption: null, event: { what: t("What's happening"), when: t('When'), where: t('Where, optional') || null } };
+  if (kind === 'event') {
+    if (!realDay(t('What day'))) return 'day';
+    return { kind, caption: null, event: { what: t("What's happening"), when: t('What day'), where: t('Where, optional') || null } };
+  }
   const age = t('Age then, optional');
   if (age && !/^\d{1,3}$/.test(age)) return 'age';
   return { kind, caption: null, saying: { words: t('What they said'), who: t('Who said it'), age: age ? Number(age) : null } };
 }
 
-/** SHARE-U-22: plain words for a refused send, by error.code; they always say the words were kept (A1). */
+/** SHARE-U-22: plain words for a refused send, by error.code; they say what happens to the words (A1).
+ *  GUX-SK-R1/R5/R6: exact words for a bad day, signed out and switched off. */
 export function kindSendMessage(e: unknown): string {
   switch (toApiError(e).code) {
-    case '42501': return 'Events, news and sayings are switched off for this family right now. Your words are kept.';
-    case '23514': return 'Something in the card needs a look, like the date (2026-10-31). Your words are kept.';
+    case '42501': return "This can't be sent right now. Your words are kept. Tap Cancel, or ask whoever set up your family.";
+    case '23514': return DAY_SERVER;
     case 'NETWORK': return 'No internet right now. Your words are kept. Tap Send again when you are back online.';
-    case 'AUTH': return 'Please sign in again. Your words are kept on this screen until you leave it.';
+    case 'AUTH': return "You're signed out, so this didn't send. Signing in again clears this card, so copy your words first if you need them.";
     default: return "That didn't send. Your words are kept. Tap Send again.";
   }
 }
 
 export const AGE_NOT_NUMBER = 'Type the age as a number, like 4, or leave it blank. Your words are kept.';
-export const SAYING_SEEN = 'Everyone you send this to will see who said it.';
+export const DAY_NOT_REAL = 'Type the day as year-month-day, like 2026-12-24. Your words are kept.';
+const DAY_SERVER = 'The day needs to look like 2026-12-24. Your words are kept.';
+/** SHARE-U-21 / GUX-SK-R8: the Saying line names the age only once one is typed. */
+export const sayingSeen = (age: string | undefined) => (has(age)
+  ? 'Everyone you send this to will see these words, who said them, and the age.'
+  : 'Everyone you send this to will see these words and who said them.');
+
+/** GUX-SK-R11: the card holds words worth asking about before Cancel throws them away. */
+export const kindHasWords = (v: KindWords) => Object.values(v).some(has);
 
 /** SHARE-ST-31 / SHARE-U-17..21: a kind's card face (tester option A): its fields, then "To:". Before the picker
  *  opens, "To:" is a blank ruled line; once open, `to` holds the photo flow's face tiles. */
 export function KindCard({ kind, values, onChange, to }: { kind: PostKind; values: KindWords; onChange: (label: string, text: string) => void; to?: React.ReactNode }) {
   const { c, type, dark } = useTheme();
-  const field = (f: { label: string; multiline?: boolean }) => (
-    <Field key={f.label} underline label={f.label} value={values[f.label] ?? ''} multiline={f.multiline}
+  const field = (f: { label: string; multiline?: boolean; placeholder?: string }) => (
+    <Field key={f.label} underline strongLine label={f.label} value={values[f.label] ?? ''} multiline={f.multiline} placeholder={f.placeholder}
       onChangeText={(x) => onChange(f.label, x)} />
   );
   const rule = { height: 1, backgroundColor: c.tabLine };
@@ -96,7 +126,7 @@ export function KindCard({ kind, values, onChange, to }: { kind: PostKind; value
         {kind === 'saying' ? <Txt variant="title2" tone="muted" style={styles.quote}>{'\u201c'}</Txt> : null}
         {FIELDS[kind].map(field)}
         {/* SHARE-U-21 (PRIV-VC-D1): say it before sending, where a screen reader reaches it. */}
-        {kind === 'saying' ? <Txt tone="muted">{SAYING_SEEN}</Txt> : null}
+        {kind === 'saying' ? <Txt tone="muted">{sayingSeen(values['Age then, optional'])}</Txt> : null}
         {to ?? (
           <View style={styles.toRow} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" aria-hidden>
             <Text accessible={false} style={{ ...type.headline, color: c.muted }}>To:</Text>

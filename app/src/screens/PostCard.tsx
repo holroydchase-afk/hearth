@@ -152,13 +152,16 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
 const isWordsKind = (p: FeedPost) => p.kind === 'news' || p.kind === 'event' || p.kind === 'saying';
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-/** SHARE-U-20: an event's day (YYYY-MM-DD, no time zone) as "October 31", with the year when it isn't this year. */
+/** SHARE-U-20 / GUX-SK-R7: an event's day (YYYY-MM-DD, no time zone) as "Saturday, October 31", with the year when it
+ *  isn't this year. The weekday comes from a UTC date, so the phone's time zone never shifts it. */
 export function eventDay(when: string, now = new Date()): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(when);
   if (!m) return when;
   const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
-  const day = `${MONTHS[mo - 1] ?? ''} ${d}`;
+  const wd = WEEKDAYS[new Date(Date.UTC(y, mo - 1, d)).getUTCDay()] ?? '';
+  const day = `${wd}, ${MONTHS[mo - 1] ?? ''} ${d}`;
   return y === now.getFullYear() ? day : `${day}, ${y}`;
 }
 

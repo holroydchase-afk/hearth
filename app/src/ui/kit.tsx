@@ -377,15 +377,16 @@ export function noWebOutline(): TextStyle {
   return (Platform.OS === 'web' ? { outlineStyle: 'none' } : {}) as TextStyle;
 }
 
-export function Field(props: TextInputProps & { label: string; underline?: boolean }) {
+export function Field(props: TextInputProps & { label: string; underline?: boolean; strongLine?: boolean }) {
   const { c, type, os } = useTheme();
-  const { label, style, onFocus, onBlur, underline, ...rest } = props;
+  const { label, style, onFocus, onBlur, underline, strongLine, ...rest } = props;
   const typing = useTypingField(); // UX-R1: the tab bar steps aside while this field is focused
   // iPhone and the web: a filled rounded box with no edge, like the Search field (GUX-R16; was a c.surface box with a
   // c.line edge, which read as a form on paper). Android: Material's outlined text field.
   // GUX-R3: `underline` writes on the card itself (Share's note): no fill, a hairline c.line rule under the words.
+  // GUX-SK-R10: `strongLine` draws that rule in c.tabLine (Share's kind cards), which reads better on the card.
   const box: TextStyle = underline
-    ? { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: c.line, paddingHorizontal: 0, paddingTop: 4, paddingBottom: 8 }
+    ? { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: strongLine ? c.tabLine : c.line, paddingHorizontal: 0, paddingTop: 4, paddingBottom: 8 }
     : os === 'android'
     ? { borderWidth: 1, borderColor: c.muted, backgroundColor: 'transparent', borderRadius: RADIUS.small }
     : { borderWidth: 0, backgroundColor: c.fill, borderRadius: RADIUS.medium };

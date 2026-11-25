@@ -7,7 +7,7 @@
 // "Add photos" button (a parent with Easy view off picks up to 100 and 11+ go to bulk review; anyone else up to 10),
 // with a stamp in the photo spot and blank ruled lines where the note and To: go.
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Image, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { Image, Keyboard, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { Circle } from '../api/HearthApi';
 import { messageFor } from '../errors/messages';
@@ -18,7 +18,7 @@ import { othersIn, recipientsLine, tileColumns, tileName } from '../share/postca
 import { loadSent, recordSent } from '../share/sentBefore';
 import { useApp } from '../state/AppContext';
 import { useNav } from '../state/nav';
-import { AddPhotoCard, AddTile, PostcardStamp, Button, FaceTile, Field, Loading, Notice, Screen, Txt } from '../ui/kit';
+import { AddPhotoCard, AddTile, AlertDialog, PostcardStamp, Button, FaceTile, Field, Loading, Notice, Screen, Txt } from '../ui/kit';
 import { photos } from '../ui/format';
 import { RADIUS, photoShadow, useTheme } from '../ui/theme';
 import type { QueueItem } from '../upload/queue';
@@ -27,7 +27,7 @@ import { AppGate } from './AppGate';
 import { BatchReview } from './BatchReview';
 import { QueueStatus } from './QueueStatus';
 import { uuid } from '../crypto/random';
-import { AGE_NOT_NUMBER, KindCard, KindsRow, kindDetails, kindFilled, kindSendMessage, showsKinds, type KindWords, type PostKind } from './ShareKinds';
+import { AGE_NOT_NUMBER, DAY_NOT_REAL, KIND_HINT, KindCard, KindsRow, kindDetails, kindFilled, kindHasWords, kindSendMessage, showsKinds, type KindWords, type PostKind } from './ShareKinds';
 
 const MAX = 10;
 const DENIED = 'Hearth needs your OK to see your photos. Tap "Allow" when your phone asks.';
@@ -58,6 +58,7 @@ export function ShareScreen() {
   const [kind, setKind] = useState<PostKind | null>(null);
   const [kindWords, setKindWords] = useState<KindWords>({});
   const [kindTo, setKindTo] = useState(false);
+  const [askThrow, setAskThrow] = useState(false); // GUX-SK-R11: "Throw away this card?" is showing
   const draft = useRef<{ clientId: string; made: boolean } | null>(null);
   const sending = useRef(false);
   // SHARE-PC-2: which picked photo is the big one.
@@ -190,6 +191,22 @@ export function ShareScreen() {
     if (draft.current?.made) draft.current = null;
   };
   const kindOk = !!kind && kindFilled(kind, kindWords);
+  // GUX-SK-R2: every notice on a kind card shows at the top of the page, so the page scrolls there.
+  const sayKind = (words: string) => { setNotice(words); scroller.current?.scrollTo({ y: 0, animated: true }); };
+  // GUX-SK-R1/R2: the day and the age are checked on "Pick who gets it", before the tiles open; GUX-SK-R4: then the
+  // keyboard goes away and the page scrolls down to the "To:" tiles.
+  const openKindTo = () => {
+    if (!kind) return;
+    const details = kindDetails(kind, kindWords);
+    if (details === 'age') { sayKind(AGE_NOT_NUMBER); return; }
+    if (details === 'day') { sayKind(DAY_NOT_REAL); return; }
+    setNotice(null);
+    Keyboard.dismiss();
+    setKindTo(true);
+    requestAnimationFrame(() => scroller.current?.scrollToEnd({ animated: true }));
+  };
+  // GUX-SK-R11: Cancel on a kind card with words asks first; an empty card (or the photo postcard) cancels at once.
+  const cancel = () => { if (kind && !items.length && kindHasWords(kindWords)) setAskThrow(true); else reset(); };
   const kindReady = kindOk && kindTo && chosen.length > 0 && !!toLine;
 
   // SHARE-U-19: one post of this kind, no media: createPost then publishPost; Share empties and Feed shows it.
@@ -197,7 +214,8 @@ export function ShareScreen() {
   const sendKind = async () => {
     if (!kind || !kindReady || !userId || sending.current) return;
     const details = kindDetails(kind, kindWords);
-    if (details === 'age') { setNotice(AGE_NOT_NUMBER); return; }
+    if (details === 'age') { sayKind(AGE_NOT_NUMBER); return; }
+    if (details === 'day') { sayKind(DAY_NOT_REAL); return; }
     sending.current = true;
     setBusy(true);
     setNotice(null);
@@ -213,8 +231,7 @@ export function ShareScreen() {
       void app.feed?.refresh().catch(() => {});
       nav.goFeed();
     } catch (e) {
-      setNotice(kindSendMessage(e));
-      scroller.current?.scrollTo({ y: 0, animated: true });
+      sayKind(kindSendMessage(e));
     } finally {
       sending.current = false;
       setBusy(false);
@@ -321,7 +338,7 @@ export function ShareScreen() {
           {/* GUX-W3: "New post" sits in one row in both states, so it never moves; Cancel joins it after photos. */}
           <View style={styles.head}>
             <View style={styles.headTitle}><Txt variant="title2" level={1} role="header">New post</Txt></View>
-            {empty && !kind ? null : <Button variant="quiet" label="Cancel this post" text="Cancel" style={styles.headCancel} onPress={reset} />}
+            {empty && !kind ? null : <Button variant="quiet" label="Cancel this post" text="Cancel" style={styles.headCancel} onPress={cancel} />}
           </View>
           <QueueStatus />
           {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
@@ -390,16 +407,22 @@ export function ShareScreen() {
             required fields hold words, then "Send to <names>" sends it. */}
         {empty && !kind ? null : (
           <View style={[styles.dock, { backgroundColor: c.bg, borderTopColor: c.line, paddingBottom: 12 + under }]}>
+            {/* GUX-SK-R3: while the button is off, one line says what to fill in. */}
+            {kind && !big && !kindTo && !kindOk ? <Txt tone="muted" style={styles.hint}>{KIND_HINT[kind]}</Txt> : null}
             {kind && !big ? (
               <Button label={kindReady ? `Send to ${toLine}` : 'Pick who gets it'} busy={busy}
                 disabled={kindTo ? !kindReady : !kindOk}
-                onPress={() => { if (kindTo) void sendKind(); else setKindTo(true); }} />
+                onPress={() => { if (kindTo) void sendKind(); else openKindTo(); }} />
             ) : (
               <Button label={ready ? `Send to ${toLine}` : 'Pick who gets it'} onPress={() => void send()} disabled={!ready} busy={busy} />
             )}
           </View>
         )}
       </KeyboardAvoidingView>
+      {askThrow ? (
+        <AlertDialog title="Throw away this card?" keep="Keep writing" destroy="Throw away"
+          onKeep={() => setAskThrow(false)} onDestroy={() => { setAskThrow(false); reset(); }} />
+      ) : null}
     </SafeAreaView>
   );
 }
@@ -429,6 +452,7 @@ const styles = StyleSheet.create({
   to: { paddingTop: 12, paddingBottom: 10, gap: 4 },
   toLine: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline', gap: 8, paddingHorizontal: 16, minHeight: 32 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 10 },
+  hint: { marginBottom: 8 },
   dock: { paddingHorizontal: 16, paddingTop: 10, paddingBottom: 12, borderTopWidth: StyleSheet.hairlineWidth },
   // A text button whose words start on the 16 pt edge, like the title above it.
   flush: { alignSelf: 'flex-start', paddingHorizontal: 0 },
