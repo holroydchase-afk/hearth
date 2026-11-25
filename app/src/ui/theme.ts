@@ -258,6 +258,10 @@ export function typeScale(bigText: boolean) {
  *  name 24. Already big, so Bigger text leaves them as they are; the phone's own text size still scales them. */
 export const GALLERY_TYPE = { largeTitle: 34, month: 24 } as const;
 
+/** SPEC-VIEWER: the full-screen viewer's iPhone text styles, in one place until the named type scale lands
+ *  (headline 17 SemiBold, caption1 12, body 17, title3 20, title2 22). They still grow with the phone's text size. */
+export const VIEWER_TYPE = { headline: 17, caption1: 12, body: 17, title3: 20, title2: 22 } as const;
+
 /** WCAG 2 contrast ratio of two opaque #RRGGBB colors. */
 export function contrast(a: string, b: string): number {
   const lum = (hex: string) => {

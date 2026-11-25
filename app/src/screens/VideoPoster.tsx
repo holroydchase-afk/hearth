@@ -15,8 +15,13 @@ import { VideoPlayer } from './VideoPlayer';
 
 const PLAY_ICON = { sf: 'play', md: 'play_arrow' };
 
-export function VideoPoster({ postId, mediaId, fit = 'cover', style, onOpen, openLabel }: {
+export function VideoPoster({ postId, mediaId, fit = 'cover', style, onOpen, openLabel, onBlack, still }: {
   postId: string; mediaId: string; fit?: 'cover' | 'contain'; style?: StyleProp<ViewStyle>;
+  /** VIEWER-15: on the viewer's black backdrop (white loading words, no colored box behind the poster). */
+  onBlack?: boolean;
+  /** SPEC-VIEWER: the poster picture only. The full-screen viewer draws its own Play button above its gallery, which
+   *  would otherwise sit on top of this one and catch the tap. */
+  still?: boolean;
   /** Tapping the poster away from Play (Photos: open the post screen). */
   onOpen?: () => void;
   openLabel?: string;
@@ -24,6 +29,14 @@ export function VideoPoster({ postId, mediaId, fit = 'cover', style, onOpen, ope
   const { t } = useTheme();
   const [playing, setPlaying] = useState(false);
   const player = playing ? <VideoPlayer postId={postId} mediaId={mediaId} onClose={() => setPlaying(false)} /> : null;
+
+  if (still) {
+    return (
+      <View style={[styles.box, style]}>
+        <MediaImage postId={postId} mediaId={mediaId} fit={fit} full={false} onBlack={onBlack} style={onBlack ? [StyleSheet.absoluteFill, styles.clear] : StyleSheet.absoluteFill} />
+      </View>
+    );
+  }
 
   if (!onOpen) {
     return (
@@ -55,6 +68,7 @@ export function VideoPoster({ postId, mediaId, fit = 'cover', style, onOpen, ope
 }
 
 const styles = StyleSheet.create({
+  clear: { backgroundColor: 'transparent' },
   box: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, overflow: 'hidden' },
   target: { minHeight: MIN_TARGET, minWidth: MIN_TARGET },
   middle: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, alignItems: 'center', justifyContent: 'center' },

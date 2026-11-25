@@ -8,8 +8,10 @@ import { useTheme } from '../ui/theme';
 
 /** Thumbnail first (a small blurry preview), then the full photo. Words while loading. full={false}: the thumb only, sharp (a video's poster).
  *  compact (RD-63, R20): a small square says only "Loading…" (spoken by the spinner), never words that clip. */
-export function MediaImage({ postId, mediaId, style, fit = 'cover', full = true, compact = false }: {
+export function MediaImage({ postId, mediaId, style, fit = 'cover', full = true, compact = false, onBlack = false }: {
   postId: string; mediaId: string; style?: StyleProp<ViewStyle>; fit?: 'cover' | 'contain'; full?: boolean; compact?: boolean;
+  /** VIEWER-14: on the full-screen viewer's black backdrop, the loading words and spinner are white. */
+  onBlack?: boolean;
 }) {
   const { media } = useApp();
   const { c } = useTheme();
@@ -35,14 +37,16 @@ export function MediaImage({ postId, mediaId, style, fit = 'cover', full = true,
         <Image source={{ uri }} resizeMode={fit} blurRadius={display || !full ? 0 : 6} style={StyleSheet.absoluteFill} accessibilityIgnoresInvertColors />
       ) : (
         <View style={styles.center}>
-          {failed ? <Txt variant="muted">{compact ? "Can't show" : "This photo can't be shown right now."}</Txt>
-            : compact ? <ActivityIndicator color={c.muted} accessibilityLabel="Loading" />
-            : <><ActivityIndicator color={c.muted} /><Txt variant="muted">Loading the photo…</Txt></>}
+          {failed ? <Txt variant="muted" style={onBlack ? ON_BLACK : undefined}>{compact ? "Can't show" : "This photo can't be shown right now."}</Txt>
+            : compact ? <ActivityIndicator color={onBlack ? ON_BLACK.color : c.muted} accessibilityLabel="Loading" />
+            : <><ActivityIndicator color={onBlack ? ON_BLACK.color : c.muted} /><Txt variant="muted" style={onBlack ? ON_BLACK : undefined}>Loading the photo…</Txt></>}
         </View>
       )}
     </View>
   );
 }
+
+const ON_BLACK = { color: '#FFFFFF' } as const;
 
 const styles = StyleSheet.create({
   box: { width: '100%', overflow: 'hidden' },
