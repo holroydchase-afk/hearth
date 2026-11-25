@@ -1,9 +1,0 @@
-{
- "suite": "app",
- "at": "2026-11-25T12:30:00-05:00",
- "label": "SPEC-TYPE (DEC-84) rule in WEB-APP-19..21: all suites 3x (target green; compiler-check red on main, B32)",
- "passed": 8088,
- "failed": 3,
- "results": {},
- "note": "3 runs on aff95aa plus the uncommitted android-screens.spec.js and SPEC-WEB-APP.md change, identical, no flake. android-screens.spec.js 30 passed x3: Easy view on keeps 17px+; off allows only SPEC-TYPE's secondary words (date group, post date, reaction count) at exactly 15px (subheadline) and nothing under 11px (caption2). jest 2539 passed (1 skipped, 1 todo, 191 suites) x3, typecheck clean x3, e2e:web 47 passed (6 opt-in skipped) x3, e2e:site 16 x3, e2e:demo 61 passed (5 skipped) x3, prototype e2e 33 x3, 17 of 18 test-all script suites ok x3. Failed x3: node app/scripts/compiler-check.js, 4 bailouts not allowlisted (B32, QA-R1; app/src identical to main, so not from this change). passed = 3 x (2539 + 47 + 16 + 61 + 33). Not run: backend SQL, Deno, starter suites (no backend change); TYPE-9/13/14 need a phone or person. e2e/results/web-app-type-green-3x-2026-11-25.txt"
-}

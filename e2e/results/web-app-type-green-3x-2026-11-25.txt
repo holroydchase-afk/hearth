@@ -1,5 +1,5 @@
 SPEC-TYPE / DEC-84 rule for WEB-APP-19..21 (android-screens.spec.js), qa-tdd, Nov 25, on aff95aa (main after #185) plus the uncommitted test and SPEC-WEB-APP change. 3 rounds, sequential, each export rebuilt by its npm script.
-Red first (r107, e2e/results/web-app-type-red-2026-11-25.txt): 6 failed, Easy view off only: Gallery 'Nov 25' 15px (date group, SPEC-TYPE subheadline) and Feed 'Just now' 15px (post date, subheadline), at 360 light, 412 light, 360 dark. Both are map rows in SPEC-TYPE, so not a bug: the test now allows only those secondary words (plus reaction count) at exactly 15px with Easy view off, nothing under 11px ever, and keeps 17px+ with Easy view on.
+Red first (r108, e2e/results/web-app-type-red-2026-11-25.txt): 6 failed, Easy view off only: Gallery 'Nov 25' 15px (date group, SPEC-TYPE subheadline) and Feed 'Just now' 15px (post date, subheadline), at 360 light, 412 light, 360 dark. Both are map rows in SPEC-TYPE, so not a bug: the test now allows only those secondary words (plus reaction count) at exactly 15px with Easy view off, nothing under 11px ever, and keeps 17px+ with Easy view on.
 
 round 1 jest rc=0 203s
 round 1 typecheck rc=0 8s

@@ -1,9 +1,0 @@
-{
- "suite": "app",
- "at": "2026-11-24T20:30:00-05:00",
- "label": "HRT-WEB.2 add to home screen and Android-size screens (WEB-APP-13..21): tests written first (red)",
- "passed": 165,
- "failed": 24,
- "results": {},
- "note": "3 runs on 0a33bfb, identical, no flake. e2e:web 41 passed, 6 failed (6 opt-in skipped) x3: install.spec.js WEB-APP-13 (no manifest link or theme-color in index.html), 14 (manifest.webmanifest falls back to index.html, text/html), 15/16 (no manifest, so no icons), 17 (Chromium sees no manifest) and WEB-APP-17 QA-R1 (nested address) red for the right reason; android-screens.spec.js WEB-APP-19/20/21 30 passed (360x800 and 412x915, Gallery/Share/Feed/More, Easy view on and off, dark at 360; a photo post is shared first so Gallery and Feed show a tile and a post card): existing screens already meet them. Checks proved live by an injected 12px text, 30x30 button, 900px line, ellipsis and clipped span (all caught). e2e:site 14 passed, 2 failed x3 (install-site.spec.js WEB-APP-18 and its QA-R1 feed/ case: no manifest link). A scratch export built to the spec passes WEB-APP-13..18 except both QA-R1 cases: B31 (relative manifest href breaks on nested addresses). Not run: jest, typecheck, e2e:demo, backend (no change there); WEB-APP-22..24 need a real Android phone. e2e/results/web-install-red-2026-11-24.txt"
-}
