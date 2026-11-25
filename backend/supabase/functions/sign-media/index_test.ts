@@ -141,14 +141,31 @@ Deno.test("QA-R4 upload takes 1..20 items: 0 and 21 are 400, nothing signed or s
   assert(!calls.some((c) => c.includes("prepare_media_upload") || c.includes("media_keys")), "no database calls");
 });
 
-Deno.test("QA-R4 free video cap -> 402 free_video_cap_reached, no key stored", async () => {
-  prepareError = { status: 400, body: { code: "P0001", message: "free_video_cap_reached", details: null, hint: null } };
+Deno.test("QA-R4 ENG-R11 free video cap (HF002) -> 402 free_video_cap_reached, no key stored", async () => {
+  prepareError = { status: 400, body: { code: "HF002", message: "free_video_cap_reached", details: null, hint: null } };
   calls.length = 0;
   const r = await upload([{ ...photo, kind: "video", mime_type: "video/mp4", duration_ms: 5000 }]);
   prepareError = null;
   assert(r.status === 402, `status ${r.status}`);
   assert((await r.json()).error === "free_video_cap_reached", "error name");
   assert(!calls.some((c) => c.startsWith("POST") && c.includes("media_keys")), "no key stored");
+});
+
+// ENG-R11: branch on the code, never the message (rule 7). HF001 is family_full (0024), not the video cap.
+Deno.test("ENG-R11 a P0001 whose message mentions free_video_cap_reached is NOT a 402", async () => {
+  prepareError = { status: 400, body: { code: "P0001", message: "trigger said free_video_cap_reached somewhere", details: null, hint: null } };
+  const r = await upload([{ ...photo, kind: "video", mime_type: "video/mp4", duration_ms: 5000 }]);
+  prepareError = null;
+  assert(r.status !== 402, `status ${r.status}`);
+  assert((await r.json()).error !== "free_video_cap_reached", "not reported as the video cap");
+});
+
+Deno.test("ENG-R11 family_full (HF001) is not reported as the video cap", async () => {
+  prepareError = { status: 400, body: { code: "HF001", message: "family_full", details: null, hint: null } };
+  const r = await upload([{ ...photo, kind: "video", mime_type: "video/mp4", duration_ms: 5000 }]);
+  prepareError = null;
+  assert(r.status !== 402, `status ${r.status}`);
+  assert((await r.json()).error !== "free_video_cap_reached", "not reported as the video cap");
 });
 
 Deno.test("QA-R4 not the author (42501) -> 403 forbidden; bad row (23514) -> 400 invalid", async () => {

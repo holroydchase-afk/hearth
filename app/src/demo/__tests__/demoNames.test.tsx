@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// T44 DEMO-NAMES-1..6 (Chase, Nov 24): the public demo's people get new made-up names. Parent Kevin -> Graham, mom
+// T45 DEMO-NAMES-1..6 (Chase, Nov 24): the public demo's people get new made-up names. Parent Kevin -> Graham, mom
 // Alex -> Eliza, Nana Ruth -> Nana Eloise, Grandpa Earl -> Grandpa Hollis, Aunt Bea -> Aunt Libby, kid Mia -> Clara;
 // Grandma Jo stays ("Graham's mom"). Only the demo changes: the FakeBackend fixture keeps its names for other tests.
 // Written FIRST (qa-tdd, Nov 24): red until the demo seed and DemoBar change. Page level: e2e-web/demo*.spec.js.
@@ -47,7 +47,7 @@ function literals(file: string): string[] {
   return [...src.matchAll(/'([^'\n]*)'|"([^"\n]*)"|`([^`]*)`|>([^<>{}\n]+)</g)].map((m) => m[1] ?? m[2] ?? m[3] ?? m[4] ?? '');
 }
 
-describe('T44 DEMO-NAMES the demo family has new names', () => {
+describe('T45 DEMO-NAMES the demo family has new names', () => {
   it('DEMO-NAMES-1 DEMO_NAMES: Graham, Eliza, Nana Eloise, Grandpa Hollis by fixture user id', () => {
     expect(DEMO_NAMES).toEqual({
       [FIXTURE.users.chase.id]: 'Graham',
@@ -111,7 +111,7 @@ describe('T44 DEMO-NAMES the demo family has new names', () => {
   });
 
   it('DEMO-NAMES-3 the seed version moves on from the Kevin family, so a returning visitor re-seeds', () => {
-    expect(demoSeedVersion()).not.toBe('napqej'); // demoSeedVersion() before T44 (Nov 24)
+    expect(demoSeedVersion()).not.toBe('napqej'); // demoSeedVersion() before T45 (Nov 24)
   });
 
   it('DEMO-NAMES-4 every demo email is valid: lower case, no spaces, @example.com', async () => {

@@ -30,7 +30,7 @@ describe('CAL-19 the demo family has dates', () => {
     expect(rows.find((r) => r.member_id === FIXTURE.users.earl.id && r.kind === 'birthday')).toMatchObject(md(in9));
   });
 
-  // Updated Nov 24 (T44 DEMO-NAMES-1): the parents are Graham and Eliza; the made-up kid is Clara (was Mia).
+  // Updated Nov 24 (T45 DEMO-NAMES-1): the parents are Graham and Eliza; the made-up kid is Clara (was Mia).
   it('CAL-19 DEMO-NAMES-1 a made-up kid\'s birthday (Clara) and Graham and Eliza\'s anniversary', async () => {
     const rows = await demoDates();
     expect(rows.filter((r) => r.kind === 'birthday' && r.member_id === null && /^Clara\b/.test(r.label ?? ''))).toHaveLength(1);
@@ -46,6 +46,6 @@ describe('CAL-19 the demo family has dates', () => {
   });
 
   it('DEMO-NAMES-3 the demo seed version moves on from the Kevin family, so returning visitors re-seed', () => {
-    expect(demoSeedVersion()).not.toBe('napqej'); // demoSeedVersion() before T44 (Nov 24, Kevin/Alex)
+    expect(demoSeedVersion()).not.toBe('napqej'); // demoSeedVersion() before T45 (Nov 24, Kevin/Alex)
   });
 });

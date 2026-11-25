@@ -61,7 +61,7 @@ describe('DEMO-1..3, DEMO-10 sample-data demo', () => {
     expect(plain).toEqual((await picture(first.pictures[0]!)).display);
   });
 
-  // Updated Nov 24 (T44 DEMO-NAMES-1/4; was "Kevin", DEC-82; "Chase", DEC-64): the parent is "Graham", the mom "Eliza",
+  // Updated Nov 24 (T45 DEMO-NAMES-1/4; was "Kevin", DEC-82; "Chase", DEC-64): the parent is "Graham", the mom "Eliza",
   // the other grandparents Nana Eloise and Grandpa Hollis; Grandma Jo stays; no surname appears.
   it('DEMO-3 DEMO-NAMES-1 DEMO-NAMES-4 the demo parent is "Graham"; the rest are made-up names and no surname, "Chase" or "Kai" appears', async () => {
     const be = await seeded();
@@ -73,7 +73,7 @@ describe('DEMO-1..3, DEMO-10 sample-data demo', () => {
     expect(JSON.stringify(be.state.users)).not.toMatch(/\b(Kevin|Alex|Ruth|Earl)\b/);
     expect(JSON.stringify(be.state.users)).not.toMatch(/\bKai\b|Holroyd|Chase/i);
     expect(Object.values(DEMO_NAMES)).not.toContain('Kai');
-    expect(be.state.spaces[F.space.id]!.name).toBe('Clara and Leo'); // T44 QA-R1: the demo seed renames the fixture's 'Mia and Leo'
+    expect(be.state.spaces[F.space.id]!.name).toBe('Clara and Leo'); // T45 QA-R1: the demo seed renames the fixture's 'Mia and Leo'
   });
 
   it('DEMO-PHOTO-9 no seeded caption, title or reply says "Chase"', async () => {

@@ -11,6 +11,9 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 25: duplicate-number check (NUM-1..6; branch claude/project-thread-hl5ax4, not pushed)
+- **Done, test-first:** `scripts/check-unique-numbers.sh [root]` fails on a repeated migration prefix, DEC heading, ticket id or run id; passes on the real repo. Test `scripts/tests/check_unique_numbers_test.sh` 6/6. **Next:** wire into `test-all.sh`/CI if staff-pm agrees.
+
 ## Nov 24: add to home screen built (HRT-WEB.2, WEB-APP-13..18 + QA-R1; branch claude/project-thread-o1dwht, PR)
 - **Done (engineer, on qa-tdd's red `e2e/results/web-install-red-2026-11-24.txt`):** `app/public/manifest.webmanifest` (Hearth, standalone, portrait, `id`/`start_url`/`scope` ".", Paper #F7F7F4), icons in `app/public/icons/` made by `app/scripts/make-web-icons.py` (Pillow, no new dependency; maskable from `adaptive-icon.png` inside the central 78% on Paper), `app/public/index.html` (Expo template + manifest link + light/dark theme-color), `.webmanifest` type in `serve-dist.js` and `serve-static.js`. QA-R1 (Chase): the link is root-relative to the base path (`/manifest.webmanifest`; `build-demo.sh` rewrites it to `/demo/hearth/...`); WEB-APP-13 test line and spec WEB-APP-13/18 updated to say so. No service worker. **Next exact step:** qa-tdd green 3x, then grandparent-ux on the icons and the inviter guide section, then commit and PR.
 ## Nov 25: React Compiler check in CI (B32, R84; branch claude/project-thread-6ew09x, PR)
@@ -81,7 +84,7 @@ blockers:
 - **Next exact step:** qa-tdd fixes UX-R1 and R18 data, green 3x; privacy-security (metadata), grandparent-ux (captions); retake screens.
 - **T37 (after #173, Nov 24):** demo-site publish run 45430430863 failed its pre-publish `site.spec.js` on old demo text; qa-tdd updated it (Kevin, search "orchard", New for you 1 of 1 then Done), `npm run e2e:site` red 3 then green 14 x3 (r71). PR #179 merged, live 3077ff5 checked fresh+returning 390/1280, Jo sees Dad's side only.
 - **T40 (live check, Nov 24):** laptop "Try this" step 3 still said search "lake" (finds nothing now); now "orchard", with a guard test that the hinted word finds a demo post. qa-tdd red then green 3x (r72, r78).
-- **T44 demo family renamed (Chase, Nov 24):** demo people are Graham (dad, the visitor), Eliza (mom), Grandma Jo (kept), Nana Eloise, Grandpa Hollis, Aunt Libby, kid Clara; family "Clara and Leo". Titles grandpa/grandma/nana/pawpaw/granny/gram/gran, never "granddaddy". Demo-only via DEMO_NAMES (fixture names unchanged). qa-tdd red (r110), engineer green.
+- **T45 demo family renamed (Chase, Nov 24):** demo people are Graham (dad, the visitor), Eliza (mom), Grandma Jo (kept), Nana Eloise, Grandpa Hollis, Aunt Libby, kid Clara; family "Clara and Leo". Titles grandpa/grandma/nana/pawpaw/granny/gram/gran, never "granddaddy". Demo-only via DEMO_NAMES (fixture names unchanged). qa-tdd red (r110), engineer green.
 - **Portfolio / public presence:** the public demo shows free Pexels stock photos and a made-up parent "Kevin" once this merges; no photo of Chase's family remains on main.
 
 ## Nov 24: life calendar review fixes built (PRIV-R1..R3, R5; GUX-R1..R11; branch claude/project-thread-ov6z2y)
@@ -222,6 +225,7 @@ blockers:
 - **CI PR #131 merged** (96729ff); e2e Playwright pinned to ~1.63.0 so CI's browser matches the sandbox (VID-18 failed on 1.56).
 - **SEC-R1 PR:** migration 0027 keeps group titles with the parents (managers) in the raw API and the data export; relatives see only Everyone and event groups they're in. Merged as a file only: NOT deployed. `deploy.sh` applies every unapplied migration, so Chase's next "deploy" ships 0026 and 0027 together.
 - **SEC-R1 PR #132 merged** (73f541f), migration file only.
+- **Video fixes PR (ENG-R2, ENG-R11, SEC-R7, PRIV-R1; branch claude/project-thread-hl5ax4):** migration 0030 (renumbered twice; 0028 and 0029 went to other features first) gives a free video's count back when it never finishes uploading (failed, deleted or its draft thrown away while pending; once, never below 0; an uploaded video keeps its count), the cap refuses with its own code HF002 (sign-media branches on it for 402), and nobody can call `private.videos_this_month` directly. The app clears decrypted video files at every start, signed in or not. File only: NOT deployed (the pending deploy now ships every migration from 0026 up once PR #135 merges). qa-tdd 3x: video green, one unrelated sign-in timer flake (T23). Then Chase: merge, deploy, VID-19 on phones, VID-22 on his iPhone, "turn video on" (TRACKER R27, DEC-89).
 - **ENG-R5 PR:** the Fake backend, the sample family and the laptop demo frame now ship only in fake and demo builds. Metro swaps `fakeRuntime` and `demo/DemoChrome` for `.off` stand-ins unless `EXPO_PUBLIC_HEARTH_FAKE` or `EXPO_PUBLIC_HEARTH_DEMO` is set; a real web export has no FakeBackend, sample family or demo strings.
 - **Next exact step (after that):** the summary for Chase; open P2s are in `docs/reviews/2026-11-19-tech-debt/README.md`.
 
@@ -908,3 +912,6 @@ blockers:
 - **Plans (claude.ai docs):** Hearth Beta Plan (with a Personas tab), Hearth Funding Plan.
 - **Published pages:** Hearth Family Photos prototype (claude.ai/artifact/SbUX3TQP2crBZ5o68Kho2a), Hearth Test Log (claude.ai/artifact/XnfnBsuPL7ayedPHBpvctD).
 - **Project docs:** `claude/hearth-*.md` and `claude/agents/*.md` in the "Family photo sharing" Project.
+
+## Repo best-practices pass (2026-11-25)
+- Done: SUPPORT.md README-AI-line codeql(actions, javascript-typescript, python) ci-permissions. Added from the GitHub, Linux Foundation and Syracuse checklists (studio-agents docs/repo-standards.md). Left for this project to review: CHANGELOG.md, THIRD_PARTY_NOTICES, wording of the README AI-use line against the claims register, repo description and topics.

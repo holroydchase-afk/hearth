@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-24T23:59:58-05:00",
- "label": "T44 DEMO-NAMES-1..6 demo renames: failing tests first (red)",
- "passed": 109,
- "failed": 30,
+ "at": "2026-11-19T07:55:00-05:00",
+ "label": "VID fixes ENG-R2, ENG-R11, SEC-R7, PRIV-R1: all suites 3x (flaky, T44)",
+ "passed": 1525,
+ "failed": 1,
  "results": {},
- "note": "Red on purpose, 1 run each, no product change: npx jest src/demo: 14 failed, 58 passed (DEMO_NAMES still Kevin/Alex with no ruth/earl; post 4 says Aunt Bea; dates Mia, Kevin and Alex; DemoBar says You're Kevin / Kevin's mom / Back to Kevin's view; seed version still napqej). DEMO-NAMES-4 (valid emails) and DEMO-NAMES-6 (no Granddaddy) pass now as guards. npm run e2e:demo: 14 failed, 39 passed, 5 skipped, every failure waiting for Graham, Eliza, Grandpa Hollis, Aunt Libby or Back to Graham's view. npm run e2e:site: 2 failed, 12 passed (DEMO-5 Start over and DEMO-NEW-5 wait for Graham / From Eliza). Green waits on the engineer's seed.ts and DemoBar.tsx change. e2e/results/2026-11-24-T44-*-red.txt"
+ "note": "3 runs each at b3d8f98 (engineer) on the red tests 08ab3be; test files unchanged by the fix. Backend SQL 1231 passed, 0 failed x3 (VIDEO REFUND 28, VIDEO CAP 14). jest 1526 passed x2, then run 3: 1525 passed, 1 failed (signin.test.tsx BETA-JOIN-2 countdown, real-clock test bug T44, unrelated). typecheck clean x3, check-agents and check-persona-checks OK x3, e2e:web 5 passed (6 skipped) x3. Deno (sign-media HF002 branch) not run: deno not installed, owed to CI. e2e/results/vid-fixes-green-3x-2026-11-19.txt"
 }

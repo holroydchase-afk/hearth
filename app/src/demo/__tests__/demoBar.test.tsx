@@ -117,7 +117,7 @@ describe('DEMO-BAR studio demo bar', () => {
     expect(open).toHaveBeenCalledWith(PORTFOLIO_URL);
   });
 
-  // Updated Nov 24 (T44 DEMO-NAMES-2): the demo parent is Graham (was Kevin, DEC-82; Chase, UX-R12).
+  // Updated Nov 24 (T45 DEMO-NAMES-2): the demo parent is Graham (was Kevin, DEC-82; Chase, UX-R12).
   it("DEMO-10 DEMO-PHOTO-10 DEMO-NAMES-2 the drawer switches to Grandma Jo's view and back to Graham's in one tap", async () => {
     const { be, reload } = await setup();
     fireEvent.press(toggle(false));
