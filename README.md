@@ -23,6 +23,7 @@ Built by Chase Holroyd, a product manager, as a working proof of concept: one pe
 | How it works and what it protects | [Architecture](docs/architecture/) (system overview, data flow, encryption and keys, threat model) |
 | Why each call was made | [Decision log](docs/product/DECISION-LOG.md): every decision, what it beat, and why |
 | How it's tested | [Testing](docs/eng/TESTING.md), plus `bash scripts/test-totals.sh` for the real totals |
+| What changed so far | [Changelog](CHANGELOG.md): what a user or visitor can see, in plain words |
 | What's in scope | [Beta spec](docs/product/BETA-SPEC.md): the acceptance criteria each feature is tested against |
 | What went wrong and what changed | [Lessons](docs/eng/LESSONS.md): six post mortems, each with the rule or guard it added |
 
@@ -93,4 +94,4 @@ License: AGPL-3.0 ([LICENSE](LICENSE)). The repo is public. [Contributing](CONTR
 
 ## How this is built
 
-Built with Claude Code (AI-assisted code, tests and docs). The maintainer directs the work and decides what ships. Tests and CI run on every pull request; the current state is in HANDOFF.md.
+Built with Claude Code (AI-assisted code, tests and docs). The app itself runs no AI on photos or metadata. The maintainer directs the work and decides what ships. Tests and CI run on every pull request; the current state is in HANDOFF.md.
