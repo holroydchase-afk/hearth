@@ -8,7 +8,7 @@ Built by Chase Holroyd, a product manager, as a working proof of concept: one pe
 
 <p>
   <img src="docs/portfolio/screens/iphone-gallery.jpg" width="200" alt="Gallery as the parent: a greeting, a search field, a birthday reminder, then New for you with 3 new photos">
-  <img src="docs/portfolio/screens/iphone-feed-who-can-see.jpg" width="200" alt="Feed as the parent: a post with its reactions and the line Alex, Grandma Jo and 1 more can see this">
+  <img src="docs/portfolio/screens/iphone-feed-who-can-see.jpg" width="200" alt="Feed as the parent: a post with its reactions and the line Eliza, Grandma Jo and 1 more can see this">
   <img src="docs/portfolio/screens/iphone-grandma-jo-feed.jpg" width="200" alt="Feed as Grandma Jo: bigger text, no Share tab, and a line under the comment field that names who will read her comment">
 </p>
 
