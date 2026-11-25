@@ -3,7 +3,7 @@
 // HRT-WEB.2 (docs/product/SPEC-WEB-APP.md): every tab reads and taps right on Android-size phones, on the real
 // fake-backend export in Chromium as a touch, mobile screen. WEB-APP-19: 360x800 and 412x915, Gallery, Feed,
 // Share and More, Easy view on and off (16 runs). WEB-APP-20: the tab bar at both sizes. WEB-APP-21: both again in
-// dark at 360x800. Written by qa-tdd, Nov 24. Each check collects every offender so one run shows them all.
+// dark at 360x800. Written by qa-tdd, Nov 24; text-size rule updated Nov 25 for SPEC-TYPE (DEC-84). Each check collects every offender so one run shows them all.
 const path = require('path');
 const { test, expect } = require('../../e2e/node_modules/@playwright/test');
 
@@ -12,6 +12,17 @@ const FIXTURE = path.join(__dirname, 'fixtures', 'park-gps.jpg');
 const GREETING = /^Good (morning|afternoon|evening)/; // RD-11: the Gallery heading
 const SIZES = [{ width: 360, height: 800 }, { width: 412, height: 915 }];
 const TABS = ['Gallery', 'Share', 'Feed', 'More'];
+
+// SPEC-TYPE (DEC-84, CLAUDE.md rule 3): Easy view on keeps every text 17px+. With it off, the smaller named styles
+// (callout..caption2) are allowed only on the secondary words SPEC-TYPE's map lists, each at exactly its style's
+// Standard size; anything else under 17px fails, and nothing is ever under caption2's 11px. A new small text means a
+// map row in SPEC-TYPE first (staff-pm call), then a row here.
+const SMALLEST_STYLE_PX = 11; // caption2, Standard
+const SECONDARY = [
+  { what: 'Gallery date group (subheadline)', px: 15, text: /^[A-Z][a-z]{2} \d{1,2}(, \d{4})?$/ },
+  { what: 'post date (subheadline)', px: 15, text: /^(Just now|\d+ (minute|hour|day)s? ago|Yesterday|[A-Z][a-z]{2} \d{1,2}(, \d{4})?)( · Edited)?$/ },
+  { what: 'reaction count (subheadline)', px: 15, text: /^\d+$/ },
+];
 
 async function signIn(page) {
   await page.goto('/sign-in');
@@ -63,8 +74,8 @@ async function openTab(page, name) {
 }
 
 /** WEB-APP-19's four checks, run in the page; each list names its offenders (empty when it passes). */
-function screenChecks(page) {
-  return page.evaluate(() => {
+function screenChecks(page, easy) {
+  return page.evaluate(({ easy, secondary, smallest }) => {
     const W = window.innerWidth;
     const shown = (el) => {
       const r = el.getBoundingClientRect();
@@ -90,8 +101,10 @@ function screenChecks(page) {
       if (r.right > W + 1 && r.left < W && !scrollsX(el)) sideways.push(`"${name(el)}" right edge ${Math.round(r.right)} > ${W}`);
     }
 
+    const allowed = (el, px) => !easy && px >= smallest
+      && secondary.some((s) => s.px === px && new RegExp(s.text).test(ownText(el)));
     const small = texts.map((el) => ({ el, px: parseFloat(getComputedStyle(el).fontSize) }))
-      .filter((t) => t.px < 17).map((t) => `"${name(t.el)}" ${t.px}px`);
+      .filter((t) => t.px < 17 && !allowed(t.el, t.px)).map((t) => `"${name(t.el)}" ${t.px}px`);
 
     const controls = all.filter((el) => el.matches('button, a[href], [role="button"], [role="link"], [role="tab"], [role="switch"]') && shown(el));
     const tiny = controls.map((el) => ({ el, r: el.getBoundingClientRect() }))
@@ -115,7 +128,7 @@ function screenChecks(page) {
       }
     }
     return { sideways, small, tiny, cut };
-  });
+  }, { easy, secondary: SECONDARY.map((s) => ({ px: s.px, text: s.text.source })), smallest: SMALLEST_STYLE_PX });
 }
 
 /** WEB-APP-20: the four tabs, their words and their size. */
@@ -146,15 +159,16 @@ for (const look of looks) {
         test.use({ viewport: size, isMobile: true, hasTouch: true, colorScheme: look.scheme });
 
         for (const tab of TABS) {
-          test(`${look.id} ${tab} at ${where}: no sideways scroll, text 17px+, targets 48x48, no cut text`, async ({ page }) => {
+          test(`${look.id} ${tab} at ${where}: no sideways scroll, ${easy ? 'text 17px+' : 'text 17px+ or a named secondary style (SPEC-TYPE)'}, targets 48x48, no cut text`, async ({ page }) => {
             await signIn(page);
             if (easy) await setEasyView(page, true);
             if (tab === 'Gallery' || tab === 'Feed') await sharePhoto(page);
             if (look.scheme === 'dark') expect(await page.evaluate(() => matchMedia('(prefers-color-scheme: dark)').matches)).toBe(true);
             await openTab(page, tab);
-            const got = await screenChecks(page);
+            const got = await screenChecks(page, easy);
             expect.soft(got.sideways, 'no sideways scroll').toEqual([]);
-            expect.soft(got.small, 'every visible text 17px or larger').toEqual([]);
+            expect.soft(got.small, easy ? 'every visible text 17px or larger (Easy view, SPEC-TYPE TYPE-3)'
+              : 'every visible text 17px or larger, or a SPEC-TYPE secondary word at its named size (DEC-84)').toEqual([]);
             expect.soft(got.tiny, 'every button, link, tab and switch 48x48').toEqual([]);
             expect.soft(got.cut, 'no cut text').toEqual([]);
           });

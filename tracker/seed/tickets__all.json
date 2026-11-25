@@ -1623,6 +1623,22 @@
    "fixed": null
   },
   {
+   "id": "B32",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "open",
+   "title": "QA-R1 (SPEC-TYPE WEB-APP-19..21 run r108, Nov 25): node app/scripts/compiler-check.js (INTAKE-80-3, a test-all suite) exits 1 on main aff95aa, 3 of 3 runs: 4 React Compiler bailouts not in its ALLOWED list. src/feed/autoplay.ts:39 useAutoplay, src/screens/SignInScreen.tsx:13 SignInScreen and src/ui/kit.tsx:309 AddPhotoCard read ref.current during render; src/ui/kit.tsx:345 PostcardStamp has a new-expression that can't be reordered. app/src is identical to origin/main, so it came in with an earlier merge (likely #174 type scale or DEC-82 autoplay), not this change; CI doesn't run compiler-check, so it went unseen. Effect: those 4 stay uncompiled (pre-compiler behaviour), no user-visible change. Fix: engineer fixes each or adds it to ALLOWED with a reason (B27). Test: node app/scripts/compiler-check.js",
+   "tests": [
+    "app/scripts/compiler-check.js",
+    "app/src/feed/autoplay.ts",
+    "app/src/screens/SignInScreen.tsx",
+    "app/src/ui/kit.tsx"
+   ],
+   "found": "2026-11-25",
+   "fixed": null
+  },
+  {
    "id": "B31",
    "kind": "bug",
    "layer": "app",
