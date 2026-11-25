@@ -28,6 +28,7 @@ import { ApiError } from '../../api/HearthApi';
 import type { Prepared, QueueItem } from '../../upload/queue';
 import { APP0_JFIF, APP1_FULL_EXIF, SECRETS, contains, imageData, jpeg } from '../../test/jpeg';
 import * as mod from '../uploadStore.web';
+import { createSecureSessionStorage } from '../secureSession.web';
 
 type Rec = { v: number; spec: Uint8Array; display: Uint8Array; thumb: Uint8Array };
 interface Db { get(k: string): Promise<Rec | undefined>; put(k: string, r: Rec): Promise<void>; delete(k: string): Promise<void>; keys(): Promise<string[]>; wipe(): Promise<void> }
@@ -275,5 +276,34 @@ describe('HRT-WEB.3 deleting bytes (WEB-APP-32, ARCH-WEB-R4)', () => {
     expect(db.m.size).toBe(0);
     expect(await store.has(r.items[0]!.uri)).toBe(false);
     expect(await mem.store.has(m.items[0]!.uri)).toBe(false);
+  });
+});
+
+describe('HRT-WEB.3 sign-out during stage (PRIV-WEB3-R1)', () => {
+  it('PRIV-WEB3-R1 a sign-out (sealer clear + wipe) that lands during stage() leaves no sealed record in hearth.uploads and mints no new session key', async () => {
+    const handed: CryptoKey[] = [];
+    let kept: CryptoKey | null = null;
+    const keys = { get: async () => kept, put: async (k: CryptoKey) => { kept = k; handed.push(k); }, delete: async () => { kept = null; } };
+    const sealer = createSecureSessionStorage({ keys });
+    expect(await sealer.sealBytes('q.warm/0/display', new Uint8Array(8))).not.toBeNull(); // a signed-in visit: one key exists
+    expect(handed).toHaveLength(1);
+
+    const db = mapDb();
+    let release!: () => void;
+    const gate = new Promise<void>((r) => { release = r; });
+    const realKeys = db.keys;
+    db.keys = async () => { await gate; return realKeys(); }; // stage() is held inside scan(), before any seal or put
+    const store = create({ db, sealer, report: () => {} });
+
+    const staging = store.stage([photo(1)], async () => prep()).catch(() => undefined);
+    await new Promise((r) => setTimeout(r, 0));
+    await sealer.clear(); // sign-out lands now: key deleted
+    await store.wipe();
+    release();
+    await staging;
+
+    expect(db.m.size).toBe(0); // no sealed record written after the wipe
+    expect(handed).toHaveLength(1); // no new key minted by the in-flight sealBytes
+    expect(kept).toBeNull(); // and none left behind
   });
 });
