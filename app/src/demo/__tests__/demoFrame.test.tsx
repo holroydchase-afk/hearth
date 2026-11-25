@@ -38,6 +38,15 @@ describe('DEMO-6 laptop frame', () => {
     expect(screen.getByText(/^3\. .*Search and type orchard\b/)).toBeTruthy();
   });
 
+  // DEMO-KINDS-6 (Chase, Nov 25: post_kinds on in the web demo so he can tap through Photos / Event / News / Saying).
+  // Written first (red) by qa-tdd: Try this gains a step 4 naming Share and the three kinds; nothing in it says the demo has no kinds.
+  it('DEMO-KINDS-6 Try this step 4 sends people to Share to try News, Event or Saying', () => {
+    render(<DemoFrame width={1280}><Text>the app</Text></DemoFrame>);
+    const step = String(screen.getByText(/^4\. /).props.children);
+    for (const w of ['Share', 'Event', 'News', 'Saying']) expect(step).toContain(w);
+    expect(screen.queryByText(/no (kinds|news|events|sayings)|photos only|not in the demo/i)).toBeNull();
+  });
+
   it('T40 the word step 3 hints really finds a demo post (title, caption or sender name, as demo search reads)', () => {
     render(<DemoFrame width={1280}><Text>the app</Text></DemoFrame>);
     const step = String(screen.getByText(/^3\. /).props.children);
