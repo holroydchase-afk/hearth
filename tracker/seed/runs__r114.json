@@ -1,9 +1,0 @@
-{
- "suite": "app",
- "at": "2026-11-25T23:50:00-05:00",
- "label": "HRT-WEB.3 photo sharing on the web (WEB-APP-25..34, B-WEB3-1, ARCH-WEB-R1..R4, PRIV-WEB3-R1): failing tests first (red, re-proved)",
- "passed": 5,
- "failed": 17,
- "results": {},
- "note": "Red re-proved by qa-tdd on a detached worktree (the earlier red run left no output file in e2e/results). At c1237dc (tests, no implementation): jest on the 4 new files, 16 failed and 5 passed: uploadStore.web.test.ts fails as a suite (no uploadStore.web module); secureSession.bytes.web.test.ts (ARCH-WEB-R1, WEB-APP-29, 32, 33: no sealBytes/openBytes); runtimeWebVideo.test.ts WEB-APP-34 x2 (picker still asks for video); webQueue.test.ts WEB-APP-29, 31 x4, 32 x2, ARCH-WEB-R4 (no store dep, no sweep). At 9ea12f1: uploadStore.web.test.ts PRIV-WEB3-R1 1 failed (db.m.size Expected 0, Received 1), 17 passed. The WEB-APP-25..28, 30, 31 Playwright cases in web-photo-share.spec.js were not re-run red (a full export + browser run per commit); their red result is not recorded. passed = 5 + 0, failed = 16 + 1."
-}
