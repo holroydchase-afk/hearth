@@ -1220,6 +1220,19 @@
    "fixed": "2026-11-18"
   },
   {
+   "id": "T44",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "open",
+   "title": "QA-R1 (VID fixes green run, Nov 19): flaky. app/src/screens/__tests__/signin.test.tsx 'BETA-JOIN-2: says where to look, and asks her to wait a minute before a new code' failed in jest run 3 of 3 (passed runs 1-2): it reads the resend countdown on the real clock and accepts only 60 or 59, so a slow worker under full-suite load sees 58. Untouched by the VID fixes. Use fake timers (as the 'after the minute' test does) or accept a wider window",
+   "tests": [
+    "app/src/screens/__tests__/signin.test.tsx"
+   ],
+   "found": "2026-11-19",
+   "fixed": null
+  },
+  {
    "id": "B20",
    "kind": "bug",
    "layer": "app",
@@ -1621,6 +1634,36 @@
    ],
    "found": "2026-11-24",
    "fixed": null
+  },
+  {
+   "id": "B32",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "Fixed on main by PR #187 (120f656): the 4 bailouts allowlisted with reasons and CI now runs compiler-check.js. QA-R1 (SPEC-TYPE WEB-APP-19..21 run r109, Nov 25): node app/scripts/compiler-check.js (INTAKE-80-3, a test-all suite) exits 1 on main aff95aa, 3 of 3 runs: 4 React Compiler bailouts not in its ALLOWED list. src/feed/autoplay.ts:39 useAutoplay, src/screens/SignInScreen.tsx:13 SignInScreen and src/ui/kit.tsx:309 AddPhotoCard read ref.current during render; src/ui/kit.tsx:345 PostcardStamp has a new-expression that can't be reordered. app/src is identical to origin/main, so it came in with an earlier merge (likely #174 type scale or DEC-82 autoplay), not this change; CI doesn't run compiler-check, so it went unseen. Effect: those 4 stay uncompiled (pre-compiler behaviour), no user-visible change. Fix: engineer fixes each or adds it to ALLOWED with a reason (B27). Test: node app/scripts/compiler-check.js",
+   "tests": [
+    "app/scripts/compiler-check.js",
+    "app/src/feed/autoplay.ts",
+    "app/src/screens/SignInScreen.tsx",
+    "app/src/ui/kit.tsx"
+   ],
+   "found": "2026-11-25",
+   "fixed": "2026-11-25"
+  },
+  {
+   "id": "B31",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "QA-R1 (HRT-WEB.2 red run r106, Nov 24): SPEC-WEB-APP HRT-WEB.2 asks for a relative manifest link (href=\"manifest.webmanifest\", WEB-APP-13) but the export serves the same index.html at every address. Chromium resolves the link against the page's current address when it reads the manifest, so on a nested screen (More > Easy view at /more/easy-view, any More row, or any route folder of the static demo, e.g. /demo/hearth/feed/) it fetches /more/manifest.webmanifest, gets index.html back and sees no manifest: Add to home screen then makes a plain shortcut, not the installed app. Shown on a scratch export built to the spec (manifest, icons, link): WEB-APP-13..17 pass, the nested-address test fails with url /more/manifest.webmanifest and a syntax error. Needs a staff-pm call on WEB-APP-13/18 (e.g. a base-aware root-absolute href such as /manifest.webmanifest or <BASE>/manifest.webmanifest, or a per-folder relative href in build-demo.sh), then the engineer. Tests: app/e2e-web/install.spec.js 'WEB-APP-17 QA-R1', app/e2e-web/install-site.spec.js 'WEB-APP-18 QA-R1'. Fixed (Nov 24, Chase's QA-R1 call): the link is root-relative to the build's base path (/manifest.webmanifest; build-demo.sh rewrites it to <BASE>/manifest.webmanifest); both QA-R1 tests green x3 (r86)",
+   "tests": [
+    "app/e2e-web/install-site.spec.js",
+    "app/e2e-web/install.spec.js"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
   }
  ]
 }

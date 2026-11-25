@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-25T05:45:00-05:00",
- "label": "Intake #183 site bar (SITEBAR-1..4): all suites 3x plus e2e:site 3x after the build at 7f87060 (green)",
- "passed": 13899,
+ "at": "2026-11-24T00:45:00-05:00",
+ "label": "PR #135 video fixes (0030_video_fixes.sql) pre-merge after two merges of main: all suites 3x via test-all.sh (green)",
+ "passed": 11166,
  "failed": 0,
  "results": {},
- "note": "3 runs of test-all.sh on 9669565 (build 7f87060): SUITES 26 passed, 0 failed, 2 skipped each run. jest 2549 passed (1 skipped, 1 todo, 192 suites), typecheck clean, e2e:demo 63 passed (5 env-gated skipped) incl. SITEBAR-4 x2 under a simulated 52 px bar, e2e:web 11 passed, prototype e2e 33, backend SQL 1963 passed (local Postgres 16), site bar 12/12, site analytics and meta ok; identical each run, no flake. Red to green: site_bar_test.sh 7 FAIL -> 12 ok; siteBarFrame.test.tsx 3 red + DARK-ELEV-4 light -> green; SITEBAR-4 x2 -> green. e2e:site 3x: 14 passed each, build-demo.sh ran add-site-bar.sh (Site bar: added to 21 pages; /assets/demo-bar.js 404 locally, expected). Review: border-box on body is web-only (Platform.OS guard), no-bar layouts unchanged (TD-UX-R1 800/720 and e2e:web green). passed = 3 x (2549 + 63 + 11 + 33 + 1963) + 3 x 14. Not run: Deno (not installed), Supabase starter invites (no template), the real portfolio demo-bar.js, real Safari/Firefox/iPhone. e2e/results/site-bar-green-2026-11-25/"
+ "note": "3 runs of bash test-all.sh at 6f0a61b: 24 suites passed, 0 failed, 1 skipped (Supabase starter invites: no STUDIO_SUPABASE_TEMPLATE, CI runs it) x3, identical. jest 2239 passed (1 skipped, 1 todo, 172 files), typecheck clean, e2e:demo 50, e2e:web 5, prototype e2e 33, backend SQL 1348 passed (VIDEO REFUND 30, VIDEO CAP 14; migrations through 0030 on local Postgres 16), Deno functions 47 passed (deno 2.9.8 from a scratch download; sign-media, notify, templates), each x3. passed = 3 x (2239 + 50 + 5 + 33 + 1348 + 47). T44 (BETA-JOIN-2 countdown) did not recur in these 3 runs; stays open. A first attempt found Postgres down (stale pid), so backend SQL was skipped; restarted Postgres and reran all 3 (that attempt is not counted). Not run: starter invites, contract-real, phones. e2e/results/vid-fixes-premerge-3x-2026-11-24/"
 }

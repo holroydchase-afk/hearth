@@ -12,6 +12,7 @@
 #   tests/reactions_test.sql  REACT-1..6: Love, Haha, Like (migration 0017); HARD-12: only through the RPCs (0018); REACT-12: Hooray (0023)
 #   tests/captions_test.sql   CAP-1..3, 5..8, 10, 11, HARD-18: post titles (0019), changing the words (0021)
 #   tests/video_cap_test.sql  S14-1..7: the free video cap counts per person, not per space (migration 0020)
+#   tests/video_refund_test.sql  ENG-R2, ENG-R11, SEC-R7: unfinished videos give their count back, the cap's own code (migration 0030)
 #   tests/viewers_test.sql    WHO-1..5: who can see a post, by name, for everyone who can see it (migration 0022)
 #   tests/start_family_test.sql  BETA-START-1, 3..8, 10..13: start a family, the switch, the cap (SPEC-START-FAMILY, migration 0024)
 #   tests/suspend_family_test.sql  START-ON-3, -4: suspend/undo/known and the start switch, the SQL behind scripts/suspend-family.sh and start-family-switch.sh
@@ -46,7 +47,7 @@ if ! psql -d postgres -XAtqc "select 1 from pg_available_extensions where name =
 fi
 for suite in tests/rls_test.sql tests/api_test.sql tests/notify_test.sql tests/setup_test.sql tests/reply_test.sql tests/timeline_test.sql \
              tests/groups_test.sql tests/timeline_future_test.sql tests/privacy_audit_test.sql tests/groups_v2_test.sql tests/chat_test.sql \
-             tests/photo_helpers_test.sql tests/reactions_test.sql tests/captions_test.sql tests/video_cap_test.sql tests/viewers_test.sql \
+             tests/photo_helpers_test.sql tests/reactions_test.sql tests/captions_test.sql tests/video_cap_test.sql tests/video_refund_test.sql tests/viewers_test.sql \
              tests/start_family_test.sql tests/suspend_family_test.sql tests/search_test.sql tests/sms_test.sql tests/group_names_test.sql tests/auth_no_passwords_test.sql \
              tests/family_dates_test.sql tests/vis_registry_test.sql tests/vis_core_test.sql tests/vis_calendar_test.sql \
              tests/vis_oracle_test.sql tests/post_kinds_test.sql; do

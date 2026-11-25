@@ -180,6 +180,9 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
 
   const load = useCallback(async () => {
     live.current.queue?.stop();
+    // PRIV-R1: wipe any decrypted video a crash left behind before anything else, whoever is (or isn't) signed in.
+    // load() runs again only from signed-out, sign-in or the offline screen, where no player is open (privacy review PRIV-R2).
+    deps.videoFiles?.clear?.().catch(() => {});
     if (!dataPrefsRef.current) {
       // DEC-87: read once, before any screen leaves 'loading', so Save data holds from the first photo.
       const dp = await loadDataPrefs(deps.kv);
