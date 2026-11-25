@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-25T16:30:00-05:00",
+ "label": "GUX-SK-R1..R11 Share kind card fixes, plus T44 (4 superseded shareStart expectations): compiler rules, jest, typecheck, e2e:demo, e2e:web 3x (green)",
+ "passed": 7917,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs at f5739f1 (engineer's GUX-SK-R1..R11 fix on qa-tdd's red tests 1f1d3a0) plus qa-tdd's T44 update, identical each time: compiler rules 0 not allowlisted (175 files, 155 compiled, 24 bailouts), jest 2571 passed (1 skipped, 1 todo; 188 suites), typecheck clean, e2e:demo 61, e2e:web 6. Before T44, shareStart.test.tsx at f5739f1: 4 failed, 93 passed (SHARE-ST-31 chase and alex, SHARE-ST-32: kind words subheadline expected, headline got; SHARE-ST-31 'Add an event': no 'When' field), reproduced by qa-tdd. T44 makes them expect exactly headline 17/22 SemiBold (Easy 21/26) and 'What day'; SMALL_OK drops share-kind-word-*. git diff 1f1d3a0 f5739f1 changes no test file. Runs 2 and 3 were interrupted by harness limits and a container restart (not by a failure); run 3 was redone whole in the foreground. Backend SQL, prototype and the other test-all suites untouched since r96 (a7d5c9e); r96 stands for them. passed = 3 x (1 + 2571 + 61 + 6), compiler rules counted as 1. Not run: Deno, starter invites, phones, screen readers on a device. e2e/results/gux-sk-green-3x-2026-11-25.txt"
+}

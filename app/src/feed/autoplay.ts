@@ -45,7 +45,7 @@ export function useAutoplay(enabled: boolean) {
     timer.current = null;
   };
   // FlatList refuses a new onViewableItemsChanged after mount, so this one never changes.
-  const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+  const [onViewableItemsChanged] = useState(() => ({ viewableItems }: { viewableItems: ViewToken[] }) => {
     const top = viewableItems.filter((v) => v.isViewable).sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
     let id: string | null = null;
     for (const v of top) {
@@ -53,7 +53,7 @@ export function useAutoplay(enabled: boolean) {
       if (id) break;
     }
     setPicked(id);
-  }).current;
+  });
   const moving = useCallback<Scroll>(() => {
     clear();
     setStill(false);
