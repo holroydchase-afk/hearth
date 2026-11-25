@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-25T05:45:00-05:00",
+ "label": "Intake #183 site bar (SITEBAR-1..4): all suites 3x after the build at 7f87060 (green)",
+ "passed": 13871,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs of test-all.sh on 9669565 (build 7f87060): SUITES 26 passed, 0 failed, 2 skipped each run. jest 2549 passed (1 skipped, 1 todo, 192 suites), typecheck clean, e2e:demo 63 passed (5 env-gated skipped) incl. SITEBAR-4 x2 under a simulated 52 px bar, e2e:web 11 passed, prototype e2e 33, backend SQL 1963 passed (local Postgres 16), site bar 12/12, site analytics and meta ok; identical each run, no flake. Red to green: site_bar_test.sh 7 FAIL -> 12 ok; siteBarFrame.test.tsx 3 red + DARK-ELEV-4 light -> green; SITEBAR-4 x2 -> green. e2e:site once: 14 passed, build-demo.sh ran add-site-bar.sh (Site bar: added to 21 pages; /assets/demo-bar.js 404 locally, expected). Review: border-box on body is web-only (Platform.OS guard), no-bar layouts unchanged (TD-UX-R1 800/720 and e2e:web green). passed = 3 x (2549 + 63 + 11 + 33 + 1963) + 14. Not run: Deno (not installed), Supabase starter invites (no template), the real portfolio demo-bar.js, real Safari/Firefox/iPhone. e2e/results/site-bar-green-2026-11-25/"
+}
