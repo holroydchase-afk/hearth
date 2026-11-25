@@ -15,7 +15,7 @@ Cost $0: the real-backend web build already lives on Expo's free hosting (the ex
 | ID | Task (one PR each, in this order) | Size | Status |
 |---|---|---|---|
 | HRT-WEB.1 | Staying signed in on the web (below, WEB-APP-1..12) | 1-2 sessions | todo |
-| HRT-WEB.2 | Add to home screen: web manifest (name, icons 192/512 + maskable, `display: standalone`, theme color), opens on Gallery; Android-size screen checks (360x800 and 412x915) for every tab in Playwright, no sideways scroll, 48pt targets | 1-2 | todo |
+| HRT-WEB.2 | Add to home screen: web manifest (name, icons 192/512 + maskable, `display: standalone`, theme color), opens on Gallery; Android-size screen checks (360x800 and 412x915) for every tab in Playwright, no sideways scroll, 48pt targets | 1-2 | todo (criteria WEB-APP-13..24 below) |
 | HRT-WEB.3 | Photo sharing on web: pick from Chrome's photo picker, EXIF/GPS stripped in the browser (auto test on a GPS-tagged JPEG), a picked post survives Chrome closing mid-upload (queue in IndexedDB, resumes on next open) | 2-3 | todo |
 | HRT-WEB.4 | Notices: email for the beta (already built; check a web-only person gets it). Chrome web push later, after the beta | 1 | todo |
 | HRT-WEB.5 | Save to my phone = browser download of the full photo; video stays off on web | 1 | todo |
@@ -52,6 +52,45 @@ Also in PR 1 (done-when, not criteria): request `navigator.storage.persist()` af
 **Done when:** WEB-APP-1..10 green 3x with all suites; privacy-security reviews the key handling; WEB-APP-11 and 12 logged on a real Android phone (Chase's or a tester's) before HRT-WEB.2 ships to a grandparent.
 
 **Lanes:** qa-tdd red (WEB-APP-1..10) → engineer → qa-tdd green 3x → privacy-security (keys, sign-out) → architect not needed unless a new dependency lands (no `fake-indexeddb` unless qa-tdd needs it; then architect first). No screen or word changes, so no grandparent-ux pass in PR 1.
+
+## HRT-WEB.2: add to home screen and Android-size screens (PR 2)
+
+**Bet.** An inviter puts a Hearth icon on an AG/LG relative's Android home screen at setup; tapping it opens Hearth full-screen (no Chrome address bar) on Gallery, still signed in. Every tab reads and taps right on a 360-wide budget Android.
+
+**How the manifest gets into the export.** `app.json` web is `output: "single"`, `bundler: "metro"`; `expo export` copies `app/public/` verbatim to the export root (that is how `og-hearth.png` reaches `dist-fake/` today) and writes `index.html` from Expo's default template. So:
+- `app/public/manifest.webmanifest` and `app/public/icons/*.png` ship as static files.
+- The `<link rel="manifest">` and `theme-color` tags go in a custom `app/public/index.html` template (Expo's documented single-output customisation, `npx expo customize public/index.html`), keeping today's viewport meta and the root div. A post-export script like `add-site-meta.sh` is the fallback only if the template route fails a WEB-APP-13 check.
+- The manifest link is root-relative to the build's base path (`href="/manifest.webmanifest"` in the app build; `scripts/build-demo.sh` rewrites it to `/demo/hearth/manifest.webmanifest` for the site build), never document-relative, so it resolves from any nested route such as `/more/easy-view` (QA-R1, P1, B31; Chase, Nov 24). Inside the manifest everything stays relative to the manifest (`start_url: "."`, `scope: "."`, `icons/...`), so the sub-path still works. No query string on `start_url` (no trackers, anchor A2/A3).
+- Test harness: `app/scripts/serve-dist.js` has no `.webmanifest` type; add `application/manifest+json` (harness change, not app code).
+
+**Service worker: none.** Chrome on Android installs from the menu without one since Chrome 108 (Chrome "Revisiting Chrome's installability criteria"); only the automatic install banner still wants a fetch handler, and the inviter uses the menu, so no banner is needed. No offline caching is promised (see Not doing). Adding a service worker later is a new architect call.
+
+**Icons.** From the existing app icon: `icon-192.png` and `icon-512.png` from `app/assets/icon.png` (`purpose: "any"`); `icon-maskable-512.png` from `app/assets/adaptive-icon.png` on `#F7F7F4` (`purpose: "maskable"`, mark inside the central 80% safe zone). A small script makes them (like `make-og-picture.py`), committed with its outputs.
+
+**Manifest values.** `name: "Hearth"`, `short_name: "Hearth"`, `id: "."`, `start_url: "."`, `scope: "."`, `display: "standalone"`, `orientation: "portrait"`, `background_color: "#F7F7F4"`, `theme_color: "#F7F7F4"` (Paper light, `theme.ts`); the template adds `<meta name="theme-color" content="#F7F7F4" media="(prefers-color-scheme: light)">` and `content="#131210"` for dark (Paper dark). Fruit themes don't change the browser colour (static file; not worth code).
+
+**How the relative gets the icon (the inviter does it, persona check LG mitigation).** On the relative's phone at setup: open the Hearth link in Chrome → sign in with the 6-digit code → Chrome menu (three dots, top right) → **Add to home screen** → **Install** → tap the new Hearth icon to check. Written as one short inviter section in `docs/product/GRANDPARENT-GUIDE.md` (grandparent-ux words), not shown in the app in this PR.
+
+### Acceptance criteria
+
+| ID | Given / When / Then | Type |
+|---|---|---|
+| WEB-APP-13 | Given the web export, when `index.html` is read, then it has exactly one `<link rel="manifest">` whose href is root-relative to the build's base path (`/manifest.webmanifest` for the app build, QA-R1), a light `#F7F7F4` and a dark `#131210` `theme-color` meta, and the existing viewport meta | auto (e2e:web or jest on `dist-fake`) |
+| WEB-APP-14 | Given the served manifest, when it is fetched, then it returns 200 as JSON with `name` and `short_name` "Hearth", `display` "standalone", `start_url` and `scope` "." (relative), `background_color` and `theme_color` "#F7F7F4", and no query string on `start_url` | auto (e2e:web) |
+| WEB-APP-15 | Given the manifest's icons, when each is fetched, then there is a 192x192 and a 512x512 PNG with purpose `any` and a 512x512 PNG with purpose `maskable`; each returns 200 and its real pixel size matches its `sizes` | auto (e2e:web) |
+| WEB-APP-16 | Given the maskable icon, when its pixels are read, then the outer 10% ring is solid `#F7F7F4` (the mark sits inside the safe zone, so Android's circle crop never cuts it) | auto (jest or script test) |
+| WEB-APP-17 | Given the export served on 127.0.0.1 in Chromium, when installability is checked (CDP `Page.getInstallabilityErrors`), then the list is empty, with no service worker registered | auto (e2e:web) |
+| WEB-APP-18 | Given the demo build under `HEARTH_BASE_URL`, when the manifest and icons are fetched from the sub-path, then all resolve from the sub-path root and from a nested route (`feed/`, QA-R1): the link tag is root-relative to the base path (`/demo/hearth/manifest.webmanifest`, never `/manifest.webmanifest`), and the manifest's `start_url`, `scope` and icon paths are relative | auto (e2e:demo) |
+| WEB-APP-19 | Given a signed-in person (FakeApi) at 360x800 and at 412x915 (touch, mobile), when each of Gallery, Feed, Share and More is opened with Easy view on and with it off, then: page `scrollWidth` is no wider than the screen (no sideways scroll); text size follows SPEC-TYPE (amended Nov 25 for DEC-84): with Easy view on every visible text is 17px or larger; with it off every visible text is 17px or larger except the secondary words SPEC-TYPE's map lists (Gallery date group, post date, reaction count: `subheadline`), each at exactly its named style's size (15px), and nothing is ever under caption2's 11px; every button, link, tab and switch is at least 48x48; no visible text is cut (no element with hidden overflow whose `scrollWidth` exceeds its `clientWidth`, no ellipsis on labels) | auto (e2e:web, 16 runs) |
+| WEB-APP-20 | Given the same two sizes, when the tab bar is shown, then all four tabs sit fully inside the screen; with Easy view on each shows its word (Gallery, Share, Feed, More) uncut; with it off each keeps its spoken name; each tab is at least 48x48 | auto (e2e:web) |
+| WEB-APP-21 | Given WEB-APP-19/20 also run in dark mode at 360x800, then the same checks pass, with the same SPEC-TYPE text-size rule (dark Paper can't hide a clipped label) | auto (e2e:web) |
+| WEB-APP-22 | Given an Android phone in Chrome, when the inviter follows the guide steps (menu → Add to home screen → Install), then a Hearth icon with the Hearth mark (not a letter tile, not cropped) appears, named "Hearth" | manual (real phone) |
+| WEB-APP-23 | Given that icon, when it is tapped, then Hearth opens with no Chrome address bar, a Paper-coloured status bar, on Gallery and signed in (WEB-APP-12 session); signed out, it opens on sign-in | manual (real phone) |
+| WEB-APP-24 | Given the inviter's section in `GRANDPARENT-GUIDE.md`, when an inviter who has never done it follows it on a relative's Android phone, then the icon is on the home screen within 2 minutes with no call to Chase | manual (person) |
+
+**Done when:** WEB-APP-13..21 green 3x with all suites; WEB-APP-22, 23 logged on a real Android phone; WEB-APP-24 logged at the first AG setup (it rides with WEB-APP-12). Rule 6: no data storage change, so no architecture doc update unless a service worker is added.
+
+**Lanes:** qa-tdd red (WEB-APP-13..21) → engineer (manifest, icons script, `public/index.html`, serve-dist type) → qa-tdd green 3x → grandparent-ux (guide words, icon look, WEB-APP-19/20 failures it finds) → privacy-security light pass (no new origins, no tracking params, no service worker). Architect not needed: no new dependency (icon script uses Pillow like `make-og-picture.py`). Existing screens that fail WEB-APP-19/20 get their own finding IDs and failing tests; fixes stay inside this PR only if each is a style change, otherwise a TRACKER row.
 
 ## Not doing (now)
 

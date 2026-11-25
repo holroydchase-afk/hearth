@@ -11,6 +11,8 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 24: add to home screen built (HRT-WEB.2, WEB-APP-13..18 + QA-R1; branch claude/project-thread-o1dwht, PR)
+- **Done (engineer, on qa-tdd's red `e2e/results/web-install-red-2026-11-24.txt`):** `app/public/manifest.webmanifest` (Hearth, standalone, portrait, `id`/`start_url`/`scope` ".", Paper #F7F7F4), icons in `app/public/icons/` made by `app/scripts/make-web-icons.py` (Pillow, no new dependency; maskable from `adaptive-icon.png` inside the central 78% on Paper), `app/public/index.html` (Expo template + manifest link + light/dark theme-color), `.webmanifest` type in `serve-dist.js` and `serve-static.js`. QA-R1 (Chase): the link is root-relative to the base path (`/manifest.webmanifest`; `build-demo.sh` rewrites it to `/demo/hearth/...`); WEB-APP-13 test line and spec WEB-APP-13/18 updated to say so. No service worker. **Next exact step:** qa-tdd green 3x, then grandparent-ux on the icons and the inviter guide section, then commit and PR.
 ## Nov 25: React Compiler check in CI (B32, R84; branch claude/project-thread-6ew09x, PR)
 - **Done, test-first:** INTAKE-80-4 (`app/src/__tests__/reactCompiler.test.ts`) failed until `.github/workflows/ci.yml`'s App (Jest + typecheck) job ran `node scripts/compiler-check.js`. Four bailouts that landed after #181 (useAutoplay, SignInScreen, AddPhotoCard: refs read in render; PostcardStamp: `new` expression) are allowlisted with reasons, same as B27.
 - **Next:** merge on green; B27 fixes the bailouts one at a time.
