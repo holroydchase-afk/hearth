@@ -17,6 +17,7 @@ Any change requires a contract-test update first; the contract tests live in `ap
   | `22023` | invalid invite or code (any reason) | "This invite is too old or already used. Ask {inviter} for a new one." |
   | `54000` | rate limited | "Too many tries. Wait 10 minutes." (from `start_family`: "You've started 3 families today. Try again tomorrow.") |
   | `HF001` | family full (0024, START-12): an app-started family not yet marked known holds 500 items or 2 GiB. PostgREST returns it as 400; branch on the code. App code `FAMILY_FULL`, not retryable, so the upload queue stops | "Your family is full for now" |
+  | `HF002` | free video cap (0030, ENG-R11): this person already sent 10 videos this month to free families; message `free_video_cap_reached`. sign-media answers 402 `free_video_cap_reached`; branch on the code, never the message. A video that never finishes uploading gives its count back (ENG-R2) | "You've sent 10 videos this month" |
 - **Time:** timestamps are ISO 8601 UTC. IDs are UUIDs.
 - **Idempotency:** every create takes a client-generated UUID, `p_client_id`. Retrying with the same `p_client_id` returns the original row and creates no duplicate. The app's upload queue relies on this.
 
