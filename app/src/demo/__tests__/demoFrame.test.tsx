@@ -28,17 +28,17 @@ describe('DEMO-6 laptop frame', () => {
     expect(screen.getByText('the app')).toBeTruthy();
   });
 
-  it('DEMO-NEW-6, T38 Try this walks the newest features in order: New for you, Grandma Jo, Search orchard', () => {
+  it('DEMO-NEW-6, T40 Try this walks the newest features in order: New for you, Grandma Jo, Search orchard', () => {
     render(<DemoFrame width={1280}><Text>the app</Text></DemoFrame>);
     expect(screen.getByText(/^1\. .*New for you/)).toBeTruthy(); // RD-21: the "See the new photos" button is gone in 1c
     expect(screen.queryByText(/See the new photos/)).toBeNull();
     expect(screen.getByText(/^2\. .*See it as Grandma Jo/)).toBeTruthy();
-    // T38 (live check, Nov 24): after the Kevin/orchard demo (DEC-82) 'lake' found nothing; 'orchard' finds 1 photo
+    // T40 (live check, Nov 24): after the Kevin/orchard demo (DEC-82) 'lake' found nothing; 'orchard' finds 1 photo
     // (site.spec.js DEMO-LIVE-2).
     expect(screen.getByText(/^3\. .*Search and type orchard\b/)).toBeTruthy();
   });
 
-  it('T38 the word step 3 hints really finds a demo post (title, caption or sender name, as demo search reads)', () => {
+  it('T40 the word step 3 hints really finds a demo post (title, caption or sender name, as demo search reads)', () => {
     render(<DemoFrame width={1280}><Text>the app</Text></DemoFrame>);
     const step = String(screen.getByText(/^3\. /).props.children);
     const word = /\btype (\w+)/.exec(step)?.[1]?.toLowerCase();

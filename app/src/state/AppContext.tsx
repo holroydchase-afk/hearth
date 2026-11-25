@@ -7,12 +7,14 @@ import type { HearthApi, Session, Space } from '../api/HearthApi';
 import { FeedStore, clearFeedCache, type FeedState } from '../feed/store';
 import { MediaCache, type VideoFiles } from '../media/cache';
 import type { MediaStore } from '../media/diskCache';
+import { stopChats } from '../messenger/client';
 import { clearArrivals, recordArrival } from '../notify/latency';
 import { listenForArrivals, pushStatus, registerForPush } from '../notify/push';
 import type { KV } from '../platform/kv';
 import type { PickedAsset } from '../share/bulk';
 import { BigTextContext, LookContext, PhoneA11yContext, ThemeContext, nativeScheme, type PhoneA11y } from '../ui/theme';
 import { UploadQueue, type Job, type Prepared, type QueueItem } from '../upload/queue';
+import { defaultDataPrefs, loadDataPrefs, saveDataPrefs, type DataPrefs } from './dataPrefs';
 import { defaultPrefs, loadPrefs, savePrefs, serverPrefs, type NotifyChoice, type Prefs } from './prefs';
 
 export interface AppDeps {
@@ -20,6 +22,9 @@ export interface AppDeps {
   kv: KV;
   /** Phone number behind "Call Chase" (EXPO_PUBLIC_HELP_PHONE). */
   helpPhone?: string | null;
+  /** START-ON-1/2: where "Email Hearth" writes to (EXPO_PUBLIC_HEARTH_HELP_EMAIL). Absent or null: Help has no
+   *  "Something wrong?" section and nobody can start a family. */
+  helpEmail?: string | null;
   prepare: (item: QueueItem) => Promise<Prepared>;
   /** videos: offer videos too (only when the server says video_posting is on: FLAG-5). */
   pickPhotos: (opts: { videos: boolean }) => Promise<{ items: QueueItem[] } | { denied: true }>;
@@ -33,6 +38,8 @@ export interface AppDeps {
   mediaDisk?: { store: MediaStore; keys: KV } | null;
   /** VID-18: where a decrypted video goes for the player (platform/videoFiles.ts). Absent: a data: URI (tests). */
   videoFiles?: VideoFiles | null;
+  /** WEB-APP-6: wipes the sealed session store (session, messenger store, its key) at sign-out. Web only. */
+  clearSessionStore?: () => Promise<void>;
 }
 
 /** offline (ENG-R1): signed in, but the family couldn't be read and this phone has none saved. */
@@ -67,6 +74,11 @@ export interface AppValue {
   /** SHARE-PC-11 (DEC-73): "Shared with <names>." after a Send, shown on Feed until closed or the next Send. */
   shared: string | null;
   setShared: (line: string | null) => void;
+  /** DEC-87 (SPEC-MEDIA 5): Videos and data, this phone's own (never per account, never sent anywhere). Read
+   *  before the first screen shows, signed in or not. */
+  dataPrefs: DataPrefs;
+  /** Changes it at once and saves it on this phone only. */
+  setDataPrefs: (p: Partial<DataPrefs>) => void;
 }
 
 const Ctx = createContext<AppValue | null>(null);
@@ -75,6 +87,11 @@ export function useApp(): AppValue {
   const v = useContext(Ctx);
   if (!v) throw new Error('AppProvider missing');
   return v;
+}
+
+/** DEC-87 (SPEC-MEDIA 5): Save data is on, so Feed cards and the Timeline show thumbnails until a photo is opened. */
+export function useSaveData(): boolean {
+  return useContext(Ctx)?.dataPrefs.saveData === true;
 }
 
 const EMPTY_FEED: FeedState = { posts: [], status: 'loading', loaded: false, hasMore: false, notice: null, comments: {}, drafts: {}, opened: {}, fetchedAt: null };
@@ -152,9 +169,25 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
     if (who) void deps.kv.setItem(pushSkipKey(who), '1').catch(() => {});
   }, [deps.kv]);
   const a11y = usePhoneA11y();
+  const [dataPrefs, setDataPrefsState] = useState<DataPrefs>(defaultDataPrefs);
+  const dataPrefsRef = useRef<DataPrefs | null>(null);
+  const setDataPrefs = useCallback((p: Partial<DataPrefs>) => {
+    const next = { ...(dataPrefsRef.current ?? defaultDataPrefs()), ...p };
+    dataPrefsRef.current = next;
+    setDataPrefsState(next);
+    void saveDataPrefs(deps.kv, next);
+  }, [deps.kv]);
 
   const load = useCallback(async () => {
     live.current.queue?.stop();
+    if (!dataPrefsRef.current) {
+      // DEC-87: read once, before any screen leaves 'loading', so Save data holds from the first photo.
+      const dp = await loadDataPrefs(deps.kv);
+      if (!dataPrefsRef.current) {
+        dataPrefsRef.current = dp;
+        setDataPrefsState(dp);
+      }
+    }
     const session = await deps.api.getSession().catch(() => null);
     if (!session) {
       setS(SIGNED_OUT);
@@ -225,6 +258,17 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
     try { Appearance.setColorScheme(nativeScheme(s.prefs.look)); } catch { /* older phones: Hearth's own colors still switch */ }
   }, [s.prefs.look]);
 
+  // HRT-WEB.1 (QA-R6): once signed in on web, ask the browser to keep Hearth's storage (the sealed session and
+  // its IndexedDB key) so Chrome is less likely to clear it under storage pressure. Never on phones.
+  const signedInAs = s.session?.userId ?? null;
+  useEffect(() => {
+    if (Platform.OS !== 'web' || !signedInAs) return;
+    try {
+      const storage = (globalThis as { navigator?: { storage?: { persist?: () => Promise<boolean> } } }).navigator?.storage;
+      if (typeof storage?.persist === 'function') void storage.persist().catch(() => {});
+    } catch { /* not offered: the session still works, it may just be cleared sooner */ }
+  }, [signedInAs]);
+
   // Back in front: retry waiting uploads and fetch new photos (BETA-SHARE-4).
   useEffect(() => {
     const sub = AppState.addEventListener('change', (st) => {
@@ -274,6 +318,8 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
   }, [deps.api]);
 
   const signOut = useCallback(async () => {
+    // PRIV-WEB-R5: open chats stop writing before the store is cleared, so nothing is sealed again after it.
+    stopChats();
     live.current.queue?.stop();
     unlisten.current?.();
     unlisten.current = null;
@@ -284,8 +330,9 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
     if (who) await deps.kv.removeItem(lastSpaceKey(who)).catch(() => {});
     await live.current.media?.clearDisk().catch(() => {});
     await deps.api.signOut().catch(() => {});
+    await deps.clearSessionStore?.().catch(() => {});
     setS(SIGNED_OUT);
-  }, [deps.api, deps.kv]);
+  }, [deps]);
 
   const value = useMemo<AppValue>(() => ({
     ...s,
@@ -301,7 +348,9 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
     skipPushAsk,
     shared: s.status === 'ready' ? shared : null,
     setShared,
-  }), [s, deps, setPrefs, saveNotify, setFamilyFeature, load, signOut, pushAsk, askPush, skipPushAsk, shared]);
+    dataPrefs,
+    setDataPrefs,
+  }), [dataPrefs, setDataPrefs, s, deps, setPrefs, saveNotify, setFamilyFeature, load, signOut, pushAsk, askPush, skipPushAsk, shared]);
 
   return (
     <Ctx.Provider value={value}>

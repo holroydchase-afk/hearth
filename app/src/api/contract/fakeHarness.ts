@@ -23,6 +23,7 @@ export async function fakeHarness(): Promise<ContractHarness> {
     starterEmail: FIXTURE.users.newbie2.email,
     // 0024: the switch lives in the global feature flags (private.feature_flags on the server); missing = off.
     setStartFamilyOpen: async (open) => { be.state.featureFlags = { ...be.state.featureFlags, start_family_open: open }; },
+    setGlobalFeature: async (feature, on) => { be.state.featureFlags = { ...be.state.featureFlags, [feature]: on }; },
     has: () => true,
     as: (u) => be.clientFor(ids[u]),
     anon: () => be.clientFor(null),

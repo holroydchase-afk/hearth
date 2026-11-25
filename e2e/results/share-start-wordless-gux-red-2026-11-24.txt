@@ -1,0 +1,26 @@
+# Share start wordless, grandparent-ux round 3 (GUX-W1..W5) + QA-R2, red run, 2026-11-24, qa-tdd
+## jest app/src/screens/__tests__/shareStart.test.tsx (1 run)
+  ● GUX-W1 P1 the empty postcard sits in the middle of the space under "New post" › GUX-W1 "share-card" is in "share-empty-wrap" (flex 1, centred), after the header; the page content can grow; the spot stays 4:3
+    Received: null
+  ● GUX-W2 P1 the stamp stays on the filled postcard › GUX-W2 3 picked: "share-stamp" top-right over the big photo, inside the card, hidden from screen readers, no onPress
+    Received: null
+  ● GUX-W3 P2 "New post" does not move when photos arrive › GUX-W3 the header sits in a row on the empty start and after photos; Cancel joins that same row
+    Received: null
+  ● GUX-W4 P2 the ruled lines are visible (>= 1.5:1 on the card) › GUX-W4 (light) note and To: rules use c.tabLine, opaque, >= 1.5:1 on c.surface
+    - Expected  - 2
+    + Received  + 2
+  ● GUX-W4 P2 the ruled lines are visible (>= 1.5:1 on the card) › GUX-W4 (dark) note and To: rules use c.tabLine, opaque, >= 1.5:1 on c.surface
+    - Expected  - 2
+    + Received  + 2
+  ● GUX-W5 P2 the filled note field has no example hint › GUX-W5 no "Like:" anywhere; the note field still reads "Add a note (optional)"
+    Expected value: "Like: Pumpkin patch day"
+    Received array: [undefined, "", "Add a note (optional)"]
+Tests:       6 failed, 45 passed, 51 total
+
+## Playwright demo SHARE-ST-8/27 with QA-R2 narrowed word filter (1 run)
+
+Running 1 test using 1 worker
+
+  ✓  1 e2e-web/demo.spec.js:1156:1 › SHARE-ST-8 SHARE-ST-27 wordless Share start: only "New post", "Add photos", "To:" and the stamp; one card button; a tap on a ruled line with 3 photos shows "1 of 3" (6.3s)
+
+  1 passed (7.5s)

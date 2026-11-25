@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-24T23:59:59-05:00",
- "label": "T39 DEMO-NAMES-1..6 demo renames: green (engineer)",
- "passed": 139,
- "failed": 0,
+ "at": "2026-11-24T00:30:00-05:00",
+ "label": "Eval findings (intake #162, EF-HE-1/2/4/5/6/9, B18): tests written first (red)",
+ "passed": 6,
+ "failed": 19,
  "results": {},
- "note": "1 run each on the uncommitted T39 fix (seed.ts DEMO_NAMES Graham/Eliza/Nana Eloise/Grandpa Hollis, space-free emails, Aunt Libby, Clara, Graham and Eliza, demo space Clara and Leo; DemoBar.tsx Graham): npx jest src/demo 9 suites, 72 passed; npm run typecheck clean; npm run e2e:site 14 passed; npm run e2e:demo 53 passed, 5 skipped. passed = 72 + 14 + 53. The 3x full-suite run is qa-tdd's."
+ "note": "Red on purpose, 1 run at 8f768cb: app/src/screens/__tests__/evalFindings.test.tsx 19 failed, 6 passed (EF-HE-1 Open names, EF-HE-2 empty rings, EF-HE-4 settings only in More, EF-HE-5 Groups line and New group, EF-HE-6 Events words, EF-HE-9 B18 25 new posts). Then qa-tdd's review test app/src/feed/__tests__/loadBackTo.test.ts at 88e605c: 4 passed, 1 failed (B26: a refresh mid-walk leaves a 6-post hole), same in 4 runs. e2e/results/eval-findings-red-2026-11-24.txt, e2e/results/eval-findings-qa-r1-red-2026-11-24.txt"
 }

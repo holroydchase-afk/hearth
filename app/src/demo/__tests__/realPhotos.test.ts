@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 // DEMO-PHOTO-4..9, 13, 14, 18 (docs/product/SPEC-DEMO-PHOTOS.md, DEC-82, Nov 24): the public demo shows free Pexels
-// stock photos of a made-up family, with "Graham" as the parent (T39; was "Kevin"). Replaces DEMO-PHOTO-1..3 (DEC-62), which this file
+// stock photos of a made-up family, with "Graham" as the parent (T44; was "Kevin"). Replaces DEMO-PHOTO-1..3 (DEC-62), which this file
 // held before. Written FIRST (Nov 24, qa-tdd): red until the new photos, posts and credits land.
 import * as fs from 'fs';
 import * as path from 'path';

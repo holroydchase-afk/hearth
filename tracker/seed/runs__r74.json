@@ -1,9 +1,9 @@
 {
- "suite": "app",
- "at": "2026-11-24T23:59:58-05:00",
- "label": "T39 DEMO-NAMES-1..6 demo renames: failing tests first (red)",
- "passed": 109,
- "failed": 30,
+ "suite": "backend",
+ "at": "2026-11-24T18:00:00-05:00",
+ "label": "Visibility core Phase 1 and 1b (VIS-1..7, VIS-19..24): all suites 3x via test-all.sh (green)",
+ "passed": 1520,
+ "failed": 0,
  "results": {},
- "note": "Red on purpose, 1 run each, no product change: npx jest src/demo: 14 failed, 58 passed (DEMO_NAMES still Kevin/Alex with no ruth/earl; post 4 says Aunt Bea; dates Mia, Kevin and Alex; DemoBar says You're Kevin / Kevin's mom / Back to Kevin's view; seed version still napqej). DEMO-NAMES-4 (valid emails) and DEMO-NAMES-6 (no Granddaddy) pass now as guards. npm run e2e:demo: 14 failed, 39 passed, 5 skipped, every failure waiting for Graham, Eliza, Grandpa Hollis, Aunt Libby or Back to Graham's view. npm run e2e:site: 2 failed, 12 passed (DEMO-5 Start over and DEMO-NEW-5 wait for Graham / From Eliza). Green waits on the engineer's seed.ts and DemoBar.tsx change. e2e/results/2026-11-24-T39-*-red.txt"
+ "note": "3 runs of bash test-all.sh at cc618ce (engineer's 0030/0031 and packages/visibility) plus qa-tdd's VIS-7 skip-list pin: 23 suites passed, 0 failed, 2 skipped x3. Backend SQL 1520 passed (VIS REGISTRY 223, VIS CORE 30, VIS GATE 8, VIS CORE KIT 30, VIS-21 3, RELAY 24), jest 2193 passed, typecheck clean, e2e:demo 43, e2e:web 5, prototype 33, each x3. App contract on the real API (PostgREST harness, contract-real.sh) 80 passed x3. Engineer's test edits reviewed: VIS-4 column-grant count is stricter (legit); VIS-7 uuid-only filter is legit but skipped 4 bigint kinds silently, now pinned (21 unaddressable kinds listed; a new one fails VIS-7); seed account_exports row makes the self-reach check non-vacuous (legit). Skipped: Supabase starter invites (no template), Deno (not installed); hosted owner BYPASSRLS not checked here. e2e/results/vis-core-green-3x-2026-11-24.txt"
 }

@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-24T23:59:59-05:00",
+ "label": "T44 DEMO-NAMES-1..6 demo renames: green (engineer)",
+ "passed": 139,
+ "failed": 0,
+ "results": {},
+ "note": "1 run each on the uncommitted T44 fix (seed.ts DEMO_NAMES Graham/Eliza/Nana Eloise/Grandpa Hollis, space-free emails, Aunt Libby, Clara, Graham and Eliza, demo space Clara and Leo; DemoBar.tsx Graham): npx jest src/demo 9 suites, 72 passed; npm run typecheck clean; npm run e2e:site 14 passed; npm run e2e:demo 53 passed, 5 skipped. passed = 72 + 14 + 53. The 3x full-suite run is qa-tdd's."
+}

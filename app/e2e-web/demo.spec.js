@@ -1054,8 +1054,8 @@ test('SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to
   expect.soft(await tiles.count()).toBeGreaterThan(1);
   expect.soft(await page.getByLabel(/, \d+ people, picked$/).count()).toBe(0);
   const off = page.getByRole('button', { name: 'Pick who gets it' });
-  await expect.soft(off).toBeVisible();
-  await expect.soft(off).toBeDisabled();
+  await expect.soft(off, 'Pick who gets it shows').toBeVisible();
+  await expect.soft(off, 'Pick who gets it is off with nothing picked').toBeDisabled();
   expect.soft(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: path.join(shots, 'share-pc-13-light.png') });
   await page.emulateMedia({ colorScheme: 'dark' });
@@ -1069,8 +1069,15 @@ test('SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to
   const names = String(await send.getAttribute('aria-label') ?? await send.innerText()).replace(/^Send to /, '');
   await send.click();
   await expect(page.getByText(`Shared with ${names}.`).filter({ visible: true })).toBeVisible();
-  const first = page.locator('[data-testid^="post-"]').filter({ visible: true }).first();
-  await expect.soft(first.getByRole('button', { name: /^Open photo 1 of 3/ })).toBeVisible();
+  // T39 (QA-R13): wait for the new post itself, then check it is on top. Every demo seed post is 3+ hours old, so
+  // the new one is the only post that reads "Just now". "The first visible post" alone could be an older one
+  // under load. Sending runs in the browser (resize, strip, encrypt 3 photos); under full-suite load it was still
+  // "Sending 1 of 3…" after 15 s (Nov 24), so the wait for the post allows 60 s. The test's own limit is 90 s.
+  const posts = page.locator('[data-testid^="post-"]').filter({ visible: true });
+  const newPost = posts.filter({ has: page.getByText('Just now', { exact: true }) });
+  await expect(newPost, 'the new post shows on Feed').toHaveCount(1, { timeout: 60_000 });
+  expect.soft(await posts.first().getAttribute('data-testid'), 'the new post is on top of Feed').toBe(await newPost.getAttribute('data-testid'));
+  await expect.soft(newPost.getByRole('button', { name: /^Open photo 1 of 3/ }), 'the new post holds the 3 photos').toBeVisible();
 
   // Grandma Jo (Easy view on for her): her Share, if she can post, names people only; never a group's title.
   await details(page);
@@ -1229,55 +1236,66 @@ test('RD-110-R3 the bar shrunk on Share comes back whole on Feed after sending',
   await resetDemo(page);
 });
 
-// SHARE-ST-8 (SPEC-REDESIGN 1j-2, DEC-79, Chase Nov 20): Share opens on an empty postcard in the public demo at 393 px.
-// Reference: option B of /mnt/project-files/design/share-start-2026-11-20/share-start-tester.html. Written first (red),
-// Nov 21, by qa-tdd. Soft expects on each start page, so one run shows every part still missing.
-// QA-R (staff-pm): the demo's Grandma Jo is a viewer with no Share tab (RD-9), so her "Up to 10" can't be reached here;
-// it runs only if the demo ever lets her post, and the jest SHARE-ST-2/5 cases cover "Up to 10" meanwhile.
-test('SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded To:, no "Pick lots of photos"; Chase "Up to 100"; 3 photos show "1 of 3"', async ({ page }) => {
-  const shots = path.join(__dirname, '..', 'test-results', 'share-st-8');
+// SHARE-ST-8 / SHARE-ST-27 (SPEC-REDESIGN 1j-2, DEC-79; round 3 "Quiet postcard", wordless, Chase Nov 24): Share opens
+// on an empty postcard in the public demo at 393 px. Reference: option A of
+// /mnt/project-files/design/share-start-2026-11-20/share-start-quiet-tester.html. Retargeted and written first (red),
+// Nov 24, by qa-tdd: SHARE-ST-27 wins over SHARE-ST-8's "Up to 100", faded To: and SHARE-ST-10/14/15's words.
+// Contract (same as the jest file): the whole card (data-testid "share-card") is one button "Add photos, up to N at a
+// time"; data-testid "share-spot", "share-stamp", "share-note-rule" x2, "share-to-rule"; the only words in the card
+// are "Add photos", "To:" and the stamp's month and day. Soft expects, so one run shows every part still missing.
+// QA-R (staff-pm): the demo's Grandma Jo is a viewer with no Share tab (RD-9), so her "up to 10" can't be reached here;
+// it runs only if the demo ever lets her post, and the jest SHARE-ST-21 cases cover it meanwhile.
+test('SHARE-ST-8 SHARE-ST-27 wordless Share start: only "New post", "Add photos", "To:" and the stamp; one card button; a tap on a ruled line with 3 photos shows "1 of 3"', async ({ page }) => {
+  const shots = path.join(__dirname, '..', 'test-results', 'share-st-27');
   await page.setViewportSize({ width: 393, height: 852 });
   await page.emulateMedia({ colorScheme: 'light' });
   await page.goto('/');
   await galleryLoaded(page);
+  const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
   const startPage = async (limit, shot) => {
     await page.getByRole('tab', { name: /^Share/ }).click();
     await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
     const add = page.getByRole('button', { name: `Add photos, up to ${limit} at a time` }).filter({ visible: true });
-    await expect.soft(add).toBeVisible();
-    await expect.soft(page.getByText(`Up to ${limit} at a time`, { exact: true }).filter({ visible: true })).toBeVisible();
-    // engineer, flagged for qa-tdd: round 2 B+ (SHARE-ST-10/14/15) replaced the subline, the To: words and the fading.
-    await expect.soft(page.getByText('Only the people you pick will see it.', { exact: true }).filter({ visible: true })).toBeVisible();
-    const to = page.getByText('To: you pick after your photos', { exact: true }).filter({ visible: true });
-    await expect.soft(to).toBeVisible();
-    await expect.soft(page.getByText('Add a note (optional)', { exact: true }).filter({ visible: true })).toBeVisible();
-    // No old start page anywhere; no Send yet.
-    await expect.soft(page.getByText(/Pick lots of photos|Lots of photos\?|Share photos|Pick photos/)).toHaveCount(0);
-    await expect.soft(page.getByRole('button', { name: /^(Send to |Pick who gets it$)/ })).toHaveCount(0);
-    // SHARE-ST-14: the note and To: show at full strength (no opacity below 1) but stay hidden from screen readers.
-    if (await to.count()) {
-      const seen = await to.first().evaluate((el) => {
-        let o = 1; let hidden = false;
-        for (let n = el; n; n = n.parentElement) { o *= parseFloat(getComputedStyle(n).opacity || '1'); if (n.getAttribute('aria-hidden') === 'true') hidden = true; }
-        return { faded: o < 1, hidden };
-      });
-      expect.soft(seen).toEqual({ faded: false, hidden: true });
-    }
-    // The target's words stay inside it, and the page never scrolls sideways.
+    await expect.soft(add).toHaveCount(1);
+    const card = page.getByTestId('share-card').filter({ visible: true }).first();
+    await expect.soft(card).toBeVisible();
+    // The card is the one button (or sits inside it): the button holds the card.
     if (await add.count()) {
-      const spill = await add.first().evaluate((el) => {
+      const holds = await add.first().evaluate((b) => b.getAttribute('data-testid') === 'share-card' || !!b.querySelector('[data-testid="share-card"]') || ['share-spot', 'share-note-rule', 'share-to-rule'].every((id) => !!b.querySelector(`[data-testid="${id}"]`)));
+      expect.soft(holds).toBe(true);
+    }
+    for (const id of ['share-spot', 'share-stamp', 'share-to-rule']) await expect.soft(page.getByTestId(id).filter({ visible: true })).toHaveCount(1);
+    await expect.soft(page.getByTestId('share-note-rule').filter({ visible: true })).toHaveCount(2);
+    // Only these words in the card: "Add photos", "To:", the stamp's month and day.
+    const now = new Date();
+    const want = ['ADD', 'PHOTOS', 'TO:', MONTHS[now.getMonth()], String(now.getDate())].sort();
+    if (await card.count()) {
+      // engineer, flagged for qa-tdd: on the web expo-symbols draws the add-photo icon as a Material Symbols glyph (a
+      // private-use character in an aria-hidden Text), which innerText includes; it is not a word, so it is dropped.
+      // QA-R2 (qa-tdd, Nov 24): drop only private-use glyphs (U+E000-U+F8FF); any other stray token still fails.
+      const got = (await card.innerText()).replace(/[\uE000-\uF8FF]/g, ' ').split(/\s+/).filter(Boolean).map((w) => w.toUpperCase()).sort();
+      expect.soft(got).toEqual(want);
+    }
+    // None of the older start-page words anywhere on the page.
+    await expect.soft(page.getByText(/Only the people you pick|For your family, nobody else|Up to \d+ at a time|To: you pick after|Add a note \(optional\)|Last shared|Add photos first|Pick lots of photos|Lots of photos\?|Share photos|Pick photos/)).toHaveCount(0);
+    await expect.soft(page.getByRole('button', { name: /^(Send to |Pick who gets it$)/ })).toHaveCount(0);
+    // "Add photos" stays inside the spot; the card is at least 48 px; the page never scrolls sideways.
+    const spot = page.getByTestId('share-spot').filter({ visible: true }).first();
+    if (await spot.count()) {
+      const spill = await spot.evaluate((el) => {
         const box = el.getBoundingClientRect(); let out = 0;
         const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
         for (let n = w.nextNode(); n; n = w.nextNode()) {
-          if (!n.textContent.trim()) continue;
+          if (!/Add photos/.test(n.textContent)) continue;
           const r = document.createRange(); r.selectNodeContents(n);
           for (const q of r.getClientRects()) out = Math.max(out, box.left - q.left, q.right - box.right, box.top - q.top, q.bottom - box.bottom);
         }
-        return { h: box.height >= 48, out: Math.round(out) };
+        return Math.round(out);
       });
-      expect.soft(spill).toEqual({ h: true, out: 0 });
+      expect.soft(spill).toBe(0);
     }
+    if (await add.count()) expect.soft((await add.first().boundingBox()).height).toBeGreaterThanOrEqual(48);
     expect.soft(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.screenshot({ path: path.join(shots, `${shot}.png`) });
   };
@@ -1286,7 +1304,7 @@ test('SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded 
   await page.emulateMedia({ colorScheme: 'dark' });
   await startPage(100, 'chase-dark');
   await page.emulateMedia({ colorScheme: 'light' });
-  // Chase with Easy view On: "Up to 10" (SHARE-ST-12).
+  // Chase with Easy view On: spoken "up to 10" (SHARE-ST-21).
   await page.getByRole('tab', { name: /^More/ }).click();
   await page.getByRole('button', { name: 'Easy view, Off' }).click();
   await page.getByRole('radio', { name: 'On', exact: true }).click();
@@ -1297,20 +1315,20 @@ test('SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded 
   await page.getByRole('button', { name: 'Easy view, On' }).click();
   await page.getByRole('radio', { name: 'Off', exact: true }).click();
 
-  // As Chase, the target with 3 photos opens the postcard at "1 of 3".
+  // As Chase, a tap on a ruled line (not the spot) opens the chooser; 3 photos open the postcard at "1 of 3".
   await page.getByRole('tab', { name: /^Share/ }).click();
   const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
-  await page.getByRole('button', { name: 'Add photos, up to 100 at a time' }).filter({ visible: true }).first().click();
+  await page.getByTestId('share-note-rule').filter({ visible: true }).first().click();
   await (await chooser).setFiles([FIXTURE, FIXTURE, FIXTURE]);
   await expect(page.getByText('1 of 3', { exact: true })).toBeVisible();
   await page.screenshot({ path: path.join(shots, 'chase-1-of-3.png') });
 
-  // Grandma Jo (Easy view on for her): "Up to 10", if the demo lets her post.
+  // Grandma Jo (Easy view on for her): "up to 10", if the demo lets her post.
   await asJo(page);
   if (await page.getByRole('tab', { name: /^Share/ }).count()) {
     await startPage(10, 'jo-easy-view');
   } else {
-    test.info().annotations.push({ type: 'SHARE-ST-8', description: 'Grandma Jo has no Share tab in the demo (viewer, RD-9); her "Up to 10" is not checked here.' });
+    test.info().annotations.push({ type: 'SHARE-ST-27', description: 'Grandma Jo has no Share tab in the demo (viewer, RD-9); her "up to 10" is not checked here.' });
   }
 });
 
@@ -1347,3 +1365,210 @@ test('DARK-ELEV-6 at 390 px dark: no visible element on the first screen has a d
   await page.emulateMedia({ colorScheme: 'light' });
   await expect.poll(() => shadeShadow(page)).not.toBe('none');
 });
+
+// TYPE-10 (docs/product/SPEC-TYPE.md, DEC-84): the public demo at 393 px as Kevin, light and dark, Easy view off and
+// on: computed font sizes match SPEC-TYPE's table. Written by the engineer (Nov 24) from the spec, flagged for qa-tdd:
+// "a post title" is Feed's inline title (post-title-<id>), which opens the description at body size (RD-71), and
+// "a button" is the reply row's "Post" (a kit Button, headline).
+const sizeOfEl = (loc) => loc.evaluate((el) => {
+  const leaf = [el, ...el.querySelectorAll('*')].reverse().find((n) => n.children.length === 0 && n.textContent.trim() !== '') ?? el;
+  return parseFloat(getComputedStyle(leaf).fontSize);
+});
+const setEasyView = async (page, on) => {
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: /^Easy view, (On|Off)$/ }).click();
+  await page.getByRole('radio', { name: on ? 'On' : 'Off', exact: true }).click();
+  await expect(page.getByRole('radio', { name: on ? 'On' : 'Off', exact: true })).toBeChecked();
+};
+for (const look of ['light', 'dark']) {
+  test(`TYPE-10 (${look}) Kevin's text sizes match the named scale, Easy view off and on`, async ({ page }) => {
+    await page.setViewportSize({ width: 393, height: 852 });
+    await page.emulateMedia({ colorScheme: look });
+    await page.goto('/');
+    await galleryLoaded(page);
+    for (const easy of [false, true]) {
+      if (easy) await setEasyView(page, true);
+      // SPEC-TYPE's table: [Standard, Easy view].
+      const want = (std, ez) => (easy ? ez : std);
+      await page.getByRole('tab', { name: /^Gallery/ }).click();
+      const got = {};
+      got.greeting = await sizeOfEl(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ }).first());
+      await onFeed(page);
+      got.feedTitle = await sizeOfEl(page.getByRole('heading', { name: 'Feed', exact: true }).first());
+      got.postTitle = await sizeOfEl(page.locator('[data-testid^="post-title-"]').filter({ visible: true }).first());
+      got.postBody = await captionSize(page);
+      got.postDate = await sizeOfEl(page.locator('[data-testid^="when-"]').filter({ visible: true }).first());
+      got.button = await sizeOfEl(page.getByRole('button', { name: 'Post', exact: true }).filter({ visible: true }).first());
+      await page.getByRole('tab', { name: /^Share/ }).click();
+      got.newPost = await sizeOfEl(page.getByRole('heading', { name: 'New post' }));
+      got.addPhotos = await sizeOfEl(page.locator('[data-testid="share-spot"]').getByText(/^Add photos( or videos)?$/).first());
+      expect({ easy, ...got }).toEqual({
+        easy,
+        greeting: want(34, 38), // largeTitle
+        feedTitle: want(34, 38), // largeTitle
+        postTitle: want(17, 21), // body (inline title, RD-71)
+        postBody: want(17, 21), // body
+        postDate: want(15, 19), // subheadline
+        button: want(17, 21), // headline
+        newPost: want(22, 26), // title2 (SHARE-ST-28)
+        addPhotos: want(17, 21), // headline (SHARE-ST-29)
+      });
+    }
+  });
+}
+
+// SHARE-ST-34 (SPEC-REDESIGN 1j-2 round 4, DEC-84; written by qa-tdd, Nov 24): the public demo at 393 px, light, dark
+// and Easy view, post_kinds switch off: "New post" is 22 (Easy 26), "Add photos" 17 (Easy 21), the circle 52 (Easy
+// 60), and no kind tile shows. SUBSTITUTION (qa-tdd): the spec says "as Kevin and as Grandma Jo", but the demo's
+// Grandma Jo is a viewer with no Share tab (RD-9), so her Easy view column is checked as Kevin (the demo parent) with
+// Easy view turned on. If the demo ever gives Jo a Share tab, her own run below takes over. Screenshots for
+// grandparent-ux in test-results/share-st-34/.
+const circleIn = (spot) => spot.evaluate((root) => {
+  const hits = [...root.querySelectorAll('*')].map((el) => {
+    const r = el.getBoundingClientRect(); const s = getComputedStyle(el);
+    return { w: Math.round(r.width), h: Math.round(r.height), radius: parseFloat(s.borderTopLeftRadius) || 0, bg: s.backgroundColor };
+  }).filter((x) => x.w >= 40 && x.w === x.h && x.radius >= x.w / 2 - 1 && x.bg !== 'rgba(0, 0, 0, 0)');
+  return hits.length ? hits[0].w : null;
+});
+test('SHARE-ST-34 Share start at standard sizes on the demo: "New post" 22/26, "Add photos" 17/21, circle 52/60, no kind tile (light, dark, Easy view)', async ({ page }) => {
+  const shots = path.join(__dirname, '..', 'test-results', 'share-st-34');
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/');
+  await galleryLoaded(page);
+  const check = async (easy, shot) => {
+    await page.getByRole('tab', { name: /^Share/ }).click();
+    const heading = page.getByRole('heading', { name: 'New post' });
+    await expect(heading).toBeVisible();
+    const spot = page.getByTestId('share-spot').filter({ visible: true }).first();
+    const got = {
+      newPost: await sizeOfEl(heading),
+      addPhotos: await sizeOfEl(spot.getByText(/^Add photos( or videos)?$/).first()),
+      circle: await circleIn(spot),
+    };
+    expect.soft({ shot, ...got }).toEqual({ shot, newPost: easy ? 26 : 22, addPhotos: easy ? 21 : 17, circle: easy ? 60 : 52 });
+    // Switch off (SHARE-ST-30): no Event, News or Saying tile anywhere.
+    await expect.soft(page.locator('[data-testid^="share-kind"]')).toHaveCount(0);
+    await expect.soft(page.getByRole('button', { name: /^(Add an event|Share news|Add a saying)$/ })).toHaveCount(0);
+    await page.screenshot({ path: path.join(shots, `${shot}.png`) });
+  };
+  await check(false, 'kevin-light');
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await check(false, 'kevin-dark');
+  await page.emulateMedia({ colorScheme: 'light' });
+  // Grandma Jo's column (Easy view on), checked as Kevin with Easy view on: see the substitution note above.
+  await setEasyView(page, true);
+  await check(true, 'kevin-easy-view-light');
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await check(true, 'kevin-easy-view-dark');
+  await page.emulateMedia({ colorScheme: 'light' });
+  await setEasyView(page, false);
+  await asJo(page);
+  if (await page.getByRole('tab', { name: /^Share/ }).count()) {
+    await check(true, 'jo-easy-view');
+  } else {
+    test.info().annotations.push({ type: 'SHARE-ST-34', description: 'Grandma Jo has no Share tab in the demo (viewer, RD-9); her Easy view sizes were checked as Kevin with Easy view on.' });
+  }
+  await resetDemo(page);
+});
+
+// ===== PR #174 fix round (grandparent-ux), written first (red), Nov 24, by qa-tdd =====
+// GUX-T2 (P1): at 390 x 844 the empty postcard starts right under the "New post" row (the row is the heading's
+// nearest box at least 48 px tall), not centered with a big gap. Light and dark.
+const rowBottom = (heading) => heading.evaluate((el) => {
+  let n = el;
+  while (n && n.getBoundingClientRect().height < 48) n = n.parentElement;
+  return (n ?? el).getBoundingClientRect().bottom;
+});
+test('GUX-T2 at 390 px the empty postcard is top-aligned: its top is within 32 px of the "New post" row (light, dark)', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  for (const scheme of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme: scheme });
+    await page.getByRole('tab', { name: /^Share/ }).click();
+    const heading = page.getByRole('heading', { name: 'New post' });
+    await expect(heading).toBeVisible();
+    const card = page.getByTestId('share-card').filter({ visible: true }).first();
+    await expect(card).toBeVisible();
+    const gap = Math.round((await card.boundingBox()).y - (await rowBottom(heading)));
+    expect.soft({ scheme, gap, close: gap >= 0 && gap <= 32 }).toEqual({ scheme, gap, close: true });
+  }
+});
+
+// GUX-T6 (P2): the demo shows Gallery's birthday card ("When's your birthday?", CAL-12) at first open. At 390 x 844 its
+// "Not now" starts under the floating tab bar; once it is scrolled to (as keyboard focus or a screen reader does:
+// the least scroll that brings it into the scroll area), all of it sits above the tab bar's top edge. Light only (the
+// layout is the same in dark).
+test('GUX-T6 at 390 x 844 Gallery\'s birthday card "Not now", once scrolled to, sits clear above the floating tab bar', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  const card = page.getByTestId('birthday-card');
+  await expect(card, 'the demo shows the birthday card on Gallery').toBeVisible();
+  const notNow = card.getByRole('button', { name: 'Not now' });
+  const bar = page.getByRole('tablist');
+  await expect(bar).toBeVisible();
+  await notNow.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(300);
+  const b = await notNow.boundingBox();
+  const barTop = (await bar.boundingBox()).y;
+  expect({ notNowBottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: b.y + b.height <= barTop })
+    .toEqual({ notNowBottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: true });
+  // Keyboard reach: Tab focus lands on it and it is not hidden behind the bar (WCAG 2.4.11).
+  await page.goto('/');
+  await galleryLoaded(page);
+  await notNow.focus();
+  await page.waitForTimeout(300);
+  const f = await notNow.boundingBox();
+  expect({ focusedBottom: Math.round(f.y + f.height), clear: f.y + f.height <= barTop }).toEqual({ focusedBottom: Math.round(f.y + f.height), clear: true });
+});
+
+// EF-HE-1-AC1/AC2 (intake #162, SPEC-EVAL-FIXES): supersedes the ff4543e guard ("Open" shown, "Open the chat …" spoken).
+// Each Messages Open button now shows which chat it opens, and its accessible name is exactly the words shown.
+test('EF-HE-1-AC1 EF-HE-1-AC2 at 390 px: each Messages Open button shows distinct words and its accessible name is exactly them', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: /^Messages(,|$)/ }).click();
+  await expect(page.getByRole('heading', { name: 'Messages' })).toBeVisible();
+  const open = page.getByRole('button', { name: /^Open / });
+  await expect(open.first()).toBeVisible();
+  const seen = await open.evaluateAll((bs) => bs.map((b) => ({ name: b.getAttribute('aria-label'), shown: (b.innerText || '').replace(/\s+/g, ' ').trim() })));
+  expect(seen.length).toBeGreaterThan(1);
+  for (const s of seen) expect(s.name).toBe(s.shown);
+  const shown = seen.map((s) => s.shown);
+  expect(new Set(shown).size).toBe(shown.length);
+  await expect(page.getByRole('button', { name: /^Open the chat/ })).toHaveCount(0);
+});
+// REACT-13a/c/d (Chase, Nov 24: 😂 👍 🎉 look small and blurry on Feed, ❤️ is crisp, and the ❤️ pill doesn't line up).
+// Written first (red), Nov 24, by qa-tdd. Apple Color Emoji are bitmaps, so a pill at a fractional x resamples them;
+// every reaction pill must sit at a whole-pixel x with a whole-pixel width, and the first pill's outline must start on
+// the photo's left edge (RD-64's -8 margin put it 8 px outside). Jest contract: src/screens/__tests__/reactEmoji.test.tsx.
+const PILL = '[aria-label="Love it"], [aria-label="Haha"], [aria-label="Like it"], [aria-label="Hooray"]';
+for (const width of [390, 1280]) {
+  test(`REACT-13 at ${width} px: every reaction pill has a whole-pixel x and width; the first lines up with the photo`, async ({ page }) => {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : 800 });
+    await page.goto('/');
+    await galleryLoaded(page);
+    await onFeed(page);
+    const pills = page.locator(PILL).filter({ visible: true });
+    await expect(pills.first()).toBeVisible();
+    const boxes = await pills.evaluateAll((els) => els.map((e) => {
+      const r = e.getBoundingClientRect();
+      return { label: e.getAttribute('aria-label'), x: r.x, width: r.width };
+    }));
+    expect(boxes.length).toBeGreaterThanOrEqual(4);
+    expect.soft(boxes.filter((b) => !Number.isInteger(b.x) || !Number.isInteger(b.width))).toEqual([]);
+    // The first post's first pill (Love it) against the same post's first photo.
+    const edges = await page.locator('[data-testid^="post-"]').filter({ visible: true }).first().evaluate((card, sel) => {
+      const pill = card.querySelector(sel);
+      const photo = card.querySelector('[aria-label^="Open photo"]');
+      return { pill: pill && pill.getBoundingClientRect().left, photo: photo && photo.getBoundingClientRect().left };
+    }, PILL);
+    expect(edges.pill).not.toBeNull();
+    expect(edges.photo).not.toBeNull();
+    expect(Math.abs(edges.pill - edges.photo)).toBeLessThanOrEqual(0.5);
+  });
+}

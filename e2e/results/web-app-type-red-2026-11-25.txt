@@ -1,0 +1,172 @@
+
+Running 6 tests using 1 worker
+
+[1/6] e2e-web/android-screens.spec.js:149:11 › 360x800, light, Easy view off › WEB-APP-19 Gallery at 360x800, light, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text
+  1) e2e-web/android-screens.spec.js:149:11 › 360x800, light, Easy view off › WEB-APP-19 Gallery at 360x800, light, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text 
+
+    Error: every visible text 17px or larger
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "\"Nov 25\" 15px",
+    + ]
+
+      155 |             const got = await screenChecks(page);
+      156 |             expect.soft(got.sideways, 'no sideways scroll').toEqual([]);
+    > 157 |             expect.soft(got.small, 'every visible text 17px or larger').toEqual([]);
+          |                                                                         ^
+      158 |             expect.soft(got.tiny, 'every button, link, tab and switch 48x48').toEqual([]);
+      159 |             expect.soft(got.cut, 'no cut text').toEqual([]);
+      160 |           });
+        at /home/user/Hearth/app/e2e-web/android-screens.spec.js:157:73
+
+    Error Context: test-results/e2e-web-artifacts/android-screens-360x800-li-09b25-x-targets-48x48-no-cut-text/error-context.md
+
+
+[2/6] e2e-web/android-screens.spec.js:149:11 › 360x800, light, Easy view off › WEB-APP-19 Feed at 360x800, light, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text
+  2) e2e-web/android-screens.spec.js:149:11 › 360x800, light, Easy view off › WEB-APP-19 Feed at 360x800, light, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text 
+
+    Error: every visible text 17px or larger
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "\"Just now\" 15px",
+    + ]
+
+      155 |             const got = await screenChecks(page);
+      156 |             expect.soft(got.sideways, 'no sideways scroll').toEqual([]);
+    > 157 |             expect.soft(got.small, 'every visible text 17px or larger').toEqual([]);
+          |                                                                         ^
+      158 |             expect.soft(got.tiny, 'every button, link, tab and switch 48x48').toEqual([]);
+      159 |             expect.soft(got.cut, 'no cut text').toEqual([]);
+      160 |           });
+        at /home/user/Hearth/app/e2e-web/android-screens.spec.js:157:73
+
+    Error Context: test-results/e2e-web-artifacts/android-screens-360x800-li-5acac-x-targets-48x48-no-cut-text/error-context.md
+
+
+[3/6] e2e-web/android-screens.spec.js:149:11 › 412x915, light, Easy view off › WEB-APP-19 Gallery at 412x915, light, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text
+  3) e2e-web/android-screens.spec.js:149:11 › 412x915, light, Easy view off › WEB-APP-19 Gallery at 412x915, light, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text 
+
+    Error: every visible text 17px or larger
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "\"Nov 25\" 15px",
+    + ]
+
+      155 |             const got = await screenChecks(page);
+      156 |             expect.soft(got.sideways, 'no sideways scroll').toEqual([]);
+    > 157 |             expect.soft(got.small, 'every visible text 17px or larger').toEqual([]);
+          |                                                                         ^
+      158 |             expect.soft(got.tiny, 'every button, link, tab and switch 48x48').toEqual([]);
+      159 |             expect.soft(got.cut, 'no cut text').toEqual([]);
+      160 |           });
+        at /home/user/Hearth/app/e2e-web/android-screens.spec.js:157:73
+
+    Error Context: test-results/e2e-web-artifacts/android-screens-412x915-li-3cd48-x-targets-48x48-no-cut-text/error-context.md
+
+
+[4/6] e2e-web/android-screens.spec.js:149:11 › 412x915, light, Easy view off › WEB-APP-19 Feed at 412x915, light, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text
+  4) e2e-web/android-screens.spec.js:149:11 › 412x915, light, Easy view off › WEB-APP-19 Feed at 412x915, light, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text 
+
+    Error: every visible text 17px or larger
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "\"Just now\" 15px",
+    + ]
+
+      155 |             const got = await screenChecks(page);
+      156 |             expect.soft(got.sideways, 'no sideways scroll').toEqual([]);
+    > 157 |             expect.soft(got.small, 'every visible text 17px or larger').toEqual([]);
+          |                                                                         ^
+      158 |             expect.soft(got.tiny, 'every button, link, tab and switch 48x48').toEqual([]);
+      159 |             expect.soft(got.cut, 'no cut text').toEqual([]);
+      160 |           });
+        at /home/user/Hearth/app/e2e-web/android-screens.spec.js:157:73
+
+    Error Context: test-results/e2e-web-artifacts/android-screens-412x915-li-f5248-x-targets-48x48-no-cut-text/error-context.md
+
+
+[5/6] e2e-web/android-screens.spec.js:149:11 › 360x800, dark, Easy view off › WEB-APP-21 Gallery at 360x800, dark, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text
+  5) e2e-web/android-screens.spec.js:149:11 › 360x800, dark, Easy view off › WEB-APP-21 Gallery at 360x800, dark, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text 
+
+    Error: every visible text 17px or larger
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "\"Nov 25\" 15px",
+    + ]
+
+      155 |             const got = await screenChecks(page);
+      156 |             expect.soft(got.sideways, 'no sideways scroll').toEqual([]);
+    > 157 |             expect.soft(got.small, 'every visible text 17px or larger').toEqual([]);
+          |                                                                         ^
+      158 |             expect.soft(got.tiny, 'every button, link, tab and switch 48x48').toEqual([]);
+      159 |             expect.soft(got.cut, 'no cut text').toEqual([]);
+      160 |           });
+        at /home/user/Hearth/app/e2e-web/android-screens.spec.js:157:73
+
+    Error Context: test-results/e2e-web-artifacts/android-screens-360x800-da-4469b-x-targets-48x48-no-cut-text/error-context.md
+
+
+[6/6] e2e-web/android-screens.spec.js:149:11 › 360x800, dark, Easy view off › WEB-APP-21 Feed at 360x800, dark, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text
+  6) e2e-web/android-screens.spec.js:149:11 › 360x800, dark, Easy view off › WEB-APP-21 Feed at 360x800, dark, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text 
+
+    Error: every visible text 17px or larger
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "\"Just now\" 15px",
+    + ]
+
+      155 |             const got = await screenChecks(page);
+      156 |             expect.soft(got.sideways, 'no sideways scroll').toEqual([]);
+    > 157 |             expect.soft(got.small, 'every visible text 17px or larger').toEqual([]);
+          |                                                                         ^
+      158 |             expect.soft(got.tiny, 'every button, link, tab and switch 48x48').toEqual([]);
+      159 |             expect.soft(got.cut, 'no cut text').toEqual([]);
+      160 |           });
+        at /home/user/Hearth/app/e2e-web/android-screens.spec.js:157:73
+
+    Error Context: test-results/e2e-web-artifacts/android-screens-360x800-da-aa57c-x-targets-48x48-no-cut-text/error-context.md
+
+
+  6 failed
+    e2e-web/android-screens.spec.js:149:11 › 360x800, light, Easy view off › WEB-APP-19 Gallery at 360x800, light, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text 
+    e2e-web/android-screens.spec.js:149:11 › 360x800, light, Easy view off › WEB-APP-19 Feed at 360x800, light, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text 
+    e2e-web/android-screens.spec.js:149:11 › 412x915, light, Easy view off › WEB-APP-19 Gallery at 412x915, light, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text 
+    e2e-web/android-screens.spec.js:149:11 › 412x915, light, Easy view off › WEB-APP-19 Feed at 412x915, light, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text 
+    e2e-web/android-screens.spec.js:149:11 › 360x800, dark, Easy view off › WEB-APP-21 Gallery at 360x800, dark, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text 
+    e2e-web/android-screens.spec.js:149:11 › 360x800, dark, Easy view off › WEB-APP-21 Feed at 360x800, dark, Easy view off: no sideways scroll, text 17px+, targets 48x48, no cut text 

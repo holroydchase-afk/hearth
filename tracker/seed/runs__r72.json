@@ -1,9 +1,9 @@
 {
  "suite": "app",
  "at": "2026-11-24T23:59:50-05:00",
- "label": "T38 demo panel 'Try this' search hint: failing test first (red)",
+ "label": "T40 demo panel 'Try this' search hint: failing test first (red)",
  "passed": 4,
  "failed": 2,
  "results": {},
- "note": "npx jest src/demo/__tests__/demoFrame.test.tsx, 1 run, red on purpose: DEMO-NEW-6, T38 found no step 3 matching 'Search and type orchard' (it still says lake), and the T38 guard found 0 DEMO_POSTS matching 'lake' (title, caption or sender name). Green waits on the engineer's DemoFrame.tsx fix. e2e/results/t38-demoframe-red-2026-11-24.txt"
+ "note": "npx jest src/demo/__tests__/demoFrame.test.tsx, 1 run, red on purpose: DEMO-NEW-6, T40 found no step 3 matching 'Search and type orchard' (it still says lake), and the T40 guard found 0 DEMO_POSTS matching 'lake' (title, caption or sender name). Green waits on the engineer's DemoFrame.tsx fix. e2e/results/t38-demoframe-red-2026-11-24.txt"
 }

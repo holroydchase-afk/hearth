@@ -21,6 +21,10 @@ import { createFakeApi } from './fakeRuntime';
 
 export const FAKE_MODE = process.env.EXPO_PUBLIC_HEARTH_FAKE === '1' || DEMO_MODE;
 
+// HRT-WEB.1 (WEB-APP-6): the web store seals the session and the messenger store and can wipe them all at
+// sign-out; the phone store has no clear (its values go with their own keys).
+const sessionStore = secureSessionStorage as { clear?: () => Promise<void> };
+
 export function createRuntime(): AppDeps | { error: string } {
   const common = {
     kv: asyncStorageKV,
@@ -33,9 +37,11 @@ export function createRuntime(): AppDeps | { error: string } {
     // A3: kept photo files on phones only; the web build keeps none.
     mediaDisk: fileMediaStore && mediaKeyStore ? { store: fileMediaStore, keys: mediaKeyStore } : null,
     videoFiles,
+    clearSessionStore: sessionStore.clear ? () => sessionStore.clear!() : undefined,
   };
   if (FAKE_MODE) {
-    return { ...common, api: createFakeApi(), helpPhone: '+1 304 555 0100' };
+    // START-ON-1/2: a fake help address (never a real one) so Help and the start button behave as deployed.
+    return { ...common, api: createFakeApi(), helpPhone: '+1 304 555 0100', helpEmail: 'help@example.test' };
   }
   const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
@@ -43,5 +49,9 @@ export function createRuntime(): AppDeps | { error: string } {
   const client = createClient(url, anonKey, {
     auth: { storage: secureSessionStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
   });
-  return { ...common, api: new SupabaseApi({ url, anonKey, client }), helpPhone: process.env.EXPO_PUBLIC_HELP_PHONE ?? null };
+  return {
+    ...common, api: new SupabaseApi({ url, anonKey, client }), helpPhone: process.env.EXPO_PUBLIC_HELP_PHONE ?? null,
+    // START-ON-1/2: set in the EAS environment, never in the repo. Unset or blank: no "Something wrong?" and no start button.
+    helpEmail: process.env.EXPO_PUBLIC_HEARTH_HELP_EMAIL || null,
+  };
 }

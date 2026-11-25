@@ -1,6 +1,6 @@
 # Spec: one visibility core, the co-parent bridge, and one Share composer
 
-Status: **design, awaits Chase's go** (Nov 24, 2026). TRACKER R77. Persona check: `decisions/2026-11-24-visibility-core.md`. Data model: `docs/architecture/07-visibility-model.md`. Design only: no code, no migration, no package files yet.
+Status: **Phases 1 and 1b built locally** (Nov 24, 2026; Chase "Ok agreed to all", DEC-83; migrations 0031 and 0032, `packages/visibility/core`; not deployed). Phase 2 built locally on top (Nov 24; VIS-8, 10, 11, 12 green, VIS-9 green except `delete_post`'s promised repeat no-op; migration 0033); bridge after the beta. TRACKER R77. Persona check: `decisions/2026-11-24-visibility-core.md`. Data model: `docs/architecture/07-visibility-model.md` (its names win: `vis.kinds`, `vis.can_see`, `vis.sees_item`, `vis.attach`).
 
 **Simple for the user, sophisticated underneath.** One core decides who sees every row of every kind. Families never see it; they pick names on a postcard. The headline feature it unlocks is the **co-parent bridge**: two homes sharing their child's photos and dates on purpose, with each side's relatives kept apart.
 
@@ -17,7 +17,7 @@ What changes:
 4. **User error is caught twice.** Before: the To: names, nothing pre-picked (DEC-73/79), and a confirm when you **widen** a post after sending. After: a 2-minute "Take back" before any notice goes out, plus a nightly check of the live data.
 5. **Fungible, and reusable.** Every content kind (photo, video, news, date, kinds not invented yet) is one registry row plus a table pointing at a post. Zero new visibility rules; a test proves it with a throwaway kind. The core has no Hearth words in it, so other studio apps can use it (`@holroyd/visibility`, like `@holroyd/messenger`).
 6. **The co-parent bridge** (anchor feature, phased): two family spaces open a narrow, two-key link about one child. Only the two named parents read across it. Nobody is ever asked "who sees this?"; a parent picks the other home (for example "Dad's home") on To: like any group.
-7. **One Share composer.** The postcard stays the only way in. It gains two worded choices beside "Add photos": "Write news" (a big announcement, words only) and "Add a date". Each is one post with one audience, picked the same way.
+7. **One Share composer.** The postcard stays the only way in. Photos come first, with Event, News (a big announcement, words only) and Saying ("kids say the darndest things") beside it. Each is one post with one audience, picked the same way, and the list stays open: a new kind needs no new rule.
 
 **What you won't be asked again:** "who should see X?" for any new content. New content attaches to a post and gets that post's audience, or it attaches to a person and follows who can see that person. Only a brand-new kind of reach (for example "everyone except Gigi") comes back to you, and that is a product call, not a plumbing question.
 
@@ -49,20 +49,20 @@ Self, Parents and Server are plumbing. (Generic names in 07: item, person, conta
 
 ### C2. The registry
 
-One table, `private.vis_registry(kind, relation, reach_class, rule_fn, parent_kind, note)`, one row per table, view, RPC that returns rows, storage bucket and edge function. Example rows: `post | public.posts | post | private.sees_post | null`, `media_item | public.media_items | post | private.sees_post | post`, `life_date | public.life_dates | person | public.can_see_profile | profile`.
+Three tables in the `vis` schema (07): `vis.kinds(kind, relation, reach, item_column, owner_column, rule_fn, narrow_fn, note)`, one row per table or view; `vis.functions(fn, kind, note)` for security definer functions (kind null = allowlisted with a reason); `vis.edge_functions(name, kind, note)`. Example rows: `post | public.posts | item | item_column id`, `media_item | public.media_items | item | item_column post_id | narrow private.vis_media_ok`, `profile | public.profiles | person | rule private.vis_sees_person`.
 
-One function reads it: `private.can_see(user, kind, id) → boolean`. It looks up the kind, finds the parent if there is one, and calls that class's rule. RLS policies keep calling the rule directly (fast, and the planner can inline it); `can_see` is what tests, the oracle, `sign-media`, `notify` and export call, so they can't drift from RLS.
+One function reads it: `vis.can_see(user, kind, id) → boolean`. It looks up the kind, finds the item through `item_column` (item reach) or calls the kind's rule, then ANDs any hook. RLS policies keep calling the rule directly (fast, and the planner can inline it); `can_see` is what tests, the oracle, `sign-media`, `notify` and export call, so they can't drift from RLS.
 
 How existing rules fold in: nothing is rewritten. `sees_post`, `group_reply_ok`, `can_see_profile`, `can_see_circle`, `can_send_to` and `feature_on` stay as they are. The registry **names** them and the tests prove every reader uses them.
 
 ### C3. Default deny and the coverage gate (the part that ends the question)
 
 A CI test, `backend/tests/vis_registry_test.sql`, reads the live catalog after all migrations:
-- every table in `public` and every storage bucket is in the registry, or the build fails with "`<table>` has no reach class: add a vis_registry row";
+- every table in `public` and every storage bucket is in the registry, or the build fails with "`<table>` has no reach class: add a vis_registry row" (the registry is `vis.kinds`);
 - every registered table has RLS on and forced, and no policy for `authenticated` is `using (true)`;
 - every policy on a Post-class table calls its class's rule (checked from `pg_policies`);
 - every `security definer` function in `public` that returns rows is registered, and its body calls its rule (text check, with a short allowlist that names a reason);
-- every edge function folder is listed (checked by a shell step that lists `backend/functions/`), and any `verify_jwt = false` names a reason;
+- every edge function folder is listed (checked by a shell step, `backend/tests/vis_gate_test.sh`, that lists `backend/supabase/functions/`), and any `verify_jwt = false` names a reason;
 - the same checks cover every schema PostgREST exposes (not only `public`), every view (must be `security_invoker`), materialized views (none exposed), all functions `authenticated` can execute (not only row-returning ones), policies `TO public`, column grants, the Realtime publication (no presence) and `storage.objects` policies (PRIV-VC-R2; full list in 07);
 - each Post-class table has exactly one permissive select policy; any other is restrictive, so nothing can OR a wider rule in (PRIV-VC-R4).
 
@@ -70,7 +70,7 @@ So a feature can still be built wrong, but it **can't merge** wrong.
 
 ### C4. The oracle (R51, folded in)
 
-`backend/tests/vis_oracle/`: a seeded generator builds families (two households, overlapping groups, events, removed members, demoted parents, a co-parent in the other space, share-history cutoffs, deleted posts). For every person × every item × every read path it compares the answer to `private.can_see`. Read paths: table selects, `get_feed`, `get_timeline`, `search_posts`, `post_viewers`, `get_comments`, `reply_readers`, `sign-media`, the notice outbox, `export_my_data`, chat. A wrong "yes" is P0; a wrong "no" is P1. Fixed seed on every PR, a random seed nightly, results matrix dated in `backend/tests/results/`.
+`backend/tests/vis_oracle/`: a seeded generator builds families (two households, overlapping groups, events, removed members, demoted parents, a co-parent in the other space, share-history cutoffs, deleted posts). For every person × every item × every read path it compares the answer to `vis.can_see`. Read paths: table selects, `get_feed`, `get_timeline`, `search_posts`, `post_viewers`, `get_comments`, `reply_readers`, `sign-media`, the notice outbox, `export_my_data`, chat. A wrong "yes" is P0; a wrong "no" is P1. Fixed seed on every PR, a random seed nightly, results matrix dated in `backend/tests/results/`.
 
 The app's Fake backend runs the same fixtures, so the demo can't show what the real server wouldn't.
 
@@ -122,25 +122,60 @@ The postcard (DEC-73, DEC-79, SHARE-ST-1..18) stays the one way in. Every kind i
 | Kind | What's on the card | Stored as |
 |---|---|---|
 | Photos and videos | Today's card | `posts.kind = 'photos'` + `media_items` (video stays behind `feature_on`) |
-| Big news | Large words, no photo ("Write news") | `posts.kind = 'news'`, caption required, no media |
-| A date | Title, date, optional place and photo ("Add a date") | `posts.kind = 'date'` + `post_dates` row (child of the post, Post class) |
+| News | Large words, no photo ("Share news") | `posts.kind = 'news'`, caption required, no media |
+| Event | What's happening, when, optional place ("Add an event") | `posts.kind = 'event'` + `post_events` row (child of the post, Post class) |
+| A saying | A quote card, "kids say the darndest things" style: the words, who said it, their age then ("Add a saying") | `posts.kind = 'saying'` + `post_sayings` row (child of the post, Post class) |
 
-The empty postcard shows "Add photos" as the big target (unchanged), with two worded buttons under it, "Write news" and "Add a date". **Parents only (owner/adult) until the grandparent test passes;** anyone else sees today's card with no change (GUX-VC-R1). Exact layout (GUX-VC-R1):
-- Two full-width rows stacked under the card (not side by side, so the words never clip at Android 200% or iOS's largest size), each at least 48pt tall with 12pt between, an outline icon beside the words (DS-3), secondary gray capsules, not filled (DS-9).
-- "Write news" with the helper line "Big words, no photo"; "Add a date" with the helper line "A day to remember, like a game or a visit" (17pt muted; so nobody reads "Add a date" as dating a photo). Spoken: "Write news, big words, no photo"; "Add a date, a day to remember".
-- Picking one swaps the photo spot for that kind's fields; the stamp, note and To: stay. To:'s hint follows the kind: "To: you pick after your words" (news), "To: you pick after the date" (date), and GUX-R1's tap hint becomes "Write your news first, then pick who sees it." / "Fill in the date first, then pick who sees it." (GUX-VC-R5).
-- News fields: a label above the box, "Your news" (never placeholder-only words, which vanish as you type). Date fields: "What's happening?", "When?" (the phone's own date picker, then the date written out, "Saturday, March 3"), "Where? (optional)", "Add a photo (optional)".
-- A "Start over" text button (top left, 48pt) goes back to the empty postcard; if anything is typed it asks "Throw away this news?" with "Keep writing" and "Throw away" (GUX-VC-R5).
+**Open-ended by design (Chase, Nov 24: "flexible for other types - events, announcements, a sayings card").** A new kind is one `posts.kind` value plus, if it needs fields, one child table attached with `vis.attach` (VIS-19): no new visibility rule, no new To: step. The Share start (thread "Redo the Share screen") owns the picker UI; this section is the contract it builds on.
 
-To: works the same for all three, after the content, nothing pre-picked. Feed shows news as a large-type card (22pt SemiBold, the "Add photos" size) and dates as a date card with "Add to my calendar" (opens the phone's own add-event screen, so no calendar permission prompt; GUX-VC-R9); both use the same "who can see this" line, people's names for relatives, never group titles.
+Kind names on screen (thread "Redo the Share screen", tester https://claude.ai/artifact/HekNBZ4bAMgpUqReeHgnTS, Nov 24): **Photos, Event, News, Saying**. Spoken labels: "Add photos", "Add an event", "Share news", "Add a saying". **No helper lines** (Chase: let the design carry it; supersedes GUX-VC-R1's helper lines). The photo postcard stays first; Event, News and Saying sit in a row under it. **Parents only (owner/adult) until the grandparent test passes;** anyone else sees today's card with no change. Text sizes follow the phone's standard (17 body, 22 title). The Share thread owns the exact look; this spec owns kinds, fields and audience.
+- Fields: **Event:** "What's happening", "When" (the phone's own date picker), "Where (optional)". **News:** one big field, "Your news". **Saying:** "What they said", "Who said it", "Age" (optional, their age then).
+- Picking a kind swaps the photo spot for that kind's fields; the note and To: stay. To: comes after the content, nothing pre-picked. A "Start over" button returns to the empty postcard, asking first if anything is typed (GUX-VC-R5).
 
-Shared dates and life-calendar dates are different things: a shared date ("Gammy's 80th, Mar 3, at the church") is a post and follows its audience. A life-calendar date (a birthday) belongs to a person and follows `can_see_profile`. Both are registered; neither raises a new question.
+To: works the same for all three, after the content, nothing pre-picked. Feed shows news as a large-type card (22pt title size), sayings as a quote card, and events as an event card with "Add to my calendar" (opens the phone's own add-event screen, so no calendar permission prompt; GUX-VC-R9); both use the same "who can see this" line, people's names for relatives, never group titles.
+
+Events and life-calendar dates are different things: an event ("Gammy's 80th, Mar 3, at the church") is a post and follows its audience. A life-calendar date (a birthday) belongs to a person and follows `can_see_profile`. Both are registered; neither raises a new question.
+
+### Notices (GUX-VC-R11, P1, TRACKER R89)
+
+Today every new post is announced as "shared new photos" (`notify/index.ts`, `summary()`). Each kind needs its own words before `post_kinds` is on. Rules, same as the photo notice: the person's name as this recipient sees it (`actor_names`, joined by `joinNames`), never a group title; **no words from the post**: no news text, no event title, day, time or place, no saying, no child's name or age (the privacy note at the top of `notify/index.ts`; nothing in the logs). Calm and guilt-free (A1, A2): no "don't miss", no "big", no countdown, no "you haven't seen". Push title stays `From <names> on Hearth` (BETA-NOTIFY-7). Email subject is `<line> on Hearth`; the email body is `<line>.` then the existing "Open Hearth to see/read it" line (20px).
+
+One kind, one or more posts from the same people (`<who>` = `joinNames(actor_names)`):
+
+| Kind | Line (push body starts with it, email subject and first line use it) | Push body ends | Email "Open Hearth…" verb |
+|---|---|---|---|
+| Photos | `<who> shared new photos` (unchanged) | `. Tap to see them.` | see them |
+| News, 1 post | `<who> shared some news` | `. Tap to read it.` | read it |
+| News, 2+ posts | `<who> shared some news` (news has no plural; same line) | `. Tap to read it.` | read it |
+| Event, 1 post | `<who> added an event` | `. Tap to see it.` | see it |
+| Event, 2+ posts | `<who> added <n> events` | `. Tap to see them.` | see them |
+| Saying, 1 post | `<who> shared a saying` | `. Tap to read it.` | read it |
+| Saying, 2+ posts | `<who> shared <n> sayings` | `. Tap to see them.` | see them |
+| Bulk import | unchanged (BETA-BULK-6) | unchanged | unchanged |
+
+Examples: push "From Mom on Hearth" / "Mom added an event. Tap to see it."; email subject "Mom shared some news on Hearth", body "Mom shared some news." then "Open Hearth on your phone to read it."
+
+**Several kinds in one batch:** one line, kinds in the fixed order photos, news, events, sayings, joined like names (", " and " and "): `<who> shared ` + parts, where the parts are `new photos`, `some news`, `an event` / `<n> events`, `a saying` / `<n> sayings`. Push body ends `. Tap to see them.`; email says "see them". Examples: "Mom shared new photos and an event", "Mom and Chase shared new photos, some news and 2 sayings". Subject: "Mom shared new photos and an event on Hearth".
+
+**Replies (same table, so a reply on news isn't called a photo):** `<who> replied to your photos` / `your news` / `your event` / `your saying`; replies across kinds: `<who> replied to your posts`. Posts and replies together: `New posts and replies from <who>` (was "New photos and replies", kept when every post is photos). Push body ends `. Tap to see.` as today.
+
+Length: the longest mixed line with 3+ names ("Mom, Chase and 3 others shared new photos, some news, 2 events and 2 sayings. Tap to see them.", 95 characters) fits the lock screen's two lines on both phones; names keep `headerSafe`'s 40-character cap in the email. The batch needs per-kind post counts from `claim_notification_batches` (counts only, no text).
+
+Confirm with a relative (next UAT): does "shared some news" worry an older reader into expecting bad news (A1)? Fallback if it does: "<who> wrote to the family".
+
+| ID | Type | Given / When / Then |
+|---|---|---|
+| NOTIFY-K-1 | auto | Given a batch of one news, one event or one saying post, When push and email are built, Then the line, push ending and email verb match the table exactly, and the news text, event title, day, place, saying, child's name and age appear nowhere in title, body, subject, text or html (GUX-VC-R11) |
+| NOTIFY-K-2 | auto | Given 2 events or 2 sayings, Then "added 2 events" / "shared 2 sayings" and "Tap to see them." |
+| NOTIFY-K-3 | auto | Given photos, news, 2 events and a saying in one batch, Then one line in the fixed order: "shared new photos, some news, 2 events and a saying" |
+| NOTIFY-K-4 | auto | Given replies only, on news, an event, a saying, or mixed kinds, Then "replied to your news / your event / your saying / your posts" |
+| NOTIFY-K-5 | auto | Given only photo posts (bulk or not), Then today's strings are unchanged (no regression) |
 
 ## Phases and acceptance criteria
 
 Build order: 1 and 1b together, then 2, 3, 4; 5 when the 0029 branch merges; 6 (bridge) after the beta.
 
-Each phase is a small PR: qa-tdd red first, then engineer. Migrations start at 0030 (0029 is taken by the life-calendar branch).
+Each phase is a small PR: qa-tdd red first, then engineer. Migrations are 0031 and up (0029 is the life calendar, 0030 the video fixes on PR #135).
 
 **Phase 1: registry and gate (no behavior change, about 3 sessions)**
 
@@ -151,8 +186,8 @@ Each phase is a small PR: qa-tdd red first, then engineer. Migrations start at 0
 | VIS-3 | auto | Given every registered table, When the catalog is read, Then RLS is enabled and forced and no `authenticated` policy is `using (true)` |
 | VIS-4 | auto | Given every Post-class table, When `pg_policies` is read, Then each select policy calls `private.sees_post` (directly or via `reply_ok`) |
 | VIS-5 | auto | Given every `security definer` row-returning function in `public`, When its body is read, Then it is registered and calls its rule, or sits on the allowlist with a reason |
-| VIS-6 | auto | Given `backend/functions/`, When CI lists it, Then every folder is in the registry |
-| VIS-7 | auto | Given the fixture family, When `private.can_see(u, kind, id)` runs for every user and row, Then it equals the class rule for each |
+| VIS-6 | auto | Given `backend/supabase/functions/`, When CI lists it, Then every folder is in the registry |
+| VIS-7 | auto | Given the fixture family, When `vis.can_see(u, kind, id)` runs for every user and row, Then it equals the class rule for each |
 
 **Phase 2: oracle across readers (R51, about 3 sessions)**
 
@@ -179,14 +214,14 @@ Each phase is a small PR: qa-tdd red first, then engineer. Migrations start at 0
 
 | ID | Type | Given / When / Then |
 |---|---|---|
-| SHARE-U-1 | auto | Given the empty postcard, When it renders for a parent (owner/adult), Then "Add photos" is the big target and "Write news" and "Add a date" sit below it as two stacked full-width rows with their helper lines, each 48pt+, 17pt+, words inside at the largest text (GUX-VC-R1) |
-| SHARE-U-2 | auto | Given anyone who is not a parent (can post or not), When Share opens, Then neither "Write news" nor "Add a date" is on the page (GUX-VC-R1) |
+| SHARE-U-1 | auto | Given the empty postcard, When it renders for a parent (owner/adult), Then "Add photos" is the big target and Event, News and Saying sit below it as two stacked full-width rows with their helper lines, each 48pt+, 17pt+, words inside at the largest text (GUX-VC-R1) |
+| SHARE-U-2 | auto | Given anyone who is not a parent (can post or not), When Share opens, Then neither Event, News nor Saying is on the page (GUX-VC-R1) |
 | SHARE-U-8 | auto | Given news or date picked, When the card renders, Then To:'s hint and the tap hint name that kind's step ("after your words", "after the date"), never "after your photos", and "Start over" returns to the empty postcard, asking first if anything is typed (GUX-VC-R5) |
 | SHARE-U-9 | auto | Given a post inside its hold, When its card renders for the author, Then it shows "Only you can see this for now. Sending in 2 minutes." and "Take back"; tapping it shows "Taken back. Nobody saw it." with no second confirm (GUX-VC-R2) |
 | SHARE-U-10 | auto | Given a widening change, When the dialog shows, Then its buttons read "Yes, send to them" and "Don't add them" and "See all N names" lists every new person (GUX-VC-R3) |
 | SHARE-U-3 | auto | Given any kind, When To: opens, Then nothing is pre-picked and the flow equals SHARE-ST's |
 | SHARE-U-4 | auto | Given a news post with words and no media, When published, Then the server accepts it, it has an audience, and VIS-8 covers it |
-| SHARE-U-5 | auto | Given a date post, When a person outside its audience reads the feed, calendar or search, Then they get nothing (registry kind `shared_date`, Post class) |
+| SHARE-U-5 | auto | Given an event post, When a person outside its audience reads the feed, calendar or search, Then they get nothing (registry kind `event`, Post class) |
 | SHARE-U-6 | auto | Given a news or date post, When anyone in its audience opens Feed, Then they see a large-type card with the "who can see this" names line |
 | SHARE-U-7 | manual | Given Mom on her own phone, When she shares a photo, news and a date, Then each takes under 60 s with no help |
 
@@ -218,7 +253,7 @@ Each phase is a small PR: qa-tdd red first, then engineer. Migrations start at 0
 | BR-11 | auto | Given an ex with no relationship on Hearth, When they enter a wrong or someone else's link code, Then the answer is the same "not found" whether or not the person or family exists, and codes are rate limited like invites |
 | BR-7 | manual | Given two parents on real phones, When one sends a photo to "Other home", Then the other sees it with no help and neither side's relatives do |
 
-**Phase 5: life calendar plugs in** (when the 0029 branch merges): VIS-18 above.
+**Phase 5: life calendar plugs in** (Built Nov 24 in 0032: kind `family_date`, Person class; `backend/tests/vis_calendar_test.sql`): VIS-18 above.
 
 Success signal: VIS-1..12 and VIS-19..22 green on CI for two weeks, and no new feature PR asks Chase "who sees this?". Stop condition: if Phase 1's catalog checks give noisy false failures after 2 sessions, keep VIS-1, VIS-3 and the oracle, and drop the body text checks (VIS-5).
 
@@ -249,7 +284,7 @@ Open:
 - **GUX-VC-R7 (P1, with PRIV-VC-R10):** recommend a bridged post can't also go to a relatives' group (To: greys the groups out with "Dad's home posts go only to Dad"). Needs Chase.
 - **GUX-VC-R8 (P1, before B1):** bridge setup and the receiving parent's yes screen are undesigned; also whether a re-share to the receiver's family tells the author. Confirm with a co-parent.
 - **GUX-VC-R9 (P2):** "Add to my calendar" on Android/web and in email; and news/date posts on the frame (skip words-only posts, or a large-type picture). Decide in Phase 4.
-- **GUX-VC-R10 (P2, confirm with a relative):** is "Write news" the word a parent would use (vs "Share news")? Add to the next UAT session.
+- **GUX-VC-R10 (P2, confirm with a relative):** is "News" (spoken "Share news") the word a parent would use (vs "Share news")? Add to the next UAT session.
 
 ## Privacy review (privacy-security, Nov 24, 2026)
 
@@ -272,9 +307,9 @@ Open (before Phase 6; none block Phases 1 to 4):
 ## Open questions for Chase (only the ones that change your goal)
 
 1. **Go on Phases 1, 1b and 2 now, before the beta?** Recommendation: yes (no screen changes; they replace R51 and make every later feature safe by default). Phase 3 after R62. It's the honest version of "data can't leak".
-2. **Add "Write news" and "Add a date" to the postcard?** This reopens DEC-79's "one way in". Recommendation: yes, parents only until the grandparent test, because most grandparents can't post anyway.
+2. **Add Event, News and Saying to the postcard?** This reopens DEC-79's "one way in". Recommendation: yes, parents only until the grandparent test, because most grandparents can't post anyway.
 3. **Co-parent bridge after the beta, and bring back a co-parent persona first?** Recommendation: yes to both. Nobody in the WV beta is a split parent pair, so B1 has no tester before Nov 22; the model and the BR tests are designed now so nothing built before then blocks it.
 4. **2-minute "Take back" delays every notice by up to 2 minutes.** Recommendation: yes; a grandparent won't notice 2 minutes, and a wrong send is the worst error we have.
 
 ---
-Last checked against code: 2026-11-24, migrations 0001 to 0028 on main (0029 life calendar on its own branch, not read).
+Last checked against code: 2026-11-24, migrations 0001 to 0029, 0031 and 0032 (0029 life calendar registered, VIS-18; 0030 is the video-fixes branch, not merged).

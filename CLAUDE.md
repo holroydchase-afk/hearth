@@ -36,13 +36,14 @@ Studio standard: follow holroydchase-afk/studio-agents docs/studio-standard.md; 
 
 ## Layout
 - `backend/`: Supabase.
-  - `supabase/migrations/0001`–`0029`: RLS, RPCs, triggers, notification outbox (0003), error reports (0006), family shape (0011), groups v2 (0013), messenger relay (0015), video (0020), start a family (0024), search (0025), text sign-in (0026), group names (0027), no passwords (0028), life calendar (0029). What is live on the hosted project: `docs/eng/DEPLOYS.md`.
+  - `supabase/migrations/0001`–`0029`: RLS, RPCs, triggers, notification outbox (0003), error reports (0006), family shape (0011), groups v2 (0013), messenger relay (0015), video (0020), start a family (0024), search (0025), text sign-in (0026), group names (0027), no passwords (0028), life calendar (0029), visibility core + registry (0031, 0032; 0030 is video fixes). What is live on the hosted project: `docs/eng/DEPLOYS.md`.
   - `scripts/`: `deploy.sh` (one-command deploy, `--dry-run`), `family-setup.sh` (fresh family in the 0011 shape + invites, through the Management API, token only), `family-setup.sql` (v1, psql; superseded for fresh setups), `family-setup-v2.sql` (re-seed into the family shape; dry run by default).
   - `functions/notify/`: Deno TS; Expo Push + Resend sender, run by a 1-minute cron.
   - `functions/sign-media/`: Deno TS; presigned Backblaze B2 URLs and per-item keys.
   - `tests/`: SQL, perf, integration (PostgREST harness).
 - `app/`: Expo SDK 58, TypeScript strict, `HearthApi` with a Supabase and a Fake implementation, upload queue, media pipeline.
 - `packages/messenger/`: `@holroyd/messenger`, the shared MLS messenger library (AGPL-3.0-or-later; Relay, Roster, Store; Supabase relay template). Hearth's `app/src/messenger/` is its adapter. Crew Clock is the next user (DEC-42).
+- `packages/visibility/`: `@holroyd/visibility`, the reusable visibility core (registry of kinds, `can_see`, narrowing hooks, conformance kit; no product words). Hearth instantiates it in migrations 0031/0032 (R77, DEC-83).
 - `prototype/`, `e2e/`: the clickable HTML prototype and its Playwright tests. Throwaway.
 - `tracker/`: Hearth Test Log seed builder.
 - `.claude/agents/`: the specialist agents. See "Chief of staff and agent roster" below.
@@ -95,7 +96,7 @@ The main session is Chase's **chief of staff**: it doesn't do specialist work it
    - Never log keys, URLs or captions.
    - No real family names, surnames or private family details in the repo (it's public). Use the kids' nicknames (Gammy, Pawpaw, Mom…) from `docs/product/PERSONAS.md`.
 3. **Grandparent UX.**
-   - Text 17pt+ and 48pt tap targets.
+   - Text uses the named iPhone text styles (SPEC-TYPE): reading text is Body 17; smaller styles (callout..caption2) only for secondary words with Easy view off; Easy view keeps everything 17+. Tap targets 48pt.
    - Verb labels and words under icons; no gesture-only actions. Exception: the tab bar is icon-only (spoken names kept, 48pt) unless Easy view is on; it is on by default for viewers (grandparents), off for parents (DEC-66).
    - Words: group (not circle); tabs Gallery, Share, Feed, More (Chase, Nov 14, DEC-59; replaces "Photos, not feed").
 4. **Deep, not wide.** Nothing outside BETA-SPEC without the staff-pm's call. New ideas go in the `docs/product/ANCHORS.md` ideas log, not straight into code.

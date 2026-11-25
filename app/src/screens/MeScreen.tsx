@@ -8,7 +8,7 @@ import { BackButton, GroupedSection, Screen, Txt } from '../ui/kit';
 import { AppGate } from './AppGate';
 import { NoticeTiming } from './NoticeTiming';
 import { ProblemDetailsCard } from './ProblemDetails';
-import { DeleteAccount, EasyView, HowToTell, LightOrDark, PhotoHelpers, Privacy, ReplyAudience, SignOut } from './Preferences';
+import { DeleteAccount, HowToTell, PhotoHelpers, Privacy, ReplyAudience, SignOut } from './Preferences';
 
 /** `onBack`: opened from More (RD-15), so a "‹ More" back button (spoken "Back to More") sits above the title (GUX-R1). */
 export function MeScreen({ onBack }: { onBack?: () => void } = {}) {
@@ -41,15 +41,13 @@ function MeReady({ onBack }: { onBack?: () => void }) {
   return (
     <Screen>
       {onBack ? <BackButton to="More" onPress={onBack} /> : null}
-      <Txt variant="display" role="header">Me</Txt>
+      <Txt variant="title1" role="header">Me</Txt>
       <GroupedSection>
         <WhoYouAre />
         {/* RD-15: viewers reach Me from More too, so say what each can do. */}
-        <Txt variant="muted">{app.space?.can_post ? 'You can share photos and choose who sees them.' : 'You can look at photos and write back.'}</Txt>
+        <Txt tone="muted">{app.space?.can_post ? 'You can share photos and choose who sees them.' : 'You can look at photos and write back.'}</Txt>
       </GroupedSection>
-      <EasyView heading />
-      <LightOrDark />
-      {/* RD-15 / RD-97: Theme lives in More (owner only). */}
+      {/* EF-HE-4 (Chase, Nov 24): Easy view and Light or dark live only in More, like Theme (RD-97). */}
       <HowToTell />
       <ReplyAudience />
       <PhotoHelpers />

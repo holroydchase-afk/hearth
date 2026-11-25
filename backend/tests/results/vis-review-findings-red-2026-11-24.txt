@@ -1,0 +1,39 @@
+qa-tdd, 2026-11-24, at e51d2a7 + new tests: ARCH-VC-R1, ARCH-VC-R2, PRIV-VC-B1, PRIV-VC-B2
+== ARCH-VC-R1 control (real files)
+ok      ARCH-VC-R1 supabase/migrations/0031_vis_core.sql below its header is ../packages/visibility/core/supabase.sql verbatim
+ok      ARCH-VC-R1 bites: a scratch change to the package alone fails the check
+ok      ARCH-VC-R1 bites: a scratch edit to migration 0031 alone fails the check
+ok      ARCH-VC-R1 a missing migration fails the check, not passes it
+VIS CORE COPY RESULT: 4 passed, 0 failed
+== ARCH-VC-R1 deliberate drift (VIS_PACKAGE = package + one line)
+NOT OK  ARCH-VC-R1 supabase/migrations/0031_vis_core.sql below its header is <scratch>/drift-pkg.sql verbatim  [203a204 > -- drift ]
+VIS CORE COPY RESULT: 0 passed, 1 failed
+== ARCH-VC-R2 bash backend/tests/deploy/deploy_test.sh
+FAIL - ARCH-VC-R2 dry run with a token queries rolbypassrls for public table owners
+FAIL - ARCH-VC-R2 that query is read-only (no create, alter, insert, update, delete, grant)
+FAIL - ARCH-VC-R2 every owner bypasses RLS: the dry run prints pass and exits 0
+ok   - ARCH-VC-R2 the dry run still changes nothing (no CLI call, no migration recorded)
+ok   - ARCH-VC-R2 the dry run never prints the token
+FAIL - ARCH-VC-R2 an owner that doesn't bypass RLS: the dry run prints FAIL and exits non-zero
+FAIL - ARCH-VC-R2 the FAIL names the table and its owner
+FAIL - ARCH-VC-R2 without a token the dry run says the owner check was skipped and why
+deploy: 22 passed, 6 failed
+== PRIV-VC-B1 real: VIS CORE RESULT: 57 passed, 0 failed; bite (scratch grants to anon/authenticated):
+ 39 | NOT OK | PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_person(uuid,uuid)
+ 42 | NOT OK | PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_media_ok(uuid,uuid)
+VIS CORE RESULT: 55 passed, 2 failed
+== PRIV-VC-B2 tests/vis_registry_test.sql
+ 233 | NOT OK | PRIV-VC-B2 public.my_spaces() is registered with a kind and rule-checked, not allowlisted
+ 234 | NOT OK | PRIV-VC-B2 public.my_circles(uuid) is registered with a kind and rule-checked, not allowlisted
+ 235 | NOT OK | PRIV-VC-B2 public.chat_roster(uuid) is registered with a kind and rule-checked, not allowlisted
+VIS REGISTRY RESULT: 233 passed, 3 failed
+== backend tests/run.sh (1 run), non-zero lines
+ 233 | NOT OK | PRIV-VC-B2 public.my_spaces() is registered with a kind and rule-checked, not allowlisted
+ 234 | NOT OK | PRIV-VC-B2 public.my_circles(uuid) is registered with a kind and rule-checked, not allowlisted
+ 235 | NOT OK | PRIV-VC-B2 public.chat_roster(uuid) is registered with a kind and rule-checked, not allowlisted
+VIS REGISTRY RESULT: 233 passed, 3 failed
+        | RESULT: sent 12, received 11, lost 1
+NOT OK  VIS-2 control: the gate passes on main's migrations  [3 NOT OK; first:  233 | NOT OK | PRIV-VC-B2 public.my_spaces() is registered with a kind and rule-checked, not allowlisted]
+NOT OK  VIS-2 a scratch table with no registry row fails the gate, naming public.vis_scratch_unregistered  [control rc=3, scratch rc=3]
+NOT OK  VIS-23 a second permissive select policy on public.posts fails the gate (PRIV-VC-R4)  [control rc=3, scratch rc=3]
+VIS GATE RESULT: 5 passed, 3 failed

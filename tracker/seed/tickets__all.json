@@ -412,7 +412,62 @@
     "EDGE-02",
     "EDGE-03",
     "EDGE-04",
-    "EDGE-05"
+    "EDGE-05",
+    "EDGE-06",
+    "EDGE-07",
+    "EDGE-08",
+    "EDGE-09",
+    "EDGE-10",
+    "EDGE-11",
+    "EDGE-12",
+    "EDGE-13",
+    "EDGE-14",
+    "EDGE-15",
+    "EDGE-16",
+    "EDGE-17",
+    "EDGE-18",
+    "EDGE-19",
+    "EDGE-20",
+    "EDGE-21",
+    "EDGE-22",
+    "EDGE-23",
+    "EDGE-24",
+    "EDGE-25",
+    "EDGE-26",
+    "EDGE-27",
+    "EDGE-28",
+    "EDGE-29",
+    "EDGE-30",
+    "EDGE-31",
+    "EDGE-32",
+    "EDGE-33",
+    "EDGE-34",
+    "EDGE-35",
+    "EDGE-36",
+    "EDGE-37",
+    "EDGE-38",
+    "EDGE-39",
+    "EDGE-40",
+    "EDGE-41",
+    "EDGE-42",
+    "EDGE-43",
+    "EDGE-44",
+    "EDGE-45",
+    "EDGE-46",
+    "EDGE-47",
+    "EDGE-48",
+    "EDGE-49",
+    "EDGE-50",
+    "EDGE-51",
+    "EDGE-52",
+    "EDGE-53",
+    "EDGE-54",
+    "EDGE-55",
+    "EDGE-56",
+    "EDGE-57",
+    "EDGE-58",
+    "EDGE-59",
+    "EDGE-60"
    ],
    "found": "2026-10-15",
    "fixed": "2026-10-15"
@@ -1028,11 +1083,27 @@
    "kind": "bug",
    "layer": "app",
    "severity": "Low",
-   "status": "open",
-   "title": "QA-R2 (OPEN-1/7/8): New for you only looks at the posts already loaded (the first page of 20). With more than 20 new posts since the last visit, the card's senders and the one-at-a-time view leave out the oldest new ones and don't start at the oldest. No test yet",
-   "tests": [],
+   "status": "fixed",
+   "title": "QA-R2 (OPEN-1/7/8): New for you only looks at the posts already loaded (the first page of 20). With more than 20 new posts since the last visit, the card's senders and the one-at-a-time view leave out the oldest new ones and don't start at the oldest. EF-HE-9 (intake #162, Nov 24): fixed at 88e605c by FeedStore.loadBackTo; with B26 fixed at d8115ee, closed by run r71 (green 3x). Tests: evalFindings.test.tsx, feed/__tests__/loadBackTo.test.ts",
+   "tests": [
+    "app/src/feed/__tests__/loadBackTo.test.ts",
+    "app/src/screens/__tests__/evalFindings.test.tsx"
+   ],
    "found": "2026-11-11",
-   "fixed": null
+   "fixed": "2026-11-24"
+  },
+  {
+   "id": "B26",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "QA-R1 (eval findings run r76, Nov 24): a refresh that answers while a loadMore page (a scroll, or B18's loadBackTo walk) is in flight lets the stale page append after the new first page: with 6 new posts on the server the feed skips 6 posts between the first page and the old page 2, and later pages continue from the bottom, so the hole stays until the next refresh. New for you can undercount the same way. Fixed at d8115ee (a refresh generation: loadMorePage drops a page started before the latest refresh, loadBackTo walks on from the new first page); closed by run r71 (green 3x). Test: app/src/feed/__tests__/loadBackTo.test.ts 'a refresh that lands mid-walk'",
+   "tests": [
+    "app/src/feed/__tests__/loadBackTo.test.ts"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
   },
   {
    "id": "T14",
@@ -1400,12 +1471,36 @@
    "fixed": null
   },
   {
+   "id": "T35",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "qa-tdd test bug (life calendar green run, Nov 24): app/src/screens/__tests__/calendar.test.tsx CAL-14 'icon and the word' counted Text nodes for the icon, but the row's icon is a SymbolView, which renders no Text under jest. It stayed red against a correct build (6fd4b91). Fixed: assert a non-chevron SymbolView inside the Birthdays row, as RD-15 does; no expectation weakened (word still checked). Green x3. Test: that file",
+   "tests": [
+    "app/src/screens/__tests__/calendar.test.tsx"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
    "id": "T38",
+   "kind": "test fix",
+   "layer": "backend",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (VIS review, Nov 24): VIS-7's every-row parity check in backend/tests/vis_core_test.sql reaches only the 13 of 34 kinds with a uuid id. The other 21 (composite keys like post_audience, reaction, media_key, circle_member; bigint ids like chat_message, comment_mode_log) are pinned by name but get no per-row can_see vs RLS comparison; VIS-4 still checks their select policies. Fix: compare those rows through their item/owner column instead of id",
+   "tests": [],
+   "found": "2026-11-24",
+   "fixed": null
+  },
+  {
+   "id": "T40",
    "kind": "bug",
    "layer": "app",
    "severity": "Medium",
    "status": "fixed",
-   "title": "Live check (Nov 24): the laptop demo panel's 'Try this' step 3 (app/src/demo/DemoFrame.tsx TRY) still says 'Tap Search and type lake.' After the Kevin/orchard demo (DEC-82) 'lake' finds nothing; 'orchard' finds 1 photo (site.spec.js DEMO-LIVE-2). Failing test first: DEMO-NEW-6, T38 now expects 'Search and type orchard', plus a T38 guard that the hinted word really finds a post in DEMO_POSTS (title, caption or sender name, as demo search reads) so the hint can't drift again. Red, 1 run: 2 failed, 4 passed. Fixed (Nov 24): step 3 now says 'Tap Search and type orchard.'; that file green, 6 passed, typecheck clean. Test: that file",
+   "title": "Live check (Nov 24): the laptop demo panel's 'Try this' step 3 (app/src/demo/DemoFrame.tsx TRY) still says 'Tap Search and type lake.' After the Kevin/orchard demo (DEC-82) 'lake' finds nothing; 'orchard' finds 1 photo (site.spec.js DEMO-LIVE-2). Failing test first: DEMO-NEW-6, T40 now expects 'Search and type orchard', plus a T40 guard that the hinted word really finds a post in DEMO_POSTS (title, caption or sender name, as demo search reads) so the hint can't drift again. Red, 1 run: 2 failed, 4 passed. Fixed (Nov 24): step 3 now says 'Tap Search and type orchard.'; that file green, 6 passed, typecheck clean. Test: that file",
    "tests": [
     "app/src/demo/__tests__/demoFrame.test.tsx"
    ],
@@ -1413,7 +1508,122 @@
    "fixed": "2026-11-24"
   },
   {
+   "id": "B27",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (React Compiler green run r79, Nov 24, intake #80): 24 compiler bailouts in 23 components are allowlisted in app/scripts/compiler-check.js, so they stay uncompiled (exactly the pre-compiler behaviour, not a regression). 10 try/finally or try/catch value blocks, throw in try or new-expression (wait for compiler support or restructure), 9 ref.current reads during render, 2 TimelineScreen manual memo deps that differ from inferred ones, VideoPlayer Playing mutating a hook value, JoinScreen using check before declaration. Follow-up: fix one at a time, each removing its ALLOWED line so INTAKE-80-3 guards it. Where: app/scripts/compiler-check.js ALLOWED. Test: node app/scripts/compiler-check.js",
+   "tests": [
+    "app/scripts/compiler-check.js"
+   ],
+   "found": "2026-11-24",
+   "fixed": null
+  },
+  {
+   "id": "B25",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "Fixed at 91e424a (fontFamily inline on each stamp Text), FONT-2 green 3x in r71. QA-R1 (wordless Share start gate r70, Nov 24): jest FONT-2 fails 3/3 at 37cbe7f: app/src/ui/kit.tsx:341-342 PostcardStamp renders <Text style={mark}> with fontFamily inside the mark variable, so the kit guard cannot see an Atkinson family. Fix (engineer): put fontFamily: FONT.semibold inline in each stamp Text's style. Test: app/src/ui/__tests__/font.test.tsx",
+   "tests": [
+    "app/src/ui/kit.tsx"
+   ],
+   "found": "2026-11-24",
+   "fixed": null
+  },
+  {
+   "id": "B28",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "High",
+   "status": "fixed",
+   "title": "GUX-T2 P1 (PR #174 fix round, Nov 24): Share's empty postcard is vertically centered (ShareScreen styles.emptyWrap justifyContent center), leaving a 125 px gap under the 'New post' row at 390 x 844 (light and dark). Must sit right under the header (<= 32 px). Tests: app/src/screens/__tests__/shareStart.test.tsx GUX-T2, app/e2e-web/demo.spec.js GUX-T2",
+   "tests": [
+    "app/src/screens/ShareScreen.tsx"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
+   "id": "B29",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "GUX-T6 P2 (PR #174 fix round, Nov 24): on the demo at 390 x 844 Gallery's birthday card 'Not now' starts under the floating tab bar, and the least scroll that reveals it (keyboard focus, screen reader) leaves it under the bar (bottom 844 vs bar top 764). The scroll content has room (paddingBottom 32 + tab bar), but the web scroll area needs its bottom inset as scroll padding. Test: app/e2e-web/demo.spec.js GUX-T6",
+   "tests": [
+    "app/src/screens/PhotosScreen.tsx"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
+   "id": "B30",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "QA-R4 P2 (PR #174 fix round, Nov 24): RD-4 allowlisted all of ShareKinds.tsx for the accent; narrowed to the kind icon's color, the test finds the Saying card's opening quote mark drawn with tone=\"accent\" (ShareKinds.tsx:58). Either ink/muted for the mark, or a named RD-4 exception. Test: app/src/ui/__tests__/redesignLint.test.ts QA-R4",
+   "tests": [
+    "app/src/screens/ShareKinds.tsx"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
    "id": "T39",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "fixed",
+   "title": "QA-R13 (PR #174 fix round green run r87, Nov 24): app/e2e-web/demo.spec.js SHARE-PC-13 failed once in run 1 of e2e:demo (toBeVisible, element(s) not found, a soft expect at line 1057 or 1073; the page had reached Grandma Jo) and passed in runs 2 and 3 and 5 of 5 alone. Likely cause: under full-suite load the Feed's first post is not yet showing 'Open photo 1 of 3' within the 5 s default after Send (soft expect, no wait for the upload). Fix the test (wait on the post, or name which expect), not the app. e2e/results/type-scale-fixes-green-2026-11-24.txt",
+   "tests": [
+    "app/e2e-web/demo.spec.js"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-24"
+  },
+  {
+   "id": "T41",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "open",
+   "title": "QA-R5 (DEC-87 all-suites run, Nov 25): app/e2e-web/demo.spec.js:960 SHARE-PC-13 failed 1 of 3 test-all runs (run 3) at line 988, the soft check that Feed's first visible post card has 'Open photo 1 of 3' after Send (15 s timeout, element not found); 'Shared with ...' had shown. Passed runs 1 and 2 at 623388c. Likely cause: the first visible post-* card is not yet the new post (feed refresh order on a slow box), or a race in DEC-87's card changes; not reproduced. Isolation (Nov 25): SHARE-PC-13 --repeat-each 10 passed 10/10 on the branch (623388c build) and 10/10 on main a32609b; the full demo config passed 50/50 twice on each. Not reproduced, so not shown to come from DEC-87; the failed run took 19.8 s against about 7 s normally, which points to load (the new post's upload not on Feed within 15 s). Next: keep the trace when it next fails. Test: that file",
+   "tests": [
+    "app/e2e-web/demo.spec.js"
+   ],
+   "found": "2026-11-25",
+   "fixed": null
+  },
+  {
+   "id": "T42",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (post kinds, Nov 24): app/src/api/contract/supabaseHarness.ts can't flip Hearth's global feature switch (private.feature_flags), so 9 of 10 SHARE-U contract tests in postKinds.contract.test.ts skip on contract-real; the server side is covered by backend/tests/post_kinds_test.sql. Fix: a service-only way for the integration harness to set a global flag",
+   "tests": [],
+   "found": "2026-11-24",
+   "fixed": null
+  },
+  {
+   "id": "T43",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R7 (HRT-WEB.1 priv fixes green run, Nov 24): app/e2e-web/demo-calendar.spec.js GUX-R2 'after Save, Saved. Your family will see December 8.' timed out (90 s) in 1 of 6 e2e:demo runs, waiting for the 'December' button after Add my birthday (line 100). That run overlapped qa-tdd's own background jest runs (CPU load); the other 5 runs passed. Not touched by HRT-WEB.1. Likely cause: the step clicks the month before the picker sheet has finished opening. Next: rerun with --repeat-each 10 under load and wait for the picker. Test: that file",
+   "tests": [
+    "app/e2e-web/demo-calendar.spec.js"
+   ],
+   "found": "2026-11-24",
+   "fixed": null
+  },
+  {
+   "id": "T44",
    "kind": "enhancement",
    "layer": "app",
    "severity": "Medium",
@@ -1432,17 +1642,34 @@
     "app/src/demo/__tests__/seed.test.ts"
    ],
    "found": "2026-11-24",
-   "fixed": "2026-11-24"
+   "fixed": "2026-11-25"
   },
   {
-   "id": "T35",
-   "kind": "test fix",
+   "id": "B32",
+   "kind": "bug",
    "layer": "app",
-   "severity": "Low",
+   "severity": "Medium",
    "status": "fixed",
-   "title": "qa-tdd test bug (life calendar green run, Nov 24): app/src/screens/__tests__/calendar.test.tsx CAL-14 'icon and the word' counted Text nodes for the icon, but the row's icon is a SymbolView, which renders no Text under jest. It stayed red against a correct build (6fd4b91). Fixed: assert a non-chevron SymbolView inside the Birthdays row, as RD-15 does; no expectation weakened (word still checked). Green x3. Test: that file",
+   "title": "Fixed on main by PR #187 (120f656): the 4 bailouts allowlisted with reasons and CI now runs compiler-check.js. QA-R1 (SPEC-TYPE WEB-APP-19..21 run r109, Nov 25): node app/scripts/compiler-check.js (INTAKE-80-3, a test-all suite) exits 1 on main aff95aa, 3 of 3 runs: 4 React Compiler bailouts not in its ALLOWED list. src/feed/autoplay.ts:39 useAutoplay, src/screens/SignInScreen.tsx:13 SignInScreen and src/ui/kit.tsx:309 AddPhotoCard read ref.current during render; src/ui/kit.tsx:345 PostcardStamp has a new-expression that can't be reordered. app/src is identical to origin/main, so it came in with an earlier merge (likely #174 type scale or DEC-82 autoplay), not this change; CI doesn't run compiler-check, so it went unseen. Effect: those 4 stay uncompiled (pre-compiler behaviour), no user-visible change. Fix: engineer fixes each or adds it to ALLOWED with a reason (B27). Test: node app/scripts/compiler-check.js",
    "tests": [
-    "app/src/screens/__tests__/calendar.test.tsx"
+    "app/scripts/compiler-check.js",
+    "app/src/feed/autoplay.ts",
+    "app/src/screens/SignInScreen.tsx",
+    "app/src/ui/kit.tsx"
+   ],
+   "found": "2026-11-25",
+   "fixed": "2026-11-25"
+  },
+  {
+   "id": "B31",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "QA-R1 (HRT-WEB.2 red run r106, Nov 24): SPEC-WEB-APP HRT-WEB.2 asks for a relative manifest link (href=\"manifest.webmanifest\", WEB-APP-13) but the export serves the same index.html at every address. Chromium resolves the link against the page's current address when it reads the manifest, so on a nested screen (More > Easy view at /more/easy-view, any More row, or any route folder of the static demo, e.g. /demo/hearth/feed/) it fetches /more/manifest.webmanifest, gets index.html back and sees no manifest: Add to home screen then makes a plain shortcut, not the installed app. Shown on a scratch export built to the spec (manifest, icons, link): WEB-APP-13..17 pass, the nested-address test fails with url /more/manifest.webmanifest and a syntax error. Needs a staff-pm call on WEB-APP-13/18 (e.g. a base-aware root-absolute href such as /manifest.webmanifest or <BASE>/manifest.webmanifest, or a per-folder relative href in build-demo.sh), then the engineer. Tests: app/e2e-web/install.spec.js 'WEB-APP-17 QA-R1', app/e2e-web/install-site.spec.js 'WEB-APP-18 QA-R1'. Fixed (Nov 24, Chase's QA-R1 call): the link is root-relative to the build's base path (/manifest.webmanifest; build-demo.sh rewrites it to <BASE>/manifest.webmanifest); both QA-R1 tests green x3 (r86)",
+   "tests": [
+    "app/e2e-web/install-site.spec.js",
+    "app/e2e-web/install.spec.js"
    ],
    "found": "2026-11-24",
    "fixed": "2026-11-24"

@@ -11,7 +11,7 @@ import { loadLastSeen, saveLastSeen } from '../state/lastSeen';
 const F = FIXTURE;
 const DAY = 864e5;
 
-/** DEMO-3, DEMO-PHOTO-9, T39 DEMO-NAMES-1 (Chase, Nov 24; was "Kevin", DEC-82; "Chase", DEC-64): the parent is Graham,
+/** DEMO-3, DEMO-PHOTO-9, T44 DEMO-NAMES-1 (Chase, Nov 24; was "Kevin", DEC-82; "Chase", DEC-64): the parent is Graham,
  *  the mom Eliza, the other grandparents Nana Eloise and Grandpa Hollis; Grandma Jo keeps the fixture's name. Everyone is
  *  made up and no surname appears. Only the demo renames them: the fixture's ids and names stay for other tests. */
 export const DEMO_NAMES: Record<string, string> = {
@@ -21,7 +21,7 @@ export const DEMO_NAMES: Record<string, string> = {
   [F.users.earl.id]: 'Grandpa Hollis',
 };
 
-/** T39 DEMO-NAMES-1 (QA-R1): the demo family's name; the fixture's space name holds the old kid's name. */
+/** T44 DEMO-NAMES-1 (QA-R1): the demo family's name; the fixture's space name holds the old kid's name. */
 export const DEMO_SPACE_NAME = 'Clara and Leo';
 
 /** DEMO-NAMES-4: a valid, space-free demo email from a name's last word ("Nana Eloise" -> eloise@example.com). */

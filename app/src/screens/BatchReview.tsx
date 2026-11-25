@@ -48,12 +48,12 @@ export function BatchReview({ plan, circles, chosen, onToggle, onSend, onCancel,
 
   return (
     <Screen>
-      <Txt variant="display" role="header">{nothing ? 'No photos to send' : reviewSummary(plan)}</Txt>
+      <Txt variant="title1" role="header">{nothing ? 'No photos to send' : reviewSummary(plan)}</Txt>
       {skipped ? <Txt>{skipped}</Txt> : null}
       {over ? <Txt>{over}</Txt> : null}
       {nothing ? null : (
         <Card>
-          <Txt variant="strong">{sendTo}</Txt>
+          <Txt variant="headline">{sendTo}</Txt>
           <Button
             label="Change who these go to"
             text={changing ? 'Done choosing' : 'Change'}

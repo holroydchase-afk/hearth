@@ -149,6 +149,14 @@
    "tickets": []
   },
   {
+   "id": "M-20",
+   "title": "EF-HE-1-AC3 Messages Open buttons wrap at the largest text (Easy view)",
+   "area": "iPhone (Expo Go)",
+   "steps": "Turn Easy view on in More. Set the iPhone's text size to the largest (Settings, Accessibility, Display & Text Size, Larger Text, slider all the way right). Open More, then Messages, with a chat whose title is long (an event like 'Grandma Jo and Pawpaw's 50th anniversary weekend').",
+   "expected": "Each Open button shows its whole chat name, wrapping onto more lines inside the button; no word is cut off with '...'. Each button is at least 48 pt tall and its words at least 17 pt.",
+   "tickets": []
+  },
+  {
    "id": "M1-01",
    "title": "BETA-JOIN-2 Sign in with the 6-digit email code",
    "area": "iPhone (Expo Go)",

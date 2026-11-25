@@ -1,6 +1,7 @@
-"""Print the harness JSON: {url, anonKey, serviceRoleKey, users: {name: {id, jwt}}}.
+"""Print the harness JSON: {url, anonKey, serviceRoleKey, users: {name: {id, jwt, email}}}.
 
-Env: URL (PostgREST root), JWT_SECRET (HS256, as Supabase), USERS ("<uuid> <email-local-part>" per line),
+Env: URL (PostgREST root), JWT_SECRET (HS256, as Supabase), USERS ("<uuid> <email>" per line; the name is the
+email's local part with dots as underscores, START-ON-6 carries the email through),
 optional ANON_KEY / SERVICE_ROLE_KEY to pass through instead of minting (real Supabase stack).
 Standard library only. Run with `python3 -I`.
 """
@@ -30,9 +31,11 @@ users = {}
 for line in os.environ["USERS"].splitlines():
     if not line.strip():
         continue
-    uid, local = line.split(" ", 1)
-    users[local.replace(".", "_")] = {
+    uid, email = line.split(" ", 1)
+    email = email.strip()
+    users[email.split("@", 1)[0].replace(".", "_")] = {
         "id": uid,
+        "email": email,
         "jwt": jwt({"sub": uid, "role": "authenticated", "aud": "authenticated", "iat": now, "exp": now + 7 * 86400}),
     }
 

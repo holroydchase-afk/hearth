@@ -44,6 +44,25 @@ describe('SupabaseApi RPC wiring (API.md names and args)', () => {
     expect(c.rpc).toHaveBeenCalledWith(rpcName, rpcArgs);
   });
 
+  // SHARE-U-4, 11, 13 (migration 0034): the kind and its fields go as p_kind / p_details; photos send neither, so an
+  // older server keeps working (same rule as p_title). News words are the caption.
+  it.each([
+    ['news', { kind: 'news' }, 'news', null],
+    ['event', { kind: 'event', event: { what: 'Pawpaw\'s picnic', when: '2026-12-12', where: 'the church hall' } }, 'event',
+      { what: 'Pawpaw\'s picnic', when: '2026-12-12', where: 'the church hall' }],
+    ['saying', { kind: 'saying', saying: { words: 'Crunchy water', who: 'Mia', age: 4 } }, 'saying', { words: 'Crunchy water', who: 'Mia', age: 4 }],
+  ] as const)('SHARE-U-4/11/13 createPost %s sends p_kind and p_details', async (_k, extra, pKind, pDetails) => {
+    const c = mockClient({ data: 'P', error: null });
+    await make(c).createPost({ clientId: 'C', space: 'S', caption: 'hi', circleIds: ['a'], ...extra } as never);
+    expect(c.rpc).toHaveBeenCalledWith('create_post', expect.objectContaining({ p_kind: pKind, p_details: pDetails }));
+  });
+  it('SHARE-U-12 createPost for photos sends no p_kind and no p_details (older servers keep working)', async () => {
+    const c = mockClient({ data: 'P', error: null });
+    await make(c).createPost({ clientId: 'C', space: 'S', caption: 'hi', circleIds: ['a'], kind: 'photos' } as never);
+    const args = (c.rpc.mock.calls[0] as unknown as [string, Record<string, unknown>])[1];
+    expect('p_kind' in args || 'p_details' in args).toBe(false);
+  });
+
   it('create_invite passes the existing signature and returns {code, link}', async () => {
     const c = mockClient({ data: [{ invite_id: 'i', code: 'ABCDEFGHJK', expires_at: 'x' }], error: null });
     const r = await make(c).createInvite({ space: 'S', role: 'viewer', circleIds: ['a'], channel: 'email', targetEmail: 'g@x.com' });

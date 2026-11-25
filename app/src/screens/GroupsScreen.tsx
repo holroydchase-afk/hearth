@@ -89,7 +89,7 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
   }, [load, isParent, spaceId, app.deps.api]);
 
   if (app.status !== 'ready' || !app.space) return <AppGate />;
-  if (!isParent) return <Screen><Txt variant="title">You can't do that here.</Txt></Screen>;
+  if (!isParent) return <Screen><Txt variant="title2">You can't do that here.</Txt></Screen>;
 
   const parentNames = new Set(family.filter((p) => p.role !== 'viewer').map((p) => p.name));
   const relatives = family.filter((p) => p.role === 'viewer').sort((a, b) => a.name.localeCompare(b.name));
@@ -185,15 +185,16 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
   return (
     <Screen>
       {onBack ? <BackButton to="More" onPress={onBack} /> : null}
-      <Txt variant="display" role="header">Your groups</Txt>
-      <Txt variant="muted">Each photo goes only to the groups you pick. People never see group names.</Txt>
+      <Txt variant="title1" role="header">Your groups</Txt>
+      {/* EF-HE-5: honest about who sees group names (DEC-49). */}
+      <Txt tone="muted">Each photo goes only to the groups you pick. Only parents see these names; everyone else sees people's names.</Txt>
       {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
       {circles === null ? <Loading words="Loading your groups…" /> : null}
       {draft ? (
         <Card>
-          <Txt variant="title" role="header">New group</Txt>
+          <Txt variant="title2" role="header">New group</Txt>
           <Field label="Name of the group" value={draft.name} onChangeText={(name) => edit({ name, need: draft.need === 'name' ? null : draft.need })} placeholder={'Like "Chase\'s birthday"'} maxLength={60} />
-          {draft.need === 'name' ? <Txt variant="strong">Type a name for the group first.</Txt> : null}
+          {draft.need === 'name' ? <Txt variant="headline">Type a name for the group first.</Txt> : null}
           <Choice
             kind="checkbox"
             label="This group is for an event"
@@ -202,22 +203,22 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
             checked={draft.event}
             onPress={() => edit({ event: !draft.event, mode: draft.event ? 'private' : 'on_group_posts' })}
           />
-          <Txt variant="title" role="header">Who is in it?</Txt>
+          <Txt variant="title2" role="header">Who is in it?</Txt>
           {groups.filter((g) => relativesIn(g).length > 0).map((g) => (
             <Button key={g.circle_id} label={`Add everyone from ${g.name}`} variant="secondary" onPress={() => copyFrom(g)} />
           ))}
-          {draft.copied.map((n) => <Txt key={n} variant="muted">{`People you add to ${n} later won't be added here.`}</Txt>)}
+          {draft.copied.map((n) => <Txt key={n} tone="muted">{`People you add to ${n} later won't be added here.`}</Txt>)}
           {relatives.map((p) => (
             <Choice key={p.user_id} kind="checkbox" label={p.name} title={p.name} checked={draft.ticked.includes(p.user_id)} onPress={() => tick(p.user_id)} />
           ))}
-          <Txt variant="title" role="header">Who reads their comments?</Txt>
+          <Txt variant="title2" role="header">Who reads their comments?</Txt>
           {MODES.map((m) => (
             <Choice key={m.mode} kind="radio" label={m.title} title={m.title} detail={m.detail} checked={draft.mode === m.mode} onPress={() => edit({ mode: m.mode })} />
           ))}
           {draft.mode === 'always' ? (
-            <Txt variant="strong">{alwaysWords(relatives.filter((p) => draft.ticked.includes(p.user_id)).map((p) => p.name), draft.name.trim() || 'this group')}</Txt>
+            <Txt variant="headline">{alwaysWords(relatives.filter((p) => draft.ticked.includes(p.user_id)).map((p) => p.name), draft.name.trim() || 'this group')}</Txt>
           ) : null}
-          <Txt variant="title" role="header">Should they see photos already shared?</Txt>
+          <Txt variant="title2" role="header">Should they see photos already shared?</Txt>
           <Choice
             kind="radio"
             label="Share all past photos"
@@ -234,18 +235,19 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
             checked={draft.history === 'new'}
             onPress={() => edit({ history: 'new', need: null })}
           />
-          {draft.need === 'history' ? <Txt variant="strong">Pick one above first.</Txt> : null}
+          {draft.need === 'history' ? <Txt variant="headline">Pick one above first.</Txt> : null}
           <Button variant="secondary" label="Make the group" onPress={() => void makeGroup()} softDisabled={!draft.name.trim() || !draft.history} busy={draft.busy} />
           <Button label="Cancel" variant="secondary" onPress={() => setDraft(null)} />
         </Card>
       ) : (
-        <Button variant="secondary" label="New group" onPress={() => { closeForm(); setDraft(NEW_GROUP); }} />
+        // EF-HE-5: the one filled main button here (DS-9); Rename and Invite stay secondary.
+        <Button label="New group" onPress={() => { closeForm(); setDraft(NEW_GROUP); }} />
       )}
       {/* one main action per screen: while making a group, the list waits */}
       {(draft ? [] : circles ?? []).map((g) => (
         <Card key={g.circle_id}>
-          <Txt variant="title">{g.name}</Txt>
-          <Txt variant="muted">{people(g.member_count)}</Txt>
+          <Txt variant="title2">{g.name}</Txt>
+          <Txt tone="muted">{people(g.member_count)}</Txt>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             {g.member_names.map((m, i) => (
               <View key={`${m}-${i}`} style={{ borderWidth: 1, borderColor: c.line, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6, backgroundColor: c.safeSoft }}>
@@ -255,7 +257,7 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
           </View>
           {g.kind !== 'everyone' && g.comment_mode ? (
             <>
-              <Txt variant="strong">Who reads their comments?</Txt>
+              <Txt variant="headline">Who reads their comments?</Txt>
               {MODES.map((m) => (
                 <Choice
                   key={m.mode}
@@ -269,7 +271,7 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
               ))}
               {confirming === g.circle_id ? (
                 <Card>
-                  <Txt variant="strong">{alwaysWords(relativesIn(g), g.name)}</Txt>
+                  <Txt variant="headline">{alwaysWords(relativesIn(g), g.name)}</Txt>
                   <Txt>As now, the parents and whoever posted a photo read every comment on it.</Txt>
                   <Button variant="secondary" label="Turn on Always shared" onPress={() => void setMode(g, 'always')} />
                   <Button label="Cancel" variant="secondary" onPress={() => setConfirming(null)} />
@@ -290,20 +292,20 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
             <InviteReady link={invite.link} code={invite.code} onText={() => text(invite.link, invite.code, !!invite.byPhone)} />
           ) : asking === g.circle_id ? (
             <>
-              <Txt variant="title" role="header">{`Invite someone to ${g.name}`}</Txt>
+              <Txt variant="title2" role="header">{`Invite someone to ${g.name}`}</Txt>
               <Field label="Their name, the way your family says it" value={inviteName} onChangeText={setInviteName} placeholder='Like "Grandma June"' maxLength={40} />
-              <Txt variant="muted">They'll see this name on Hearth and won't have to type it.</Txt>
+              <Txt tone="muted">They'll see this name on Hearth and won't have to type it.</Txt>
               {textsOn() && byText ? (
                 <>
                   <Field label="Their mobile number" value={invitePhone} onChangeText={setInvitePhone} keyboardType="phone-pad" autoComplete="off" placeholder="304-555-0100" maxLength={20} />
-                  <Txt variant="muted">Only this number can open the invite.</Txt>
+                  <Txt tone="muted">Only this number can open the invite.</Txt>
                   <Button label="They'll use email" variant="secondary" onPress={() => { setByText(false); setInvitePhone(''); }} />
                 </>
               ) : null}
               {/* GUX-R2: skipping the number makes a link invite; say who can open it, and offer the number back. */}
               {textsOn() && !byText ? (
                 <>
-                  <Txt variant="muted">They'll sign in with their email. Anyone you send the invite to can open it.</Txt>
+                  <Txt tone="muted">They'll sign in with their email. Anyone you send the invite to can open it.</Txt>
                   <Button label="Add their mobile number" variant="secondary" onPress={() => setByText(true)} />
                 </>
               ) : null}
@@ -341,7 +343,7 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
             <Button label={`Invite someone to ${g.name}`} text="Invite someone" variant="secondary" onPress={() => { closeForm(); setAsking(g.circle_id); }} />
           ) : (
             // RR-11: only point to a household when the family has one; plain groups otherwise.
-            <Txt variant="muted">{(circles ?? []).some((o) => o.kind === 'household') ? 'To invite someone, use their household below.' : 'To invite someone, use one of the groups below.'}</Txt>
+            <Txt tone="muted">{(circles ?? []).some((o) => o.kind === 'household') ? 'To invite someone, use their household below.' : 'To invite someone, use one of the groups below.'}</Txt>
           )}
         </Card>
       ))}

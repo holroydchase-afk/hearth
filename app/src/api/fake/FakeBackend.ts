@@ -24,6 +24,7 @@ import type {
   TimelineArgs, TimelinePost, TimelineYear, SearchArgs,
   ChatKind, ChatMember, ChatRow, ChatRowKind, ChatSummary, ClaimedKeyPackage,
   FamilyDate, FamilyDateKind, SaveFamilyDateArgs,
+  PostKind, PostEvent, PostSaying,
 } from '../types';
 import { fromBase64, toBase64 } from '../../crypto/base64';
 import { randomBytes, uuid } from '../../crypto/random';
@@ -48,13 +49,17 @@ interface PostRow {
   title?: string | null;
   /** 0021 (CAP-6): when the sender last changed the words. */
   words_edited_at?: string | null;
+  /** 0034 (SHARE-U): the kind (missing = photos) and an event's or a saying's fields (post_events / post_sayings). */
+  kind?: PostKind;
+  event?: PostEvent | null;
+  saying?: PostSaying | null;
 }
 interface MediaRow {
   id: string; post: string; position: number; kind: MediaKind; mime: string; width: number; height: number;
   duration_ms: number | null; byte_size: number; thumb_byte_size: number; status: MediaStatus; dek: string;
   display_key: string; thumb_key: string; uploader: string;
 }
-interface CommentRec { id: string; post: string; author: string; body: string; created_at: string; client_id: string }
+interface CommentRec { id: string; post: string; author: string; body: string; created_at: string; client_id: string; deleted?: boolean }
 interface InviteRow {
   code: string; space: string; role: Role; circles: string[]; created_by: string; target_email: string | null;
   /** BETA-SMS-8: E.164, only that number may redeem. */
@@ -85,7 +90,7 @@ export interface FakeState {
   members: MemberRow[];
   circles: Record<string, CircleRow>;
   /** `at`: when they were added (ISO); fixture rows have none and count as always there. */
-  circleMembers: { circle: string; user: string; at?: string }[];
+  circleMembers: { circle: string; user: string; at?: string; sees_from?: string | null }[];
   posts: Record<string, PostRow>;
   media: Record<string, MediaRow>;
   objects: Record<string, string>; // key -> base64 ciphertext
@@ -122,8 +127,10 @@ export interface FakeState {
 const defaultMode = (k: CircleKind | undefined): CommentMode => (k === 'household' ? 'always' : k === 'event' ? 'on_group_posts' : 'private');
 const MODES: CommentMode[] = ['private', 'on_group_posts', 'always'];
 /** private.feature_capability: who may use each feature (parents only to start; the fake's posters are the parents). */
-const FEATURE_CAPABILITY: Record<string, 'use_video' | 'post'> = {
+const FEATURE_CAPABILITY: Record<string, 'use_video' | 'post' | 'post_kinds'> = {
   video_posting: 'use_video', photo_helpers_duplicates: 'post', photo_helpers_screens_blur: 'post',
+  // 0034: News, Event and Saying posts; parents only, off by default (a missing row is off)
+  post_kinds: 'post_kinds',
 };
 /** private.feature_default_on (0016): a missing row means off for add-ons, on for off-switches (HELP-R4). */
 const FEATURE_DEFAULT_ON = new Set(['photo_helpers_duplicates', 'photo_helpers_screens_blur']);
@@ -147,6 +154,27 @@ export const FIXTURE = {
   },
   invites: { jo: 'GRANDMAJ23', expired: 'EXPRDEXPRD' },
 };
+
+/** VIS-11: the rows of backend/tests/vis_oracle/fixtures/seed-N.json (vis_oracle.fixture_json()). */
+export interface OracleFixtureRows {
+  users: { id: string; name: string }[];
+  spaces: { id: string; name: string; deleted: boolean; reply_audience: ReplyAudience }[];
+  members: { space: string; user: string; role: Role }[];
+  circles: { id: string; space: string; name: string; kind: CircleKind; deleted: boolean }[];
+  circle_members: { circle: string; user: string; sees_from: string | null }[];
+  posts: {
+    id: string; space: string; author: string; status: 'draft' | 'published'; deleted: boolean; published_at: string | null;
+    taken_at: string | null; title: string | null; caption: string | null; circles: string[];
+    /** 0034: present in fixtures made after the post kinds landed; missing = photos. */
+    kind?: PostKind;
+  }[];
+  comments: { id: string; post: string; author: string; body: string; created_at: string; deleted: boolean }[];
+  reactions: { post: string; user: string; emoji: Reaction; created_at: string }[];
+  family_dates: {
+    id: string; space: string; kind: FamilyDateKind; label: string | null; month: number; day: number;
+    member: string | null; created_by: string;
+  }[];
+}
 
 export interface FixtureOptions {
   /** Grandma Jo already joined (contract + screen tests) or still holds an invite (web smoke test). */
@@ -199,6 +227,37 @@ export class FakeBackend {
     return new FakeBackend(s, persist);
   }
 
+  /** VIS-11: load the server oracle's generated family (backend/tests/vis_oracle/fixtures/seed-N.json) so the Fake
+   *  can be held to vis.can_see on the same rows (app/src/api/__tests__/visOracle.test.ts). Test use only. */
+  static fromOracleFixture(fx: OracleFixtureRows): FakeBackend {
+    const s = FakeBackend.empty();
+    for (const u of fx.users) s.users[u.id] = { id: u.id, email: `${u.id}@example.com`, name: u.name };
+    for (const sp of fx.spaces) {
+      s.spaces[sp.id] = { id: sp.id, name: sp.name, reply_audience: sp.reply_audience, deleted: sp.deleted };
+    }
+    for (const m of fx.members) s.members.push({ space: m.space, user: m.user, role: m.role, invited_by: null });
+    for (const c of fx.circles) {
+      s.circles[c.id] = { id: c.id, space: c.space, name: c.name, created_by: '', deleted: c.deleted, kind: c.kind };
+    }
+    for (const cm of fx.circle_members) s.circleMembers.push({ circle: cm.circle, user: cm.user, sees_from: cm.sees_from });
+    for (const p of fx.posts) {
+      s.posts[p.id] = {
+        id: p.id, space: p.space, author: p.author, caption: p.caption, status: p.status, deleted: p.deleted,
+        circles: [...p.circles], client_id: p.id, created_at: p.published_at ?? '2026-01-01T00:00:00.000Z',
+        published_at: p.published_at, taken_at: p.taken_at, title: p.title, kind: p.kind ?? 'photos',
+      };
+    }
+    for (const c of fx.comments) {
+      s.comments[c.id] = { id: c.id, post: c.post, author: c.author, body: c.body, created_at: c.created_at, client_id: c.id, deleted: c.deleted };
+    }
+    for (const r of fx.reactions) s.hearts.push({ post: r.post, user: r.user, emoji: r.emoji });
+    s.familyDates = fx.family_dates.map((d) => ({
+      id: d.id, space: d.space, kind: d.kind, label: d.label, month: d.month, day: d.day, member: d.member,
+      created_by: d.created_by, created_at: '2026-01-01T00:00:00.000Z',
+    }));
+    return new FakeBackend(s);
+  }
+
   clientFor(userId: string | null, opts: { trackAppSession?: boolean; latencyMs?: number } = {}): HearthApi {
     return new FakeApi(this, userId, opts);
   }
@@ -230,11 +289,14 @@ export class FakeBackend {
   /** can_view_post(): author (while a member), or a member of a circle in the audience. */
   canView(user: string | null, p: PostRow | undefined): p is PostRow {
     if (!user || !p || p.deleted) return false;
+    if (this.state.spaces[p.space]?.deleted) return false; // VIS-11: nothing in a deleted family
     if (!this.member(p.space, user)) return false;
     if (p.author === user) return true;
     if (p.status !== 'published') return false;
     if (this.isPoster(p.space, user)) return true; // 0011 / SPEC-GROUPS: parents see every published post
-    return p.circles.some((c) => !this.state.circles[c]?.deleted && this.inCircle(c, user));
+    // VIS-11: a share-history cutoff (circle_members.sees_from) hides posts sent before it
+    return p.circles.some((c) => !this.state.circles[c]?.deleted && this.state.circleMembers.some((x) =>
+      x.circle === c && x.user === user && (!x.sees_from || (!!p.published_at && Date.parse(p.published_at) >= Date.parse(x.sees_from)))));
   }
   visiblePost(user: string | null, post: string): PostRow {
     const p = this.state.posts[post];
@@ -543,6 +605,9 @@ export class FakeBackend {
         reply_scope: this.replyScope(me, p),
         taken_at: p.taken_at ?? null,
         ...this.postEvent(me, p),
+        kind: p.kind ?? 'photos',
+        event: p.kind === 'event' ? (p.event ?? null) : null,
+        saying: p.kind === 'saying' ? (p.saying ?? null) : null,
       };
   }
 
@@ -558,6 +623,7 @@ export class FakeBackend {
     const me = this.requireUser(user);
     if ((a.batchId == null) !== (a.batchSize == null)) throw new ApiError('23514', 'batch id and size go together');
     if (a.batchSize != null && (a.batchSize < 1 || a.batchSize > 100)) throw new ApiError('23514', 'a batch is 1 to 100 posts');
+    const fields = this.kindFields(me, a);
     const existing = Object.values(this.state.posts).find((p) => p.author === me && p.client_id === a.clientId);
     if (existing) return existing.id;
     if (!this.member(a.space, me)) throw new ApiError('42501', 'not a member');
@@ -571,9 +637,35 @@ export class FakeBackend {
       id, space: a.space, author: me, caption: a.caption?.trim() || null, status: 'draft', deleted: false,
       circles: [...new Set(a.circleIds)], client_id: a.clientId, created_at: this.now(), published_at: null,
       taken_at: a.takenAt ? new Date(a.takenAt).toISOString() : null, batch_id: a.batchId ?? null, batch_size: a.batchSize ?? null, title,
+      ...fields,
     };
     this.changed();
     return id;
+  }
+
+  /** create_post's p_kind / p_details rules (0034): 42501 unless a parent with post_kinds on; 23514 for a broken field. */
+  private kindFields(me: string, a: CreatePostArgs): Pick<PostRow, 'kind' | 'event' | 'saying'> {
+    const kind = a.kind ?? 'photos';
+    if (!['photos', 'news', 'event', 'saying'].includes(kind)) throw new ApiError('23514', 'unknown post kind');
+    if (kind === 'photos') return { kind };
+    if (!this.myFeatures(me, a.space).includes('post_kinds')) throw new ApiError('42501', 'post_kinds_off');
+    const blank = (v: unknown) => typeof v !== 'string' || !v.trim();
+    if (kind === 'news') {
+      if (blank(a.caption)) throw new ApiError('23514', 'news needs words');
+      return { kind };
+    }
+    if (kind === 'event') {
+      const e = a.event;
+      if (!e || blank(e.what) || [...e.what.trim()].length > 200) throw new ApiError('23514', 'an event needs what');
+      const ok = typeof e.when === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(e.when)
+        && new Date(`${e.when}T00:00:00Z`).toISOString().slice(0, 10) === e.when;
+      if (!ok) throw new ApiError('23514', 'an event needs a real date');
+      return { kind, event: { what: e.what.trim(), when: e.when, where: e.where?.trim() || null } };
+    }
+    const y = a.saying;
+    if (!y || blank(y.words) || blank(y.who)) throw new ApiError('23514', 'a saying needs the words and who');
+    if (y.age != null && (!Number.isInteger(y.age) || y.age < 0 || y.age > 120)) throw new ApiError('23514', 'age 0..120');
+    return { kind, saying: { words: y.words.trim(), who: y.who.trim(), age: y.age ?? null } };
   }
 
   authorPost(user: string | null, post: string): PostRow {
@@ -588,8 +680,14 @@ export class FakeBackend {
     const p = this.authorPost(user, post);
     if (p.status === 'published') return;
     const media = Object.values(this.state.media).filter((m) => m.post === post);
-    // Backend 0002: at least one media item, and all of them ready.
-    if (!media.length || media.some((m) => m.status !== 'ready')) throw new ApiError('23514', 'media not ready');
+    if ((p.kind ?? 'photos') !== 'photos') {
+      // 0034: news, events and sayings publish with no media, while post_kinds is still on for the author
+      if (!this.myFeatures(p.author, p.space).includes('post_kinds')) throw new ApiError('42501', 'post_kinds_off');
+      if (media.length) throw new ApiError('23514', 'no photos on this kind');
+    } else if (!media.length || media.some((m) => m.status !== 'ready')) {
+      // Backend 0002: at least one media item, and all of them ready.
+      throw new ApiError('23514', 'media not ready');
+    }
     p.status = 'published';
     p.published_at = this.now();
     this.changed();
@@ -613,6 +711,7 @@ export class FakeBackend {
     const c = caption?.trim() || null;
     if (t && [...t].length > 80) throw new ApiError('23514', 'a title is 80 characters at most');
     if (c && [...c].length > 2000) throw new ApiError('23514', 'a caption is 2000 characters at most');
+    if (row.kind === 'news' && !c) throw new ApiError('23514', 'news needs words'); // 0034 posts_news_has_words
     row.title = t;
     row.caption = c;
     row.words_edited_at = this.now();
@@ -707,7 +806,7 @@ export class FakeBackend {
   getComments(user: string | null, post: string, limit = 50): CommentRow[] {
     const me = this.requireUser(user);
     const p = this.visiblePost(me, post); // get_comments raises P0002 like the server (0011)
-    return Object.values(this.state.comments).filter((c) => c.post === post && this.canSeeReply(me, p!, c.author))
+    return Object.values(this.state.comments).filter((c) => c.post === post && !c.deleted && this.canSeeReply(me, p!, c.author))
       .sort((a, b) => (a.created_at < b.created_at ? -1 : 1)).slice(0, Math.min(limit, 200))
       .map((c) => ({ comment_id: c.id, author_id: c.author, author_name: this.state.users[c.author]?.name ?? '', body: c.body, created_at: c.created_at }));
   }
@@ -996,7 +1095,7 @@ export class FakeBackend {
   /** private.may_see_family_date (PRIV-R2): a member's birthday follows who may see that member's name; a date with
    *  no member goes to the family's parents and its Everyone group only. */
   private seesDate(me: string, d: FamilyDateRow): boolean {
-    if (!this.member(d.space, me)) return false;
+    if (this.state.spaces[d.space]?.deleted || !this.member(d.space, me)) return false; // PRIV-R2: live families only
     if (this.isPoster(d.space, me)) return true;
     if (d.member) return this.seesProfile(me, d.member);
     return Object.values(this.state.circles).some((c) => c.space === d.space && c.kind === 'everyone' && !c.deleted && this.inCircle(c.id, me));
@@ -1098,6 +1197,8 @@ export class FakeBackend {
     if (!Array.isArray(items) || items.length < 1 || items.length > 20) throw new ApiError('23514', 'items 1..20');
     if (items.some((i) => i?.exif_stripped !== true)) throw new ApiError('EXIF', 'exif_not_stripped');
     const p = this.authorPost(me, post);
+    // 0034: no media on a news, event or saying post (the media_items trigger)
+    if ((p.kind ?? 'photos') !== 'photos') throw new ApiError('23514', 'a news, event or saying post has no photos');
     const base = Object.values(this.state.media).filter((m) => m.post === post).length;
     const out = items.map((it, idx) => {
       const id = uuid();

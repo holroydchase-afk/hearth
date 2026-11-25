@@ -17,7 +17,7 @@ const resetDemo = async (page) => {
   await details(page);
   await page.getByRole('button', { name: 'Reset demo' }).click();
   await page.getByRole('button', { name: 'Reset', exact: true }).click();
-  await greeted(page, 'Graham'); // DEMO-NAMES-5 (T39, Nov 24): the demo parent is Graham (was Kevin, DEC-82)
+  await greeted(page, 'Graham'); // DEMO-NAMES-5 (T44, Nov 24): the demo parent is Graham (was Kevin, DEC-82)
 };
 
 for (const tab of ['', 'photos', 'share', 'groups', 'me', 'help']) {
