@@ -1,0 +1,7 @@
+
+Test Suites: 191 passed, 191 total
+Tests:       1 skipped, 1 todo, 2540 passed, 2542 total
+Snapshots:   0 total
+Time:        219.59 s, estimated 225 s
+Ran all test suites.
+exit=0
