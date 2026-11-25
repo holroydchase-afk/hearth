@@ -5,7 +5,7 @@
 // event | saying }) already exist (migration 0034); these tests hold the UI that is still missing.
 //
 // CONTRACT for the engineer (the tests find things by these; behaviour is what is checked):
-//   - Kind card fields keep their spoken labels: Event "What's happening", "When", "Where, optional"; News "Your news";
+//   - Kind card fields keep their spoken labels: Event "What's happening", "What day" (was "When", GUX-SK-R1), "Where, optional"; News "Your news";
 //     Saying "What they said", "Who said it", "Age then, optional".
 //   - SHARE-U-17: the "Pick who gets it" button (role button, that label) is disabled until the kind's required fields
 //     hold words (spaces alone don't count): Event what + when; News words; Saying words + who. Optional ones may stay blank.
@@ -20,14 +20,15 @@
 //     (news words / event what / saying words) at title3 size or larger (fontSize >= 20 with Easy view off; body is 17), the event's date
 //     ("Oct 31" or "October 31") and where, the saying's who and age, and the "who-<id>" names line.
 //   - SHARE-U-21 (PRIV-VC-D1): the Saying card shows, visible to screen readers, exactly
-//     "Everyone you send this to will see who said it." before sending; Event and News cards don't.
+//     "Everyone you send this to will see these words and who said them." before sending (GUX-SK-R8 wording; was
+//     "...will see who said it."); Event and News cards don't.
 //   - SHARE-U-22: when createPost refuses (42501 post_kinds_off, 23514 a bad field) a Notice (role alert) shows plain
 //     words that say the words were kept (/kept/i), with no code and not the photo line "Pick who should see it.";
 //     every typed word stays in the card. Branch on error.code.
 //   - SHARE-U-23: every new tap target is labelled and 48 pt+; text through useTheme().type / <Txt> (typeScale lint).
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { Keyboard, Platform, ScrollView, StyleSheet, Text, TextInput } from 'react-native';
 import { ApiError } from '../../api/HearthApi';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { uuid } from '../../crypto/random';
@@ -35,11 +36,16 @@ import { memoryKV, type KV } from '../../platform/kv';
 import type { PickedAsset } from '../../share/bulk';
 import { FeedScreen } from '../../test/redesignScreens';
 import { expectGrandparentSafe, renderApp, type FixtureUser } from '../../test/renderApp';
+import { eventDay } from '../PostCard';
 import { ShareScreen } from '../ShareScreen';
+import { TYPE, paletteFor } from '../../ui/theme';
 
 const slow = { timeout: 5000 };
 const DAD = "Grandparents – Dad's side";
-const SAYING_LINE = 'Everyone you send this to will see who said it.';
+// GUX-SK-R8 (Nov 25): the SHARE-U-21 line's words changed at grandparent-ux's review (Chase's reviewers asked for it);
+// the check is as strict as before (exact words, reachable, 17 pt+). With the age blank (a fresh card) it reads:
+const SAYING_LINE = 'Everyone you send this to will see these words and who said them.';
+const SAYING_LINE_AGE = 'Everyone you send this to will see these words, who said them, and the age.';
 type Inst = ReturnType<typeof screen.getByTestId>;
 const flat = (s: unknown) => (StyleSheet.flatten((typeof s === 'function' ? (s as (p: object) => unknown)({ pressed: false }) : s) as never) ?? {}) as Record<string, unknown>;
 function wordsIn(root: Inst): string {
@@ -75,7 +81,7 @@ async function start(opts: { user?: FixtureUser; be?: FakeBackend; kv?: KV } = {
 }
 
 const KINDS = {
-  event: { label: 'Add an event', required: { "What's happening": 'Pumpkin patch', When: '2026-10-31' }, optional: { 'Where, optional': '' } },
+  event: { label: 'Add an event', required: { "What's happening": 'Pumpkin patch', 'What day': '2026-10-31' }, optional: { 'Where, optional': '' } },
   news: { label: 'Share news', required: { 'Your news': 'Leo lost his first tooth' }, optional: {} },
   saying: { label: 'Add a saying', required: { 'What they said': 'Pawpaw, your beard is a cloud', 'Who said it': 'Leo' }, optional: { 'Age then, optional': '' } },
 } as const;
@@ -314,14 +320,17 @@ describe('SHARE-U-22 guards: a non-number age, and every existing notice still a
       const { be } = await start();
       const create = jest.spyOn(be, 'createPost');
       const publish = jest.spyOn(be, 'publishPost');
-      fireEvent.press(await toSend('saying', { 'Age then, optional': age }));
+      // GUX-SK-R2 (Nov 25): the age is now checked when "Pick who gets it" is tapped, before the tiles open.
+      await openKind('saying');
+      fill('saying', { 'Age then, optional': age });
+      fireEvent.press(pickBtn());
       const notice = await screen.findByRole('alert', {}, slow);
       expect(wordsIn(notice)).toBe('Type the age as a number, like 4, or leave it blank. Your words are kept.');
+      expect(tiles()).toHaveLength(0);
       expect(create).not.toHaveBeenCalled();
       expect(publish).not.toHaveBeenCalled();
       expect(screen.getByTestId('share-kind-card-saying')).toBeTruthy();
       for (const [l, v] of Object.entries({ ...KINDS.saying.required, 'Age then, optional': age })) expect({ l, v: screen.getByLabelText(l).props.value }).toEqual({ l, v });
-      expect(screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' })).toBeTruthy();
     });
   }
 
@@ -340,4 +349,232 @@ describe('SHARE-U-22 guards: a non-number age, and every existing notice still a
     fireEvent.press(ok);
     await waitFor(() => expect(screen.queryByRole('alert')).toBeNull(), slow);
   });
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+// GUX-SK-R1..R11 (grandparent-ux review of Share's Event/News/Saying cards, Nov 25, 2026). Written first (red) by qa-tdd.
+// CONTRACT for the engineer (behaviour is what is checked):
+//   - R1: the Event field "When" is now "What day" (label and spoken name), placeholder "Like 2026-12-24". Tapping
+//     "Pick who gets it" checks the day locally (a real YYYY-MM-DD date); a bad one shows GUX_DAY, tiles stay closed,
+//     createPost is never called. A 23514 from the server shows GUX_DAY_SERVER.
+//   - R2: the Saying age check runs at the same moment (before the tiles open); any notice, local or from the server,
+//     scrolls Share's page to the top (ScrollView scrollTo({ y: 0 })).
+//   - R3: while the button is disabled, one line of words (R3_LINE[k]) shows; it is gone once the button is enabled.
+//   - R4: opening the tiles calls Keyboard.dismiss() and scrolls the "To:" tiles into view: scrollToEnd() on Share's
+//     page, or scrollTo with a y above 0.
+//   - R5/R6: exact AUTH and 42501 notices. R7: Feed's event line "Saturday, October 31 · place".
+//   - R8: Saying line exact, with ", and the age" only once an age is typed. R9: kind tile words are type.headline.
+//   - R10: kind card field underlines are c.tabLine. R11: Cancel on a card with words asks first (AlertDialog).
+const AGE_NOT_NUMBER_WORDS = 'Type the age as a number, like 4, or leave it blank. Your words are kept.';
+const GUX_DAY = 'Type the day as year-month-day, like 2026-12-24. Your words are kept.';
+const GUX_DAY_SERVER = 'The day needs to look like 2026-12-24. Your words are kept.';
+const GUX_AUTH = "You're signed out, so this didn't send. Signing in again clears this card, so copy your words first if you need them.";
+const GUX_OFF = "This can't be sent right now. Your words are kept. Tap Cancel, or ask whoever set up your family.";
+const R3_LINE: Record<K, string> = {
+  event: "Fill in What's happening and What day to go on.",
+  saying: 'Fill in What they said and Who said it to go on.',
+  news: 'Write your news to go on.',
+};
+type Mocked = jest.Mock & { mock: { calls: unknown[][] } };
+const scrollProto = ScrollView.prototype as unknown as { scrollTo: Mocked; scrollToEnd: Mocked };
+const clearScroll = () => { scrollProto.scrollTo.mockClear(); scrollProto.scrollToEnd.mockClear(); };
+const scrolledToTop = () => scrollProto.scrollTo.mock.calls.some((c) => Number((c[0] as { y?: number } | undefined)?.y ?? -1) === 0);
+
+describe('GUX-SK-R1 (P1) Event "What day": checked before the picker opens, plain words for a bad day', () => {
+  it('GUX-SK-R1 the field is labelled "What day" (not "When") with the placeholder "Like 2026-12-24"', async () => {
+    await start();
+    await openKind('event');
+    expect(screen.getByText('What day')).toBeTruthy();
+    expect(screen.queryByText('When')).toBeNull();
+    expect(screen.getByLabelText('What day').props.placeholder).toBe('Like 2026-12-24');
+  });
+  for (const bad of ['Saturday', '2026-13-40']) {
+    it(`GUX-SK-R1 What day "${bad}": a local notice, the tiles stay closed, createPost never called, words kept`, async () => {
+      const { be } = await start();
+      const create = jest.spyOn(be, 'createPost');
+      await openKind('event');
+      fill('event', { 'What day': bad });
+      fireEvent.press(pickBtn());
+      const notice = await screen.findByRole('alert', {}, slow);
+      expect(wordsIn(notice)).toBe(GUX_DAY);
+      expect(tiles()).toHaveLength(0);
+      expect(create).not.toHaveBeenCalled();
+      expect(screen.getByLabelText('What day').props.value).toBe(bad);
+      expect(screen.getByLabelText("What's happening").props.value).toBe('Pumpkin patch');
+    });
+  }
+  it('GUX-SK-R1 a 23514 from the server says exactly how the day should look', async () => {
+    const { be } = await start();
+    jest.spyOn(be, 'createPost').mockImplementation(() => { throw new ApiError('23514', 'an event needs a real date'); });
+    fireEvent.press(await toSend('event'));
+    expect(wordsIn(await screen.findByRole('alert', {}, slow))).toBe(GUX_DAY_SERVER);
+  });
+});
+
+describe('GUX-SK-R2 (P1) the age is checked before the picker opens; every notice scrolls to the top', () => {
+  it('GUX-SK-R2 Saying age "four": the age notice shows on "Pick who gets it", the tiles stay closed, the page scrolls to the top', async () => {
+    await start();
+    await openKind('saying');
+    fill('saying', { 'Age then, optional': 'four' });
+    clearScroll();
+    fireEvent.press(pickBtn());
+    expect(wordsIn(await screen.findByRole('alert', {}, slow))).toBe(AGE_NOT_NUMBER_WORDS);
+    expect(tiles()).toHaveLength(0);
+    expect(scrolledToTop()).toBe(true);
+  });
+  it('GUX-SK-R2 a bad day (local notice) scrolls the page to the top', async () => {
+    await start();
+    await openKind('event');
+    fill('event', { 'What day': 'Saturday' });
+    clearScroll();
+    fireEvent.press(pickBtn());
+    await screen.findByRole('alert', {}, slow);
+    expect(scrolledToTop()).toBe(true);
+  });
+  it('GUX-SK-R2 a server notice (42501) scrolls the page to the top', async () => {
+    const { be } = await start();
+    jest.spyOn(be, 'createPost').mockImplementation(() => { throw new ApiError('42501', 'post_kinds_off'); });
+    const send = await toSend('news');
+    clearScroll();
+    fireEvent.press(send);
+    await screen.findByRole('alert', {}, slow);
+    expect(scrolledToTop()).toBe(true);
+  });
+});
+
+describe('GUX-SK-R3 (P1) a line says what to fill in while "Pick who gets it" is off', () => {
+  for (const k of ALL) {
+    it(`GUX-SK-R3 ${k}: "${R3_LINE[k]}" shows while the button is off and is gone once it is on`, async () => {
+      await start();
+      await openKind(k);
+      expect(isDisabled(pickBtn())).toBe(true);
+      const line = screen.getByText(R3_LINE[k]);
+      expect(hiddenFromReaders(line)).toBe(false);
+      fill(k);
+      expect(isDisabled(pickBtn())).toBe(false);
+      expect(screen.queryByText(R3_LINE[k])).toBeNull();
+    });
+  }
+});
+
+describe('GUX-SK-R4 (P1) opening the tiles puts the keyboard away and brings "To:" into view', () => {
+  for (const k of ALL) {
+    it(`GUX-SK-R4 ${k}: Keyboard.dismiss() and a scroll down to the tiles`, async () => {
+      await start();
+      await openKind(k);
+      fill(k);
+      const dismiss = jest.spyOn(Keyboard, 'dismiss');
+      clearScroll();
+      fireEvent.press(pickBtn());
+      await waitFor(() => expect(tiles().length).toBe(3), slow);
+      expect(dismiss).toHaveBeenCalled();
+      const down = scrollProto.scrollToEnd.mock.calls.length > 0
+        || scrollProto.scrollTo.mock.calls.some((c) => Number((c[0] as { y?: number } | undefined)?.y ?? 0) > 0);
+      expect(down).toBe(true);
+    });
+  }
+});
+
+describe('GUX-SK-R5 / R6 exact words for signed out and switched off', () => {
+  const cases: [string, ApiError, string][] = [
+    ['GUX-SK-R5 (P1) AUTH', new ApiError('AUTH'), GUX_AUTH],
+    ['GUX-SK-R6 (P2) 42501', new ApiError('42501', 'post_kinds_off'), GUX_OFF],
+  ];
+  for (const [name, err, want] of cases) {
+    for (const k of ['event', 'news'] as const) {
+      it(`${name} on ${k}: the notice reads exactly "${want}"`, async () => {
+        const { be } = await start();
+        jest.spyOn(be, 'createPost').mockImplementation(() => { throw err; });
+        fireEvent.press(await toSend(k));
+        expect(wordsIn(await screen.findByRole('alert', {}, slow))).toBe(want);
+      });
+    }
+  }
+});
+
+describe('GUX-SK-R7 (P2) the Feed event line names the weekday', () => {
+  it('GUX-SK-R7 eventDay: "Saturday, October 31" this year; "Wednesday, December 24, 2025" another year', () => {
+    const now = new Date(2026, 10, 25);
+    expect(eventDay('2026-10-31', now)).toBe('Saturday, October 31');
+    expect(eventDay('2025-12-24', now)).toBe('Wednesday, December 24, 2025');
+  });
+  it('GUX-SK-R7 in Feed, Grandma Jo sees "Saturday, October 31 · Grandpa Earl’s farm"', async () => {
+    const be = kindsOn();
+    const id = await seedKind(be, 'event'); // 2026-10-31, a Saturday
+    await renderApp(<FeedScreen />, { waitReady: false, user: 'jo', be });
+    const card = await screen.findByTestId(`post-${id}`, {}, slow);
+    const thisYear = new Date().getFullYear() === 2026;
+    expect(wordsIn(card)).toContain(`Saturday, October 31${thisYear ? '' : ', 2026'} · Grandpa Earl’s farm`);
+  });
+});
+
+describe('GUX-SK-R8 (P2) the Saying line names the words, who said them, and the age only when there is one', () => {
+  it('GUX-SK-R8 blank age: "...these words and who said them."; an age typed: "...these words, who said them, and the age."; cleared: back again', async () => {
+    await start();
+    await openKind('saying');
+    expect(screen.getByText(SAYING_LINE)).toBeTruthy();
+    expect(screen.queryByText(SAYING_LINE_AGE)).toBeNull();
+    type('Age then, optional', '4');
+    expect(screen.getByText(SAYING_LINE_AGE)).toBeTruthy();
+    expect(screen.queryByText(SAYING_LINE)).toBeNull();
+    type('Age then, optional', '  ');
+    expect(screen.getByText(SAYING_LINE)).toBeTruthy();
+  });
+});
+
+describe('GUX-SK-R9 (P2) kind tile words are type.headline', () => {
+  for (const easy of [false, true]) {
+    it(`GUX-SK-R9 Easy view ${easy ? 'on' : 'off'}: Event, News and Saying words are headline (${easy ? 21 : 17} pt, SemiBold)`, async () => {
+      const kv = memoryKV({ [`hearth.prefs.v1.${FIXTURE.users.chase.id}`]: JSON.stringify({ easyView: easy }) });
+      await start({ kv });
+      const want = TYPE[easy ? 'easy' : 'standard'].headline;
+      for (const k of ALL) {
+        const s = flat(screen.getByTestId(`share-kind-word-${k}`).props.style);
+        expect({ k, size: s.fontSize, family: s.fontFamily }).toEqual({ k, size: want.fontSize, family: want.fontFamily });
+      }
+    });
+  }
+});
+
+describe('GUX-SK-R10 (P2) kind card field underlines use c.tabLine', () => {
+  for (const k of ALL) {
+    it(`GUX-SK-R10 ${k}: every field's underline is c.tabLine, not c.line`, async () => {
+      await start();
+      await openKind(k);
+      const tabLines = [false, true].map((d) => paletteFor(Platform.OS as 'ios', d, 'paper').tabLine.toUpperCase());
+      const inputs = screen.getByTestId(`share-kind-card-${k}`).findAll((x: Inst) => x.type === TextInput) as Inst[];
+      expect(inputs.length).toBeGreaterThan(0);
+      for (const i of inputs) {
+        const color = String(flat(i.props.style).borderBottomColor ?? '').toUpperCase();
+        expect({ field: i.props.accessibilityLabel, tabLine: tabLines.includes(color) }).toEqual({ field: i.props.accessibilityLabel, tabLine: true });
+      }
+    });
+  }
+});
+
+describe('GUX-SK-R11 (P2) Cancel on a card with words asks first', () => {
+  it('GUX-SK-R11 an empty card cancels at once, with no question', async () => {
+    await start();
+    await openKind('event');
+    fireEvent.press(screen.getByRole('button', { name: 'Cancel this post' }));
+    expect(screen.queryByRole('header', { name: 'Throw away this card?' })).toBeNull();
+    await emptyAgain();
+  });
+  for (const k of ALL) {
+    it(`GUX-SK-R11 ${k} with words: "Throw away this card?"; "Keep writing" keeps every word, "Throw away" empties Share`, async () => {
+      await start();
+      await openKind(k);
+      const [label, value] = Object.entries(KINDS[k].required)[0]!;
+      type(label, value);
+      fireEvent.press(screen.getByRole('button', { name: 'Cancel this post' }));
+      await screen.findByRole('header', { name: 'Throw away this card?' }, slow);
+      fireEvent.press(screen.getByRole('button', { name: 'Keep writing' }));
+      await waitFor(() => expect(screen.queryByRole('header', { name: 'Throw away this card?' })).toBeNull(), slow);
+      expect(screen.getByLabelText(label).props.value).toBe(value);
+      fireEvent.press(screen.getByRole('button', { name: 'Cancel this post' }));
+      await screen.findByRole('header', { name: 'Throw away this card?' }, slow);
+      fireEvent.press(screen.getByRole('button', { name: 'Throw away' }));
+      await emptyAgain();
+    });
+  }
 });
