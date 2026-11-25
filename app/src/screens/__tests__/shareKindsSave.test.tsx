@@ -578,3 +578,79 @@ describe('GUX-SK-R11 (P2) Cancel on a card with words asks first', () => {
     });
   }
 });
+
+// ---------------------------------------------------------------------------------------------------------------------
+// PRIV-SK-R1 (P1, privacy-security, Nov 25, 2026). Written first (red) by qa-tdd.
+// create_post returns the existing post for a repeated client id and ignores new groups and words (by design: that is
+// what makes a retry safe). So ShareScreen must not reuse a kind draft's client id once the parent has changed who it
+// goes to or what it says, or "Send again" publishes the OLD post to the OLD groups while the button names the new ones.
+// CONTRACT for the engineer (behaviour is what is checked):
+//   (a) publishPost fails, the parent changes the picked groups, Send: the published post goes to exactly the new pick
+//       (and someone only in the old pick does not get it).
+//   (b) createPost commits on the server but its reply is lost (NETWORK), the parent edits the words, Send: the
+//       published post holds the new words, and no published post holds the old ones.
+//   (c) guard: a plain retry with nothing changed after that lost reply still makes exactly one post (idempotency kept).
+// PRIV-SK-R2 (P2, accepted until milestone 7): a committed draft left behind by (a)/(b) is not cleaned up; not tested.
+const MOM = "Grandparents – Mom's side";
+const sendBtn = () => screen.getByRole('button', { name: /^Send to / });
+const tile = (name: string, picked: boolean) => screen.getByLabelText(new RegExp(`^${name}, \\d+ people, ${picked ? '' : 'not '}picked$`));
+const published = (be: FakeBackend) => Object.values(be.state.posts).filter((p) => p.status === 'published' && !p.deleted);
+/** createPost writes the post on the server, then the reply never arrives (the phone sees NETWORK). */
+const commitThenLose = (be: FakeBackend) => {
+  const real = be.createPost.bind(be);
+  return jest.spyOn(be, 'createPost')
+    .mockImplementationOnce((u, a) => { real(u, a); throw new ApiError('NETWORK'); })
+    .mockImplementation(real);
+};
+
+describe('PRIV-SK-R1 (P1) Send again never publishes the old groups or the old words', () => {
+  it('PRIV-SK-R1 (a) publish fails, the parent changes the groups, Send: the published post goes to exactly the new pick', async () => {
+    const { be } = await start();
+    const before = new Set(published(be).map((p) => p.id));
+    const real = be.publishPost.bind(be);
+    jest.spyOn(be, 'publishPost').mockImplementationOnce(() => { throw new ApiError('NETWORK'); }).mockImplementation(real);
+    fireEvent.press(await toSend('news')); // to Dad's side: Chase, Jo, Earl
+    await screen.findByRole('alert', {}, slow);
+    fireEvent.press(tile(DAD, true));
+    fireEvent.press(tile(MOM, false)); // now Mom's side only: Alex, Ruth
+    expect(sendBtn().props.accessibilityLabel ?? '').not.toMatch(/Jo|Earl/);
+    fireEvent.press(sendBtn());
+    await emptyAgain();
+    const mine = published(be).filter((p) => !before.has(p.id));
+    expect(mine.map((p) => ({ caption: p.caption, circles: [...p.circles].sort() })))
+      .toEqual([{ caption: 'Leo lost his first tooth', circles: [FIXTURE.circles.momSide.id] }]);
+    const id = mine[0]!.id;
+    // Both directions: Ruth (Mom's side, the new pick) gets it; Grandpa Earl (Dad's side only, the old pick) does not.
+    const ruth = await be.clientFor(FIXTURE.users.ruth.id).getFeed({ space: FIXTURE.space.id });
+    const earl = await be.clientFor(FIXTURE.users.earl.id).getFeed({ space: FIXTURE.space.id });
+    expect({ ruth: ruth.some((p) => p.post_id === id), earl: earl.some((p) => p.post_id === id) }).toEqual({ ruth: true, earl: false });
+  });
+
+  it('PRIV-SK-R1 (b) createPost commits but its reply is lost, the parent edits the words, Send: the new words are published, never the old', async () => {
+    const { be } = await start();
+    const before = new Set(published(be).map((p) => p.id));
+    commitThenLose(be);
+    fireEvent.press(await toSend('news'));
+    await screen.findByRole('alert', {}, slow);
+    type('Your news', 'Leo lost his second tooth');
+    fireEvent.press(sendBtn());
+    await emptyAgain();
+    const mine = published(be).filter((p) => !before.has(p.id));
+    expect(mine.map((p) => ({ caption: p.caption, circles: p.circles }))).toEqual([{ caption: 'Leo lost his second tooth', circles: [FIXTURE.circles.dadSide.id] }]);
+    expect(published(be).filter((p) => p.caption === 'Leo lost his first tooth')).toEqual([]);
+  });
+
+  it('PRIV-SK-R1 (c) guard: after that lost reply, a plain Send again with nothing changed still makes exactly one post', async () => {
+    const { be } = await start();
+    const before = Object.keys(be.state.posts).length;
+    const create = commitThenLose(be);
+    fireEvent.press(await toSend('news'));
+    await screen.findByRole('alert', {}, slow);
+    fireEvent.press(sendBtn());
+    await emptyAgain();
+    expect(new Set(create.mock.calls.map((c) => c[1].clientId)).size).toBe(1);
+    expect(Object.keys(be.state.posts).length).toBe(before + 1);
+    const mine = Object.values(be.state.posts).filter((p) => p.client_id === create.mock.calls[0]![1].clientId);
+    expect(mine.map((p) => ({ caption: p.caption, status: p.status }))).toEqual([{ caption: 'Leo lost his first tooth', status: 'published' }]);
+  });
+});

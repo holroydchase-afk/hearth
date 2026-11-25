@@ -1639,6 +1639,30 @@
    ],
    "found": "2026-11-25",
    "fixed": "2026-11-25"
+  },
+  {
+   "id": "B32",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "High",
+   "status": "open",
+   "title": "PRIV-SK-R1 P1 (privacy-security, Share kind cards, Nov 25): create_post returns the existing post for a repeated client id and ignores new groups and words (that is what makes a retry safe), but ShareScreen keeps a News/Event/Saying draft's client id when (1) the parent changes the picked groups after a failed publish, or (2) createPost committed but its reply was lost (NETWORK) and the parent then edits the words (draft.made is only set after the reply). Send again then publishes the OLD post to the OLD groups while the button names the new ones. Failing tests by qa-tdd: PRIV-SK-R1 (a) and (b) in app/src/screens/__tests__/shareKindsSave.test.tsx (red: (a) published to Dad's side, not Mom's side; (b) published 'Leo lost his first tooth', not the edited words); (c) plain retry still one post is the idempotency guard (passes). e2e/results/priv-sk-red-2026-11-25.txt",
+   "tests": [
+    "app/src/screens/__tests__/shareKindsSave.test.tsx"
+   ],
+   "found": "2026-11-25",
+   "fixed": null
+  },
+  {
+   "id": "B33",
+   "kind": "bug",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "PRIV-SK-R2 P2 (privacy-security, Nov 25; accepted until milestone 7): once the PRIV-SK-R1 fix mints a new client id after the groups or words change, the draft already committed under the old id stays on the server unpublished and is never cleaned up (drafts are author-only and never shown to anyone else, so no exposure; storage and export tidiness only). No test until the clean-up is scheduled.",
+   "tests": [],
+   "found": "2026-11-25",
+   "fixed": null
   }
  ]
 }
