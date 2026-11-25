@@ -4,6 +4,10 @@
 // a black viewer that behaves like iPhone Photos for parents (Easy view Off: Chase, an owner) and keeps words and
 // pills for grandparents (Easy view On: Grandma Jo, a viewer). VIEWER-20 is a manual phone check (M-VIEWER-20).
 //
+// M-VIEWER-20 (manual, Chase's iPhone, Expo Go): 1. Open a photo as Kevin (Easy view Off); swipe, pinch, double tap,
+// drag down. Expected: follows the finger like Photos, no stutter, closes on swipe down. 2. As a viewer (Easy view On),
+// open, Next, Back, Save, Close with no help. Expected: each under 60 s, nothing asked.
+//
 // Seams the engineer builds (named here so the tests hold whatever the library does inside):
 //   - ViewerScreen draws the photo with react-native-zoom-toolkit's `Gallery` (jest: src/test/mockZoomGallery.tsx).
 //     Its ref's setIndex moves photos for Back / Next / arrows / screen reader; its `zoom` (the pinned patch) zooms.
