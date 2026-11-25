@@ -171,7 +171,7 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **When / status:** Oct 18 · Decided (building)
 - **Chose:** a group is a plain list of people; anyone can be in several groups. Events copy people in from groups once.
 - **Replaces:** the Oct 17 fixed shape (Everyone, sides, households, events; migration 0011).
-- **Because:** real split families don't fit one hierarchy (Mom's sister belongs in two houses). Plain groups cover every case with less to explain.
+- **Because:** real split families don't fit one hierarchy (a far-away relative can belong in two houses). Plain groups cover every case with less to explain.
 - **Source:** `/mnt/project-files/plans/v1-groups-plan.md`, PR #22
 
 ### DEC-20 · Who reads a comment: three settings per group
