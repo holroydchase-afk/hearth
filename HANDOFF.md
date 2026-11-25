@@ -11,6 +11,10 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 25: React Compiler check in CI (B32, R84; branch claude/project-thread-6ew09x, PR)
+- **Done, test-first:** INTAKE-80-4 (`app/src/__tests__/reactCompiler.test.ts`) failed until `.github/workflows/ci.yml`'s App (Jest + typecheck) job ran `node scripts/compiler-check.js`. Four bailouts that landed after #181 (useAutoplay, SignInScreen, AddPhotoCard: refs read in render; PostcardStamp: `new` expression) are allowlisted with reasons, same as B27.
+- **Next:** merge on green; B27 fixes the bailouts one at a time.
+
 ## Nov 24: staying signed in on the web built (HRT-WEB.1, SPEC-WEB-APP WEB-APP-1..10; branch claude/project-thread-o1dwht, not committed)
 - **Done (engineer, test-first on qa-tdd's red tests):** `app/src/platform/secureSession.web.ts` seals the session and the messenger store (AES-256-GCM, values under `hs.<name>`, non-extractable key in IndexedDB `hearth.session`), migrates the old plain values without a sign-in, falls back to memory when storage or WebCrypto is blocked, and `clear()` wipes all of it at sign-out (`AppDeps.clearSessionStore`, wired in `state/runtime.ts`, called by `AppContext.signOut`). QA-R1 closed (no plain MLS state in localStorage). QA-R2 closed: `SupabaseApi.signOut` removes the local session when supabase-js can't reach the server (offline, expired token). Native `secureSession.ts` unchanged. Architecture 03 updated.
 - **Proof:** `secureSession.web.test.ts` 14/14, `SupabaseApi.offlineSignOut.test.ts` 2/2, full jest 177 suites green once, typecheck clean, `e2e:web` 9 passed (web-session 4/4). **Next exact step:** qa-tdd green 3x, privacy-security review, then commit and PR (touches app/**: merge on Chase's word).

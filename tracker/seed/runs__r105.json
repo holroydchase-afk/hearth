@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-25T02:00:00-05:00",
+ "label": "B32 React Compiler rules check in CI (INTAKE-80-4): red at ecf71b3, all app checks 3x at 8aa6278 (green)",
+ "passed": 7620,
+ "failed": 0,
+ "results": {},
+ "note": "Red at ecf71b3 (temp worktree): reactCompiler.test.ts INTAKE-80-4 failed (ci.yml App job has no 'run: node scripts/compiler-check.js'), and compiler-check.js exited 1 with 4 bailouts not allowlisted (autoplay.ts useAutoplay, SignInScreen, kit.tsx AddPhotoCard, kit.tsx PostcardStamp). Green 3x at 8aa6278: jest 2540 passed (1 skipped, 1 todo, 191 suites), typecheck clean, compiler-check 26 bailouts, 0 not allowlisted, ci.yml parses with yaml.safe_load; identical each run, no flake. passed = 3 x 2540. Not run: e2e and backend (no app runtime or backend code changed; allowlist, CI step and a test only). e2e/results/compiler-ci-2026-11-25/"
+}

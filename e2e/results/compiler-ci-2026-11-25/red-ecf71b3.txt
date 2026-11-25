@@ -1,0 +1,72 @@
+FAIL src/__tests__/reactCompiler.test.ts
+  ● INTAKE-80-4 CI runs the React Compiler rules check › INTAKE-80-4 B32 the App (Jest + typecheck) job runs scripts/compiler-check.js
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /run: node scripts\/compiler-check\.js/
+    Received string:  "    name: App (Jest + typecheck)
+        runs-on: ubuntu-24.04
+        timeout-minutes: 20
+        defaults:
+          run:
+            working-directory: app
+        steps:
+          - uses: actions/checkout@v5
+          - uses: actions/setup-node@v5
+            with:
+              node-version: 22
+              cache: npm
+              cache-dependency-path: app/package-lock.json
+          - run: npm ci
+          - name: npm run eas works with only EXPO_ACCESS_TOKEN (EXPO-1, stubbed, no network)
+            run: bash scripts/tests/eas_test.sh
+          - run: npm test
+          - run: npm run typecheck·
+      # QA-R2 (Nov 19 review, TRACKER R52): the browser tests run on every pull request, not only on a laptop:
+      # the public demo build (e2e:demo) and the core loop on the fake backend (e2e:web)."
+
+      47 |     const ci = fs.readFileSync(path.join(__dirname, '../../../.github/workflows/ci.yml'), 'utf8');
+      48 |     const job = ci.split(/\n  [a-z][\w-]*:\n/).find((j) => j.includes('name: App (Jest + typecheck)')) ?? '';
+    > 49 |     expect(job).toMatch(/run: node scripts\/compiler-check\.js/);
+         |                 ^
+      50 |   });
+      51 | });
+      52 |
+
+      at Object.toMatch (src/__tests__/reactCompiler.test.ts:49:17)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 3 passed, 4 total
+Snapshots:   0 total
+Time:        1.212 s
+Ran all test suites matching src/__tests__/reactCompiler.test.ts.
+exit=1
+--- compiler-check at ecf71b3
+FAIL - INTAKE-80-3 src/feed/autoplay.ts:39 useAutoplay [CompileError] Cannot access refs during render: React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef)
+allowed - INTAKE-80-3 src/screens/Birthdays.tsx:122 DateForm [CompileError] (BuildHIR::lowerStatement) Handle TryStatement with a finalizer ('finally') clause
+allowed - INTAKE-80-3 src/screens/EmailCodeFlow.tsx:10 EmailCodeFlow [CompileError] (BuildHIR::lowerStatement) Handle TryStatement with a finalizer ('finally') clause
+allowed - INTAKE-80-3 src/screens/GalleryGrid.tsx:45 GalleryGrid [CompileError] Cannot access refs during render: React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef)
+allowed - INTAKE-80-3 src/screens/GalleryTop.tsx:79 GalleryTopBar [CompileError] Cannot access refs during render: React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef)
+allowed - INTAKE-80-3 src/screens/GroupsScreen.tsx:46 GroupsScreen [CompileError] Support value blocks (conditional, logical, optional chaining, etc) within a try/catch statement
+allowed - INTAKE-80-3 src/screens/JoinScreen.tsx:16 JoinScreen [CompileError] Cannot access variable before it is declared: `check` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time
+allowed - INTAKE-80-3 src/screens/MessagesScreen.tsx:64 ChatScreen [CompileError] (BuildHIR::lowerStatement) Handle TryStatement with a finalizer ('finally') clause
+allowed - INTAKE-80-3 src/screens/PhotoSwipe.tsx:41 PhotoSwipe [CompileError] Support value blocks (conditional, logical, optional chaining, etc) within a try/catch statement
+allowed - INTAKE-80-3 src/screens/PhotosScreen.tsx:52 PhotosScreen [CompileError] Cannot access refs during render: React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef)
+allowed - INTAKE-80-3 src/screens/PostCard.tsx:453 ReactionButton [CompileError] Cannot access refs during render: React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef)
+allowed - INTAKE-80-3 src/screens/SearchScreen.tsx:29 SearchScreen [CompileError] (BuildHIR::lowerStatement) Handle TryStatement with a finalizer ('finally') clause
+allowed - INTAKE-80-3 src/screens/ShareScreen.tsx:43 ShareScreen [CompileError] (BuildHIR::lowerStatement) Handle TryStatement with a finalizer ('finally') clause
+FAIL - INTAKE-80-3 src/screens/SignInScreen.tsx:13 SignInScreen [CompileError] Cannot access refs during render: React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef)
+allowed - INTAKE-80-3 src/screens/StartFamily.tsx:18 StartFamily [CompileError] (BuildHIR::lowerStatement) Handle TryStatement with a finalizer ('finally') clause
+allowed - INTAKE-80-3 src/screens/StartFamily.tsx:127 FirstInvite [CompileError] (BuildHIR::lowerStatement) Support ThrowStatement inside of try/catch
+allowed - INTAKE-80-3 src/screens/TextCodeFlow.tsx:15 TextCodeFlow [CompileError] (BuildHIR::lowerStatement) Handle TryStatement with a finalizer ('finally') clause
+allowed - INTAKE-80-3 src/screens/TimelineScreen.tsx:23 TimelineScreen [CompileError] Existing memoization could not be preserved: React Compiler has skipped optimizing this component because the existing manual memoization could not be preserved. The inferred dependencies did not match the manually specified dependencies, which could cause the value to change more or less frequently than expected. The inferred dependency was `app.space.space_id`, but the source dependencies were [app.deps.api, app.space?.space_id]. Inferred different dependency than source
+allowed - INTAKE-80-3 src/screens/TimelineScreen.tsx:23 TimelineScreen [CompileError] Existing memoization could not be preserved: React Compiler has skipped optimizing this component because the existing manual memoization could not be preserved. The inferred dependencies did not match the manually specified dependencies, which could cause the value to change more or less frequently than expected. The inferred dependency was `app.helper`, but the source dependencies were [app.deps.api, app.space?.space_id]. Inferred different dependency than source
+allowed - INTAKE-80-3 src/screens/VideoPlayer.tsx:76 Playing [CompileError] This value cannot be modified: Modifying a value returned from a hook is not allowed. Consider moving the modification into the hook where the value is constructed
+allowed - INTAKE-80-3 src/screens/ViewerScreen.tsx:19 ViewerScreen [CompileError] (BuildHIR::lowerStatement) Handle TryStatement with a finalizer ('finally') clause
+allowed - INTAKE-80-3 src/state/AppContext.tsx:148 AppProvider [CompileError] Cannot access refs during render: React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef)
+FAIL - INTAKE-80-3 src/ui/kit.tsx:309 AddPhotoCard [CompileError] Cannot access refs during render: React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef)
+FAIL - INTAKE-80-3 src/ui/kit.tsx:345 PostcardStamp [CompileError] (BuildHIR::node.lowerReorderableExpression) Expression type `NewExpression` cannot be safely reordered
+allowed - INTAKE-80-3 src/ui/kit.tsx:506 BottomSheet [CompileError] Cannot access refs during render: React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef)
+allowed - INTAKE-80-3 src/ui/typing.ts:51 useTypingField [CompileError] Cannot access refs during render: React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef)
+INTAKE-80-3: 175 files, 151 functions compiled, 26 bailouts (4 not allowlisted)
+exit=1
