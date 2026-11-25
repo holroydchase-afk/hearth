@@ -524,10 +524,10 @@ TIMELINE RESULT: 39 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('2c74fb51-8e2d-43fb-9863-f3d2b8b48bc3'))
-psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('576bef15-b376-4ade-9c9b-1c22ee7e518a'))
-psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('a3ea8540-ec5c-4e8b-b11b-68c9427c4083'))
-psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '795d19f6-1259-4820-abf8-bc21d4bb2734')
+psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('b8203319-21a7-42ce-8165-1a56fac05793'))
+psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('388d990d-cd63-4935-864c-3cf54c88f3e7'))
+psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('af80d1d9-2819-4774-914d-b2e92cae0446'))
+psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '98b71a80-224f-4bb2-ae40-0961ebaf0879')
   n  | result |                                                                                  description                                                                                   
 -----+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    1 | ok     | BETA-AUD-11 shape: circles.kind exists (everyone | group | household | event)
@@ -1769,9 +1769,9 @@ VIS CALENDAR RESULT: 8 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-Time: 0.062 ms
+Time: 0.076 ms
 
-VIS ORACLE MATRIX seed=42 seconds=13
+VIS ORACLE MATRIX seed=42 seconds=11
          path         |        kind         | checked | wrong_yes | wrong_no 
 ----------------------+---------------------+---------+-----------+----------
  chat_roster          | chat_group          |     600 |         0 |        0
@@ -2035,9 +2035,9 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
 Narrowing for Chase (readable before 0011 only through "members see each other's replies"):
      reader     |  kind   |                                 reply_id                                  
 ----------------+---------+---------------------------------------------------------------------------
- Grandma Rivera | comment | 31c7d56c-5f30-46d6-949a-6de35010dfcc
+ Grandma Rivera | comment | c7ea76f0-ab72-436d-b26b-c499af65b621
  Grandma Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a2
- Grandpa Rivera | comment | 22116295-1e8e-4329-b082-c4ee242c6475
+ Grandpa Rivera | comment | 10d19f69-5cf4-40ff-bfff-5cec758ff792
  Grandpa Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a1
 
  n  | result |                                                     description                                                      
@@ -2148,8 +2148,8 @@ ok      SETUP-API: before Chase has an account it says "sign in once in the app"
 ok      SETUP-API: ... and changes nothing
 ok      SETUP-API: fresh setup runs without error
         | Family "Chase's kids" is ready: Everyone, Chase's side, Mom's side, 7 houses, 2 events.
-        | Test viewer invite (account B): code SH6D8DHK44, works once until Dec 01, link https://thefreighttrains-team-hearth.expo.app/join/42ce80c580a5e410c76a572514d952f37f9563f7
-        | Mom's poster invite: code 45PANZ23N9, works once until Dec 01, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/2504c041c667cce4f11a332f23bad271daaa2ad7
+        | Test viewer invite (account B): code M3ZRYTKKHG, works once until Dec 02, link https://thefreighttrains-team-hearth.expo.app/join/6cd7c6eccde08c213a208ae776f13c0c443e0711
+        | Mom's poster invite: code RX72A53VWS, works once until Dec 02, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/a3ceab2b071910921dad6b04d38abb63a14ef754
 ok      SETUP-API: Chase owns one family, named as given (an apostrophe in the name is kept, not a SQL error)
 ok      SETUP-API: one Everyone
 ok      SETUP-API: the set groups are Chase's side and Mom's side (no v1 groups to retire later)
@@ -2246,7 +2246,7 @@ ok      PRIV-1 smoke: IP addresses in Supabase Auth's audit log are a warning wi
 ok      PRIV-1 smoke: ... and the address itself is never printed
 
 SMOKE CHECK TEST RESULT: 28 passed, 0 failed
-ok      START-ON setup: Pat started a family (got '17e2ae11-ee0d-477e-9472-3635433ff116')
+ok      START-ON setup: Pat started a family (got 'd81e8ee2-3fc0-4235-ad52-4b1d1222bf0e')
 ok      START-ON-3 backend/scripts/suspend-family.sh exists
 ok      START-ON-3 without SUPABASE_ACCESS_TOKEN it stops and names the secret
 ok      START-ON-3 without --space it stops, says what's missing and sends nothing
@@ -2254,7 +2254,7 @@ ok      START-ON-3 a --space that isn't a uuid is refused before anything is sen
 ok      START-ON-3 an unknown option is refused before anything is sent
 ok      START-ON-3 --undo and --known together are refused (one action at a time)
 ok      START-ON-3 the dry run runs without error
-        | Dry run: would suspend family 17e2ae11-ee0d-477e-9472-3635433ff116. Nothing changed. Add --apply to suspend it.
+        | Dry run: would suspend family d81e8ee2-3fc0-4235-ad52-4b1d1222bf0e. Nothing changed. Add --apply to suspend it.
         | --undo brings it back unchanged. purge_soft_deleted can remove families suspended over 30 days ago, but it is not scheduled, so nothing (photos included) is deleted on its own.
 ok      START-ON-3 without --apply nothing changes (dry run is the default)
 ok      START-ON-3 the dry run says it is a dry run and to add --apply
@@ -2263,9 +2263,9 @@ ok      SEC-R1 the dry run says the purge is not scheduled, never that it runs o
 ok      START-ON-3 the dry run names the space id
 ok      START-ON-3 the dry run prints no family, side or member name and no email
 ok      START-ON-3 --apply runs without error
-        | Suspended family 17e2ae11-ee0d-477e-9472-3635433ff116: every member now finds nothing and uploads to it are refused.
+        | Suspended family d81e8ee2-3fc0-4235-ad52-4b1d1222bf0e: every member now finds nothing and uploads to it are refused.
         | --undo brings it back unchanged. purge_soft_deleted can remove families suspended over 30 days ago, but it is not scheduled, so nothing (photos included) is deleted on its own.
-        | To undo: bash scripts/suspend-family.sh --space 17e2ae11-ee0d-477e-9472-3635433ff116 --undo --apply
+        | To undo: bash scripts/suspend-family.sh --space d81e8ee2-3fc0-4235-ad52-4b1d1222bf0e --undo --apply
 ok      START-ON-3 --apply suspends the family (spaces.deleted_at set)
 ok      START-ON-3 --apply names purge_soft_deleted and 30 days
 ok      SEC-R1 --apply says the purge is not scheduled
@@ -2332,7 +2332,7 @@ ok      ARCH-VC-R1 bites: a scratch edit to migration 0031 alone fails the check
 ok      ARCH-VC-R1 a missing migration fails the check, not passes it
 VIS CORE COPY RESULT: 4 passed, 0 failed
 ok      VIS-12 tests/vis_oracle/nightly.sh exists
-ok      VIS-12 --seed 4242 writes a dated matrix: tests/results/vis-oracle-2026-11-24-seed4242.txt
+ok      VIS-12 --seed 4242 writes a dated matrix: tests/results/vis-oracle-2026-11-25-seed4242.txt
 ok      VIS-12 the matrix names its seed
 ok      VIS-12 the matrix has path, kind, checked, wrong_yes, wrong_no
 ok      VIS-12 the matrix has a row for every read path

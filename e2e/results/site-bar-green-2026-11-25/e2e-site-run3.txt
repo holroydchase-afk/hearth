@@ -1,0 +1,101 @@
+
+> hearth-app@1.0.0 e2e:site
+> bash scripts/build-demo.sh && node ../e2e/node_modules/@playwright/test/cli.js test -c e2e-web/playwright.site.config.js
+
+
+Using (experimental) base path: /demo/hearth
+Using src/app as the root directory for Expo Router.
+React Compiler enabled
+Starting Metro Bundler
+
+warning: Bundler cache is empty, rebuilding (this may take a minute)
+Web Bundled 17993ms node_modules/expo-router/entry.js (1341 modules)
+
+› Assets (22):
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/400Regular/AtkinsonHyperlegibleNext_400Regular.86635252a71fd7c43fd5b0c41bdc5d54.ttf (48KB)
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/500Medium/AtkinsonHyperlegibleNext_500Medium.2d5d6c0565845615ac6982fc8abf1095.ttf (48KB)
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/600SemiBold/AtkinsonHyperlegibleNext_600SemiBold.5cf92f89d6fa6a976d135e61e9ffde1f.ttf (48KB)
+node_modules/@expo-google-fonts/material-symbols/400Regular/MaterialSymbols_400Regular.6b4f0c2d698edccb36b0f132059c0205.ttf (972KB)
+node_modules/expo-router/assets/arrow_down.017bc6ba3fc25503e5eb5e53826d48a8.png (9.5KB)
+node_modules/expo-router/assets/error.d1ea1496f9057eb392d5bbf3732a61b7.png (469B)
+node_modules/expo-router/assets/file.19eeb73b9593a38f8e9f418337fc7d10.png (138B)
+node_modules/expo-router/assets/forward.d8b800c443b8972542883e0b9de2bdc6.png (188B)
+node_modules/expo-router/assets/pkg.ab19f4cbc543357183a20571f68380a3.png (364B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon-mask.0a328cd9c1afd0afe8e3b1ec5165b1b4.png (653B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon.35ba0eaec5a4f5ed12ca16fabeae451d.png (207B)
+node_modules/expo-router/assets/react-navigation/elements/clear-icon.c94f6478e7ae0cdd9f15de1fcb9e5e55.png (4 variations | 425B)
+node_modules/expo-router/assets/react-navigation/elements/close-icon.808e1b1b9b53114ec2838071a7e6daa7.png (4 variations | 235B)
+node_modules/expo-router/assets/react-navigation/elements/search-icon.286d67d3f74808a60a78d3ebf1a5fb57.png (928B)
+node_modules/expo-router/assets/sitemap.412dd9275b6b48ad28f5e3d81bb1f626.png (465B)
+node_modules/expo-router/assets/unmatched.20e71bdf79e3a97bf55fd9e164041578.png (4.8KB)
+
+› web bundles (39):
+_expo/static/css/native-tabs.module-78b0f59737571f455720970791a36bdd.css (2.5KB)
+_expo/static/js/web/__common-37865ddebd02b3b3689cc14ed5dccb01.js (944KB)
+_expo/static/js/web/__expo-metro-runtime-8c088df87a31e4e6accd81c554ec290d.js (3.8KB)
+_expo/static/js/web/_layout-65e2b0b2571d9cfcbb8a2f19d0dd760c.js (320B)
+_expo/static/js/web/_layout-6b220375c5e71686c3b9fc54884b9212.js (413KB)
+_expo/static/js/web/_layout-7c0ddc400526be32efd292fd13b1edd7.js (57KB)
+_expo/static/js/web/_layout-a620b6957bba0e0e62a7da5610ee1435.js (320B)
+_expo/static/js/web/_layout-c4718481da54e3aa287001f83cacbfc2.js (320B)
+_expo/static/js/web/[code]-59553a6c62c13945f476d167cdf23862.js (4.4KB)
+_expo/static/js/web/[postId]-1720919f131bb13402e7912d19c5d3c5.js (466B)
+_expo/static/js/web/+not-found-7636392b8a8faa4c562177e40f95fc54.js (910B)
+_expo/static/js/web/birthdays-608d34d543a091031bdd8de3629b68d9.js (444B)
+_expo/static/js/web/birthdays-bfd6c81737c66608a4cdd6bfba3c94cc.js (557B)
+_expo/static/js/web/easy-view-5c12384548cf5c7265373c2f4a9cf2ad.js (444B)
+_expo/static/js/web/ed448-e44aac0624bbc1c04da0c65aca5f1977.js (12KB)
+_expo/static/js/web/entry-f9cb4cb88824f847210bed278e8bc0ba.js (1.1MB)
+_expo/static/js/web/events-ed178b61145b4851f4f5479983398023.js (422B)
+_expo/static/js/web/groups-4264ece480211661208fa2c246d13e95.js (404B)
+_expo/static/js/web/groups-cc0aacc7e3f5e84fa6b07883897646b7.js (12KB)
+_expo/static/js/web/help-385f4f9625da981c7de528593419a980.js (3.1KB)
+_expo/static/js/web/help-a0c4cf22b08076e74224dc8ed635a88f.js (402B)
+_expo/static/js/web/index-3e57106cefe9b2745e248ed4c2d6a0d8.js (473B)
+_expo/static/js/web/index-5c593a9393b7226aca6bdab1c97f4d65.js (599B)
+_expo/static/js/web/index-72c94e67446647d7fc818690605e2fa0.js (525B)
+_expo/static/js/web/index-81b40892c61183e1879e9b282f96d2b5.js (700B)
+_expo/static/js/web/index-9df31d8a20b819448811374d72855207.js (640B)
+_expo/static/js/web/look-34eddef2c11f72999deea3d88689a36a.js (436B)
+_expo/static/js/web/me-ad199ea1fea1745edb1d09c421524f44.js (4.6KB)
+_expo/static/js/web/me-f6a93e50446e8c122ef1e141a03ece29.js (400B)
+_expo/static/js/web/messages-b6a1ff898f98db48dc792cf96f4d91e7.js (6.4KB)
+_expo/static/js/web/mod-acdd4db4b8222a9d6a098deb612530f2.js (14KB)
+_expo/static/js/web/nist-9953652af43e6a9d05098f3b34fe52a6.js (21KB)
+_expo/static/js/web/photos-0b48f053703b72b30f0f88a24664a364.js (386B)
+_expo/static/js/web/search-4c49f84d29210f1668050b1d7ff4e86e.js (5.8KB)
+_expo/static/js/web/share-1a9cc837299c0372531130990eb28b7c.js (22KB)
+_expo/static/js/web/sign-in-a7709b169b3fffd4d44387a6de930c54.js (1.3KB)
+_expo/static/js/web/theme-c7a27727099fbbb62e56fa34f6fc1a06.js (438B)
+_expo/static/js/web/timeline-e91accc53fb9709053c992ed8aa83cdc.js (693B)
+_expo/static/js/web/videos-data-9bfb5d3df971769fa6d309c693bdfe06.js (430B)
+
+› Files (3):
+favicon.ico (15KB)
+index.html (1.7KB)
+metadata.json (49B)
+
+Exported: dist-demo-site
+Site link preview: added to 21 pages
+Site analytics: off (set UMAMI_SCRIPT_URL and UMAMI_WEBSITE_ID to turn on)
+Site bar: added to 21 pages
+Built dist-demo-site for /demo/hearth/ (copy its contents to that folder of the site)
+
+Running 14 tests using 1 worker
+
+  ✓   1 e2e-web/site.spec.js:24:3 › DEMO-5 a cold load of /demo/hearth/ works with no server fallback (1.4s)
+  ✓   2 e2e-web/site.spec.js:24:3 › DEMO-5 a cold load of /demo/hearth/photos works with no server fallback (1.4s)
+  ✓   3 e2e-web/site.spec.js:24:3 › DEMO-5 a cold load of /demo/hearth/share works with no server fallback (579ms)
+  ✓   4 e2e-web/site.spec.js:24:3 › DEMO-5 a cold load of /demo/hearth/groups works with no server fallback (1.4s)
+  ✓   5 e2e-web/site.spec.js:24:3 › DEMO-5 a cold load of /demo/hearth/me works with no server fallback (1.4s)
+  ✓   6 e2e-web/site.spec.js:24:3 › DEMO-5 a cold load of /demo/hearth/help works with no server fallback (1.4s)
+  ✓   7 e2e-web/site.spec.js:51:1 › DEMO-5 every link inside the demo stays under /demo/hearth/ or goes to chaseholroyd.com (1.7s)
+  ✓   8 e2e-web/site.spec.js:58:1 › DEMO-5 Grandma's view and Start over stay inside /demo/hearth/ (2.5s)
+  ✓   9 e2e-web/site.spec.js:71:1 › RR-15 reloading an open full-screen photo on the static host keeps the photo open (3.3s)
+  ✓  10 e2e-web/site.spec.js:82:1 › DEMO-LIVE-2 Search for "orchard" finds the one orchard post (2.5s)
+  ✓  11 e2e-web/site.spec.js:93:1 › DEMO-LIVE-3 RD-18 Gallery is the wall: month headings and photo tiles on the first screen, no All photos button (1.6s)
+  ✓  12 e2e-web/site.spec.js:101:1 › DEMO-LIVE-4 the build serves version.txt naming its commit (15ms)
+  ✓  13 e2e-web/site.spec.js:108:1 › DEMO-NEW-5 RD-21 a first visit opens on New for you; See all walks the new photos (1.8s)
+  ✓  14 e2e-web/site.spec.js:124:1 › DEMO-META-2 the page carries link-preview tags and serves the preview picture (234ms)
+
+  14 passed (22.0s)

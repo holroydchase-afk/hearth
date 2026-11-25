@@ -1,3 +1,3 @@
-ok   - INTAKE-80-2 dist-fake is compiled (148 memo-cache sentinels)
-ok   - INTAKE-80-2 dist-demo is compiled (159 memo-cache sentinels)
+ok   - INTAKE-80-2 dist-fake is compiled (157 memo-cache sentinels)
+ok   - INTAKE-80-2 dist-demo is compiled (168 memo-cache sentinels)
 2 passed, 0 failed

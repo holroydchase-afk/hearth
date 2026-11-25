@@ -4,7 +4,7 @@
 // web, Material 3 on Android. Every tappable thing is a Button or Choice: it always has an
 // accessibilityLabel, a visible word (DS-3), and a 48 pt minimum target (DS-1).
 import { SymbolView } from 'expo-symbols';
-import React, { useRef, type ReactNode } from 'react';
+import React, { useRef, useState, type ReactNode } from 'react';
 import {
   ActivityIndicator, Animated, Modal, PanResponder, Platform, Pressable, type PanResponderCallbacks, ScrollView, StyleSheet, Switch, Text, TextInput, View,
   useWindowDimensions, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
@@ -312,7 +312,7 @@ export function AddPhotoCard({ label, title, onPress, testID, spotTestID, cardSt
 }) {
   const { c, type, bigText, reduceMotion } = useTheme();
   const spot = bigText ? SPOT.easy : SPOT.standard;
-  const scale = useRef(new Animated.Value(1)).current;
+  const [scale] = useState(() => new Animated.Value(1));
   const to = (toValue: number) => {
     if (reduceMotion) return;
     Animated.timing(scale, { toValue, duration: 120, useNativeDriver: Platform.OS !== 'web' }).start();
@@ -342,8 +342,9 @@ export function AddPhotoCard({ label, title, onPress, testID, spotTestID, cardSt
 const STAMP_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 /** SHARE-ST-22: the empty postcard's small decorative stamp, for the photo spot's top-right corner, postmarked with
  *  today's month, then day (GUX-R4). Not a control: hidden from VoiceOver and TalkBack, and taps pass through it. */
-export function PostcardStamp({ date = new Date(), testID }: { date?: Date; testID?: string }) {
+export function PostcardStamp({ date: given, testID }: { date?: Date; testID?: string }) {
   const { c } = useTheme();
+  const date = given ?? new Date();
   return (
     <View testID={testID} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants" aria-hidden
       style={[styles.stamp, { borderColor: c.accent, backgroundColor: c.surface }]}>
@@ -376,15 +377,16 @@ export function noWebOutline(): TextStyle {
   return (Platform.OS === 'web' ? { outlineStyle: 'none' } : {}) as TextStyle;
 }
 
-export function Field(props: TextInputProps & { label: string; underline?: boolean }) {
+export function Field(props: TextInputProps & { label: string; underline?: boolean; strongLine?: boolean }) {
   const { c, type, os } = useTheme();
-  const { label, style, onFocus, onBlur, underline, ...rest } = props;
+  const { label, style, onFocus, onBlur, underline, strongLine, ...rest } = props;
   const typing = useTypingField(); // UX-R1: the tab bar steps aside while this field is focused
   // iPhone and the web: a filled rounded box with no edge, like the Search field (GUX-R16; was a c.surface box with a
   // c.line edge, which read as a form on paper). Android: Material's outlined text field.
   // GUX-R3: `underline` writes on the card itself (Share's note): no fill, a hairline c.line rule under the words.
+  // GUX-SK-R10: `strongLine` draws that rule in c.tabLine (Share's kind cards), which reads better on the card.
   const box: TextStyle = underline
-    ? { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: c.line, paddingHorizontal: 0, paddingTop: 4, paddingBottom: 8 }
+    ? { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: strongLine ? c.tabLine : c.line, paddingHorizontal: 0, paddingTop: 4, paddingBottom: 8 }
     : os === 'android'
     ? { borderWidth: 1, borderColor: c.muted, backgroundColor: 'transparent', borderRadius: RADIUS.small }
     : { borderWidth: 0, backgroundColor: c.fill, borderRadius: RADIUS.medium };
@@ -454,8 +456,12 @@ export function Loading({ words }: { words: string }) {
 export function Notice({ text, onClose, tone = 'info' }: { text: string; onClose?: () => void; tone?: 'info' | 'good' }) {
   const { c } = useTheme();
   return (
-    <View accessibilityRole="alert" style={[styles.notice, { backgroundColor: tone === 'good' ? c.safeSoft : c.accentSoft, borderColor: c.line }]}>
-      <Txt style={{ flex: 1, color: tone === 'good' ? c.safe : c.ink }}>{text}</Txt>
+    // SHARE-U-22: the words sit in one accessible alert element, so a screen reader (and a test) finds them as one
+    // thing while the OK button stays its own; the box is a polite live region for Android.
+    <View accessibilityLiveRegion="polite" style={[styles.notice, { backgroundColor: tone === 'good' ? c.safeSoft : c.accentSoft, borderColor: c.line }]}>
+      <View accessible accessibilityRole="alert" style={{ flex: 1 }}>
+        <Txt style={{ color: tone === 'good' ? c.safe : c.ink }}>{text}</Txt>
+      </View>
       {onClose ? <Button label="OK, hide this message" text="OK" variant="secondary" onPress={onClose} /> : null}
     </View>
   );

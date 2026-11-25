@@ -1,0 +1,551 @@
+# qa-tdd red run, Nov 24 2026: SHARE-U-17..23 (app/src/screens/__tests__/shareKindsSave.test.tsx), 1 run before the build.
+# Expected red: 22 failed for missing behaviour; 3 pass as guards (SHARE-U-20 outsider, SHARE-U-21 not on event/news). Typecheck clean. Existing share tests + typeScale lint: 210 passed.
+FAIL src/screens/__tests__/shareKindsSave.test.tsx (84.178 s)
+  ● SHARE-U-17 "Pick who gets it" opens up only when the required fields are filled › SHARE-U-17 event: off while empty, off with any one required field blank or spaces only, on with every required one filled and the optional ones blank
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "disabled": false,
+    +   "disabled": true,
+        "k": "event",
+      }
+
+      115 |       fill(k);
+      116 |       for (const l of Object.keys(KINDS[k].optional)) type(l, '');
+    > 117 |       expect({ k, disabled: isDisabled(pickBtn()) }).toEqual({ k, disabled: false });
+          |                                                      ^
+      118 |     });
+      119 |   }
+      120 | });
+
+      at Object.toEqual (src/screens/__tests__/shareKindsSave.test.tsx:117:54)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-17 "Pick who gets it" opens up only when the required fields are filled › SHARE-U-17 news: off while empty, off with any one required field blank or spaces only, on with every required one filled and the optional ones blank
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "disabled": false,
+    +   "disabled": true,
+        "k": "news",
+      }
+
+      115 |       fill(k);
+      116 |       for (const l of Object.keys(KINDS[k].optional)) type(l, '');
+    > 117 |       expect({ k, disabled: isDisabled(pickBtn()) }).toEqual({ k, disabled: false });
+          |                                                      ^
+      118 |     });
+      119 |   }
+      120 | });
+
+      at Object.toEqual (src/screens/__tests__/shareKindsSave.test.tsx:117:54)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-17 "Pick who gets it" opens up only when the required fields are filled › SHARE-U-17 saying: off while empty, off with any one required field blank or spaces only, on with every required one filled and the optional ones blank
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "disabled": false,
+    +   "disabled": true,
+        "k": "saying",
+      }
+
+      115 |       fill(k);
+      116 |       for (const l of Object.keys(KINDS[k].optional)) type(l, '');
+    > 117 |       expect({ k, disabled: isDisabled(pickBtn()) }).toEqual({ k, disabled: false });
+          |                                                      ^
+      118 |     });
+      119 |   }
+      120 | });
+
+      at Object.toEqual (src/screens/__tests__/shareKindsSave.test.tsx:117:54)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-18 it opens the same who-gets-it picker as photos, nothing pre-picked (SHARE-U-3, DEC-73/79) › SHARE-U-18 event: the group tiles show, none picked even with a saved last audience; a pick names the people on Send
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 0
+
+      129 |       fill(k);
+      130 |       fireEvent.press(pickBtn());
+    > 131 |       await waitFor(() => expect(tiles().length).toBe(3), slow);
+          |                    ^
+      132 |       for (const t of tiles()) expect({ t: t.props.accessibilityLabel, picked: !!t.props.accessibilityState?.selected }).toEqual({ t: t.props.accessibilityLabel, picked: false });
+      133 |       fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      134 |       expect(screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' })).toBeTruthy();
+
+      at Object.<anonymous> (src/screens/__tests__/shareKindsSave.test.tsx:131:20)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-18 it opens the same who-gets-it picker as photos, nothing pre-picked (SHARE-U-3, DEC-73/79) › SHARE-U-18 news: the group tiles show, none picked even with a saved last audience; a pick names the people on Send
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 0
+
+      129 |       fill(k);
+      130 |       fireEvent.press(pickBtn());
+    > 131 |       await waitFor(() => expect(tiles().length).toBe(3), slow);
+          |                    ^
+      132 |       for (const t of tiles()) expect({ t: t.props.accessibilityLabel, picked: !!t.props.accessibilityState?.selected }).toEqual({ t: t.props.accessibilityLabel, picked: false });
+      133 |       fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      134 |       expect(screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' })).toBeTruthy();
+
+      at Object.<anonymous> (src/screens/__tests__/shareKindsSave.test.tsx:131:20)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-18 it opens the same who-gets-it picker as photos, nothing pre-picked (SHARE-U-3, DEC-73/79) › SHARE-U-18 saying: the group tiles show, none picked even with a saved last audience; a pick names the people on Send
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 0
+
+      129 |       fill(k);
+      130 |       fireEvent.press(pickBtn());
+    > 131 |       await waitFor(() => expect(tiles().length).toBe(3), slow);
+          |                    ^
+      132 |       for (const t of tiles()) expect({ t: t.props.accessibilityLabel, picked: !!t.props.accessibilityState?.selected }).toEqual({ t: t.props.accessibilityLabel, picked: false });
+      133 |       fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      134 |       expect(screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' })).toBeTruthy();
+
+      at Object.<anonymous> (src/screens/__tests__/shareKindsSave.test.tsx:131:20)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-19 Send makes exactly one post of that kind, published with no media, and Share empties › SHARE-U-19 event: one createPost with the fields as details and the picked group, then publishPost; no upload; back to the empty postcard
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 0
+
+      141 |   fill(k, extra);
+      142 |   fireEvent.press(pickBtn());
+    > 143 |   await waitFor(() => expect(tiles().length).toBe(3), slow);
+          |                ^
+      144 |   fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      145 |   return screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' });
+      146 | }
+
+      at src/screens/__tests__/shareKindsSave.test.tsx:143:16
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-19 Send makes exactly one post of that kind, published with no media, and Share empties › SHARE-U-19 news: one createPost with the fields as details and the picked group, then publishPost; no upload; back to the empty postcard
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 0
+
+      141 |   fill(k, extra);
+      142 |   fireEvent.press(pickBtn());
+    > 143 |   await waitFor(() => expect(tiles().length).toBe(3), slow);
+          |                ^
+      144 |   fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      145 |   return screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' });
+      146 | }
+
+      at src/screens/__tests__/shareKindsSave.test.tsx:143:16
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-19 Send makes exactly one post of that kind, published with no media, and Share empties › SHARE-U-19 saying: one createPost with the fields as details and the picked group, then publishPost; no upload; back to the empty postcard
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 0
+
+      141 |   fill(k, extra);
+      142 |   fireEvent.press(pickBtn());
+    > 143 |   await waitFor(() => expect(tiles().length).toBe(3), slow);
+          |                ^
+      144 |   fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      145 |   return screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' });
+      146 | }
+
+      at src/screens/__tests__/shareKindsSave.test.tsx:143:16
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-19 Send makes exactly one post of that kind, published with no media, and Share empties › SHARE-U-19 a double tap on Send makes one post
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 0
+
+      141 |   fill(k, extra);
+      142 |   fireEvent.press(pickBtn());
+    > 143 |   await waitFor(() => expect(tiles().length).toBe(3), slow);
+          |                ^
+      144 |   fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      145 |   return screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' });
+      146 | }
+
+      at src/screens/__tests__/shareKindsSave.test.tsx:143:16
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-19 Send makes exactly one post of that kind, published with no media, and Share empties › SHARE-U-19 Send again after a failed publish reuses the client id: still one post, now published
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 0
+
+      141 |   fill(k, extra);
+      142 |   fireEvent.press(pickBtn());
+    > 143 |   await waitFor(() => expect(tiles().length).toBe(3), slow);
+          |                ^
+      144 |   fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      145 |   return screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' });
+      146 | }
+
+      at src/screens/__tests__/shareKindsSave.test.tsx:143:16
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-20 the post in Feed: a large-type card for its kind, the names line, no photo frame (SHARE-U-6) › SHARE-U-20 event: Grandma Jo (in its audience) sees a large-type event card with its fields and "who can see this"
+
+    expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      230 |       expect(screen.queryByTestId(`collage-${id}`)).toBeNull();
+      231 |       const main = (card.findAll((x: Inst) => x.type === Text) as Inst[]).filter((t) => wordsIn(t).includes(MAIN[k]));
+    > 232 |       expect(main.length).toBeGreaterThan(0);
+          |                           ^
+      233 |       const size = Math.max(...main.map((t) => Number(flat(t.props.style).fontSize ?? 0)));
+      234 |       expect({ k, large: size >= 20 }).toEqual({ k, large: true });
+      235 |       const words = wordsIn(card);
+
+      at Object.toBeGreaterThan (src/screens/__tests__/shareKindsSave.test.tsx:232:27)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-20 the post in Feed: a large-type card for its kind, the names line, no photo frame (SHARE-U-6) › SHARE-U-20 news: Grandma Jo (in its audience) sees a large-type news card with its fields and "who can see this"
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "k": "news",
+    -   "large": true,
+    +   "large": false,
+      }
+
+      232 |       expect(main.length).toBeGreaterThan(0);
+      233 |       const size = Math.max(...main.map((t) => Number(flat(t.props.style).fontSize ?? 0)));
+    > 234 |       expect({ k, large: size >= 20 }).toEqual({ k, large: true });
+          |                                        ^
+      235 |       const words = wordsIn(card);
+      236 |       if (k === 'event') {
+      237 |         expect(words).toMatch(/Oct(ober)? 31/);
+
+      at Object.toEqual (src/screens/__tests__/shareKindsSave.test.tsx:234:40)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-20 the post in Feed: a large-type card for its kind, the names line, no photo frame (SHARE-U-6) › SHARE-U-20 saying: Grandma Jo (in its audience) sees a large-type saying card with its fields and "who can see this"
+
+    expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      230 |       expect(screen.queryByTestId(`collage-${id}`)).toBeNull();
+      231 |       const main = (card.findAll((x: Inst) => x.type === Text) as Inst[]).filter((t) => wordsIn(t).includes(MAIN[k]));
+    > 232 |       expect(main.length).toBeGreaterThan(0);
+          |                           ^
+      233 |       const size = Math.max(...main.map((t) => Number(flat(t.props.style).fontSize ?? 0)));
+      234 |       expect({ k, large: size >= 20 }).toEqual({ k, large: true });
+      235 |       const words = wordsIn(card);
+
+      at Object.toBeGreaterThan (src/screens/__tests__/shareKindsSave.test.tsx:232:27)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-21 PRIV-VC-D1 the Saying card says who will see who said it, before sending › SHARE-U-21 the Saying card shows "Everyone you send this to will see who said it." where screen readers reach it, 17 pt+
+
+    Unable to find an element with text: Everyone you send this to will see who said it.
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<View>[39m
+        [36m<RCTScrollView>[39m
+          [36m<View>[39m
+            [36m<View>[39m
+              [36m<View>[39m
+                [36m<Text[39m
+                  [33maccessibilityRole[39m=[32m"header"[39m
+                [36m>[39m
+                  [0mNew post[0m
+                [36m</Text>[39m
+              [36m</View>[39m
+              [36m<View[39m
+                [33maccessibilityLabel[39m=[32m"Cancel this post"[39m
+                [33maccessibilityRole[39m=[32m"button"[39m
+                [33maccessibilityState[39m=[32m{
+                  {
+                    "busy": false,
+                    "disabled": false,
+                    "selected": false,
+                  }
+                }[39m
+                [33maccessible[39m=[32m{true}[39m
+              [36m>[39m
+                [36m<Text>[39m
+                  [0mCancel[0m
+                [36m</Text>[39m
+              [36m</View>[39m
+            [36m</View>[39m
+            [36m<View>[39m
+              [36m<View[39m
+                [33mtestID[39m=[32m"share-kind-card-saying"[39m
+              [36m>[39m
+                [36m<Text>[39m
+                  [0m“[0m
+                [36m</Text>[39m
+                [36m<View>[39m
+                  [36m<Text>[39m
+                    [0mWhat they said[0m
+                  [36m</Text>[39m
+                  [36m<TextInput[39m
+                    [33maccessibilityLabel[39m=[32m"What they said"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                [36m</View>[39m
+                [36m<View>[39m
+                  [36m<Text>[39m
+                    [0mWho said it[0m
+                  [36m</Text>[39m
+                  [36m<TextInput[39m
+                    [33maccessibilityLabel[39m=[32m"Who said it"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                [36m</View>[39m
+                [36m<View>[39m
+                  [36m<Text>[39m
+                    [0mAge then, optional[0m
+                  [36m</Text>[39m
+                  [36m<TextInput[39m
+                    [33maccessibilityLabel[39m=[32m"Age then, optional"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                [36m</View>[39m
+                [36m<View[39m
+                  [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                  [33maria-hidden[39m=[32m{true}[39m
+                  [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                [36m>[39m
+                  [36m<Text[39m
+                    [33maccessible[39m=[32m{false}[39m
+                  [36m>[39m
+                    [0mTo:[0m
+                  [36m</Text>[39m
+                  [36m<View />[39m
+                [36m</View>[39m
+              [36m</View>[39m
+              [36m<View[39m
+                [33maccessibilityLabel[39m=[32m"Pick who gets it"[39m
+                [33maccessibilityRole[39m=[32m"button"[39m
+                [33maccessibilityState[39m=[32m{
+                  {
+                    "busy": false,
+                    "disabled": true,
+                    "selected": false,
+                  }
+                }[39m
+                [33maccessible[39m=[32m{true}[39m
+              [36m>[39m
+                [36m<Text>[39m
+                  [0mPick who gets it[0m
+                [36m</Text>[39m
+              [36m</View>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</RCTScrollView>[39m
+      [36m</View>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      261 |     await start();
+      262 |     await openKind('saying');
+    > 263 |     const line = screen.getByText(SAYING_LINE);
+          |                         ^
+      264 |     expect(hiddenFromReaders(line)).toBe(false);
+      265 |     expect(Number(flat(line.props.style).fontSize ?? 0)).toBeGreaterThanOrEqual(17);
+      266 |   });
+
+      at Object.getByText (src/screens/__tests__/shareKindsSave.test.tsx:263:25)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-22 a refusal shows a plain notice and keeps every word (A1) › SHARE-U-22 42501 post_kinds_off on event: a notice that says the words were kept; the card and its words stay; nothing published
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 0
+
+      141 |   fill(k, extra);
+      142 |   fireEvent.press(pickBtn());
+    > 143 |   await waitFor(() => expect(tiles().length).toBe(3), slow);
+          |                ^
+      144 |   fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      145 |   return screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' });
+      146 | }
+
+      at src/screens/__tests__/shareKindsSave.test.tsx:143:16
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-22 a refusal shows a plain notice and keeps every word (A1) › SHARE-U-22 42501 post_kinds_off on saying: a notice that says the words were kept; the card and its words stay; nothing published
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 0
+
+      141 |   fill(k, extra);
+      142 |   fireEvent.press(pickBtn());
+    > 143 |   await waitFor(() => expect(tiles().length).toBe(3), slow);
+          |                ^
+      144 |   fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      145 |   return screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' });
+      146 | }
+
+      at src/screens/__tests__/shareKindsSave.test.tsx:143:16
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-22 a refusal shows a plain notice and keeps every word (A1) › SHARE-U-22 23514 a bad field on event: a notice that says the words were kept; the card and its words stay; nothing published
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 0
+
+      141 |   fill(k, extra);
+      142 |   fireEvent.press(pickBtn());
+    > 143 |   await waitFor(() => expect(tiles().length).toBe(3), slow);
+          |                ^
+      144 |   fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      145 |   return screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' });
+      146 | }
+
+      at src/screens/__tests__/shareKindsSave.test.tsx:143:16
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-22 a refusal shows a plain notice and keeps every word (A1) › SHARE-U-22 23514 a bad field on saying: a notice that says the words were kept; the card and its words stay; nothing published
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 0
+
+      141 |   fill(k, extra);
+      142 |   fireEvent.press(pickBtn());
+    > 143 |   await waitFor(() => expect(tiles().length).toBe(3), slow);
+          |                ^
+      144 |   fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      145 |   return screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' });
+      146 | }
+
+      at src/screens/__tests__/shareKindsSave.test.tsx:143:16
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-23 grandparent UX on the working cards › SHARE-U-23 event: with the picker open and a group picked, every tap target is labelled and 48 pt+, every text 17 pt+
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 0
+
+      141 |   fill(k, extra);
+      142 |   fireEvent.press(pickBtn());
+    > 143 |   await waitFor(() => expect(tiles().length).toBe(3), slow);
+          |                ^
+      144 |   fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      145 |   return screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' });
+      146 | }
+
+      at src/screens/__tests__/shareKindsSave.test.tsx:143:16
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-23 grandparent UX on the working cards › SHARE-U-23 news: with the picker open and a group picked, every tap target is labelled and 48 pt+, every text 17 pt+
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 0
+
+      141 |   fill(k, extra);
+      142 |   fireEvent.press(pickBtn());
+    > 143 |   await waitFor(() => expect(tiles().length).toBe(3), slow);
+          |                ^
+      144 |   fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      145 |   return screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' });
+      146 | }
+
+      at src/screens/__tests__/shareKindsSave.test.tsx:143:16
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-U-23 grandparent UX on the working cards › SHARE-U-23 saying: with the picker open and a group picked, every tap target is labelled and 48 pt+, every text 17 pt+
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 0
+
+      141 |   fill(k, extra);
+      142 |   fireEvent.press(pickBtn());
+    > 143 |   await waitFor(() => expect(tiles().length).toBe(3), slow);
+          |                ^
+      144 |   fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      145 |   return screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' });
+      146 | }
+
+      at src/screens/__tests__/shareKindsSave.test.tsx:143:16
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       22 failed, 3 passed, 25 total
+Snapshots:   0 total
+Time:        84.325 s
+Ran all test suites matching src/screens/__tests__/shareKindsSave.test.tsx.
+
+> hearth-app@1.0.0 typecheck
+> tsc --noEmit
+
+typecheck exit 0
+Tests:       210 passed, 210 total

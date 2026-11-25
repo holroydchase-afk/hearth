@@ -1,0 +1,72 @@
+# PRIV-SK-R1 red run, 2026-11-25, qa-tdd, HEAD 28c8b80 + test commit (product code unchanged)
+# cmd: cd app && npx jest src/screens/__tests__/shareKindsSave.test.tsx ; npm run typecheck
+FAIL src/screens/__tests__/shareKindsSave.test.tsx (21.886 s)
+  ● PRIV-SK-R1 (P1) Send again never publishes the old groups or the old words › PRIV-SK-R1 (a) publish fails, the parent changes the groups, Send: the published post goes to exactly the new pick
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Array [
+        Object {
+          "caption": "Leo lost his first tooth",
+          "circles": Array [
+    -       "00000000-0000-4000-8000-000000000202",
+    +       "00000000-0000-4000-8000-000000000201",
+          ],
+        },
+      ]
+
+      619 |     const mine = published(be).filter((p) => !before.has(p.id));
+      620 |     expect(mine.map((p) => ({ caption: p.caption, circles: [...p.circles].sort() })))
+    > 621 |       .toEqual([{ caption: 'Leo lost his first tooth', circles: [FIXTURE.circles.momSide.id] }]);
+          |        ^
+      622 |     const id = mine[0]!.id;
+      623 |     // Both directions: Ruth (Mom's side, the new pick) gets it; Grandpa Earl (Dad's side only, the old pick) does not.
+      624 |     const ruth = await be.clientFor(FIXTURE.users.ruth.id).getFeed({ space: FIXTURE.space.id });
+
+      at Object.toEqual (src/screens/__tests__/shareKindsSave.test.tsx:621:8)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● PRIV-SK-R1 (P1) Send again never publishes the old groups or the old words › PRIV-SK-R1 (b) createPost commits but its reply is lost, the parent edits the words, Send: the new words are published, never the old
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Array [
+        Object {
+    -     "caption": "Leo lost his second tooth",
+    +     "caption": "Leo lost his first tooth",
+          "circles": Array [
+            "00000000-0000-4000-8000-000000000201",
+          ],
+        },
+      ]
+
+      637 |     await emptyAgain();
+      638 |     const mine = published(be).filter((p) => !before.has(p.id));
+    > 639 |     expect(mine.map((p) => ({ caption: p.caption, circles: p.circles }))).toEqual([{ caption: 'Leo lost his second tooth', circles: [FIXTURE.circles.dadSide.id] }]);
+          |                                                                           ^
+      640 |     expect(published(be).filter((p) => p.caption === 'Leo lost his first tooth')).toEqual([]);
+      641 |   });
+      642 |
+
+      at Object.toEqual (src/screens/__tests__/shareKindsSave.test.tsx:639:75)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 60 passed, 62 total
+Snapshots:   0 total
+Time:        22.05 s
+Ran all test suites matching src/screens/__tests__/shareKindsSave.test.tsx.
+# typecheck
+
+> hearth-app@1.0.0 typecheck
+> tsc --noEmit
+
+typecheck exit: 0
