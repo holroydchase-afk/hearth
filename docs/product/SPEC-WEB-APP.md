@@ -122,6 +122,20 @@ Also in PR 1 (done-when, not criteria): request `navigator.storage.persist()` af
 
 **Done when:** WEB-APP-25..34 green 3x with all suites; WEB-APP-35, 36 logged on a real Android phone before a grandparent shares from web. Rule 6: this stores photo bytes in the browser, so `docs/architecture/03-encryption-and-keys.md` (web row) and the data-flow doc get the IndexedDB queue store and "Last checked" in this PR.
 
+### Words (grandparent-ux)
+
+Exact words, all 17pt+ (Body, Easy view or not), buttons 48pt+, "Chrome" only on web (phones keep "Hearth"). Reviewed as Grandaddy on an old Android; reading the screen, not guessing: confirm with a relative in UAT.
+
+| Where | Exact words | Rule |
+|---|---|---|
+| WEB-APP-33 warning, once on Share while a post is sending and the browser can't keep it (muted, under the headline, not red) | `Keep Chrome open until this is sent. Closing Chrome now would stop it.` | One element; regex-safe: it matches `/clos\w+ (Chrome\|this page\|the app)[^.]*(stop\|finish\|before)/i` exactly once ("Closing Chrome now would stop"), so the provisional e2e regex can stay as is. Shown only for memory-only posts. Plain, no "storage", "IndexedDB", "private window". |
+| WEB-APP-31 failed job (saved photo gone) | Headline `Didn't send` (keep: it matches phones and the test). Body: `This photo is no longer on this phone, so we can't send it. Go to Share to pick it again.` Button: `Remove this from the list` (visible text `Remove`) | One clear choice. Do not show "Try again" for this case: retrying a missing photo can only fail again. Other failed jobs keep Try again + Remove. (`webQueue.test.ts` header says "Try again / Remove": change it to Remove only for the missing-bytes case.) Never blame the person; no code shown. |
+| Bulk staging (WEB-APP-30/enqueue prepare, before the batch is saved) | `Getting 12 of 48 photos ready…` (one photo: `Getting your photo ready…`). Screen reader says the same, polite live region. | Same shape as `Sending 12 of 48 photos…`; uses the real numbers; "photo" not "item"/"asset". |
+| "Waiting to send" second line, web, photo saved safely | `We'll keep trying. You can close Chrome. It will finish when you open Hearth again.` | Replaces "You can close Hearth" on web (true only because the bytes are saved, WEB-APP-30). |
+| Same line, web, memory-only (blocked/over cap) | `We'll keep trying while Chrome stays open. Closing Chrome now would stop it.` | The web-true version when nothing is saved; never promise "close". Headline stays `Waiting to send`. |
+
+Acceptance (qa-tdd): UX-WEB3-1 the line shows exactly once and only for memory-only posts; UX-WEB3-2 the failed missing-photo job shows Remove and no Try again; UX-WEB3-3 no web string says "Hearth" where it means closing the browser tab; UX-WEB3-4 all of these render at 17pt+ and 200% font scale without clipping (360x740).
+
 **Needs other lanes first.**
 - **architect:** the IndexedDB byte store (raw `indexedDB` vs a small wrapper; no new dependency preferred; `fake-indexeddb` for jest only if qa-tdd needs it), size cap (bulk 100 photos ≈ 50 MB cleaned), and moving prepare to enqueue time on web only.
 - **privacy-security:** cleaned photo bytes at rest in the browser profile (sealed with the WEB.1 key, same limits as PRIV-WEB-R3), deletion on publish/sign-out, and a check that no `blob:` URL or byte ever reaches a log or error report.
