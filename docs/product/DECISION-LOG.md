@@ -633,5 +633,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** Chase likes the effect and the family knows it from social apps; the prepaid question protects the relatives with small data plans in one tap.
 - **Source:** `docs/product/SPEC-MEDIA.md` section 5; CF-08 updated; persona check `decisions/2026-11-24-autoplay-save-data.md` (LG and AG Red, mitigated). TRACKER R88. Waits on video being on (R27).
 
+### DEC-88 · Web app for Android Chrome first; Hearth runs on web, iPhone and Android
+- **When / status:** Nov 24 · Chase: "go" on the web app plan · Specced (`SPEC-WEB-APP.md`, HRT-WEB.1..5); PR 1 (staying signed in, WEB-APP-1..12) next
+- **Chose:** a Chrome web app so the two Android beta grandparents use Hearth before a native Android build, in this order: staying signed in on the web, add to home screen plus Android-size screen checks, photo sharing on web (EXIF/GPS stripped in the browser, upload survives Chrome closing), email notices (Chrome push later), Save to my phone as a download (video off). $0, no domain yet.
+- **Over:** waiting for a native Android build (ANCHORS milestone 5, "once the iPhone side is solid"); leaving the Android grandpas out of the beta.
+- **Because:** two of three least-savvy grandparents are on Android (PERSONAS AG); the web build already exists on free hosting, so the gap is sign-in that sticks and a home-screen icon, not a second app.
+- **Source:** `docs/product/SPEC-WEB-APP.md`; persona check `decisions/2026-11-24-web-app.md`. Pulls part of ANCHORS milestone 5 forward through the web; the native Android build stays milestone 5.
+
 ---
-Last updated: Nov 25, 2026 (DEC-87; DEC-86; DEC-84)
+Last updated: Nov 24, 2026 (DEC-88)
