@@ -84,6 +84,7 @@ blockers:
 - **Next exact step:** qa-tdd fixes UX-R1 and R18 data, green 3x; privacy-security (metadata), grandparent-ux (captions); retake screens.
 - **T37 (after #173, Nov 24):** demo-site publish run 45430430863 failed its pre-publish `site.spec.js` on old demo text; qa-tdd updated it (Kevin, search "orchard", New for you 1 of 1 then Done), `npm run e2e:site` red 3 then green 14 x3 (r71). PR #179 merged, live 3077ff5 checked fresh+returning 390/1280, Jo sees Dad's side only.
 - **T40 (live check, Nov 24):** laptop "Try this" step 3 still said search "lake" (finds nothing now); now "orchard", with a guard test that the hinted word finds a demo post. qa-tdd red then green 3x (r72, r78).
+- **T45 demo family renamed (Chase, Nov 24):** demo people are Graham (dad, the visitor), Eliza (mom), Grandma Jo (kept), Nana Eloise, Grandpa Hollis, Aunt Libby, kid Clara; family "Clara and Leo". Titles grandpa/grandma/nana/pawpaw/granny/gram/gran, never "granddaddy". Demo-only via DEMO_NAMES (fixture names unchanged). qa-tdd red (r110), engineer green.
 - **Portfolio / public presence:** the public demo shows free Pexels stock photos and a made-up parent "Kevin" once this merges; no photo of Chase's family remains on main.
 
 ## Nov 24: life calendar review fixes built (PRIV-R1..R3, R5; GUX-R1..R11; branch claude/project-thread-ov6z2y)

@@ -22,7 +22,7 @@ async function demoDates(): Promise<Row[]> {
 }
 
 describe('CAL-19 the demo family has dates', () => {
-  it('CAL-19 Grandma Jo\'s birthday is today and Grandpa Earl\'s is in 9 days, counted from the visit', async () => {
+  it('CAL-19 DEMO-NAMES-1 Grandma Jo\'s birthday is today and Grandpa Hollis\'s (fixture earl) is in 9 days, counted from the visit', async () => {
     const rows = await demoDates();
     const today = new Date();
     const in9 = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 9);
@@ -30,11 +30,11 @@ describe('CAL-19 the demo family has dates', () => {
     expect(rows.find((r) => r.member_id === FIXTURE.users.earl.id && r.kind === 'birthday')).toMatchObject(md(in9));
   });
 
-  // Updated Nov 24 (DEMO-PHOTO-9, DEC-82): the parents are Kevin and Alex.
-  it('CAL-19 DEMO-PHOTO-9 a made-up kid\'s birthday (Mia) and Kevin and Alex\'s anniversary', async () => {
+  // Updated Nov 24 (T45 DEMO-NAMES-1): the parents are Graham and Eliza; the made-up kid is Clara (was Mia).
+  it('CAL-19 DEMO-NAMES-1 a made-up kid\'s birthday (Clara) and Graham and Eliza\'s anniversary', async () => {
     const rows = await demoDates();
-    expect(rows.filter((r) => r.kind === 'birthday' && r.member_id === null && /^Mia\b/.test(r.label ?? ''))).toHaveLength(1);
-    expect(rows.filter((r) => r.kind === 'anniversary' && /^Kevin and Alex\b/.test(r.label ?? ''))).toHaveLength(1);
+    expect(rows.filter((r) => r.kind === 'birthday' && r.member_id === null && /^Clara\b/.test(r.label ?? ''))).toHaveLength(1);
+    expect(rows.filter((r) => r.kind === 'anniversary' && /^Graham and Eliza\b/.test(r.label ?? ''))).toHaveLength(1);
   });
 
   it('CAL-19 the demo seed version moves on from the pre-calendar one, so returning visitors get the dates', () => {
@@ -43,5 +43,9 @@ describe('CAL-19 the demo family has dates', () => {
 
   it('DEMO-PHOTO-13 the demo seed version moves on from the Nov 16 photo family (with CAL-19 dates)', () => {
     expect(demoSeedVersion()).not.toBe('u4ie58'); // demoSeedVersion() on main before DEMO-PHOTO (Nov 24)
+  });
+
+  it('DEMO-NAMES-3 the demo seed version moves on from the Kevin family, so returning visitors re-seed', () => {
+    expect(demoSeedVersion()).not.toBe('napqej'); // demoSeedVersion() before T45 (Nov 24, Kevin/Alex)
   });
 });

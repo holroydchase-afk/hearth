@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-24T23:59:59-05:00",
+ "label": "T45 DEMO-NAMES-1..6 demo renames: all suites 3x (green)",
+ "passed": 7928,
+ "failed": 0,
+ "results": {},
+ "note": "3 identical runs on the uncommitted T45 fix (seed.ts DEMO_NAMES Graham/Eliza/Nana Eloise/Grandpa Hollis, Aunt Libby, Clara; DemoBar.tsx Graham), no flake. jest 2550 passed (1 skipped, 1 todo, 192 suites) x3, typecheck clean x3, e2e:site 16 passed x3, e2e:demo 61 passed x3, e2e:web 47 passed once. passed = 3 x (2550 + 16 + 61) + 47. Not run: backend, Deno, prototype e2e, compiler-check. e2e/results/t44-*-run{1,2,3}-2026-11-25.txt"
+}
