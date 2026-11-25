@@ -17,7 +17,7 @@ const resetDemo = async (page) => {
   await details(page);
   await page.getByRole('button', { name: 'Reset demo' }).click();
   await page.getByRole('button', { name: 'Reset', exact: true }).click();
-  await greeted(page, 'Kevin'); // DEMO-PHOTO-10 (DEC-82): the demo parent is Kevin
+  await greeted(page, 'Graham'); // DEMO-NAMES-5 (T39, Nov 24): the demo parent is Graham (was Kevin, DEC-82)
 };
 
 for (const tab of ['', 'photos', 'share', 'groups', 'me', 'help']) {
@@ -55,7 +55,7 @@ test(`DEMO-5 every link inside the demo stays under ${BASE}/ or goes to chasehol
   for (const h of hrefs) expect(h.startsWith(BASE) || h.startsWith('https://chaseholroyd.com')).toBe(true);
 });
 
-test(`DEMO-5 Grandma's view and Start over stay inside ${BASE}/`, async ({ page }) => {
+test(`DEMO-NAMES-5 DEMO-5 Grandma's view and Start over stay inside ${BASE}/`, async ({ page }) => {
   await page.goto(`${BASE}/`);
   await details(page);
   await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
@@ -64,7 +64,7 @@ test(`DEMO-5 Grandma's view and Start over stay inside ${BASE}/`, async ({ page 
   await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
   expect(new URL(page.url()).pathname).toMatch(new RegExp(`^${baseRe}\\/gallery\\/?$`));
   await resetDemo(page);
-  await expect(page.getByText(/You're Kevin, a parent/)).toBeVisible(); // DEMO-PHOTO-10
+  await expect(page.getByText(/You're Graham, a parent/)).toBeVisible(); // DEMO-PHOTO-10
   expect(new URL(page.url()).pathname).toMatch(new RegExp(`^${baseRe}\\/`));
 });
 
@@ -105,19 +105,19 @@ test('DEMO-LIVE-4 the build serves version.txt naming its commit', async ({ requ
 });
 
 // DEMO-NEW-5 (R45 step 2; RD-19..21): a first-time visitor lands on New for you and can walk the new photos.
-test('DEMO-NEW-5 RD-21 a first visit opens on New for you; See all walks the new photos', async ({ page }) => {
+test('DEMO-NAMES-5 DEMO-NEW-5 RD-21 a first visit opens on New for you; See all walks the new photos', async ({ page }) => {
   await page.goto(`${BASE}/`);
-  await expect(page.getByText(/^From Alex (today|since \S+)$/)).toBeVisible(); // DEC-61: the sender line, no "Tap a photo to start"
+  await expect(page.getByText(/^From Eliza (today|since \S+)$/)).toBeVisible(); // DEC-61: the sender line, no "Tap a photo to start"
   await expect(page.getByText('Tap a photo to start', { exact: true })).toHaveCount(0);
   const see = page.getByRole('button', { name: /^See all(?! the photos)/ });
   await expect(see).toBeVisible();
   await see.click();
-  // DEMO-PHOTO-12 (DEC-82): one new post since the last visit, Alex's balance bike ride; it is the last step, so Done, no Next.
+  // DEMO-PHOTO-12 (DEC-82): one new post since the last visit, Eliza's balance bike ride; it is the last step, so Done, no Next.
   await expect(page.getByText('New photos: 1 of 1', { exact: true })).toBeVisible();
   await expect(page.getByText(/First ride on the balance bike/).filter({ visible: true }).first()).toBeVisible();
   await expect(page.getByRole('button', { name: 'Next new photo' })).toHaveCount(0);
   await page.getByRole('button', { name: /^Done/ }).first().click();
-  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Kevin$/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Graham$/ })).toBeVisible();
 });
 
 // DEMO-META-2: a shared link has a preview: the tags are on the page and the picture is served.

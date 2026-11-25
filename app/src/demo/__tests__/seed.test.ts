@@ -61,17 +61,19 @@ describe('DEMO-1..3, DEMO-10 sample-data demo', () => {
     expect(plain).toEqual((await picture(first.pictures[0]!)).display);
   });
 
-  // Updated Nov 24 (DEMO-PHOTO-9, DEC-82; was UX-R12 "Chase", DEC-64): the stock photos show a model, so the parent is
-  // "Kevin"; everyone else stays made up (Mia and Leo, Alex, Grandma Jo) and no surname appears.
-  it('DEMO-3 DEMO-PHOTO-9 the demo parent is "Kevin"; the rest are made-up names and no surname, "Chase" or "Kai" appears', async () => {
+  // Updated Nov 24 (T39 DEMO-NAMES-1/4; was "Kevin", DEC-82; "Chase", DEC-64): the parent is "Graham", the mom "Eliza",
+  // the other grandparents Nana Eloise and Grandpa Hollis; Grandma Jo stays; no surname appears.
+  it('DEMO-3 DEMO-NAMES-1 DEMO-NAMES-4 the demo parent is "Graham"; the rest are made-up names and no surname, "Chase" or "Kai" appears', async () => {
     const be = await seeded();
     const names = Object.values(be.state.users).map((u) => u.name);
-    expect(names).toEqual(expect.arrayContaining(['Kevin', 'Alex', 'Grandma Jo']));
-    expect(be.state.users[F.users.chase.id]!.name).toBe('Kevin');
-    expect(be.state.users[F.users.chase.id]!.email).toBe('kevin@example.com');
+    expect(names).toEqual(expect.arrayContaining(['Graham', 'Eliza', 'Nana Eloise', 'Grandpa Hollis', 'Grandma Jo']));
+    expect(be.state.users[F.users.chase.id]!.name).toBe('Graham');
+    expect(be.state.users[F.users.chase.id]!.email).toBe('graham@example.com');
+    for (const u of Object.values(be.state.users)) expect(u.email).toMatch(/^[a-z0-9._+-]+@example\.com$/);
+    expect(JSON.stringify(be.state.users)).not.toMatch(/\b(Kevin|Alex|Ruth|Earl)\b/);
     expect(JSON.stringify(be.state.users)).not.toMatch(/\bKai\b|Holroyd|Chase/i);
     expect(Object.values(DEMO_NAMES)).not.toContain('Kai');
-    expect(be.state.spaces[F.space.id]!.name).toBe('Mia and Leo');
+    expect(be.state.spaces[F.space.id]!.name).toBe('Clara and Leo'); // T39 QA-R1: the demo seed renames the fixture's 'Mia and Leo'
   });
 
   it('DEMO-PHOTO-9 no seeded caption, title or reply says "Chase"', async () => {
@@ -191,7 +193,7 @@ describe('GUX-DP demo words', () => {
   const post = (n: number) => DEMO_POSTS[n - 1]!;
   const reply = (n: number, who: string) => post(n).replies.filter((r) => r.who === who).map((r) => r.body);
 
-  it('GUX-DP-AC1 post 6: Nana Ruth says "Look at that little yellow coat go!" and no reply says "smile"', () => {
+  it('GUX-DP-AC1 post 6: Nana Eloise (fixture ruth) says "Look at that little yellow coat go!" and no reply says "smile"', () => {
     expect(reply(6, 'ruth')).toEqual(['Look at that little yellow coat go!']);
     expect(DEMO_POSTS.flatMap((p) => p.replies.map((r) => r.body)).filter((b) => /smile/i.test(b))).toEqual([]);
   });
@@ -202,7 +204,7 @@ describe('GUX-DP demo words', () => {
     expect(DEMO_POSTS.map((p) => p.caption).filter((c) => /leaf pile/i.test(c))).toEqual([]);
   });
 
-  it('GUX-DP-AC3 post 3: Nana Ruth says "Three of my favorite faces."', () => {
+  it('GUX-DP-AC3 post 3: Nana Eloise (fixture ruth) says "Three of my favorite faces."', () => {
     expect(reply(3, 'ruth')).toEqual(['Three of my favorite faces.']);
   });
 

@@ -91,7 +91,7 @@ for (const size of SIZES) {
       await shot('not-found');
       await page.goto('');
       await resetDemo(page);
-      await expect(page.getByText(/You're Kevin, a parent/)).toBeVisible();
+      await expect(page.getByText(/You're Graham, a parent/)).toBeVisible();
       await ctx.close();
     });
   }

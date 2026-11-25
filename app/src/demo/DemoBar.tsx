@@ -121,11 +121,11 @@ export function DemoActions({ be, reload, startOver }: { be: FakeBackend; reload
   };
   return (
     <View style={styles.actions}>
-      <Txt>{viewer === 'parent' ? "You're Kevin, a parent." : "You're Grandma Jo, Kevin's mom."}</Txt>
+      <Txt>{viewer === 'parent' ? "You're Graham, a parent." : "You're Grandma Jo, Graham's mom."}</Txt>
       <Button
         variant="secondary"
-        label={viewer === 'parent' ? 'See the photos as Grandma Jo sees them' : "Back to Kevin's view, the parent"}
-        text={viewer === 'parent' ? 'See it as Grandma Jo' : "Back to Kevin's view"}
+        label={viewer === 'parent' ? 'See the photos as Grandma Jo sees them' : "Back to Graham's view, the parent"}
+        text={viewer === 'parent' ? 'See it as Grandma Jo' : "Back to Graham's view"}
         onPress={swap}
       />
       {asking ? (

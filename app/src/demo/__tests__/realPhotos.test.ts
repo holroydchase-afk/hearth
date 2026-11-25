@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 // DEMO-PHOTO-4..9, 13, 14, 18 (docs/product/SPEC-DEMO-PHOTOS.md, DEC-82, Nov 24): the public demo shows free Pexels
-// stock photos of a made-up family, with "Kevin" as the parent. Replaces DEMO-PHOTO-1..3 (DEC-62), which this file
+// stock photos of a made-up family, with "Graham" as the parent (T39; was "Kevin"). Replaces DEMO-PHOTO-1..3 (DEC-62), which this file
 // held before. Written FIRST (Nov 24, qa-tdd): red until the new photos, posts and credits land.
 import * as fs from 'fs';
 import * as path from 'path';
@@ -17,13 +17,13 @@ const bike = (...ids: number[]) => ids.map((i) => `bike-${i}`);
 
 /** The spec's post table, oldest first. `text` is the quoted title or caption (null: the engineer writes it). */
 const TABLE = [
-  { from: 'Alex', to: 'everyone', days: 190, text: 'Apple blossoms at the orchard', pictures: orchard(4543640, 4543633, 4543718, 4543714, 4543720, 4543719) },
-  { from: 'Kevin', to: 'dadSide', days: 190, text: 'Shoulder rides all afternoon', pictures: orchard(4543671, 4543672, 4543642) },
-  { from: 'Alex', to: 'momSide', days: 190, text: null, pictures: orchard(4543661) },
-  { from: 'Kevin', to: 'dadSide', days: 40, text: 'Aunt Bea taught the kids to make pancakes', pictures: baking(3807194, 3807115, 3806951, 3807313) },
-  { from: 'Kevin', to: 'everyone', days: 40, text: null, pictures: baking(3807394) },
-  { from: 'Alex', to: 'everyone', days: 0, text: 'First ride on the balance bike', pictures: bike(6209917, 6209856, 6209923) },
-  { from: 'Kevin', to: 'dadSide', days: 0, text: null, pictures: bike(6209901) },
+  { from: 'Eliza', to: 'everyone', days: 190, text: 'Apple blossoms at the orchard', pictures: orchard(4543640, 4543633, 4543718, 4543714, 4543720, 4543719) },
+  { from: 'Graham', to: 'dadSide', days: 190, text: 'Shoulder rides all afternoon', pictures: orchard(4543671, 4543672, 4543642) },
+  { from: 'Eliza', to: 'momSide', days: 190, text: null, pictures: orchard(4543661) },
+  { from: 'Graham', to: 'dadSide', days: 40, text: 'Aunt Libby taught the kids to make pancakes', pictures: baking(3807194, 3807115, 3806951, 3807313) },
+  { from: 'Graham', to: 'everyone', days: 40, text: null, pictures: baking(3807394) },
+  { from: 'Eliza', to: 'everyone', days: 0, text: 'First ride on the balance bike', pictures: bike(6209917, 6209856, 6209923) },
+  { from: 'Graham', to: 'dadSide', days: 0, text: null, pictures: bike(6209901) },
 ] as const;
 const NAMES = TABLE.flatMap((r) => [...r.pictures]);
 const OLD = ['beach', 'dunes', 'museum', 'playground', 'porch', 'bike', 'splash', 'bridge', 'overlook', 'hug'];
@@ -89,7 +89,7 @@ describe('DEMO-PHOTO stock photos in the public demo', () => {
   });
 
   it('DEMO-PHOTO-8 DEMO_POSTS is the 7 posts of the table in order: sender, group, pictures, day bucket; 19 pictures, each once', () => {
-    const got = DEMO_POSTS.map((p) => ({ from: p.from === 'alex' ? 'Alex' : 'Kevin', to: p.to, pictures: p.pictures }));
+    const got = DEMO_POSTS.map((p) => ({ from: p.from === 'alex' ? 'Eliza' : 'Graham', to: p.to, pictures: p.pictures }));
     expect(got).toEqual(TABLE.map((r) => ({ from: r.from, to: r.to, pictures: [...r.pictures] })));
     for (const [i, r] of TABLE.entries()) {
       const p = DEMO_POSTS[i]!;
@@ -105,16 +105,16 @@ describe('DEMO-PHOTO stock photos in the public demo', () => {
     expect(new Set(all).size).toBe(19);
   });
 
-  it('DEMO-PHOTO-9 the parent is "Kevin", and no demo name, caption, title, reply or date label says "Chase"', () => {
-    const parent = Object.entries(DEMO_NAMES).find(([, n]) => n !== 'Alex');
-    expect(parent?.[1]).toBe('Kevin');
+  it('DEMO-PHOTO-9 DEMO-NAMES-1 the parent is "Graham", and no demo name, caption, title, reply or date label says "Chase"', () => {
+    expect(DEMO_NAMES[Object.keys(DEMO_NAMES)[0]!]).toBe('Graham');
+    expect(Object.values(DEMO_NAMES)).toEqual(expect.arrayContaining(['Graham', 'Eliza', 'Nana Eloise', 'Grandpa Hollis']));
     const words = [
       ...Object.values(DEMO_NAMES),
       ...DEMO_POSTS.flatMap((p) => [p.caption, p.title ?? '', ...p.replies.map((r) => r.body)]),
       ...DEMO_DATES.labelled.map((d) => d.label),
     ];
     expect(words.filter((w) => /Chase/i.test(w))).toEqual([]);
-    expect(DEMO_DATES.labelled.find((d) => d.kind === 'anniversary')?.label).toBe('Kevin and Alex');
+    expect(DEMO_DATES.labelled.find((d) => d.kind === 'anniversary')?.label).toBe('Graham and Eliza');
   });
 
   it('DEMO-PHOTO-13 the seed version moves on from the Nov 16 family, so a returning browser drops it and its bytes', () => {

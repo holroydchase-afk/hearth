@@ -11,12 +11,21 @@ import { loadLastSeen, saveLastSeen } from '../state/lastSeen';
 const F = FIXTURE;
 const DAY = 864e5;
 
-/** DEMO-3, DEMO-PHOTO-9 (DEC-82, Nov 24; was DEC-64): the parent is "Kevin", since the stock photos show a model; everyone
- *  is made up and no surname appears. The fixture's user id keeps its old key. */
+/** DEMO-3, DEMO-PHOTO-9, T39 DEMO-NAMES-1 (Chase, Nov 24; was "Kevin", DEC-82; "Chase", DEC-64): the parent is Graham,
+ *  the mom Eliza, the other grandparents Nana Eloise and Grandpa Hollis; Grandma Jo keeps the fixture's name. Everyone is
+ *  made up and no surname appears. Only the demo renames them: the fixture's ids and names stay for other tests. */
 export const DEMO_NAMES: Record<string, string> = {
-  [F.users.chase.id]: 'Kevin',
-  [F.users.alex.id]: 'Alex',
+  [F.users.chase.id]: 'Graham',
+  [F.users.alex.id]: 'Eliza',
+  [F.users.ruth.id]: 'Nana Eloise',
+  [F.users.earl.id]: 'Grandpa Hollis',
 };
+
+/** T39 DEMO-NAMES-1 (QA-R1): the demo family's name; the fixture's space name holds the old kid's name. */
+export const DEMO_SPACE_NAME = 'Clara and Leo';
+
+/** DEMO-NAMES-4: a valid, space-free demo email from a name's last word ("Nana Eloise" -> eloise@example.com). */
+export const demoEmail = (name: string): string => `${name.trim().split(/\s+/).pop()!.toLowerCase().replace(/[^a-z0-9]/g, '')}@example.com`;
 
 export interface DemoPicture { display: Uint8Array; thumb: Uint8Array; width: number; height: number }
 
@@ -28,7 +37,7 @@ export interface DemoPost {
   pictures: string[];
   to: 'everyone' | 'dadSide' | 'momSide';
   daysAgo: number;
-  /** DEMO-NEW-2: who sent it; Kevin (the visitor) when left out. */
+  /** DEMO-NEW-2: who sent it; the parent (the visitor) when left out. */
   from?: 'alex';
   hearts: Who[];
   replies: { who: Who; body: string }[];
@@ -46,12 +55,12 @@ export const DEMO_POSTS: DemoPost[] = [
     hearts: ['jo', 'earl'], replies: [{ who: 'jo', body: 'Your dad used to carry you just like that.' }] },
   { caption: 'My two sweethearts', pictures: ['orchard-4543661'], to: 'momSide', daysAgo: 189.8, from: 'alex',
     hearts: ['ruth'], replies: [{ who: 'ruth', body: 'Three of my favorite faces.' }] },
-  { title: 'Pancake morning', caption: 'Aunt Bea taught the kids to make pancakes', pictures: ['baking-3807194', 'baking-3807115', 'baking-3806951', 'baking-3807313'],
+  { title: 'Pancake morning', caption: 'Aunt Libby taught the kids to make pancakes', pictures: ['baking-3807194', 'baking-3807115', 'baking-3806951', 'baking-3807313'],
     to: 'dadSide', daysAgo: 40,
     hearts: ['jo', 'earl'], replies: [{ who: 'earl', body: 'Save me a stack next time.' }] },
   { caption: 'Then we all sat down for tea and pancakes.', pictures: ['baking-3807394'], to: 'everyone', daysAgo: 39.9,
     hearts: ['jo', 'ruth', 'earl', 'alex'], replies: [{ who: 'jo', body: 'What a sweet morning.' }] },
-  // DEMO-NEW-2, DEMO-PHOTO-12: Alex's post since the demo's last visit, so New for you opens on the bike ride.
+  // DEMO-NEW-2, DEMO-PHOTO-12: the mom's post since the demo's last visit, so New for you opens on the bike ride.
   { title: 'First ride on the balance bike', caption: 'All the way down the path on the first try',
     pictures: ['bike-6209917', 'bike-6209856', 'bike-6209923'], to: 'everyone', daysAgo: 2, from: 'alex',
     hearts: ['jo', 'ruth', 'earl'], replies: [{ who: 'ruth', body: 'Look at that little yellow coat go!' }, { who: 'jo', body: 'Watch out, world!' }] },
@@ -59,17 +68,17 @@ export const DEMO_POSTS: DemoPost[] = [
     hearts: ['jo'], replies: [{ who: 'jo', body: "That's a lot of leaves!" }] },
 ];
 
-/** CAL-19: the demo family's dates. Grandma Jo's and Grandpa Earl's birthdays are counted from the visit (days from
- *  today), so the Gallery line always shows; Mia (a made-up kid) and the parents' anniversary are fixed. */
+/** CAL-19: the demo family's dates. Grandma Jo's and Grandpa Hollis's birthdays are counted from the visit (days from
+ *  today), so the Gallery line always shows; Clara (a made-up kid) and the parents' anniversary are fixed. */
 export const DEMO_DATES = {
   members: [{ who: 'jo', inDays: 0 }, { who: 'earl', inDays: 9 }] as { who: 'jo' | 'earl'; inDays: number }[],
   labelled: [
-    { kind: 'birthday', label: 'Mia', month: 3, day: 14 },
-    { kind: 'anniversary', label: 'Kevin and Alex', month: 6, day: 20 },
+    { kind: 'birthday', label: 'Clara', month: 3, day: 14 },
+    { kind: 'anniversary', label: 'Graham and Eliza', month: 6, day: 20 },
   ] as { kind: 'birthday' | 'anniversary'; label: string; month: number; day: number }[],
 };
 
-/** CAL-19: puts the demo's dates in (again): Grandma Jo's birthday today, Grandpa Earl's in 9 days, counted from now.
+/** CAL-19: puts the demo's dates in (again): Grandma Jo's birthday today, Grandpa Hollis's in 9 days, counted from now.
  *  Also run on a saved demo family each visit, so a returning visitor still sees the line. */
 export function seedDemoDates(be: FakeBackend, now: Date = new Date()): void {
   const space = F.space.id;
@@ -93,7 +102,7 @@ const iso = (t: number) => new Date(t).toISOString();
 
 /** Seeds the demo family into a fixture backend (made with joIsMember: true). */
 export async function seedDemo(be: FakeBackend, load: (name: string) => Promise<DemoPicture>, kv?: KV): Promise<void> {
-  // DEMO-NEW-1: a last visit 3 days ago for Kevin and Grandma Jo, written first so Photos reads it; a saved one is kept.
+  // DEMO-NEW-1: a last visit 3 days ago for the parent and Grandma Jo, written first so Photos reads it; a saved one is kept.
   if (kv) {
     const last = new Date(Date.now() - DEMO_LAST_VISIT_DAYS * DAY).toISOString();
     for (const u of [F.users.chase.id, F.users.jo.id]) {
@@ -102,8 +111,9 @@ export async function seedDemo(be: FakeBackend, load: (name: string) => Promise<
   }
   for (const [id, name] of Object.entries(DEMO_NAMES)) {
     be.state.users[id]!.name = name;
-    be.state.users[id]!.email = `${name.toLowerCase()}@example.com`;
+    be.state.users[id]!.email = demoEmail(name);
   }
+  be.state.spaces[F.space.id]!.name = DEMO_SPACE_NAME;
   const parent = F.users.chase.id;
   const now = Date.now();
   let n = 0;
@@ -167,7 +177,7 @@ export const DEMO_SEED_KEY = 'hearth.demoSeed';
 
 export function demoSeedVersion(src: { posts: DemoPost[]; names: Record<string, string> } = { posts: DEMO_POSTS, names: DEMO_NAMES }): string {
   // CAL-19: the dates are part of the sample family, so adding them moves the version and returning visitors get them.
-  const s = JSON.stringify([src.posts, src.names, DEMO_LAST_VISIT_DAYS, DEMO_DATES]);
+  const s = JSON.stringify([src.posts, src.names, DEMO_LAST_VISIT_DAYS, DEMO_DATES, DEMO_SPACE_NAME]);
   let h = 5381;
   for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
   return h.toString(36);
