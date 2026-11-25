@@ -40,6 +40,19 @@ export interface AppDeps {
   videoFiles?: VideoFiles | null;
   /** WEB-APP-6: wipes the sealed session store (session, messenger store, its key) at sign-out. Web only. */
   clearSessionStore?: () => Promise<void>;
+  /** WEB-APP-34: the real-backend web build never offers or sends video (the Fake/demo build and phones do). */
+  noVideo?: boolean;
+  /**
+   * HRT-WEB.3: web only. Where a picked photo's CLEANED bytes are kept (sealed, IndexedDB) so a post survives Chrome
+   * closing. stage() prepares each photo before its job is saved; the rest is what the queue and QueueStatus need.
+   */
+  uploadStore?: {
+    stage: (items: QueueItem[], onProgress?: (done: number, total: number) => void) => Promise<{ items: QueueItem[]; durable: boolean }>;
+    has: (uri: string) => Promise<boolean>;
+    release: (job: { items: { uri: string }[] }) => Promise<void>;
+    sweep: (liveUris: string[]) => Promise<void>;
+    memoryOnly: (uri: string) => boolean;
+  } | null;
 }
 
 /** offline (ENG-R1): signed in, but the family couldn't be read and this phone has none saved. */
@@ -224,6 +237,7 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
     if (space.can_post) {
       queue = await UploadQueue.open({
         api: deps.api, kv: deps.kv, userId: session.userId, prepare: deps.prepare,
+        ...(deps.uploadStore ? { store: deps.uploadStore } : {}),
         onPublished: (job) => { void feed.refresh().then(() => queue?.remove(job.id)); },
       });
     }

@@ -11,7 +11,7 @@
 //   }
 //   UploadQueue.open() runs, BEFORE its first kick(): sweep(uris of every unpublished job's items), then fails any
 //   unpublished job (WEB-APP-31) whose item uri is a blob:/data: URL or whose copy `has` says is gone. Such a job is
-//   state 'failed' (words "Didn't send": Try again / Remove) with one code-only error report. No store dep: no change.
+//   state 'failed' (words "Didn't send": Remove only) with one code-only error report. No store dep: no change.
 import { type HearthApi } from '../../api/HearthApi';
 import { FakeBackend, FIXTURE } from '../../api/fake/FakeBackend';
 import { encryptedSize } from '../../crypto/media';

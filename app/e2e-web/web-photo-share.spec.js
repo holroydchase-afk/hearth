@@ -224,7 +224,7 @@ test('WEB-APP-32 sign-out deletes every queued byte (the whole hearth.uploads da
   expect(dbs).not.toContain('hearth.uploads');
 });
 
-test('B-WEB3-1 / WEB-APP-31 an old job with a dead blob: URL shows "Didn\'t send" with Try again / Remove, never "Sending…" forever', async ({ page }) => {
+test('B-WEB3-1 / WEB-APP-31 an old job with a dead blob: URL shows "Didn\'t send" with Remove only, never "Sending…" forever', async ({ page }) => {
   await signIn(page);
   const uid = await page.evaluate(() => globalThis.__hearthFake.state.appSession);
   await page.evaluate(({ k, uid }) => {
@@ -242,7 +242,9 @@ test('B-WEB3-1 / WEB-APP-31 an old job with a dead blob: URL shows "Didn\'t send
   await page.getByRole('tab', { name: 'Share' }).click();
   await expect(page.getByText(/Didn't send/)).toBeVisible({ timeout: 20_000 });
   await expect(page.getByText(/Sending…/)).toHaveCount(0);
-  await expect(page.getByRole('button', { name: /Try again/ })).toBeVisible();
+  // grandparent-ux words (SPEC-WEB-APP "Words"): a missing photo can only fail again, so Remove is the one choice.
+  await expect(page.getByText("This photo is no longer on this phone, so we can't send it. Go to Share to pick it again.")).toBeVisible();
+  await expect(page.getByRole('button', { name: /Try again/ })).toHaveCount(0);
   await expect(page.getByRole('button', { name: /Remove/ })).toBeVisible();
 });
 
