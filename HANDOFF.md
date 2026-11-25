@@ -11,6 +11,11 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 25: portfolio header on the demo (intake #183, R95; branch claude/project-thread-6ew09x, PR)
+- **Done, test-first** (qa-tdd red 1624575, r120): `app/scripts/add-site-bar.sh` (called by `build-demo.sh`) puts `<script src="/assets/demo-bar.js" data-page="white" defer>` before `</body>` on every demo page; the bar file lives on the portfolio site. DemoFrame row is #FFFFFF in light (dark unchanged); `_layout.tsx` sets body `box-sizing: border-box` on web so the bar's 52px padding stays inside 100% height (SITEBAR-4 at 1280x800 and 390x844).
+- **Next:** Chase's merge (live demo); after publish, check the header on chaseholroyd.com/hearth/ at 1280 and 390.
+
+
 ## Nov 25: duplicate-number check (NUM-1..6; branch claude/project-thread-hl5ax4, not pushed)
 - **Done, test-first:** `scripts/check-unique-numbers.sh [root]` fails on a repeated migration prefix, DEC heading, ticket id or run id; passes on the real repo. Test `scripts/tests/check_unique_numbers_test.sh` 6/6. **Next:** wire into `test-all.sh`/CI if staff-pm agrees.
 
