@@ -90,3 +90,7 @@ Hearth is a working proof of concept, built in the open.
 | Known limits | Speed on a phone hasn't been measured ([performance](docs/eng/PERFORMANCE.md)). No outside security review ([threat model](docs/architecture/04-threat-model.md)). Hearth's server holds the photo keys ([encryption and keys](docs/architecture/03-encryption-and-keys.md)) |
 
 License: AGPL-3.0 ([LICENSE](LICENSE)). The repo is public. [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## How this is built
+
+Built with Claude Code (AI-assisted code, tests and docs). The maintainer directs the work and decides what ships. Tests and CI run on every pull request; the current state is in HANDOFF.md.

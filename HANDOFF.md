@@ -913,3 +913,6 @@ blockers:
 - **Plans (claude.ai docs):** Hearth Beta Plan (with a Personas tab), Hearth Funding Plan.
 - **Published pages:** Hearth Family Photos prototype (claude.ai/artifact/SbUX3TQP2crBZ5o68Kho2a), Hearth Test Log (claude.ai/artifact/XnfnBsuPL7ayedPHBpvctD).
 - **Project docs:** `claude/hearth-*.md` and `claude/agents/*.md` in the "Family photo sharing" Project.
+
+## Repo best-practices pass (2026-11-25)
+- Done: SUPPORT.md README-AI-line codeql(actions, javascript-typescript, python) ci-permissions. Added from the GitHub, Linux Foundation and Syracuse checklists (studio-agents docs/repo-standards.md). Left for this project to review: CHANGELOG.md, THIRD_PARTY_NOTICES, wording of the README AI-use line against the claims register, repo description and topics.
