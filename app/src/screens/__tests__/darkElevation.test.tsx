@@ -188,7 +188,10 @@ describe('DARK-ELEV-4 the laptop demo frame (1280 px) lifts the phone column wit
     const c = pal(false);
     const { page, column } = frame(false);
     expect(String(column.boxShadow)).toBe('0 12px 40px rgba(0,0,0,0.18)');
-    expect(page.backgroundColor).toBe(c.bg);
+    expect(column.backgroundColor).toBe(c.bg);
+    // SITEBAR-3 (intake #183, retargeted by qa-tdd Nov 25): the page behind the column is white in light, to match
+    // the portfolio's white site bar (was c.bg).
+    expect(String(page.backgroundColor).toUpperCase()).toBe('#FFFFFF');
   });
 });
 
