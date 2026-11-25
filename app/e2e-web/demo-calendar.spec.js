@@ -1,5 +1,5 @@
 // CAL-19 (docs/product/SPEC-LIFE-CALENDAR.md, DEC-81): the public demo shows the life calendar. Grandma Jo's birthday
-// is today (set relative to the visit, so the Gallery line always shows), Grandpa Earl's is in 9 days, plus a made-up
+// is today (set relative to the visit, so the Gallery line always shows), Grandpa Hollis's is in 9 days, plus a made-up
 // kid's birthday and the parents' anniversary. Grandma Jo's view offers only "Change my birthday".
 // Written FIRST (Nov 24, qa-tdd): red until the calendar and its demo dates land.
 const { test, expect } = require('../../e2e/node_modules/@playwright/test');
@@ -25,7 +25,7 @@ test.beforeEach(async ({ page }) => {
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
 });
 
-test("CAL-19 a fresh visit's Gallery says \"Today is Grandma Jo's birthday\" and See birthdays opens the list", async ({ page }) => {
+test("DEMO-NAMES-5 CAL-19 a fresh visit's Gallery says \"Today is Grandma Jo's birthday\" and See birthdays opens the list", async ({ page }) => {
   await page.goto('/');
   await galleryLoaded(page);
   await expect(page.getByText(/^Today is Grandma Jo[’']s birthday$/).filter({ visible: true })).toBeVisible();
@@ -34,13 +34,13 @@ test("CAL-19 a fresh visit's Gallery says \"Today is Grandma Jo's birthday\" and
   expect(errors).toEqual([]);
 });
 
-// Updated Nov 24 (DEMO-PHOTO-9, DEC-82): the parents are Kevin and Alex.
-test('CAL-19 DEMO-PHOTO-9 Birthdays lists Grandma Jo today, Grandpa Earl in 9 days, Mia\'s birthday and Kevin and Alex\'s anniversary', async ({ page }) => {
+// Updated Nov 24 (DEMO-PHOTO-9, DEC-82): the parents are Graham and Eliza.
+test('DEMO-NAMES-5 CAL-19 DEMO-PHOTO-9 Birthdays lists Grandma Jo today, Grandpa Hollis in 9 days, Clara\'s birthday and Graham and Eliza\'s anniversary', async ({ page }) => {
   await page.goto('/');
   await galleryLoaded(page);
   await openBirthdays(page);
   await expect(page.getByText('Only your family can see these.').filter({ visible: true })).toBeVisible();
-  for (const t of [/Grandma Jo/, /Grandpa Earl/, /Mia[’']s birthday/, /Kevin and Alex[’']s anniversary/, /^Today$/, /^In 9 days$/]) {
+  for (const t of [/Grandma Jo/, /Grandpa Hollis/, /Clara[’']s birthday/, /Graham and Eliza[’']s anniversary/, /^Today$/, /^In 9 days$/]) {
     await expect(page.getByText(t).filter({ visible: true }).first()).toBeVisible();
   }
 });
@@ -54,7 +54,7 @@ test('CAL-19 a returning visitor with a pre-calendar demo saved gets the dates t
   await expect(page.getByText(/^Today is Grandma Jo[’']s birthday$/).filter({ visible: true })).toBeVisible();
 });
 
-test("CAL-19 Grandma Jo's view: her only action on Birthdays is \"Change my birthday\"", async ({ page }) => {
+test("DEMO-NAMES-5 CAL-19 Grandma Jo's view: her only action on Birthdays is \"Change my birthday\"", async ({ page }) => {
   await page.goto('/');
   await galleryLoaded(page);
   await details(page);
@@ -69,7 +69,7 @@ test("CAL-19 Grandma Jo's view: her only action on Birthdays is \"Change my birt
 });
 
 // Grandparent-ux review fixes (Nov 24, GUX-R1..R3). Written FIRST (qa-tdd): red until the fixes land.
-// The demo signs in as Kevin, who has no birthday saved, so a fresh visit's Gallery shows the card.
+// The demo signs in as Graham, who has no birthday saved, so a fresh visit's Gallery shows the card.
 const tabBarTop = async (page) => {
   const ys = [];
   for (const t of await page.getByRole('tab').filter({ visible: true }).all()) ys.push((await t.boundingBox()).y);

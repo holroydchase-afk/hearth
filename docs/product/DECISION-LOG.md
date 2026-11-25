@@ -640,5 +640,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** two of three least-savvy grandparents are on Android (PERSONAS AG); the web build already exists on free hosting, so the gap is sign-in that sticks and a home-screen icon, not a second app.
 - **Source:** `docs/product/SPEC-WEB-APP.md`; persona check `decisions/2026-11-24-web-app.md`. Pulls part of ANCHORS milestone 5 forward through the web; the native Android build stays milestone 5.
 
+### DEC-89 · Keep video, built and switched off, and get it ready to turn on (PM-R5)
+- **When / status:** Nov 19 · Chase: "We need to keep the switched off features. Start a thread for each" · Thread "Get video ready to turn on"; the switch stays off until his word
+- **Chose:** video (VID-1..22, migration 0020, `video_posting` off) stays on main. Before turning on: ENG-R2 (a retried upload no longer spends another free video), ENG-R11 (the cap has its own error code), SEC-R7, PRIV-R1, then VID-19 on an iPhone and an Android phone and the FLAG-7 check (VID-22) on Chase's iPhone.
+- **Over:** parking video on an archive branch until a relative asks for it (PM-R5's recommendation for the other dark features).
+- **Because:** Chase asked for video (Oct 29), it is the most finished of the three dark features, and family video is a reason grandparents open the app. Keeping it costs a few small fixes, not a rebuild.
+- **Source:** `docs/reviews/2026-11-19-tech-debt/pm.md` PM-R5; `docs/product/SPEC-MEDIA.md` section 4; persona check `decisions/2026-11-19-keep-video.md`
+
 ---
-Last updated: Nov 24, 2026 (DEC-88)
+Last updated: Nov 25, 2026 (DEC-89)
