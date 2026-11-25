@@ -11,6 +11,10 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 25: review of repo best-practices PR (intake #191, R97; branch local, not pushed yet)
+- **Done:** README AI wording matched to the claims register, CHANGELOG.md added. Docs only.
+- **Next:** push in the next turn; read CodeQL alerts once the Security tab can be read; P2s in R97.
+
 ## Nov 25: portfolio header on the demo (intake #183, R95; branch claude/project-thread-6ew09x, PR)
 - **Done, test-first** (qa-tdd red 1624575, r120): `app/scripts/add-site-bar.sh` (called by `build-demo.sh`) puts `<script src="/assets/demo-bar.js" data-page="white" defer>` before `</body>` on every demo page; the bar file lives on the portfolio site. DemoFrame row is #FFFFFF in light (dark unchanged); `_layout.tsx` sets body `box-sizing: border-box` on web so the bar's 52px padding stays inside 100% height (SITEBAR-4 at 1280x800 and 390x844).
 - **Next:** Chase's merge (live demo); after publish, check the header on chaseholroyd.com/hearth/ at 1280 and 390.
