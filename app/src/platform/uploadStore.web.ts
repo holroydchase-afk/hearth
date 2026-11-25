@@ -51,13 +51,19 @@ export function createUploadStore(o: { db: UploadDb; sealer: ByteSealer; report:
   const sizes = new Map<string, number>();
   let scanned = false;
   let used = 0;
+  /** PRIV-WEB3-R1: bumped by wipe() (sign-out). A stage or put that started under an older one writes nothing and seals nothing. */
+  let gen = 0;
 
-  async function scan(): Promise<void> {
+  async function scan(g: number): Promise<void> {
     if (scanned) return;
-    for (const k of await db.keys()) {
+    const ks = await db.keys();
+    for (const k of ks) {
+      if (g !== gen) throw 'gone';
       const r = await db.get(k);
+      if (g !== gen) throw 'gone';
       if (r) { const n = recBytes(r); sizes.set(k, n); used += n; }
     }
+    if (g !== gen) throw 'gone';
     scanned = true; // only after a whole read, so a blocked first try is retried
   }
 
@@ -69,18 +75,22 @@ export function createUploadStore(o: { db: UploadDb; sealer: ByteSealer; report:
   }
 
   /** Seals and puts one photo. Throws a short reason string when it cannot be kept. */
-  async function put(key: string, p: Prepared): Promise<void> {
+  async function put(key: string, p: Prepared, g: number): Promise<void> {
     const parts: [string, Uint8Array][] = [['display', p.display], ['spec', enc.encode(JSON.stringify(p.spec))], ['thumb', p.thumb]];
     const sealed: Record<string, Uint8Array> = {};
     for (const [name, bytes] of parts) {
+      if (g !== gen) throw 'gone'; // sign-out landed: never ask the sealer (it would mint a fresh key)
       const s = await sealer.sealBytes(`q.${key}/${name}`, bytes);
+      if (g !== gen) throw 'gone';
       if (!s) throw 'blocked';
       sealed[name] = s;
     }
     const rec: UploadRecord = { v: 1, spec: sealed.spec!, display: sealed.display!, thumb: sealed.thumb! };
     const n = recBytes(rec);
     if (used + n > cap) throw 'full';
+    if (g !== gen) throw 'gone';
     try { await db.put(key, rec); } catch (e) { throw isQuota(e) ? 'full' : 'blocked'; }
+    if (g !== gen) { try { await db.delete(key); } catch { /* blocked */ } throw 'gone'; }
     sizes.set(key, n);
     used += n;
   }
@@ -88,6 +98,7 @@ export function createUploadStore(o: { db: UploadDb; sealer: ByteSealer; report:
   return {
     async stage(items, prepare, onProgress) {
       const stageId = uuid();
+      const g = gen;
       const total = items.filter((i) => i.kind === 'photo').length;
       const out: QueueItem[] = [];
       const ready: { key: string; p: Prepared }[] = [];
@@ -106,9 +117,14 @@ export function createUploadStore(o: { db: UploadDb; sealer: ByteSealer; report:
       if (!ready.length) return { items: out, durable: true };
       let durable = true;
       try {
-        await scan();
-        for (const r of ready) await put(r.key, r.p);
+        await scan(g);
+        for (const r of ready) await put(r.key, r.p, g);
       } catch (why) {
+        if (why === 'gone' || g !== gen) {
+          // Signed out mid-stage: nothing stays (db, memory) and the caller is told it didn't happen.
+          for (const r of ready) { mem.delete(r.key); try { await db.delete(r.key); } catch { /* blocked */ } }
+          throw new Error('signed out');
+        }
         durable = false;
         for (const r of ready) await drop(r.key); // all or nothing: a half-saved post would fail at the next open
         try { o.report(why === 'full' ? 'upload_store_full' : 'upload_store_blocked'); } catch { /* reporting never blocks */ }
@@ -163,6 +179,7 @@ export function createUploadStore(o: { db: UploadDb; sealer: ByteSealer; report:
     },
 
     async wipe() {
+      gen += 1;
       mem.clear();
       sizes.clear();
       used = 0;
