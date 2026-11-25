@@ -1,0 +1,495 @@
+
+> hearth-app@1.0.0 e2e:demo
+> npm run export:web:demo && node ../e2e/node_modules/@playwright/test/cli.js test -c e2e-web/playwright.demo.config.js
+
+
+> hearth-app@1.0.0 export:web:demo
+> EXPO_PUBLIC_HEARTH_DEMO=1 expo export --platform web --output-dir dist-demo --clear
+
+Using src/app as the root directory for Expo Router.
+Starting Metro Bundler
+
+warning: Bundler cache is empty, rebuilding (this may take a minute)
+Web Bundled 13599ms node_modules/expo-router/entry.js (1334 modules)
+
+› Assets (22):
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/400Regular/AtkinsonHyperlegibleNext_400Regular.86635252a71fd7c43fd5b0c41bdc5d54.ttf (48KB)
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/500Medium/AtkinsonHyperlegibleNext_500Medium.2d5d6c0565845615ac6982fc8abf1095.ttf (48KB)
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/600SemiBold/AtkinsonHyperlegibleNext_600SemiBold.5cf92f89d6fa6a976d135e61e9ffde1f.ttf (48KB)
+node_modules/@expo-google-fonts/material-symbols/400Regular/MaterialSymbols_400Regular.6b4f0c2d698edccb36b0f132059c0205.ttf (972KB)
+node_modules/expo-router/assets/arrow_down.017bc6ba3fc25503e5eb5e53826d48a8.png (9.5KB)
+node_modules/expo-router/assets/error.d1ea1496f9057eb392d5bbf3732a61b7.png (469B)
+node_modules/expo-router/assets/file.19eeb73b9593a38f8e9f418337fc7d10.png (138B)
+node_modules/expo-router/assets/forward.d8b800c443b8972542883e0b9de2bdc6.png (188B)
+node_modules/expo-router/assets/pkg.ab19f4cbc543357183a20571f68380a3.png (364B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon-mask.0a328cd9c1afd0afe8e3b1ec5165b1b4.png (653B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon.35ba0eaec5a4f5ed12ca16fabeae451d.png (207B)
+node_modules/expo-router/assets/react-navigation/elements/clear-icon.c94f6478e7ae0cdd9f15de1fcb9e5e55.png (4 variations | 425B)
+node_modules/expo-router/assets/react-navigation/elements/close-icon.808e1b1b9b53114ec2838071a7e6daa7.png (4 variations | 235B)
+node_modules/expo-router/assets/react-navigation/elements/search-icon.286d67d3f74808a60a78d3ebf1a5fb57.png (928B)
+node_modules/expo-router/assets/sitemap.412dd9275b6b48ad28f5e3d81bb1f626.png (465B)
+node_modules/expo-router/assets/unmatched.20e71bdf79e3a97bf55fd9e164041578.png (4.8KB)
+
+› web bundles (38):
+_expo/static/css/native-tabs.module-78b0f59737571f455720970791a36bdd.css (2.5KB)
+_expo/static/js/web/__common-e40ef8325fb9b259d38e6c91ebf4d225.js (645KB)
+_expo/static/js/web/__expo-metro-runtime-8c088df87a31e4e6accd81c554ec290d.js (3.8KB)
+_expo/static/js/web/_layout-30155ba6537bab7ebf84b572f403b72c.js (320B)
+_expo/static/js/web/_layout-93c0fa4f560577662d04d3a7e6224fc8.js (320B)
+_expo/static/js/web/_layout-99040bc953b152fef787dfb7cda44336.js (404KB)
+_expo/static/js/web/_layout-c27a065ccaf32a755c5d209be3a45582.js (55KB)
+_expo/static/js/web/_layout-e9e078cac3efb72b82faf45d3b1b5c35.js (320B)
+_expo/static/js/web/[code]-0bfb098d7999f9ee868e031bc37c0761.js (4.1KB)
+_expo/static/js/web/[postId]-5ba0d3fa77187a128d59fa7d5f3cc2b5.js (371B)
+_expo/static/js/web/+not-found-14f6c74c538cced0fac73548128e3eac.js (747B)
+_expo/static/js/web/birthdays-2d06bea3d77459f57bf0189bd05960fd.js (482B)
+_expo/static/js/web/birthdays-c484cb78da6b9f52f76851be765aafbd.js (333B)
+_expo/static/js/web/easy-view-cc84376a13165fe3bec7b848b087450b.js (333B)
+_expo/static/js/web/ed448-0b0aa5aa2eee07132cc2146684fbfc13.js (12KB)
+_expo/static/js/web/entry-44d50db15d87bfffea95f0d25045d7b3.js (1.1MB)
+_expo/static/js/web/events-cc9c118131665bbfc9b81ebabf6a341e.js (311B)
+_expo/static/js/web/groups-47552636f6b3c6241f91a1c2ec2e4af4.js (12KB)
+_expo/static/js/web/groups-9f99b3db4b5d89bd78356ac7cb970ae9.js (297B)
+_expo/static/js/web/help-086e5a3c583abc106e0eb6bd4551896c.js (1.6KB)
+_expo/static/js/web/help-a6924fa129fb63fc06db5225cc52b705.js (295B)
+_expo/static/js/web/index-280e467561eba87fd3bcdf66e92274c6.js (529B)
+_expo/static/js/web/index-bad26feb55cbf86329c595342d11d59a.js (414B)
+_expo/static/js/web/index-d6bbd62ce7cf77bb5bdd0a3634bf8991.js (414B)
+_expo/static/js/web/index-eb5d21894d2510a75ca3cc5c995f957c.js (473B)
+_expo/static/js/web/index-f62cb9071fce99f7c7bb97f021669605.js (430B)
+_expo/static/js/web/look-925e54078f900c2801b7660c324c91db.js (325B)
+_expo/static/js/web/me-214227d3c5da76cd3fd71809a925e895.js (293B)
+_expo/static/js/web/me-cc4569fb929c71846ea05634e6841a7d.js (3.1KB)
+_expo/static/js/web/messages-3441fdd8bc07566050cb39b082da5dec.js (236KB)
+_expo/static/js/web/mod-e12552ddfd66eab64f5d3b6f1648c694.js (14KB)
+_expo/static/js/web/nist-570605771c194af1aded7e09891cec21.js (21KB)
+_expo/static/js/web/photos-4a6434902971b9f1723a6f6b6a13c694.js (279B)
+_expo/static/js/web/search-cd7c0a41008232f7ed6266704496cc5f.js (5.7KB)
+_expo/static/js/web/share-a1a8de74bcf0e675fd6985d6581185b0.js (20KB)
+_expo/static/js/web/sign-in-99d1505ad465a3f5c8d9b52046a055ff.js (1.1KB)
+_expo/static/js/web/theme-60a7a29113e5056d576123d0a35ab90b.js (327B)
+_expo/static/js/web/timeline-efe55598d86d330ef0d226b2c26d617e.js (528B)
+
+› Files (3):
+favicon.ico (15KB)
+index.html (1.6KB)
+metadata.json (49B)
+
+Exported: dist-demo
+
+Running 58 tests using 1 worker
+
+  ✓   1 e2e-web/demo-calendar.spec.js:28:1 › DEMO-NAMES-5 CAL-19 a fresh visit's Gallery says "Today is Grandma Jo's birthday" and See birthdays opens the list (2.7s)
+  ✘   2 e2e-web/demo-calendar.spec.js:38:1 › DEMO-NAMES-5 CAL-19 DEMO-PHOTO-9 Birthdays lists Grandma Jo today, Grandpa Hollis in 9 days, Clara's birthday and Graham and Eliza's anniversary (18.2s)
+  ✓   3 e2e-web/demo-calendar.spec.js:48:1 › CAL-19 a returning visitor with a pre-calendar demo saved gets the dates too (2.6s)
+  ✓   4 e2e-web/demo-calendar.spec.js:57:1 › DEMO-NAMES-5 CAL-19 Grandma Jo's view: her only action on Birthdays is "Change my birthday" (4.2s)
+  ✓   5 e2e-web/demo-calendar.spec.js:79:1 › GUX-R1 at 390x844 the card's "Add my birthday" opens the form, and after month and day Save is fully on-screen above the tab bar (2.1s)
+  ✓   6 e2e-web/demo-calendar.spec.js:96:1 › GUX-R2 after Save, "Saved. Your family will see December 8." is on-screen at the top of Birthdays (2.6s)
+  ✓   7 e2e-web/demo-calendar.spec.js:108:1 › GUX-R3 Gallery → See birthdays → the back button reads "Gallery" and goes back to Gallery (2.4s)
+  ✓   8 e2e-web/demo-panel.spec.js:7:3 › TD-UX-R1 at 1280 x 800 the story panel's first and last lines can be seen (549ms)
+  ✓   9 e2e-web/demo-panel.spec.js:7:3 › TD-UX-R1 at 1280 x 720 the story panel's first and last lines can be seen (546ms)
+  ✘  10 e2e-web/demo-safari.spec.js:54:1 › DEMO-NAMES-5 DEMO-SAFARI-1 phone 390 px, Safari quota: Demo details, See it as Grandma Jo greets Jo; back to Graham works (15.1s)
+  ✘  11 e2e-web/demo-safari.spec.js:67:1 › DEMO-NAMES-5 DEMO-SAFARI-2 laptop 1280 px, Safari quota: Grandma Jo from the story panel, then back to Graham (16.6s)
+  ✓  12 e2e-web/demo-safari.spec.js:78:1 › DEMO-SAFARI-3 phone, Safari quota: Chase's new post to Dad's side survives a reload, and Grandma Jo sees it (6.3s)
+  ✓  13 e2e-web/demo-safari.spec.js:98:1 › DEMO-SAFARI-4 (no cap) after the demo loads, no localStorage key holds more than 200,000 characters (1.6s)
+  -  14 e2e-web/demo-screens.spec.js:18:1 › portfolio screenshots from the demo
+  -  15 e2e-web/demo-showcase.spec.js:33:5 › demo showcase phone light
+  -  16 e2e-web/demo-showcase.spec.js:33:5 › demo showcase phone dark
+  -  17 e2e-web/demo-showcase.spec.js:33:5 › demo showcase laptop light
+  -  18 e2e-web/demo-showcase.spec.js:33:5 › demo showcase laptop dark
+  ✓  19 e2e-web/demo.spec.js:55:1 › DEMO-1/2/3 opens straight into the sample family: no sign-in, pictures, a demo bar (1.6s)
+  ✘  20 e2e-web/demo.spec.js:67:1 › DEMO-NAMES-5 DEMO-10 RD-17 Grandma Jo's view hides the Mom's-side posts; the parent's view shows them again (18.4s)
+  ✘  21 e2e-web/demo.spec.js:88:1 › DEMO-NAMES-5 DEMO-PHOTO-11 Grandma Jo's view: 18 photos in 6 posts, never Mom's-side post 3; the way back reads Back to Graham's view (18.1s)
+  ✓  22 e2e-web/demo.spec.js:113:1 › RR-14 add a photo, reload keeps it, Start over brings back the sample family (6.3s)
+  ✘  23 e2e-web/demo.spec.js:133:1 › FONT-5 the demo's heading and body words are Atkinson Hyperlegible Next, and the font really loaded (2.4s)
+  ✓  24 e2e-web/demo.spec.js:154:1 › DEMO-6 / NF-1 laptop shows the story panel beside the app; an unknown link shows plain words (2.5s)
+  ✓  25 e2e-web/demo.spec.js:167:1 › HARD-7 storage blocked (private window, strict cookie settings): the demo still opens with the sample family (1.5s)
+  ✘  26 e2e-web/demo.spec.js:183:1 › DEMO-BAR-LAPTOP-1 at 1280 px: no demo bar; Grandma Jo and Reset work from the story panel (16.5s)
+  ✓  27 e2e-web/demo.spec.js:205:3 › DEMO-BAR at 390 px: collapsed and slim, pushes the app down, Esc closes, Hearth's font and no accent badge (1.7s)
+  ✓  28 e2e-web/demo.spec.js:242:1 › DEMO-BAR no sideways scroll down to 320 px, back link still there (1.5s)
+  ✓  29 e2e-web/demo.spec.js:250:1 › DEMO-BAR Reset asks first: Keep changes nothing; Reset restores and says so once (3.5s)
+  ✓  30 e2e-web/demo.spec.js:274:1 › RD-102 RD-117 FRUIT-11 Paper by default; Chase picks each of the nine fruits, the last survives a reload; Grandma Jo stays Paper (18.5s)
+  ✓  31 e2e-web/demo.spec.js:363:1 › RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma Jo gets three tabs (5.2s)
+  ✘  32 e2e-web/demo.spec.js:404:1 › RD-18 RD-19 RD-20 RD-21 New for you and the grid at 360 px; a tap walks the new photos and Done comes back (16.6s)
+  ✘  33 e2e-web/demo.spec.js:436:1 › DEMO-NAMES-5 UX-R12 DEMO-PHOTO-10 the demo greets the parent as Graham; "Chase" and "Kai" appear nowhere (15.2s)
+  ✘  34 e2e-web/demo.spec.js:456:1 › DEMO-NAMES-5 DEMO-PHOTO-12 a fresh visit's New for you shows Eliza's balance bike post first, with its 3 photos (16.6s)
+  ✓  35 e2e-web/demo.spec.js:474:3 › RD-44 UX-R13 months mosaic at a 360 px phone: one wide photo per month, then rounded squares that fill each row, inset 16 (2.5s)
+  ✓  36 e2e-web/demo.spec.js:474:3 › RD-44 UX-R13 months mosaic at a 390 px phone: one wide photo per month, then rounded squares that fill each row, inset 16 (2.3s)
+  ✓  37 e2e-web/demo.spec.js:527:1 › RD-47 a "Search photos" field under the greeting opens Search; By date and the view switch are gone (2.5s)
+  ✓  38 e2e-web/demo.spec.js:552:1 › DEMO-NAMES-5 UX-R1 focusing the walk's comment field hides the tab bar and keeps the field uncovered when the keyboard opens (2.0s)
+  ✘  39 e2e-web/demo.spec.js:577:1 › DEMO-FRESH-1 a browser that saved an older demo family sees the current one on its next visit (16.6s)
+  ✘  40 e2e-web/demo.spec.js:593:1 › DEMO-NAMES-5 DEMO-PHOTO-13 a browser that saved the Nov 16 demo family gets the new 19 photos and Graham, without Start over (16.7s)
+  ✓  41 e2e-web/demo.spec.js:613:1 › R18 the current month title sticks under the pinned search field while Gallery scrolls (2.0s)
+  ✓  42 e2e-web/demo.spec.js:634:1 › RD-83 greeting, search bar and month title stay one pinned block after scrolling down and back at 393 px (2.4s)
+  ✓  43 e2e-web/demo.spec.js:675:1 › R23 Gallery, Share, Feed and More each have exactly one h1 (3.7s)
+  ✓  44 e2e-web/demo.spec.js:693:1 › UX-R27 every "can see this." line on Feed is one line at 390 px (2.5s)
+  ✘  45 e2e-web/demo.spec.js:726:1 › RD-80 RD-76 RD-77 Chase has icon-only tabs; Grandma Jo has words under the tabs and bigger text; back to Chase restores Off (1.5m)
+  ✘  46 e2e-web/demo.spec.js:757:1 › RD-80 RD-78 each person's Easy view pick is kept separately: Chase turns it On, Jo turns hers Off, Chase's stays On (1.5m)
+  ✓  47 e2e-web/demo.spec.js:786:1 › RD-92 RD-94 Paper, photo shadows and the reaction pop in the demo, light and dark, with reduced motion (7.6s)
+  ✓  48 e2e-web/demo.spec.js:894:1 › RD-117 RD-116 Avocado (Hass) light and dark; a picked ❤️ is a 2 px accent outline with an accent count, no fill, in every theme (16.4s)
+  ✓  49 e2e-web/demo.spec.js:994:1 › RD-108 RD-109 Chase gets the floating glass tab bar and Gallery clears it; Grandma Jo keeps the fixed bar (3.5s)
+  ✓  50 e2e-web/demo.spec.js:1030:1 › DEMO-EASY-1 on a laptop, Grandma Jo's Easy view leaves the story panel the same size (2.5s)
+  ✓  51 e2e-web/demo.spec.js:1045:1 › SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to ...", Feed says "Shared with ..."; Jo sees names only (5.8s)
+  ✓  52 e2e-web/demo.spec.js:1092:3 › GUX-R1 360 px: every face-tile name stays inside its own tile; 2 across; full names (2.6s)
+  ✓  53 e2e-web/demo.spec.js:1092:3 › GUX-R1 390 px: every face-tile name stays inside its own tile; 2 across; full names (2.6s)
+  ✓  54 e2e-web/demo.spec.js:1149:1 › RD-110 the glass bar shrinks on scroll down and comes back on scroll up or a tap; Grandma Jo's bar never shrinks (4.3s)
+  ✓  55 e2e-web/demo.spec.js:1189:1 › RD-110-R2 scrolling the laptop's story panel never shrinks the bar, and a sideways strip never brings it back (2.0s)
+  ✓  56 e2e-web/demo.spec.js:1218:1 › RD-110-R3 the bar shrunk on Share comes back whole on Feed after sending (4.5s)
+  ✓  57 e2e-web/demo.spec.js:1237:1 › SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded To:, no "Pick lots of photos"; Chase "Up to 100"; 3 photos show "1 of 3" (5.7s)
+  ✓  58 e2e-web/demo.spec.js:1334:1 › DARK-ELEV-6 at 390 px dark: no visible element on the first screen has a drop shadow (DemoBar inset divider allowed) (1.8s)
+
+
+  1) e2e-web/demo-calendar.spec.js:38:1 › DEMO-NAMES-5 CAL-19 DEMO-PHOTO-9 Birthdays lists Grandma Jo today, Grandpa Hollis in 9 days, Clara's birthday and Graham and Eliza's anniversary 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText(/Grandpa Hollis/).visible().first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText(/Grandpa Hollis/).visible().first() with timeout 15000ms
+      - waiting for getByText(/Grandpa Hollis/).visible().first()
+
+
+      42 |   await expect(page.getByText('Only your family can see these.').filter({ visible: true })).toBeVisible();
+      43 |   for (const t of [/Grandma Jo/, /Grandpa Hollis/, /Clara[’']s birthday/, /Graham and Eliza[’']s anniversary/, /^Today$/, /^In 9 days$/]) {
+    > 44 |     await expect(page.getByText(t).filter({ visible: true }).first()).toBeVisible();
+         |                                                                       ^
+      45 |   }
+      46 | });
+      47 |
+        at /home/user/Hearth/app/e2e-web/demo-calendar.spec.js:44:71
+
+    Error Context: test-results/e2e-demo-artifacts/demo-calendar-DEMO-NAMES-5-d7716-ham-and-Eliza-s-anniversary/error-context.md
+
+  2) e2e-web/demo-safari.spec.js:54:1 › DEMO-NAMES-5 DEMO-SAFARI-1 phone 390 px, Safari quota: Demo details, See it as Grandma Jo greets Jo; back to Graham works 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: /, Graham$/ })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: /, Graham$/ }) with timeout 15000ms
+      - waiting for getByRole('heading', { name: /, Graham$/ })
+
+
+      56 |   await page.goto('/');
+      57 |   // A fresh visitor taps as soon as the app shows, before the sample photos finish drawing.
+    > 58 |   await expect(greeting(page, 'Graham')).toBeVisible();
+         |                                          ^
+      59 |   await details(page);
+      60 |   await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+      61 |   await expect(greeting(page, 'Grandma Jo')).toBeVisible();
+        at /home/user/Hearth/app/e2e-web/demo-safari.spec.js:58:42
+
+    Error Context: test-results/e2e-demo-artifacts/demo-safari-DEMO-NAMES-5-D-1879c-ets-Jo-back-to-Graham-works/error-context.md
+
+  3) e2e-web/demo-safari.spec.js:67:1 › DEMO-NAMES-5 DEMO-SAFARI-2 laptop 1280 px, Safari quota: Grandma Jo from the story panel, then back to Graham 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: /, Graham$/ })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: /, Graham$/ }) with timeout 15000ms
+      - waiting for getByRole('heading', { name: /, Graham$/ })
+
+
+      69 |   await page.goto('/');
+      70 |   await galleryLoaded(page);
+    > 71 |   await expect(greeting(page, 'Graham')).toBeVisible();
+         |                                          ^
+      72 |   await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+      73 |   await expect(greeting(page, 'Grandma Jo')).toBeVisible();
+      74 |   await page.getByRole('button', { name: "Back to Graham's view, the parent" }).click();
+        at /home/user/Hearth/app/e2e-web/demo-safari.spec.js:71:42
+
+    Error Context: test-results/e2e-demo-artifacts/demo-safari-DEMO-NAMES-5-D-fbfd3-y-panel-then-back-to-Graham/error-context.md
+
+  4) e2e-web/demo.spec.js:67:1 › DEMO-NAMES-5 DEMO-10 RD-17 Grandma Jo's view hides the Mom's-side posts; the parent's view shows them again 
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: getByText(/Aunt Libby taught the kids to make pancakes/).first()
+    Expected: attached
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" getByText(/Aunt Libby taught the kids to make pancakes/).first() with timeout 15000ms
+      - waiting for getByText(/Aunt Libby taught the kids to make pancakes/).first()
+
+
+      74 |   await onFeed(page);
+      75 |   // Updated Nov 24 (DEMO-PHOTO-8): Dad's side shows (the pancakes), Mom's side (one orchard photo) does not.
+    > 76 |   await expect(page.getByText(/Aunt Libby taught the kids to make pancakes/).first()).toBeAttached();
+         |                                                                                       ^
+      77 |   await expect.poll(async () => (await feedWords(page)).length).toBe(6);
+      78 |   await details(page);
+      79 |   await page.getByRole('button', { name: "Back to Graham's view, the parent" }).click();
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:76:87
+
+    Error Context: test-results/e2e-demo-artifacts/demo-DEMO-NAMES-5-DEMO-10--de29b-ent-s-view-shows-them-again/error-context.md
+
+  5) e2e-web/demo.spec.js:88:1 › DEMO-NAMES-5 DEMO-PHOTO-11 Grandma Jo's view: 18 photos in 6 posts, never Mom's-side post 3; the way back reads Back to Graham's view 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('button', { name: 'Back to Graham\'s view, the parent' })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('button', { name: 'Back to Graham\'s view, the parent' }) with timeout 15000ms
+      - waiting for getByRole('button', { name: 'Back to Graham\'s view, the parent' })
+
+
+       97 |   await details(page);
+       98 |   await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
+    >  99 |   await expect(page.getByRole('button', { name: "Back to Graham's view, the parent" })).toBeVisible();
+          |                                                                                         ^
+      100 |   await expect(page.getByText("Back to Graham's view", { exact: true })).toBeVisible();
+      101 |   await page.getByRole('tab', { name: /^Gallery/ }).click();
+      102 |   await expect.poll(() => galleryTiles(page).count()).toBe(18);
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:99:89
+
+    Error Context: test-results/e2e-demo-artifacts/demo-DEMO-NAMES-5-DEMO-PHO-31886-reads-Back-to-Graham-s-view/error-context.md
+
+  6) e2e-web/demo.spec.js:133:1 › FONT-5 the demo's heading and body words are Atkinson Hyperlegible Next, and the font really loaded 
+
+    Error: expect(received).toMatch(expected)
+
+    Expected pattern: /^"?AtkinsonHyperlegibleNext_400Regular/
+    Received string:  "no caption"
+
+      147 |   });
+      148 |   expect(look.heading).toMatch(/^"?AtkinsonHyperlegibleNext_600SemiBold/);
+    > 149 |   expect(look.body).toMatch(/^"?AtkinsonHyperlegibleNext_400Regular/);
+          |                     ^
+      150 |   expect(look.loaded).toEqual([true, true]);
+      151 |   expect(errors).toEqual([]);
+      152 | });
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:149:21
+
+    Error Context: test-results/e2e-demo-artifacts/demo-FONT-5-the-demo-s-hea-7d2bf--and-the-font-really-loaded/error-context.md
+
+  7) e2e-web/demo.spec.js:183:1 › DEMO-BAR-LAPTOP-1 at 1280 px: no demo bar; Grandma Jo and Reset work from the story panel 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: /, Graham$/ })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: /, Graham$/ }) with timeout 15000ms
+      - waiting for getByRole('heading', { name: /, Graham$/ })
+
+
+      189 |   await expect(page.getByRole('region', { name: 'Demo' })).toHaveCount(0);
+      190 |   await expect(page.getByRole('button', { name: 'Demo details' })).toHaveCount(0);
+    > 191 |   await expect(page.getByRole('heading', { name: /, Graham$/ })).toBeVisible();
+          |                                                                  ^
+      192 |   await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+      193 |   await expect(page.getByRole('heading', { name: /, Grandma Jo$/ })).toBeVisible();
+      194 |   await page.getByRole('button', { name: "Back to Graham's view, the parent" }).click();
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:191:66
+
+    Error Context: test-results/e2e-demo-artifacts/demo-DEMO-BAR-LAPTOP-1-at--a25b2-t-work-from-the-story-panel/error-context.md
+
+  8) e2e-web/demo.spec.js:404:1 › RD-18 RD-19 RD-20 RD-21 New for you and the grid at 360 px; a tap walks the new photos and Done comes back 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText(/^From Eliza (today|since \S+)$/)
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText(/^From Eliza (today|since \S+)$/) with timeout 15000ms
+      - waiting for getByText(/^From Eliza (today|since \S+)$/)
+
+
+      410 |   await expect(page.getByText('3 new', { exact: true })).toBeVisible();
+      411 |   await expect(page.getByText('Tap a photo to start', { exact: true })).toHaveCount(0); // DEC-61
+    > 412 |   await expect(page.getByText(/^From Eliza (today|since \S+)$/)).toBeVisible();
+          |                                                                  ^
+      413 |   await expect(page.getByRole('button', { name: /^See all(?! the photos)/ })).toBeVisible();
+      414 |   await expect(page.getByText(/^(January|February|March|April|May|June|July|August|September|October|November|December) \d{4}$/).first()).toBeVisible();
+      415 |   await expect(page.getByRole('button', { name: /^Open photo from / }).first()).toBeAttached();
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:412:66
+
+    Error Context: test-results/e2e-demo-artifacts/demo-RD-18-RD-19-RD-20-RD--63829--photos-and-Done-comes-back/error-context.md
+
+  9) e2e-web/demo.spec.js:436:1 › DEMO-NAMES-5 UX-R12 DEMO-PHOTO-10 the demo greets the parent as Graham; "Chase" and "Kai" appear nowhere 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: /^Good (morning|afternoon|evening), Graham$/ })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: /^Good (morning|afternoon|evening), Graham$/ }) with timeout 15000ms
+      - waiting for getByRole('heading', { name: /^Good (morning|afternoon|evening), Graham$/ })
+
+
+      436 | test('DEMO-NAMES-5 UX-R12 DEMO-PHOTO-10 the demo greets the parent as Graham; "Chase" and "Kai" appear nowhere', async ({ page }) => {
+      437 |   await page.goto('/');
+    > 438 |   await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Graham$/ })).toBeVisible();
+          |                                                                                                   ^
+      439 |   await galleryLoaded(page);
+      440 |   expect(await saysChase(page)).toEqual([]);
+      441 |   await details(page);
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:438:99
+
+    Error Context: test-results/e2e-demo-artifacts/demo-DEMO-NAMES-5-UX-R12-D-99882-hase-and-Kai-appear-nowhere/error-context.md
+
+  10) e2e-web/demo.spec.js:456:1 › DEMO-NAMES-5 DEMO-PHOTO-12 a fresh visit's New for you shows Eliza's balance bike post first, with its 3 photos 
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator: locator('[data-testid^="new-tile-"]').first()
+    Expected pattern: /^3 new\. New photo from Eliza, /
+    Received string:  "3 new. New photo from Alex, Sun, Nov 22. Start the new photos"
+    Timeout: 15000ms
+
+    Call log:
+      - Expect "toHaveAttribute" locator('[data-testid^="new-tile-"]').first() with timeout 15000ms
+      - waiting for locator('[data-testid^="new-tile-"]').first()
+        34 × locator resolved to <button tabindex="0" role="button" type="button" class="css-g5y9jx r-1loqt21 r-1otgn73" data-testid="new-tile-756c42a8-fac1-4b72-a3b4-8e8b9abe00d8" aria-label="3 new. New photo from Alex, Sun, Nov 22. Start the new photos">…</button>
+           - unexpected value "3 new. New photo from Alex, Sun, Nov 22. Start the new photos"
+
+
+      460 |   const tiles = page.locator('[data-testid^="new-tile-"]');
+      461 |   await expect.poll(() => tiles.count()).toBe(3);
+    > 462 |   await expect(tiles.first()).toHaveAttribute('aria-label', /^3 new\. New photo from Eliza, /);
+          |                               ^
+      463 |   for (const label of await tiles.evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')))) expect(label).toMatch(/New photo from Eliza, /);
+      464 |   await tiles.first().click();
+      465 |   await expect(page.getByText('New photos: 1 of 1', { exact: true })).toBeVisible();
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:462:31
+
+    Error Context: test-results/e2e-demo-artifacts/demo-DEMO-NAMES-5-DEMO-PHO-04b06-ost-first-with-its-3-photos/error-context.md
+
+  11) e2e-web/demo.spec.js:577:1 › DEMO-FRESH-1 a browser that saved an older demo family sees the current one on its next visit 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: /^Good (morning|afternoon|evening), Graham$/ })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: /^Good (morning|afternoon|evening), Graham$/ }) with timeout 15000ms
+      - waiting for getByRole('heading', { name: /^Good (morning|afternoon|evening), Graham$/ })
+
+
+      585 |   });
+      586 |   await page.reload();
+    > 587 |   await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Graham$/ })).toBeVisible();
+          |                                                                                                   ^
+      588 |   await expect(page.getByText(/\bKai\b/)).toHaveCount(0);
+      589 | });
+      590 |
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:587:99
+
+    Error Context: test-results/e2e-demo-artifacts/demo-DEMO-FRESH-1-a-browse-4099e-rrent-one-on-its-next-visit/error-context.md
+
+  12) e2e-web/demo.spec.js:593:1 › DEMO-NAMES-5 DEMO-PHOTO-13 a browser that saved the Nov 16 demo family gets the new 19 photos and Graham, without Start over 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: /^Good (morning|afternoon|evening), Graham$/ })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: /^Good (morning|afternoon|evening), Graham$/ }) with timeout 15000ms
+      - waiting for getByRole('heading', { name: /^Good (morning|afternoon|evening), Graham$/ })
+
+
+      600 |   });
+      601 |   await page.reload();
+    > 602 |   await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Graham$/ })).toBeVisible();
+          |                                                                                                   ^
+      603 |   await galleryLoaded(page);
+      604 |   await expect.poll(() => galleryTiles(page).count()).toBe(19);
+      605 |   expect(await page.evaluate(() => localStorage.getItem('hearth.demoSeed'))).not.toBe('u4ie58');
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:602:99
+
+    Error Context: test-results/e2e-demo-artifacts/demo-DEMO-NAMES-5-DEMO-PHO-e20ec-d-Graham-without-Start-over/error-context.md
+
+  13) e2e-web/demo.spec.js:726:1 › RD-80 RD-76 RD-77 Chase has icon-only tabs; Grandma Jo has words under the tabs and bigger text; back to Chase restores Off 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.evaluate: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByText('Aunt Libby taught the kids to make pancakes', { exact: true }).visible().first()
+
+
+      710 | const tabWordsShown = (page) => page.getByRole('tab').evaluateAll((els) => els.map((e) => (e.innerText || '').replace(/[^A-Za-z ]/g, '').trim()));
+      711 | const captionSize = (page) => page.getByText('Aunt Libby taught the kids to make pancakes', { exact: true }).filter({ visible: true }).first()
+    > 712 |   .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+          |    ^
+      713 | const asJo = async (page) => {
+      714 |   await details(page);
+      715 |   await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+        at captionSize (/home/user/Hearth/app/e2e-web/demo.spec.js:712:4)
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:738:16
+
+    Error Context: test-results/e2e-demo-artifacts/demo-RD-80-RD-76-RD-77-Cha-e75f6--back-to-Chase-restores-Off/error-context.md
+
+  14) e2e-web/demo.spec.js:757:1 › RD-80 RD-78 each person's Easy view pick is kept separately: Chase turns it On, Jo turns hers Off, Chase's stays On 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.click: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Back to Graham\'s view, the parent' })
+
+
+      719 | const asChase = async (page) => {
+      720 |   await details(page);
+    > 721 |   await page.getByRole('button', { name: "Back to Graham's view, the parent" }).click();
+          |                                                                                 ^
+      722 |   await details(page);
+      723 |   await expect(page.getByText(/You're Graham, a parent/)).toBeVisible();
+      724 | };
+        at asChase (/home/user/Hearth/app/e2e-web/demo.spec.js:721:81)
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:775:3
+
+    Error Context: test-results/e2e-demo-artifacts/demo-RD-80-RD-78-each-pers-7d221-s-hers-Off-Chase-s-stays-On/error-context.md
+
+  14 failed
+    e2e-web/demo-calendar.spec.js:38:1 › DEMO-NAMES-5 CAL-19 DEMO-PHOTO-9 Birthdays lists Grandma Jo today, Grandpa Hollis in 9 days, Clara's birthday and Graham and Eliza's anniversary 
+    e2e-web/demo-safari.spec.js:54:1 › DEMO-NAMES-5 DEMO-SAFARI-1 phone 390 px, Safari quota: Demo details, See it as Grandma Jo greets Jo; back to Graham works 
+    e2e-web/demo-safari.spec.js:67:1 › DEMO-NAMES-5 DEMO-SAFARI-2 laptop 1280 px, Safari quota: Grandma Jo from the story panel, then back to Graham 
+    e2e-web/demo.spec.js:67:1 › DEMO-NAMES-5 DEMO-10 RD-17 Grandma Jo's view hides the Mom's-side posts; the parent's view shows them again 
+    e2e-web/demo.spec.js:88:1 › DEMO-NAMES-5 DEMO-PHOTO-11 Grandma Jo's view: 18 photos in 6 posts, never Mom's-side post 3; the way back reads Back to Graham's view 
+    e2e-web/demo.spec.js:133:1 › FONT-5 the demo's heading and body words are Atkinson Hyperlegible Next, and the font really loaded 
+    e2e-web/demo.spec.js:183:1 › DEMO-BAR-LAPTOP-1 at 1280 px: no demo bar; Grandma Jo and Reset work from the story panel 
+    e2e-web/demo.spec.js:404:1 › RD-18 RD-19 RD-20 RD-21 New for you and the grid at 360 px; a tap walks the new photos and Done comes back 
+    e2e-web/demo.spec.js:436:1 › DEMO-NAMES-5 UX-R12 DEMO-PHOTO-10 the demo greets the parent as Graham; "Chase" and "Kai" appear nowhere 
+    e2e-web/demo.spec.js:456:1 › DEMO-NAMES-5 DEMO-PHOTO-12 a fresh visit's New for you shows Eliza's balance bike post first, with its 3 photos 
+    e2e-web/demo.spec.js:577:1 › DEMO-FRESH-1 a browser that saved an older demo family sees the current one on its next visit 
+    e2e-web/demo.spec.js:593:1 › DEMO-NAMES-5 DEMO-PHOTO-13 a browser that saved the Nov 16 demo family gets the new 19 photos and Graham, without Start over 
+    e2e-web/demo.spec.js:726:1 › RD-80 RD-76 RD-77 Chase has icon-only tabs; Grandma Jo has words under the tabs and bigger text; back to Chase restores Off 
+    e2e-web/demo.spec.js:757:1 › RD-80 RD-78 each person's Easy view pick is kept separately: Chase turns it On, Jo turns hers Off, Chase's stays On 
+  5 skipped
+  39 passed (8.7m)

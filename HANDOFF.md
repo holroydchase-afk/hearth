@@ -6,13 +6,13 @@ milestone: HRT-M1
 now: tech-debt review Nov 19 (docs/reviews/2026-11-19-tech-debt/): fixing the P0s and P1s in small PRs (TRACKER R62). Main has everything through #124 (demo bar), live
 next: R62 fixes in order (offline family load, demo panel, privacy, UX, perf, CI); then R51 audience-leak eval, R53 operations. Share redo and PR 125 continue in their own threads
 waiting_on_chase:
-  - New Supabase access token in the Hearth cloud environment (SUPABASE_ACCESS_TOKEN); Chase already said "deploy" (Nov 19), so the next session deploys 0026+0027+0028 and Confirm email
+  - Supabase dashboard: check Authentication > Providers > Email has "Confirm email" ON (TS-SEC-R1). The new token gets 403 on the auth-config API, so deploy.sh couldn't set or read it
 blockers:
-  - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
+  - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
 ## Nov 25: portfolio header on the demo (intake #183, R95; branch claude/project-thread-6ew09x, PR)
-- **Done, test-first** (qa-tdd red 1624575, r112): `app/scripts/add-site-bar.sh` (called by `build-demo.sh`) puts `<script src="/assets/demo-bar.js" data-page="white" defer>` before `</body>` on every demo page; the bar file lives on the portfolio site. DemoFrame row is #FFFFFF in light (dark unchanged); `_layout.tsx` sets body `box-sizing: border-box` on web so the bar's 52px padding stays inside 100% height (SITEBAR-4 at 1280x800 and 390x844).
+- **Done, test-first** (qa-tdd red 1624575, r114): `app/scripts/add-site-bar.sh` (called by `build-demo.sh`) puts `<script src="/assets/demo-bar.js" data-page="white" defer>` before `</body>` on every demo page; the bar file lives on the portfolio site. DemoFrame row is #FFFFFF in light (dark unchanged); `_layout.tsx` sets body `box-sizing: border-box` on web so the bar's 52px padding stays inside 100% height (SITEBAR-4 at 1280x800 and 390x844).
 - **Next:** Chase's merge (live demo); after publish, check the header on chaseholroyd.com/hearth/ at 1280 and 390.
 
 
@@ -89,6 +89,7 @@ blockers:
 - **Next exact step:** qa-tdd fixes UX-R1 and R18 data, green 3x; privacy-security (metadata), grandparent-ux (captions); retake screens.
 - **T37 (after #173, Nov 24):** demo-site publish run 45430430863 failed its pre-publish `site.spec.js` on old demo text; qa-tdd updated it (Kevin, search "orchard", New for you 1 of 1 then Done), `npm run e2e:site` red 3 then green 14 x3 (r71). PR #179 merged, live 3077ff5 checked fresh+returning 390/1280, Jo sees Dad's side only.
 - **T40 (live check, Nov 24):** laptop "Try this" step 3 still said search "lake" (finds nothing now); now "orchard", with a guard test that the hinted word finds a demo post. qa-tdd red then green 3x (r72, r78).
+- **T45 demo family renamed (Chase, Nov 24):** demo people are Graham (dad, the visitor), Eliza (mom), Grandma Jo (kept), Nana Eloise, Grandpa Hollis, Aunt Libby, kid Clara; family "Clara and Leo". Titles grandpa/grandma/nana/pawpaw/granny/gram/gran, never "granddaddy". Demo-only via DEMO_NAMES (fixture names unchanged). qa-tdd red (r110), engineer green.
 - **Portfolio / public presence:** the public demo shows free Pexels stock photos and a made-up parent "Kevin" once this merges; no photo of Chase's family remains on main.
 
 ## Nov 24: life calendar review fixes built (PRIV-R1..R3, R5; GUX-R1..R11; branch claude/project-thread-ov6z2y)

@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-25T04:45:00-05:00",
- "label": "Intake #183 site bar (SITEBAR-1..4): tests written first (red)",
- "passed": 29,
- "failed": 13,
+ "at": "2026-11-24T23:59:58-05:00",
+ "label": "T45 DEMO-NAMES-1..6 demo renames: failing tests first (red)",
+ "passed": 109,
+ "failed": 30,
  "results": {},
- "note": "1 run each, before any fix. site_bar_test.sh 5 passed, 7 failed (SITEBAR-1: scripts/add-site-bar.sh missing; SITEBAR-2: build-demo.sh does not call it). jest siteBarFrame.test.tsx 3 red (light demo-frame row is c.bg, e.g. Paper #F7F7F4, not #FFFFFF), dark and phone-column guards pass; darkElevation.test.tsx DARK-ELEV-4 (light) retargeted to #FFFFFF, red. e2e:demo demo-panel.spec.js SITEBAR-4 2 red under a simulated 52 px bar (fixed header + body padding-top 52; demo-bar.js lives on the portfolio site): at 1280x800 the phone column ends at 828 (> 800), at 390x844 the Feed tab ends at 876 (> 844), so the bar pushes the bottom 52 px off screen; TD-UX-R1 x2 still pass. Not run: e2e:site, real browsers. e2e/results/site-bar-red-2026-11-25.txt"
+ "note": "Red on purpose, 1 run each, no product change: npx jest src/demo: 14 failed, 58 passed (DEMO_NAMES still Kevin/Alex with no ruth/earl; post 4 says Aunt Bea; dates Mia, Kevin and Alex; DemoBar says You're Kevin / Kevin's mom / Back to Kevin's view; seed version still napqej). DEMO-NAMES-4 (valid emails) and DEMO-NAMES-6 (no Granddaddy) pass now as guards. npm run e2e:demo: 14 failed, 39 passed, 5 skipped, every failure waiting for Graham, Eliza, Grandpa Hollis, Aunt Libby or Back to Graham's view. npm run e2e:site: 2 failed, 12 passed (DEMO-5 Start over and DEMO-NEW-5 wait for Graham / From Eliza). Green waits on the engineer's seed.ts and DemoBar.tsx change. e2e/results/2026-11-24-T45-*-red.txt"
 }
