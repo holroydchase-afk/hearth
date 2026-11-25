@@ -153,6 +153,9 @@ export async function seedDemo(be: FakeBackend, load: (name: string) => Promise<
       be.state.comments[c.comment_id]!.created_at = iso(at + (k + 1) * 47 * 60e3);
     });
   }
+  // DEMO-KINDS-1 (Chase, Nov 25): Event, News and Saying are on in the web demo only; real builds and withFixture stay off.
+  be.state.featureFlags = { ...be.state.featureFlags, post_kinds: true };
+  be.state.spaceFeatures = { ...be.state.spaceFeatures, [`${F.space.id}:post_kinds`]: true };
   seedDemoDates(be);
   setDemoViewer(be, 'parent');
 }
@@ -177,7 +180,7 @@ export const DEMO_SEED_KEY = 'hearth.demoSeed';
 
 export function demoSeedVersion(src: { posts: DemoPost[]; names: Record<string, string> } = { posts: DEMO_POSTS, names: DEMO_NAMES }): string {
   // CAL-19: the dates are part of the sample family, so adding them moves the version and returning visitors get them.
-  const s = JSON.stringify([src.posts, src.names, DEMO_LAST_VISIT_DAYS, DEMO_DATES, DEMO_SPACE_NAME]);
+  const s = JSON.stringify([src.posts, src.names, DEMO_LAST_VISIT_DAYS, DEMO_DATES, DEMO_SPACE_NAME, 'post_kinds']);
   let h = 5381;
   for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
   return h.toString(36);
