@@ -59,7 +59,9 @@ export function ShareScreen() {
   const [kindWords, setKindWords] = useState<KindWords>({});
   const [kindTo, setKindTo] = useState(false);
   const [askThrow, setAskThrow] = useState(false); // GUX-SK-R11: "Throw away this card?" is showing
-  const draft = useRef<{ clientId: string; made: boolean } | null>(null);
+  // PRIV-SK-R1: the draft remembers what its createPost was sent with (kind, words, groups); a Send with anything
+  // different makes a new client id, so a changed pick or changed words never publish the old draft.
+  const draft = useRef<{ clientId: string; sentWith: string } | null>(null);
   const sending = useRef(false);
   // SHARE-PC-2: which picked photo is the big one.
   const [cur, setCur] = useState(0);
@@ -186,9 +188,8 @@ export function ShareScreen() {
   };
   const pickKind = (k: PostKind) => { setKind(k); setKindWords({}); setKindTo(false); setChosen([]); draft.current = null; };
   const typeKind = (label: string, text: string) => {
+    // Words changed after a draft was made: sendKind sees they differ from the draft and makes a new one (PRIV-SK-R1).
     setKindWords((o) => ({ ...o, [label]: text }));
-    // Words changed after a draft was made: the next Send makes a new draft, so the family never gets the old words.
-    if (draft.current?.made) draft.current = null;
   };
   const kindOk = !!kind && kindFilled(kind, kindWords);
   // GUX-SK-R2: every notice on a kind card shows at the top of the page, so the page scrolls there.
@@ -220,10 +221,11 @@ export function ShareScreen() {
     setBusy(true);
     setNotice(null);
     try {
-      draft.current ??= { clientId: uuid(), made: false };
+      // PRIV-SK-R1: same kind, words and groups reuse the client id (one post on a retry); anything changed is a new one.
+      const sentWith = JSON.stringify({ kind, details, groups: [...chosen].sort() });
+      if (draft.current?.sentWith !== sentWith) draft.current = { clientId: uuid(), sentWith };
       const d = draft.current;
       const id = await app.deps.api.createPost({ ...details, clientId: d.clientId, space: app.space!.space_id, circleIds: chosen, title: null, takenAt: null });
-      d.made = true;
       await app.deps.api.publishPost(id);
       await saveLastAudience(app.deps.kv, userId, chosen).catch(() => {});
       app.setShared(`Shared with ${toLine}.`);
