@@ -111,7 +111,7 @@ let n = 0;
 /** A picked photo as pickBulk hands it over: with EXIF, GPS and the camera's make (BETA-BULK-1). */
 const asset = (hour = 9): PickedAsset => ({
   uri: `file:///picked/ST_${++n}.jpg`, type: 'image', mimeType: 'image/jpeg', width: 4032, height: 3024,
-  exif: { DateTimeOriginal: `2024:07:04 ${String(hour).padStart(2, '0')}:00:00`, OffsetTimeOriginal: '-04:00', GPSLatitude: 35.2271, GPSLongitude: -80.8431, Make: 'Apple' },
+  exif: { DateTimeOriginal: `2024:07:04 ${String(hour).padStart(2, '0')}:00:00`, OffsetTimeOriginal: '-04:00', GPSLatitude: 0.5123, GPSLongitude: -0.4567, Make: 'Apple' },
 });
 const assets = (count: number) => Array.from({ length: count }, (_, i) => asset(8 + (i % 12)));
 const item = (i: number) => ({ uri: `file:///pick/${i}.jpg`, kind: 'photo' as const, width: 4032, height: 3024 });

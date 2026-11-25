@@ -1,6 +1,6 @@
 # Portfolio review, three seats (Nov 18, 2026)
 
-Chase asked for a blunt review of Hearth as a portfolio piece shown to established tech companies, from three seats: a recruiter, a staff product manager and an engineering manager. The full review with file and line citations is a Claude Doc: https://claude.ai/artifact/NrhDHPJuKetHTXkGs5HYpZ. This file keeps the findings and the backlog where agents can read them.
+Chase asked for a blunt review of Hearth as a portfolio piece shown to established tech companies, from three seats: a recruiter, a staff product manager and an engineering manager. The full review with file and line citations is kept outside the repo. This file keeps the findings and the backlog where agents can read them.
 
 **One line:** strong engineering discipline and honest privacy writing, but the front door was out of date.
 

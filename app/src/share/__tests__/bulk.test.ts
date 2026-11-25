@@ -8,7 +8,7 @@ import { BULK_PICK_LIMIT, PHOTOS_PER_POST, overLimitLine, planBatch, reviewSumma
 // The phone is in Eastern time (passed explicitly: Jest sandboxes process.env.TZ).
 const NY = { timeZone: 'America/New_York' };
 
-const GPS = { GPSLatitude: 35.2271, GPSLongitude: -80.8431 };
+const GPS = { GPSLatitude: 0.5123, GPSLongitude: -0.4567 };
 let n = 0;
 /** A picked iPhone photo with full EXIF: date, offset, GPS, maker. */
 function photo(date: string, offset: string | null = '-04:00', over: Partial<PickedAsset> = {}): PickedAsset {

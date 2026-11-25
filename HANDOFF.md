@@ -109,7 +109,7 @@ blockers:
 - **Portfolio / public presence:** the public demo's dark mode loses its drop shadows once this merges.
 
 ## Nov 23: nine fruit themes beside Paper (Chase, DEC-80, R76, FRUIT-1..12; PR #160, branch claude/project-thread-9r046o)
-- Done: Paper (default, unchanged) + Avocado (unchanged) + new Pomegranate + Blood orange, Kiwi, Fig, Dragon fruit, Watermelon, Candy-stripe beet, Red cabbage. Picker of 10, owner-only. Dark dangerText #FF6961 off Paper. Tokens regenerated. qa-tdd red (r61) then green 3x (r62). Source tool: https://claude.ai/artifact/SQ6gmnFB6bX7t6scr3ipSz
+- Done: Paper (default, unchanged) + Avocado (unchanged) + new Pomegranate + Blood orange, Kiwi, Fig, Dragon fruit, Watermelon, Candy-stripe beet, Red cabbage. Picker of 10, owner-only. Dark dangerText #FF6961 off Paper. Tokens regenerated. qa-tdd red (r61) then green 3x (r62). Source tool:
 - Chase Nov 23: "merge all in the right order on green" (after #144, #158). Next: live check fresh + returning; then GUX-R30..R33 (P2) as their own PR; FRUIT-12 on phones.
 - GUX-R30..R33 (Nov 23, same branch): swatch shows page, fill and accent (R30); note above the list, "Only this phone changes. Other people keep their own colors." (R32, QA-R1 resolved); first row "Paper (standard)" (R33); R31 Delete never colour-only is guarded (held already). Next: qa-tdd green 3x, then FRUIT-12 on phones.
 - **Portfolio / public presence:** the public demo's Theme picker offers the 10 themes once this merges.
@@ -142,7 +142,7 @@ blockers:
 - **Portfolio / public presence:** none.
 
 ## Nov 21: Atkinson Hyperlegible Next everywhere, again (Chase, DEC-78, R69; branch claude/project-thread-1ba5s6, PR)
-- **Chase:** "hyperlegible next. also ensure that is on the portfolio demo page" (after the live font tester https://claude.ai/artifact/7Dfseqn1BtTaPtFuCijPzX).
+- **Chase:** "hyperlegible next. also ensure that is on the portfolio demo page" (after the live font tester).
 - **Done:** qa-tdd red FONT-1..5 (flipped RD-2 tests), engineer built: package 0.4.1 bundled, `FONT`/`FONT_FILES` in theme.ts, `useFonts` in the root layout, every `fontWeight` replaced by the matching family, tokens.json regenerated; STUDIO-CORE, DESIGN-SYSTEM DS-12, DEC-78 and persona check updated.
 - **Next:** merge, live demo check fresh and returning, Expo preview republish, Chase's iPhone look at 360 px wrapping.
 - **Portfolio / public presence:** the public demo (chaseholroyd.com/hearth/) shows Atkinson Hyperlegible Next once this merges.
@@ -196,7 +196,7 @@ blockers:
 - **Next exact step:** after Chase replaces SUPABASE_ACCESS_TOKEN, a fresh session runs `deploy.sh` (comment-only functions/.env), smoke check, checks hosted `mailer_autoconfirm` is false (PATCH may 403: then Chase toggles Confirm email), and an email sign-in; then Chase's Twilio sign-up, "deploy" (0026+0027+0028); Claude sets up Verify service, custom text (SMS-PROVIDER request body), per-number rate limits, hosted phone confirmations; BETA-SMS-16 on an iPhone and an Android; Chase's word flips the switch. Then Chase's Twilio sign-up, "deploy" (0026+0027+0028), Verify service + custom text + Verify per-number rate limits, BETA-SMS-16 on an iPhone and an Android.
 
 ## Nov 19: Share is a postcard (Chase, DEC-73, R63, SHARE-PC-1..14; branch claude/project-thread-4ulu9i, PR)
-- **Chase:** "This all looks great to me. proceed with the build" (00:27 ET) on direction B of the Share tester (https://claude.ai/artifact/71YN9yYWMt1KYZsqfsXCT4); no autoselect of the audience; one "Add a note (optional)" replaces Title + What's happening (amends DEC-39). Spec `SPEC-REDESIGN.md` 1j, persona check `decisions/2026-11-19-share-postcard.md`.
+- **Chase:** "This all looks great to me. proceed with the build" (00:27 ET) on direction B of the Share tester; no autoselect of the audience; one "Add a note (optional)" replaces Title + What's happening (amends DEC-39). Spec `SPEC-REDESIGN.md` 1j, persona check `decisions/2026-11-19-share-postcard.md`.
 - **Done, test-first:** qa-tdd red (SHARE-PC-1..13), engineer build, grandparent-ux review (GUX-R1 P1 long group names spill out of tiles; R2..R4 P2 grey Add/note fills, picked mark), red tests then fixes (tiles go 2 across for long names, Easy view or big text). qa-tdd all suites 3x green (r50): jest 1537, typecheck, e2e:web 5, e2e:demo 28, test-all 15. Bulk review keeps its Title for now (QA-R3). Open: T24/QA-R1 env-gated screenshot specs stale on Gallery (pre-existing).
 - **Next exact step:** Chase says "merge N"; then SHARE-PC-14 on his iPhone (Expo preview republish on his word).
 ## Nov 19: web glass tab bar lookalike, Grandma Jo no longer enlarges the laptop page (Chase, DEC-72, RD-108, RD-109, DEMO-EASY-1, R61; branch claude/project-thread-ox4dz4, PR)
@@ -270,7 +270,7 @@ blockers:
 - **Portfolio / public presence:** the README's Status section changes when this merges.
 
 ## Nov 18: portfolio review from three seats; item 1, the front door is true (TRACKER R49..R53; branch claude/project-thread-9m9i56, PR)
-- **Done:** a blunt review as a recruiter, a staff PM and an engineering manager: `docs/reviews/2026-11-18-portfolio-review.md` (full version with citations: https://claude.ai/artifact/NrhDHPJuKetHTXkGs5HYpZ). 15 ranked items; the top five are TRACKER R49..R53.
+- **Done:** a blunt review as a recruiter, a staff PM and an engineering manager: `docs/reviews/2026-11-18-portfolio-review.md`. 15 ranked items; the top five are TRACKER R49..R53.
 - **Built (docs only):** README and case study now match the live demo. Totals rerun today: 1,291 app tests in 141 files, 1,199 database checks (`scripts/test-totals.sh`; jest and backend SQL each ran once, green). Three current screenshots in `docs/portfolio/screens/` (`iphone-gallery.jpg`, `iphone-feed-who-can-see.jpg`, `iphone-grandma-jo-feed.jpg`, from a local demo build of main; the old `iphone-0*.png` files stay because the portfolio site may link them). README: search listed as built, a Status table (proven, not proven yet, built but switched off, next), Lessons in "Start here". Case study: 65 decisions, "What went wrong", "What isn't proven yet". LESSONS: the Oct 29 real-names post mortem, written up from HANDOFF and TRACKER R26.
 - **Found on the way:** `app/e2e-web/demo-screens.spec.js` fails since the redesign (it waits for "Bridge walk on the trail" on the first screen), so the documented way to retake portfolio screenshots is broken; in R52. Local backend runs need a Postgres role for the shell user (`createuser -s root` in a cloud container).
 - **Not done:** no app, backend or workflow file changed. The demo guide's "the family here is made up" line (`app/src/demo/DemoFrame.tsx`) is review item 13, left for the redesign thread's files.
@@ -377,7 +377,7 @@ blockers:
 - **Portfolio / public presence:** the live demo changes when this merges: New for you first, new Try this steps, link previews on LinkedIn and texts.
 
 ## Nov 13: the public demo is checked before and after it goes live (TRACKER R45 step 1, DEMO-LIVE-1..4; branch claude/project-thread-s1r7xd, PR)
-- **Why:** Chase, Nov 13: "a stable, quality version demo on the site". Plan: https://claude.ai/artifact/KfZxVmpdEa8qRAh5BfMPne. Live audit that day: 8/8 site checks on chaseholroyd.com/hearth/, desktop and phone (light and dark) walk with 0 errors; gaps G1 (New for you never shows in the demo), G3 (no link preview), G4 (guide steps out of date) are steps 2 and 3.
+- **Why:** Chase, Nov 13: "a stable, quality version demo on the site". Live audit that day: 8/8 site checks on chaseholroyd.com/hearth/, desktop and phone (light and dark) walk with 0 errors; gaps G1 (New for you never shows in the demo), G3 (no link preview), G4 (guide steps out of date) are steps 2 and 3.
 - **Done, test-first:** `e2e/site-target.js` (DEMO-LIVE-1, jest `siteTarget.test.ts`): `SITE_URL=https://…` points the site checks at the live demo with no local server. `site.spec.js` adds DEMO-LIVE-2 (Search "lake" finds 1 photo), DEMO-LIVE-3 (All photos wall), DEMO-LIVE-4 (`version.txt` names the commit; `build-demo.sh` writes it from `GITHUB_SHA`, else `local`). DEMO-5's failed-request check only counts the demo's own files (ARCH-R3). `demo-site.yml`: the checks run on the build before upload; a `live-check` job waits until the live `version.txt` is this commit (ARCH-R1), runs once with `--max-failures=1` (ARCH-R2), and also runs daily at 11:17 UTC (ARCH-R4).
 - **If live-check is red:** the live demo needs a look; re-run demo-site by hand (Run workflow) on the last good commit.
 - **Portfolio / public presence:** no visible change to the demo in this step.
@@ -416,7 +416,7 @@ blockers:
 - **Next exact step:** after "lift GitHub hold", push Start a family first, then this branch on top as its own PR (it sits on R41's commits).
 
 ## Nov 6: Apple design guidelines fixes (HIG-1..12, DEC-54, TRACKER R39; branch claude/project-thread-bellss, PR)
-- **Why:** Chase asked for a full sweep against Apple's Human Interface Guidelines (doc https://claude.ai/artifact/3N1G5jF4ezeQ2Gtf2jFwZU), then "handle all the p1s". HIG is readable here through Apple's JSON feed (`developer.apple.com/tutorials/data/design/human-interface-guidelines/<page>.json`).
+- **Why:** Chase asked for a full sweep against Apple's Human Interface Guidelines, then "handle all the p1s". HIG is readable here through Apple's JSON feed (`developer.apple.com/tutorials/data/design/human-interface-guidelines/<page>.json`).
 - **Done:** notices asked after the first photo with a Hearth card (HIG-1, DS-15); zoom (HIG-2, BETA-SEE-4); tab and toolbar words capped at 1.5x with Apple's large pop-up label (HIG-3); Ember launch screen light and dark (HIG-4); iPad in every direction (HIG-5); Increase Contrast, Reduce Motion, VoiceOver sender, swipe-down sheets, scaling icons, haptics (HIG-7..12, DS-14). New dependency `expo-haptics` (version from `npx expo install`). Tests `app/src/screens/__tests__/hig.test.tsx`.
 - **Decided:** HIG-6 dropped; Chase kept emoji only (Nov 6 card, REACT-7).
 - **Nov 10 (GitHub hold, local only):** pinch on Android and the web (QA-R1, `pinchZoom()`), plus tests for swipe-down close (QA-R2), Allow sending the token (QA-R3) and a live Reduce Motion change (QA-R4). Saved as a git bundle and patches in `/mnt/project-files/drafts/hig-fixes-2026-11-10/`, not pushed.
@@ -430,21 +430,21 @@ blockers:
 - **Next exact step:** Chase says merge and deploy; deploy 0024 with the switch off; then the PRIV-R7 Help contact, then turn it on.
 
 ## Nov 6: demo first minute, raising 3s toward 5s (FIRSTMIN-1..3, TRACKER R40; branch claude/project-thread-eaq4hr, PR)
-- **Why:** Chase, Nov 6: bring the readiness doc's level-3 features to 5 before new dev (doc https://claude.ai/artifact/EBrvRki1RMkdHtApKSX48e, fix #5).
+- **Why:** Chase, Nov 6: bring the readiness doc's level-3 features to 5 before new dev (fix #5).
 - **Done:** `initialOf` gives two letters for two-word names (GJ, GE), one rule for the faces, Who sheet and post header; the phone-width demo shows 3 numbered steps; face letters cap at 1.3x (GUX-R1). Shots: `docs/reviews/2026-11-06-firstmin/`. Pretend sign-in cut (staff-pm).
 - **Checked on hosted (read only):** `HEARTH_KEYS_PENDING` is already gone; the outbox has 0 rows because only one person (Chase) has signed in, so TRACKER step 7's email check needs account B, which is step 9.
 - **Waiting on Chase:** merge this PR; sign in account B on the web build to start the 2-day demo. (The Start a family card: Chase picked build it, Nov 7.)
 - **Next exact step:** Chase merges; the demo rebuilds on merge.
 
 ## Nov 6: studio agents really run in cloud threads (AGENTRUN-1..6, TRACKER R38; branch claude/project-thread-7zjm6h, PR)
-- **Why:** Chase's recruiter-readiness review (Nov 6, doc https://claude.ai/artifact/EBrvRki1RMkdHtApKSX48e) found PRs #99-#103 all say "qa-tdd skipped: the studio agent types can't be loaded", which contradicts the README's nine-agent claim. Chase: "Start 2".
+- **Why:** Chase's recruiter-readiness review (Nov 6) found PRs #99-#103 all say "qa-tdd skipped: the studio agent types can't be loaded", which contradicts the README's nine-agent claim. Chase: "Start 2".
 - **Cause:** in cloud project threads the Agent tool offers only built-in types (`subagent_type: qa-tdd` → "not found", even from ~/.claude/agents), and repo hooks never fire (CLAUDE_PROJECT_DIR empty), so nothing logged runs.
 - **Done:** `bash scripts/agent-prompt.sh <agent> "<task>"` builds a general-purpose prompt from the agent file; the subagent logs itself with `bash scripts/log-agent-run.sh --as <agent>` (`<agent> via-general-purpose`), which `check-agent-runs.sh` accepts. Test `scripts/tests/agent_runs_test.sh` (20 checks) in test-all and agents.verify. This PR used it: qa-tdd red, engineer, qa-tdd 3x green.
 - **Open:** QA-R1 (test runs with stdin closed), QA-R2 (`--as` is honest by convention; only qa-tdd has a CI backstop). The same change belongs in studio-agents (Product Studio) so `sync.sh` doesn't overwrite it.
 - **Next exact step:** merges itself on green (non-live, DEC-48).
 
 ## Nov 6: memes and GIFs in comments chosen (DEC-53, TRACKER R37; branch claude/project-thread-qvd39c)
-- **Why:** Chase, Nov 5: "support memes and gifs in the comments... slack meets instagram". Plan doc https://claude.ai/artifact/N3wzTESDf3LXhhRYnBdgUi; he picked "Picture reply + GIF shelf" on Nov 6.
+- **Why:** Chase, Nov 5: "support memes and gifs in the comments... slack meets instagram". He picked "Picture reply + GIF shelf" on Nov 6.
 - **Done:** decision logged with a persona check (`docs/product/decisions/2026-11-06-gifs-in-comments.md`), ideas log row, TRACKER R37. No code.
 - **Next exact step:** after the Nov 22 beta, staff-pm spec, then a failing test for GIF-3 (comment pictures signed only for reply readers).
 
@@ -801,7 +801,7 @@ blockers:
 2. **Migration order (also in the overnight plan):** 0010 timeline, 0011 family shape (removes the 0009 switch), `family-setup.sql` v2 re-seed, 0012 households-only. Next: privacy-security review, then qa-tdd failing tests. Before milestone 3; doesn't block M1 or M2.
 
 ## Oct 17, 2 am: first real deploy (Chase's ask, without function keys)
-1. **Live on `jqvgjfbhzbvfdhtnvgzr`:** migrations 0001–0009 (the Management API accepts begin/commit, so the migration-transaction question is settled), both edge functions, `NOTIFY_CRON_SECRET`, and the `hearth-notify` and `hearth-purge-client-errors` cron jobs.
+1. **Live on `<project-ref>`:** migrations 0001–0009 (the Management API accepts begin/commit, so the migration-transaction question is settled), both edge functions, `NOTIFY_CRON_SECRET`, and the `hearth-notify` and `hearth-purge-client-errors` cron jobs.
 2. **Failed, step 5/5 (sign-in email: 6-digit code):** `PATCH config/auth` returned 403 "Missing required permission(s): project_admin_write". The access token is scoped and can't change project settings. Until this is fixed, sign-in emails send Supabase's default link, not a code.
 3. **Action items for Chase:**
    - [x] **Merge PR #9** (bulk upload + timeline, family shape, review fixes).
@@ -861,7 +861,7 @@ blockers:
 ## Overnight Oct 16: notification sender (AE-2)
 1. **Built:** migration 0003 adds an outbox filled on publish/comment/heart and a batching claim (at most 1 push per 10 min and 1 email per day; access is re-checked at send time). New RPCs `register_push_token` and `set_notification_prefs` are in docs/eng/API.md. The `notify` edge function sends through Expo Push and Resend with the first name and post id only, retries failed sends, and drops dead phone tokens.
 2. **Tests (one full run):** SQL 110 RLS + 130 API + 46 NOTIFY green; Deno 17 (5 sign-media + 12 notify); Jest 179 passed + 1 skipped; typecheck clean; web e2e 1 passed (the day-2 note said 3/3, worth a look). Nothing is deployed.
-3. **Needs you, access:** in the environment's network settings, allow `mcp.supabase.com`, `api.supabase.com` and `jqvgjfbhzbvfdhtnvgzr.supabase.co`, and add `SUPABASE_ACCESS_TOKEN` as an environment secret. Then Claude can run `bash backend/scripts/deploy.sh` (migrations and cron go through the Management API).
+3. **Needs you, access:** in the environment's network settings, allow `mcp.supabase.com`, `api.supabase.com` and `<project-ref>.supabase.co`, and add `SUPABASE_ACCESS_TOKEN` as an environment secret. Then Claude can run `bash backend/scripts/deploy.sh` (migrations and cron go through the Management API).
 4. **Needs you, keys:** put the values listed in `backend/supabase/functions/.env.example` into Supabase secrets, the values in `app/.env.example` into `app/.env.local`, and add GitHub secrets `SUPABASE_ACCESS_TOKEN` and `SUPABASE_PROJECT_REF`. The service_role key stays inside Supabase only.
 5. **Open:** the 1-minute cron for `notify` (after deploy); the app doesn't call the two new RPCs yet (contract test first); email links go to `hearth.family/p/<id>`, which needs the website plus an Android `/p` link filter. **PM call:** with "3 posts in 10 min", the first post buzzes right away (to keep NOTIFY-1 within 60 s) and the rest go out as 1 notice.
 
@@ -879,7 +879,7 @@ blockers:
 6. **The Test Log isn't updated.**
    - S9 and S10 still show open there.
    - New app suites and runs aren't recorded.
-   - Run `tracker/build_seed.py` and push it to the Test Log artifact (claude.ai/artifact/XnfnBsuPL7ayedPHBpvctD).
+   - Run `tracker/build_seed.py` and push it to the Test Log artifact.
 7. **Video is off for the beta.** iOS location metadata can't be stripped without a transcoder.
 
 ## Chase's to-dos (blocking)
@@ -906,7 +906,7 @@ blockers:
 
 ## Links
 - **Plans (claude.ai docs):** Hearth Beta Plan (with a Personas tab), Hearth Funding Plan.
-- **Published pages:** Hearth Family Photos prototype (claude.ai/artifact/SbUX3TQP2crBZ5o68Kho2a), Hearth Test Log (claude.ai/artifact/XnfnBsuPL7ayedPHBpvctD).
+- **Published pages:** Hearth Family Photos prototype, Hearth Test Log.
 - **Project docs:** `claude/hearth-*.md` and `claude/agents/*.md` in the "Family photo sharing" Project.
 
 ## Repo best-practices pass (2026-11-25)

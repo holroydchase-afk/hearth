@@ -37,7 +37,7 @@ staff-pm reading, to confirm when we circle back:
 
 ## Decided: on-device only, opt-in (DEC-31, Oct 19)
 
-Chase picked option B on Oct 19 ("Yes I am"). The promise is now: **"AI is off until your family turns it on. Then it runs only on your phones, and your photos never train anyone else's AI."** CF-10, the claims register, STORY and BETA-SPEC are reworded in the same PR. The persona check is `decisions/2026-10-19-ai-on-device-opt-in.md`. Research behind it (zero-knowledge AI options, five features, blockers): https://claude.ai/artifact/NsUEm6y7fVNQtjEVPjPUVn
+Chase picked option B on Oct 19 ("Yes I am"). The promise is now: **"AI is off until your family turns it on. Then it runs only on your phones, and your photos never train anyone else's AI."** CF-10, the claims register, STORY and BETA-SPEC are reworded in the same PR. The persona check is `decisions/2026-10-19-ai-on-device-opt-in.md`. Research behind it (zero-knowledge AI options, five features, blockers) is kept outside the repo.
 
 What the old promises said, for the record:
 - **CF-10** (`docs/product/CORE-FEATURES.md`): "no face scanning, tagging or ML of any kind", enforced by a CI grep for ML/vision dependencies.

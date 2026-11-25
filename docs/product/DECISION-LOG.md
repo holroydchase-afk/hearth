@@ -388,7 +388,7 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Source:** `docs/product/decisions/2026-11-06-gifs-in-comments.md`
 
 ### DEC-54 · Fix the Apple design guidelines gaps (HIG-1..12)
-- **When / status:** Nov 6 · Chase, after the sweep (doc https://claude.ai/artifact/3N1G5jF4ezeQ2Gtf2jFwZU): "handle all the p1s, handle 1,6,8,4,etc"
+- **When / status:** Nov 6 · Chase, after the sweep: "handle all the p1s, handle 1,6,8,4,etc"
 - **Chose:** ask for notices after the first photo with a Hearth card; zoom; capped tab words; warm launch screen; iPad in every direction; Increase Contrast, Reduce Motion, VoiceOver sender, swipe-down sheets, bigger icons, haptics.
 - **Over:** waiting until the App Store build; words under the emoji (Chase picked "Keep emoji only" on the Nov 6 card; REACT-7 stands).
 - **Because:** each was a gap against Apple's own rules that an older user or a reviewer would hit first; the cold notice prompt can't be undone from far away.
@@ -498,14 +498,14 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Chose:** Paper light page `#F7F7F4` (Linen). Surface, ink, accent, dark mode and the other themes stay as DEC-68 set them.
 - **Over:** `#FAF8F3` (live, read as papyrus); `#F9F9F7` Barely warm (Chase's own suggestion, kept as the runner-up to revisit); `#FAFAFA` Neutral; `#FBFAF8` Soft.
 - **Because:** Linen reads white next to the photos with no yellow cast, yet keeps a trace of warmth, and the white tab bar still stands apart from it.
-- **Source:** `docs/product/SPEC-REDESIGN.md` RD-105; persona check `decisions/2026-11-19-paper-linen.md`; picker https://claude.ai/artifact/Yb4PXNBTHA8ytzmUGXHXV1
+- **Source:** `docs/product/SPEC-REDESIGN.md` RD-105; persona check `decisions/2026-11-19-paper-linen.md`
 
 ### DEC-70 · iPhone's own tab bar with Easy view Off, Hearth's fixed bar with Easy view On (RD-106, RD-107)
 - **When / status:** Nov 19 · Chase, on how Apple's glass capsule works on older iOS: "That's the route I want", "But maybe the fixed bar for grandparents", "Build them now", "We will look back, re org work based on what we accomplished" · Built, waits on Chase's "merge" and an iPhone check
 - **Chose:** on iPhone with Easy view Off (parents, icons only) the system tab bar: iOS 26 gives the floating glass capsule for free, older iPhones keep the classic bar. Easy view On (grandparents) keeps Hearth's fixed, solid bar with words. Android and the web unchanged. No custom glass of ours.
 - **Over:** Hearth's bar everywhere on iPhone (LIVE-1, Nov 5); a custom glass capsule (`expo-glass-effect`, iOS 26 only, needs a fallback everywhere else); a solid floating capsule; the bar shrinking on scroll (DS-5).
 - **Because:** the native bar matches what parents see in Apple's own apps and Instagram and costs nothing on older phones; LIVE-1's problem was 17 pt words, which only Easy view shows. Grandparents keep big words on a bar that never floats or blurs. Partly reverses Chase's Nov 16 "no glass before the beta" call, by his word.
-- **Source:** `docs/product/SPEC-REDESIGN.md` RD-106, RD-107; persona check `decisions/2026-11-19-native-tab-bar.md`; picker https://claude.ai/artifact/Yb4PXNBTHA8ytzmUGXHXV1
+- **Source:** `docs/product/SPEC-REDESIGN.md` RD-106, RD-107; persona check `decisions/2026-11-19-native-tab-bar.md`
 
 ### DEC-71 · No demo bar on a laptop; the phone keeps it slim (DEMO-BAR-LAPTOP-1)
 - **When / status:** Nov 19 · Chase asked "do we need the demo bar?" and said its portfolio link went to an old page; picked "Laptop off, phone stays slim" on a decision card · Small PR, waits on Chase's "merge"
@@ -547,7 +547,7 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Chose:** Avocado light: page `#F6F5E4` (inner flesh), fill `#E7ECC6` (middle flesh), ink `#1F1A1B` (ripe skin), muted `#4F4A42`, accent `#2F5419` (the green under the skin). Dark: page `#2A2426` (a softer charcoal-plum skin), fill `#3A3335`, ink `#F3F1DA`, muted `#C2BDA8`, accent `#7ED69B` (Fresh leaf). Surface and line follow the existing rules. In every theme a picked reaction has no fill: a 2 pt accent outline and its count in the accent (≥ 3:1 and ≥ 4.5:1 on the page); unpicked keeps a 1 pt line border. Paper and Pomegranate unchanged.
 - **Over:** the Nov 18 Avocado (`#EEEFD3` page, near-black green `#10140C` dark); a ripe-skin dark page (too dark); dark accents `#B3D25B` (mushy), `#EFEBB8`, `#C8EB7E`; the seed brown as an accent (reads as a second theme); GUX-R15's filled `accentPicked` oval and LIVE-3's "no outline".
 - **Because:** a theme drawn from the real fruit is consistent, layer by layer; the pale flesh keeps photos the star. The filled oval looked heavy behind the emoji; an outline marks the pick with width and color, not a blob.
-- **Source:** `docs/product/SPEC-REDESIGN.md` 1k; persona check `decisions/2026-11-20-avocado-hass.md` (LG Red, mitigated); tester https://claude.ai/artifact/6UJSk4FvbyCVMjUrRWaeYz, saved `/mnt/project-files/design/avocado-hass-tester-2026-11-20.html`. Supersedes DEC-68's Avocado values (RD-95) and GUX-R15's filled capsule.
+- **Source:** `docs/product/SPEC-REDESIGN.md` 1k; persona check `decisions/2026-11-20-avocado-hass.md` (LG Red, mitigated), saved `/mnt/project-files/design/avocado-hass-tester-2026-11-20.html`. Supersedes DEC-68's Avocado values (RD-95) and GUX-R15's filled capsule.
 
 ### DEC-77 · Funding research leaves the public repo (PM-R10)
 - **When / status:** Nov 20 · Chase, thread on the tech-debt review: "Is it OK to move FUNDING-RESEARCH.md out of the public repo? yes." · Done
@@ -561,12 +561,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Chose:** Atkinson Hyperlegible Next (Regular, Medium, SemiBold; no Bold) bundled in the app, on iPhone, Android and the web demo; also the studio core's font for Chase's other products.
 - **Over:** the phone's own font (DEC-59 / RD-2, Nov 15); Lexend, Inter, Nunito Sans.
 - **Because:** the studio wants products that look alike, and the phone's own font differs between iPhone and Android; Atkinson was designed for low-vision readers, which fits the grandparents best.
-- **Source:** persona check `decisions/2026-11-21-atkinson-font.md`; tester https://claude.ai/artifact/7Dfseqn1BtTaPtFuCijPzX. Supersedes DEC-59's font row (RD-2) and DS-12.
+- **Source:** persona check `decisions/2026-11-21-atkinson-font.md`. Supersedes DEC-59's font row (RD-2) and DS-12.
 
 ### DEC-79 · Share opens on an empty postcard with one "Add photos" target (SHARE-ST-1..SHARE-ST-27)
 - **When / status:** Nov 20, 9:19 PM ET · Chase, thread on the Share start ("The start screen for sharing needs improvement", "This looks subpar compared to the rest of the app"), decision card "Which Share start screen should replace today's?": "B Empty postcard", on the live tester (`/mnt/project-files/design/share-start-2026-11-20/share-start-tester.html`) · Specced, failing tests next
 - **Amended Nov 24 (round 4):** Chase picked "A + Standard iphone sizes" on the kinds tester; sizes, the 52 px circle and the parents-only kinds row in DEC-84 (SHARE-ST-28..34).
-- **Amended Nov 24 (round 3, wordless), pending Chase's pick, A recommended:** Chase: "It doesn't look good. let the [design] do everything don't have the explainer text and instructions." Tester `/mnt/project-files/design/share-start-2026-11-20/share-start-quiet-tester.html` (https://claude.ai/artifact/Y2C1ov8cNcQyPWWDdtkMtU), persona check `decisions/2026-11-24-share-start-wordless.md`; decision card open, A "Quiet postcard" recommended and specced.
+- **Amended Nov 24 (round 3, wordless), pending Chase's pick, A recommended:** Chase: "It doesn't look good. let the [design] do everything don't have the explainer text and instructions." Tester `/mnt/project-files/design/share-start-2026-11-20/share-start-quiet-tester.html`, persona check `decisions/2026-11-24-share-start-wordless.md`; decision card open, A "Quiet postcard" recommended and specced.
 - **Chose (A, wins where it differs):** no subline, no "Up to N at a time" (the spoken label keeps "Add photos, up to N at a time"), no "To: you pick after your photos", names or faces, no "Add photos first..." hint (GUX-R1), no "Last shared" line; the photo spot is a soft accent-tint fill with no border, a 76 px surface circle round the icon and "Add photos" at 22 pt; the stamp (month then day) sits top-right inside the spot; two blank ruled lines and "To:" with one ruled line below, all decorative; a tap anywhere on the empty card opens the picker. After photos the DEC-73 postcard is unchanged; parents 100, others 10; nothing auto-advances (SHARE-ST-19..27).
 - **Over (round 3):** B "Just the photo spot" (drops the postcard Chase picked twice); C "Postcard, three ways" (Write news and Add a date wait for the composer, SPEC-VISIBILITY-CORE); keeping B+'s words.
 - **Because (round 3):** the words made the card look like a form with instructions; a postcard with ruled lines already says "photo, note, address", and one tap target means no dead taps for the least savvy.
@@ -578,7 +578,7 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Source:** `docs/product/SPEC-REDESIGN.md` 1j-2; persona check `decisions/2026-11-20-share-start-postcard.md`. Keeps the Oct 17 call (bulk pick is parents only) and HARD-2's 10-photo postcard max; replaces the start page in BETA-BULK's "Pick lots of photos" entry.
 
 ### DEC-80 · Paper plus nine cut-open fruit themes; Pomegranate gets new values (FRUIT-1..FRUIT-12)
-- **When / status:** Nov 23 · Chase: "put these pallettes in hearth, replacing everything but the default/paper", on the Cut-Open Palettes tool (https://claude.ai/artifact/SQ6gmnFB6bX7t6scr3ipSz) · Specced, failing tests next
+- **When / status:** Nov 23 · Chase: "put these pallettes in hearth, replacing everything but the default/paper", on the Cut-Open Palettes tool · Specced, failing tests next
 - **Chose:** ten themes in this order: Paper (default, unchanged), Avocado (its JSON values equal RD-111/RD-112), Pomegranate (new values), Blood orange, Kiwi, Fig, Dragon fruit, Watermelon, Candy-stripe beet, Red cabbage; page, fill, ink, muted and accent per mode from `/mnt/project-files/design/fruit-palettes-2026-11-20/palettes-v2.json`; surface and line by the existing rules. Still owner only, saved per phone. Non-Paper dark themes use `#FF6961` for red Delete words (today's `#FF453A` is 4.47:1 on Avocado and Dragon fruit dark).
 - **Over:** three themes (DEC-68's "not doing"); the Nov 18 Pomegranate; any name with "pit" or "rind".
 - **Because:** Chase's pick; each theme comes from a real cut fruit, layer by layer, like the Hass avocado (DEC-76), and every set passes Hearth's contrast rules.
@@ -606,7 +606,7 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Source:** `docs/product/SPEC-VISIBILITY-CORE.md` (open questions 1 to 4), `docs/architecture/07-visibility-model.md`; persona check `decisions/2026-11-24-visibility-core.md`. Amends DEC-79's one way in (parents only).
 
 ### DEC-84 · One named type scale at iPhone's standard sizes; Share start A with standard sizes (TYPE-1..14, SHARE-ST-28..34)
-- **When / status:** Nov 24 · Chase, on the kinds tester (https://claude.ai/artifact/HekNBZ4bAMgpUqReeHgnTS): "Go with A +Standard iphone sizes... If we do not have everything broken down based on the header, body, title, etc. etc. we need to do that now. Then we need to align with iphones standards." · Specced, pending Chase's OK on the rule change (CLAUDE.md rule 3, DS-2); failing tests next
+- **When / status:** Nov 24 · Chase, on the kinds tester: "Go with A +Standard iphone sizes... If we do not have everything broken down based on the header, body, title, etc. etc. we need to do that now. Then we need to align with iphones standards." · Specced, pending Chase's OK on the rule change (CLAUDE.md rule 3, DS-2); failing tests next
 - **Chose:** Apple's eleven text styles by name in `theme.ts` (largeTitle 34/41, title1 28/34, title2 22/28, title3 20/25, headline 17/22 SemiBold, body 17/22, callout 16/21, subheadline 15/20, footnote 13/18, caption1 12/16, caption2 11/13); Easy view uses Apple's xxLarge set raised to 17 where Apple goes under. Titles and headline SemiBold, the rest Regular, no Bold. Every use today mapped to a style; a lint test fails on raw sizes. Share start option A "Photos first, three below" at those sizes: "New post" title2, "Add photos" headline, 52 px circle (60 in Easy view), 26 px icon; the Event / News / Saying row under it only behind the `post_kinds` switch (off until the visibility-core thread's data lands), parents only. Rule 3 becomes: "Text uses the named iPhone text styles (SPEC-TYPE): reading text is Body 17; smaller styles (callout..caption2) only for secondary words with Easy view off; Easy view keeps everything 17+."
 - **Over:** today's multiplied sizes (base ×1.3, ×1.65) and the "nothing under 17" rule (DS-2, rule 3); Material 3's own scale on Android; B "Four equal cards" and C "One postcard, four faces"; the tester's "today" sizes (76 px circle, 22 pt "Add photos").
 - **Because:** named styles let every screen be checked against the iPhone and stop each screen picking its own size; Easy view (on for viewers, DEC-66) keeps grandparents at 17+, so only parents with Easy view off see the smaller secondary words.
