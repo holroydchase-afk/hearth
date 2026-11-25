@@ -167,167 +167,258 @@
   },
   {
    "id": "EDGE-24",
-   "title": "upload then view round-trips the data key; URLs are 10-minute SigV4",
+   "title": "R89 push for a news, event or saying post never mentions photos and still names who sent it",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-25",
-   "title": "view denied -> 404, no key lookups",
+   "title": "R89 email for a news, event or saying post never mentions photos and still names who sent it",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-26",
-   "title": "exif not stripped -> 422; no auth -> 401",
+   "title": "R89 each kind gets its own wording (not one generic line for all three)",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-27",
-   "title": "FLAG-4 video_posting off -> sign-media refuses a video upload (403 video_posting_off), signs nothing",
+   "title": "R89 a photos batch (post_kinds ['photos']) keeps today's words",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-28",
-   "title": "QA-R4 upload takes 1..20 items: 0 and 21 are 400, nothing signed or stored",
+   "title": "R89 the kind wording carries no caption, what, where or saying words (the batch has none to give)",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-29",
-   "title": "QA-R4 ENG-R11 free video cap (HF002) -> 402 free_video_cap_reached, no key stored",
+   "title": "NOTIFY-K-1 one news post: 'Alex shared some news. Tap to read it.', subject and email 'read it'",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-30",
-   "title": "ENG-R11 a P0001 whose message mentions free_video_cap_reached is NOT a 402",
+   "title": "NOTIFY-K-1 one event: 'Alex added an event. Tap to see it.', email 'see it'",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-31",
-   "title": "ENG-R11 family_full (HF001) is not reported as the video cap",
+   "title": "NOTIFY-K-1 one saying: 'Alex shared a saying. Tap to read it.', email 'read it'",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-32",
-   "title": "QA-R4 not the author (42501) -> 403 forbidden; bad row (23514) -> 400 invalid",
+   "title": "NOTIFY-K-1 the email with no website link says 'Open Hearth on your phone to read it.'",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-33",
-   "title": "QA-R4 expired session (PGRST301) -> 401, never 500",
+   "title": "NOTIFY-K-1 no post words, day, place, saying, child's name or age anywhere in push or email",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-34",
-   "title": "QA-R4 an unknown database error is 500 'internal' and logs no message text",
+   "title": "NOTIFY-K-2 two events or two sayings: 'added 2 events' / 'shared 2 sayings' and 'Tap to see them.'",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-35",
-   "title": "QA-R4 finalize marks ok only when both objects exist at the promised sizes",
+   "title": "NOTIFY-K-3 several kinds: one line in the fixed order photos, news, events, sayings",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-36",
-   "title": "QA-R4 finalize takes 1..20 uuids; anything else is 400 and checks nothing",
+   "title": "NOTIFY-K-4 replies name the kind: your news / your event / your saying / your posts",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-37",
-   "title": "QA-R4 finalize skips rows that aren't the caller's pending rows",
+   "title": "NOTIFY-K-4 posts and replies together: 'New posts and replies from' unless every post is photos",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-38",
-   "title": "QA-R4 CORS: only a listed origin is echoed; preflight is 204 without auth",
+   "title": "NOTIFY-K-5 photo-only batches keep today's words (with and without the new fields, bulk too)",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-39",
-   "title": "QA-R4 bad requests: missing post_id 400, unknown action 400, PUT 405",
+   "title": "upload then view round-trips the data key; URLs are 10-minute SigV4",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-40",
-   "title": "matches AWS documented presigned GET example",
+   "title": "view denied -> 404, no key lookups",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-41",
-   "title": "uriEncode keeps unreserved, encodes others",
+   "title": "exif not stripped -> 422; no auth -> 401",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-42",
-   "title": "JOIN-2: magic_link email has the code, plain words, and no link",
+   "title": "FLAG-4 video_posting off -> sign-media refuses a video upload (403 video_posting_off), signs nothing",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-43",
-   "title": "JOIN-2: confirmation email has the code, plain words, and no link",
+   "title": "QA-R4 upload takes 1..20 items: 0 and 21 are 400, nothing signed or stored",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-44",
-   "title": "JOIN-2: config.toml uses both templates with a code in the subject",
+   "title": "QA-R4 free video cap -> 402 free_video_cap_reached, no key stored",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-45",
-   "title": "BETA-SMS-7: the [auth.sms] template, with code 123456, is Hearth's words in one GSM-7 segment",
+   "title": "QA-R4 not the author (42501) -> 403 forbidden; bad row (23514) -> 400 invalid",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-46",
-   "title": "TS-GUX-R1 / BETA-SMS-7: the [auth.sms] template, with code 123456, is exactly the R1 words",
+   "title": "QA-R4 expired session (PGRST301) -> 401, never 500",
    "area": "Media signing",
    "tickets": [],
    "where": "backend/supabase/functions/sign-media/"
   },
   {
    "id": "EDGE-47",
+   "title": "QA-R4 an unknown database error is 500 'internal' and logs no message text",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-48",
+   "title": "QA-R4 finalize marks ok only when both objects exist at the promised sizes",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-49",
+   "title": "QA-R4 finalize takes 1..20 uuids; anything else is 400 and checks nothing",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-50",
+   "title": "QA-R4 finalize skips rows that aren't the caller's pending rows",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-51",
+   "title": "QA-R4 CORS: only a listed origin is echoed; preflight is 204 without auth",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-52",
+   "title": "QA-R4 bad requests: missing post_id 400, unknown action 400, PUT 405",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-53",
+   "title": "matches AWS documented presigned GET example",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-54",
+   "title": "uriEncode keeps unreserved, encodes others",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-55",
+   "title": "JOIN-2: magic_link email has the code, plain words, and no link",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-56",
+   "title": "JOIN-2: confirmation email has the code, plain words, and no link",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-57",
+   "title": "JOIN-2: config.toml uses both templates with a code in the subject",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-58",
+   "title": "BETA-SMS-7: the [auth.sms] template, with code 123456, is Hearth's words in one GSM-7 segment",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-59",
+   "title": "TS-GUX-R1 / BETA-SMS-7: the [auth.sms] template, with code 123456, is exactly the R1 words",
+   "area": "Media signing",
+   "tickets": [],
+   "where": "backend/supabase/functions/sign-media/"
+  },
+  {
+   "id": "EDGE-60",
    "title": "TS-GUX-R1 / BETA-SMS-7: SMS-PROVIDER.md's Twilio template request body is exactly the R1 words",
    "area": "Media signing",
    "tickets": [],

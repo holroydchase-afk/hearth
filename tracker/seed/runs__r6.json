@@ -2,7 +2,7 @@
  "suite": "edge",
  "at": "2026-10-15T08:05:00-04:00",
  "label": "After type fixes, type-checking on",
- "passed": 47,
+ "passed": 60,
  "failed": 0,
  "results": {
   "EDGE-01": "pass",
@@ -51,6 +51,19 @@
   "EDGE-44": "pass",
   "EDGE-45": "pass",
   "EDGE-46": "pass",
-  "EDGE-47": "pass"
+  "EDGE-47": "pass",
+  "EDGE-48": "pass",
+  "EDGE-49": "pass",
+  "EDGE-50": "pass",
+  "EDGE-51": "pass",
+  "EDGE-52": "pass",
+  "EDGE-53": "pass",
+  "EDGE-54": "pass",
+  "EDGE-55": "pass",
+  "EDGE-56": "pass",
+  "EDGE-57": "pass",
+  "EDGE-58": "pass",
+  "EDGE-59": "pass",
+  "EDGE-60": "pass"
  }
 }

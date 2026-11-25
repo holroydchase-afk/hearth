@@ -33,6 +33,10 @@ export type Batch = {
   photo_count?: number;
   taken_from?: string | null;
   taken_to?: string | null;
+  // 0034 (NOTIFY-K, GUX-VC-R11): new posts per kind ({} for replies only) and the kinds of every post the batch is
+  // about. Counts and kinds only, never a post's words. Missing (an older claim) reads as photos.
+  kind_counts?: Record<string, number>;
+  post_kinds?: string[];
 };
 
 export type PushMessage = { to: string[]; title: string; body: string; sound: "default"; data: { post_id: string } };
@@ -72,25 +76,69 @@ export function takenSpan(from?: string | null, to?: string | null): string {
   return ` from ${a.m} ${a.y} to ${b.m} ${b.y}`;
 }
 
-function summary(b: Batch): { line: string; isReply: boolean; one?: boolean } {
+type Summary = { line: string; push: string; act: string };
+const KIND_ORDER = ["photos", "news", "event", "saying"];
+
+// "a, b and c" (all parts kept, unlike joinNames)
+const joinParts = (parts: string[]) =>
+  parts.length <= 1 ? (parts[0] ?? "") : `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`;
+
+// NOTIFY-K (SPEC-VISIBILITY-CORE "Notices (GUX-VC-R11)"): each kind its own words; photos and bulk unchanged.
+// `push` ends the push body; `act` is the email's "Open Hearth to <act>".
+function summary(b: Batch): Summary {
   const who = joinNames(b.actor_names);
-  if (b.is_batch && b.post_count > 0 && b.comment_count + b.heart_count === 0) {
+  const counts: Record<string, number> = {};
+  for (const k of KIND_ORDER) if ((b.kind_counts?.[k] ?? 0) > 0) counts[k] = b.kind_counts![k];
+  const newKinds = KIND_ORDER.filter((k) => counts[k]);
+  const onlyPhotos = newKinds.every((k) => k === "photos");
+  const replies = b.comment_count + b.heart_count;
+  const them = { push: ". Tap to see them.", act: "see them" };
+  if (b.is_batch && b.post_count > 0 && replies === 0 && onlyPhotos) {
     const n = b.photo_count ?? 0;
     const photos = n === 1 ? "1 photo" : `${n} photos`;
-    return { line: `${who} added ${photos}${takenSpan(b.taken_from, b.taken_to)}`, isReply: false, one: n === 1 };
+    const one = n === 1;
+    return { line: `${who} added ${photos}${takenSpan(b.taken_from, b.taken_to)}`,
+             push: one ? ". Tap to see it." : them.push, act: one ? "see it" : them.act };
   }
-  if (b.post_count > 0 && b.comment_count + b.heart_count === 0) return { line: `${who} shared new photos`, isReply: false };
-  if (b.post_count === 0) return { line: `${who} replied to your photos`, isReply: true };
-  return { line: `New photos and replies from ${who}`, isReply: false };
+  if (b.post_count > 0 && replies === 0) {
+    if (onlyPhotos) return { line: `${who} shared new photos`, ...them };
+    if (newKinds.length === 1) {
+      const k = newKinds[0], n = counts[k];
+      if (k === "news") return { line: `${who} shared some news`, push: ". Tap to read it.", act: "read it" };
+      if (k === "event") {
+        return n === 1 ? { line: `${who} added an event`, push: ". Tap to see it.", act: "see it" }
+                       : { line: `${who} added ${n} events`, ...them };
+      }
+      return n === 1 ? { line: `${who} shared a saying`, push: ". Tap to read it.", act: "read it" }
+                     : { line: `${who} shared ${n} sayings`, ...them };
+    }
+    const parts = newKinds.map((k) => {
+      const n = counts[k];
+      if (k === "photos") return "new photos";
+      if (k === "news") return "some news";
+      if (k === "event") return n === 1 ? "an event" : `${n} events`;
+      return n === 1 ? "a saying" : `${n} sayings`;
+    });
+    return { line: `${who} shared ${joinParts(parts)}`, ...them };
+  }
+  const about = (b.post_kinds ?? []).filter((k) => KIND_ORDER.includes(k));
+  const aboutPhotos = about.every((k) => k === "photos");
+  if (b.post_count === 0) {
+    const kindsOn = [...new Set(about.length ? about : ["photos"])];
+    const your = kindsOn.length > 1 ? "your posts"
+      : ({ photos: "your photos", news: "your news", event: "your event", saying: "your saying" } as Record<string, string>)[kindsOn[0]];
+    return { line: `${who} replied to ${your}`, push: ". Tap to see.", act: "see it" };
+  }
+  return { line: `New ${onlyPhotos && aboutPhotos ? "photos" : "posts"} and replies from ${who}`, ...them };
 }
 
 export function buildPush(b: Batch): PushMessage[] {
   if (b.push_tokens.length === 0) return [];
-  const { line, isReply, one } = summary(b);
+  const { line, push } = summary(b);
   return [{
     to: b.push_tokens,
     title: `From ${joinNames(b.actor_names)} on Hearth`, // BETA-NOTIFY-7: a real person, not a generic notice
-    body: isReply ? `${line}. Tap to see.` : one ? `${line}. Tap to see it.` : `${line}. Tap to see them.`,
+    body: `${line}${push}`,
     sound: "default",
     data: { post_id: b.latest_post_id },
   }];
@@ -106,11 +154,10 @@ const headerSafe = (n: string) => n.replace(/[^\p{L}\p{N} .'-]/gu, "").trim().sl
 export function buildEmail(input: Batch): Email | null {
   const b = { ...input, actor_names: input.actor_names.map(headerSafe).filter(Boolean) };
   if (b.actor_names.length === 0) return null;
-  const { line, isReply, one } = summary(b);
+  const { line, act } = summary(b);
   // No website yet -> no link (a dead link looks like a scam); plain words instead.
   const base = Deno.env.get("APP_LINK_BASE")?.replace(/\/$/, "");
   const link = base ? `${base}/p/${b.latest_post_id}` : null;
-  const what = isReply || one ? "it" : "them";
   // BETA-NOTIFY-7: "Chase on Hearth <hello@…>". Only the address comes from RESEND_FROM;
   // the name is stripped of anything that could change the header.
   const addr = (Deno.env.get("RESEND_FROM") ?? "hello@hearth.family").match(/<([^>]+)>/)?.[1] ??
@@ -121,10 +168,10 @@ export function buildEmail(input: Batch): Email | null {
     from,
     to: [b.email!],
     subject: `${line} on Hearth`,
-    text: link ? `${line}.\n\nOpen Hearth to see ${what}:\n${link}\n` : `${line}.\n\nOpen Hearth on your phone to see ${what}.\n`,
+    text: link ? `${line}.\n\nOpen Hearth to ${act}:\n${link}\n` : `${line}.\n\nOpen Hearth on your phone to ${act}.\n`,
     html: `<p style="font-size:20px">${esc(line)}.</p>` +
-      (link ? `<p><a href="${esc(link)}" style="font-size:20px">Open Hearth to see ${what}</a></p>`
-            : `<p style="font-size:20px">Open Hearth on your phone to see ${what}.</p>`),
+      (link ? `<p><a href="${esc(link)}" style="font-size:20px">Open Hearth to ${act}</a></p>`
+            : `<p style="font-size:20px">Open Hearth on your phone to ${act}.</p>`),
   };
 }
 

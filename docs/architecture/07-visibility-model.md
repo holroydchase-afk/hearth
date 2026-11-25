@@ -125,6 +125,7 @@ RLS policies call the reach's rule directly (inlinable, fast). `vis.can_see` is 
 - `can_see` answers only for rows with a uuid `id`. Rows without one (reactions, post_children, post_audiences, the membership tables) are answered by their table's one policy, and `can_see` says no. A rule or hook that errors makes `can_see` say no.
 - Policies written by `vis.attach` call `vis.viewer_sees_item(item)`, which passes `auth.uid()` itself, so no app role can execute a function that takes a user id (PRIV-VC-R3). `attach` refuses a table that already has a permissive select policy and a hook that isn't stable `(uuid, uuid) -> boolean`.
 - Hooks registered today: `private.vis_media_ok` (pending uploads only to their uploader) and `private.vis_comment_ok` (reply settings, through `private.reply_ok`). `children` uses the person rule, which says no for a child: default deny until the oracle adds a child rule.
+- First product use of `vis.attach` (0034, Phase 4): `post_events` and `post_sayings` are fungible item kinds of the post with no new rule; VIS-8 checks both tables for every person in the seed-42 oracle.
 - `vis.links` and `vis.link_members` are not built (bridge after the beta).
 - 0032 also forces RLS on every public table (refusing to run if the owner doesn't bypass RLS) and revokes any table grant from `anon`.
 
@@ -132,7 +133,7 @@ RLS policies call the reach's rule directly (inlinable, fast). `vis.can_see` is 
 
 | Reach | Hearth relations |
 |---|---|
-| `item` | `posts` (the item), `media_items`, `media_keys`, `post_children`, `comments` and `reactions` (narrow: `private.group_reply_ok`), `post_audiences` (narrow: author and parents; others see names via `post_viewers`), future `post_events`, `post_sayings` and news |
+| `item` | `posts` (the item), `media_items`, `media_keys`, `post_children`, `comments` and `reactions` (narrow: `private.group_reply_ok`), `post_audiences` (narrow: author and parents; others see names via `post_viewers`), `post_events` and `post_sayings` (0034, through `vis.attach`: no rule, no hook; news is a `posts.kind` with no child table) |
 | `person` | `profiles`, `children` (guardians, parents, or a tagged post), `child_guardians`, `family_dates` (0029, rule `private.vis_sees_family_date`: the person rule for a member's birthday, parents and the Everyone group for other dates; VIS-18) |
 | `container` | `circles` (0027), `circle_members`, `circle_people`, `circle_links`, `chat_groups`, `chat_messages`, `chat_key_packages` (via `chat_claim`) |
 | `self` | `push_tokens`, `notification_prefs`, `account_exports`, `chat_devices`, `post_views` |
@@ -160,6 +161,17 @@ Rules every reader must follow once clause (B) exists (PRIV-VC-R5). Without them
 - Notices: a link reader gets "new photo" notices only; the sender gets reply notices. No notice ever says a link was closed, a request refused, or an item opened. A link request is delivered by a code the requester hands over, never by looking a person up, so nobody can learn whether an ex has a Hearth account.
 - "Seen by" (`seen_count`, tracker R62) must be dropped before any link ships, or an author learns whether the other parent opened their post.
 
+## Family names: labels, not rules (Planned; Chase, Nov 24)
+
+Families call the same person different things: Grandpa, Pawpaw, Granddad, Nana, Gram, Gran, Granny, Aunt Libby, Uncle Graham. The model keeps these as **free-text labels someone picks**, never a fixed list and never a rule:
+
+- `person_labels(tenant_id, labeler_id, person_id, label text)`: what *this* person calls *that* person ("Pawpaw" to one grandchild, "Dad" to the parent). One row per labeler and person; the app falls back to the person's own display name. A family-wide default (`labeler_id` null, set by a parent) covers the common case so nobody has to type it twice.
+- Suggestions only: the app offers common words (grandma, grandpa, nana, pawpaw, granny, gram, gran, aunt, uncle, cousin) and the person can type anything else.
+- **Labels never decide who sees what.** Visibility stays with groups and the six reaches; a label is a Person-class kind (registered with `vis.attach`, following `can_see_profile`), so a label is only shown to someone who can already see that person. Your private label ("the ex") is readable only by you (self reach).
+- Generic core words: the `vis` package sees only "a label on a member"; the kinship words live in Hearth's layer, so another app (a "village" of neighbours, a team) can use the same table for its own names.
+
+This is the first step toward Chase's "light Village Operating System" idea: people, the names they use for each other, and the groups they share with, all behind one visibility core.
+
 ## What Hearth's server can see
 
 Unchanged by this model: RLS limits what each member's app reads, not the service role or the edge functions (see [04-threat-model.md](04-threat-model.md)). A link adds no new server access.
@@ -178,4 +190,4 @@ Following `packages/messenger` (DEC-42): the generic core is `packages/visibilit
 - Privacy review findings: `docs/product/SPEC-VISIBILITY-CORE.md`, "Privacy review".
 
 ---
-Last checked against code: 2026-11-24, migrations 0001 to 0029, 0031 and 0032 on branch claude/project-thread-jtelk5 (0029 life calendar registered, VIS-18; 0030 is the video-fixes branch, not merged).
+Last checked against code: 2026-11-24, migrations 0001 to 0029 and 0031 to 0034 on branch claude/project-thread-jtelk5 (0034 attaches post_events and post_sayings; 0029 life calendar registered, VIS-18; 0030 is the video-fixes branch, not merged).

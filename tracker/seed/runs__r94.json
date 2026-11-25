@@ -1,9 +1,9 @@
 {
- "suite": "app",
- "at": "2026-11-24T00:45:00-05:00",
- "label": "PR #135 video fixes (0030_video_fixes.sql) pre-merge after two merges of main: all suites 3x via test-all.sh (green)",
- "passed": 11166,
- "failed": 0,
+ "suite": "backend",
+ "at": "2026-11-24T23:00:00-05:00",
+ "label": "News, Event and Saying posts (0034, SHARE-U-4, 5, 11..15) 3x green; R89 notice words written first (red, on purpose)",
+ "passed": 13140,
+ "failed": 15,
  "results": {},
- "note": "3 runs of bash test-all.sh at 6f0a61b: 24 suites passed, 0 failed, 1 skipped (Supabase starter invites: no STUDIO_SUPABASE_TEMPLATE, CI runs it) x3, identical. jest 2239 passed (1 skipped, 1 todo, 172 files), typecheck clean, e2e:demo 50, e2e:web 5, prototype e2e 33, backend SQL 1348 passed (VIDEO REFUND 30, VIDEO CAP 14; migrations through 0030 on local Postgres 16), Deno functions 47 passed (deno 2.9.8 from a scratch download; sign-media, notify, templates), each x3. passed = 3 x (2239 + 50 + 5 + 33 + 1348 + 47). T42 (BETA-JOIN-2 countdown) did not recur in these 3 runs; stays open. A first attempt found Postgres down (stale pid), so backend SQL was skipped; restarted Postgres and reran all 3 (that attempt is not counted). Not run: starter invites, contract-real, phones. e2e/results/vid-fixes-premerge-3x-2026-11-24/"
+ "note": "3 runs of bash test-all.sh at 1c36369 (engineer's 0034) plus qa-tdd's R89 tests, identical each time: 22 suites passed, 2 failed (backend SQL, Deno functions: R89 only), 1 skipped (starter invites: no template). Per run: backend SQL 1875 passed, 2 failed (post_kinds_test.sql 82/2: claim_notification_batches has no post_kinds); Deno 47 passed, 3 failed (notify index_test.ts R89: news, event and saying notices still say 'shared new photos'); jest 2276 passed (1 skipped, 1 todo), typecheck clean, e2e:demo 53, e2e:web 5, prototype 33; contract-real 91 passed, 149 skipped by filter (SHARE-U: 1 ran, 9 skip because the real harness can't flip the global post_kinds switch, T42). Every SHARE-U-4, 5, 11..15 check green 3x; no test loosened since bcaabd4 (only generate.sql and seed-42.json changed under tests). passed = 3 x (1875 + 47 + 2276 + 53 + 5 + 33 + 91). Deno 2.9.6 from npm (deno.land blocked here). Not run: starter invites, phones, UI (none yet). backend/tests/results/post-kinds-3x-r83-red-2026-11-24.txt"
 }
