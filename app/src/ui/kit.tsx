@@ -4,7 +4,7 @@
 // web, Material 3 on Android. Every tappable thing is a Button or Choice: it always has an
 // accessibilityLabel, a visible word (DS-3), and a 48 pt minimum target (DS-1).
 import { SymbolView } from 'expo-symbols';
-import React, { useRef, type ReactNode } from 'react';
+import React, { useRef, useState, type ReactNode } from 'react';
 import {
   ActivityIndicator, Animated, Modal, PanResponder, Platform, Pressable, type PanResponderCallbacks, ScrollView, StyleSheet, Switch, Text, TextInput, View,
   useWindowDimensions, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
@@ -312,7 +312,7 @@ export function AddPhotoCard({ label, title, onPress, testID, spotTestID, cardSt
 }) {
   const { c, type, bigText, reduceMotion } = useTheme();
   const spot = bigText ? SPOT.easy : SPOT.standard;
-  const scale = useRef(new Animated.Value(1)).current;
+  const [scale] = useState(() => new Animated.Value(1));
   const to = (toValue: number) => {
     if (reduceMotion) return;
     Animated.timing(scale, { toValue, duration: 120, useNativeDriver: Platform.OS !== 'web' }).start();
@@ -342,8 +342,9 @@ export function AddPhotoCard({ label, title, onPress, testID, spotTestID, cardSt
 const STAMP_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 /** SHARE-ST-22: the empty postcard's small decorative stamp, for the photo spot's top-right corner, postmarked with
  *  today's month, then day (GUX-R4). Not a control: hidden from VoiceOver and TalkBack, and taps pass through it. */
-export function PostcardStamp({ date = new Date(), testID }: { date?: Date; testID?: string }) {
+export function PostcardStamp({ date: given, testID }: { date?: Date; testID?: string }) {
   const { c } = useTheme();
+  const date = given ?? new Date();
   return (
     <View testID={testID} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants" aria-hidden
       style={[styles.stamp, { borderColor: c.accent, backgroundColor: c.surface }]}>

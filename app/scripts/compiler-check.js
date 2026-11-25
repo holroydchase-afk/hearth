@@ -28,6 +28,9 @@ const ALLOWED = {
   'src/screens/PostCard.tsx:ReactionButton': "reads ref.current during render; left uncompiled (today's behaviour)",
   'src/screens/SearchScreen.tsx:SearchScreen': "try/finally not supported by the compiler yet; left uncompiled (today's behaviour)",
   'src/screens/ShareScreen.tsx:ShareScreen': "try/finally not supported by the compiler yet; left uncompiled (today's behaviour)",
+  // B31 (Nov 25): writes asked.current during render so the async sign-in callback reads the latest data-plan answer
+  // after app.reload(); moving it to an effect would change that timing. Left uncompiled (today's behaviour).
+  'src/screens/SignInScreen.tsx:SignInScreen': "writes ref.current during render (latest-value ref); left uncompiled (today's behaviour)",
   'src/screens/ShareScreen.tsx:Stamp': "`new` expression the compiler can't reorder; left uncompiled",
   'src/screens/StartFamily.tsx:StartFamily': "try/finally not supported by the compiler yet; left uncompiled (today's behaviour)",
   'src/screens/StartFamily.tsx:FirstInvite': "throw inside try/catch not supported yet; left uncompiled",
@@ -36,7 +39,6 @@ const ALLOWED = {
   'src/screens/VideoPlayer.tsx:Playing': "mutates a value returned from a hook (follow-up: move into the hook)",
   'src/screens/ViewerScreen.tsx:ViewerScreen': "try/finally not supported by the compiler yet; left uncompiled (today's behaviour)",
   'src/state/AppContext.tsx:AppProvider': "reads ref.current during render; left uncompiled (today's behaviour)",
-  'src/ui/kit.tsx:AddPhotoSpot': "reads ref.current during render; left uncompiled (today's behaviour)",
   'src/ui/kit.tsx:BottomSheet': "reads ref.current during render; left uncompiled (today's behaviour)",
   'src/ui/typing.ts:useTypingField': "reads ref.current during render; left uncompiled (today's behaviour)",
 };

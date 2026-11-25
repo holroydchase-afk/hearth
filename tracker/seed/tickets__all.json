@@ -1614,8 +1614,8 @@
    "kind": "bug",
    "layer": "app",
    "severity": "Medium",
-   "status": "open",
-   "title": "QA-R1 (Share kinds green run r96, Nov 25): the compiler rules suite (node app/scripts/compiler-check.js, INTAKE-80-3) fails on main ea3f08a and on this branch, the same 4 times in every run: 4 React Compiler bailouts are not in its allowlist: src/ui/kit.tsx AddPhotoCard (ref read during render; the allowlist still names the old AddPhotoSpot, renamed by #174) and PostcardStamp (NewExpression reorder, #174), src/feed/autoplay.ts useAutoplay (ref read, #178/DEC-87) and src/screens/SignInScreen.tsx SignInScreen. Merges of main brought them together; no single PR saw it. Fix: refactor them to compile, or allowlist each with a reason. Test: app/scripts/compiler-check.js; e2e/results/share-kinds-green-3x-2026-11-25.txt",
+   "status": "fixed",
+   "title": "QA-R1 (Share kinds green run r96, Nov 25): the compiler rules suite (node app/scripts/compiler-check.js, INTAKE-80-3) fails on main ea3f08a and on this branch, the same 4 times in every run: 4 React Compiler bailouts are not in its allowlist: src/ui/kit.tsx AddPhotoCard (ref read during render; the allowlist still names the old AddPhotoSpot, renamed by #174) and PostcardStamp (NewExpression reorder, #174), src/feed/autoplay.ts useAutoplay (ref read, #178/DEC-87) and src/screens/SignInScreen.tsx SignInScreen. Merges of main brought them together; no single PR saw it. Fix: refactor them to compile, or allowlist each with a reason. Fixed Nov 25 (engineer): AddPhotoCard and useAutoplay keep their stable values in useState instead of reading ref.current during render, PostcardStamp defaults its date in the body (no `new` in the parameter), and SignInScreen is allowlisted (its latest-value ref is written during render on purpose); the stale AddPhotoSpot line is gone. compiler-check: 0 not allowlisted. Test: app/scripts/compiler-check.js; e2e/results/share-kinds-green-3x-2026-11-25.txt",
    "tests": [
     "app/scripts/compiler-check.js",
     "app/src/feed/autoplay.ts",
@@ -1623,7 +1623,7 @@
     "app/src/ui/kit.tsx"
    ],
    "found": "2026-11-25",
-   "fixed": null
+   "fixed": "2026-11-25"
   }
  ]
 }
