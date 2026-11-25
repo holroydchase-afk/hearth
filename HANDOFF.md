@@ -11,6 +11,10 @@ blockers:
   - Deploy (0026, 0027, 0028) stopped Nov 19 14:20Z: Supabase returned "Invalid access token"; nothing applied
 -->
 
+## Nov 25: portfolio header on the demo (intake #183, R95; branch claude/project-thread-6ew09x, PR)
+- **Done, test-first** (qa-tdd red 1624575, r110): `app/scripts/add-site-bar.sh` (called by `build-demo.sh`) puts `<script src="/assets/demo-bar.js" data-page="white" defer>` before `</body>` on every demo page; the bar file lives on the portfolio site. DemoFrame row is #FFFFFF in light (dark unchanged); `_layout.tsx` sets body `box-sizing: border-box` on web so the bar's 52px padding stays inside 100% height (SITEBAR-4 at 1280x800 and 390x844).
+- **Next:** Chase's merge (live demo); after publish, check the header on chaseholroyd.com/hearth/ at 1280 and 390.
+
 ## Nov 25: React Compiler check in CI (B32, R84; branch claude/project-thread-6ew09x, PR)
 - **Done, test-first:** INTAKE-80-4 (`app/src/__tests__/reactCompiler.test.ts`) failed until `.github/workflows/ci.yml`'s App (Jest + typecheck) job ran `node scripts/compiler-check.js`. Four bailouts that landed after #181 (useAutoplay, SignInScreen, AddPhotoCard: refs read in render; PostcardStamp: `new` expression) are allowlisted with reasons, same as B27.
 - **Next:** merge on green; B27 fixes the bailouts one at a time.
