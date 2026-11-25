@@ -19,7 +19,7 @@ One table in `theme.ts`, `TYPE`, keyed by style name, with a Standard set (Easy 
 | `headline` | 17 / 22 | 21 / 26 | SemiBold | Button and action words, names, counts that are the point, "Add photos" |
 | `body` | 17 / 22 | 21 / 26 | Regular | All reading text: captions, comments, notes, menu rows, fields, alert messages |
 | `callout` | 16 / 21 | 20 / 25 | Regular | Reserved: none today |
-| `subheadline` | 15 / 20 | 19 / 24 | Regular | Secondary words only (see the map): dates, "N people", reaction counts, kind tiles |
+| `subheadline` | 15 / 20 | 19 / 24 | Regular | Secondary words only (see the map): dates, "N people", reaction counts |
 | `footnote` | 13 / 18 | 17 / 22 | Regular | Reserved: none today (Easy view raises to 17) |
 | `caption1` | 12 / 16 | 17 / 22 | Regular | Tab words (Android's own bar with Easy view off; Hearth's bar in Easy view) |
 | `caption2` | 11 / 13 | 17 / 22 | Regular | Reserved: none today (Easy view raises to 17) |
@@ -91,7 +91,7 @@ Counts from `grep` on Nov 24. "No change" means the same size in Standard; Easy 
 | TYPE-4 | Given every style, then fontFamily is `FONT.regular` or `FONT.semibold` (never Medium, never a Bold file); the titles and `headline` are SemiBold; `textStyle(name, easy, true)` returns SemiBold for every style. | auto (jest) |
 | TYPE-5 | Lint (`app/src/ui/__tests__/typeLint.test.ts`): scanning `app/src/**/*.tsx?` except `ui/theme.ts` and test files, the test fails on any `fontSize:` or `lineHeight:` followed by a number literal; any `t.base`, `t.title`, `t.display`, `t.line`, `typeScale(`, `GALLERY_TYPE`; any `variant="strong"`, `"title"`, `"display"` or `"muted"` on `Txt`. It names the file and line. | auto (jest) |
 | TYPE-6 | Given the map, then rendered samples carry their style: Gallery greeting and Feed and More titles `largeTitle`; a pushed page title (Birthdays) `title1`; Share "New post" `title2`; a `Button` label `headline`; a post date `subheadline`; the who-sees-it line `body`; a FaceTile "N people" `subheadline`; Android tab `labelStyle` `caption1`. Each checks size and leading in both modes. | auto (jest) |
-| TYPE-7 | Given Easy view off, then `callout`..`caption2` appear only on the elements the map lists (date group, post date, "N people", reaction count, kind tiles, tab words); a test lists the allowed `testID`s and fails on any other Text under 17 in the `a11ySweep` screens. | auto (jest) |
+| TYPE-7 | Given Easy view off, then `callout`..`caption2` appear only on the elements the map lists (date group, post date, "N people", reaction count, tab words; Share's kind tile words are `headline` since GUX-SK-R9); a test lists the allowed `testID`s and fails on any other Text under 17 in the `a11ySweep` screens. | auto (jest) |
 | TYPE-8 | Given any text on a screen, then nothing sets `allowFontScaling={false}` except the two `STAMP_MARK` texts; `maxFontSizeMultiplier={LABEL_SCALE_CAP}` stays where it is today. | auto (jest) |
 | TYPE-9 | Given an iPhone at the largest accessibility text size (and Android font scale 2.0), when Gallery, Feed, a post, Share and More open, then every style grows with the setting, words wrap (nothing cut, nothing overlaps) and labels stop at their cap. | manual (phone) |
 | TYPE-10 | Public demo (393 px) as Kevin, light and dark, Easy view off and on: computed font sizes on Gallery greeting, Feed title, a post title, post body, post date, a button, Share "New post" and "Add photos" match the table. | auto (Playwright) |

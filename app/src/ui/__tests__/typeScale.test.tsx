@@ -29,7 +29,7 @@
 //   - `gallery-day-label`         Gallery's date group          subheadline emphasized (SemiBold)
 //   - `face-count`                FaceTile "N people"           subheadline, muted
 //   - `reaction-count`            a reaction's count            subheadline
-//   - `share-kind-word-<kind>`    Share's Event/News/Saying     subheadline (kind = event | news | saying)
+//   - `share-kind-word-<kind>`    Share's Event/News/Saying     headline since GUX-SK-R9 (no longer small; off SMALL_OK)
 // Share kinds (SHARE-ST-30..33): the feature name is `post_kinds` (in app.features, from my_features). Seams are
 // listed at the top of the Round 4 block in shareStart.test.tsx.
 import { render, screen, within } from '@testing-library/react-native';
@@ -264,7 +264,7 @@ describe('TYPE-6 each screen element carries its named style (Standard and Easy 
 // =================================================================================================================
 // TYPE-3 (screens) and TYPE-7: a sweep over the main screens. Easy view on: nothing under 17. Easy view off: only the
 // allowed testIDs may be under 17 (and never under caption1's 12).
-const SMALL_OK = /^(when-.+|gallery-day-label|face-count|reaction-count|share-kind-word-(event|news|saying))$/;
+const SMALL_OK = /^(when-.+|gallery-day-label|face-count|reaction-count)$/;
 /** A Text's testID, or the nearest Text parent's (a nested Txt inherits its parent's size). */
 function smallId(n: Inst): string | undefined {
   for (let p: Inst | null = n; p; p = p.parent) if (p.type === Text && typeof p.props.testID === 'string') return p.props.testID as string;
