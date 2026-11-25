@@ -16,6 +16,9 @@ blockers:
 - **Next:** Chase's merge (live demo); after publish, check the header on chaseholroyd.com/hearth/ at 1280 and 390.
 
 
+## Nov 25: duplicate-number check (NUM-1..6; branch claude/project-thread-hl5ax4, not pushed)
+- **Done, test-first:** `scripts/check-unique-numbers.sh [root]` fails on a repeated migration prefix, DEC heading, ticket id or run id; passes on the real repo. Test `scripts/tests/check_unique_numbers_test.sh` 6/6. **Next:** wire into `test-all.sh`/CI if staff-pm agrees.
+
 ## Nov 24: add to home screen built (HRT-WEB.2, WEB-APP-13..18 + QA-R1; branch claude/project-thread-o1dwht, PR)
 - **Done (engineer, on qa-tdd's red `e2e/results/web-install-red-2026-11-24.txt`):** `app/public/manifest.webmanifest` (Hearth, standalone, portrait, `id`/`start_url`/`scope` ".", Paper #F7F7F4), icons in `app/public/icons/` made by `app/scripts/make-web-icons.py` (Pillow, no new dependency; maskable from `adaptive-icon.png` inside the central 78% on Paper), `app/public/index.html` (Expo template + manifest link + light/dark theme-color), `.webmanifest` type in `serve-dist.js` and `serve-static.js`. QA-R1 (Chase): the link is root-relative to the base path (`/manifest.webmanifest`; `build-demo.sh` rewrites it to `/demo/hearth/...`); WEB-APP-13 test line and spec WEB-APP-13/18 updated to say so. No service worker. **Next exact step:** qa-tdd green 3x, then grandparent-ux on the icons and the inviter guide section, then commit and PR.
 ## Nov 25: React Compiler check in CI (B32, R84; branch claude/project-thread-6ew09x, PR)
