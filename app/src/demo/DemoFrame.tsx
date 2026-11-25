@@ -28,7 +28,8 @@ export function DemoFrame({ width, children, open = () => {}, controls }: {
   const { c, dark } = useTheme();
   if (width < WIDE) return <>{children}</>;
   return (
-    <View testID="demo-frame" style={[styles.row, { backgroundColor: c.bg }]}>
+    // SITEBAR-3: in light the page is plain white, matching the portfolio's white site bar (data-page="white").
+    <View testID="demo-frame" style={[styles.row, { backgroundColor: dark ? c.bg : '#FFFFFF' }]}>
       {/* DEMO-EASY-1: Easy view (Grandma Jo) enlarges only the app in the phone column, never this panel. */}
       <BigTextContext.Provider value={false}>
       <ScrollView style={styles.panel} contentContainerStyle={styles.panelWords}>
