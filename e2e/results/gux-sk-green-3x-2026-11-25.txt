@@ -1,0 +1,23 @@
+GUX-SK-R1..R11 green check, qa-tdd, 2026-11-25, at f5739f1 (engineer's fix on 1f1d3a0) plus qa-tdd's T44 test update (4 superseded expectations in shareStart.test.tsx; SMALL_OK no longer lists share-kind-word-*).
+git diff 1f1d3a0 f5739f1: agent log, HANDOFF.md, PostCard.tsx, ShareKinds.tsx, ShareScreen.tsx, ui/kit.tsx. No test file changed by the engineer.
+Before the T44 update (reproduced by qa-tdd: jest shareStart.test.tsx at f5739f1, 4 failed, 93 passed): 4 failed (SHARE-ST-31 chase, alex: kind word 15/20 expected, 17/22 got; SHARE-ST-32: 19/24 expected, 21/26 got; SHARE-ST-31 'Add an event': field 'When' not found, 'What day' is there).
+Run 1 started in a background loop; runs 2 and 3 were cut off by harness limits and a container restart; run 2 finished in a second loop, run 3 was redone whole in the foreground. No run was retried after a failure: none failed.
+Backend SQL and prototype untouched since r96 (a7d5c9e); r96 stands for them.
+== run 1
+compiler: INTAKE-80-3: 175 files, 155 functions compiled, 24 bailouts (0 not allowlisted)
+jest: Test Suites: 188 passed, 188 total / Tests:       1 skipped, 1 todo, 2571 passed, 2573 total
+typecheck: 0 bytes of output (clean)
+e2e:demo:   61 passed (3.9m) 
+e2e:web:   6 passed (44.2s) 
+== run 2
+compiler: INTAKE-80-3: 175 files, 155 functions compiled, 24 bailouts (0 not allowlisted)
+jest: Test Suites: 188 passed, 188 total / Tests:       1 skipped, 1 todo, 2571 passed, 2573 total
+typecheck: 0 bytes of output (clean)
+e2e:demo:   61 passed (3.8m) 
+e2e:web:   6 passed (44.2s) 
+== run 3
+compiler: INTAKE-80-3: 175 files, 155 functions compiled, 24 bailouts (0 not allowlisted)
+jest: Test Suites: 188 passed, 188 total / Tests:       1 skipped, 1 todo, 2571 passed, 2573 total
+typecheck: 0 bytes of output (clean)
+e2e:demo:   61 passed (3.9m) 
+e2e:web:   6 passed (45.2s) 
