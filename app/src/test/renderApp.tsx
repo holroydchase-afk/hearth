@@ -68,7 +68,7 @@ const flat = (style: unknown) =>
   (StyleSheet.flatten(typeof style === 'function' ? style({ pressed: false, hovered: false }) : style) ?? {}) as Record<string, unknown>;
 
 /** TYPE-7: the only Texts allowed under 17 pt (Easy view off), by their own or their nearest Text parent's testID. */
-export const SMALL_OK = /^(when-.+|gallery-day-label|face-count|reaction-count|share-kind-word-(event|news|saying))$/;
+export const SMALL_OK = /^(when-.+|gallery-day-label|face-count|reaction-count)$/;
 function smallTestId(n: Node): string | undefined {
   for (let p: Node | null = n; p; p = p.parent as Node | null) if (p.type === Text && typeof p.props.testID === 'string') return p.props.testID as string;
   return undefined;

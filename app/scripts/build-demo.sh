@@ -23,4 +23,6 @@ echo "$sha" > "$OUT/version.txt"
 bash scripts/add-site-meta.sh "$OUT" "$BASE"
 # ANALYTICS-1: page views on the demo site only, off unless the two Umami values are set.
 bash scripts/add-site-analytics.sh "$OUT"
+# SITEBAR-2: the portfolio's shared top bar on every page of the demo site.
+bash scripts/add-site-bar.sh "$OUT"
 echo "Built $OUT for $BASE/ (copy its contents to that folder of the site)"

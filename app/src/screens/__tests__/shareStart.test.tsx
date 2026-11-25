@@ -830,14 +830,15 @@ describe('GUX-W5 P2 the filled note field has no example hint', () => {
 //     borderRadius 16, minHeight >= 48 (Easy view >= 60), flex 1 when in a row (equal widths); in Easy view each
 //     tile is flexDirection 'row' (icon left of the word) and full width (alignSelf 'stretch' or width '100%' or no
 //     fixed width). Each holds an icon (name + tintColor props) and one Text, testID "share-kind-word-<kind>",
-//     "Event" / "News" / "Saying", subheadline (15 / 20; Easy 19 / 24), no numberOfLines, no adjustsFontSizeToFit.
+//     "Event" / "News" / "Saying", headline (17 / 22 SemiBold; Easy 21 / 26; GUX-SK-R9 superseded subheadline),
+//     no numberOfLines, no adjustsFontSizeToFit.
 //   - Tapping a tile shows that kind's empty card face (tester option A), testID "share-kind-card-<kind>", in place
 //     of the empty photo card and the kinds row; "New post" stays. Fields (TextInput, accessibilityLabel):
-//     event "What's happening", "When", "Where, optional"; news "Your news"; saying "What they said",
+//     event "What's happening", "What day" (GUX-SK-R1 renamed "When"), "Where, optional"; news "Your news"; saying "What they said",
 //     "Who said it", "Age then, optional". Each card shows "To:" and a disabled button "Pick who gets it".
 //     Nothing is sent or created by the tap.
 const KINDS = [
-  { k: 'event', word: 'Event', label: 'Add an event', fields: ["What's happening", 'When', 'Where, optional'] },
+  { k: 'event', word: 'Event', label: 'Add an event', fields: ["What's happening", 'What day', 'Where, optional'] },
   { k: 'news', word: 'News', label: 'Share news', fields: ['Your news'] },
   { k: 'saying', word: 'Saying', label: 'Add a saying', fields: ['What they said', 'Who said it', 'Age then, optional'] },
 ] as const;
@@ -893,7 +894,7 @@ describe('SHARE-ST-30 post_kinds off: no kind tiles for anyone', () => {
 
 describe('SHARE-ST-31 post_kinds on, a parent: three tiles under the postcard', () => {
   for (const user of ['chase', 'alex'] as const) {
-    it(`SHARE-ST-31 ${user}: "share-kinds" after the card, a row of Event, News, Saying; surface, 16 px corners, >= 48 pt, equal widths; subheadline words; spoken labels`, async () => {
+    it(`SHARE-ST-31 ${user}: "share-kinds" after the card, a row of Event, News, Saying; surface, 16 px corners, >= 48 pt, equal widths; headline words (GUX-SK-R9); spoken labels`, async () => {
       await start({ user, be: kindsOn(), kv: prefs(user, { easyView: false }) });
       const c = pal(false);
       const row = await screen.findByTestId('share-kinds', {}, slow);
@@ -911,8 +912,8 @@ describe('SHARE-ST-31 post_kinds on, a parent: three tiles under the postcard', 
         expect(t.findAll((x: Inst) => x.props.name !== undefined && x.props.tintColor !== undefined).length).toBeGreaterThan(0);
         const w = screen.getByTestId(`share-kind-word-${K.k}`);
         const ws = flat(w.props.style);
-        expect({ k: K.k, words: wordsIn(w) || String(w.props.children), size: ws.fontSize, line: ws.lineHeight, lines: w.props.numberOfLines, shrink: w.props.adjustsFontSizeToFit ?? false })
-          .toEqual({ k: K.k, words: K.word, size: 15, line: 20, lines: undefined, shrink: false });
+        expect({ k: K.k, words: wordsIn(w) || String(w.props.children), size: ws.fontSize, line: ws.lineHeight, font: ws.fontFamily, lines: w.props.numberOfLines, shrink: w.props.adjustsFontSizeToFit ?? false })
+          .toEqual({ k: K.k, words: K.word, size: 17, line: 22, font: FONT.semibold, lines: undefined, shrink: false });
         expect(within(w, t)).toBe(true);
       }
       expectGrandparentSafe();
@@ -921,7 +922,7 @@ describe('SHARE-ST-31 post_kinds on, a parent: three tiles under the postcard', 
 });
 
 describe('SHARE-ST-32 post_kinds on, a parent with Easy view: the tiles stack', () => {
-  it('SHARE-ST-32 one tile per row, full width, icon left of the word, >= 60 pt; same order and labels; words 19 / 24, never cut', async () => {
+  it('SHARE-ST-32 one tile per row, full width, icon left of the word, >= 60 pt; same order and labels; words headline 21 / 26 (GUX-SK-R9), never cut', async () => {
     await start({ be: kindsOn(), kv: prefs('chase', { easyView: true }) });
     const row = await screen.findByTestId('share-kinds', {}, slow);
     expect(flat(row.props.style).flexDirection).toBe('column');
@@ -935,7 +936,7 @@ describe('SHARE-ST-32 post_kinds on, a parent with Easy view: the tiles stack', 
       expect({ k: K.k, dir: st.flexDirection, tall: Number(st.minHeight ?? st.height ?? 0) >= 60, full }).toEqual({ k: K.k, dir: 'row', tall: true, full: true });
       const w = screen.getByTestId(`share-kind-word-${K.k}`);
       const ws = flat(w.props.style);
-      expect({ size: ws.fontSize, line: ws.lineHeight, lines: w.props.numberOfLines, shrink: w.props.adjustsFontSizeToFit ?? false }).toEqual({ size: 19, line: 24, lines: undefined, shrink: false });
+      expect({ size: ws.fontSize, line: ws.lineHeight, font: ws.fontFamily, lines: w.props.numberOfLines, shrink: w.props.adjustsFontSizeToFit ?? false }).toEqual({ size: 21, line: 26, font: FONT.semibold, lines: undefined, shrink: false });
     }
   });
 });

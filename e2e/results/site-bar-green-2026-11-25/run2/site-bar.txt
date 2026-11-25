@@ -1,0 +1,13 @@
+ok   - SITEBAR-1: the script exists
+ok   - SITEBAR-1: the run passes
+ok   - SITEBAR-1: every index.html gets the tag exactly once, right before </body>
+ok   - SITEBAR-1: the rest of the page is untouched
+ok   - SITEBAR-1: files not named index.html are left alone
+ok   - SITEBAR-1: running twice passes and adds no second tag
+ok   - SITEBAR-1: no other host is loaded (no http address in any script tag it adds)
+ok   - SITEBAR-1: the script itself names no outside host
+ok   - SITEBAR-1: a missing SITE_DIR fails with usage
+ok   - SITEBAR-2: build-demo.sh runs it on the site build
+ok   - SITEBAR-2: it runs next to add-site-analytics.sh, after the route copies
+ok   - SITEBAR-2: nothing in the app's own code loads demo-bar.js
+SITE BAR RESULT: 12 passed, 0 failed

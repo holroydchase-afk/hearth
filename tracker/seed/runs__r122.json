@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-25T18:30:00-05:00",
+ "label": "Intake #176 privacy sweep: jest, typecheck, persona and agents checks 3x (green; e2e:web left to CI)",
+ "passed": 7632,
+ "failed": 0,
+ "results": {},
+ "note": "3 identical runs on priv-176: jest 192 suites, 2544 passed (1 skipped, 1 todo); typecheck clean; check-persona-checks and check-agents exit 0. e2e:web did not run in the cloud worktree (Playwright missing), so the changed park-gps.jpg fixture is covered by CI."
+}

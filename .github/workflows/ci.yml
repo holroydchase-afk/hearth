@@ -31,6 +31,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - run: bash scripts/tests/check_persona_checks_test.sh
+      - run: bash scripts/tests/check_unique_numbers_test.sh
+      - run: bash scripts/check-unique-numbers.sh
 
   # PRIV-2 (CLAUDE.md rule 2): no console.* call logs a key, URL, caption, email or raw error.
   logs:

@@ -117,11 +117,11 @@ describe('DEMO-BAR studio demo bar', () => {
     expect(open).toHaveBeenCalledWith(PORTFOLIO_URL);
   });
 
-  // Updated Nov 24 (DEMO-PHOTO-9/10, DEC-82): the demo parent is Kevin (was Chase, UX-R12).
-  it("DEMO-10 DEMO-PHOTO-10 the drawer switches to Grandma Jo's view and back to Kevin's in one tap", async () => {
+  // Updated Nov 24 (T45 DEMO-NAMES-2): the demo parent is Graham (was Kevin, DEC-82; Chase, UX-R12).
+  it("DEMO-10 DEMO-PHOTO-10 DEMO-NAMES-2 the drawer switches to Grandma Jo's view and back to Graham's in one tap", async () => {
     const { be, reload } = await setup();
     fireEvent.press(toggle(false));
-    expect(screen.getByText("You're Kevin, a parent.")).toBeTruthy();
+    expect(screen.getByText("You're Graham, a parent.")).toBeTruthy();
     fireEvent.press(screen.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }));
     expect(be.state.appSession).toBe(FIXTURE.users.jo.id);
     expect(reload).toHaveBeenCalledTimes(1);
@@ -129,8 +129,8 @@ describe('DEMO-BAR studio demo bar', () => {
     render(<DemoBar be={be} reload={reload} startOver={jest.fn()} open={jest.fn()} />);
     fireEvent.press(toggle(false));
     expect(screen.getByText(/You're Grandma Jo/)).toBeTruthy();
-    expect(screen.getByText("Back to Kevin's view")).toBeTruthy();
-    fireEvent.press(screen.getByRole('button', { name: "Back to Kevin's view, the parent" }));
+    expect(screen.getByText("Back to Graham's view")).toBeTruthy();
+    fireEvent.press(screen.getByRole('button', { name: "Back to Graham's view, the parent" }));
     expect(be.state.appSession).toBe(FIXTURE.users.chase.id);
   });
 
@@ -162,13 +162,13 @@ describe('DEMO-BAR studio demo bar', () => {
   });
 
   // GUX-DP-AC6 (grandparent-ux, Nov 24): Grandma Jo's view says who she is in the family, not a role label.
-  it("GUX-DP-AC6 Grandma Jo's view reads \"You're Grandma Jo, Kevin's mom.\"", async () => {
+  it("GUX-DP-AC6 DEMO-NAMES-2 Grandma Jo's view reads \"You're Grandma Jo, Graham's mom.\"", async () => {
     const { be } = await setup();
     be.state.appSession = FIXTURE.users.jo.id;
     screen.unmount();
     render(<DemoBar be={be} reload={jest.fn()} startOver={jest.fn()} open={jest.fn()} />);
     fireEvent.press(toggle(false));
-    expect(screen.getByText("You're Grandma Jo, Kevin's mom.")).toBeTruthy();
+    expect(screen.getByText("You're Grandma Jo, Graham's mom.")).toBeTruthy();
     expect(screen.queryByText(/a grandparent\./)).toBeNull();
   });
 
