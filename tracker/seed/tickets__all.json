@@ -1645,13 +1645,13 @@
    "kind": "bug",
    "layer": "app",
    "severity": "High",
-   "status": "open",
-   "title": "PRIV-SK-R1 P1 (privacy-security, Share kind cards, Nov 25): create_post returns the existing post for a repeated client id and ignores new groups and words (that is what makes a retry safe), but ShareScreen keeps a News/Event/Saying draft's client id when (1) the parent changes the picked groups after a failed publish, or (2) createPost committed but its reply was lost (NETWORK) and the parent then edits the words (draft.made is only set after the reply). Send again then publishes the OLD post to the OLD groups while the button names the new ones. Failing tests by qa-tdd: PRIV-SK-R1 (a) and (b) in app/src/screens/__tests__/shareKindsSave.test.tsx (red: (a) published to Dad's side, not Mom's side; (b) published 'Leo lost his first tooth', not the edited words); (c) plain retry still one post is the idempotency guard (passes). e2e/results/priv-sk-red-2026-11-25.txt",
+   "status": "fixed",
+   "title": "PRIV-SK-R1 P1 (privacy-security, Share kind cards, Nov 25): create_post returns the existing post for a repeated client id and ignores new groups and words (that is what makes a retry safe), but ShareScreen keeps a News/Event/Saying draft's client id when (1) the parent changes the picked groups after a failed publish, or (2) createPost committed but its reply was lost (NETWORK) and the parent then edits the words (draft.made is only set after the reply). Send again then publishes the OLD post to the OLD groups while the button names the new ones. Failing tests by qa-tdd: PRIV-SK-R1 (a) and (b) in app/src/screens/__tests__/shareKindsSave.test.tsx (red: (a) published to Dad's side, not Mom's side; (b) published 'Leo lost his first tooth', not the edited words); (c) plain retry still one post is the idempotency guard (passes). e2e/results/priv-sk-red-2026-11-25.txt Fixed Nov 25 (engineer, 02d7827): the draft keeps what its createPost was sent with (kind, words, sorted groups); Send with anything different mints a new client id, and an unchanged Send still reuses it, so a plain retry is still one post. qa-tdd green 3x on the merge of main (run r105): PRIV-SK-R1 (a), (b), (c) pass, full jest 2601 passed, all 25 suites green. e2e/results/priv-sk-green-3x-2026-11-25.txt",
    "tests": [
     "app/src/screens/__tests__/shareKindsSave.test.tsx"
    ],
    "found": "2026-11-25",
-   "fixed": null
+   "fixed": "2026-11-25"
   },
   {
    "id": "B33",

@@ -27,7 +27,7 @@ ReferenceError: You are trying to access a property or method of the Jest enviro
 
       at Timeout.now [as _onTimeout] (node_modules/@react-native/jest-preset/jest/setup.js:61:45)
 
-Test Suites: 188 passed, 188 total
-Tests:       1 skipped, 1 todo, 2542 passed, 2544 total
+Test Suites: 192 passed, 192 total
+Tests:       1 skipped, 1 todo, 2601 passed, 2603 total
 Snapshots:   0 total
-Time:        210.346 s
+Time:        195.581 s, estimated 199 s
