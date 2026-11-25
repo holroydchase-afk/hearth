@@ -1233,6 +1233,28 @@
    "fixed": null
   },
   {
+   "id": "T45",
+   "kind": "enhancement",
+   "layer": "app",
+   "severity": "Medium",
+   "status": "fixed",
+   "title": "Chase, Nov 24: rename the public demo's people only (FakeBackend fixture names unchanged): parent Kevin -> Graham, mom Alex -> Eliza, Nana Ruth -> Nana Eloise, Grandpa Earl -> Grandpa Hollis, Aunt Bea (post 4 caption) -> Aunt Libby, kid Mia (calendar birthday) -> Clara, anniversary 'Graham and Eliza'; Grandma Jo stays, now \"Graham's mom\"; never 'Granddaddy'. DEMO-NAMES-1..6. Failing tests first (qa-tdd, Nov 24): new app/src/demo/__tests__/demoNames.test.tsx; seed, demoBar, realPhotos and calendarDemo tests and the demo/site e2e specs now expect the new names. Red, 1 run: jest src/demo 14 failed, 58 passed; e2e:demo 14 failed, 39 passed, 5 skipped; e2e:site 2 failed, 12 passed. Fix goes to the engineer: DEMO_NAMES in seed.ts (add ruth, earl; emails with no spaces), DEMO_POSTS/DEMO_DATES words, DemoBar.tsx lines. Fixed Nov 24 (engineer, uncommitted on claude/project-thread-dp2r8b): seed.ts DEMO_NAMES adds ruth/earl, emails from the name's last word (graham, eliza, eloise, hollis @example.com), Aunt Libby, Clara, 'Graham and Eliza', demo space renamed 'Clara and Leo' (QA-R1; seed.test DEMO-3 assertion updated), seed version moves; DemoBar.tsx says Graham. Green, 1 run: jest src/demo 72 passed, typecheck clean, e2e:site 14 passed, e2e:demo 53 passed 5 skipped. Test: app/src/demo/__tests__/demoNames.test.tsx",
+   "tests": [
+    "app/e2e-web/demo-calendar.spec.js",
+    "app/e2e-web/demo-safari.spec.js",
+    "app/e2e-web/demo-showcase.spec.js",
+    "app/e2e-web/demo.spec.js",
+    "app/e2e-web/site.spec.js",
+    "app/src/demo/__tests__/calendarDemo.test.ts",
+    "app/src/demo/__tests__/demoBar.test.tsx",
+    "app/src/demo/__tests__/demoNames.test.tsx",
+    "app/src/demo/__tests__/realPhotos.test.ts",
+    "app/src/demo/__tests__/seed.test.ts"
+   ],
+   "found": "2026-11-24",
+   "fixed": "2026-11-25"
+  },
+  {
    "id": "B20",
    "kind": "bug",
    "layer": "app",
@@ -1639,7 +1661,7 @@
    "fixed": "2026-11-25"
   },
   {
-   "id": "T45",
+   "id": "T46",
    "kind": "test fix",
    "layer": "app",
    "severity": "Low",

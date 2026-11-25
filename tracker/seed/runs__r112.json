@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-25T22:00:00-05:00",
- "label": "PRIV-SK-R1 Send again with changed groups or words fixed (B32), on the merge of main aff95aa (HRT-WEB.1): all suites 3x via test-all.sh (green)",
- "passed": 14007,
- "failed": 0,
+ "at": "2026-11-24T23:59:58-05:00",
+ "label": "T45 DEMO-NAMES-1..6 demo renames: failing tests first (red)",
+ "passed": 109,
+ "failed": 30,
  "results": {},
- "note": "3 whole foreground runs of bash test-all.sh at bf11673 (merge of origin/main aff95aa into the engineer's fix 02d7827), identical each time: 25 suites passed, 0 failed, 2 skipped (Deno isn't installed, CI runs it; starter invites, no template). Per run: jest 2601 passed (1 skipped, 1 todo; 192 suites), typecheck clean, e2e:demo 61 passed (5 env-gated skipped), e2e:web 11 passed (6 skipped; main's web-session specs included), prototype 33, backend SQL 1963 passed 0 failed, compiler rules 0 not allowlisted (B31 stays closed), compiler bundle 2, deploy 28, VIS-12 nightly 8, starter scripts 17. git diff d20d187 02d7827 changes no test file. Red before: r99 (2 failed). Targeted: jest -t PRIV-SK-R1 3 passed (a, b, c). A first attempt at run 2 skipped backend SQL and the starter scripts because the local Postgres cluster had stopped between runs (environment, not a test result); it was restarted and run 2 redone whole. The merge needed no renumbering: main took r101..r104, T43, R92..R94, ours keep r96..r99, T42/T44, B31..B33, R90. Open: B33 (PRIV-SK-R2, accepted until milestone 7), T42 (contract harness can't flip the global post_kinds switch). Not run: Deno, starter invites, e2e:site, phones, screen readers on a device. e2e/results/priv-sk-green-3x-2026-11-25.txt"
+ "note": "Red on purpose, 1 run each, no product change: npx jest src/demo: 14 failed, 58 passed (DEMO_NAMES still Kevin/Alex with no ruth/earl; post 4 says Aunt Bea; dates Mia, Kevin and Alex; DemoBar says You're Kevin / Kevin's mom / Back to Kevin's view; seed version still napqej). DEMO-NAMES-4 (valid emails) and DEMO-NAMES-6 (no Granddaddy) pass now as guards. npm run e2e:demo: 14 failed, 39 passed, 5 skipped, every failure waiting for Graham, Eliza, Grandpa Hollis, Aunt Libby or Back to Graham's view. npm run e2e:site: 2 failed, 12 passed (DEMO-5 Start over and DEMO-NEW-5 wait for Graham / From Eliza). Green waits on the engineer's seed.ts and DemoBar.tsx change. e2e/results/2026-11-24-T45-*-red.txt"
 }
