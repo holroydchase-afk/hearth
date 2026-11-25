@@ -1,0 +1,14 @@
+qa-tdd, 2026-11-24, HRT-WEB.1 (SPEC-WEB-APP.md, WEB-APP-1..10): tests written first (red). No implementation.
+== jest --ci, 3 runs (full app suite)
+run 1: Test Suites: 2 failed, 175 passed, 177 total; Tests: 15 failed, 1 skipped, 1 todo, 2297 passed
+run 2: same
+run 3: same
+FAIL src/platform/__tests__/secureSession.web.test.ts (14 red): "secureSession.web.ts does not export createSecureSessionStorage({ keys }) yet"; default secureSessionStorage has no clear()
+FAIL src/api/__tests__/SupabaseApi.offlineSignOut.test.ts (1 red): WEB-APP-7 expired token + offline sign-out keeps sb-x-auth-token (supabase-js refresh fails with AuthRetryableFetchError and returns before removing the session). Fresh-token offline case passes today.
+PASS src/platform/__tests__/secureSession.native.test.ts (4, WEB-APP-10 guard: native file sha256 pinned, round trip, remove, tamper)
+typecheck: clean
+== e2e:web web-session.spec.js, 3 runs (dist-fake)
+each run: 2 passed (WEB-APP-1, WEB-APP-2: guards, the fake build keeps its own session), 2 failed:
+  WEB-APP-3/4: chat.identity.<user> and chat.group.<user>.<circle> stored in plain JSON (includes the MLS signKey); expected sealed base64
+  WEB-APP-6: no CryptoKey in IndexedDB (expected 1 before sign-out)
+== e2e:web full, 1 run: 7 passed, 2 failed (the two above); no other spec affected

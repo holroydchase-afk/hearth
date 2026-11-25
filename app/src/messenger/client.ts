@@ -29,11 +29,33 @@ export function hearthRelay(api: HearthApi): Relay & Roster {
   };
 }
 
+/** Bumped at sign-out: every chat opened before it stops reading and writing its store. */
+let generation = 0;
+
+/**
+ * PRIV-WEB-R5 (WEB-APP-6): stops every open chat's store before sign-out clears it, so a save still in flight
+ * (a poll mid-fetch) can't seal chat.* values again after the wipe. Chats opened after the next sign-in work.
+ */
+export function stopChats(): void {
+  generation += 1;
+}
+
+/** The store as one chat sees it: once stopChats() runs, reads find nothing and writes are dropped. */
+function gated(store: ChatStore): ChatStore {
+  const mine = generation;
+  const live = () => mine === generation;
+  return {
+    getItem: (k) => (live() ? store.getItem(k) : Promise.resolve(null)),
+    setItem: (k, v) => (live() ? store.setItem(k, v) : Promise.resolve()),
+    removeItem: (k) => (live() ? store.removeItem(k) : Promise.resolve()),
+  };
+}
+
 export class ChatClient extends Messenger {
   constructor(api: HearthApi, me: string, store: ChatStore = secureSessionStorage) {
     const relay = hearthRelay(api);
     super({
-      relay, roster: relay, store, me, random: randomBytes,
+      relay, roster: relay, store: gated(store), me, random: randomBytes,
       isEpochConflict: (e) => isApiError(e) && e.code === '23505',
     });
   }
