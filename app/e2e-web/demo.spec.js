@@ -1417,12 +1417,14 @@ for (const look of ['light', 'dark']) {
   });
 }
 
-// SHARE-ST-34 (SPEC-REDESIGN 1j-2 round 4, DEC-84; written by qa-tdd, Nov 24): the public demo at 393 px, light, dark
-// and Easy view, post_kinds switch off: "New post" is 22 (Easy 26), "Add photos" 17 (Easy 21), the circle 52 (Easy
-// 60), and no kind tile shows. SUBSTITUTION (qa-tdd): the spec says "as Kevin and as Grandma Jo", but the demo's
-// Grandma Jo is a viewer with no Share tab (RD-9), so her Easy view column is checked as Kevin (the demo parent) with
-// Easy view turned on. If the demo ever gives Jo a Share tab, her own run below takes over. Screenshots for
-// grandparent-ux in test-results/share-st-34/.
+// SHARE-ST-34 (SPEC-REDESIGN 1j-2 round 4, DEC-84; written by qa-tdd, Nov 24; REWRITTEN Nov 25, DEMO-KINDS-7): the
+// public demo at 393 px, light, dark and Easy view. "New post" is 22 (Easy 26), "Add photos" 17 (Easy 21), the circle
+// 52 (Easy 60). SUPERSEDED expectation: Nov 24 asserted NO kind tile (post_kinds off). Chase turned post_kinds on for
+// the web demo only on Nov 25, so the parent now sees the Event, News and Saying row, each word at headline 17 (Easy 21).
+// EXACT, NOT LOOSENED: the three tiles are required, with these sizes. SUBSTITUTION (qa-tdd): the spec says "as Kevin
+// and as Grandma Jo", but the demo's Grandma Jo is a viewer with no Share tab (RD-9), so her Easy view column is checked as
+// Graham (the demo parent, was Kevin) with Easy view turned on. If the demo ever gives Jo a Share tab, her own run below
+// takes over. Screenshots for grandparent-ux in test-results/share-st-34/.
 const circleIn = (spot) => spot.evaluate((root) => {
   const hits = [...root.querySelectorAll('*')].map((el) => {
     const r = el.getBoundingClientRect(); const s = getComputedStyle(el);
@@ -1430,7 +1432,7 @@ const circleIn = (spot) => spot.evaluate((root) => {
   }).filter((x) => x.w >= 40 && x.w === x.h && x.radius >= x.w / 2 - 1 && x.bg !== 'rgba(0, 0, 0, 0)');
   return hits.length ? hits[0].w : null;
 });
-test('SHARE-ST-34 Share start at standard sizes on the demo: "New post" 22/26, "Add photos" 17/21, circle 52/60, no kind tile (light, dark, Easy view)', async ({ page }) => {
+test('SHARE-ST-34 DEMO-KINDS-7 Share start at standard sizes on the demo: "New post" 22/26, "Add photos" 17/21, circle 52/60, Event/News/Saying row at headline 17/21 (light, dark, Easy view)', async ({ page }) => {
   const shots = path.join(__dirname, '..', 'test-results', 'share-st-34');
   await page.setViewportSize({ width: 393, height: 852 });
   await page.emulateMedia({ colorScheme: 'light' });
@@ -1447,9 +1449,11 @@ test('SHARE-ST-34 Share start at standard sizes on the demo: "New post" 22/26, "
       circle: await circleIn(spot),
     };
     expect.soft({ shot, ...got }).toEqual({ shot, newPost: easy ? 26 : 22, addPhotos: easy ? 21 : 17, circle: easy ? 60 : 52 });
-    // Switch off (SHARE-ST-30): no Event, News or Saying tile anywhere.
-    await expect.soft(page.locator('[data-testid^="share-kind"]')).toHaveCount(0);
-    await expect.soft(page.getByRole('button', { name: /^(Add an event|Share news|Add a saying)$/ })).toHaveCount(0);
+    // Switch on for the demo (DEMO-KINDS-7): the three kinds show, each word at headline size (SPEC-TYPE: 17, Easy view 21).
+    await expect.soft(page.getByRole('button', { name: /^(Add an event|Share news|Add a saying)$/ })).toHaveCount(3);
+    for (const k of ['event', 'news', 'saying']) {
+      expect.soft(await sizeOfEl(page.getByTestId(`share-kind-word-${k}`)), `${k} word size`).toBe(easy ? 21 : 17);
+    }
     await page.screenshot({ path: path.join(shots, `${shot}.png`) });
   };
   await check(false, 'kevin-light');
@@ -1470,6 +1474,155 @@ test('SHARE-ST-34 Share start at standard sizes on the demo: "New post" 22/26, "
     test.info().annotations.push({ type: 'SHARE-ST-34', description: 'Grandma Jo has no Share tab in the demo (viewer, RD-9); her Easy view sizes were checked as Kevin with Easy view on.' });
   }
   await resetDemo(page);
+});
+
+// ===== DEMO-KINDS (Chase, Nov 25: post_kinds ON for the web demo only), written first (red) by qa-tdd =====
+// The demo parent is Graham (fixture owner; Chase called him Kevin before T45). Grandma Jo is a viewer with no Share tab.
+// These SUPERSEDE the Nov 24 switch-off expectations (SHARE-ST-34's "no kind tile"; SHARE-ST-30 in the demo). Exact, not loosened.
+const KIND_BUTTONS = /^(Add an event|Share news|Add a saying)$/;
+const kindsRowAt = async (page, { width, look, easy }) => {
+  await page.setViewportSize({ width, height: 844 });
+  await page.emulateMedia({ colorScheme: look });
+  await page.goto('/');
+  await galleryLoaded(page);
+  if (easy) await setEasyView(page, true);
+  await page.getByRole('tab', { name: /^Share/ }).click();
+  await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
+};
+for (const look of ['light', 'dark']) {
+  for (const easy of [false, true]) {
+    test(`DEMO-KINDS-7 the demo parent sees Event, News and Saying on Share at 390 px (${look}, Easy view ${easy ? 'on' : 'off'}), headline ${easy ? 21 : 17}`, async ({ page }) => {
+      await kindsRowAt(page, { width: 390, look, easy });
+      await expect(page.getByTestId('share-kinds')).toBeVisible();
+      await expect(page.getByRole('button', { name: KIND_BUTTONS })).toHaveCount(3);
+      for (const [k, word] of [['event', 'Event'], ['news', 'News'], ['saying', 'Saying']]) {
+        const w = page.getByTestId(`share-kind-word-${k}`);
+        await expect(w).toHaveText(word);
+        expect(await sizeOfEl(w)).toBe(easy ? 21 : 17);
+        const box = await page.getByTestId(`share-kind-${k}`).boundingBox();
+        expect(box.height).toBeGreaterThanOrEqual(48);
+        expect(box.x + box.width).toBeLessThanOrEqual(390);
+      }
+    });
+  }
+}
+
+test('DEMO-KINDS-8 Grandma Jo (a viewer) has no Share tab and so no kinds row anywhere', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await asJo(page);
+  await expect(page.getByRole('tab', { name: /^Share/ })).toHaveCount(0);
+  await expect(page.locator('[data-testid^="share-kind"]')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: KIND_BUTTONS })).toHaveCount(0);
+});
+
+test('DEMO-KINDS-9 a returning visitor whose browser saved an earlier demo family (before the kinds switch) gets the kinds row', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  // Pretend this browser saved the family on an earlier visit: the seed version the demo had before the switch went on.
+  await page.evaluate(() => localStorage.setItem('hearth.demoSeed', 'wofmn'));
+  await page.reload();
+  await galleryLoaded(page);
+  await page.getByRole('tab', { name: /^Share/ }).click();
+  await expect(page.getByRole('button', { name: KIND_BUTTONS })).toHaveCount(3);
+  // and the family is the sample one, saved at the current version (not an empty or half-cleared one)
+  expect(await page.evaluate(() => localStorage.getItem('hearth.demoSeed'))).not.toBe('wofmn');
+});
+
+// The walk: Graham picks a kind, types words, "Pick who gets it", picks a group, Send; Feed shows the card.
+const sendKind = async (page, kindLabel, fields, groupTile) => {
+  await page.getByRole('tab', { name: /^Share/ }).click();
+  await page.getByRole('button', { name: kindLabel }).click();
+  for (const [label, text] of Object.entries(fields)) await page.getByLabel(label, { exact: true }).fill(text);
+  await page.getByRole('button', { name: 'Pick who gets it' }).click();
+  await page.getByRole('button', { name: groupTile }).click();
+  await page.getByRole('button', { name: /^Send to / }).click();
+};
+const EVERYONE = /^Everyone, \d+ people, not picked$/;
+const MOM_SIDE = /^Grandparents . Mom's side, \d+ people, not picked$/;
+const noGroupTitlesFor = async (page) => {
+  // members never see group names (Jo is in Everyone and Dad's side, and still sees neither title)
+  await expect(page.getByText(/Grandparents . (Mom|Dad)'s side/)).toHaveCount(0);
+};
+const inFeed = async (page) => {
+  await page.getByRole('tab', { name: /^Feed/ }).click();
+};
+
+test('DEMO-KINDS-10 News walk: Graham sends News to Mom\'s side; Feed shows the news card; Grandma Jo is not in that group so never sees it', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await sendKind(page, 'Share news', { 'Your news': 'We found a house with a big yard!' }, MOM_SIDE);
+  await inFeed(page);
+  await expect(page.getByText('We found a house with a big yard!').filter({ visible: true }).first()).toBeVisible();
+  await expect(page.locator('[data-testid^="kind-"]').filter({ visible: true }).first()).toContainText('We found a house with a big yard!');
+  await asJo(page);
+  await inFeed(page);
+  await expect(page.getByText(/First ride on the balance bike/).filter({ visible: true }).first()).toBeVisible();
+  await expect(page.getByText('We found a house with a big yard!')).toHaveCount(0);
+  await noGroupTitlesFor(page);
+});
+
+test('DEMO-KINDS-11 News walk: sent to Everyone, Grandma Jo sees the news card and no group titles', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await sendKind(page, 'Share news', { 'Your news': 'Pawpaw is home from the hospital.' }, EVERYONE);
+  await asJo(page);
+  await inFeed(page);
+  await expect(page.locator('[data-testid^="kind-"]').filter({ visible: true }).first()).toContainText('Pawpaw is home from the hospital.');
+  await noGroupTitlesFor(page);
+});
+
+test('DEMO-KINDS-12 Event walk: What day 2026-12-24, Feed shows the event with its day; Grandma Jo (in Everyone) sees it', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await sendKind(page, 'Add an event', { "What's happening": 'Christmas Eve supper', 'What day': '2026-12-24', 'Where, optional': 'Gammy\'s house' }, EVERYONE);
+  await inFeed(page);
+  const card = page.locator('[data-testid^="kind-"]').filter({ visible: true }).first();
+  await expect(card).toContainText('Christmas Eve supper');
+  await expect(card).toContainText(/Dec(ember)? 24/);
+  await expect(card).toContainText("Gammy's house");
+  await asJo(page);
+  await inFeed(page);
+  await expect(page.locator('[data-testid^="kind-"]').filter({ visible: true }).first()).toContainText('Christmas Eve supper');
+  await noGroupTitlesFor(page);
+});
+
+test('DEMO-KINDS-13 Saying walk: the card says who sees the words and the age; Feed shows the words, who and the age', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.getByRole('tab', { name: /^Share/ }).click();
+  await page.getByRole('button', { name: 'Add a saying' }).click();
+  await page.getByLabel('What they said', { exact: true }).fill('The moon is following our car');
+  await page.getByLabel('Who said it', { exact: true }).fill('Leo');
+  await expect(page.getByText('Everyone you send this to will see these words and who said them.')).toBeVisible();
+  await page.getByLabel('Age then, optional', { exact: true }).fill('4');
+  await expect(page.getByText('Everyone you send this to will see these words, who said them, and the age.')).toBeVisible(); // the age line
+  await page.getByRole('button', { name: 'Pick who gets it' }).click();
+  await page.getByRole('button', { name: EVERYONE }).click();
+  await page.getByRole('button', { name: /^Send to / }).click();
+  await inFeed(page);
+  const card = page.locator('[data-testid^="kind-"]').filter({ visible: true }).first();
+  await expect(card).toContainText('The moon is following our car');
+  await expect(card).toContainText('Leo, age 4');
+  await asJo(page);
+  await inFeed(page);
+  await expect(page.locator('[data-testid^="kind-"]').filter({ visible: true }).first()).toContainText('Leo, age 4');
+  await noGroupTitlesFor(page);
+});
+
+test('DEMO-KINDS-14 the demo\'s Try this panel has a step for Share, Event, News and Saying (laptop width)', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  const step = page.getByText(/^4\. /);
+  await expect(step).toBeVisible();
+  for (const w of ['Share', 'Event', 'News', 'Saying']) await expect(step).toContainText(w);
 });
 
 // ===== PR #174 fix round (grandparent-ux), written first (red), Nov 24, by qa-tdd =====
