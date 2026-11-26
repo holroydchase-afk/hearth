@@ -30,7 +30,7 @@
 // big box and chips and step 2's tiles; the old field labels map onto them. Superseded tests are rewritten, IDs kept.
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import { Keyboard, Platform, ScrollView, StyleSheet, Text, TextInput } from 'react-native';
+import { Keyboard, ScrollView, StyleSheet, Text, TextInput } from 'react-native';
 import { ApiError } from '../../api/HearthApi';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { uuid } from '../../crypto/random';
@@ -40,14 +40,12 @@ import { FeedScreen } from '../../test/redesignScreens';
 import { expectGrandparentSafe, renderApp, type FixtureUser } from '../../test/renderApp';
 import { eventDay } from '../PostCard';
 import { ShareScreen } from '../ShareScreen';
-import { TYPE, paletteFor } from '../../ui/theme';
+import { TYPE } from '../../ui/theme';
 
 const slow = { timeout: 5000 };
 const DAD = "Grandparents – Dad's side";
 // GUX-SK-R8 (Nov 25): the SHARE-U-21 line's words changed at grandparent-ux's review (Chase's reviewers asked for it);
 // the check is as strict as before (exact words, reachable, 17 pt+). With the age blank (a fresh card) it reads:
-const SAYING_LINE = 'Everyone you send this to will see these words and who said them.';
-const SAYING_LINE_AGE = 'Everyone you send this to will see these words, who said them, and the age.';
 type Inst = ReturnType<typeof screen.getByTestId>;
 const flat = (s: unknown) => (StyleSheet.flatten((typeof s === 'function' ? (s as (p: object) => unknown)({ pressed: false }) : s) as never) ?? {}) as Record<string, unknown>;
 function wordsIn(root: Inst): string {
@@ -419,16 +417,10 @@ describe('SHARE-U-22 (DEC-91) guards: the age takes digits only, and every exist
 //   - R5/R6: exact AUTH and 42501 notices. R7: Feed's event line "Saturday, October 31 · place".
 //   - R8: Saying line exact, with ", and the age" only once an age is typed. R9: kind tile words are type.headline.
 //   - R10: kind card field underlines are c.tabLine. R11: Cancel on a card with words asks first (AlertDialog).
-const AGE_NOT_NUMBER_WORDS = 'Type the age as a number, like 4, or leave it blank. Your words are kept.';
 const GUX_DAY = 'Type the day as year-month-day, like 2026-12-24. Your words are kept.';
 const GUX_DAY_SERVER = 'The day needs to look like 2026-12-24. Your words are kept.';
 const GUX_AUTH = "You're signed out, so this didn't send. Signing in again clears this card, so copy your words first if you need them.";
 const GUX_OFF = "This can't be sent right now. Your words are kept. Tap Cancel, or ask whoever set up your family.";
-const R3_LINE: Record<K, string> = {
-  event: "Fill in What's happening and What day to go on.",
-  saying: 'Fill in What they said and Who said it to go on.',
-  news: 'Write your news to go on.',
-};
 type Mocked = jest.Mock & { mock: { calls: unknown[][] } };
 const scrollProto = ScrollView.prototype as unknown as { scrollTo: Mocked; scrollToEnd: Mocked };
 const clearScroll = () => { scrollProto.scrollTo.mockClear(); scrollProto.scrollToEnd.mockClear(); };

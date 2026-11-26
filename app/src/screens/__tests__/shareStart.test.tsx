@@ -88,7 +88,7 @@ import { memoryKV, type KV } from '../../platform/kv';
 import type { PickedAsset } from '../../share/bulk';
 import { expectGrandparentSafe, renderApp, screenWords, type FixtureUser } from '../../test/renderApp';
 import type { AppDeps } from '../../state/AppContext';
-import { FONT, THEME_NAMES, contrast, paletteFor, photoShadow } from '../../ui/theme';
+import { FONT, THEME_NAMES, paletteFor, photoShadow } from '../../ui/theme';
 import { ShareScreen } from '../ShareScreen';
 
 const slow = { timeout: 5000 };
@@ -148,19 +148,6 @@ const HIDDEN = { includeHiddenElements: true } as const;
 const spotOf = () => screen.getByTestId('share-spot', HIDDEN);
 /** Every word under `root`, hidden parts included. */
 const allWords = () => wordsIn(screen.UNSAFE_root as unknown as Inst);
-/** Opacity of a node times every host parent's. */
-function opacityOf(node: Inst): number {
-  let o = 1;
-  for (let p: Inst | null = node; p; p = p.parent) if (isHost(p)) o *= Number(flat(p.props.style).opacity ?? 1);
-  return o;
-}
-/** True when a host node at or above `node` hides it from VoiceOver/TalkBack. */
-function hiddenFromReaders(node: Inst): boolean {
-  for (let p: Inst | null = node; p; p = p.parent) {
-    if (isHost(p) && (p.props.accessibilityElementsHidden === true || p.props.importantForAccessibility === 'no-hide-descendants' || p.props['aria-hidden'] === true)) return true;
-  }
-  return false;
-}
 const within = (node: Inst, top: Inst) => { for (let p: Inst | null = node; p; p = p.parent) if (p === top) return true; return false; };
 /** The "Add photos" title Text(s) inside the spot. */
 const titlesIn = (root: Inst) => root.findAll((x: Inst) => x.type === Text && /^Add photos( or videos)?$/.test(wordsIn(x))) as Inst[];

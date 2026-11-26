@@ -7,7 +7,7 @@
 // Easy view On (grandparents): words on pills (Close, Zoom in, Back / Save / Next), "Photo n of m", bigger small
 // photos, and nothing ever hides. Kept: HARD-8 (remember which photo, not its index), prefetch, Save's words and
 // haptic, Save hidden on videos (R27).
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   AccessibilityInfo, ActivityIndicator, BackHandler, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, View,
   type LayoutChangeEvent, type TextStyle, type ViewStyle,
@@ -120,6 +120,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
   const gallery = useRef<GalleryRefType>(null);
   const photoBox = useRef<React.ComponentRef<typeof View>>(null);
   const shown = useRef<number | null>(null);
+  // eslint-disable-next-line react-hooks/refs -- sets the shown photo once, the first time there is one; a ref (not state) because the Gallery moves itself (Nov 26)
   if (shown.current === null && cur !== null) shown.current = cur;
   useEffect(() => {
     if (cur === null || shown.current === null || shown.current === cur) return;
@@ -128,7 +129,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
   }, [cur, entries]);
 
   const entriesRef = useRef(entries);
-  entriesRef.current = entries;
+  useLayoutEffect(() => { entriesRef.current = entries; });
   const arrive = (to: number) => {
     const e = entriesRef.current[to];
     if (!e) return;
@@ -148,7 +149,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
 
   // Gallery callbacks, kept stable so its gesture handler isn't rebuilt on every render.
   const live = useRef({ go, arrive, easy, screenReader, zoomed, close: nav.close, entries, cur, next, back, playing, size });
-  live.current = { go, arrive, easy, screenReader, zoomed, close: nav.close, entries, cur, next, back, playing, size };
+  useLayoutEffect(() => { live.current = { go, arrive, easy, screenReader, zoomed, close: nav.close, entries, cur, next, back, playing, size }; });
 
   const onIndexChange = useCallback((i: number) => live.current.arrive(i), []);
   const onTap = useCallback((_e: unknown, i: number) => {
@@ -315,6 +316,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
   const backdrop: ViewStyle = { backgroundColor: pull > 0 ? `rgba(0, 0, 0, ${Math.max(0, 1 - pull).toFixed(3)})` : BLACK };
 
   if (!entry) {
+    // eslint-disable-next-line react-hooks/refs -- asked only flips inside the effect that starts the refresh, whose result re-renders this screen (Nov 26)
     const removed = state.loaded && state.status === 'idle' && (asked.current || pos === -1);
     return (
       <View testID="viewer-backdrop" style={[styles.fill, backdrop, { paddingTop: insets.top + 8, paddingBottom: insets.bottom }]} onAccessibilityEscape={nav.close}>

@@ -193,7 +193,6 @@ describe("GUX-R16 → GUX-R3 (DEC-91) Share's note is an open box: no fill, no u
     for (const dark of [false, true]) {
       it(`GUX-R3 ${os} (${lookName(dark)}): the note field has no fill and no underline (DEC-91)`, async () => {
         jest.replaceProperty(Platform, 'OS', os);
-        const c = paletteFor(os, dark);
         await renderApp(<ShareScreen />, { user: 'chase', kv: memoryKV(prefs(chase.id, dark)) });
         await openNote();
         for (const label of FIELDS) {
