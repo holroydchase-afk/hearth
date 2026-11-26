@@ -52,6 +52,7 @@ Chase, Nov 24 (rapid messages): "Life calendar" / "Capture birthdays" / "And imp
 - Buttons: **Add my birthday**, **Change my birthday**, **Add a date**, **Change**, **Delete**. Gallery line button: **See birthdays**.
 - "Group" never appears here.
 - Review words (grandparent-ux, Nov 24): the card is short, "Add my birthday" opens the form on Birthdays with Save fixed at the bottom (GUX-R1); "Saved. December 8 is your birthday." at the top of Birthdays (GUX-R2); "Happy birthday, Grandma Jo!" on your own day (GUX-R4); "Today: Family reunion" for something else (GUX-R6); the form's back reads "Birthdays" (GUX-R7); "The dates can't load right now. Try again in a minute, or ask Chase." (GUX-R9); "Whose birthday?" and "It's removed for everyone in the family." (GUX-R11).
+- Review round (grandparent-ux, Nov 26, My birthday in Me): GUX-R22 a saved date reads "Your birthday is December 8." (no year). GUX-R20 the privacy line stays "The people who can see you in Hearth will see the month and day. Never the year." because it is accurate under PRIV-R2 (a birthday follows who can see that person); "Everyone in your family" would overclaim. GUX-R21 accepted for beta. GUX-R23 (no nudge for a grandparent with no date) is an ideas-log item, not built.
 
 ## Not doing in v1 (parked, one line each)
 - Push or email on the day, and "3 days before" reminders: v1.1; needs outbox changes, `notify` change and a deploy (TRACKER R78 follow-up).

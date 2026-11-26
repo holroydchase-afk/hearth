@@ -112,7 +112,7 @@ test('GUX-R1 CAL-S4 at 390x844 Me -> My birthday -> "Add my birthday" opens the 
   expect(errors).toEqual([]);
 });
 
-test('GUX-R2 CAL-S2 CAL-S4 after Save from Me, "Saved. December 8 is your birthday." is on-screen at the top of Birthdays, and Me then shows "December 8"', async ({ page }) => {
+test('GUX-R2 CAL-S2 CAL-S4 after Save from Me, "Saved. December 8 is your birthday." is on-screen at the top of Birthdays, and Me then shows "Your birthday is December 8."', async ({ page }) => {
   await page.goto('/');
   await galleryLoaded(page);
   const section = await openMyBirthday(page);
@@ -126,7 +126,7 @@ test('GUX-R2 CAL-S2 CAL-S4 after Save from Me, "Saved. December 8 is your birthd
   await expect(page.getByRole('button', { name: /^(Back to )?Gallery$/ }).filter({ visible: true })).toHaveCount(0); // More's stack
   await page.getByRole('button', { name: /^(Back to )?More$/ }).filter({ visible: true }).click();
   const again = await openMyBirthday(page);
-  await expect(again.getByText('December 8', { exact: true })).toBeVisible();
+  await expect(again.getByText('Your birthday is December 8.', { exact: true })).toBeVisible();
   await expect(again.getByRole('button', { name: 'Change my birthday' })).toBeVisible();
 });
 

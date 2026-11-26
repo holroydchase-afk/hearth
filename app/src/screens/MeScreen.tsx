@@ -50,7 +50,7 @@ function MyBirthday() {
   return (
     <GroupedSection testID="my-birthday">
       <Txt variant="title2" role="header">My birthday</Txt>
-      <Txt>{mine ? dateWords(mine.month, mine.day) : "Your birthday isn't added yet."}</Txt>
+      <Txt>{mine ? `Your birthday is ${dateWords(mine.month, mine.day)}.` : "Your birthday isn't added yet."}</Txt>
       <Txt tone="muted">{PRIVACY}</Txt>
       <Button label={mine ? 'Change my birthday' : 'Add my birthday'} variant="secondary" onPress={() => router.push('/more/birthdays?add=mine')} />
     </GroupedSection>

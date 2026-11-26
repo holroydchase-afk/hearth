@@ -91,12 +91,12 @@ describe('CAL-S2 Me has a "My birthday" section', () => {
     expect(s.queryByRole('button', { name: 'Change my birthday' })).toBeNull();
   });
 
-  it('CAL-S2 with one saved it shows "December 8" (month and day, never a year) and offers "Change my birthday"', async () => {
+  it('CAL-S2 with one saved it shows "Your birthday is December 8." (month and day, never a year) and offers "Change my birthday"', async () => {
     const be = FakeBackend.withFixture();
     await as(be, 'jo').setMyBirthday(SPACE, 12, 8);
     await openMe(be, 'jo');
     const s = await section();
-    expect(await s.findByText('December 8', {}, slow)).toBeTruthy();
+    expect(await s.findByText('Your birthday is December 8.', {}, slow)).toBeTruthy();
     expect(s.getByRole('button', { name: 'Change my birthday' })).toBeTruthy();
     expect(s.queryByRole('button', { name: 'Add my birthday' })).toBeNull();
     expect(s.queryByText(/isn[’']t added|not added/i)).toBeNull();
