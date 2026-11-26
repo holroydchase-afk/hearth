@@ -10,7 +10,7 @@ import {
   useWindowDimensions, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LABEL_SCALE_CAP, MIN_TARGET, RADIUS, FONT, STAMP_MARK, dialogRadius, iconSize, sheetShouldClose, useTheme, type TextStyleName } from './theme';
+import { LABEL_SCALE_CAP, MIN_TARGET, RADIUS, FONT, STAMP_MARK, dialogRadius, iconSize, sheetShouldClose, textStyle, useTheme, type TextStyleName } from './theme';
 import { useTypingField } from './typing';
 import { useTabBarSpace } from './tabBarSpace';
 
@@ -150,7 +150,9 @@ export function IconButton({ label, text, icon, onPress, testID }: { label: stri
 
 /** GUX-R1: Apple's back button, top left above the title: a chevron and the place's word ("‹ More") as a plain text
  *  button, 48 pt tall. The screen reader still hears "Back to More" (DS-4: a labeled way back, no swipe needed). */
-export function BackButton({ to, onPress, label, ink }: {
+export function BackButton({ to, onPress, label, ink, style }: {
+  /** FLOW-19: Easy view makes it 60 pt tall. */
+  style?: StyleProp<ViewStyle>;
   to: string; onPress: () => void; /** Spoken name, when not "Back to <to>". */ label?: string;
   /** UX-R9: in the words' own color, where the screen's one accent belongs to another button (the walk's Next). */
   ink?: boolean;
@@ -163,7 +165,7 @@ export function BackButton({ to, onPress, label, ink }: {
       accessibilityLabel={label ?? `Back to ${to}`}
       onPress={onPress}
       android_ripple={{ color: c.line }}
-      style={({ pressed }) => [styles.back, { opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
+      style={({ pressed }) => [styles.back, { opacity: pressed && os !== 'android' ? 0.7 : 1 }, style]}
     >
       <SystemIcon icon={{ sf: 'chevron.backward', md: 'arrow_back' }} color={color} />
       <Text style={{ color, ...type.body }}>{to}</Text>
@@ -253,7 +255,7 @@ export function Choice({ label, title, detail, checked, onPress, kind, disabled 
 export function FaceTile({ name, count, faces, picked, onPress, across }: {
   name: string; count: number; faces: string[]; picked: boolean; onPress: () => void; across: number;
 }) {
-  const { c, type, os } = useTheme();
+  const { c, type, os, bigText } = useTheme();
   const edge = picked ? 3 : 2;
   return (
     <Pressable
@@ -265,7 +267,7 @@ export function FaceTile({ name, count, faces, picked, onPress, across }: {
       android_ripple={{ color: c.line }}
       style={({ pressed }) => [styles.face, { width: `${(100 / across).toFixed(3)}%` as `${number}%`, opacity: pressed && os !== 'android' ? 0.7 : 1 }]}
     >
-      <View style={[styles.faceRing, { borderWidth: edge, borderColor: picked ? c.accent : c.line, backgroundColor: picked ? c.accentSoft : c.bg, paddingVertical: 12 - edge }]}>
+      <View style={[styles.faceRing, { borderWidth: edge, borderColor: picked ? c.accent : c.tabLine, backgroundColor: picked ? c.accentSoft : c.bg, paddingVertical: 12 - edge }]}>
         <View style={styles.faceStack}>
           {faces.slice(0, 3).map((f, i) => (
             <View key={`${f}-${i}`} style={[styles.faceDot, { backgroundColor: c.line, borderColor: c.bg, marginLeft: i ? -10 : 0 }]}>
@@ -282,7 +284,7 @@ export function FaceTile({ name, count, faces, picked, onPress, across }: {
       </View>
       {/* GUX-R1: the whole name, never cut; a word too long for even a 2-across tile breaks rather than spill out. */}
       <Text style={[{ alignSelf: 'stretch', color: c.ink, ...type.headline, textAlign: 'center' }, breakLongWords]}>{name}</Text>
-      <Text testID="face-count" style={{ color: c.muted, ...type.subheadline, textAlign: 'center' }}>{`${count} ${count === 1 ? 'person' : 'people'}`}</Text>
+      <Text testID="face-count" style={{ color: c.muted, ...textStyle(bigText ? 'body' : 'subheadline', bigText), textAlign: 'center' }}>{`${count} ${count === 1 ? 'person' : 'people'}`}</Text>
     </Pressable>
   );
 }

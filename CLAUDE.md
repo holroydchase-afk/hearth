@@ -25,6 +25,7 @@ Studio standard: follow holroydchase-afk/studio-agents docs/studio-standard.md; 
 - `docs/product/DESIGN-SYSTEM.md`: native first (Apple HIG on iPhone, Material 3 on Android) plus Hearth's stricter overrides (DS-1..DS-9). Check it before designing any screen.
 - `docs/product/SPEC-MEDIA.md`: media policy (what is stripped, kept or extracted from photos; compression), rules for location ideas, Live Photos plan (MEDIA-*, LIVE-*).
 - `docs/eng/AGENT-NOTES.md`: the source of each studio agent's "Hearth notes" (staff-pm's beta jobs, qa-tdd's test homes, the engineer's stack, privacy-security's threat list, positioning's claims). Edit there, then `scripts/sync-agents.sh`.
+- `docs/eng/STACK.md`: one line per stack choice (data, state, navigation, tests, media, crypto, language) with the date it was checked against the vendor and why any job uses two libraries. Update it in the PR that changes a choice.
 - `docs/eng/LESSONS.md`: post mortems and the rules they added. Read before choosing any version or calling a build ready.
 - `docs/eng/MERGING.md`: when and how Claude merges PRs (non-live PRs on green; app, demo and backend on Chase's word; merge commits; DEC-48).
 - `docs/architecture/`: system overview, data flow, encryption and keys, threat model, written for technical privacy-focused readers (anchor A4). Its README has the writing rules.

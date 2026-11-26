@@ -11,6 +11,23 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 26: fixed sleeps out of the web e2e (intake #206, R122; PR)
+- **Done:** 27 `waitForTimeout` replaced (helpers/settle.js), guard script and test, wired into test-all.sh and CI. e2e not run locally; CI is the proof.
+- **Next:** #205, #213, #208. Open P2: the 2 jest real-timer cases (not named in the intake).
+
+## Nov 26: STACK.md and architecture refresh (intake #207, R121; PR)
+- **Done:** `docs/eng/STACK.md`, `kind_counts` in 02/04, TypeScript decision (stay on ~6.0.3). Docs only.
+- **Next:** #206 (fixed sleeps in e2e), then #205, #213, #208.
+
+## Nov 26: full-screen viewer overhaul built (R113, SPEC-VIEWER look B, DEC-92; branch claude/project-thread-47ve1x, merged with origin/main Nov 26 after PRs 203, 211, 212; pushed)
+- **Done (engineer):** `ViewerScreen` on react-native-zoom-toolkit's `Gallery` (black, photo edge to edge, finger-following swipes, pinch/double tap to 3x, swipe down to close; Easy view Off round icons + tap-to-hide, On pills + counter + Zoom pill; photo strip). New deps `react-native-reanimated` 4.7.1, `react-native-worklets` 0.13.0 (expo install), `react-native-zoom-toolkit` 5.1.1 and dev `patch-package` 8.0.1 with `app/patches/react-native-zoom-toolkit+5.1.1.patch` (postinstall). `viewerMotion.ts`, `VIEWER_TYPE`; jest stand-ins in `jest.setup.js`. Old core-loop e2e line updated to the new name line. No storage, transfer or encryption change (no `docs/architecture/` update).
+- **Reviews:** qa-tdd QA-R1..R3 fixed; grandparent-ux and ux-reviewer passed with changes, UX-R1..R5 fixed; open items in TRACKER R113.
+- **Next exact step:** open the PR; then VIEWER-20 on Chase's iPhone (Expo Go).
+- **Portfolio / public presence:** the public demo's photo viewer becomes the black Photos-style viewer with the strip once this merges.
+## Nov 26: two-step Share flow (DEC-91, R112, PR #212; branch claude/project-thread-jtelk5)
+- **Done, test-first** (FLOW-1..26 in `docs/product/SPEC-SHARE-FLOW.md`; qa-tdd red then green 3x): step 1 one open box plus chips, step 2 "Who gets it?" on its own page, day sheet, sent page, for Photos, Event, News and Saying. No underline fields, no "To:" line. grandparent-ux P1 (outline contrast) fixed; privacy-security no P0/P1.
+- **Proof:** jest 2752, typecheck clean, e2e:demo 84, e2e:web 59.
+- **Next:** Chase's merge word (app/**). Then manual M1-11..13 on a real phone; open P2s GUX-FL-R4, R9, R10, R11 in the spec.
 
 ## Nov 26: lint to strict, step 1 (intake #204, R113; branch claude/project-thread-is6w2s-disables, not pushed)
 - **Done, test-first** (LINT-6 red, then green): all 30 `eslint-disable` comments carry a `-- reason`; the 2 in `ui/typing.ts` that suppressed nothing are deleted; `reportUnusedDisableDirectives` is on (LINT-7). Comments only, no behaviour change.

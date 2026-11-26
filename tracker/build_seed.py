@@ -143,6 +143,9 @@ manual = [
  ("M1-08", "M-09 / BETA-SEE-5 Save to phone, no location", "iPhone (Expo Go)", "Save a photo to your phone; check its info in Photos.", "It's there at 2048 px with no location."),
  ("M1-09", "Gate: 10+ posts over 2 days, 0 lost (QA-3)", "iPhone + web build", "Keep posting until 10+ posts over 2 days, then run backend/scripts/sent-vs-received.sh (MILESTONE-1.md).", "RESULT: sent N, received N, lost 0; 0 crash reports."),
  ("M1-10", "BETA-BULK-1 fallback: a screenshot gets its date", "iPhone (Expo Go)", "Bulk-pick a screenshot (no EXIF date) with 2 normal photos.", "The screenshot sits under the day it was taken, not undated."),
+ ("M1-11", "FLOW-20 (DEC-91) Two-step Share with VoiceOver and TalkBack", "iPhone + Android", "Turn on VoiceOver (then TalkBack). On Share, open Photos, Event, News and Saying in turn: step 1, Next, step 2, Send.", "Step 1 reads title, 'Step 1 of 2', the box, each chip as a button with its value, the hint, then the button. Step 2 reads title, 'Step 2 of 2', each tile with picked or not picked, the summary, the button. Focus moves to the step's title on each change."),
+ ("M1-12", "FLOW-25 (DEC-91) First-time tester posts an event with a day and a place", "A real phone", "Hand a grandparent (or Chase's wife) the phone on Share. Ask: 'Tell the family about Saturday at the farm.' Time it. Do not help.", "Done with no help in under 60 seconds. If two grandparents tap Back from step 2 to hunt for a To field, stop and rework step 2's title."),
+ ("M1-13", "FLOW-26 (DEC-91) First-time tester sends a photo to one group", "A real phone", "Same tester: 'Send this photo to Dad's side.' Time it. Do not help.", "Done with no help in under 60 seconds and no tap on Back from step 2."),
 ]
 write("suites", "manual", {"name": "Manual tests (people + real phones)", "kind": "manual",
       "how": "Run on a real phone, then log the result on this page.", "order": 4,

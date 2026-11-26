@@ -7,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const { test, expect } = require('../../e2e/node_modules/@playwright/test');
+const { pageReady } = require('./helpers/settle');
 
 // DEMO-BAR: Grandma's view and Reset live in the Details drawer.
 const details = async (page) => {
@@ -42,7 +43,7 @@ for (const size of SIZES) {
       const shot = async (name) => {
         // UI-5: wait for the screen's own header, not a fixed delay (a cold tab takes ~750 ms to draw).
         await page.getByRole('heading').first().waitFor({ timeout: 3000 }).catch(() => {}); // the full-screen viewer has none
-        await page.waitForTimeout(300);
+        await pageReady(page);
         const sideways = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
         if (sideways) problems.push({ tag, url: page.url(), text: `sideways scroll on ${name}` });
         n += 1;
@@ -64,7 +65,8 @@ for (const size of SIZES) {
       const chooser = page.waitForEvent('filechooser');
       await page.getByRole('button', { name: /^Add photos, up to \d+ at a time$/ }).click();
       await (await chooser).setFiles(PICTURE);
-      await page.getByLabel('Add a note (optional)').fill('First snow!');
+      await page.getByLabel('Say something, optional').fill('First snow!');
+      await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-91: step 2
       await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
       await shot('share-filled');
       await page.getByRole('button', { name: /^Send to / }).click();

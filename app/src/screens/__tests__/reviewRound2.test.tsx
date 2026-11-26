@@ -315,7 +315,7 @@ describe('R19 (P2) Share: one 16 pt left edge for all content', () => {
   // note's label and the To: line start 16 pt in from the card's edge (32 from the screen).
   // Retargeted Nov 21 by qa-tdd for DEC-79 (SHARE-ST-1/2): the start page is the empty postcard ("New post" and the
   // share-card); the Add photos target fills the card's photo spot, so the card, not the target, sits on the 16 pt edge.
-  it('R19 DEC-73 DEC-79 Share: the title, the empty card, Cancel and the card start 16 pt in; the note label and To: 16 pt inside the card', async () => {
+  it('R19 (DEC-91) DEC-73 DEC-79 Share: the title, the empty card, Cancel and the card start 16 pt in; the note box 16 pt inside the card; no To: line', async () => {
     const r = await renderApp(<ShareScreen />, { user: 'chase' });
     const title = await screen.findByRole('header', { name: 'New post' }, slow);
     let root: Inst = title;
@@ -327,15 +327,14 @@ describe('R19 (P2) Share: one 16 pt left edge for all content', () => {
     const header = await screen.findByRole('header', { name: 'New post' }, slow);
     root = header;
     while (root.parent) root = root.parent;
-    const toWord = screen.getByText('To:');
+    expect(screen.queryByText('To:')).toBeNull();
     const got = {
       title: inset(header, root, false),
       cancel: inset(screen.getByRole('button', { name: 'Cancel this post' }), root, true),
       card: inset(screen.getByTestId('share-card'), root, false),
-      noteLabel: inset(screen.getByText('Add a note (optional)'), root, false),
-      to: inset(toWord, root, false),
+      noteBox: inset(screen.getByLabelText('Say something, optional'), root, false),
     };
-    expect(got).toEqual({ title: 16, cancel: 16, card: 16, noteLabel: 32, to: 32 });
+    expect(got).toEqual({ title: 16, cancel: 16, card: 16, noteBox: 32 });
   });
 });
 

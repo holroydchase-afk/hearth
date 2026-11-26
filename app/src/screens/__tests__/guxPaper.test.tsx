@@ -181,8 +181,8 @@ describe('RD-116 turning a reaction on or off never changes the capsule\'s outer
 // Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-3), flagged for qa-tdd: the postcard has one field, the note.
 // Retargeted again Nov 19 by engineer for GUX-R3, flagged for qa-tdd: the note writes on the card, with no fill and a
 // hairline c.line underline, on every phone (the other fields keep GUX-R16's filled box).
-describe("GUX-R16 → GUX-R3 Share's note writes on the card: no fill, a hairline c.line underline", () => {
-  const FIELDS = ['Add a note (optional)'];
+describe("GUX-R16 → GUX-R3 (DEC-91) Share's note is an open box: no fill, no underline", () => {
+  const FIELDS = ['Say something, optional'];
   const fieldStyle = (label: string) => flat(screen.getByLabelText(label).props.style);
   const openNote = async () => {
     fireEvent.press(await screen.findByRole('button', { name: /^Add photos/ }, slow));
@@ -191,7 +191,7 @@ describe("GUX-R16 → GUX-R3 Share's note writes on the card: no fill, a hairlin
 
   for (const os of ['ios', 'web', 'android'] as const) {
     for (const dark of [false, true]) {
-      it(`GUX-R3 ${os} (${lookName(dark)}): the note field has no fill and only a hairline c.line underline`, async () => {
+      it(`GUX-R3 ${os} (${lookName(dark)}): the note field has no fill and no underline (DEC-91)`, async () => {
         jest.replaceProperty(Platform, 'OS', os);
         const c = paletteFor(os, dark);
         await renderApp(<ShareScreen />, { user: 'chase', kv: memoryKV(prefs(chase.id, dark)) });
@@ -200,7 +200,7 @@ describe("GUX-R16 → GUX-R3 Share's note writes on the card: no fill, a hairlin
           const s = fieldStyle(label);
           const [top, right, bottom, left] = borders(s);
           expect({ label, fill: s.backgroundColor === undefined || TRANSPARENT.test(String(s.backgroundColor)), sides: [top!.width, right!.width, left!.width], bottom: bottom })
-            .toEqual({ label, fill: true, sides: [0, 0, 0], bottom: { width: StyleSheet.hairlineWidth, color: c.line } });
+            .toEqual({ label, fill: true, sides: [0, 0, 0], bottom: expect.objectContaining({ width: 0 }) });
         }
       }, 20000);
     }

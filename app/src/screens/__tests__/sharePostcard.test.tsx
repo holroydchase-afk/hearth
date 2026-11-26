@@ -69,26 +69,20 @@ async function openPostcard(opts: { user?: FixtureUser; n?: number; kv?: KV; be?
   return { ...r, pickPhotos: r.deps.pickPhotos as jest.Mock };
 }
 
+/** DEC-91: the tiles live on step 2; "Next: who gets it" gets there. */
+async function toWho() {
+  fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' }, slow));
+  await screen.findByRole('header', { name: 'Who gets it?' }, slow);
+}
 const tile = (name: string | RegExp) => screen.getByLabelText(typeof name === 'string' ? new RegExp(`^${esc(name)}, \\d+ (person|people), (not )?picked$`) : name);
 const tiles = () => screen.UNSAFE_root.findAll((n: Inst) => isHost(n) && /, \d+ (person|people), (not )?picked$/.test(String(n.props.accessibilityLabel ?? ''))) as Inst[];
 const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-/** The "To:" line: the first words in the To: section up to the first tile. */
+/** DEC-91: the summary line on step 2 ("<names> will see your photos."), with its "will see" tail dropped; '' when nothing is picked. */
 function toWords(): string {
-  const to = screen.getByTestId('share-to');
-  const firstTile = tiles()[0];
-  const order = hostOrder();
-  const stop = firstTile ? order.indexOf(firstTile) : Infinity;
-  const parts: string[] = [];
-  for (const n of order) {
-    if (order.indexOf(n) >= stop) break;
-    if (!inside(n, to) || (n.type as unknown) !== 'Text') continue;
-    const c = n.props.children;
-    const text = (Array.isArray(c) ? c : [c]).filter((x: unknown) => typeof x === 'string' || typeof x === 'number').join('');
-    if (text) parts.push(text);
-  }
-  return parts.join(' ').replace(/\s+/g, ' ').trim();
+  const t = wordsIn(screen.getByTestId('share-summary'));
+  return /^Nothing is picked/.test(t) ? '' : t.replace(/ will see .*$/, '');
 }
-const sendButton = () => screen.getAllByRole('button').find((b) => /^(Send to |Pick who gets it$)/.test(String(b.props.accessibilityLabel ?? wordsIn(b))))!;
+const sendButton = () => screen.getAllByRole('button').find((b) => /^(Send to |Next: who gets it$)/.test(String(b.props.accessibilityLabel ?? wordsIn(b))))!;
 
 /** A family with Everyone and 5 groups, for SHARE-PC-5. */
 function sixCircles(): Circle[] {
@@ -106,7 +100,7 @@ function sixCircles(): Circle[] {
 afterEach(() => jest.restoreAllMocks());
 
 describe('SHARE-PC-1 one "New post" page holding a card', () => {
-  it('SHARE-PC-1 the card (c.surface, photo shadow) holds the big photo, the note, a dashed c.line divider and To:, in that order; nothing but the pinned button below it', async () => {
+  it('SHARE-PC-1 (DEC-91) the card (c.surface, photo shadow) holds the big photo and the note box, in that order; no dashed divider, no To:; nothing but the pinned Next button below it', async () => {
     await openPostcard({ n: 3 });
     const card = screen.getByTestId('share-card');
     const c = light();
@@ -116,20 +110,18 @@ describe('SHARE-PC-1 one "New post" page holding a card', () => {
     const order = hostOrder();
     const at = (n: Inst) => order.indexOf(n);
     const big = screen.getByText('1 of 3');
-    const note = screen.getByLabelText('Add a note (optional)');
-    // Nov 19, engineer for GUX-R2 (flagged for qa-tdd): the Add tile is dashed too now, so the divider is the dashed
-    // host that isn't a button.
-    const divider = (card.findAll((n: Inst) => isHost(n) && flat(n.props.style).borderStyle === 'dashed' && n.props.accessibilityRole !== 'button') as Inst[])[0];
-    const to = screen.getByTestId('share-to');
-    expect({ divider: !!divider, dividerColor: divider && (flat(divider.props.style).borderColor ?? flat(divider.props.style).borderTopColor) })
-      .toEqual({ divider: true, dividerColor: c.line });
-    expect([big, note, divider!, to].map((n) => inside(n, card))).toEqual([true, true, true, true]);
-    expect([at(big) < at(note), at(note) < at(divider!), at(divider!) < at(to)]).toEqual([true, true, true]);
+    const note = screen.getByLabelText('Say something, optional');
+    const divider = card.findAll((n: Inst) => isHost(n) && flat(n.props.style).borderStyle === 'dashed' && n.props.accessibilityRole !== 'button');
+    expect(divider.filter((n: Inst) => flat(n.props.style).borderWidth === 2 && flat(n.props.style).height === 6)).toHaveLength(0);
+    expect(screen.queryByTestId('share-to')).toBeNull();
+    expect(wordsIn(card)).not.toMatch(/To:/);
+    expect([big, note].map((n) => inside(n, card))).toEqual([true, true]);
+    expect(at(big) < at(note)).toBe(true);
 
-    // Below the card: only the pinned Send button's words.
+    // Below the card: only the pinned button's words (and the step/hint lines).
     const send = sendButton();
     const after = order.filter((n) => at(n) > at(card) && !inside(n, card) && (n.type as unknown) === 'Text' && !inside(n, send));
-    expect(after.map((n) => wordsIn(n))).toEqual([]);
+    expect(after.map((n) => wordsIn(n)).filter((w) => !/^Step 1 of 2$/.test(w))).toEqual([]);
     expect(screen.queryByRole('header', { name: 'Who can see it' })).toBeNull();
   });
 });
@@ -164,11 +156,11 @@ describe('SHARE-PC-2 the big photo, thumbnails and Add', () => {
 });
 
 describe('SHARE-PC-3 one note field, no title', () => {
-  it('SHARE-PC-3 exactly one text field, "Add a note (optional)" with its label always shown; no Title, no "What\'s happening?"', async () => {
+  it('SHARE-PC-3 (DEC-91) exactly one text field, "Say something, optional" (placeholder and label); no Title, no "What\'s happening?"', async () => {
     await openPostcard({ n: 1 });
     const inputs = screen.UNSAFE_queryAllByType(TextInput);
-    expect(inputs.map((i) => i.props.accessibilityLabel)).toEqual(['Add a note (optional)']);
-    expect(screen.getByText('Add a note (optional)')).toBeTruthy(); // visible words, not only a placeholder
+    expect(inputs.map((i) => i.props.accessibilityLabel)).toEqual(['Say something, optional']);
+    expect(inputs[0]!.props.placeholder).toBe('Say something, optional');
     expect(screenWords()).not.toMatch(/\bTitle\b|What's happening\?/);
     expectGrandparentSafe();
   });
@@ -176,7 +168,8 @@ describe('SHARE-PC-3 one note field, no title', () => {
   it('SHARE-PC-3 Send saves the note as the caption and title null; an empty note sends caption null', async () => {
     const enqueue = jest.spyOn(UploadQueue.prototype, 'enqueue');
     const first = await openPostcard({ n: 1 });
-    fireEvent.changeText(screen.getByLabelText('Add a note (optional)'), '  First snow! ');
+    fireEvent.changeText(screen.getByLabelText('Say something, optional'), '  First snow! ');
+    await toWho();
     fireEvent.press(tile(DAD));
     fireEvent.press(sendButton());
     await waitFor(() => expect(enqueue).toHaveBeenCalledTimes(1));
@@ -184,6 +177,7 @@ describe('SHARE-PC-3 one note field, no title', () => {
     first.unmount();
 
     await openPostcard({ n: 1 });
+    await toWho();
     fireEvent.press(tile(DAD));
     fireEvent.press(sendButton());
     await waitFor(() => expect(enqueue).toHaveBeenCalledTimes(2));
@@ -197,7 +191,8 @@ describe('SHARE-PC-4 old titles still show; new posts have none', () => {
     const old = await seedPost(be, { title: 'Mia turns 5', caption: 'Cake' });
     await openPostcard({ be, withFeed: true });
     expect(await screen.findByTestId(`post-title-${old.id}`, {}, slow)).toBeTruthy();
-    fireEvent.changeText(screen.getByLabelText('Add a note (optional)'), 'Leaf pile');
+    fireEvent.changeText(screen.getByLabelText('Say something, optional'), 'Leaf pile');
+    await toWho();
     fireEvent.press(tile(DAD));
     fireEvent.press(sendButton());
     await waitFor(() => expect(Object.values(be.state.posts).some((p) => p.caption === 'Leaf pile' && p.status === 'published')).toBe(true), slow);
@@ -214,6 +209,7 @@ describe('SHARE-PC-5 face tiles inside the card (parents)', () => {
     const api = be.clientFor(null, { trackAppSession: true });
     jest.spyOn(api, 'myCircles').mockResolvedValue(sixCircles());
     await openPostcard({ be, kv, deps: { api } });
+    await toWho();
     await waitFor(() => expect(tiles()).toHaveLength(6));
   }
   /** Columns from a tile's width (or flexBasis) as a share of its row, on the tile or one of its two wrappers. */
@@ -226,9 +222,9 @@ describe('SHARE-PC-5 face tiles inside the card (parents)', () => {
     return null;
   };
 
-  it('SHARE-PC-5 Everyone and 5 groups: 6 tiles in the card, Everyone first, each "<name>, N people, not picked", 2 across here (GUX-R1), no sideways scroll', async () => {
+  it('SHARE-PC-5 (DEC-91) Everyone and 5 groups: 6 tiles on step 2 (in share-tiles-grid), Everyone first, each "<name>, N people, not picked", 2 across here (GUX-R1), no sideways scroll', async () => {
     await six();
-    const card = screen.getByTestId('share-card');
+    const card = screen.getByTestId('share-tiles-grid');
     const all = tiles();
     expect(all.every((t) => inside(t, card))).toBe(true);
     expect(String(all[0]!.props.accessibilityLabel)).toMatch(/^Everyone, \d+ people, not picked$/);
@@ -236,21 +232,21 @@ describe('SHARE-PC-5 face tiles inside the card (parents)', () => {
     // Retargeted Nov 19 by engineer for GUX-R1, flagged for qa-tdd: "Grandparents" is wider than a 3-across tile on
     // this 375 pt test phone, so these tiles go 2 across (the column rule is in shareGux.test.tsx).
     expect(all.map(across)).toEqual(Array(6).fill(2));
-    const to = screen.getByTestId('share-to');
+    const to = screen.getByTestId('share-tiles-grid');
     expect((to.findAll((n: Inst) => n.type === ScrollView && n.props.horizontal) as Inst[]).length).toBe(0);
     expect(wordsIn(all[1]!)).toMatch(/3 people/);
     expectGrandparentSafe();
   });
 
-  it('SHARE-PC-5 Easy view On: 2 across', async () => {
+  it('SHARE-PC-5 (DEC-91) Easy view On: 1 across (FLOW-9)', async () => {
     await six(easyKV('chase'));
-    expect(tiles().map(across)).toEqual(Array(6).fill(2));
+    expect(tiles().map(across)).toEqual(Array(6).fill(1));
     expectGrandparentSafe();
   });
 });
 
 describe('SHARE-PC-6 a relative who can post sees people, never group names', () => {
-  it('SHARE-PC-6 tiles and the To: line name people (≤2, then "and N more"); no group name anywhere; no Everyone (BETA-AUD-21)', async () => {
+  it('SHARE-PC-6 (DEC-91) tiles and the summary line name people (≤2, then "and N more"); no group name anywhere; no Everyone (BETA-AUD-21)', async () => {
     const be = FakeBackend.withFixture();
     const api = be.clientFor(null, { trackAppSession: true });
     const space: Space = { space_id: FIXTURE.space.id, name: FIXTURE.space.name, role: 'viewer', inviter_name: 'Chase', can_post: true, reply_audience: 'parents' };
@@ -259,6 +255,7 @@ describe('SHARE-PC-6 a relative who can post sees people, never group names', ()
       { circle_id: '00000000-0000-4000-8000-000000000304', name: 'Kids', member_count: 5, member_names: ['Alex', 'Chase', 'Grandma Jo', 'Nana Ruth', 'Tammy'], kind: 'group', parent_ids: [] },
     ]));
     await openPostcard({ user: 'jo', be, deps: { api } });
+    await toWho();
     await waitFor(() => expect(tiles().length).toBeGreaterThan(0));
     const labels = tiles().map((t) => String(t.props.accessibilityLabel));
     const GROUP = /Everyone|Grandparents|Dad's side|Mom's side|Our house|Aunts and uncles|Cousins|Kids/;
@@ -268,19 +265,20 @@ describe('SHARE-PC-6 a relative who can post sees people, never group names', ()
     expect(labels.some((l) => /^Alex, Chase and 2 more, \d+ people, not picked$/.test(l))).toBe(true);
     expect(wordsIn(screen.getByTestId('share-card'))).not.toMatch(GROUP);
     fireEvent.press(tile(/^Chase and Grandpa Earl, /));
-    expect(toWords()).toBe('To: Chase and Grandpa Earl');
+    expect(toWords()).toBe('Chase and Grandpa Earl');
     expect(toWords()).not.toMatch(GROUP);
   });
 });
 
 describe('SHARE-PC-7 nothing is picked at the start', () => {
-  it('SHARE-PC-7 a saved last audience ticks nothing: every tile "not picked", the To: line is just "To:"', async () => {
+  it('SHARE-PC-7 (DEC-91) a saved last audience ticks nothing: every tile "not picked", the summary says "Nothing is picked yet. Tap one or more."', async () => {
     const kv = memoryKV();
     await saveLastAudience(kv, chase.id, [FIXTURE.circles.dadSide.id]);
     await openPostcard({ kv });
+    await toWho();
     await waitFor(() => expect(tiles().length).toBe(3));
     expect(tiles().map((t) => String(t.props.accessibilityLabel)).filter((l) => !l.endsWith('not picked'))).toEqual([]);
-    expect(toWords()).toBe('To:');
+    expect(wordsIn(screen.getByTestId('share-summary'))).toBe('Nothing is picked yet. Tap one or more.');
   });
 
   // Retargeted Nov 21 by qa-tdd for DEC-79 (SHARE-ST-4): only 11+ picked reach bulk review, so 12 photos, not 4.
@@ -301,6 +299,7 @@ describe('SHARE-PC-7 nothing is picked at the start', () => {
 describe('SHARE-PC-8 tapping a tile picks it', () => {
   it('SHARE-PC-8 tap: "picked", accent check and accent border (not color alone); tap again: "not picked"', async () => {
     await openPostcard();
+    await toWho();
     await waitFor(() => expect(tiles().length).toBe(3));
     fireEvent.press(tile(DAD));
     const picked = screen.getByLabelText(new RegExp(`^${esc(DAD)}, \\d+ people, picked$`));
@@ -315,7 +314,7 @@ describe('SHARE-PC-8 tapping a tile picks it', () => {
   });
 });
 
-describe('SHARE-PC-9 the To: line names the people', () => {
+describe('SHARE-PC-9 (DEC-91) the summary line names the people', () => {
   const namesLine = (names: string[]): string => (require('../../share/postcard') as { namesLine: (n: string[]) => string }).namesLine(names);
   it('SHARE-PC-9 unit: ≤2 names, then "and N more"', () => {
     expect(namesLine([])).toBe('');
@@ -327,22 +326,25 @@ describe('SHARE-PC-9 the To: line names the people', () => {
 
   it('SHARE-PC-9 Everyone gives "Everyone in the family"; two groups give the union of their people (not me), each once', async () => {
     await openPostcard();
+    await toWho();
     await waitFor(() => expect(tiles().length).toBe(3));
     fireEvent.press(tile(DAD));
-    expect(toWords()).toBe('To: Grandma Jo and Grandpa Earl');
+    expect(toWords()).toBe('Grandma Jo and Grandpa Earl');
     fireEvent.press(tile(MOM));
     // Dad's side (Jo, Earl) + Mom's side (Alex, Ruth); Chase is the sender.
-    expect(toWords()).toMatch(/^To: [^,]+, [^,]+ and 2 more$/);
+    expect(toWords()).toMatch(/^[^,]+, [^,]+ and 2 more$/);
     fireEvent.press(tile('Everyone'));
-    expect(toWords()).toBe('To: Everyone in the family');
+    expect(toWords()).toBe('Everyone in the family');
   });
 });
 
 describe('SHARE-PC-10 the pinned button', () => {
-  it('SHARE-PC-10 nothing picked: "Pick who gets it", off; a pick: "Send to <names>", on', async () => {
+  it('SHARE-PC-10 (DEC-91) step 1 "Next: who gets it"; step 2 nothing picked: Send off; a pick: "Send to <names>", on', async () => {
     await openPostcard();
+    expect(screen.getByRole('button', { name: 'Next: who gets it' })).toBeTruthy();
+    await toWho();
     await waitFor(() => expect(tiles().length).toBe(3));
-    const off = screen.getByRole('button', { name: 'Pick who gets it' });
+    const off = screen.getByRole('button', { name: /^Send/ });
     expect(off.props.accessibilityState).toMatchObject({ disabled: true });
     fireEvent.press(tile(DAD));
     const on = screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' });
@@ -350,9 +352,9 @@ describe('SHARE-PC-10 the pinned button', () => {
     expect(screen.queryByRole('button', { name: 'Post' })).toBeNull();
   });
 
-  it('SHARE-PC-10 the button sits outside the scrolling page (pinned above the keyboard and tab bar)', async () => {
+  it('SHARE-PC-10 (DEC-91) the button sits outside the scrolling page (pinned above the keyboard and tab bar)', async () => {
     await openPostcard();
-    const btn = screen.getByRole('button', { name: 'Pick who gets it' });
+    const btn = screen.getByRole('button', { name: 'Next: who gets it' });
     const card = screen.getByTestId('share-card');
     let scroller: Inst | null = null;
     for (let p: Inst | null = card.parent; p; p = p.parent) if (p.type === ScrollView || (p.type as unknown) === 'RCTScrollView') { scroller = p; break; }
@@ -362,36 +364,41 @@ describe('SHARE-PC-10 the pinned button', () => {
 });
 
 describe('SHARE-PC-11 Send lands on Feed', () => {
-  it('SHARE-PC-11 Send queues the post to the picked groups, goes to Feed (not Gallery) and says "Shared with <names>."', async () => {
+  it('SHARE-PC-11 (DEC-91) Send queues the post to the picked groups, shows the sent page; "See it in Feed" goes to Feed (not Gallery); no "Shared with" banner', async () => {
     const be = FakeBackend.withFixture();
     const enqueue = jest.spyOn(UploadQueue.prototype, 'enqueue');
     const { nav } = await openPostcard({ be, withFeed: true, n: 2 });
-    fireEvent.changeText(screen.getByLabelText('Add a note (optional)'), 'Pumpkin patch');
+    fireEvent.changeText(screen.getByLabelText('Say something, optional'), 'Pumpkin patch');
+    await toWho();
     fireEvent.press(tile(DAD));
     fireEvent.press(screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' }));
     await waitFor(() => expect(enqueue).toHaveBeenCalledTimes(1));
     expect(enqueue.mock.calls[0]![0]).toMatchObject({ space: FIXTURE.space.id, circleIds: [FIXTURE.circles.dadSide.id], caption: 'Pumpkin patch' });
     expect(enqueue.mock.calls[0]![0].items).toHaveLength(2);
     const goFeed = (nav as unknown as { goFeed: jest.Mock }).goFeed;
-    await waitFor(() => expect(goFeed).toHaveBeenCalled());
+    await screen.findByRole('header', { name: 'Sent' }, slow);
+    fireEvent.press(screen.getByRole('button', { name: 'See it in Feed' }));
+    expect(goFeed).toHaveBeenCalled();
     expect(nav.goPhotos).not.toHaveBeenCalled();
-    expect(await screen.findByText('Shared with Grandma Jo and Grandpa Earl.', {}, slow)).toBeTruthy();
+    expect(screen.queryByText('Shared with Grandma Jo and Grandpa Earl.')).toBeNull();
     await waitFor(async () => expect((await be.clientFor(jo.id).getFeed({ space: FIXTURE.space.id }))[0]?.caption).toBe('Pumpkin patch'), slow);
   });
 });
 
 describe('SHARE-PC-12 a send error keeps everything', () => {
-  it('SHARE-PC-12 the notice shows on the page; photos, note and picks stay; no Feed', async () => {
+  it('SHARE-PC-12 (DEC-91) the notice shows on step 2; photos, note and picks stay; no Feed', async () => {
     jest.spyOn(UploadQueue.prototype, 'enqueue').mockRejectedValue(new ApiError('FAMILY_FULL'));
     const { nav } = await openPostcard({ n: 3 });
-    fireEvent.changeText(screen.getByLabelText('Add a note (optional)'), 'Leaf pile');
+    fireEvent.changeText(screen.getByLabelText('Say something, optional'), 'Leaf pile');
+    await toWho();
     fireEvent.press(tile(DAD));
     fireEvent.press(screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' }));
     expect(await screen.findByText(/Your family is full for now/)).toBeTruthy();
-    expect(screen.getByRole('header', { name: 'New post' })).toBeTruthy();
-    expect(screen.getByText('1 of 3')).toBeTruthy();
-    expect(screen.getByLabelText('Add a note (optional)').props.value).toBe('Leaf pile');
+    expect(screen.getByRole('header', { name: 'Who gets it?' })).toBeTruthy(); // DEC-91: step 2 stays
     expect(screen.getByLabelText(new RegExp(`^${esc(DAD)}, \\d+ people, picked$`))).toBeTruthy();
+    fireEvent.press(screen.getByRole('button', { name: 'Back' }));
+    expect(await screen.findByText('1 of 3', {}, slow)).toBeTruthy();
+    expect(screen.getByLabelText('Say something, optional').props.value).toBe('Leaf pile');
     expect((nav as unknown as { goFeed: jest.Mock }).goFeed).not.toHaveBeenCalled();
     expect(nav.goPhotos).not.toHaveBeenCalled();
   });

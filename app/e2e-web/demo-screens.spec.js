@@ -4,6 +4,7 @@
 // Phone shots hide the demo bar so the app's own screens show; the laptop shot keeps the whole demo.
 const path = require('path');
 const { test, expect } = require('../../e2e/node_modules/@playwright/test');
+const { pageReady } = require('./helpers/settle');
 
 // DEMO-BAR: Grandma's view and Reset live in the Details drawer.
 const details = async (page) => {
@@ -17,7 +18,7 @@ const HIDE_BAR = '[data-testid="demo-bar"] { display: none !important; }';
 
 test('portfolio screenshots from the demo', async ({ page }) => {
   test.skip(!DIR, 'set SNAPSHOT_DIR to take portfolio screenshots');
-  const shot = async (name) => { await page.waitForTimeout(600); await page.screenshot({ path: path.join(DIR, `${name}.png`) }); };
+  const shot = async (name) => { await pageReady(page); await page.screenshot({ path: path.join(DIR, `${name}.png`) }); };
 
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/');
@@ -35,7 +36,8 @@ test('portfolio screenshots from the demo', async ({ page }) => {
   await page.getByRole('button', { name: /^Add photos, up to \d+ at a time$/ }).click();
   await (await chooser).setFiles(PICTURE);
   await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible(); // DEC-73 postcard
-  await page.getByLabel('Add a note (optional)').fill('First snow!');
+  await page.getByLabel('Say something, optional').fill('First snow!');
+  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-91: step 2
   await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
   await shot('iphone-02-share');
   await page.getByRole('button', { name: /^Send to / }).click();

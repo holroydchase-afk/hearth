@@ -3,7 +3,7 @@ const { defineConfig } = require('../../e2e/node_modules/@playwright/test');
 const { launchOptions } = require('../../e2e/browser'); // T12: cloud sandbox browser fallback
 module.exports = defineConfig({
   testDir: '.',
-  testMatch: /demo(-screens|-showcase|-panel|-safari|-calendar)?\.spec\.js/,
+  testMatch: /demo(-screens|-showcase|-panel|-safari|-calendar|-share-flow)?\.spec\.js/,
   timeout: 90_000,
   expect: { timeout: 15_000 },
   retries: 0,

@@ -23,7 +23,8 @@ describe('upload that fails in the prepare step', () => {
     fireEvent.press(await screen.findByRole('button', { name: /^Add photos, up to \d+ at a time$/ }));
     // Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC), flagged for qa-tdd: the postcard's note, a tile, Send.
     await screen.findByRole('header', { name: 'New post' });
-    fireEvent.changeText(screen.getByLabelText('Add a note (optional)'), 'First snow!');
+    fireEvent.changeText(screen.getByLabelText('Say something, optional'), 'First snow!');
+    fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' })); // DEC-91: step 2
     fireEvent.press(await screen.findByLabelText(`${DAD}, 3 people, not picked`));
     fireEvent.press(screen.getByRole('button', { name: /^Send to / }));
 

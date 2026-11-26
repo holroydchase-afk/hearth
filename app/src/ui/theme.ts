@@ -294,6 +294,12 @@ export const STAMP_MARK = { fontSize: 17, lineHeight: 18 } as const;
 /** A reaction's emoji: title2's numbers. */
 export const EMOJI_GLYPH = { fontSize: TYPE_TABLE.title2[0], lineHeight: TYPE_TABLE.title2[1] } as const;
 
+/** SPEC-VIEWER: the sizes of the named styles the full-screen viewer uses (always the standard set, VIEWER-9/10). */
+export const VIEWER_TYPE = {
+  headline: TYPE.standard.headline.fontSize, caption1: TYPE.standard.caption1.fontSize, body: TYPE.standard.body.fontSize,
+  title3: TYPE.standard.title3.fontSize, title2: TYPE.standard.title2.fontSize,
+} as const;
+
 /** WCAG 2 contrast ratio of two opaque #RRGGBB colors. */
 export function contrast(a: string, b: string): number {
   const lum = (hex: string) => {
