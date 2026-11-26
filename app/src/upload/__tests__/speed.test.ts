@@ -33,7 +33,7 @@ function gatedApi(api: HearthApi) {
   const wrapped = new Proxy(api, {
     get(target, prop: string) {
       const orig = (target as unknown as Record<string, unknown>)[prop];
-      if (prop !== 'putObject' || typeof orig !== 'function') return typeof orig === 'function' ? (orig as Function).bind(target) : orig;
+      if (prop !== 'putObject' || typeof orig !== 'function') return typeof orig === 'function' ? (orig as (...a: unknown[]) => unknown).bind(target) : orig;
       return async (...args: unknown[]) => {
         inFlight += 1;
         maxInFlight = Math.max(maxInFlight, inFlight);

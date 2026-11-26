@@ -33,4 +33,10 @@ export default [
       }),
     },
   },
+  // INTAKE-204 (Nov 26): require() is how jest.mock/resetModules tests load a module after the mock is set, and the
+  // e2e and jest setup files are CommonJS Node scripts. Production code under src/ stays covered.
+  {
+    files: ['**/__tests__/**', 'src/test/**', 'e2e-web/**', 'jest.*.js'],
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
+  },
 ];

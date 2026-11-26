@@ -45,7 +45,7 @@ describe('INTAKE-80-4 CI runs the React Compiler rules check', () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports -- app.config.js is re-read after the environment changes
     const path = require('path') as typeof import('path');
     const ci = fs.readFileSync(path.join(__dirname, '../../../.github/workflows/ci.yml'), 'utf8');
-    const job = ci.split(/\n  [a-z][\w-]*:\n/).find((j) => j.includes('name: App (Jest + typecheck)')) ?? '';
+    const job = ci.split(/\n {2}[a-z][\w-]*:\n/).find((j) => j.includes('name: App (Jest + typecheck)')) ?? '';
     expect(job).toMatch(/run: node scripts\/compiler-check\.js/);
   });
 });
