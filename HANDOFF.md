@@ -11,6 +11,10 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 26: dev-loop basics part 1 (intake #213, R124; branch claude/project-thread-6ew09x)
+- **Done:** `.editorconfig`, CODEOWNERS, dependency audit job (critical blocks, rest warns). First audit found 11 open vulnerabilities in Expo tooling deps (R124).
+- **Next:** formatter, pre-commit and a11y lint after the ESLint thread's PR; the Expo patch upgrade clears the audit findings; then #208.
+
 ## Nov 26: missing CI gates (intake #205, R123; local-205, not pushed)
 - **Done:** secret scan, real-build bundle check, Dependabot for visibility, typecheck in agents.verify. SHA pins and `eas.json` not done (see R123).
 - **Next:** push after the ESLint thread's PR; then #213, #208.
