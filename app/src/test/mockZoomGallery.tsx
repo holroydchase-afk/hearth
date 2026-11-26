@@ -11,7 +11,7 @@
 import React, { forwardRef, useImperativeHandle, useLayoutEffect, useState } from 'react';
 import { View } from 'react-native';
 
-type AnyProps = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+type AnyProps = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any -- a stand-in for the library's Gallery: it forwards whatever props the screen passes
 
 interface Driver {
   /** The latest props the screen gave the Gallery (null before it rendered). */

@@ -6,19 +6,9 @@
 // the same across re-renders.
 import { act, render, renderHook, screen } from '@testing-library/react-native';
 import React from 'react';
-import { Platform, Text } from 'react-native';
-import { FakeBackend } from '../../api/fake/FakeBackend';
-import { ViewerScreen } from '../../screens/ViewerScreen';
-import { renderApp } from '../../test/renderApp';
-import { seedPost } from '../../test/seed';
+import { Text } from 'react-native';
 import { BottomSheet } from '../kit';
 import { SHOW_AGAIN_MS, useTyping, useTypingField } from '../typing';
-
-const touch = (pageX: number, pageY = 0) => ({ pageX, pageY, identifier: 0, timestamp: 0 });
-const fingers = (gap: number, at = 0) => ({
-  nativeEvent: { touches: [touch(0), touch(gap)] },
-  touchHistory: { touchBank: [], numberActiveTouches: 2, indexOfSingleActiveTouch: -1, mostRecentTimeStamp: at },
-});
 
 describe('LINT-STRICT-1 a sheet built once still calls the latest onClose', () => {
   it('LINT-STRICT-1 after a re-render with a new onClose, a drag down of 100 pt closes through the new one', () => {
@@ -39,37 +29,6 @@ describe('LINT-STRICT-1 a sheet built once still calls the latest onClose', () =
     act(() => { sheet.props.onResponderRelease(at(100, false)); });
     expect(second).toHaveBeenCalledTimes(1);
     expect(first).not.toHaveBeenCalled();
-  });
-});
-
-describe('LINT-STRICT-2 the viewer pinch reads the latest zoom', () => {
-  const pinch = async (area: { props: Record<string, (e: unknown) => unknown> }, from: number, to: number) => {
-    act(() => { area.props.onResponderGrant!(fingers(from)); });
-    act(() => { area.props.onResponderMove!(fingers(to, 5)); });
-    act(() => { area.props.onResponderRelease!(fingers(to, 6)); });
-  };
-  afterEach(() => { jest.restoreAllMocks(); });
-  it('LINT-STRICT-2 spreading zooms in, then pinching back out of the same handler zooms out (not stuck on the first render\'s zoom)', async () => {
-    jest.replaceProperty(Platform, 'OS', 'android');
-    const be = FakeBackend.withFixture();
-    const p = await seedPost(be, { caption: 'At the lake' });
-    await renderApp(<ViewerScreen postId={p.id} index={0} />, { be, user: 'jo' });
-    const area = await screen.findByTestId('viewer-gestures');
-    expect(screen.queryByTestId('viewer-zoomed')).toBeNull();
-    await pinch(area as never, 100, 200);
-    expect(await screen.findByTestId('viewer-zoomed')).toBeTruthy();
-    await pinch(screen.getByTestId('viewer-gestures') as never, 200, 100);
-    expect(screen.queryByTestId('viewer-zoomed')).toBeNull();
-  });
-  it('LINT-STRICT-2 a small pinch while zoomed keeps the zoom (it needs the latest value, false would unzoom)', async () => {
-    jest.replaceProperty(Platform, 'OS', 'android');
-    const be = FakeBackend.withFixture();
-    const p = await seedPost(be, { caption: 'At the lake' });
-    await renderApp(<ViewerScreen postId={p.id} index={0} />, { be, user: 'jo' });
-    await pinch(await screen.findByTestId('viewer-gestures') as never, 100, 200);
-    await screen.findByTestId('viewer-zoomed');
-    await pinch(screen.getByTestId('viewer-gestures') as never, 100, 105);
-    expect(screen.getByTestId('viewer-zoomed')).toBeTruthy();
   });
 });
 

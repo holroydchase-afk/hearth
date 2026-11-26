@@ -114,7 +114,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
       const e = n !== null ? entries[n] : undefined;
       if (e) app.media?.prefetch(e.post.post_id, [e.media.media_id]);
     }
-  }, [entry?.media.media_id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [entry?.media.media_id]); // eslint-disable-line react-hooks/exhaustive-deps -- prefetches once per photo shown; next, back, entries and the Save data pref change more often than the photo does
 
   // The Gallery's own index. Kept in step with `cur` so a new post arriving (HARD-8) never changes the photo shown.
   const gallery = useRef<GalleryRefType>(null);
@@ -491,7 +491,7 @@ function Strip({ entries, cur, easy, animated, onPick }: { entries: Entry[]; cur
   useEffect(() => {
     if (!width) return;
     list.current?.scrollTo?.({ x: Math.max(0, offset(cur) + slot.current / 2 - width / 2), y: 0, animated });
-  }, [cur, width]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [cur, width]); // eslint-disable-line react-hooks/exhaustive-deps -- the strip re-centres only when the current photo or the width changes; offset and slot are re-made every render
   const m = entries.length;
   return (
     <ScrollView
