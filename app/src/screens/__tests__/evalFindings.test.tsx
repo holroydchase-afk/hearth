@@ -67,7 +67,7 @@ describe('EF-HE-1 Messages Open buttons', () => {
   it('EF-HE-1-AC1 chatOpenLabel: "Open <name>" for a named group or event, "Open chat with <people>" for people', () => {
     const chat = (title: string, named: boolean, kind: ChatSummary['kind'] = 'group'): ChatSummary => ({ circle_id: title, kind, title, named, member_count: 3 });
     expect(chatOpenLabel(chat('Everyone', true, 'everyone'))).toBe('Open Everyone');
-    expect(chatOpenLabel(chat('Charleston trip', true, 'event'))).toBe('Open Charleston trip');
+    expect(chatOpenLabel(chat('Lake weekend', true, 'event'))).toBe('Open Lake weekend');
     expect(chatOpenLabel(chat('Alex and Grandpa Earl', false))).toBe('Open chat with Alex and Grandpa Earl');
   });
 

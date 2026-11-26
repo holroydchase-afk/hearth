@@ -26,7 +26,7 @@
 
 -- an event (ma + jo) and a household (ma + pa) in space A
 insert into public.circles (id, space_id, name, kind, created_by) values
-  ('33333333-0000-0000-0000-0000000000e1', '22222222-0000-0000-0000-00000000000a', 'Charleston trip', 'event', 'a0000000-0000-0000-0000-00000000000a'),
+  ('33333333-0000-0000-0000-0000000000e1', '22222222-0000-0000-0000-00000000000a', 'Lake weekend', 'event', 'a0000000-0000-0000-0000-00000000000a'),
   ('33333333-0000-0000-0000-0000000000d1', '22222222-0000-0000-0000-00000000000a', 'Rivera house',    'household', 'a0000000-0000-0000-0000-00000000000a');
 insert into public.circle_members (circle_id, user_id) values
   ('33333333-0000-0000-0000-0000000000e1', 'a0000000-0000-0000-0000-0000000000a1'),
@@ -68,7 +68,7 @@ select tests.ok_sql($$select array_agg(kind order by kind) = array['event', 'eve
                     'MSG-1 Grandma''s chats: Everyone, her group and her event (no household, nothing she isn''t in)');
 select tests.ok_sql($$select title = 'Alex and Grandpa Rivera' and not named and member_count = 3 from public.chat_list('22222222-0000-0000-0000-00000000000a') where kind = 'group'$$,
                     'AUD-14 a relative sees a group chat titled by its people (the parent included), never the group''s name');
-select tests.ok_sql($$select title = 'Charleston trip' and named from public.chat_list('22222222-0000-0000-0000-00000000000a') where kind = 'event'$$,
+select tests.ok_sql($$select title = 'Lake weekend' and named from public.chat_list('22222222-0000-0000-0000-00000000000a') where kind = 'event'$$,
                     'MSG-7 an event chat keeps the event''s name');
 :as_blair
 select tests.ok_sql($$select not exists (select 1 from public.chat_list('22222222-0000-0000-0000-00000000000a') where title like 'Grandparents%' or circle_id = '33333333-0000-0000-0000-0000000000a1')$$,
@@ -76,7 +76,7 @@ select tests.ok_sql($$select not exists (select 1 from public.chat_list('2222222
 :as_jo
 select tests.throws_code($$select * from public.chat_list('22222222-0000-0000-0000-00000000000b')$$, 'MSG-2 a family you aren''t in is "not found"', 'P0002');
 :as_alex
-select tests.ok_sql($$select array_agg(title order by title) = array['Charleston trip', 'Co-parent', 'Everyone', 'Grandparents – Dad''s side'] from public.chat_list('22222222-0000-0000-0000-00000000000a')$$,
+select tests.ok_sql($$select array_agg(title order by title) = array['Co-parent', 'Everyone', 'Grandparents – Dad''s side', 'Lake weekend'] from public.chat_list('22222222-0000-0000-0000-00000000000a')$$,
                     'REPLY-10 the parent is in every chat of the family (not households), by its real names');
 
 -- ---------- starting, roster, claiming ----------

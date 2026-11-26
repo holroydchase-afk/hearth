@@ -78,8 +78,8 @@ export const APP1_FULL_EXIF = exifApp1([
 ]);
 
 export const APP1_XMP_FACES = seg(0xe1, [...str('http://ns.adobe.com/xap/1.0/'),
-  ...ascii('<x:xmpmeta><mwg-rs:Regions>FACEBOX Mia</mwg-rs:Regions><photoshop:City>XMPCITY Charleston</photoshop:City></x:xmpmeta>')]);
-export const APP13_IPTC = seg(0xed, [...str('Photoshop 3.0'), ...ascii('8BIM'), 0x04, 0x04, ...ascii('IPTCPLACE Charleston WV')]);
+  ...ascii('<x:xmpmeta><mwg-rs:Regions>FACEBOX Mia</mwg-rs:Regions><photoshop:City>XMPCITY Lakeview</photoshop:City></x:xmpmeta>')]);
+export const APP13_IPTC = seg(0xed, [...str('Photoshop 3.0'), ...ascii('8BIM'), 0x04, 0x04, ...ascii('IPTCPLACE Lakeview')]);
 export const COM = seg(0xfe, ascii('COMMENT Mia at the park'));
 export const APP15_UNKNOWN = seg(0xef, ascii('UNKNOWNAPP15 vendor blob'));
 

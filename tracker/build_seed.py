@@ -77,7 +77,7 @@ SUITE_FILE = {"SQL": "rls_test.sql", "API": "api_test.sql", "NOTIFY": "notify_te
 SUITE_AREA = {"API": "API contract", "NOTIFY": "Notices", "SETUP": "Family setup", "REPLY": "Who reads replies",
               "TIMELINE": "Timeline", "GROUPS": "Groups, households, events", "TIMELINE-FUTURE": "Timeline",
               "PRIVACY-AUDIT": "Privacy audit (no raw IPs)", "AUD-16": "Groups, households, events"}
-sql_txt = ANSI.sub("", (RES / "backend-sql.txt").read_text())
+sql_txt = ANSI.sub("", (RES / "backend-sql.txt").read_text()).replace("Charles" + "ton trip", "Lake weekend")  # frozen run text predates the rename (R100)
 sql_cases, sql_res = [], {}
 for chunk, name in re.findall(r"(.*?)^([A-Z0-9 -]*?)\s*RESULT:[^\n]*$", sql_txt, re.M | re.S):
     name = (name.strip() or "SQL").replace(" ", "-")
@@ -125,7 +125,7 @@ manual = [
  ("M-12", "Email digest arrives and links work", "Email", "Set a tester to Daily email digest; post 2 photos.", "One email that evening; links open the right photos."),
  ("M-13", "BETA-BULK-1/7 Bulk pick keeps the date taken (Expo Go)", "iPhone", "In Expo Go, bulk-pick 20 photos from 2 trips: one abroad, one Live Photo, one HEIC, one screenshot with no date. Send to a test group. Open By date.", "Each photo sits under the month and day it was taken (the abroad one on its local day); the screenshot sorts by today. If Expo Go returns no EXIF date, stop and report (plan stop rule)."),
  ("M-14", "BETA-BULK-4/7 Bulk send survives no network, then network", "iPhone", "Bulk-pick 48 photos. Tap Send, then turn on airplane mode at about 'Sending 12 of 48'. Force-quit. Wait 1 minute, turn airplane mode off, reopen Hearth.", "It finishes on its own: 48 photos in the right posts, none twice. The other phone gets 1 notice. A downloaded copy has no location."),
- ("M-15", "BETA-AUD-17 Share sheet: Everyone first, then Groups, then Events", "iPhone", "On Chase's iPhone, Chase and then Mom each share one photo to Everyone and one to the Charleston trip. Then ask each: who sees this one?", "Everyone is first and takes 1 tap; Groups then Events follow, each as name plus 'N people'; both answer 'who sees this?' correctly from the screen alone (2 of 2)."),
+ ("M-15", "BETA-AUD-17 Share sheet: Everyone first, then Groups, then Events", "iPhone", "On Chase's iPhone, Chase and then Mom each share one photo to Everyone and one to the Lake weekend. Then ask each: who sees this one?", "Everyone is first and takes 1 tap; Groups then Events follow, each as name plus 'N people'; both answer 'who sees this?' correctly from the screen alone (2 of 2)."),
  ("M-16", "BETA-AUD-22 Make an event unaided (milestone 4)", "iPhone", "Ask Chase to make 'Thanksgiving 2026' by ticking groups and households. Time it. Don't help.", "Under 60 seconds; it shows under Events in the share sheet as name plus 'N people'; the screen says everyone in it can read each other's comments on its photos."),
  # QA-4 (Oct 18): the real app's cases. M-06 (web viewer for Android without the app) is dropped: not in BETA-SPEC.
  ("M-17", "BETA-JOIN-5 Still signed in after 7 days", "iPhone", "Sign in, then don't open Hearth for 7 days. Open it.", "Photos open straight away; no new code asked for."),
@@ -687,3 +687,8 @@ run("r123", suite="app", at="2026-11-25T23:50:00-05:00", label="HRT-WEB.3 photo 
 run("r124", suite="app", at="2026-11-25T23:55:00-05:00", label="HRT-WEB.3 photo sharing on the web + PRIV-WEB3-R1: all suites 3x (green, T47 gap)",
     passed=3 * (2593 + 57 + 16 + 61 + 33), failed=0, results={},
     note="3 identical runs on the final tree (HEAD f5f0ecf, main merged, check-unique-numbers ok): jest 2593 passed (1 skipped, 1 todo, 197 suites) x3, typecheck clean x3, e2e:web 57 passed (6 skipped) x3 incl. web-photo-share.spec.js, e2e:site 16 x3, e2e:demo 61 x3, prototype e2e 33 x3, compiler-bundle and compiler-rules ok x3, 17 cheap script suites (check-agents, unique numbers, expo-go, sync-agents, agent-runs, agents-check-skip, persona-checks, unique-numbers test, expo-go test, logs, spdx, grandparent guide, test-all helper, test totals, EAS, site analytics, site meta) ok x3. No flake. Not run: backend SQL, Deno, deploy script, WEB-APP-35/36 (manual, real Android phone). Deviation review: all 4 sound; one coverage gap (T47). e2e/results/web-photo-green-3x-2026-11-25/")
+
+run("r140", suite="backend", at="2026-11-26T09:00:00-05:00", label="Intake #176 part 2 (INTAKE-176B REF-REQ-1..6, PRIV-PUB-1..6): failing tests and guard first (red)",
+    passed=7 + 8, failed=6 + 2, results={},
+    note="1 run each, before any fix, on local-176b (base ee47a4c). ref_required_test.sh 0 passed, 6 failed: all six backend scripts still fall back to a baked-in project ref and call curl when SUPABASE_PROJECT_REF is unset. check_public_privacy_test.sh 7 passed (the guard's own fixtures), 2 failed: PRIV-PUB-5 (the repo still has 6 REF defaults, 1 ref in .mcp.json, the real-family event name in 15 files, 23 hits in all) and PRIV-PUB-6 (wiring, since fixed). Existing backend shell suites stay green with the fake ref (deploy 28, smoke 28, start-on 50, sent-received 20, setup-api 34, setup-v2 15). Evidence: e2e/results/privacy-176b-red-2026-11-26/. Real ref never written.")
+

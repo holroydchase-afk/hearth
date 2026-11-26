@@ -8,6 +8,8 @@
 #   bash tests/sent_received_test.sh
 set -uo pipefail
 cd "$(dirname "$0")/.."
+# INTAKE-176B: the scripts take the project ref from the environment only; tests use a fake one.
+export SUPABASE_PROJECT_REF=abcdefghijklmnopqrst
 PASS=0; FAIL=0
 ok() { if [ "$1" = 0 ]; then PASS=$((PASS+1)); echo "ok      $2"; else FAIL=$((FAIL+1)); echo "NOT OK  $2"; fi; }
 

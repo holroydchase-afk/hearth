@@ -8,8 +8,8 @@
 --                            Gigi and Bebar's house [Gigi, Bebar].
 --   Mom's side (group): Memaw's house [Memaw, Mom's sister]; Pawpaw and Granny's house
 --                            [Pawpaw, Granny, Mom's sister]; Great-Grandma's house [Great-Grandma].
---   Mom's sister also has her own house (not under any group), linked to the Charleston trip.
---   Charleston trip    (event): Pawpaw and Granny's house + the sister's house.
+--   Mom's sister also has her own house (not under any group), linked to the Lake weekend.
+--   Lake weekend    (event): Pawpaw and Granny's house + the sister's house.
 --   Birthday at Gigi's (event): Grandaddy and Grandmomma's house, Gigi and Bebar's house, Pawpaw and Granny's house.
 --   Everyone: every relative who joined by invite, plus the parents.
 -- Relatives join the way the app does it: create_invite (naming one household and Everyone, which the app ticks by
@@ -259,7 +259,7 @@ select tests.level('h_memaw', 'household', 'Memaw''s house');
 select tests.level('h_pg',    'household', 'Pawpaw and Granny''s house');
 select tests.level('h_phyl',  'household', 'Great-Grandma''s house');
 select tests.level('h_sis',   'household', 'Mom''s sister''s house');
-select tests.level('e_chs',   'event', 'Charleston trip');
+select tests.level('e_chs',   'event', 'Lake weekend');
 select tests.level('e_bday',  'event', 'Birthday at Gigi''s');
 select tests.link('g_chase', 'h_gammy'); select tests.link('g_chase', 'h_gg'); select tests.link('g_chase', 'h_gigi');
 select tests.link('g_dan', 'h_memaw');   select tests.link('g_dan', 'h_pg');   select tests.link('g_dan', 'h_phyl');
@@ -350,11 +350,11 @@ select tests.ok(tests.sees('memaw', 'p_memaw') and not tests.sees('pawpaw', 'p_m
                 'BETA-AUD-12 a person in two households does not bridge them: Pawpaw can''t see the Memaw''s house post, Memaw can''t see Pawpaw and Granny''s');
 
 -- ======================================================================
--- BETA-AUD-18: the Charleston trip event
+-- BETA-AUD-18: the Lake weekend event
 -- ======================================================================
 select tests.ok(tests.sees('pawpaw', 'p_chs') and tests.sees('granny', 'p_chs') and tests.sees('sister', 'p_chs')
                 and tests.sees('chase', 'p_chs') and tests.sees('mom', 'p_chs'),
-                'BETA-AUD-18 allowed: Pawpaw, Granny, the sister and both parents see the Charleston trip post');
+                'BETA-AUD-18 allowed: Pawpaw, Granny, the sister and both parents see the Lake weekend post');
 select tests.ok(not (tests.sees('memaw', 'p_chs') or tests.sees('gammy', 'p_chs') or tests.sees('ggma', 'p_chs')),
                 'BETA-AUD-18 excluded: Memaw, Gammy and Great-Grandma don''t');
 select tests.ok(tests.sees('pawpaw', 'p_dan') and tests.sees('pawpaw', 'p_ev') and tests.sees('sister', 'p_dan'),
@@ -462,7 +462,7 @@ select tests.ok(tests.counts('grandaddy', 'p_ev') = '1:1' and tests.counts('gamm
 -- ======================================================================
 select tests.ok(tests.reads('pawpaw', 'c_granny_chs') and tests.reads('sister', 'c_granny_chs')
                 and tests.reads('chase', 'c_granny_chs') and tests.reads('mom', 'c_granny_chs'),
-                'BETA-REPLY-8 allowed: Granny''s comment on the Charleston trip reaches Pawpaw, the sister (event rule), the parents and the author');
+                'BETA-REPLY-8 allowed: Granny''s comment on the Lake weekend reaches Pawpaw, the sister (event rule), the parents and the author');
 select tests.ok(not coalesce(tests.reads('memaw', 'c_granny_chs'), true),
                 'BETA-REPLY-8 excluded: Memaw (can''t see the post at all) doesn''t read it');
 select tests.ok(tests.reads('grandmomma', 'c_gd_bday') and tests.reads('gigi', 'c_gd_bday') and tests.reads('bebar', 'c_gd_bday')
@@ -471,7 +471,7 @@ select tests.ok(tests.reads('grandmomma', 'c_gd_bday') and tests.reads('gigi', '
 select tests.ok(not coalesce(tests.reads('gammy', 'c_gd_bday'), true) and not coalesce(tests.reads('memaw', 'c_gd_bday'), true),
                 'BETA-REPLY-8 Birthday at Gigi''s: Gammy and Memaw never read it');
 select tests.ok(tests.reads('pawpaw', 'c_granny_mix') and tests.reads('sister', 'c_granny_mix') and tests.reads('mom', 'c_granny_mix'),
-                'BETA-REPLY-8 mixed audience (Everyone + Charleston trip): Granny''s comment reaches the event (Pawpaw, the sister) and the parents');
+                'BETA-REPLY-8 mixed audience (Everyone + Lake weekend): Granny''s comment reaches the event (Pawpaw, the sister) and the parents');
 select tests.ok(tests.sees('memaw', 'p_mixed') and not tests.reads('memaw', 'c_granny_mix') and not tests.reads('gammy', 'c_granny_mix'),
                 'BETA-REPLY-8 mixed audience: Memaw sees the photo but not Granny''s comment; nor does Gammy');
 
@@ -522,7 +522,7 @@ select tests.ok(tests.readers('sister', 'p_ev') = tests.names(array['Memaw', 'Pa
 select tests.ok(tests.readers('gammy', 'p_ev') = tests.names(array['Chase', 'Mom']),
                 'BETA-REPLY-11 household of one: Gammy''s readers on an Everyone post = Chase, Mom');
 select tests.ok(tests.readers('granny', 'p_chs') = tests.names(array['Pawpaw', 'Mom''s sister', 'Chase', 'Mom']),
-                'BETA-REPLY-11 event: Granny''s readers on the Charleston trip = Pawpaw, the sister, Chase, Mom');
+                'BETA-REPLY-11 event: Granny''s readers on the Lake weekend = Pawpaw, the sister, Chase, Mom');
 select tests.ok(tests.readers('pawpaw', 'p_ev') = tests.names(array['Granny', 'Mom''s sister', 'Chase', 'Mom']),
                 'BETA-REPLY-11 household: Pawpaw''s readers on an Everyone post = Granny, the sister, Chase, Mom');
 select tests.ok(cardinality(tests.readers('mom', 'p_ev')) = 11
@@ -787,7 +787,7 @@ select tests.ok(tests.readers('memaw', 'p_ev') = tests.names(array['Mom''s siste
 -- A household added to an event with "Share all past photos": sees old photos, not old comments.
 select tests.link('e_chs', 'h_memaw', 'all');
 select tests.ok(tests.sees('memaw', 'p_chs'),
-                'BETA-AUD-20: Memaw''s house added to the Charleston trip with "Share all past photos": Memaw sees the trip''s earlier post');
+                'BETA-AUD-20: Memaw''s house added to the Lake weekend with "Share all past photos": Memaw sees the trip''s earlier post');
 select tests.ok(not tests.reads('memaw', 'c_granny_chs') and not tests.reads('memaw', 'c_sis_chs'),
                 'privacy item 5: ... but not the trip comments written before her house was added (Granny''s, and even the sister''s, whose box never named Memaw)');
 select tests.say('c_granny_chs2', 'granny', 'p_chs');

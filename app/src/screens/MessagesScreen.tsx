@@ -56,7 +56,7 @@ export function MessagesScreen({ onClose, backTo = 'Gallery' }: { onClose: () =>
   );
 }
 
-/** EF-HE-1: shown and spoken. "Open Charleston trip" for a named group or event; "Open chat with Alex and Grandpa Earl" for people. */
+/** EF-HE-1: shown and spoken. "Open Lake weekend" for a named group or event; "Open chat with Alex and Grandpa Earl" for people. */
 export function chatOpenLabel(c: ChatSummary): string {
   return c.named ? `Open ${c.title}` : `Open chat with ${c.title}`;
 }
