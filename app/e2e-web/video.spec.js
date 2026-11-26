@@ -71,6 +71,6 @@ test('VID-18 a video post shows its poster with a Play word button on Photos and
 
   // The post screen (full-screen viewer).
   await page.getByRole('button', { name: /full screen/ }).first().click();
-  await expect(page.getByText(/^(From )?Chase$/).first()).toBeVisible(); // VIEWER-9: name and date on their own lines now
+  await expect(page.getByTestId('viewer-backdrop').getByText(/^(From )?Chase$/)).toBeVisible(); // VIEWER-9; QA-R1: inside the viewer (Feed underneath has a hidden "Chase")
   await expectPlayerOpens(page, await expectPlayButton(page));
 });

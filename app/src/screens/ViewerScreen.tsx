@@ -203,8 +203,8 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
       setTimeout(() => {
         const g = gallery.current;
         if (!g || g.getState().scale !== before) return; // the Gallery's own double tap handled it
-        if (before > 1) g.reset(true);
-        else g.zoom(MAX_SCALE, at, true);
+        // QA-R2: say so at once, so a drag right after the double-click pans instead of pulling down to close.
+        if (before > 1) { g.reset(true); setZoomed(false); } else { g.zoom(MAX_SCALE, at, true); setZoomed(true); }
       }, 350);
     };
     // VIEWER-6 on the web: gesture-handler's web pan doesn't reliably tell a mouse drag down from a sideways one, so
@@ -214,15 +214,16 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
       const box = photoBox.current as unknown as HTMLElement | null;
       return !!box && e.target instanceof Node && box.contains(e.target);
     };
+    const zoomedNow = () => live.current.zoomed || (gallery.current?.getState().scale ?? 1) > 1;
     const onDown = (e: PointerEvent) => {
-      drag = inPhoto(e) && !live.current.zoomed && !live.current.playing ? { x: e.clientX, y: e.clientY, t: e.timeStamp, lastY: e.clientY, lastT: e.timeStamp, pulling: false } : null;
+      drag = inPhoto(e) && !zoomedNow() && !live.current.playing ? { x: e.clientX, y: e.clientY, t: e.timeStamp, lastY: e.clientY, lastT: e.timeStamp, pulling: false } : null;
     };
     const onMove = (e: PointerEvent) => {
       if (!drag) return;
       const dx = e.clientX - drag.x;
       const dy = e.clientY - drag.y;
       if (!drag.pulling && Math.abs(dy) > 10) {
-        if (dy > 0 && dy > Math.abs(dx) && !live.current.zoomed) drag.pulling = true;
+        if (dy > 0 && dy > Math.abs(dx) && !zoomedNow()) drag.pulling = true;
         else { drag = null; return; }
       }
       if (!drag.pulling) return;
@@ -238,17 +239,25 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
       const recent = e.timeStamp - d.lastT < 100 ? ((e.clientY - d.lastY) / dt) * 1000 : 0;
       pullJS(e.clientY - d.y, true, recent);
     };
+    // QA-R3: the browser took the pointer (a scroll, a system gesture): spring back, never close.
+    const onCancel = () => {
+      const d = drag;
+      drag = null;
+      if (d?.pulling) pullJS(0, true, 0);
+    };
     document.addEventListener('keydown', onKey);
     document.addEventListener('dblclick', onDouble);
     document.addEventListener('pointerdown', onDown, true);
     document.addEventListener('pointermove', onMove, true);
     document.addEventListener('pointerup', onUp, true);
+    document.addEventListener('pointercancel', onCancel, true);
     return () => {
       document.removeEventListener('keydown', onKey);
       document.removeEventListener('dblclick', onDouble);
       document.removeEventListener('pointerdown', onDown, true);
       document.removeEventListener('pointermove', onMove, true);
       document.removeEventListener('pointerup', onUp, true);
+      document.removeEventListener('pointercancel', onCancel, true);
     };
   }, []);
 

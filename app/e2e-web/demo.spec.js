@@ -1514,6 +1514,33 @@ test('VIEWER-6 dragging down fades the backdrop; a short drag springs back, past
   await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible();
 });
 
+// QA-R2 / QA-R3 (qa-tdd review of the viewer build, Nov 26; engineer wrote them red first).
+test('QA-R2 VIEWER-5 VIEWER-6 after a double-click zoom, a long drag down pans and never closes', async ({ page }) => {
+  await page.goto('/');
+  await openPhoto(page);
+  const before = await visiblePhoto(page);
+  const { x, y } = await mid(page);
+  await page.mouse.dblclick(x, y);
+  await page.waitForTimeout(370); // just after the zoom starts, before its animation ends
+  await drag(page, { x, y: y - 150 }, { x, y: y + 200 }, { fast: true });
+  await page.waitForTimeout(400);
+  expect((await visiblePhoto(page)).w / before.w).toBeGreaterThan(2.7);
+  await expect(page.getByTestId('viewer-backdrop')).toBeVisible();
+  expect(await backdropFade(page)).toBeGreaterThan(0.99);
+});
+
+test('QA-R3 VIEWER-6 a drag down the browser cancels (pointercancel) leaves the backdrop solid and the viewer open', async ({ page }) => {
+  await page.goto('/');
+  await openPhoto(page);
+  const { x, y } = await mid(page);
+  await drag(page, { x, y }, { x, y: y + 60 }, { release: false });
+  expect(await backdropFade(page)).toBeLessThan(0.99);
+  await page.evaluate(() => document.dispatchEvent(new PointerEvent('pointercancel', { bubbles: true, pointerId: 1 })));
+  await expect.poll(() => backdropFade(page)).toBeGreaterThan(0.99);
+  await expect(page.getByTestId('viewer-backdrop')).toBeVisible();
+  await page.mouse.up();
+});
+
 test('VIEWER-7 VIEWER-23 Kevin: a click hides the controls and the strip, a second click brings them back', async ({ page }) => {
   await page.goto('/');
   await openPhoto(page);
