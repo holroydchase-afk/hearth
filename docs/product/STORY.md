@@ -1,6 +1,6 @@
 # Hearth story, problems and family stories
 
-Why Hearth exists, in Chase's words, plus the problems it solves and the family stories behind them. Milestones, anchors (A1–A3) and the ideas log live in `docs/product/ANCHORS.md`. Mirrored from the claude.ai doc **Hearth Story & Anchors** on Oct 16, 2026; this file is now the source of truth.
+Why Hearth exists, in Chase's words, plus the problems it solves and the family stories behind them. Milestones, anchors (A1–A3) and the ideas log live in `docs/product/ANCHORS.md`. Started Oct 16, 2026; this file is the source of truth. Personal details about the real family are kept out of this public repo (privacy sweep, Nov 25, 2026); the people here are composites.
 
 ## Why Hearth exists
 
@@ -12,15 +12,15 @@ Hearth exists so parents can share their kids with every part of a complicated f
 
 **How most posts go** (Chase, Oct 16): "for us 90% of the content we post will be to everyone." Sharing to everyone must be the fastest path; picking a narrower audience is the exception.
 
-**The family it was built for.** I'm from West Virginia, where about 25 of my family members still live. I live in Charlotte now. My mom's parents are divorced and remarried. My parents are divorced and remarried. My wife's family, from Charleston, WV, has about the same amount of divorce and separation. People who won't sit in the same room certainly won't comment on each other's photos of the grandkids.
+**The family it was built for.** A large family rooted in West Virginia, with a founder who now lives in the Charlotte area. On both sides there are divorces and remarriages across the grandparent generation. People who won't sit in the same room certainly won't comment on each other's photos of the grandkids.
 
-**What that looks like today.** We keep at least 5 group texts. Grandma A should be able to comment on a photo without divorced Grandpa B seeing it, and without worrying that he might.
+**What that looks like today.** The family keeps at least 5 group texts. One grandparent should be able to comment on a photo without a separated relative seeing it, and without worrying that they might.
 
-- Every grandpa has an Android and everyone else has an iPhone. Somebody doesn't get the photo, or gets a blurry one.
-- Videos are worse. In a 5-person chat with 1 Android, the video arrives degraded. So I send it to my stepmom separately and hope nobody feels slighted. With my in-laws, they do.
-- Underneath it all is guilt. Like a lot of America, we live far from our hometown. Getting a "good enough" amount of the kids to the grandparents is hard, and the barriers make it harder.
+- Some grandparents have an Android and everyone else has an iPhone. Somebody doesn't get the photo, or gets a blurry one.
+- Videos are worse. In a 5-person chat with 1 Android, the video arrives degraded. So the parents send it to a stepparent separately and hope nobody feels slighted.
+- Underneath it all is guilt. Like a lot of America, the family lives far from its hometown. Getting a "good enough" amount of the kids to the grandparents is hard, and the barriers make it harder.
 
-**Why not social media.** My wife and I don't post our kids online, and neither do many of our peers. The risks are real: deepfakes, predators, stalkers, AI trained on our children, ads, and more. Family photos belong with family.
+**Why not social media.** The parents don't post their kids online, and neither do many of our peers. The risks are real: deepfakes, predators, stalkers, AI trained on our children, ads, and more. Family photos belong with family.
 
 **The feeling we want.** It should feel like the preschool app. Parents know it's secure and that only people they trust are in it. They stop thinking about it and just share.
 
@@ -41,23 +41,22 @@ Eight problems, each with Hearth's answer. Two are only partly solved for the be
 | **Social media itself.** Filters, likes, strangers | No filters, public profiles, ranking, or ads. US-stored data | Beta |
 
 
-## Family stories, as told
+## Family stories (composites)
 
-These are the stories Chase has shared in this project and related chats. The personas (June, Earl, Linda and the rest) are composites, not real relatives.
+These are the shapes of stories Chase has shared in this project, with the private details removed. The personas (June, Earl, Linda and the rest) are composites, not real relatives.
 
-| Story | What Chase said | Why it matters for Hearth |
+| Story | What it looks like | Why it matters for Hearth |
 | --- | --- | --- |
-| Divorce across generations | Mom's parents divorced and remarried. Chase's parents divorced and remarried | Up to 3 generations of separate households want the same photos |
-| Mom's side | About the same level of divorce and separation. Mom was born in Charleston, WV | Two families' worth of households, not one |
+| Divorce across generations | Grandparents on both sides have separated and remarried | Up to 3 generations of separate households want the same photos |
 | 5+ group texts | Relatives won't sit in a room together, let alone comment on each other's photos | The core use case: comment without being seen by the other side |
-| Birthday at Gigi's | "We had a birthday party at Gigi's house. My dad's side was there, Mom's dad's side was there. I'd want to only post to those groups." | Some posts belong to an occasion: share with the people who were there (the events idea) |
-| The Charleston trip | "Mom's dad and stepmom and her sister (who lives in Texas) were all together with us in Charleston, WV. That would be a natural group." (Oct 17) | A natural group crosses households and states: Pawpaw and Granny's house plus a sister in Texas. Hearth must combine households from different places, not only follow a strict family tree: this is an event (`docs/product/SPEC-GROUPS.md` §3) |
-| The stepmom workaround | Sends videos to his stepmom separately and worries about offending his dad. With the in-laws, people really do get offended | Video quality turns into a family relationships problem |
-| Android grandpas | Every grandpa has an Android; everyone else has an iPhone | Cross-platform quality is a must-have |
-| No kids on social media | Chase and Mom don't post the kids, and neither do many of their peers | Privacy is the reason to switch, not a feature |
-| WV roots | About 25 family members in WV. Several great-grandparents and grandparents were born there | The first users are rural WV relatives |
-| Distance | Chase lives in the Charlotte area and once weighed moving back to Charleston, WV to be near family. He stayed, and moves to North Carolina in 2027 | Distance is why sharing "enough" feels hard |
-| Home life | Stay-at-home dad with young kids; Mom works remotely | The founder is the target parent, and time is short |
+| A birthday at a great-grandparent's house | Two sides of the family were there; the parents want to post only to those groups | Some posts belong to an occasion: share with the people who were there (the events idea) |
+| A trip that mixes households | A natural group crosses households and sometimes states | Hearth must combine households from different places, not only follow a strict family tree: this is an event (`docs/product/SPEC-GROUPS.md`) |
+| The stepparent workaround | Videos are sent to a stepparent separately for fear of offending someone | Video quality turns into a family relationships problem |
+| Android grandparents | Some grandparents have an Android; everyone else has an iPhone | Cross-platform quality is a must-have |
+| No kids on social media | The parents don't post the kids, and neither do many of their peers | Privacy is the reason to switch, not a feature |
+| West Virginia roots | A large extended family still lives in WV | The first users are rural WV relatives |
+| Distance | The founder lives in the Charlotte area, far from the hometown | Distance is why sharing "enough" feels hard |
+| Home life | A parent at home with young kids | The founder is the target parent, and time is short |
 
 
 ## West Virginia vs Charlotte tech culture (inferred)

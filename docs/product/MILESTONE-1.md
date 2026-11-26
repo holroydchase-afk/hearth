@@ -16,7 +16,7 @@ Your morning doc. Do the steps in order and Claude handles the rest. The gate is
 
 | # | Step | Time | Unblocks |
 |---|---|---|---|
-| 1 | Cloud environment settings: allow `mcp.supabase.com`, `api.supabase.com`, `jqvgjfbhzbvfdhtnvgzr.supabase.co`, `exp.host`, `expo.dev`, `api.expo.dev`, `api.resend.com` | 5 min | Claude can deploy |
+| 1 | Cloud environment settings: allow `mcp.supabase.com`, `api.supabase.com`, `<project-ref>.supabase.co`, `exp.host`, `expo.dev`, `api.expo.dev`, `api.resend.com` | 5 min | Claude can deploy |
 | 2 | Supabase → Account → Access Tokens: make one; save it as environment secret `SUPABASE_ACCESS_TOKEN`. That is the only Supabase secret the deploy needs: migrations and the cron run through the Management API. Family setup (step 5 below) goes through the same API. Only the hosted test runs (step 3) still use `psql`, so also save the connection string (Supabase → Connect → URI) as `SUPABASE_DB_URL` | 5 min | Migrations, function deploys, cron, family setup; with `SUPABASE_DB_URL`, hosted test runs |
 | 3 | Make a free account at expo.dev; Access tokens → save as environment secret `EXPO_ACCESS_TOKEN` (`npm run eas -- …` in `app/` passes it to EAS CLI as `EXPO_TOKEN`) | 5 min | Push project ID, builds |
 | 4 | Make a free account at resend.com and save its API key as a **Supabase** function secret, not here: Supabase → Edge Functions → Secrets → `RESEND_API_KEY` | 5 min | Email notices. For M1, Resend's test sender can mail only you, which is all M1 needs |

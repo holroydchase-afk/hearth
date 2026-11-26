@@ -1,7 +1,7 @@
 # Decision: fix the gaps from the Apple design guidelines sweep
 Date: Nov 6, 2026 · Status: Chase asked ("handle all the p1s, handle 1,6,8,4,etc") · DEC-54
 
-What changes (sweep doc https://claude.ai/artifact/3N1G5jF4ezeQ2Gtf2jFwZU):
+What changes:
 - **HIG-1:** the phone's "Allow notifications?" no longer pops up at sign-in. After the first photo, a card explains it, then one button asks. Not now hides it.
 - **HIG-2 (BETA-SEE-4):** photos zoom by pinch (iPhone), double tap, or a Zoom button.
 - **HIG-3, HIG-11:** tab and toolbar words and icons grow with Larger Text up to 1.5x; tabs show the large pop-up label.
