@@ -8,7 +8,7 @@ Reviewer: ux-reviewer, walking it as LG (least tech-savvy). Sources: Chase's iPh
 | ID | Fix | Why |
 |---|---|---|
 | UI-26 | "Check for new photos" removed (the app already refreshes on open and return, plus pull-down). "Show by date" → "By date" with the system sort icon, beside Messages in one row. First photo starts a row sooner. | Chase's call (DEC-41); one focal point; platform icons with words under them. |
-| UI-27 | Avatar letter skips "The": "The Holroyds" shows H, not T. | Looked like a bug. |
+| UI-27 | Avatar letter skips "The": "The Millers" shows M, not T. | Looked like a bug. |
 
 ## Checked and left alone
 - The blue gear at the top right is Expo Go's own developer button, not Hearth's. It won't be in a store build.

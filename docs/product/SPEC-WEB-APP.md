@@ -4,7 +4,7 @@ Status: Chase's go, Nov 24, 2026 (DEC-88) · Owner: staff-pm · Persona check: `
 
 ## The bet
 
-Two Android grandparents (AG: Grandaddy, Pawpaw) use Hearth before any native Android build exists. They open a link in Chrome, sign in once with the 6-digit email code, add Hearth to the home screen, and from then on it opens like an app, still signed in. Hearth runs on web, iPhone and Android; the native path does not change.
+Some Android grandparents (AG) use Hearth before any native Android build exists. They open a link in Chrome, sign in once with the 6-digit email code, add Hearth to the home screen, and from then on it opens like an app, still signed in. Hearth runs on web, iPhone and Android; the native path does not change.
 
 Proof: both AG testers open Hearth from the home screen on 3 separate days without signing in again and without a help call (GOALS signal: help calls). Stop condition: if a tester is signed out twice in a week, or Chrome loses a picked photo, stop adding web scope and fix that first.
 

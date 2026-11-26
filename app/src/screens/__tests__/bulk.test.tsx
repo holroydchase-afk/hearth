@@ -19,7 +19,7 @@ const EVERYONE = FIXTURE.circles.everyone;
 let n = 0;
 const photo = (date: string): PickedAsset => ({
   uri: `file:///picked/IMG_${++n}.jpg`, type: 'image', mimeType: 'image/jpeg', width: 4032, height: 3024,
-  exif: { DateTimeOriginal: date, OffsetTimeOriginal: '-04:00', GPSLatitude: 35.2271, GPSLongitude: -80.8431, Make: 'Apple' },
+  exif: { DateTimeOriginal: date, OffsetTimeOriginal: '-04:00', GPSLatitude: 0.5123, GPSLongitude: -0.4567, Make: 'Apple' },
 });
 const day = (d: string, count: number) => Array.from({ length: count }, (_, i) => photo(`${d} ${String(8 + Math.floor(i / 6)).padStart(2, '0')}:${String((i % 6) * 10).padStart(2, '0')}:00`));
 const video = (): PickedAsset => ({ uri: `file:///picked/MOV_${++n}.mov`, type: 'video', mimeType: 'video/quicktime', duration: 12_000 });

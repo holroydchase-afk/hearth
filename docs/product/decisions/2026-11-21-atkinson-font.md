@@ -1,5 +1,5 @@
 # Decision: Atkinson Hyperlegible Next everywhere, again
-Date: Nov 21, 2026 · Status: Chase's (thread "Build Hearth's design guidelines": "we may want to use atkinson", then after the live font tester: "hyperlegible next. also ensure that is on the portfolio demo page") · DEC-78 · Tester: https://claude.ai/artifact/7Dfseqn1BtTaPtFuCijPzX, saved `/mnt/project-files/design/font-tester-2026-11-21.html`
+Date: Nov 21, 2026 · Status: Chase's (thread "Build Hearth's design guidelines": "we may want to use atkinson", then after the live font tester: "hyperlegible next. also ensure that is on the portfolio demo page") · DEC-78 · Tester: saved `/mnt/project-files/design/font-tester-2026-11-21.html`
 
 What changes: Hearth's app and web demo use Atkinson Hyperlegible Next (Regular, Medium, SemiBold; no Bold), bundled with the app, on every phone and the web. It is also the studio core's font (`docs/design/STUDIO-CORE.md` section 4), so other products match. Sizes, colors and the phone's text-size scaling are unchanged.
 Over: the phone's own font (DEC-59's RD-2, Nov 15); Lexend, Inter and Nunito Sans (in the tester).

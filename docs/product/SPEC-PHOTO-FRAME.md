@@ -38,4 +38,4 @@ FRAME-8 is a change from the first pitch. Apple allows Live Activities only for 
 1. Architect lane: which widget library or config plugin, checked on the vendor's live page (rule 8), and how the widget reads the app's cached photos on each platform.
 2. privacy-security: the widget's photo copy at rest, then `docs/architecture/02-data-flow.md` and `03-encryption-and-keys.md` updated in the build PR (rule 6).
 3. grandparent-ux: final words for FRAME-1, 5, 7 and the guide step.
-4. GG: Bebar's Aluratek frame stays the path for great-grandparents (milestone 6, CF-18). This widget doesn't replace it.
+4. GG: A smart photo frame stays the path for great-grandparents (milestone 6, CF-18). This widget doesn't replace it.

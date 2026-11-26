@@ -1,5 +1,5 @@
 # Decision: Paper plus nine cut-open fruit themes; Pomegranate gets new values
-Date: Nov 23, 2026 · Status: Chase's ("put these pallettes in hearth, replacing everything but the default/paper") · DEC-80 · Spec: `docs/product/SPEC-REDESIGN.md` 1l (FRUIT-1..FRUIT-12) · Tool: https://claude.ai/artifact/SQ6gmnFB6bX7t6scr3ipSz; values `/mnt/project-files/design/fruit-palettes-2026-11-20/palettes-v2.json`
+Date: Nov 23, 2026 · Status: Chase's ("put these pallettes in hearth, replacing everything but the default/paper") · DEC-80 · Spec: `docs/product/SPEC-REDESIGN.md` 1l (FRUIT-1..FRUIT-12) · Tool: values `/mnt/project-files/design/fruit-palettes-2026-11-20/palettes-v2.json`
 
 What changes: the owner's Theme list grows from 3 to 10: Paper (default, unchanged), Avocado (unchanged), Pomegranate (new values), Blood orange, Kiwi, Fig, Dragon fruit, Watermelon, Candy-stripe beet, Red cabbage. Each has light and dark page, fill, ink, muted and accent from the cut fruit. Owner only, saved on that phone (DEC-68). Non-Paper dark themes use a lighter Delete red (`#FF6961`) so it stays 4.5:1.
 Over: keeping three themes (DEC-68 "not doing"); keeping the Nov 18 Pomegranate.

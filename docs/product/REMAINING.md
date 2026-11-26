@@ -74,7 +74,7 @@ Email codes at M1: Supabase's built-in mailer only sends to project team members
 
 ## Milestone 2: Mom posts too; both family sides work
 
-**Gate:** Mom signs in from an invite and posts unaided (JOIN-2, SHARE-1, stopwatch); both of them post to both family sides' groups (Chase's WV side, Mom's Charleston side) with 0 cross-side leaks; AUD-1 answered correctly by both; AUD-6 audience change works; NOTIFY-1 p90 ≤ 60 s over ≥10 posts; REPLY-3 notices reach the poster; 0 open P0.
+**Gate:** Mom signs in from an invite and posts unaided (JOIN-2, SHARE-1, stopwatch); both of them post to both family sides' groups (Dad's side, Mom's side) with 0 cross-side leaks; AUD-1 answered correctly by both; AUD-6 audience change works; NOTIFY-1 p90 ≤ 60 s over ≥10 posts; REPLY-3 notices reach the poster; 0 open P0.
 
 | # | Item | Owner | Needs Chase? |
 |---|---|---|---|
@@ -95,7 +95,7 @@ Email codes at M1: Supabase's built-in mailer only sends to project team members
 | 3. Most tech-savvy relative | Apple enrollment + TestFlight **external** (AE-6) → Beta App Review → Delete my account (AE-5, JOIN-7) and a plain privacy policy page (PS-3, no legal review); Supabase Pro + key restore drill (IN-7, IN-4, IN-8); JOIN-5, SEE-5, NOTIFY-4 |
 | 4. Everyone else by savviness | Printed guide (GU-3), grandparent test (GU-4), JOIN-6, SEE-2, SEE-4, NOTIFY-5 digest, REPLY-5; **A2 "Seen by" decision due before this**; Thanksgiving setup if Chase keeps the soft date |
 | 5. Android grandpas | Android test phone (CH-7), Play Console $25, Android device pass (AE-3 Android half, GU-1), Android install < 10 min |
-| 6. Smart frame | Check whether the Aluratek model takes photos by email or shared link; skip if app-only |
+| 6. Smart frame | Check whether the smart frame takes photos by email or shared link; skip if app-only |
 | 7. Decide | Costs, problems hit, whether to go further. Funding, pricing, pentest, legal, self-hosted auth (A3 gap) live here |
 
 ---
@@ -136,7 +136,7 @@ Email codes at M1: Supabase's built-in mailer only sends to project team members
 | Supabase Pro, backups, restore drill (IN-7, IN-8, IN-4) | **M3** | No relative data before then; KEK on paper from M1 |
 | Beta App Review, Delete my account, privacy policy page | **M3** | Only external TestFlight needs them |
 | Android phone, Play Console | **M5** | Milestone order; iPhone side first |
-| Video (SHARE-6, video half of SEE-4) | Still out until a transcode proves location-free | Unchanged. Note: video is a named story problem (stepmom, in-laws), not a nice-to-have. Revisit at M4 |
+| Video (SHARE-6, video half of SEE-4) | Still out until a transcode proves location-free | Unchanged. Note: video is a named story problem (sent separately, offence), not a nice-to-have. Revisit at M4 |
 | REPLY-1 names | Count + "You loved this" | Unchanged |
 | Purge worker, exports, S11/S13/S14/S15, web viewer | Unchanged (v1.0 / out) | |
 

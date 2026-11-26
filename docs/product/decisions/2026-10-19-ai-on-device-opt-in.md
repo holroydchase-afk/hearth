@@ -1,5 +1,5 @@
 # Decision: AI positioning is option B: on-device only, opt-in. CF-10's "no ML of any kind" and the "no face scanning" claim are retired
-Date: Oct 19, 2026 · Status: Chase's ("Yes I am", Oct 19, 17:36Z, asked "are you OK promising 'opt-in, on your phone only' instead of 'no AI at all'?") · Source: AI positioning session agenda (`ANCHORS.md`), TRACKER D6, `AI-FEATURES.md`, research page https://claude.ai/artifact/NsUEm6y7fVNQtjEVPjPUVn
+Date: Oct 19, 2026 · Status: Chase's ("Yes I am", Oct 19, 17:36Z, asked "are you OK promising 'opt-in, on your phone only' instead of 'no AI at all'?") · Source: AI positioning session agenda (`ANCHORS.md`), TRACKER D6, `AI-FEATURES.md`, research page
 
 | Persona | Green/Red | Why |
 |---|---|---|

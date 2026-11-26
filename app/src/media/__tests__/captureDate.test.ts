@@ -4,7 +4,7 @@
 // The phone is in Eastern time for these tests (passed explicitly: Jest sandboxes process.env.TZ).
 import { takenAtFromAsset } from '../captureDate';
 
-const GPS = { GPSLatitude: 35.2271, GPSLongitude: -80.8431, GPSLatitudeRef: 'N', GPSLongitudeRef: 'W' };
+const GPS = { GPSLatitude: 0.5123, GPSLongitude: -0.4567, GPSLatitudeRef: 'N', GPSLongitudeRef: 'W' };
 const MAKER = { Make: 'Apple', Model: 'iPhone 15', LensModel: 'iPhone 15 back camera' };
 
 const NY = { timeZone: 'America/New_York' };
