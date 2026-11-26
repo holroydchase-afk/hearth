@@ -659,6 +659,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Over:** the optional onboarding card on Gallery (DEC-81).
 - **Because:** the card felt out of place among photos. Photos stay the first thing a grandparent sees (A1).
 - **Source:** `docs/product/SPEC-LIFE-CALENDAR.md` CAL-S1..S5; persona check `decisions/2026-11-26-birthday-in-settings.md`
+### DEC-92 · Full-screen viewer: iPhone Photos look plus a strip of small photos (R113, VIEWER-*)
+- **When / status:** Nov 24 · Chase picked "B. A plus a photo strip" on the viewer card after trying the live tester; he also asked why not the system viewer · Specced, tests next
+- **Chose:** black backdrop, photo edge to edge, swipe, pinch and double tap zoom, swipe down to close, tap hides controls (Easy view Off), Easy view keeps labelled pills that never hide, plus a strip of small photos to jump around. Built on an open-source gallery component (react-native-zoom-toolkit, MIT), not hand-built gestures.
+- **Over:** A (no strip); C (page color behind the photo); the iPhone's own Quick Look viewer (no sender, caption or Easy view, needs decrypted copies on disk, no Expo Go or web); hand-building the gestures.
+- **Because:** Chase called the viewer "the worst aspect of the product"; Photos is what every relative already knows; a proven component means less of our own gesture code to break.
+- **Source:** `docs/product/SPEC-VIEWER.md`; persona check `decisions/2026-11-24-photo-viewer.md`; the live viewer tester (claude.ai artifact).
 
 ---
-Last updated: Nov 26, 2026 (DEC-91)
+Last updated: Nov 26, 2026 (DEC-92)
