@@ -131,7 +131,7 @@ describe('sign in: email typos (June types "yaho.com")', () => {
 
   it('JOIN-2: a real address, or an uncommon one, gets no suggestion', async () => {
     await renderApp(<SignInScreen />, { user: null });
-    for (const ok of ['june@yahoo.com', 'chase@holroyd.family', 'a@suddenlink.net']) {
+    for (const ok of ['june@yahoo.com', 'sam@example.family', 'a@suddenlink.net']) {
       fireEvent.changeText(await screen.findByLabelText('Your email'), ok);
       expect(screen.queryByText(/Did you mean/)).toBeNull();
     }

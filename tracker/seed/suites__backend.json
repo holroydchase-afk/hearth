@@ -6190,14 +6190,14 @@
   },
   {
    "id": "VIDEO-CAP-004",
-   "title": "S14-1 the 11th video is refused even in a brand-new space",
+   "title": "S14-1 the 11th video is refused even in a brand-new space (ENG-R11: HF002)",
    "area": "Video-Cap",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIDEO-CAP-005",
-   "title": "S14-1 and in the first space too",
+   "title": "S14-1 and in the first space too (ENG-R11: HF002)",
    "area": "Video-Cap",
    "tickets": [],
    "where": "backend/tests/"
@@ -6262,6 +6262,216 @@
    "id": "VIDEO-CAP-014",
    "title": "S14-7 the refusal says the cap is per person",
    "area": "Video-Cap",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-001",
+   "title": "ENG-R2 setup: Alex's count this month is readable",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-002",
+   "title": "ENG-R2-1 a video upload restarted 3x (drafts thrown away while pending) counts once",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-003",
+   "title": "ENG-R2-2 setup: preparing a video counts it",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-004",
+   "title": "ENG-R2-2 sign-media marks the upload failed",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-005",
+   "title": "ENG-R2-2 a failed video gives the month's count back",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-006",
+   "title": "ENG-R2-3 Alex deletes his failed video row",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-007",
+   "title": "ENG-R2-3 deleting an already-failed video does not give it back a second time",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-008",
+   "title": "ENG-R2-4 Alex deletes a pending video row",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-009",
+   "title": "ENG-R2-4 a pending video that is deleted gives its count back",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-010",
+   "title": "ENG-R2-5 setup: the video uploaded (ready)",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-011",
+   "title": "ENG-R2-5 deleting an uploaded video (post deleted, row purged) keeps it counted",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-012",
+   "title": "ENG-R2-6 Alex sends videos up to 10 this month",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-013",
+   "title": "ENG-R2-6 the 11th is still refused (free_video_cap_reached)",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-014",
+   "title": "ENG-R2-6 the counter stops at 10",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-015",
+   "title": "ENG-R2-6 once one of the 10 fails, Alex can send one more",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-016",
+   "title": "ENG-R2-6 and then he is at the cap again",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-017",
+   "title": "ENG-R2-7 marking a video failed when the counter is already 0 does not error",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-018",
+   "title": "ENG-R2-7 nor does deleting a pending one",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-019",
+   "title": "ENG-R2-7 the counter stays at 0, never negative",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-020",
+   "title": "ENG-R2-8 a paid family's video can fail",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-021",
+   "title": "ENG-R2-8 and still has no free-cap usage row",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-022",
+   "title": "ENG-R11 the free video cap is refused with SQLSTATE HF002, not generic P0001",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-023",
+   "title": "ENG-R11 the message is still free_video_cap_reached",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-024",
+   "title": "SEC-R7 PUBLIC has no EXECUTE on private.videos_this_month(uuid)",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-025",
+   "title": "SEC-R7 authenticated has no EXECUTE on private.videos_this_month(uuid)",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-026",
+   "title": "SEC-R7 anon has no EXECUTE on private.videos_this_month(uuid)",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-027",
+   "title": "SEC-R7 Blair can't read Alex's video count directly",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-028",
+   "title": "SEC-R7 Alex still sees his own count through space_upload_quota",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-029",
+   "title": "PRIV-R1 authenticated has no privilege on private.video_refundable",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-030",
+   "title": "PRIV-R1 anon has no privilege on private.video_refundable",
+   "area": "Video-Refund",
    "tickets": [],
    "where": "backend/tests/"
   },

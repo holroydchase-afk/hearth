@@ -83,7 +83,7 @@ Chase's first iPhone photo died in `prepareItem` → `processPhoto`. Leading gue
 Logged in `docs/product/ANCHORS.md` ideas log (Oct 19). Not specced. Any location idea must meet **all** of these rules:
 1. Never in the file: a location feature uses `extract` (its own field) and the file is stripped. `keep` is only for a Chase-approved change of the default (D2), never for a feature.
 2. Per post, opt-in, off by default. The poster turns it on for that post, with words saying who will see it (G4).
-3. Coarse only: city or town ("Charleston, WV"), never coordinates. Rounding to the city happens on the phone; the precise point never leaves it.
+3. Coarse only: city or town ("Springfield"), never coordinates. Rounding to the city happens on the phone; the precise point never leaves it.
 4. Place names come from on-device lookup or a US-hosted service that is sent no photo (A3). No Google or Apple Maps calls carrying a child's photo.
 5. Behind the family flag (`feature_on(space,'location')`) and checked by the server (1.4).
 6. Never in notices, error reports or logs (rule 2).

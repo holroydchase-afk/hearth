@@ -20,11 +20,11 @@ const JWT = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMifQ.c2lnbmF0dXJlLXNpZ25hdHVyZQ'
 const DEK = 'c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5MTIzNDU2';
 const LEAKS = [
   'file:', '/var/mobile', 'IMG_0001', 'HEIC', CAPTION, 'Mia', EMAIL, 'june.holroyd', 'https:', 'backblazeb2', 'X-Amz', 'deadbeef', 'KEYID',
-  JWT, 'eyJ', DEK, 'c2VjcmV0', '38.3498', '81.6326', 'iPhone 15', 'Apple', 'DateTimeOriginal', '2026:10:18',
+  JWT, 'eyJ', DEK, 'c2VjcmV0', '0.5123', '0.4567', 'iPhone 15', 'Apple', 'DateTimeOriginal', '2026:10:18',
 ];
 
 const leakyMessage = `${SECRET_URI} "${CAPTION}" ${CAPTION} for ${EMAIL} at ${URL} token=${JWT} dek=${DEK} ` +
-  'GPSLatitude 38.3498 GPSLongitude -81.6326 Make Apple Model iPhone 15 DateTimeOriginal 2026:10:18 12:01:02';
+  'GPSLatitude 0.5123 GPSLongitude -0.4567 Make Apple Model iPhone 15 DateTimeOriginal 2026:10:18 12:01:02';
 
 function expectNoLeaks(text: string) {
   for (const s of LEAKS) expect({ s, leaked: text.includes(s) }).toEqual({ s, leaked: false });

@@ -47,7 +47,7 @@ One entry per post mortem, newest first. Each entry gives what happened, why, an
 
 ## Oct 18, 2026: Hearth wouldn't open in Expo Go (SDK 54 vs 57)
 
-Full post mortem (Claude Doc): https://claude.ai/code/artifact/730d2640-da97-4612-a22a-86abd9493f84
+Full post mortem: a Claude Doc (link kept private)
 
 **What happened.** The first time Chase opened Hearth on his iPhone, Expo Go refused it: "The installed version of Expo Go is for SDK 57.0.0. The project you opened uses SDK 54." App Store Expo Go runs only the newest SDK and can't be downgraded. Hearth had been on SDK 54 since its first commit on Oct 16. SDK 54 came out Sep 10, 2025, and SDK 57 came out Jun 30, 2026, so we started three versions behind. Expo did not move during our build. PR 24 upgraded the app to SDK 57.
 

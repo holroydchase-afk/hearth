@@ -71,6 +71,8 @@ export function ShareScreen() {
   const { c, type, os, dark, bigText } = useTheme();
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // HRT-WEB.3: "Getting 12 of 48 photos ready…" while the web build cleans and saves each photo before the post is saved.
+  const [staging, setStaging] = useState<{ done: number; total: number } | null>(null);
   const userId = app.session?.userId;
   // BETA-BULK-3: a bulk pick waiting on the review screen (dates only; EXIF already dropped).
   // R15: the bulk pick as picked; photo helpers set some aside (never deleted), and putBack brings them back.
@@ -80,7 +82,7 @@ export function ShareScreen() {
   // HELP-R4: the server's off-switches (my_features); off until read, like every feature (FLAG-5).
   const switches = useMemo(() => helperSwitches(app.features), [app.features]);
   const helped = useMemo(() => (picked ? applyHelpers(picked, { on: switches, putBack, looks }) : null), [picked, switches, putBack, looks]);
-  const plan = useMemo(() => (helped ? planBatch(helped.kept, {}, { videos: app.features.includes('video_posting') }) : null), [helped, app.features]);
+  const plan = useMemo(() => (helped ? planBatch(helped.kept, {}, { videos: app.features.includes('video_posting') && !app.deps.noVideo }) : null), [helped, app.features]);
   const setPlan = (assets: PickedAsset[] | null) => { setPicked(assets); setPutBack(new Set()); setLooks(null); };
   // HELP-DUP-2/3, HELP-BLUR: read small previews after the review screen shows; Send never waits for them.
   const previewBytes = app.deps.previewBytes;
@@ -100,7 +102,8 @@ export function ShareScreen() {
   // Oct 17 decision: "Pick lots of photos" is for parents only, never a relative allowed to post.
   const isParent = app.space?.role === 'owner' || app.space?.role === 'adult';
   // FLAG-5: video is offered only when the server has video_posting on for me.
-  const videos = app.features.includes('video_posting');
+  // WEB-APP-34: never on the real-backend web build (deps.noVideo), whatever the server says.
+  const videos = app.features.includes('video_posting') && !app.deps.noVideo;
 
   useEffect(() => {
     if (!spaceId || !userId || !canPost) return;
@@ -161,10 +164,16 @@ export function ShareScreen() {
     setBusy(true);
     try {
       await saveLastAudience(app.deps.kv, userId, chosen);
-      await app.queue.enqueueBatch({
-        space: app.space!.space_id, circleIds: chosen, title,
-        posts: plan.posts.map((p) => ({ takenAt: p.takenAt, items: p.items })),
-      });
+      const staged = await stageAll(plan.posts.map((p) => p.items));
+      try {
+        await app.queue.enqueueBatch({
+          space: app.space!.space_id, circleIds: chosen, title,
+          posts: plan.posts.map((p, i) => ({ takenAt: p.takenAt, items: staged[i]! })),
+        });
+      } catch (e) {
+        void app.deps.uploadStore?.release({ items: staged.flat() }); // nothing saved a job for these bytes
+        throw e;
+      }
       // HELP-DUP-2: remember what went, by preview fingerprint, on this phone only.
       if (looks && helped) await recordSent(app.deps.kv, userId, helped.kept.flatMap((a) => looks.ids.get(a.uri) ?? [])).catch(() => {});
       setPlan(null);
@@ -175,6 +184,37 @@ export function ShareScreen() {
       setBusy(false);
     }
   };
+
+  /**
+   * HRT-WEB.3: web only (deps.uploadStore). Cleans and saves each photo post by post BEFORE any job is saved; a close
+   * mid-way loses only posts never shown as sending. Phones: the items go through untouched.
+   */
+  const stageAll = async (posts: QueueItem[][]): Promise<QueueItem[][]> => {
+    const store = app.deps.uploadStore;
+    if (!store) return posts;
+    const total = posts.reduce((n, p) => n + p.filter((i) => i.kind === 'photo').length, 0);
+    let before = 0;
+    const out: QueueItem[][] = [];
+    setStaging({ done: 0, total });
+    try {
+      for (const post of posts) {
+        const r = await store.stage(post, (done) => setStaging({ done: before + done, total }));
+        out.push(r.items);
+        before += post.filter((i) => i.kind === 'photo').length;
+      }
+    } catch (e) {
+      await store.release({ items: out.flat() }).catch(() => {}); // posts already saved but never queued
+      throw e;
+    } finally {
+      setStaging(null);
+    }
+    return out;
+  };
+
+  // HRT-WEB.3 (grandparent-ux words): the real numbers, "photo" not "item".
+  const readyLine = staging
+    ? staging.total > 1 ? `Getting ${Math.min(staging.done + 1, staging.total)} of ${staging.total} photos ready…` : 'Getting your photo ready…'
+    : null;
 
   const toggle = (id: string) => setChosen((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));
 
@@ -246,7 +286,13 @@ export function ShareScreen() {
     setBusy(true);
     try {
       await saveLastAudience(app.deps.kv, userId, chosen);
-      await app.queue.enqueue({ space: app.space!.space_id, caption: note.trim() || null, title: null, circleIds: chosen, items });
+      const [staged] = await stageAll([items]);
+      try {
+        await app.queue.enqueue({ space: app.space!.space_id, caption: note.trim() || null, title: null, circleIds: chosen, items: staged! });
+      } catch (e) {
+        void app.deps.uploadStore?.release({ items: staged! });
+        throw e;
+      }
       app.setShared(`Shared with ${toLine}.`);
       reset();
       nav.goFeed();
@@ -263,7 +309,7 @@ export function ShareScreen() {
     const bringBack = (uris: string[]) => setPutBack((cur) => new Set([...cur, ...uris]));
     return (
       <BatchReview plan={plan} circles={circles} chosen={chosen} onToggle={toggle} busy={busy} title={title} onTitle={setTitle}
-        onSend={() => void sendBatch()} onCancel={() => setPlan(null)}
+        onSend={() => void sendBatch()} onCancel={() => setPlan(null)} status={readyLine}
         helpers={{
           lines: helperLines(helped),
           setAside: helped.setAside.flatMap((s) => s.items),
@@ -342,7 +388,8 @@ export function ShareScreen() {
             <View style={styles.headTitle}><Txt variant="title2" level={1} role="header">New post</Txt></View>
             {empty && !kind ? null : <Button variant="quiet" label="Cancel this post" text="Cancel" style={styles.headCancel} onPress={cancel} />}
           </View>
-          <QueueStatus />
+          <QueueStatus full />
+          {readyLine ? <View accessibilityLiveRegion="polite"><Txt tone="muted">{readyLine}</Txt></View> : null}
           {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
 
           {/* SHARE-PC-1: one card holds the post as the family will see it, and who it goes to. */}

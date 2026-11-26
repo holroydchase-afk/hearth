@@ -4,7 +4,7 @@
 
 ## The problem
 
-Chase's family is "distributed": divorces, remarriages, step-grandparents, relatives spread between rural West Virginia and Charlotte. Photos of the kids reached some grandparents and not others. They got lost in text threads, or sat on social networks that half the family refuses to join. The real requirement wasn't another photo app. It was **control over who sees each photo, simple enough for a great-grandparent, private enough for a skeptic.**
+The family is "distributed": several grandparent households, step-grandparents, relatives spread between rural West Virginia and Charlotte. Photos of the kids reached some grandparents and not others. They got lost in text threads, or sat on social networks that half the family refuses to join. The real requirement wasn't another photo app. It was **control over who sees each photo, simple enough for a great-grandparent, private enough for a skeptic.**
 
 ## Five calls that shaped it
 

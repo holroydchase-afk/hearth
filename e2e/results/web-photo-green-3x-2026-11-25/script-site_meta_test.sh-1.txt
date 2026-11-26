@@ -1,0 +1,16 @@
+ok   - DEMO-META-1: the script exists
+ok   - DEMO-META-1: it runs
+ok   - DEMO-META-1: index.html has a description
+ok   - DEMO-META-1: index.html has og:title, og:description, og:type and og:url
+ok   - DEMO-META-1: index.html has an absolute https preview picture
+ok   - DEMO-META-1: index.html has a large Twitter card
+ok   - DEMO-META-1: index.html says demo in its title
+ok   - DEMO-META-1: photos/index.html has a description
+ok   - DEMO-META-1: photos/index.html has og:title, og:description, og:type and og:url
+ok   - DEMO-META-1: photos/index.html has an absolute https preview picture
+ok   - DEMO-META-1: photos/index.html has a large Twitter card
+ok   - DEMO-META-1: photos/index.html says demo in its title
+ok   - DEMO-META-1: running twice adds nothing twice
+ok   - DEMO-META-1: the preview picture ships in public/ at 1200x630
+ok   - DEMO-META-1: build-demo.sh runs it with the base
+SITE META RESULT: 15 passed, 0 failed

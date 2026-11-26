@@ -5,11 +5,11 @@ Reviewer: `grandparent-ux`. Branch `claude/project-thread-df9051` at 579b440, re
 **Measured vs inferred.** Words and line numbers are read from the code. Sizes are inferred from `ui/kit.tsx`: every `Txt`, `Button` and `Field` uses `t.base` (17 pt+), buttons including `quiet` keep 48 pt (`MIN_TARGET`), fields are 56 pt, and nothing sets `allowFontScaling={false}`. No Playwright run at 360x740 this pass (texts are off in the web build). Real-phone behaviour (autofill, Twilio sender, how a scam-wary relative reads an unknown number) is **confirm with a relative** at BETA-SMS-16/17.
 
 ## Verdict: Needs changes (0 P0, 6 P1, 11 P2). Don't switch texts on for relatives until the P1s are fixed.
-- **LG / AG (Grandaddy, Memaw, Pawpaw; Android, WV signal):** the code screen works, but the printed guide tells them to distrust the code text (R3), a stranger-caused outage drops a text account into an empty email account (R4), and a wrong number on a phone invite dead-ends (R6).
+- **LG / AG (Grandaddy, Memaw, Pawpaw; some on Android, WV signal):** the code screen works, but the printed guide tells them to distrust the code text (R3), a stranger-caused outage drops a text account into an empty email account (R4), and a wrong number on a phone invite dead-ends (R6).
 - **GG (Bebar, Gigi, Great-Grandma):** not touched (they use email, web or the frame); email stays exactly as today when texts are off.
 - **SG (Grandmomma, Granny):** same screens as everyone; no second-tier words found. R6 hits hardest when a stepparent's number was typed by another household.
 - **CU (cousins):** fine; R8 makes the button say what it does.
-- **PA / FA / TR (Chase, Mom, Texas aunt):** the invite card's words don't match what the relative will see (R13, R14), and the code-safety line fights the invite code they read aloud (R2).
+- **PA / FA / TR (Chase, Mom, the one who moved away):** the invite card's words don't match what the relative will see (R13, R14), and the code-safety line fights the invite code they read aloud (R2).
 
 ## Changes (most important first)
 

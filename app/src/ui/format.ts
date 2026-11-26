@@ -22,7 +22,7 @@ export function andList(names: string[]): string {
 }
 
 /** UI-27 / FIRSTMIN-1: the avatar initials. The first letters of the first two words, after skipping a
- *  leading "The" ("The Holroyds" → "H", "Grandma Jo" → "GJ"); one word stays one letter; "?" when there's no name. */
+ *  leading "The" ("The Millers" → "M", "Grandma Jo" → "GJ"); one word stays one letter; "?" when there's no name. */
 export function initialOf(name: string): string {
   const all = name.trim().split(/\s+/).filter(Boolean);
   const words = all.length > 1 && all[0]?.toLowerCase() === 'the' ? all.slice(1) : all;

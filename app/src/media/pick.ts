@@ -45,17 +45,18 @@ export async function pickPhotos(limit = 10, opts: { videos: boolean } = { video
  * so the capture date can be read on the phone. The EXIF stays in memory here and is dropped by
  * planBatch; only takenAt leaves. The pipeline re-encodes and refuses any output with EXIF.
  */
-export async function pickBulk(opts: { videos: boolean } = { videos: false }): Promise<{ assets: PickedAsset[] } | { denied: true }> {
+export async function pickBulk(opts: { videos: boolean; imagesOnly?: boolean } = { videos: false }): Promise<{ assets: PickedAsset[] } | { denied: true }> {
   const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
   if (!perm.granted && perm.accessPrivileges !== 'limited') return { denied: true };
   const r = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ['images', 'videos'],
+    // WEB-APP-34: the real-backend web build never offers video (imagesOnly); phones list videos so planBatch can say they were skipped.
+    mediaTypes: opts.imagesOnly ? ['images'] : ['images', 'videos'],
     allowsMultipleSelection: true,
     selectionLimit: BULK_PICK_LIMIT,
     exif: true,
     quality: 1,
     // VID-21: with video_posting on, bulk videos are sent, so iPhone exports them at 720p H.264 like pickPhotos.
-    ...(opts.videos ? { videoExportPreset: ImagePicker.VideoExportPreset.H264_1280x720 } : {}),
+    ...(opts.videos && !opts.imagesOnly ? { videoExportPreset: ImagePicker.VideoExportPreset.H264_1280x720 } : {}),
   });
   if (r.canceled) return { assets: [] };
   const assets: PickedAsset[] = r.assets.map((a) => ({

@@ -4,7 +4,7 @@ Status: Chase's go, Nov 24, 2026 (DEC-88) · Owner: staff-pm · Persona check: `
 
 ## The bet
 
-Two Android grandparents (AG: Grandaddy, Pawpaw) use Hearth before any native Android build exists. They open a link in Chrome, sign in once with the 6-digit email code, add Hearth to the home screen, and from then on it opens like an app, still signed in. Hearth runs on web, iPhone and Android; the native path does not change.
+Some Android grandparents (AG) use Hearth before any native Android build exists. They open a link in Chrome, sign in once with the 6-digit email code, add Hearth to the home screen, and from then on it opens like an app, still signed in. Hearth runs on web, iPhone and Android; the native path does not change.
 
 Proof: both AG testers open Hearth from the home screen on 3 separate days without signing in again and without a help call (GOALS signal: help calls). Stop condition: if a tester is signed out twice in a week, or Chrome loses a picked photo, stop adding web scope and fix that first.
 
@@ -16,7 +16,7 @@ Cost $0: the real-backend web build already lives on Expo's free hosting (the ex
 |---|---|---|---|
 | HRT-WEB.1 | Staying signed in on the web (below, WEB-APP-1..12) | 1-2 sessions | todo |
 | HRT-WEB.2 | Add to home screen: web manifest (name, icons 192/512 + maskable, `display: standalone`, theme color), opens on Gallery; Android-size screen checks (360x800 and 412x915) for every tab in Playwright, no sideways scroll, 48pt targets | 1-2 | todo (criteria WEB-APP-13..24 below) |
-| HRT-WEB.3 | Photo sharing on web: pick from Chrome's photo picker, EXIF/GPS stripped in the browser (auto test on a GPS-tagged JPEG), a picked post survives Chrome closing mid-upload (queue in IndexedDB, resumes on next open) | 2-3 | todo |
+| HRT-WEB.3 | Photo sharing on web: pick from Chrome's photo picker, EXIF/GPS stripped in the browser (auto test on a GPS-tagged JPEG), a picked post survives Chrome closing mid-upload (queue in IndexedDB, resumes on next open) | 2-3 | todo (criteria WEB-APP-25..36 below) |
 | HRT-WEB.4 | Notices: email for the beta (already built; check a web-only person gets it). Chrome web push later, after the beta | 1 | todo |
 | HRT-WEB.5 | Save to my phone = browser download of the full photo; video stays off on web | 1 | todo |
 
@@ -91,6 +91,68 @@ Also in PR 1 (done-when, not criteria): request `navigator.storage.persist()` af
 **Done when:** WEB-APP-13..21 green 3x with all suites; WEB-APP-22, 23 logged on a real Android phone; WEB-APP-24 logged at the first AG setup (it rides with WEB-APP-12). Rule 6: no data storage change, so no architecture doc update unless a service worker is added.
 
 **Lanes:** qa-tdd red (WEB-APP-13..21) → engineer (manifest, icons script, `public/index.html`, serve-dist type) → qa-tdd green 3x → grandparent-ux (guide words, icon look, WEB-APP-19/20 failures it finds) → privacy-security light pass (no new origins, no tracking params, no service worker). Architect not needed: no new dependency (icon script uses Pillow like `make-og-picture.py`). Existing screens that fail WEB-APP-19/20 get their own finding IDs and failing tests; fixes stay inside this PR only if each is a style change, otherwise a TRACKER row.
+
+## HRT-WEB.3: photo sharing on web (PR 3)
+
+**Bet.** An AG grandparent taps Share in Chrome, picks a photo from Chrome's photo picker, chooses a group, and the post arrives with no location in it, even if they close Chrome straight after tapping Send.
+
+**Today (checked Nov 25, expo-image-picker 58.0.10, expo-image-manipulator 58.0.15).**
+- The pipeline already runs on web: `runtime.ts` wires `prepareItem` (`app/src/media/prepare.ts`) for both the real and the Fake build. Chrome's canvas re-encode drops EXIF, then `cleanImage` + `verifyClean` (pure TS, `clean.ts`) strip again and fail closed. Sizes come from `MEDIA_POLICY` (2048 long edge, quality 0.82, thumb ~40 KB, max 48 KB), the same as phones. No web test proves any of this on a GPS-tagged JPEG yet.
+- **The queue does not survive Chrome closing.** The job list persists (localStorage via `webKV`, `hearth.uploadQueue.v1`), but each item's `uri` is a `blob:` URL (the web picker calls `URL.createObjectURL`), which dies with the page. On the next open `readBytes` fetch fails with a TypeError, `toApiError` calls it `NETWORK`, and the job retries forever as "Sending…" (B-WEB3-1, P1: a stuck post, A1). Grants aren't persisted, so a job past `signing` restarts and hits the same dead URL.
+- Video is **not** off on web: with `video_posting` on, `pickPhotos` offers videos on web and `e2e-web/video.spec.js` (VID-18) posts one on the Fake build.
+
+**Change.** On web only, `enqueue` prepares each photo before it returns (so the cleaned display + thumb bytes exist before the job is saved), stores those **cleaned** bytes in IndexedDB keyed by job and item, and the job's item points at that store instead of the `blob:` URL. The original (with GPS) never touches disk. Stored bytes are sealed with the HRT-WEB.1 non-extractable key and deleted when the job publishes, is removed, or the person signs out. Phones are unchanged (`file://` URIs already survive).
+
+### Acceptance criteria
+
+| ID | Given / When / Then | Type |
+|---|---|---|
+| WEB-APP-25 | Given the web build signed in, when Share is tapped and "Pick photos" chosen, then Chrome's file chooser opens with `accept` images only (no video types), multiple allowed, up to 10 | auto (e2e:web, `filechooser`) |
+| WEB-APP-26 | Given a JPEG fixture with GPS lat/long, MakerNote, camera serial and XMP, when it is picked and sent through the real web pipeline (`prepareItem`, Fake build), then the display and thumb bytes handed to `encrypt` contain no APP1 Exif/GPS, no XMP and no MakerNote (`verifyClean` passes, and a direct byte search for the GPS IFD tag and the fixture's lat string finds nothing) | auto (e2e:web; jest for the byte check if the hook is easier) |
+| WEB-APP-27 | Given that photo, when the post is published, then the spec sent to sign-media says `exif_stripped: true`, `mime_type: image/jpeg`, display long edge ≤ 2048, thumb ≤ 48 KB, matching SPEC-MEDIA 1.2 (`MEDIA_POLICY`, no web-only numbers) | auto (e2e:web) |
+| WEB-APP-28 | Given a JPEG with EXIF orientation 6 (rotated), when it is shared on web, then the published display and thumb are upright (width/height swapped vs the raw pixels) | auto (e2e:web) |
+| WEB-APP-29 | Given a picked post on web, when it is queued, then no original bytes and no GPS appear in localStorage or IndexedDB; IndexedDB holds only cleaned, sealed bytes; localStorage holds only the job JSON (no `blob:` or `data:` URI, no bytes) | auto (e2e:web reads both stores) |
+| WEB-APP-30 | Given a post queued on web, when the page is closed before the upload finishes (Playwright: block the B2 PUT, close the page, open a new page in the same context, unblock), then the post publishes once (one post, same `client_id`), with no second pick | auto (e2e:web) |
+| WEB-APP-31 | Given the B-WEB3-1 case (a saved job whose item bytes are gone: cleared site data, an old `blob:` job from before this PR), when Hearth opens, then the job ends as failed with a plain retry/remove choice, not "Sending…" forever, and sends one code-only error report | auto (jest on `UploadQueue` + web store) |
+| WEB-APP-32 | Given a published or removed job, or sign-out, then its IndexedDB bytes are deleted (sign-out removes all of them, with WEB-APP-6's wipe) | auto (jest + e2e:web) |
+| WEB-APP-33 | Given IndexedDB is blocked (private window, HARD-7), when a photo is shared, then it still sends while the page stays open, nothing is written in plain text, and the Share screen says once that closing Chrome before it finishes will stop it (grandparent-ux words) | auto (jest) |
+| WEB-APP-34 | Given the real-backend web build with `video_posting` on, when Share or bulk pick opens, then no video is offered and a video file chosen anyway is skipped with the bulk "videos skipped" line; sign-media still refuses video (FLAG-4) | auto (e2e:web + jest on `pickPhotos` web) |
+| WEB-APP-35 | Given an Android phone in Chrome (AG tester or Chase), when a photo taken with location on is shared to a group, then the recipient's saved copy shows no location in any EXIF viewer | manual (real phone) |
+| WEB-APP-36 | Given the same phone, when Chrome is swiped closed right after Send and reopened from the home-screen icon 1 minute later, then the post publishes with no help; also with a HEIC/HEIF photo (Samsung): it sends or shows a plain "can't send this one" line, never a stuck job | manual (real phone) |
+
+**Done when:** WEB-APP-25..34 green 3x with all suites; WEB-APP-35, 36 logged on a real Android phone before a grandparent shares from web. Rule 6: this stores photo bytes in the browser, so `docs/architecture/03-encryption-and-keys.md` (web row) and the data-flow doc get the IndexedDB queue store and "Last checked" in this PR.
+
+### Words (grandparent-ux)
+
+Exact words, all 17pt+ (Body, Easy view or not), buttons 48pt+, "Chrome" only on web (phones keep "Hearth"). Reviewed as Grandaddy on an old Android; reading the screen, not guessing: confirm with a relative in UAT.
+
+| Where | Exact words | Rule |
+|---|---|---|
+| WEB-APP-33 warning, once on Share while a post is sending and the browser can't keep it (muted, under the headline, not red) | `Keep Chrome open until this is sent. Closing Chrome now would stop it.` | One element; regex-safe: it matches `/clos\w+ (Chrome\|this page\|the app)[^.]*(stop\|finish\|before)/i` exactly once ("Closing Chrome now would stop"), so the provisional e2e regex can stay as is. Shown only for memory-only posts. Plain, no "storage", "IndexedDB", "private window". |
+| WEB-APP-31 failed job (saved photo gone) | Headline `Didn't send` (keep: it matches phones and the test). Body: `This photo is no longer on this phone, so we can't send it. Go to Share to pick it again.` Button: `Remove this from the list` (visible text `Remove`) | One clear choice. Do not show "Try again" for this case: retrying a missing photo can only fail again. Other failed jobs keep Try again + Remove. (`webQueue.test.ts` header says "Try again / Remove": change it to Remove only for the missing-bytes case.) Never blame the person; no code shown. |
+| Bulk staging (WEB-APP-30/enqueue prepare, before the batch is saved) | `Getting 12 of 48 photos ready…` (one photo: `Getting your photo ready…`). Screen reader says the same, polite live region. | Same shape as `Sending 12 of 48 photos…`; uses the real numbers; "photo" not "item"/"asset". |
+| "Waiting to send" second line, web, photo saved safely | `We'll keep trying. You can close Chrome. It will finish when you open Hearth again.` | Replaces "You can close Hearth" on web (true only because the bytes are saved, WEB-APP-30). |
+| Same line, web, memory-only (blocked/over cap) | `We'll keep trying while Chrome stays open. Closing Chrome now would stop it.` | The web-true version when nothing is saved; never promise "close". Headline stays `Waiting to send`. |
+
+Acceptance (qa-tdd): UX-WEB3-1 the line shows exactly once and only for memory-only posts; UX-WEB3-2 the failed missing-photo job shows Remove and no Try again; UX-WEB3-3 no web string says "Hearth" where it means closing the browser tab; UX-WEB3-4 all of these render at 17pt+ and 200% font scale without clipping (360x740).
+
+**Needs other lanes first.**
+- **architect:** the IndexedDB byte store (raw `indexedDB` vs a small wrapper; no new dependency preferred; `fake-indexeddb` for jest only if qa-tdd needs it), size cap (bulk 100 photos ≈ 50 MB cleaned), and moving prepare to enqueue time on web only.
+- **privacy-security:** cleaned photo bytes at rest in the browser profile (sealed with the WEB.1 key, same limits as PRIV-WEB-R3), deletion on publish/sign-out, and a check that no `blob:` URL or byte ever reaches a log or error report.
+- **grandparent-ux:** the WEB-APP-31 failed-job words and the WEB-APP-33 one-line warning.
+- **Video conflict:** VID-18 (`e2e-web/video.spec.js`) posts video on the Fake web build. Recommendation: WEB-APP-34 applies to the real-backend web build only; the Fake/demo build keeps VID-18 so the showcase still shows video. Chase can overrule.
+
+**Architect call (Nov 25).** OK with changes; no new dependency (raw `indexedDB`, same pattern as `indexedDbKeyStore`).
+- **Store:** a separate database `hearth.uploads` (v1, one object store `items`, key `<stageId>/<index>`, a fresh id per staged post, since the queue makes the job id inside `enqueue`), not a v2 of `hearth.session`: bumping that DB's version would race the key store's `open(DB, 1)` and risk the WEB.1 key. One record per photo: `{ v: 1, spec, display, thumb }`, each a sealed `Uint8Array` (no base64). New module `app/src/platform/uploadStore.web.ts` (no-op `uploadStore.ts` on phones), with its IDB handle injected like `SessionKeyStore`, so jest uses a Map fake and `fake-indexeddb` stays out; real IndexedDB is covered by e2e:web (WEB-APP-29/30/32).
+- **Key:** one key owner. `secureSession.web.ts` gains `sealBytes(name, bytes)` / `openBytes(name, sealed)` on the same key, serial chain and memory-mode switch, with `name` (`q.<stageId>/<index>/display|thumb|spec`) as additional data. The upload store never reads or makes a key itself (ARCH-WEB-R1).
+- **Queue seam:** keep `UploadQueue` platform-blind. Web staging runs before `enqueue`/`enqueueBatch`: prepare, seal, put, then set the item `uri` to `hearth-q:<stageId>/<index>`; the web `prepare` dep opens that record (and re-runs `verifyClean` on the bytes) instead of re-preparing. Bulk stages post by post and saves each job only after all its items are stored, with a "Getting photos ready… 12 of 48" line (grandparent-ux words); a close mid-staging loses only posts never shown as sending. The queue gains one optional dep, `release(job)`, called on publish and `remove`.
+- **Cap:** 150 MB of sealed bytes in `hearth.uploads` (a full 100-photo bulk ≈ 50 MB, with room for a second). Over the cap, or on `QuotaExceededError`, or when IndexedDB/WebCrypto is blocked, that post goes memory-only (WEB-APP-33 path and its one-line warning); sharing is never refused for storage. One code-only error report `upload_store_full` / `upload_store_blocked`, no sizes or names.
+- **Deletion:** `release` on publish/remove; sign-out calls `deleteDatabase('hearth.uploads')` beside WEB-APP-6's wipe (the key going makes any leftover unreadable anyway). On queue load, sweep records no saved job's item `uri` points at (a crash between put and save) and fail any job still pointing at `blob:` or a missing record (WEB-APP-31).
+- **Video:** agreed: WEB-APP-34 gates on the real backend (`runtime.ts` build kind), not on `Platform.OS`, so the Fake/demo web build keeps VID-18. Fake-build videos stay `blob:` and memory-only (they won't survive a close; fine for the demo).
+
+Findings: **ARCH-WEB-R1 (P1)** one sealing key owner; the upload store must not call `keys.get()/put()` itself, or sign-out and a first write can make two keys. **ARCH-WEB-R2 (P1)** A3 doc drift: `platform/mediaStore.web.ts` and `03-encryption-and-keys.md` say the web build keeps no photo files; this PR adds a short-lived, sealed, cleaned-only exception and must say so in both (Rule 6). **ARCH-WEB-R3 (P2)** no `fake-indexeddb` devDependency; inject the store. **ARCH-WEB-R4 (P2)** the orphan sweep and the `blob:` fail-fast run before the first `kick()` after load, so a dead job never shows "Sending…".
+
+**Lanes:** architect → qa-tdd red (WEB-APP-25..34) → engineer → qa-tdd green 3x → privacy-security → grandparent-ux. Minor, not in scope: the web manipulator's `blob:` URLs are never revoked (memory only, P2, TRACKER if it shows up in perf).
 
 ## Not doing (now)
 
