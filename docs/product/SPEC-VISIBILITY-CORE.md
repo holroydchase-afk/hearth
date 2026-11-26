@@ -128,13 +128,48 @@ The postcard (DEC-73, DEC-79, SHARE-ST-1..18) stays the one way in. Every kind i
 
 **Open-ended by design (Chase, Nov 24: "flexible for other types - events, announcements, a sayings card").** A new kind is one `posts.kind` value plus, if it needs fields, one child table attached with `vis.attach` (VIS-19): no new visibility rule, no new To: step. The Share start (thread "Redo the Share screen") owns the picker UI; this section is the contract it builds on.
 
-Kind names on screen (thread "Redo the Share screen", tester https://claude.ai/artifact/HekNBZ4bAMgpUqReeHgnTS, Nov 24): **Photos, Event, News, Saying**. Spoken labels: "Add photos", "Add an event", "Share news", "Add a saying". **No helper lines** (Chase: let the design carry it; supersedes GUX-VC-R1's helper lines). The photo postcard stays first; Event, News and Saying sit in a row under it. **Parents only (owner/adult) until the grandparent test passes;** anyone else sees today's card with no change. Text sizes follow the phone's standard (17 body, 22 title). The Share thread owns the exact look; this spec owns kinds, fields and audience.
-- Fields: **Event:** "What's happening", "When" (the phone's own date picker), "Where (optional)". **News:** one big field, "Your news". **Saying:** "What they said", "Who said it", "Age" (optional, their age then).
+Kind names on screen (thread "Redo the Share screen", Nov 24): **Photos, Event, News, Saying**. Spoken labels: "Add photos", "Add an event", "Share news", "Add a saying". **No helper lines** (Chase: let the design carry it; supersedes GUX-VC-R1's helper lines). The photo postcard stays first; Event, News and Saying sit in a row under it. **Parents only (owner/adult) until the grandparent test passes;** anyone else sees today's card with no change. Text sizes follow the phone's standard (17 body, 22 title). The Share thread owns the exact look; this spec owns kinds, fields and audience.
+- Fields: **Event:** "What's happening", "What day" (was "When"; renamed by GUX-SK-R1; the phone's own date picker), "Where (optional)". **News:** one big field, "Your news". **Saying:** "What they said", "Who said it", "Age" (optional, their age then).
 - Picking a kind swaps the photo spot for that kind's fields; the note and To: stay. To: comes after the content, nothing pre-picked. A "Start over" button returns to the empty postcard, asking first if anything is typed (GUX-VC-R5).
 
 To: works the same for all three, after the content, nothing pre-picked. Feed shows news as a large-type card (22pt title size), sayings as a quote card, and events as an event card with "Add to my calendar" (opens the phone's own add-event screen, so no calendar permission prompt; GUX-VC-R9); both use the same "who can see this" line, people's names for relatives, never group titles.
 
 Events and life-calendar dates are different things: an event ("Gammy's 80th, Mar 3, at the church") is a post and follows its audience. A life-calendar date (a birthday) belongs to a person and follows `can_see_profile`. Both are registered; neither raises a new question.
+
+### Notices (GUX-VC-R11, P1, TRACKER R89)
+
+Today every new post is announced as "shared new photos" (`notify/index.ts`, `summary()`). Each kind needs its own words before `post_kinds` is on. Rules, same as the photo notice: the person's name as this recipient sees it (`actor_names`, joined by `joinNames`), never a group title; **no words from the post**: no news text, no event title, day, time or place, no saying, no child's name or age (the privacy note at the top of `notify/index.ts`; nothing in the logs). Calm and guilt-free (A1, A2): no "don't miss", no "big", no countdown, no "you haven't seen". Push title stays `From <names> on Hearth` (BETA-NOTIFY-7). Email subject is `<line> on Hearth`; the email body is `<line>.` then the existing "Open Hearth to see/read it" line (20px).
+
+One kind, one or more posts from the same people (`<who>` = `joinNames(actor_names)`):
+
+| Kind | Line (push body starts with it, email subject and first line use it) | Push body ends | Email "Open Hearth…" verb |
+|---|---|---|---|
+| Photos | `<who> shared new photos` (unchanged) | `. Tap to see them.` | see them |
+| News, 1 post | `<who> shared some news` | `. Tap to read it.` | read it |
+| News, 2+ posts | `<who> shared some news` (news has no plural; same line) | `. Tap to read it.` | read it |
+| Event, 1 post | `<who> added an event` | `. Tap to see it.` | see it |
+| Event, 2+ posts | `<who> added <n> events` | `. Tap to see them.` | see them |
+| Saying, 1 post | `<who> shared a saying` | `. Tap to read it.` | read it |
+| Saying, 2+ posts | `<who> shared <n> sayings` | `. Tap to see them.` | see them |
+| Bulk import | unchanged (BETA-BULK-6) | unchanged | unchanged |
+
+Examples: push "From Mom on Hearth" / "Mom added an event. Tap to see it."; email subject "Mom shared some news on Hearth", body "Mom shared some news." then "Open Hearth on your phone to read it."
+
+**Several kinds in one batch:** one line, kinds in the fixed order photos, news, events, sayings, joined like names (", " and " and "): `<who> shared ` + parts, where the parts are `new photos`, `some news`, `an event` / `<n> events`, `a saying` / `<n> sayings`. Push body ends `. Tap to see them.`; email says "see them". Examples: "Mom shared new photos and an event", "Mom and Chase shared new photos, some news and 2 sayings". Subject: "Mom shared new photos and an event on Hearth".
+
+**Replies (same table, so a reply on news isn't called a photo):** `<who> replied to your photos` / `your news` / `your event` / `your saying`; replies across kinds: `<who> replied to your posts`. Posts and replies together: `New posts and replies from <who>` (was "New photos and replies", kept when every post is photos). Push body ends `. Tap to see.` as today.
+
+Length: the longest mixed line with 3+ names ("Mom, Chase and 3 others shared new photos, some news, 2 events and 2 sayings. Tap to see them.", 95 characters) fits the lock screen's two lines on both phones; names keep `headerSafe`'s 40-character cap in the email. The batch needs per-kind post counts from `claim_notification_batches` (counts only, no text).
+
+Confirm with a relative (next UAT): does "shared some news" worry an older reader into expecting bad news (A1)? Fallback if it does: "<who> wrote to the family".
+
+| ID | Type | Given / When / Then |
+|---|---|---|
+| NOTIFY-K-1 | auto | Given a batch of one news, one event or one saying post, When push and email are built, Then the line, push ending and email verb match the table exactly, and the news text, event title, day, place, saying, child's name and age appear nowhere in title, body, subject, text or html (GUX-VC-R11) |
+| NOTIFY-K-2 | auto | Given 2 events or 2 sayings, Then "added 2 events" / "shared 2 sayings" and "Tap to see them." |
+| NOTIFY-K-3 | auto | Given photos, news, 2 events and a saying in one batch, Then one line in the fixed order: "shared new photos, some news, 2 events and a saying" |
+| NOTIFY-K-4 | auto | Given replies only, on news, an event, a saying, or mixed kinds, Then "replied to your news / your event / your saying / your posts" |
+| NOTIFY-K-5 | auto | Given only photo posts (bulk or not), Then today's strings are unchanged (no regression) |
 
 ## Phases and acceptance criteria
 
@@ -189,6 +224,13 @@ Each phase is a small PR: qa-tdd red first, then engineer. Migrations are 0031 a
 | SHARE-U-5 | auto | Given an event post, When a person outside its audience reads the feed, calendar or search, Then they get nothing (registry kind `event`, Post class) |
 | SHARE-U-6 | auto | Given a news or date post, When anyone in its audience opens Feed, Then they see a large-type card with the "who can see this" names line |
 | SHARE-U-7 | manual | Given Mom on her own phone, When she shares a photo, news and a date, Then each takes under 60 s with no help |
+| SHARE-U-17 | auto | Given Event, News or Saying picked, When the card renders, Then "Pick who gets it" is enabled only once the kind's required fields hold words (Event: What's happening + When; News: Your news; Saying: What they said + Who said it); the optional ones may stay blank |
+| SHARE-U-18 | auto | Given a filled kind card, When "Pick who gets it" is tapped, Then the same who-gets-it picker as photos opens with nothing pre-picked, even with a saved last audience (SHARE-U-3, DEC-73/79) |
+| SHARE-U-19 | auto | Given a kind card with a group picked, When Send is tapped, Then exactly one post of that kind is made through createPost with the fields as details and the picked groups, published with no media, and Share returns to the empty postcard; a double tap or a Send again after a failure reuses one client id, so no second post |
+| SHARE-U-20 | auto | Given a sent news, event or saying post, When a member of its audience opens Feed, Then they see a large-type card for its kind (news words; event what, when, where; saying quote, who, age) with the "who can see this" names line and no photo frame (SHARE-U-6); a person outside the audience sees nothing |
+| SHARE-U-21 | auto | Given the Saying card, When it renders, before sending, Then it shows "Everyone you send this to will see who said it." where screen readers reach it (PRIV-VC-D1; words to grandparent-ux) |
+| SHARE-U-22 | auto | Given the server refuses a kind post (42501 post_kinds_off, or 23514 a bad field), When Send fails, Then a plain notice says the words were kept and every word stays in the card (A1); branch on error.code |
+| SHARE-U-23 | auto | Given a kind card with the picker open, When it renders, Then every new tap target is labelled and 48pt+ and every text 17pt+ through the named text styles (no raw fontSize) |
 
 **Phase 1b: fungible and reusable** (with Phase 1, about 2 sessions)
 

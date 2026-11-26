@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 // Native first (docs/product/DESIGN-SYSTEM.md): each phone's own type ramp and controls, Hearth's own font
 // (Atkinson Hyperlegible Next, DEC-78) on the owner's theme (Paper by default; RD-94..RD-99, DEC-68), plus Hearth's
-// overrides (DS-1..DS-9). Nothing under 17 pt (DS-2). RN Text scales with the phone's text size (Dynamic Type /
+// overrides (DS-1..DS-9). Text sizes are SPEC-TYPE's named styles; Easy view keeps everything 17+ (DS-2). RN Text scales with the phone's text size (Dynamic Type /
 // Android font scale): we never turn allowFontScaling off.
 // One bundled file per weight (no network, no Google Fonts CDN), so Light, Bold and italics never ship in the app.
 import { AtkinsonHyperlegibleNext_400Regular } from '@expo-google-fonts/atkinson-hyperlegible-next/400Regular';
@@ -248,19 +248,57 @@ export function photoShadow(dark: boolean): { boxShadow: string } | null {
   return dark ? null : { boxShadow: '0px 2px 12px rgba(30, 27, 23, 0.1)' };
 }
 
-/** HIG text styles at the default size (Body 17, Title 2 22, Title 1 28); Material's ramp raised to match (DS-2). */
-export function typeScale(bigText: boolean) {
-  const base = bigText ? 21 : 17;
-  return { base, title: Math.round(base * 1.3), display: Math.round(base * 1.65), line: Math.round(base * 1.3) };
+// TYPE-1..TYPE-4 (docs/product/SPEC-TYPE.md, DEC-84, Chase Nov 24): Apple's eleven text styles by name, at Apple's
+// sizes and leading (HIG Typography, "iOS, iPadOS Dynamic Type sizes"). Standard is Apple's default Large size; Easy
+// view is xxLarge, two steps up, raised to 17 where Apple goes under (TYPE-3). The phone's text size still multiplies
+// both. A style never sets color (Txt's tone does). Titles and headline are SemiBold; every other style is Regular,
+// with an emphasized form in SemiBold (TYPE-4). Medium belongs to no style.
+export type TextStyleName = 'largeTitle' | 'title1' | 'title2' | 'title3' | 'headline' | 'body' | 'callout'
+  | 'subheadline' | 'footnote' | 'caption1' | 'caption2';
+export const TEXT_STYLES: readonly TextStyleName[] = ['largeTitle', 'title1', 'title2', 'title3', 'headline', 'body', 'callout', 'subheadline', 'footnote', 'caption1', 'caption2'];
+export interface TextStyleSpec { fontFamily: string; fontSize: number; lineHeight: number }
+
+/** [standard size, leading, easy size, leading, SemiBold]. */
+const TYPE_TABLE: Record<TextStyleName, [number, number, number, number, boolean]> = {
+  largeTitle: [34, 41, 38, 46, true],
+  title1: [28, 34, 32, 39, true],
+  title2: [22, 28, 26, 32, true],
+  title3: [20, 25, 24, 30, true],
+  headline: [17, 22, 21, 26, true],
+  body: [17, 22, 21, 26, false],
+  callout: [16, 21, 20, 25, false],
+  subheadline: [15, 20, 19, 24, false],
+  footnote: [13, 18, 17, 22, false],
+  caption1: [12, 16, 17, 22, false],
+  caption2: [11, 13, 17, 22, false],
+};
+function typeSet(easy: boolean): Record<TextStyleName, TextStyleSpec> {
+  return Object.fromEntries(TEXT_STYLES.map((n) => {
+    const [s, l, es, el, semi] = TYPE_TABLE[n];
+    return [n, { fontFamily: semi ? FONT.semibold : FONT.regular, fontSize: easy ? es : s, lineHeight: easy ? el : l }];
+  })) as Record<TextStyleName, TextStyleSpec>;
+}
+export const TYPE: { standard: Record<TextStyleName, TextStyleSpec>; easy: Record<TextStyleName, TextStyleSpec> } = {
+  standard: typeSet(false),
+  easy: typeSet(true),
+};
+
+/** One named style for Easy view on or off; emphasized is SemiBold. */
+export function textStyle(name: TextStyleName, easyView: boolean, emphasized = false): TextStyleSpec {
+  const s = TYPE[easyView ? 'easy' : 'standard'][name];
+  return emphasized ? { ...s, fontFamily: FONT.semibold } : s;
 }
 
-/** RD-44 / RD-55: Gallery's two big words, at Apple's sizes: the greeting is the Large Title (34) and each month's
- *  name 24. Already big, so Bigger text leaves them as they are; the phone's own text size still scales them. */
-export const GALLERY_TYPE = { largeTitle: 34, month: 24 } as const;
+/** The postcard stamp's month and day: decorative, hidden from screen readers, fixed (the only allowFontScaling off). */
+export const STAMP_MARK = { fontSize: 17, lineHeight: 18 } as const;
+/** A reaction's emoji: title2's numbers. */
+export const EMOJI_GLYPH = { fontSize: TYPE_TABLE.title2[0], lineHeight: TYPE_TABLE.title2[1] } as const;
 
-/** SPEC-VIEWER: the full-screen viewer's iPhone text styles, in one place until the named type scale lands
- *  (headline 17 SemiBold, caption1 12, body 17, title3 20, title2 22). They still grow with the phone's text size. */
-export const VIEWER_TYPE = { headline: 17, caption1: 12, body: 17, title3: 20, title2: 22 } as const;
+/** SPEC-VIEWER: the sizes of the named styles the full-screen viewer uses (always the standard set, VIEWER-9/10). */
+export const VIEWER_TYPE = {
+  headline: TYPE.standard.headline.fontSize, caption1: TYPE.standard.caption1.fontSize, body: TYPE.standard.body.fontSize,
+  title3: TYPE.standard.title3.fontSize, title2: TYPE.standard.title2.fontSize,
+} as const;
 
 /** WCAG 2 contrast ratio of two opaque #RRGGBB colors. */
 export function contrast(a: string, b: string): number {
@@ -273,7 +311,10 @@ export function contrast(a: string, b: string): number {
 }
 
 export interface Theme {
-  c: Colors; t: ReturnType<typeof typeScale>; bigText: boolean; dark: boolean; os: OS;
+  c: Colors;
+  /** TYPE-2: the named styles for Easy view on (TYPE.easy) or off (TYPE.standard). */
+  type: Record<TextStyleName, TextStyleSpec>;
+  bigText: boolean; dark: boolean; os: OS;
   /** HIG-7 / HIG-8: the phone's Increase Contrast and Reduce Motion. */
   highContrast: boolean; reduceMotion: boolean;
 }
@@ -311,5 +352,5 @@ export function useTheme(): Theme {
   const { highContrast, reduceMotion } = useContext(PhoneA11yContext);
   const dark = isDark(look, scheme);
   const os = Platform.OS as OS;
-  return { c: paletteFor(os, dark, theme, highContrast), t: typeScale(bigText), bigText, dark, os, highContrast, reduceMotion };
+  return { c: paletteFor(os, dark, theme, highContrast), type: TYPE[bigText ? 'easy' : 'standard'], bigText, dark, os, highContrast, reduceMotion };
 }

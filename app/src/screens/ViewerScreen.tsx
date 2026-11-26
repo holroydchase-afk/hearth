@@ -23,7 +23,7 @@ import { useApp, useFeed } from '../state/AppContext';
 import { useNav } from '../state/nav';
 import { SystemIcon, type Icon } from '../ui/kit';
 import { shortDate } from '../ui/format';
-import { FONT, MIN_TARGET, RADIUS, useTheme, VIEWER_TYPE } from '../ui/theme';
+import { MIN_TARGET, RADIUS, TYPE, useTheme } from '../ui/theme';
 import { AppGate } from './AppGate';
 import { MediaImage } from './MediaImage';
 import { VideoPlayer } from './VideoPlayer';
@@ -31,6 +31,8 @@ import { VideoPoster } from './VideoPoster';
 import { closeProgress, shouldClose, viewerMotion } from './viewerMotion';
 
 // The viewer is always black, whatever the theme (VIEWER-1); its words are white.
+/** SPEC-VIEWER / TYPE-*: the viewer keeps iPhone's standard text styles in both Easy view modes (VIEWER-9/10). */
+const VT = TYPE.standard;
 const BLACK = '#000000';
 /** VIEWER-1: light status bar text. One constant element, so it is pushed once and never re-rendered. */
 const LIGHT_BAR = <StatusBar barStyle="light-content" />;
@@ -104,8 +106,10 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
     return () => { alive = false; sub?.remove?.(); };
   }, []);
 
-  // VIEWER-13: on arrival the next and the previous photo are fetched ahead.
+  // VIEWER-13: on arrival the next and the previous photo are fetched ahead. DEC-87 (DATA-4): with Save data on,
+  // their full size waits for the swipe.
   useEffect(() => {
+    if (app.dataPrefs.saveData === true) return;
     for (const n of [next, back]) {
       const e = n !== null ? entries[n] : undefined;
       if (e) app.media?.prefetch(e.post.post_id, [e.media.media_id]);
@@ -263,12 +267,15 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
     };
   }, []);
 
-  const renderItem = useCallback((e: Entry) => {
+  // DEC-87 (DATA-3/4): with Save data on, only the photo on screen loads its full size; the neighbours the Gallery
+  // keeps ready stay thumbnails until you move to them.
+  const saveData = app.dataPrefs.saveData === true;
+  const renderItem = useCallback((e: Entry, i: number) => {
     const box: ViewStyle = size.w ? { width: size.w, height: size.h } : { width: '100%', height: '100%' };
     return e.media.kind === 'video'
       ? <VideoPoster postId={e.post.post_id} mediaId={e.media.media_id} fit="contain" onBlack still style={[box, { backgroundColor: BLACK }]} />
-      : <View style={box}><MediaImage postId={e.post.post_id} mediaId={e.media.media_id} fit="contain" onBlack style={styles.photo} /></View>;
-  }, [size.w, size.h]);
+      : <View style={box}><MediaImage postId={e.post.post_id} mediaId={e.media.media_id} fit="contain" full={!saveData || i === cur} onBlack style={styles.photo} /></View>;
+  }, [size.w, size.h, saveData, cur]);
   const keyOf = useCallback((e: Entry) => e.media.media_id, []);
   const onLayout = (ev: LayoutChangeEvent) => {
     const { width, height } = ev.nativeEvent.layout;
@@ -315,7 +322,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
         <View style={styles.topRow}>{closeBtn}</View>
         <View style={styles.center} accessibilityLiveRegion="polite">
           {removed ? null : <ActivityIndicator size="large" color={WHITE} />}
-          <Text style={[styles.white, { fontSize: VIEWER_TYPE.body, fontFamily: FONT.regular, textAlign: 'center' }]}>
+          <Text style={[styles.white, { ...VT.body, textAlign: 'center' }]}>
             {removed ? 'This was removed.' : 'Loading the photo…'}
           </Text>
         </View>
@@ -341,11 +348,11 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
 
   const message = msg ? (
     <View style={[styles.msg, { marginHorizontal: easy ? 0 : 16 }]} accessibilityLiveRegion="polite">
-      <Text style={[styles.white, { fontSize: VIEWER_TYPE.body, fontFamily: FONT.regular }]}>{msg.text}</Text>
+      <Text style={[styles.white, VT.body]}>{msg.text}</Text>
     </View>
   ) : null;
   const strip = m > 1 ? <Strip entries={entries} cur={cur!} easy={easy} animated={!reduceMotion} onPick={go} /> : null;
-  const captionStyle: TextStyle = { ...styles.white, fontSize: VIEWER_TYPE.body, fontFamily: FONT.regular, lineHeight: 22 };
+  const captionStyle: TextStyle = { ...styles.white, ...VT.body };
 
   return (
     <GestureHandlerRootView style={styles.fill}>
@@ -357,8 +364,8 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
               {closeBtn}
               {!isVideo ? <Pill label={zoomed ? 'Zoom out' : 'Zoom in'} text={zoomed ? 'Zoom out' : 'Zoom in'} onPress={zoom} /> : null}
             </View>
-            <Text style={[styles.white, { fontSize: VIEWER_TYPE.title2, fontFamily: FONT.semibold }]}>{entry.post.author_name}</Text>
-            <Text style={[styles.white, { fontSize: VIEWER_TYPE.body, fontFamily: FONT.regular }]}>{`${date} · Photo ${n} of ${m}`}</Text>
+            <Text style={[styles.white, VT.title2]}>{entry.post.author_name}</Text>
+            <Text style={[styles.white, VT.body]}>{`${date} · Photo ${n} of ${m}`}</Text>
           </View>
         ) : null}
         <View style={styles.fill}>
@@ -396,7 +403,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
             <Pressable accessibilityRole="button" accessibilityLabel="Play video" onPress={() => setPlaying(entry.media.media_id)} style={styles.play}>
               <MediaImage postId={entry.post.post_id} mediaId={entry.media.media_id} full={false} compact onBlack style={styles.playThumb} />
               <SystemIcon icon={PLAY_ICON} color={WHITE} />
-              <Text style={[styles.white, { fontSize: VIEWER_TYPE.title3, fontFamily: FONT.semibold }]}>Play</Text>
+              <Text style={[styles.white, VT.title3]}>Play</Text>
             </Pressable>
           </View>
         ) : null}
@@ -417,8 +424,8 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
             <View style={[styles.offTop, TOP_SHADE, { paddingTop: insets.top + 4 }]}>
               {closeBtn}
               <View style={styles.titles}>
-                <Text numberOfLines={1} style={[styles.white, { fontSize: VIEWER_TYPE.headline, fontFamily: FONT.semibold, textAlign: 'center' }]}>{entry.post.author_name}</Text>
-                <Text numberOfLines={1} style={[styles.white, { fontSize: VIEWER_TYPE.caption1, fontFamily: FONT.regular, textAlign: 'center' }]}>{date}</Text>
+                <Text numberOfLines={1} style={[styles.white, { ...VT.headline, textAlign: 'center' }]}>{entry.post.author_name}</Text>
+                <Text numberOfLines={1} style={[styles.white, { ...VT.caption1, textAlign: 'center' }]}>{date}</Text>
               </View>
               <View style={styles.spacer} />
             </View>
@@ -462,7 +469,7 @@ function Pill({ label, text, onPress, busy, wide }: { label: string; text: strin
       style={({ pressed }) => [styles.pill, wide ? styles.pillWide : null, { opacity: pressed ? 0.7 : 1 }]}
     >
       {busy ? <ActivityIndicator color={WHITE} /> : null}
-      <Text numberOfLines={1} style={[styles.white, { fontSize: VIEWER_TYPE.title3, fontFamily: FONT.semibold }]}>{text}</Text>
+      <Text numberOfLines={1} style={[styles.white, VT.title3]}>{text}</Text>
     </Pressable>
   );
 }

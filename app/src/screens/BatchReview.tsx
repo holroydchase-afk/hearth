@@ -20,7 +20,7 @@ export interface ReviewHelpers {
   onPutBack: (uri: string) => void;
 }
 
-export function BatchReview({ plan, circles, chosen, onToggle, onSend, onCancel, busy, helpers, title, onTitle }: {
+export function BatchReview({ plan, circles, chosen, onToggle, onSend, onCancel, busy, helpers, title, onTitle, status }: {
   plan: BatchPlan;
   circles: Circle[] | null;
   chosen: string[];
@@ -32,6 +32,8 @@ export function BatchReview({ plan, circles, chosen, onToggle, onSend, onCancel,
   /** CAP-9: one optional title for the whole batch (no caption box: one box, nothing else). */
   title?: string;
   onTitle?: (t: string) => void;
+  /** HRT-WEB.3: "Getting 12 of 48 photos ready…" while the web build saves each photo (a polite live region). */
+  status?: string | null;
 }) {
   // grandparent-ux: with nobody picked yet, the choices are already open (no hidden step).
   const [changing, setChanging] = useState(chosen.length === 0);
@@ -48,12 +50,12 @@ export function BatchReview({ plan, circles, chosen, onToggle, onSend, onCancel,
 
   return (
     <Screen>
-      <Txt variant="display" role="header">{nothing ? 'No photos to send' : reviewSummary(plan)}</Txt>
+      <Txt variant="title1" role="header">{nothing ? 'No photos to send' : reviewSummary(plan)}</Txt>
       {skipped ? <Txt>{skipped}</Txt> : null}
       {over ? <Txt>{over}</Txt> : null}
       {nothing ? null : (
         <Card>
-          <Txt variant="strong">{sendTo}</Txt>
+          <Txt variant="headline">{sendTo}</Txt>
           <Button
             label="Change who these go to"
             text={changing ? 'Done choosing' : 'Change'}
@@ -103,6 +105,7 @@ export function BatchReview({ plan, circles, chosen, onToggle, onSend, onCancel,
           ) : null}
         </Card>
       ) : null}
+      {status ? <View accessibilityLiveRegion="polite"><Txt tone="muted">{status}</Txt></View> : null}
       {nothing ? null : (
         <Button variant="secondary" label={`Send ${photos(plan.photoCount)}`} onPress={onSend} disabled={!named} busy={busy} />
       )}

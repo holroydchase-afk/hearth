@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-25T23:30:00-05:00",
+ "label": "DEMO-KINDS-1..14 post_kinds on for the web demo only: failing tests first (red)",
+ "passed": 9,
+ "failed": 16,
+ "results": {},
+ "note": "Red on purpose, 1 run at 07b6751 plus test edits only (no product code). New: src/demo/__tests__/demoKinds.test.ts (DEMO-KINDS-1..5: seeded demo has the global post_kinds flag, parent Graham gets it from myFeatures, Grandma Jo, Nana Eloise and Grandpa Hollis do not, a plain fixture backend stays off, news createPost accepted, seed version moved off wofmn and an older saved copy is cleared), demoFrame.test.tsx (DEMO-KINDS-6 Try this step 4 names Share, Event, News, Saying). Playwright demo.spec.js: SHARE-ST-34 REWRITTEN (the Nov 24 no-kind-tile expectation is superseded; now the row at headline 17/21, exact), DEMO-KINDS-7 (390 px, light/dark, Easy view), -8 (Jo has no Share tab, passes as a guard), -9 (returning visitor with seed version wofmn), -10..13 (News to Moms side so Jo never sees it; News, Event and Saying to Everyone, Jo sees the card and no group titles, Saying age line), -14 (Try this step 4). jest 2 files: 5 failed, 8 passed. e2e:demo DEMO-KINDS + SHARE-ST-34: 11 failed, 1 passed (DEMO-KINDS-8 guard). Red for the right reason: no flag in the demo, so the kinds row is absent (count 0) and the Share news button never appears. The walks stop at their first step, so their later selectors (field labels, tile names, Send to, kind- card) are untested until the engineer's build; expect small selector fixes in the green pass. typecheck clean. Not run: full jest, e2e:web, backend. e2e/results/demo-kinds-red-2026-11-25.txt"
+}

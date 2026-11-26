@@ -37,9 +37,9 @@ export function MediaImage({ postId, mediaId, style, fit = 'cover', full = true,
         <Image source={{ uri }} resizeMode={fit} blurRadius={display || !full ? 0 : 6} style={StyleSheet.absoluteFill} accessibilityIgnoresInvertColors />
       ) : (
         <View style={styles.center}>
-          {failed ? <Txt variant="muted" style={onBlack ? ON_BLACK : undefined}>{compact ? "Can't show" : "This photo can't be shown right now."}</Txt>
+          {failed ? <Txt tone="muted" style={onBlack ? ON_BLACK : undefined}>{compact ? "Can't show" : "This photo can't be shown right now."}</Txt>
             : compact ? <ActivityIndicator color={onBlack ? ON_BLACK.color : c.muted} accessibilityLabel="Loading" />
-            : <><ActivityIndicator color={onBlack ? ON_BLACK.color : c.muted} /><Txt variant="muted" style={onBlack ? ON_BLACK : undefined}>Loading the photo…</Txt></>}
+            : <><ActivityIndicator color={onBlack ? ON_BLACK.color : c.muted} /><Txt tone="muted" style={onBlack ? ON_BLACK : undefined}>Loading the photo…</Txt></>}
         </View>
       )}
     </View>

@@ -1,0 +1,86 @@
+# R83 / NOTIFY-K-1..5 fix (c44be02) and 0034 post kinds: all suites 3x (qa-tdd, Nov 24 2026). Deno 2.9.6 from npm on PATH.
+# No test changed between 9ff0c5c (tests) and c44be02 (fix): git diff touches no test file.
+
+== run 1
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SUITES: 24 passed, 0 failed, 1 skipped
+VIS ORACLE RESULT: 101 passed, 0 failed
+POST KINDS RESULT: 89 passed, 0 failed
+deno (all functions):
+ok | 60 passed | 0 failed (362ms)
+deno notify:
+R83 push for a news, event or saying post never mentions photos and still names who sent it ... ok (242µs)
+R83 email for a news, event or saying post never mentions photos and still names who sent it ... ok (142µs)
+R83 each kind gets its own wording (not one generic line for all three) ... ok (80µs)
+R83 a photos batch (post_kinds ['photos']) keeps today's words ... ok (69µs)
+R83 the kind wording carries no caption, what, where or saying words (the batch has none to give) ... ok (121µs)
+NOTIFY-K-1 one news post: 'Alex shared some news. Tap to read it.', subject and email 'read it' ... ok (130µs)
+NOTIFY-K-1 one event: 'Alex added an event. Tap to see it.', email 'see it' ... ok (74µs)
+NOTIFY-K-1 one saying: 'Alex shared a saying. Tap to read it.', email 'read it' ... ok (61µs)
+NOTIFY-K-1 the email with no website link says 'Open Hearth on your phone to read it.' ... ok (75µs)
+NOTIFY-K-1 no post words, day, place, saying, child's name or age anywhere in push or email ... ok (662µs)
+NOTIFY-K-2 two events or two sayings: 'added 2 events' / 'shared 2 sayings' and 'Tap to see them.' ... ok (126µs)
+NOTIFY-K-3 several kinds: one line in the fixed order photos, news, events, sayings ... ok (142µs)
+NOTIFY-K-4 replies name the kind: your news / your event / your saying / your posts ... ok (115µs)
+NOTIFY-K-4 posts and replies together: 'New posts and replies from' unless every post is photos ... ok (70µs)
+NOTIFY-K-5 photo-only batches keep today's words (with and without the new fields, bulk too) ... ok (407µs)
+ok | 38 passed | 0 failed (56ms)
+Tests:       1 skipped, 1 todo, 2276 passed, 2278 total
+contract-real:
+Tests:       149 skipped, 91 passed, 240 total
+
+== run 2
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SUITES: 24 passed, 0 failed, 1 skipped
+VIS ORACLE RESULT: 101 passed, 0 failed
+POST KINDS RESULT: 89 passed, 0 failed
+deno (all functions):
+ok | 60 passed | 0 failed (348ms)
+deno notify:
+R83 push for a news, event or saying post never mentions photos and still names who sent it ... ok (242µs)
+R83 email for a news, event or saying post never mentions photos and still names who sent it ... ok (126µs)
+R83 each kind gets its own wording (not one generic line for all three) ... ok (97µs)
+R83 a photos batch (post_kinds ['photos']) keeps today's words ... ok (80µs)
+R83 the kind wording carries no caption, what, where or saying words (the batch has none to give) ... ok (154µs)
+NOTIFY-K-1 one news post: 'Alex shared some news. Tap to read it.', subject and email 'read it' ... ok (148µs)
+NOTIFY-K-1 one event: 'Alex added an event. Tap to see it.', email 'see it' ... ok (72µs)
+NOTIFY-K-1 one saying: 'Alex shared a saying. Tap to read it.', email 'read it' ... ok (72µs)
+NOTIFY-K-1 the email with no website link says 'Open Hearth on your phone to read it.' ... ok (81µs)
+NOTIFY-K-1 no post words, day, place, saying, child's name or age anywhere in push or email ... ok (492µs)
+NOTIFY-K-2 two events or two sayings: 'added 2 events' / 'shared 2 sayings' and 'Tap to see them.' ... ok (125µs)
+NOTIFY-K-3 several kinds: one line in the fixed order photos, news, events, sayings ... ok (146µs)
+NOTIFY-K-4 replies name the kind: your news / your event / your saying / your posts ... ok (115µs)
+NOTIFY-K-4 posts and replies together: 'New posts and replies from' unless every post is photos ... ok (64µs)
+NOTIFY-K-5 photo-only batches keep today's words (with and without the new fields, bulk too) ... ok (380µs)
+ok | 38 passed | 0 failed (56ms)
+Tests:       1 skipped, 1 todo, 2276 passed, 2278 total
+contract-real:
+Tests:       149 skipped, 91 passed, 240 total
+
+== run 3
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SUITES: 24 passed, 0 failed, 1 skipped
+VIS ORACLE RESULT: 101 passed, 0 failed
+POST KINDS RESULT: 89 passed, 0 failed
+deno (all functions):
+ok | 60 passed | 0 failed (355ms)
+deno notify:
+R83 push for a news, event or saying post never mentions photos and still names who sent it ... ok (286µs)
+R83 email for a news, event or saying post never mentions photos and still names who sent it ... ok (130µs)
+R83 each kind gets its own wording (not one generic line for all three) ... ok (78µs)
+R83 a photos batch (post_kinds ['photos']) keeps today's words ... ok (83µs)
+R83 the kind wording carries no caption, what, where or saying words (the batch has none to give) ... ok (216µs)
+NOTIFY-K-1 one news post: 'Alex shared some news. Tap to read it.', subject and email 'read it' ... ok (140µs)
+NOTIFY-K-1 one event: 'Alex added an event. Tap to see it.', email 'see it' ... ok (69µs)
+NOTIFY-K-1 one saying: 'Alex shared a saying. Tap to read it.', email 'read it' ... ok (59µs)
+NOTIFY-K-1 the email with no website link says 'Open Hearth on your phone to read it.' ... ok (72µs)
+NOTIFY-K-1 no post words, day, place, saying, child's name or age anywhere in push or email ... ok (531µs)
+NOTIFY-K-2 two events or two sayings: 'added 2 events' / 'shared 2 sayings' and 'Tap to see them.' ... ok (102µs)
+NOTIFY-K-3 several kinds: one line in the fixed order photos, news, events, sayings ... ok (134µs)
+NOTIFY-K-4 replies name the kind: your news / your event / your saying / your posts ... ok (122µs)
+NOTIFY-K-4 posts and replies together: 'New posts and replies from' unless every post is photos ... ok (63µs)
+NOTIFY-K-5 photo-only batches keep today's words (with and without the new fields, bulk too) ... ok (420µs)
+ok | 38 passed | 0 failed (61ms)
+Tests:       1 skipped, 1 todo, 2276 passed, 2278 total
+contract-real:
+Tests:       149 skipped, 91 passed, 240 total

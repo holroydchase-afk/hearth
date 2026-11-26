@@ -1,7 +1,6 @@
 # Opening screen: New for you (OPEN-*)
 
-Chase, Nov 11 2026 (DEC-58): "Go with C and all your recommendations." Picked from four sketches
-(https://claude.ai/artifact/HzArt7UBv8EhsPpeNmAsyH): A photo wall, B newest posts (what Hearth did), C new for you,
+Chase, Nov 11 2026 (DEC-58): "Go with C and all your recommendations." Picked from four sketches: A photo wall, B newest posts (what Hearth did), C new for you,
 D one photo at a time. C is the front door; A and D are kept as the second ways in; B stays underneath.
 
 ## What a relative sees on open

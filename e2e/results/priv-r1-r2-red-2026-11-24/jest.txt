@@ -1,0 +1,8 @@
+  ● PRIV-R1 the decrypted .mp4 is deleted when a quiet Feed video is let go › PRIV-R1a downloaded with a signal, then aborted (scrolled past), then releaseVideo: the file is removed once
+    Expected number of calls: 1
+    Received number of calls: 0
+  ● PRIV-R1 the decrypted .mp4 is deleted when a quiet Feed video is let go › PRIV-R1b aborted while the file is being written: AbortError, and the half-made file is removed
+    Expected: "2ecea93a-8080-47ce-a888-f535a30c95ab.mp4"
+  ● PRIV-R2 one caller aborting does not break another caller sharing the download › PRIV-R2 a signalled caller starts the download, a no-signal caller (full-screen Play) shares it; the abort rejects only the first
+    Received promise rejected instead of resolved
+Tests:       3 failed, 1 passed, 4 total

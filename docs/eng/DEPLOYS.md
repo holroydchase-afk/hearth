@@ -4,10 +4,10 @@ One table of what runs on the hosted project, so nobody has to guess from chat o
 
 | Piece | Live | On main, not live | Last deploy |
 |---|---|---|---|
-| Database migrations | 0001–0025 (smoke check 9/9) | 0026 text sign-in (switched off; needs "deploy 0026"); 0027 group names for parents only (needs "deploy 0027"); 0028 no passwords in Auth (TS-SEC-R1, PR #134 once merged; the same deploy also turns "Confirm email" on). `deploy.sh` applies every migration not yet applied, so the next deploy ships 0026, 0027 and 0028 together. Branch `claude/project-thread-jtelk5` adds 0031 visibility core and 0032 visibility registry (R77 Phase 1/1b, no behavior change; 0032 refuses to run if the table owner doesn't bypass RLS; 0030 is the video-fixes branch, PR #135, and ships before 0031 and 0032: deploy.sh applies in number order, ARCH-VC-R3) | Nov 11, 2026 (0024, 0025) |
+| Database migrations | 0001–0034 (34 recorded; checked Nov 25: no password hashes left, `videos_this_month` closed to app roles, `post_kinds` and `start_family_open` switches off, every public table has RLS). Smoke check not run: this token gets 403 on the secrets and auth-config APIs | Nothing waiting | Nov 25, 2026 (0026–0034; Chase: deploy after the merges) |
 | `start_family_open` switch | off | | Nov 11, 2026 |
 | Edge function `notify` | yes (1-minute cron `hearth-notify`) | | Oct 28, 2026 (unchanged since Oct 18) |
-| Edge function `sign-media` | yes | | Oct 28, 2026 |
+| Edge function `sign-media` | yes (HF002 cap code, 402 on the video cap) | | Nov 25, 2026 |
 | Expo preview (Expo Go) | main f882255, update group 3f7d0149 | everything merged after Nov 13 | Nov 13, 2026 |
 | Public web demo (chaseholroyd.com/hearth/) | follows main on every merge (`demo-site.yml`, live checks before and after) | | each merge |
 

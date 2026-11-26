@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -28,6 +31,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - run: bash scripts/tests/check_persona_checks_test.sh
+      - run: bash scripts/tests/check_unique_numbers_test.sh
+      - run: bash scripts/check-unique-numbers.sh
 
   # PRIV-2 (CLAUDE.md rule 2): no console.* call logs a key, URL, caption, email or raw error.
   logs:
@@ -186,6 +191,9 @@ jobs:
         run: bash scripts/tests/eas_test.sh
       - run: npm test
       - run: npm run typecheck
+      # INTAKE-80-4 / B32: a component the React Compiler newly skips fails the PR that adds it.
+      - name: React Compiler rules check (INTAKE-80-3)
+        run: node scripts/compiler-check.js
 
   # QA-R2 (Nov 19 review, TRACKER R52): the browser tests run on every pull request, not only on a laptop:
   # the public demo build (e2e:demo) and the core loop on the fake backend (e2e:web).

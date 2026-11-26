@@ -12,6 +12,7 @@ suite "agent sync" quiet e2e/results/sync-agents.txt bash scripts/tests/sync_age
 suite "agent runs" quiet e2e/results/agent-runs.txt bash scripts/tests/agent_runs_test.sh
 suite "agents check skip" quiet e2e/results/agents-check-skip.txt bash scripts/tests/agents_check_skip_test.sh
 suite "persona checks" quiet e2e/results/persona-checks.txt bash scripts/tests/check_persona_checks_test.sh
+suite "unique numbers" quiet e2e/results/unique-numbers.txt bash scripts/tests/check_unique_numbers_test.sh
 suite "Expo Go SDK" bash scripts/check-expo-go.sh
 suite "Expo Go check test" quiet e2e/results/expo-go.txt bash scripts/tests/check_expo_go_test.sh
 suite "log check" quiet e2e/results/priv2-logs.txt bash scripts/tests/check_logs_test.sh
@@ -22,12 +23,16 @@ suite "test totals" quiet e2e/results/test-totals.txt bash scripts/tests/test_to
 suite "EAS script" quiet e2e/results/app-eas.txt bash app/scripts/tests/eas_test.sh
 suite "site analytics" quiet e2e/results/site-analytics.txt bash app/scripts/tests/site_analytics_test.sh
 suite "site meta" quiet e2e/results/site-meta.txt bash app/scripts/tests/site_meta_test.sh
+suite "site bar" quiet e2e/results/site-bar.txt bash app/scripts/tests/site_bar_test.sh
 suite "prototype e2e" bash -c 'cd e2e && npx playwright test'
 # QA-R1 (Nov 19 review): the app's own suites, so "everything" means everything.
 suite "app jest" quiet e2e/results/app-jest.txt bash -c 'cd app && npx jest --ci --silent'
 suite "app typecheck" quiet e2e/results/app-typecheck.txt bash -c 'cd app && npm run -s typecheck'
 suite "app e2e demo" quiet e2e/results/app-e2e-demo.txt bash -c 'cd app && npm run -s e2e:demo'
 suite "app e2e web" quiet e2e/results/app-e2e-web.txt bash -c 'cd app && npm run -s e2e:web'
+# INTAKE-80: React Compiler. The bundle check reads the exports the two e2e suites above just built.
+suite "compiler bundle" quiet e2e/results/compiler-bundle.txt bash app/scripts/check-compiler-bundle.sh
+suite "compiler rules" quiet e2e/results/compiler-rules.txt node app/scripts/compiler-check.js
 suite "deploy script" quiet e2e/results/backend-deploy.txt bash -c 'cd backend && bash tests/deploy/deploy_test.sh'
 if pg_isready -q 2>/dev/null; then
   suite "backend SQL" quiet e2e/results/backend-sql.txt bash -c 'cd backend && bash tests/run.sh'

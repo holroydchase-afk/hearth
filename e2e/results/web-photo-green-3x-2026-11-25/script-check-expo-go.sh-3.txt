@@ -1,0 +1,1 @@
+Expo Go check OK: the app and the App Store's Expo Go are both on SDK 58

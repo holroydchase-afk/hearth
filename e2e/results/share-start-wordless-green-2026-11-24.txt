@@ -1,0 +1,57 @@
+Wordless Share start (SHARE-ST-19..27, DEC-79 option A) gate run, qa-tdd, 2026-11-24, at 37cbe7f (claude/project-thread-4ulu9i)
+VERDICT: red (jest FONT-2 fails 3/3, deterministic; every other suite green 3x)
+
+jest --ci x3:
+Test Suites: 1 failed, 170 passed, 171 total
+Tests:       1 failed, 1 skipped, 1 todo, 2227 passed, 2230 total
+Test Suites: 1 failed, 170 passed, 171 total
+Tests:       1 failed, 1 skipped, 1 todo, 2227 passed, 2230 total
+Test Suites: 1 failed, 170 passed, 171 total
+Tests:       1 failed, 1 skipped, 1 todo, 2227 passed, 2230 total
+
+Failure (identical in all 3):
+  ● FONT Atkinson Hyperlegible Next everywhere (DEC-78) › FONT-2 no <Text> in the kit is left without an Atkinson family (FONT.*)
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 4
+
+    - Array []
+    + Array [
+    +   "ui/kit.tsx:341 <Text accessible={false} allowFontScaling={false} style={mark}",
+    +   "ui/kit.tsx:342 <Text accessible={false} allowFontScaling={false} style={mark}",
+    + ]
+
+      88 |       if (!/fontFamily:\s*(FONT\.\w+|\w+)/.test(props)) offenders.push(`ui/kit.tsx:${lineOf(text, m.index!)} ${props.replace(/\s+/g, ' ').slice(0, 80)}`);
+      89 |     }
+    > 90 |     expect(offenders).toEqual([]);
+         |                       ^
+      91 |   });
+      92 |
+      93 |   it('FONT-3 no fontWeight left in app/src (outside theme.ts): Android needs the weight from the family', () => {
+
+      at Object.toEqual (src/ui/__tests__/font.test.tsx:90:23)
+
+
+typecheck x3: exit 0 x3
+check-expo-go x3: OK, SDK 58 x3
+
+e2e:demo (fresh export:web:demo) x3:
+  5 skipped
+  50 passed (3.4m)
+  5 skipped
+  50 passed (3.5m)
+  5 skipped
+  50 passed (3.4m)
+GUX-R2 calendar: passed in all 3 runs (no repeat of the engineer's one failure)
+
+e2e:web (fresh export:web:fake) x3:
+  6 skipped
+  5 passed (49.3s)
+  6 skipped
+  5 passed (48.6s)
+  6 skipped
+  5 passed (39.6s)
+
+Not run: backend SQL and Deno (no backend change), prototype e2e, phones (SHARE-ST-9 manual).

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// SPEC-VIEWER VIEWER-1..19 (R83, qa-tdd Nov 24, written first, red). The full-screen viewer overhaul, look A:
+// SPEC-VIEWER VIEWER-1..19 (R112, qa-tdd Nov 24, written first, red). The full-screen viewer overhaul, look A:
 // a black viewer that behaves like iPhone Photos for parents (Easy view Off: Chase, an owner) and keeps words and
 // pills for grandparents (Easy view On: Grandma Jo, a viewer). VIEWER-20 is a manual phone check (M-VIEWER-20).
 //
@@ -562,7 +562,7 @@ describe('VIEWER-19 grandparent-safe', () => {
 });
 
 // ---------------------------------------------------------------------------------------------------------------
-// Look B (Chase, Nov 24, DEC-84): a strip of small photos above the bottom buttons. Seams: testID `viewer-strip`;
+// Look B (Chase, Nov 24, DEC-90): a strip of small photos above the bottom buttons. Seams: testID `viewer-strip`;
 // each small photo is a button named "Photo n of m, from <name>", the current one has accessibilityState.selected.
 describe('VIEWER-21 the photo strip', () => {
   const thumbs = () => within(screen.getByTestId('viewer-strip')).getAllByRole('button', { name: STRIP_THUMB });

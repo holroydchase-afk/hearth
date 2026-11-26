@@ -14,7 +14,7 @@ test('MSG-4 the bundled app makes an MLS group and sends a sealed message', asyn
 
   await page.getByRole('button', { name: /^Messages(,|$)/ }).click();
   await expect(page.getByRole('heading', { name: 'Messages' })).toBeVisible();
-  await page.getByRole('button', { name: "Open the chat Grandparents – Dad's side" }).click();
+  await page.getByRole('button', { name: "Open Grandparents – Dad's side" }).click(); // EF-HE-1: the button names its chat
   await expect(page.getByText('No messages yet. Say hello!')).toBeVisible({ timeout: 15000 });
   await page.getByLabel('Your message').fill('Hello from the web');
   await page.getByRole('button', { name: 'Send' }).click();

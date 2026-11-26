@@ -38,6 +38,10 @@ function ThemedStatusBar() {
     if (Platform.OS !== 'web' || typeof document === 'undefined') return;
     document.documentElement.style.backgroundColor = c.bg;
     document.body.style.backgroundColor = c.bg;
+    // SITEBAR-4: the portfolio's site bar reserves its room with padding-top on body. Border-box keeps that padding
+    // inside body's 100% height, so the app (#root, 100% of body) fits under the bar instead of running off screen.
+    // With no bar there is no padding, so nothing changes.
+    document.body.style.boxSizing = 'border-box';
   }, [c.bg]);
   return <StatusBar style={statusBarStyle(dark)} />;
 }
@@ -49,7 +53,7 @@ export default function RootLayout() {
   const [fontsReady, fontError] = useFonts(FONT_FILES);
   if (!fontsReady && !fontError) return null;
   if ('error' in runtime) {
-    return <SafeAreaProvider><Screen><Txt variant="title">{runtime.error}</Txt></Screen></SafeAreaProvider>;
+    return <SafeAreaProvider><Screen><Txt variant="title2">{runtime.error}</Txt></Screen></SafeAreaProvider>;
   }
   return (
     <SafeAreaProvider>

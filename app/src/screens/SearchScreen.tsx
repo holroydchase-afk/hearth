@@ -123,8 +123,8 @@ export function SearchScreen({ onClose }: { onClose: () => void }) {
   const header = (
     <View style={{ gap: 12 }}>
       <BackButton to="Gallery" onPress={onClose} />
-      <Txt variant="display" role="header">Search photos</Txt>
-      <Txt variant="muted">Search looks at the words people wrote and who sent them. It never looks inside your photos.</Txt>
+      <Txt variant="title1" role="header">Search photos</Txt>
+      <Txt tone="muted">Search looks at the words people wrote and who sent them. It never looks inside your photos.</Txt>
       <Field
         label="Words to look for"
         value={words}
@@ -138,7 +138,7 @@ export function SearchScreen({ onClose }: { onClose: () => void }) {
       <Button variant="secondary" label="Search for these words" text="Search" busy={busy} onPress={() => void run({ words, author, year })} />
       {senders.length > 1 ? (
         <View style={{ gap: 8 }}>
-          <Txt variant="title" role="header">From</Txt>
+          <Txt variant="title2" role="header">From</Txt>
           <View style={ROW}>
             <Button label="Photos from anyone" text="Anyone" variant="secondary" selected={author === null} onPress={() => pickAuthor(null)} />
             {senders.map((s) => (
@@ -149,7 +149,7 @@ export function SearchScreen({ onClose }: { onClose: () => void }) {
       ) : null}
       {years.length > 1 ? (
         <View style={{ gap: 8 }}>
-          <Txt variant="title" role="header">Taken in</Txt>
+          <Txt variant="title2" role="header">Taken in</Txt>
           <View style={ROW}>
             <Button label="Photos from any year" text="Any year" variant="secondary" selected={year === null} onPress={() => pickYear(null)} />
             {years.map((y) => (
@@ -159,7 +159,7 @@ export function SearchScreen({ onClose }: { onClose: () => void }) {
         </View>
       ) : null}
       {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
-      {found ? <Txt variant="strong" role="header">{found}</Txt> : null}
+      {found ? <Txt variant="headline" role="header">{found}</Txt> : null}
     </View>
   );
 

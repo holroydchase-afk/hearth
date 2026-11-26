@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// UI-27: the avatar letter skips a leading "The", so "The Holroyds" shows "H", not "T".
+// UI-27: the avatar letter skips a leading "The", so "The Millers" shows "M", not "T".
 import { initialOf } from '../format';
 
 describe('UI-27 avatar initial', () => {
   it.each([
-    ['The Holroyds', 'H'],
+    ['The Millers', 'M'],
     ['the smiths', 'S'],
     ['Sam', 'S'],
     ['Theo', 'T'],
@@ -25,7 +25,7 @@ describe('FIRSTMIN-1 first and second initials', () => {
     ['Grandpa Earl', 'GE'],
     ['Nana Ruth', 'NR'],
     ['Sam', 'S'],
-    ['The Holroyds', 'H'],
+    ['The Millers', 'M'],
     ['The Smith Family', 'SF'],
     ['  grandma   jo  ', 'GJ'],
     ['Mary Ann Lee', 'MA'],

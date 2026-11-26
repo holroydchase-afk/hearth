@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-25T18:00:00-05:00",
+ "label": "PRIV-SK-R1 Send again with changed groups or words: tests written first (red, 1 run)",
+ "passed": 60,
+ "failed": 2,
+ "results": {},
+ "note": "Red on purpose, 1 run at 28c8b80 plus qa-tdd's PRIV-SK-R1 tests (no fix yet), npx jest src/screens/__tests__/shareKindsSave.test.tsx: 2 failed, 60 passed. PRIV-SK-R1 (a) publish fails, groups changed from Dad's side to Mom's side, Send: published to Dad's side (old pick). PRIV-SK-R1 (b) createPost commits then NETWORK, words edited, Send: published the old words. PRIV-SK-R1 (c) plain retry, one post: passes (guard). Typecheck clean. Tickets B32 (PRIV-SK-R1, open) and B33 (PRIV-SK-R2, accepted until milestone 7). Not run: other suites (only this file changed). e2e/results/priv-sk-red-2026-11-25.txt"
+}

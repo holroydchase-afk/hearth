@@ -38,7 +38,7 @@ export function YourName() {
 
   return (
     <GroupedSection>
-      <Txt variant="title" role="header">What should your family call you?</Txt>
+      <Txt variant="title2" role="header">What should your family call you?</Txt>
       <Txt>Your family sees this name on every photo and message you send.</Txt>
       <Field label="Your name" value={name} onChangeText={setName} placeholder='Like "Chase"' maxLength={40} />
       {msg ? <Txt>{msg}</Txt> : null}

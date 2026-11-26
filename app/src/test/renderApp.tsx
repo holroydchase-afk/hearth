@@ -21,17 +21,29 @@ export function preparedFixture(): Prepared {
   };
 }
 
-/** `userId`: sign in as an account made in the test (a phone account, BETA-SMS) instead of a fixture user. */
-export async function renderApp(ui: ReactElement, opts: { user?: FixtureUser | null; userId?: string; be?: FakeBackend; kv?: KV; deps?: Partial<AppDeps>; fixture?: FixtureOptions; waitReady?: boolean } = {}) {
+/** DEC-87 (SPEC-MEDIA 5): the phone's "Videos and data" choices (Play videos as I scroll, Save data) live under this
+ *  one key, per phone, never per account and never on the server. `saveData: null` (or no key) = the sign-up
+ *  question was never asked on this phone. Kept here too so tests can seed it before the module exists. */
+export const DATA_PREFS_KEY = 'hearth.dataPrefs.v1';
+export type SeedDataPrefs = { autoplay?: boolean; saveData?: boolean | null };
+
+/** `userId`: sign in as an account made in the test (a phone account, BETA-SMS) instead of a fixture user.
+ *  `dataPrefs`: what this phone has saved for Videos and data. By default the phone was already asked the Save data
+ *  question and said No (so older tests never meet DATA-1's question); `dataPrefs: null` is a fresh install. */
+export async function renderApp(ui: ReactElement, opts: { user?: FixtureUser | null; userId?: string; be?: FakeBackend; kv?: KV; deps?: Partial<AppDeps>; fixture?: FixtureOptions; waitReady?: boolean; dataPrefs?: SeedDataPrefs | null } = {}) {
   const be = opts.be ?? FakeBackend.withFixture(opts.fixture);
   const user = opts.userId ?? (opts.user === undefined ? 'jo' : opts.user);
   be.state.appSession = opts.userId ?? (user ? FIXTURE.users[user as FixtureUser].id : null);
   const api = be.clientFor(null, { trackAppSession: true });
   const kv = opts.kv ?? memoryKV();
+  if (opts.dataPrefs !== null && (await kv.getItem(DATA_PREFS_KEY)) === null) {
+    await kv.setItem(DATA_PREFS_KEY, JSON.stringify({ autoplay: true, saveData: false, ...opts.dataPrefs }));
+  }
   // SHARE-PC-11 (DEC-73): Send lands on Feed through nav.goFeed().
   const nav: jest.Mocked<Nav> = { openViewer: jest.fn(), close: jest.fn(), goPhotos: jest.fn(), goFeed: jest.fn(), goSignIn: jest.fn(), goJoin: jest.fn() };
   const deps: AppDeps = {
-    api, kv, helpPhone: '+1 304 555 0100',
+    // START-ON-1/2: a fake help address (never a real one) so Help and the start button behave as deployed.
+    api, kv, helpPhone: '+1 304 555 0100', helpEmail: 'help@example.test',
     prepare: jest.fn(async () => preparedFixture()),
     pickPhotos: jest.fn(async () => ({ items: [{ uri: 'file:///pick/1.jpg', kind: 'photo' as const, width: 4032, height: 3024 }] })),
     saveToPhone: jest.fn(async () => 'saved' as const),
@@ -55,6 +67,13 @@ type Node = ReturnType<typeof screen.UNSAFE_getAllByType>[number];
 const flat = (style: unknown) =>
   (StyleSheet.flatten(typeof style === 'function' ? style({ pressed: false, hovered: false }) : style) ?? {}) as Record<string, unknown>;
 
+/** TYPE-7: the only Texts allowed under 17 pt (Easy view off), by their own or their nearest Text parent's testID. */
+export const SMALL_OK = /^(when-.+|gallery-day-label|face-count|reaction-count)$/;
+function smallTestId(n: Node): string | undefined {
+  for (let p: Node | null = n; p; p = p.parent as Node | null) if (p.type === Text && typeof p.props.testID === 'string') return p.props.testID as string;
+  return undefined;
+}
+
 /** Every tappable thing: labeled, ≥48 × 48. Every input: labeled, ≥48 tall. Every text ≥17 pt. */
 export function expectGrandparentSafe(): void {
   // Pressable renders a host View carrying the responder handlers; find those.
@@ -77,6 +96,9 @@ export function expectGrandparentSafe(): void {
   }
   for (const t of screen.UNSAFE_queryAllByType(Text) as Node[]) {
     const size = flat(t.props.style).fontSize;
+    // TYPE-7 (SPEC-TYPE, DEC-84): with Easy view off, only the listed secondary words may use a smaller style
+    // (subheadline 15, caption1 12), never under 12. Easy view keeps everything 17+ (typeScale.test.tsx TYPE-3).
+    if (typeof size === 'number' && size < 17 && size >= 12 && SMALL_OK.test(smallTestId(t) ?? '')) continue;
     if (size !== undefined) expect({ text: String(t.props.children).slice(0, 40), size }).toEqual({ text: expect.any(String), size: expect.toBeAtLeast17() });
   }
 }

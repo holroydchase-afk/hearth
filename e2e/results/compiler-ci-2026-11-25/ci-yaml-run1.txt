@@ -1,0 +1,2 @@
+parsed jobs: ['agents', 'persona-checks', 'logs', 'expo-go', 'supabase-starter', 'backend-sql', 'backend', 'contract-real', 'app', 'app-e2e']
+exit=0

@@ -24,7 +24,7 @@ const galleryLoaded = async (page) => {
 };
 const onFeed = async (page) => {
   await page.getByRole('tab', { name: /^Feed/ }).click();
-  // DEMO-PHOTO-8: the newest post (Alex's balance bike ride) tops Feed.
+  // DEMO-PHOTO-8: the newest post (Eliza's balance bike ride) tops Feed.
   await expect(page.getByText(/First ride on the balance bike/).filter({ visible: true }).first()).toBeVisible();
 };
 // DEMO-PHOTO-11: Gallery's photo tiles (RD-44), all in the page at once (a ScrollView, not a list).
@@ -64,7 +64,7 @@ test('DEMO-1/2/3 opens straight into the sample family: no sign-in, pictures, a 
   expect(errors).toEqual([]);
 });
 
-test("DEMO-10 RD-17 Grandma Jo's view hides the Mom's-side posts; the parent's view shows them again", async ({ page }) => {
+test("DEMO-NAMES-5 DEMO-10 RD-17 Grandma Jo's view hides the Mom's-side posts; the parent's view shows them again", async ({ page }) => {
   await page.goto('/');
   await galleryLoaded(page);
   await details(page);
@@ -73,19 +73,19 @@ test("DEMO-10 RD-17 Grandma Jo's view hides the Mom's-side posts; the parent's v
   await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
   await onFeed(page);
   // Updated Nov 24 (DEMO-PHOTO-8): Dad's side shows (the pancakes), Mom's side (one orchard photo) does not.
-  await expect(page.getByText(/Aunt Bea taught the kids to make pancakes/).first()).toBeAttached();
+  await expect(page.getByText(/Aunt Libby taught the kids to make pancakes/).first()).toBeAttached();
   await expect.poll(async () => (await feedWords(page)).length).toBe(6);
   await details(page);
-  await page.getByRole('button', { name: "Back to Kevin's view, the parent" }).click();
+  await page.getByRole('button', { name: "Back to Graham's view, the parent" }).click();
   await details(page);
-  await expect(page.getByText(/You're Kevin, a parent/)).toBeVisible();
+  await expect(page.getByText(/You're Graham, a parent/)).toBeVisible();
   await onFeed(page);
   await expect.poll(async () => (await feedWords(page)).length).toBe(7);
 });
 
 // DEMO-PHOTO-11 (SPEC-DEMO-PHOTOS, DEC-82). Written first (Nov 24, qa-tdd): Grandma Jo's Gallery and Feed hold posts
-// 1, 2, 4, 5, 6 and 7 (18 photos), never Mom's-side post 3 (orchard-4543661); the way back reads "Back to Kevin's view".
-test("DEMO-PHOTO-11 Grandma Jo's view: 18 photos in 6 posts, never Mom's-side post 3; the way back reads Back to Kevin's view", async ({ page }) => {
+// 1, 2, 4, 5, 6 and 7 (18 photos), never Mom's-side post 3 (orchard-4543661); the way back reads "Back to Graham's view".
+test("DEMO-NAMES-5 DEMO-PHOTO-11 Grandma Jo's view: 18 photos in 6 posts, never Mom's-side post 3; the way back reads Back to Graham's view", async ({ page }) => {
   await page.goto('/');
   await galleryLoaded(page);
   await expect.poll(() => galleryTiles(page).count()).toBe(19);
@@ -96,17 +96,17 @@ test("DEMO-PHOTO-11 Grandma Jo's view: 18 photos in 6 posts, never Mom's-side po
   await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
   await details(page);
   await expect(page.getByText(/You're Grandma Jo/)).toBeVisible();
-  await expect(page.getByRole('button', { name: "Back to Kevin's view, the parent" })).toBeVisible();
-  await expect(page.getByText("Back to Kevin's view", { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: "Back to Graham's view, the parent" })).toBeVisible();
+  await expect(page.getByText("Back to Graham's view", { exact: true })).toBeVisible();
   await page.getByRole('tab', { name: /^Gallery/ }).click();
   await expect.poll(() => galleryTiles(page).count()).toBe(18);
   await onFeed(page);
   await expect.poll(async () => (await feedWords(page)).length).toBe(6);
   const hers = await feedWords(page);
-  for (const t of ['Apple blossoms at the orchard', 'Shoulder rides all afternoon', 'Aunt Bea taught the kids to make pancakes', 'First ride on the balance bike']) {
+  for (const t of ['Apple blossoms at the orchard', 'Shoulder rides all afternoon', 'Aunt Libby taught the kids to make pancakes', 'First ride on the balance bike']) {
     expect({ t, shown: hers.some((w) => w.includes(t)) }).toEqual({ t, shown: true });
   }
-  // The one post Kevin sees and Jo doesn't is post 3, Mom's side.
+  // The one post Graham sees and Jo doesn't is post 3, Mom's side.
   expect(kevins.filter((w) => !hers.includes(w))).toHaveLength(1);
 });
 
@@ -136,7 +136,7 @@ test('FONT-5 the demo\'s heading and body words are Atkinson Hyperlegible Next, 
   await onFeed(page);
   const look = await page.evaluate(async () => {
     await document.fonts.ready;
-    const caption = [...document.querySelectorAll('div,span')].find((n) => n.textContent === 'Aunt Bea taught the kids to make pancakes' && n.offsetParent);
+    const caption = [...document.querySelectorAll('div,span')].find((n) => n.textContent === 'Aunt Libby taught the kids to make pancakes' && n.offsetParent);
     const heading = document.querySelector('[role="heading"]');
     return {
       heading: heading ? getComputedStyle(heading).fontFamily : 'no heading',
@@ -188,11 +188,11 @@ test('DEMO-BAR-LAPTOP-1 at 1280 px: no demo bar; Grandma Jo and Reset work from 
   await galleryLoaded(page);
   await expect(page.getByRole('region', { name: 'Demo' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Demo details' })).toHaveCount(0);
-  await expect(page.getByRole('heading', { name: /, Kevin$/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /, Graham$/ })).toBeVisible();
   await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
   await expect(page.getByRole('heading', { name: /, Grandma Jo$/ })).toBeVisible();
-  await page.getByRole('button', { name: "Back to Kevin's view, the parent" }).click();
-  await expect(page.getByRole('heading', { name: /, Kevin$/ })).toBeVisible();
+  await page.getByRole('button', { name: "Back to Graham's view, the parent" }).click();
+  await expect(page.getByRole('heading', { name: /, Graham$/ })).toBeVisible();
   await page.getByRole('button', { name: 'Reset demo' }).click();
   await page.getByRole('button', { name: 'Reset', exact: true }).click();
   await galleryLoaded(page);
@@ -397,7 +397,7 @@ test('RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma 
   expect(errors.slice(before)).toEqual([]);
 });
 
-// RD-18..RD-21 (SPEC-REDESIGN 1c) on the demo build at a 360 px phone: the parent's last visit was 3 days ago and Alex
+// RD-18..RD-21 (SPEC-REDESIGN 1c) on the demo build at a 360 px phone: the parent's last visit was 3 days ago and Eliza
 // sent one post since, 3 photos (DEMO-PHOTO-12, Nov 24). Gallery: New for you with a sideways row, "3 new" on the first photo,
 // the sender line and See all (no "Tap a photo to start", DEC-61); under it the grid by month. Any photo opens the walk at
 // the oldest new post; Done comes back to Gallery. No All photos button, no group name.
@@ -409,7 +409,7 @@ test('RD-18 RD-19 RD-20 RD-21 New for you and the grid at 360 px; a tap walks th
   await expect(page.getByRole('heading', { name: 'New for you' })).toBeVisible();
   await expect(page.getByText('3 new', { exact: true })).toBeVisible();
   await expect(page.getByText('Tap a photo to start', { exact: true })).toHaveCount(0); // DEC-61
-  await expect(page.getByText(/^From Alex (today|since \S+)$/)).toBeVisible();
+  await expect(page.getByText(/^From Eliza (today|since \S+)$/)).toBeVisible();
   await expect(page.getByRole('button', { name: /^See all(?! the photos)/ })).toBeVisible();
   await expect(page.getByText(/^(January|February|March|April|May|June|July|August|September|October|November|December) \d{4}$/).first()).toBeVisible();
   await expect(page.getByRole('button', { name: /^Open photo from / }).first()).toBeAttached();
@@ -427,19 +427,19 @@ test('RD-18 RD-19 RD-20 RD-21 New for you and the grid at 360 px; a tap walks th
 // ---------------------------------------------------------------------------------------------------------------
 // Review round 1 (ux-reviewer on Chase's iPhone, Nov 17; SPEC-REDESIGN RD-35..). Written first (red).
 
-// UX-R12 (Nov 17) made the demo parent Chase; DEMO-PHOTO-10 (DEC-82, Nov 24) makes it Kevin, since the stock photos
+// UX-R12 (Nov 17) made the demo parent Chase; DEMO-PHOTO-10 (DEC-82, Nov 24) makes it Graham, since the stock photos
 // show a model. Written first (qa-tdd): "Chase" appears nowhere on Gallery, Feed, More, Birthdays or the demo bar.
 const saysChase = (page) => page.evaluate(() => {
   const words = [document.body.innerText, ...[...document.querySelectorAll('[aria-label]')].map((e) => e.getAttribute('aria-label'))];
   return words.filter((w) => /Chase/.test(w || '')).map((w) => w.slice(0, 80));
 });
-test('UX-R12 DEMO-PHOTO-10 the demo greets the parent as Kevin; "Chase" and "Kai" appear nowhere', async ({ page }) => {
+test('DEMO-NAMES-5 UX-R12 DEMO-PHOTO-10 the demo greets the parent as Graham; "Chase" and "Kai" appear nowhere', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Kevin$/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Graham$/ })).toBeVisible();
   await galleryLoaded(page);
   expect(await saysChase(page)).toEqual([]);
   await details(page);
-  await expect(page.getByText("You're Kevin, a parent.")).toBeVisible();
+  await expect(page.getByText("You're Graham, a parent.")).toBeVisible();
   expect(await saysChase(page)).toEqual([]);
   expect(await page.evaluate(() => /\bKai\b/.test(document.body.innerText))).toBe(false);
   await onFeed(page);
@@ -447,20 +447,20 @@ test('UX-R12 DEMO-PHOTO-10 the demo greets the parent as Kevin; "Chase" and "Kai
   await page.getByRole('tab', { name: /^More/ }).click();
   await page.getByRole('button', { name: 'Birthdays', exact: true }).filter({ visible: true }).click({ timeout: 15_000 });
   await expect(page.getByRole('heading', { name: 'Birthdays and dates' })).toBeVisible();
-  await expect(page.getByText(/Kevin and Alex[’']s anniversary/).filter({ visible: true }).first()).toBeVisible();
+  await expect(page.getByText(/Graham and Eliza[’']s anniversary/).filter({ visible: true }).first()).toBeVisible();
   expect(await saysChase(page)).toEqual([]);
 });
 
 // DEMO-PHOTO-12 (DEC-82). Written first (Nov 24, qa-tdd): a fresh visit (last visit 3 days ago, DEMO-NEW-1) opens
-// New for you on Alex's balance bike post, its 3 photos first.
-test("DEMO-PHOTO-12 a fresh visit's New for you shows Alex's balance bike post first, with its 3 photos", async ({ page }) => {
+// New for you on Eliza's balance bike post, its 3 photos first.
+test("DEMO-NAMES-5 DEMO-PHOTO-12 a fresh visit's New for you shows Eliza's balance bike post first, with its 3 photos", async ({ page }) => {
   await page.goto('/');
   await galleryLoaded(page);
   await expect(page.getByRole('heading', { name: 'New for you' })).toBeVisible();
   const tiles = page.locator('[data-testid^="new-tile-"]');
   await expect.poll(() => tiles.count()).toBe(3);
-  await expect(tiles.first()).toHaveAttribute('aria-label', /^3 new\. New photo from Alex, /);
-  for (const label of await tiles.evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')))) expect(label).toMatch(/New photo from Alex, /);
+  await expect(tiles.first()).toHaveAttribute('aria-label', /^3 new\. New photo from Eliza, /);
+  for (const label of await tiles.evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')))) expect(label).toMatch(/New photo from Eliza, /);
   await tiles.first().click();
   await expect(page.getByText('New photos: 1 of 1', { exact: true })).toBeVisible();
   await expect(page.getByText(/First ride on the balance bike/).filter({ visible: true }).first()).toBeVisible();
@@ -549,10 +549,10 @@ test('RD-47 a "Search photos" field under the greeting opens Search; By date and
 
 // UX-R1 (P0): typing a comment in the walk. The tab bar goes away while the field is focused, and the field stays in
 // view and uncovered when the screen gets shorter (a keyboard opening; a real iPhone keyboard is manual case M-19).
-test('UX-R1 focusing the walk\'s comment field hides the tab bar and keeps the field uncovered when the keyboard opens', async ({ page }) => {
+test('DEMO-NAMES-5 UX-R1 focusing the walk\'s comment field hides the tab bar and keeps the field uncovered when the keyboard opens', async ({ page }) => {
   await page.goto('/');
   await galleryLoaded(page);
-  // DEMO-PHOTO-12: the newest post is Alex's balance bike post, 3 photos; the walk counts posts (1 of 1).
+  // DEMO-PHOTO-12: the newest post is Eliza's balance bike post, 3 photos; the walk counts posts (1 of 1).
   await page.getByText('3 new', { exact: true }).click();
   await expect(page.getByText('New photos: 1 of 1', { exact: true })).toBeVisible();
   await expect(page.getByRole('tab')).toHaveCount(4);
@@ -580,26 +580,26 @@ test('DEMO-FRESH-1 a browser that saved an older demo family sees the current on
   // Pretend this browser kept the family from an older demo: the parent was Kai, and no seed version was saved.
   await page.evaluate(() => {
     const k = 'hearth.fakeBackend.v1';
-    localStorage.setItem(k, localStorage.getItem(k).replaceAll('"Kevin"', '"Kai"'));
+    localStorage.setItem(k, localStorage.getItem(k).replaceAll('"Graham"', '"Kai"'));
     localStorage.removeItem('hearth.demoSeed');
   });
   await page.reload();
-  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Kevin$/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Graham$/ })).toBeVisible();
   await expect(page.getByText(/\bKai\b/)).toHaveCount(0);
 });
 
 // DEMO-PHOTO-13 (DEC-82). Written first (Nov 24, qa-tdd): a browser that saved the Nov 16 family (parent "Chase",
 // seed version u4ie58, its photo bytes in IndexedDB) gets the new family and its 19 photos with no Start over.
-test('DEMO-PHOTO-13 a browser that saved the Nov 16 demo family gets the new 19 photos and Kevin, without Start over', async ({ page }) => {
+test('DEMO-NAMES-5 DEMO-PHOTO-13 a browser that saved the Nov 16 demo family gets the new 19 photos and Graham, without Start over', async ({ page }) => {
   await page.goto('/');
   await galleryLoaded(page);
   await page.evaluate(() => {
     const k = 'hearth.fakeBackend.v1';
-    localStorage.setItem(k, localStorage.getItem(k).replaceAll('"Kevin"', '"Chase"'));
+    localStorage.setItem(k, localStorage.getItem(k).replaceAll('"Graham"', '"Chase"'));
     localStorage.setItem('hearth.demoSeed', 'u4ie58'); // demoSeedVersion() on main before DEMO-PHOTO
   });
   await page.reload();
-  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Kevin$/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening), Graham$/ })).toBeVisible();
   await galleryLoaded(page);
   await expect.poll(() => galleryTiles(page).count()).toBe(19);
   expect(await page.evaluate(() => localStorage.getItem('hearth.demoSeed'))).not.toBe('u4ie58');
@@ -708,7 +708,7 @@ test('UX-R27 every "can see this." line on Feed is one line at 390 px', async ({
 // spoken names. Grandma Jo (viewer) starts On: a word under each tab and bigger text. Each person's pick is kept
 // separately in the browser. Written first (Nov 17), red until Easy view exists.
 const tabWordsShown = (page) => page.getByRole('tab').evaluateAll((els) => els.map((e) => (e.innerText || '').replace(/[^A-Za-z ]/g, '').trim()));
-const captionSize = (page) => page.getByText('Aunt Bea taught the kids to make pancakes', { exact: true }).filter({ visible: true }).first()
+const captionSize = (page) => page.getByText('Aunt Libby taught the kids to make pancakes', { exact: true }).filter({ visible: true }).first()
   .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
 const asJo = async (page) => {
   await details(page);
@@ -718,9 +718,9 @@ const asJo = async (page) => {
 };
 const asChase = async (page) => {
   await details(page);
-  await page.getByRole('button', { name: "Back to Kevin's view, the parent" }).click();
+  await page.getByRole('button', { name: "Back to Graham's view, the parent" }).click();
   await details(page);
-  await expect(page.getByText(/You're Kevin, a parent/)).toBeVisible();
+  await expect(page.getByText(/You're Graham, a parent/)).toBeVisible();
 };
 
 test('RD-80 RD-76 RD-77 Chase has icon-only tabs; Grandma Jo has words under the tabs and bigger text; back to Chase restores Off', async ({ page }) => {
@@ -1054,8 +1054,8 @@ test('SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to
   expect.soft(await tiles.count()).toBeGreaterThan(1);
   expect.soft(await page.getByLabel(/, \d+ people, picked$/).count()).toBe(0);
   const off = page.getByRole('button', { name: 'Pick who gets it' });
-  await expect.soft(off).toBeVisible();
-  await expect.soft(off).toBeDisabled();
+  await expect.soft(off, 'Pick who gets it shows').toBeVisible();
+  await expect.soft(off, 'Pick who gets it is off with nothing picked').toBeDisabled();
   expect.soft(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: path.join(shots, 'share-pc-13-light.png') });
   await page.emulateMedia({ colorScheme: 'dark' });
@@ -1069,8 +1069,15 @@ test('SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to
   const names = String(await send.getAttribute('aria-label') ?? await send.innerText()).replace(/^Send to /, '');
   await send.click();
   await expect(page.getByText(`Shared with ${names}.`).filter({ visible: true })).toBeVisible();
-  const first = page.locator('[data-testid^="post-"]').filter({ visible: true }).first();
-  await expect.soft(first.getByRole('button', { name: /^Open photo 1 of 3/ })).toBeVisible();
+  // T39 (QA-R13): wait for the new post itself, then check it is on top. Every demo seed post is 3+ hours old, so
+  // the new one is the only post that reads "Just now". "The first visible post" alone could be an older one
+  // under load. Sending runs in the browser (resize, strip, encrypt 3 photos); under full-suite load it was still
+  // "Sending 1 of 3…" after 15 s (Nov 24), so the wait for the post allows 60 s. The test's own limit is 90 s.
+  const posts = page.locator('[data-testid^="post-"]').filter({ visible: true });
+  const newPost = posts.filter({ has: page.getByText('Just now', { exact: true }) });
+  await expect(newPost, 'the new post shows on Feed').toHaveCount(1, { timeout: 60_000 });
+  expect.soft(await posts.first().getAttribute('data-testid'), 'the new post is on top of Feed').toBe(await newPost.getAttribute('data-testid'));
+  await expect.soft(newPost.getByRole('button', { name: /^Open photo 1 of 3/ }), 'the new post holds the 3 photos').toBeVisible();
 
   // Grandma Jo (Easy view on for her): her Share, if she can post, names people only; never a group's title.
   await details(page);
@@ -1229,55 +1236,66 @@ test('RD-110-R3 the bar shrunk on Share comes back whole on Feed after sending',
   await resetDemo(page);
 });
 
-// SHARE-ST-8 (SPEC-REDESIGN 1j-2, DEC-79, Chase Nov 20): Share opens on an empty postcard in the public demo at 393 px.
-// Reference: option B of /mnt/project-files/design/share-start-2026-11-20/share-start-tester.html. Written first (red),
-// Nov 21, by qa-tdd. Soft expects on each start page, so one run shows every part still missing.
-// QA-R (staff-pm): the demo's Grandma Jo is a viewer with no Share tab (RD-9), so her "Up to 10" can't be reached here;
-// it runs only if the demo ever lets her post, and the jest SHARE-ST-2/5 cases cover "Up to 10" meanwhile.
-test('SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded To:, no "Pick lots of photos"; Chase "Up to 100"; 3 photos show "1 of 3"', async ({ page }) => {
-  const shots = path.join(__dirname, '..', 'test-results', 'share-st-8');
+// SHARE-ST-8 / SHARE-ST-27 (SPEC-REDESIGN 1j-2, DEC-79; round 3 "Quiet postcard", wordless, Chase Nov 24): Share opens
+// on an empty postcard in the public demo at 393 px. Reference: option A of
+// /mnt/project-files/design/share-start-2026-11-20/share-start-quiet-tester.html. Retargeted and written first (red),
+// Nov 24, by qa-tdd: SHARE-ST-27 wins over SHARE-ST-8's "Up to 100", faded To: and SHARE-ST-10/14/15's words.
+// Contract (same as the jest file): the whole card (data-testid "share-card") is one button "Add photos, up to N at a
+// time"; data-testid "share-spot", "share-stamp", "share-note-rule" x2, "share-to-rule"; the only words in the card
+// are "Add photos", "To:" and the stamp's month and day. Soft expects, so one run shows every part still missing.
+// QA-R (staff-pm): the demo's Grandma Jo is a viewer with no Share tab (RD-9), so her "up to 10" can't be reached here;
+// it runs only if the demo ever lets her post, and the jest SHARE-ST-21 cases cover it meanwhile.
+test('SHARE-ST-8 SHARE-ST-27 wordless Share start: only "New post", "Add photos", "To:" and the stamp; one card button; a tap on a ruled line with 3 photos shows "1 of 3"', async ({ page }) => {
+  const shots = path.join(__dirname, '..', 'test-results', 'share-st-27');
   await page.setViewportSize({ width: 393, height: 852 });
   await page.emulateMedia({ colorScheme: 'light' });
   await page.goto('/');
   await galleryLoaded(page);
+  const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
   const startPage = async (limit, shot) => {
     await page.getByRole('tab', { name: /^Share/ }).click();
     await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
     const add = page.getByRole('button', { name: `Add photos, up to ${limit} at a time` }).filter({ visible: true });
-    await expect.soft(add).toBeVisible();
-    await expect.soft(page.getByText(`Up to ${limit} at a time`, { exact: true }).filter({ visible: true })).toBeVisible();
-    // engineer, flagged for qa-tdd: round 2 B+ (SHARE-ST-10/14/15) replaced the subline, the To: words and the fading.
-    await expect.soft(page.getByText('Only the people you pick will see it.', { exact: true }).filter({ visible: true })).toBeVisible();
-    const to = page.getByText('To: you pick after your photos', { exact: true }).filter({ visible: true });
-    await expect.soft(to).toBeVisible();
-    await expect.soft(page.getByText('Add a note (optional)', { exact: true }).filter({ visible: true })).toBeVisible();
-    // No old start page anywhere; no Send yet.
-    await expect.soft(page.getByText(/Pick lots of photos|Lots of photos\?|Share photos|Pick photos/)).toHaveCount(0);
-    await expect.soft(page.getByRole('button', { name: /^(Send to |Pick who gets it$)/ })).toHaveCount(0);
-    // SHARE-ST-14: the note and To: show at full strength (no opacity below 1) but stay hidden from screen readers.
-    if (await to.count()) {
-      const seen = await to.first().evaluate((el) => {
-        let o = 1; let hidden = false;
-        for (let n = el; n; n = n.parentElement) { o *= parseFloat(getComputedStyle(n).opacity || '1'); if (n.getAttribute('aria-hidden') === 'true') hidden = true; }
-        return { faded: o < 1, hidden };
-      });
-      expect.soft(seen).toEqual({ faded: false, hidden: true });
-    }
-    // The target's words stay inside it, and the page never scrolls sideways.
+    await expect.soft(add).toHaveCount(1);
+    const card = page.getByTestId('share-card').filter({ visible: true }).first();
+    await expect.soft(card).toBeVisible();
+    // The card is the one button (or sits inside it): the button holds the card.
     if (await add.count()) {
-      const spill = await add.first().evaluate((el) => {
+      const holds = await add.first().evaluate((b) => b.getAttribute('data-testid') === 'share-card' || !!b.querySelector('[data-testid="share-card"]') || ['share-spot', 'share-note-rule', 'share-to-rule'].every((id) => !!b.querySelector(`[data-testid="${id}"]`)));
+      expect.soft(holds).toBe(true);
+    }
+    for (const id of ['share-spot', 'share-stamp', 'share-to-rule']) await expect.soft(page.getByTestId(id).filter({ visible: true })).toHaveCount(1);
+    await expect.soft(page.getByTestId('share-note-rule').filter({ visible: true })).toHaveCount(2);
+    // Only these words in the card: "Add photos", "To:", the stamp's month and day.
+    const now = new Date();
+    const want = ['ADD', 'PHOTOS', 'TO:', MONTHS[now.getMonth()], String(now.getDate())].sort();
+    if (await card.count()) {
+      // engineer, flagged for qa-tdd: on the web expo-symbols draws the add-photo icon as a Material Symbols glyph (a
+      // private-use character in an aria-hidden Text), which innerText includes; it is not a word, so it is dropped.
+      // QA-R2 (qa-tdd, Nov 24): drop only private-use glyphs (U+E000-U+F8FF); any other stray token still fails.
+      const got = (await card.innerText()).replace(/[\uE000-\uF8FF]/g, ' ').split(/\s+/).filter(Boolean).map((w) => w.toUpperCase()).sort();
+      expect.soft(got).toEqual(want);
+    }
+    // None of the older start-page words anywhere on the page.
+    await expect.soft(page.getByText(/Only the people you pick|For your family, nobody else|Up to \d+ at a time|To: you pick after|Add a note \(optional\)|Last shared|Add photos first|Pick lots of photos|Lots of photos\?|Share photos|Pick photos/)).toHaveCount(0);
+    await expect.soft(page.getByRole('button', { name: /^(Send to |Pick who gets it$)/ })).toHaveCount(0);
+    // "Add photos" stays inside the spot; the card is at least 48 px; the page never scrolls sideways.
+    const spot = page.getByTestId('share-spot').filter({ visible: true }).first();
+    if (await spot.count()) {
+      const spill = await spot.evaluate((el) => {
         const box = el.getBoundingClientRect(); let out = 0;
         const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
         for (let n = w.nextNode(); n; n = w.nextNode()) {
-          if (!n.textContent.trim()) continue;
+          if (!/Add photos/.test(n.textContent)) continue;
           const r = document.createRange(); r.selectNodeContents(n);
           for (const q of r.getClientRects()) out = Math.max(out, box.left - q.left, q.right - box.right, box.top - q.top, q.bottom - box.bottom);
         }
-        return { h: box.height >= 48, out: Math.round(out) };
+        return Math.round(out);
       });
-      expect.soft(spill).toEqual({ h: true, out: 0 });
+      expect.soft(spill).toBe(0);
     }
+    if (await add.count()) expect.soft((await add.first().boundingBox()).height).toBeGreaterThanOrEqual(48);
     expect.soft(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.screenshot({ path: path.join(shots, `${shot}.png`) });
   };
@@ -1286,7 +1304,7 @@ test('SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded 
   await page.emulateMedia({ colorScheme: 'dark' });
   await startPage(100, 'chase-dark');
   await page.emulateMedia({ colorScheme: 'light' });
-  // Chase with Easy view On: "Up to 10" (SHARE-ST-12).
+  // Chase with Easy view On: spoken "up to 10" (SHARE-ST-21).
   await page.getByRole('tab', { name: /^More/ }).click();
   await page.getByRole('button', { name: 'Easy view, Off' }).click();
   await page.getByRole('radio', { name: 'On', exact: true }).click();
@@ -1297,20 +1315,20 @@ test('SHARE-ST-8 empty postcard Share: "New post", one Add photos target, faded 
   await page.getByRole('button', { name: 'Easy view, On' }).click();
   await page.getByRole('radio', { name: 'Off', exact: true }).click();
 
-  // As Chase, the target with 3 photos opens the postcard at "1 of 3".
+  // As Chase, a tap on a ruled line (not the spot) opens the chooser; 3 photos open the postcard at "1 of 3".
   await page.getByRole('tab', { name: /^Share/ }).click();
   const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
-  await page.getByRole('button', { name: 'Add photos, up to 100 at a time' }).filter({ visible: true }).first().click();
+  await page.getByTestId('share-note-rule').filter({ visible: true }).first().click();
   await (await chooser).setFiles([FIXTURE, FIXTURE, FIXTURE]);
   await expect(page.getByText('1 of 3', { exact: true })).toBeVisible();
   await page.screenshot({ path: path.join(shots, 'chase-1-of-3.png') });
 
-  // Grandma Jo (Easy view on for her): "Up to 10", if the demo lets her post.
+  // Grandma Jo (Easy view on for her): "up to 10", if the demo lets her post.
   await asJo(page);
   if (await page.getByRole('tab', { name: /^Share/ }).count()) {
     await startPage(10, 'jo-easy-view');
   } else {
-    test.info().annotations.push({ type: 'SHARE-ST-8', description: 'Grandma Jo has no Share tab in the demo (viewer, RD-9); her "Up to 10" is not checked here.' });
+    test.info().annotations.push({ type: 'SHARE-ST-27', description: 'Grandma Jo has no Share tab in the demo (viewer, RD-9); her "up to 10" is not checked here.' });
   }
 });
 
@@ -1349,8 +1367,8 @@ test('DARK-ELEV-6 at 390 px dark: no visible element on the first screen has a d
 });
 
 // ---------------------------------------------------------------------------------------------------------------
-// SPEC-VIEWER (R83, qa-tdd Nov 24, written first, red): the full-screen viewer overhaul, look B (look A plus the
-// photo strip, DEC-84). Real mouse drags, double-clicks and keys on the real Gallery (react-native-zoom-toolkit).
+// SPEC-VIEWER (R112, qa-tdd Nov 24, written first, red): the full-screen viewer overhaul, look B (look A plus the
+// photo strip, DEC-90). Real mouse drags, double-clicks and keys on the real Gallery (react-native-zoom-toolkit).
 // Kevin (the demo parent) has Easy view Off; Grandma Jo has it On. Light and dark. Seams: data-testid
 // viewer-backdrop (the black root) and viewer-strip (the small photos, each a button "Photo n of m, from <name>").
 const VSTRIP = /^Photo \d+ of \d+, from .+$/;
@@ -1655,3 +1673,363 @@ test('VIEWER-22 VIEWER-23 Grandma Jo: small photos are 48 by 48 or more, named, 
   await page.waitForTimeout(600);
   await expect(page.getByTestId('viewer-strip')).toBeVisible();
 });
+
+// TYPE-10 (docs/product/SPEC-TYPE.md, DEC-84): the public demo at 393 px as Kevin, light and dark, Easy view off and
+// on: computed font sizes match SPEC-TYPE's table. Written by the engineer (Nov 24) from the spec, flagged for qa-tdd:
+// "a post title" is Feed's inline title (post-title-<id>), which opens the description at body size (RD-71), and
+// "a button" is the reply row's "Post" (a kit Button, headline).
+const sizeOfEl = (loc) => loc.evaluate((el) => {
+  const leaf = [el, ...el.querySelectorAll('*')].reverse().find((n) => n.children.length === 0 && n.textContent.trim() !== '') ?? el;
+  return parseFloat(getComputedStyle(leaf).fontSize);
+});
+const setEasyView = async (page, on) => {
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: /^Easy view, (On|Off)$/ }).click();
+  await page.getByRole('radio', { name: on ? 'On' : 'Off', exact: true }).click();
+  await expect(page.getByRole('radio', { name: on ? 'On' : 'Off', exact: true })).toBeChecked();
+};
+for (const look of ['light', 'dark']) {
+  test(`TYPE-10 (${look}) Kevin's text sizes match the named scale, Easy view off and on`, async ({ page }) => {
+    await page.setViewportSize({ width: 393, height: 852 });
+    await page.emulateMedia({ colorScheme: look });
+    await page.goto('/');
+    await galleryLoaded(page);
+    for (const easy of [false, true]) {
+      if (easy) await setEasyView(page, true);
+      // SPEC-TYPE's table: [Standard, Easy view].
+      const want = (std, ez) => (easy ? ez : std);
+      await page.getByRole('tab', { name: /^Gallery/ }).click();
+      const got = {};
+      got.greeting = await sizeOfEl(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ }).first());
+      await onFeed(page);
+      got.feedTitle = await sizeOfEl(page.getByRole('heading', { name: 'Feed', exact: true }).first());
+      got.postTitle = await sizeOfEl(page.locator('[data-testid^="post-title-"]').filter({ visible: true }).first());
+      got.postBody = await captionSize(page);
+      got.postDate = await sizeOfEl(page.locator('[data-testid^="when-"]').filter({ visible: true }).first());
+      got.button = await sizeOfEl(page.getByRole('button', { name: 'Post', exact: true }).filter({ visible: true }).first());
+      await page.getByRole('tab', { name: /^Share/ }).click();
+      got.newPost = await sizeOfEl(page.getByRole('heading', { name: 'New post' }));
+      got.addPhotos = await sizeOfEl(page.locator('[data-testid="share-spot"]').getByText(/^Add photos( or videos)?$/).first());
+      expect({ easy, ...got }).toEqual({
+        easy,
+        greeting: want(34, 38), // largeTitle
+        feedTitle: want(34, 38), // largeTitle
+        postTitle: want(17, 21), // body (inline title, RD-71)
+        postBody: want(17, 21), // body
+        postDate: want(15, 19), // subheadline
+        button: want(17, 21), // headline
+        newPost: want(22, 26), // title2 (SHARE-ST-28)
+        addPhotos: want(17, 21), // headline (SHARE-ST-29)
+      });
+    }
+  });
+}
+
+// SHARE-ST-34 (SPEC-REDESIGN 1j-2 round 4, DEC-84; written by qa-tdd, Nov 24; REWRITTEN Nov 25, DEMO-KINDS-7): the
+// public demo at 393 px, light, dark and Easy view. "New post" is 22 (Easy 26), "Add photos" 17 (Easy 21), the circle
+// 52 (Easy 60). SUPERSEDED expectation: Nov 24 asserted NO kind tile (post_kinds off). Chase turned post_kinds on for
+// the web demo only on Nov 25, so the parent now sees the Event, News and Saying row, each word at headline 17 (Easy 21).
+// EXACT, NOT LOOSENED: the three tiles are required, with these sizes. SUBSTITUTION (qa-tdd): the spec says "as Kevin
+// and as Grandma Jo", but the demo's Grandma Jo is a viewer with no Share tab (RD-9), so her Easy view column is checked as
+// Graham (the demo parent, was Kevin) with Easy view turned on. If the demo ever gives Jo a Share tab, her own run below
+// takes over. Screenshots for grandparent-ux in test-results/share-st-34/.
+const circleIn = (spot) => spot.evaluate((root) => {
+  const hits = [...root.querySelectorAll('*')].map((el) => {
+    const r = el.getBoundingClientRect(); const s = getComputedStyle(el);
+    return { w: Math.round(r.width), h: Math.round(r.height), radius: parseFloat(s.borderTopLeftRadius) || 0, bg: s.backgroundColor };
+  }).filter((x) => x.w >= 40 && x.w === x.h && x.radius >= x.w / 2 - 1 && x.bg !== 'rgba(0, 0, 0, 0)');
+  return hits.length ? hits[0].w : null;
+});
+test('SHARE-ST-34 DEMO-KINDS-7 Share start at standard sizes on the demo: "New post" 22/26, "Add photos" 17/21, circle 52/60, Event/News/Saying row at headline 17/21 (light, dark, Easy view)', async ({ page }) => {
+  const shots = path.join(__dirname, '..', 'test-results', 'share-st-34');
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/');
+  await galleryLoaded(page);
+  const check = async (easy, shot) => {
+    await page.getByRole('tab', { name: /^Share/ }).click();
+    const heading = page.getByRole('heading', { name: 'New post' });
+    await expect(heading).toBeVisible();
+    const spot = page.getByTestId('share-spot').filter({ visible: true }).first();
+    const got = {
+      newPost: await sizeOfEl(heading),
+      addPhotos: await sizeOfEl(spot.getByText(/^Add photos( or videos)?$/).first()),
+      circle: await circleIn(spot),
+    };
+    expect.soft({ shot, ...got }).toEqual({ shot, newPost: easy ? 26 : 22, addPhotos: easy ? 21 : 17, circle: easy ? 60 : 52 });
+    // Switch on for the demo (DEMO-KINDS-7): the three kinds show, each word at headline size (SPEC-TYPE: 17, Easy view 21).
+    await expect.soft(page.getByRole('button', { name: /^(Add an event|Share news|Add a saying)$/ })).toHaveCount(3);
+    for (const k of ['event', 'news', 'saying']) {
+      expect.soft(await sizeOfEl(page.getByTestId(`share-kind-word-${k}`)), `${k} word size`).toBe(easy ? 21 : 17);
+    }
+    await page.screenshot({ path: path.join(shots, `${shot}.png`) });
+  };
+  await check(false, 'kevin-light');
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await check(false, 'kevin-dark');
+  await page.emulateMedia({ colorScheme: 'light' });
+  // Grandma Jo's column (Easy view on), checked as Kevin with Easy view on: see the substitution note above.
+  await setEasyView(page, true);
+  await check(true, 'kevin-easy-view-light');
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await check(true, 'kevin-easy-view-dark');
+  await page.emulateMedia({ colorScheme: 'light' });
+  await setEasyView(page, false);
+  await asJo(page);
+  if (await page.getByRole('tab', { name: /^Share/ }).count()) {
+    await check(true, 'jo-easy-view');
+  } else {
+    test.info().annotations.push({ type: 'SHARE-ST-34', description: 'Grandma Jo has no Share tab in the demo (viewer, RD-9); her Easy view sizes were checked as Kevin with Easy view on.' });
+  }
+  await resetDemo(page);
+});
+
+// ===== DEMO-KINDS (Chase, Nov 25: post_kinds ON for the web demo only), written first (red) by qa-tdd =====
+// The demo parent is Graham (fixture owner; Chase called him Kevin before T45). Grandma Jo is a viewer with no Share tab.
+// These SUPERSEDE the Nov 24 switch-off expectations (SHARE-ST-34's "no kind tile"; SHARE-ST-30 in the demo). Exact, not loosened.
+const KIND_BUTTONS = /^(Add an event|Share news|Add a saying)$/;
+const kindsRowAt = async (page, { width, look, easy }) => {
+  await page.setViewportSize({ width, height: 844 });
+  await page.emulateMedia({ colorScheme: look });
+  await page.goto('/');
+  await galleryLoaded(page);
+  if (easy) await setEasyView(page, true);
+  await page.getByRole('tab', { name: /^Share/ }).click();
+  await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible();
+};
+for (const look of ['light', 'dark']) {
+  for (const easy of [false, true]) {
+    test(`DEMO-KINDS-7 the demo parent sees Event, News and Saying on Share at 390 px (${look}, Easy view ${easy ? 'on' : 'off'}), headline ${easy ? 21 : 17}`, async ({ page }) => {
+      await kindsRowAt(page, { width: 390, look, easy });
+      await expect(page.getByTestId('share-kinds')).toBeVisible();
+      await expect(page.getByRole('button', { name: KIND_BUTTONS })).toHaveCount(3);
+      for (const [k, word] of [['event', 'Event'], ['news', 'News'], ['saying', 'Saying']]) {
+        const w = page.getByTestId(`share-kind-word-${k}`);
+        await expect(w).toHaveText(word);
+        expect(await sizeOfEl(w)).toBe(easy ? 21 : 17);
+        const box = await page.getByTestId(`share-kind-${k}`).boundingBox();
+        expect(box.height).toBeGreaterThanOrEqual(48);
+        expect(box.x + box.width).toBeLessThanOrEqual(390);
+      }
+    });
+  }
+}
+
+test('DEMO-KINDS-8 Grandma Jo (a viewer) has no Share tab and so no kinds row anywhere', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await asJo(page);
+  await expect(page.getByRole('tab', { name: /^Share/ })).toHaveCount(0);
+  await expect(page.locator('[data-testid^="share-kind"]')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: KIND_BUTTONS })).toHaveCount(0);
+});
+
+test('DEMO-KINDS-9 a returning visitor whose browser saved an earlier demo family (before the kinds switch) gets the kinds row', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  // Pretend this browser saved the family on an earlier visit: the seed version the demo had before the switch went on.
+  await page.evaluate(() => localStorage.setItem('hearth.demoSeed', 'wofmn'));
+  await page.reload();
+  await galleryLoaded(page);
+  await page.getByRole('tab', { name: /^Share/ }).click();
+  await expect(page.getByRole('button', { name: KIND_BUTTONS })).toHaveCount(3);
+  // and the family is the sample one, saved at the current version (not an empty or half-cleared one)
+  expect(await page.evaluate(() => localStorage.getItem('hearth.demoSeed'))).not.toBe('wofmn');
+});
+
+// The walk: Graham picks a kind, types words, "Pick who gets it", picks a group, Send; Feed shows the card.
+const sendKind = async (page, kindLabel, fields, groupTile) => {
+  await page.getByRole('tab', { name: /^Share/ }).click();
+  await page.getByRole('button', { name: kindLabel }).click();
+  for (const [label, text] of Object.entries(fields)) await page.getByLabel(label, { exact: true }).fill(text);
+  await page.getByRole('button', { name: 'Pick who gets it' }).click();
+  await page.getByRole('button', { name: groupTile }).click();
+  await page.getByRole('button', { name: /^Send to / }).click();
+};
+const EVERYONE = /^Everyone, \d+ people, not picked$/;
+const MOM_SIDE = /^Grandparents . Mom's side, \d+ people, not picked$/;
+const noGroupTitlesFor = async (page) => {
+  // members never see group names (Jo is in Everyone and Dad's side, and still sees neither title)
+  await expect(page.getByText(/Grandparents . (Mom|Dad)'s side/)).toHaveCount(0);
+};
+const inFeed = async (page) => {
+  await page.getByRole('tab', { name: /^Feed/ }).click();
+};
+
+test('DEMO-KINDS-10 News walk: Graham sends News to Mom\'s side; Feed shows the news card; Grandma Jo is not in that group so never sees it', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await sendKind(page, 'Share news', { 'Your news': 'We found a house with a big yard!' }, MOM_SIDE);
+  await inFeed(page);
+  await expect(page.getByText('We found a house with a big yard!').filter({ visible: true }).first()).toBeVisible();
+  await expect(page.locator('[data-testid^="kind-"]').filter({ visible: true }).first()).toContainText('We found a house with a big yard!');
+  await asJo(page);
+  await inFeed(page);
+  await expect(page.getByText(/First ride on the balance bike/).filter({ visible: true }).first()).toBeVisible();
+  await expect(page.getByText('We found a house with a big yard!')).toHaveCount(0);
+  await noGroupTitlesFor(page);
+});
+
+test('DEMO-KINDS-11 News walk: sent to Everyone, Grandma Jo sees the news card and no group titles', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await sendKind(page, 'Share news', { 'Your news': 'Pawpaw is home from the hospital.' }, EVERYONE);
+  await asJo(page);
+  await inFeed(page);
+  await expect(page.locator('[data-testid^="kind-"]').filter({ visible: true }).first()).toContainText('Pawpaw is home from the hospital.');
+  await noGroupTitlesFor(page);
+});
+
+test('DEMO-KINDS-12 Event walk: What day 2026-12-24, Feed shows the event with its day; Grandma Jo (in Everyone) sees it', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await sendKind(page, 'Add an event', { "What's happening": 'Christmas Eve supper', 'What day': '2026-12-24', 'Where, optional': 'Gammy\'s house' }, EVERYONE);
+  await inFeed(page);
+  const card = page.locator('[data-testid^="kind-"]').filter({ visible: true }).first();
+  await expect(card).toContainText('Christmas Eve supper');
+  await expect(card).toContainText(/Dec(ember)? 24/);
+  await expect(card).toContainText("Gammy's house");
+  await asJo(page);
+  await inFeed(page);
+  await expect(page.locator('[data-testid^="kind-"]').filter({ visible: true }).first()).toContainText('Christmas Eve supper');
+  await noGroupTitlesFor(page);
+});
+
+test('DEMO-KINDS-13 Saying walk: the card says who sees the words and the age; Feed shows the words, who and the age', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.getByRole('tab', { name: /^Share/ }).click();
+  await page.getByRole('button', { name: 'Add a saying' }).click();
+  await page.getByLabel('What they said', { exact: true }).fill('The moon is following our car');
+  await page.getByLabel('Who said it', { exact: true }).fill('Leo');
+  await expect(page.getByText('Everyone you send this to will see these words and who said them.')).toBeVisible();
+  await page.getByLabel('Age then, optional', { exact: true }).fill('4');
+  await expect(page.getByText('Everyone you send this to will see these words, who said them, and the age.')).toBeVisible(); // the age line
+  await page.getByRole('button', { name: 'Pick who gets it' }).click();
+  await page.getByRole('button', { name: EVERYONE }).click();
+  await page.getByRole('button', { name: /^Send to / }).click();
+  await inFeed(page);
+  const card = page.locator('[data-testid^="kind-"]').filter({ visible: true }).first();
+  await expect(card).toContainText('The moon is following our car');
+  await expect(card).toContainText('Leo, age 4');
+  await asJo(page);
+  await inFeed(page);
+  await expect(page.locator('[data-testid^="kind-"]').filter({ visible: true }).first()).toContainText('Leo, age 4');
+  await noGroupTitlesFor(page);
+});
+
+test('DEMO-KINDS-14 the demo\'s Try this panel has a step for Share, Event, News and Saying (laptop width)', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  const step = page.getByText(/^4\. /);
+  await expect(step).toBeVisible();
+  for (const w of ['Share', 'Event', 'News', 'Saying']) await expect(step).toContainText(w);
+});
+
+// ===== PR #174 fix round (grandparent-ux), written first (red), Nov 24, by qa-tdd =====
+// GUX-T2 (P1): at 390 x 844 the empty postcard starts right under the "New post" row (the row is the heading's
+// nearest box at least 48 px tall), not centered with a big gap. Light and dark.
+const rowBottom = (heading) => heading.evaluate((el) => {
+  let n = el;
+  while (n && n.getBoundingClientRect().height < 48) n = n.parentElement;
+  return (n ?? el).getBoundingClientRect().bottom;
+});
+test('GUX-T2 at 390 px the empty postcard is top-aligned: its top is within 32 px of the "New post" row (light, dark)', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  for (const scheme of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme: scheme });
+    await page.getByRole('tab', { name: /^Share/ }).click();
+    const heading = page.getByRole('heading', { name: 'New post' });
+    await expect(heading).toBeVisible();
+    const card = page.getByTestId('share-card').filter({ visible: true }).first();
+    await expect(card).toBeVisible();
+    const gap = Math.round((await card.boundingBox()).y - (await rowBottom(heading)));
+    expect.soft({ scheme, gap, close: gap >= 0 && gap <= 32 }).toEqual({ scheme, gap, close: true });
+  }
+});
+
+// GUX-T6 (P2): the demo shows Gallery's birthday card ("When's your birthday?", CAL-12) at first open. At 390 x 844 its
+// "Not now" starts under the floating tab bar; once it is scrolled to (as keyboard focus or a screen reader does:
+// the least scroll that brings it into the scroll area), all of it sits above the tab bar's top edge. Light only (the
+// layout is the same in dark).
+test('GUX-T6 at 390 x 844 Gallery\'s birthday card "Not now", once scrolled to, sits clear above the floating tab bar', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  const card = page.getByTestId('birthday-card');
+  await expect(card, 'the demo shows the birthday card on Gallery').toBeVisible();
+  const notNow = card.getByRole('button', { name: 'Not now' });
+  const bar = page.getByRole('tablist');
+  await expect(bar).toBeVisible();
+  await notNow.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(300);
+  const b = await notNow.boundingBox();
+  const barTop = (await bar.boundingBox()).y;
+  expect({ notNowBottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: b.y + b.height <= barTop })
+    .toEqual({ notNowBottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: true });
+  // Keyboard reach: Tab focus lands on it and it is not hidden behind the bar (WCAG 2.4.11).
+  await page.goto('/');
+  await galleryLoaded(page);
+  await notNow.focus();
+  await page.waitForTimeout(300);
+  const f = await notNow.boundingBox();
+  expect({ focusedBottom: Math.round(f.y + f.height), clear: f.y + f.height <= barTop }).toEqual({ focusedBottom: Math.round(f.y + f.height), clear: true });
+});
+
+// EF-HE-1-AC1/AC2 (intake #162, SPEC-EVAL-FIXES): supersedes the ff4543e guard ("Open" shown, "Open the chat …" spoken).
+// Each Messages Open button now shows which chat it opens, and its accessible name is exactly the words shown.
+test('EF-HE-1-AC1 EF-HE-1-AC2 at 390 px: each Messages Open button shows distinct words and its accessible name is exactly them', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await galleryLoaded(page);
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: /^Messages(,|$)/ }).click();
+  await expect(page.getByRole('heading', { name: 'Messages' })).toBeVisible();
+  const open = page.getByRole('button', { name: /^Open / });
+  await expect(open.first()).toBeVisible();
+  const seen = await open.evaluateAll((bs) => bs.map((b) => ({ name: b.getAttribute('aria-label'), shown: (b.innerText || '').replace(/\s+/g, ' ').trim() })));
+  expect(seen.length).toBeGreaterThan(1);
+  for (const s of seen) expect(s.name).toBe(s.shown);
+  const shown = seen.map((s) => s.shown);
+  expect(new Set(shown).size).toBe(shown.length);
+  await expect(page.getByRole('button', { name: /^Open the chat/ })).toHaveCount(0);
+});
+// REACT-13a/c/d (Chase, Nov 24: 😂 👍 🎉 look small and blurry on Feed, ❤️ is crisp, and the ❤️ pill doesn't line up).
+// Written first (red), Nov 24, by qa-tdd. Apple Color Emoji are bitmaps, so a pill at a fractional x resamples them;
+// every reaction pill must sit at a whole-pixel x with a whole-pixel width, and the first pill's outline must start on
+// the photo's left edge (RD-64's -8 margin put it 8 px outside). Jest contract: src/screens/__tests__/reactEmoji.test.tsx.
+const PILL = '[aria-label="Love it"], [aria-label="Haha"], [aria-label="Like it"], [aria-label="Hooray"]';
+for (const width of [390, 1280]) {
+  test(`REACT-13 at ${width} px: every reaction pill has a whole-pixel x and width; the first lines up with the photo`, async ({ page }) => {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : 800 });
+    await page.goto('/');
+    await galleryLoaded(page);
+    await onFeed(page);
+    const pills = page.locator(PILL).filter({ visible: true });
+    await expect(pills.first()).toBeVisible();
+    const boxes = await pills.evaluateAll((els) => els.map((e) => {
+      const r = e.getBoundingClientRect();
+      return { label: e.getAttribute('aria-label'), x: r.x, width: r.width };
+    }));
+    expect(boxes.length).toBeGreaterThanOrEqual(4);
+    expect.soft(boxes.filter((b) => !Number.isInteger(b.x) || !Number.isInteger(b.width))).toEqual([]);
+    // The first post's first pill (Love it) against the same post's first photo.
+    const edges = await page.locator('[data-testid^="post-"]').filter({ visible: true }).first().evaluate((card, sel) => {
+      const pill = card.querySelector(sel);
+      const photo = card.querySelector('[aria-label^="Open photo"]');
+      return { pill: pill && pill.getBoundingClientRect().left, photo: photo && photo.getBoundingClientRect().left };
+    }, PILL);
+    expect(edges.pill).not.toBeNull();
+    expect(edges.photo).not.toBeNull();
+    expect(Math.abs(edges.pill - edges.photo)).toBeLessThanOrEqual(0.5);
+  });
+}

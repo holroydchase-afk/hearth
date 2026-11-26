@@ -16,7 +16,8 @@ export const WIDE = 900;
 const TRY = [
   'Tap a photo under New for you. You get what the family sent since your last visit, one post at a time.',
   'Tap See it as Grandma Jo below. She sees only what was shared with her side of the family.',
-  'Tap Search and type lake. It looks at the words people wrote, never inside the photos.',
+  'Tap Search and type orchard. It looks at the words people wrote, never inside the photos.',
+  'Tap Share, then News, Event or Saying, pick a group and Send. It lands in Feed.',
 ];
 const PROOF = ['Private by name', 'Stored in the US', 'No ads, no AI training'];
 
@@ -28,25 +29,26 @@ export function DemoFrame({ width, children, open = () => {}, controls }: {
   const { c, dark } = useTheme();
   if (width < WIDE) return <>{children}</>;
   return (
-    <View testID="demo-frame" style={[styles.row, { backgroundColor: c.bg }]}>
+    // SITEBAR-3: in light the page is plain white, matching the portfolio's white site bar (data-page="white").
+    <View testID="demo-frame" style={[styles.row, { backgroundColor: dark ? c.bg : '#FFFFFF' }]}>
       {/* DEMO-EASY-1: Easy view (Grandma Jo) enlarges only the app in the phone column, never this panel. */}
       <BigTextContext.Provider value={false}>
       <ScrollView style={styles.panel} contentContainerStyle={styles.panelWords}>
-        <Txt variant="muted">Hearth (working name) · demo</Txt>
-        <Txt variant="display" role="header">A private photo app for split families</Txt>
+        <Txt tone="muted">Hearth (working name) · demo</Txt>
+        <Txt variant="title1" role="header">A private photo app for split families</Txt>
         <Txt>Every photo goes only to the people you pick, by name. Built for grandparents who stay off social media: big text, words under every icon, no passwords.</Txt>
         <View style={styles.proof}>
           {PROOF.map((p) => (
-            <View key={p} style={[styles.pill, { backgroundColor: c.surface, borderColor: c.line }]}><Txt variant="strong">{p}</Txt></View>
+            <View key={p} style={[styles.pill, { backgroundColor: c.surface, borderColor: c.line }]}><Txt variant="headline">{p}</Txt></View>
           ))}
         </View>
-        <Txt variant="title" role="header">Try this</Txt>
+        <Txt variant="title2" role="header">Try this</Txt>
         {TRY.map((t, i) => <Txt key={t}>{`${i + 1}. ${t}`}</Txt>)}
         {controls}
         <Button variant="quiet" role="link" label="Read the case study on chaseholroyd.com" text="Read the case study" onPress={() => open(PORTFOLIO_URL)} style={styles.cta} />
-        <Txt variant="muted">Built test-first by Chase Holroyd, a product manager, with a team of AI agents. The family here is made up and stays in this browser.</Txt>
+        <Txt tone="muted">Built test-first by Chase Holroyd, a product manager, with a team of AI agents. The family here is made up and stays in this browser.</Txt>
         {/* DEMO-PHOTO-14: a laptop has no Demo bar, so the photo credit sits here too. */}
-        <Txt variant="muted">{PHOTO_CREDIT}</Txt>
+        <Txt tone="muted">{PHOTO_CREDIT}</Txt>
       </ScrollView>
       </BigTextContext.Provider>
       {/* DARK-ELEV-4: in dark the column is a surface step lighter than the page, with no shadow. */}

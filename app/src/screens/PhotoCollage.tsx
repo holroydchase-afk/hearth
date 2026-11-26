@@ -8,8 +8,9 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { FeedPost } from '../api/HearthApi';
+import { useSaveData } from '../state/AppContext';
 import { useNav } from '../state/nav';
-import { MIN_TARGET, RADIUS, SPACE, FONT, photoShadow, useTheme } from '../ui/theme';
+import { MIN_TARGET, RADIUS, SPACE, photoShadow, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
 import { VideoPoster } from './VideoPoster';
 
@@ -42,7 +43,8 @@ export function collageTiles(n: number, single = 4 / 3): { aspect: number; wide:
 /** from: who sent it and the day ("Chase, Nov 3"), read out after each photo's place (HIG-9). */
 export function PhotoCollage({ postId, media, from }: { postId: string; media: CollageMedia[]; from?: string }) {
   const nav = useNav();
-  const { c, dark } = useTheme();
+  const { c, type, dark } = useTheme();
+  const saveData = useSaveData(); // DEC-87: thumbnails only until a photo is opened
   const n = media.length;
   const { big, small, more } = collageShape(n);
 
@@ -72,10 +74,10 @@ export function PhotoCollage({ postId, media, from }: { postId: string; media: C
             onPress={() => nav.openViewer(pid, at)}
             style={[styles.tile, { backgroundColor: c.photo }, style]}
           >
-            <MediaImage postId={pid} mediaId={m.media_id} fit="cover" full={m.kind !== 'video'} compact={i >= big} style={{ flex: 1 }} />
+            <MediaImage postId={pid} mediaId={m.media_id} fit="cover" full={m.kind !== 'video' && !saveData} compact={i >= big} style={{ flex: 1 }} />
             {extra ? (
               <View style={styles.more} pointerEvents="none">
-                <Text style={styles.moreText}>{`+${extra}`}</Text>
+                <Text style={[styles.moreText, type.headline]}>{`+${extra}`}</Text>
               </View>
             ) : null}
           </Pressable>
@@ -105,5 +107,6 @@ const styles = StyleSheet.create({
   tile: { minHeight: MIN_TARGET, minWidth: MIN_TARGET, overflow: 'hidden', borderRadius: RADIUS.photo },
   // RD-54: a solid dark chip in the corner, the same in light and dark (the photo stays clear around it).
   more: { position: 'absolute', right: SPACE.sm, bottom: SPACE.sm, backgroundColor: '#1C1C1E', borderRadius: RADIUS.medium, paddingHorizontal: 10, paddingVertical: 6 },
-  moreText: { color: '#FFFFFF', fontSize: 17, lineHeight: 20, fontFamily: FONT.medium },
+  // TYPE-6: headline (SemiBold), white on the dark chip.
+  moreText: { color: '#FFFFFF' },
 });

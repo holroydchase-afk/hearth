@@ -11,7 +11,7 @@ import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useApp } from '../state/AppContext';
 import { greeting } from '../ui/greeting';
 import { SystemIcon, Txt } from '../ui/kit';
-import { GALLERY_TYPE, MIN_TARGET, RADIUS, SPACE, FONT, useTheme } from '../ui/theme';
+import { MIN_TARGET, RADIUS, SPACE, FONT, useTheme } from '../ui/theme';
 
 /** How the greeting moves between large and small. */
 export function titleMotion(reduceMotion: boolean): 'fade' | 'shrink' {
@@ -45,12 +45,11 @@ export function LargeGreeting({ words, scrollY }: { words: string; scrollY: Anim
   const style = titleMotion(reduceMotion) === 'fade'
     ? { opacity: fade }
     : { opacity: fade, transform: [{ scale }], transformOrigin: 'left center' as const };
-  const { c } = useTheme();
-  const size = GALLERY_TYPE.largeTitle;
+  const { c, type } = useTheme();
   return (
     <Animated.View style={style}>
-      {/* RD-55: Apple's Large Title, 34 pt Semibold (never Bold). */}
-      <Text accessibilityRole="header" {...{ 'aria-level': 1 }} style={{ fontSize: size, lineHeight: Math.round(size * 1.2), fontFamily: FONT.semibold, color: c.ink }}>
+      {/* RD-55 / TYPE-6: Apple's Large Title (34 pt, Easy view 38), SemiBold (never Bold). */}
+      <Text accessibilityRole="header" {...{ 'aria-level': 1 }} style={{ ...type.largeTitle, color: c.ink }}>
         {words}
       </Text>
     </Animated.View>
@@ -71,7 +70,7 @@ export function SearchField({ onPress, testID }: { onPress: () => void; testID?:
       style={({ pressed }) => [styles.field, { backgroundColor: c.fill, opacity: pressed ? 0.7 : 1 }]}
     >
       <SystemIcon icon={{ sf: 'magnifyingglass', md: 'search' }} color={c.muted} />
-      <Txt variant="muted" numberOfLines={1}>Search photos</Txt>
+      <Txt tone="muted" numberOfLines={1}>Search photos</Txt>
     </Pressable>
   );
 }
@@ -88,7 +87,7 @@ export function GalleryTopBar({ words, folded }: { words: string | null; folded:
       <View style={{ flex: 1 }}>
         {folded && words ? (
           <Animated.View style={{ opacity: show }}>
-            <Txt testID="top-bar-title" variant="strong" numberOfLines={1}>{words}</Txt>
+            <Txt testID="top-bar-title" variant="headline" numberOfLines={1}>{words}</Txt>
           </Animated.View>
         ) : null}
       </View>

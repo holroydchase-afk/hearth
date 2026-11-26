@@ -6190,14 +6190,14 @@
   },
   {
    "id": "VIDEO-CAP-004",
-   "title": "S14-1 the 11th video is refused even in a brand-new space",
+   "title": "S14-1 the 11th video is refused even in a brand-new space (ENG-R11: HF002)",
    "area": "Video-Cap",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIDEO-CAP-005",
-   "title": "S14-1 and in the first space too",
+   "title": "S14-1 and in the first space too (ENG-R11: HF002)",
    "area": "Video-Cap",
    "tickets": [],
    "where": "backend/tests/"
@@ -6262,6 +6262,216 @@
    "id": "VIDEO-CAP-014",
    "title": "S14-7 the refusal says the cap is per person",
    "area": "Video-Cap",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-001",
+   "title": "ENG-R2 setup: Alex's count this month is readable",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-002",
+   "title": "ENG-R2-1 a video upload restarted 3x (drafts thrown away while pending) counts once",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-003",
+   "title": "ENG-R2-2 setup: preparing a video counts it",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-004",
+   "title": "ENG-R2-2 sign-media marks the upload failed",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-005",
+   "title": "ENG-R2-2 a failed video gives the month's count back",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-006",
+   "title": "ENG-R2-3 Alex deletes his failed video row",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-007",
+   "title": "ENG-R2-3 deleting an already-failed video does not give it back a second time",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-008",
+   "title": "ENG-R2-4 Alex deletes a pending video row",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-009",
+   "title": "ENG-R2-4 a pending video that is deleted gives its count back",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-010",
+   "title": "ENG-R2-5 setup: the video uploaded (ready)",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-011",
+   "title": "ENG-R2-5 deleting an uploaded video (post deleted, row purged) keeps it counted",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-012",
+   "title": "ENG-R2-6 Alex sends videos up to 10 this month",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-013",
+   "title": "ENG-R2-6 the 11th is still refused (free_video_cap_reached)",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-014",
+   "title": "ENG-R2-6 the counter stops at 10",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-015",
+   "title": "ENG-R2-6 once one of the 10 fails, Alex can send one more",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-016",
+   "title": "ENG-R2-6 and then he is at the cap again",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-017",
+   "title": "ENG-R2-7 marking a video failed when the counter is already 0 does not error",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-018",
+   "title": "ENG-R2-7 nor does deleting a pending one",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-019",
+   "title": "ENG-R2-7 the counter stays at 0, never negative",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-020",
+   "title": "ENG-R2-8 a paid family's video can fail",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-021",
+   "title": "ENG-R2-8 and still has no free-cap usage row",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-022",
+   "title": "ENG-R11 the free video cap is refused with SQLSTATE HF002, not generic P0001",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-023",
+   "title": "ENG-R11 the message is still free_video_cap_reached",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-024",
+   "title": "SEC-R7 PUBLIC has no EXECUTE on private.videos_this_month(uuid)",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-025",
+   "title": "SEC-R7 authenticated has no EXECUTE on private.videos_this_month(uuid)",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-026",
+   "title": "SEC-R7 anon has no EXECUTE on private.videos_this_month(uuid)",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-027",
+   "title": "SEC-R7 Blair can't read Alex's video count directly",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-028",
+   "title": "SEC-R7 Alex still sees his own count through space_upload_quota",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-029",
+   "title": "PRIV-R1 authenticated has no privilege on private.video_refundable",
+   "area": "Video-Refund",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIDEO-REFUND-030",
+   "title": "PRIV-R1 anon has no privilege on private.video_refundable",
+   "area": "Video-Refund",
    "tickets": [],
    "where": "backend/tests/"
   },
@@ -6927,6 +7137,223 @@
    "id": "START-FAMILY-088",
    "title": "BETA-START-8 and Quinn still sees Pat's post",
    "area": "Start-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-001",
+   "title": "START-ON-3 backend/scripts/suspend-family.sql exists",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-002",
+   "title": "START-ON-4 backend/scripts/start-family-switch.sql exists",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-003",
+   "title": "START-ON-3 setup: Pat started a family with a post, Quinn joined",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-004",
+   "title": "START-ON-3 suspend without apply (the dry run) leaves the family alone",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-005",
+   "title": "START-ON-3 suspend with apply sets spaces.deleted_at to now",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-006",
+   "title": "START-ON-3 only the named family changes (Alex's family untouched)",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-007",
+   "title": "START-ON-3 Alex's family is not suspended",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-008",
+   "title": "START-ON-3 suspended: the owner (Pat) no longer finds the family or its post (rule 2: not found)",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-009",
+   "title": "START-ON-3 suspended: the family is not in Pat's my_spaces()",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-010",
+   "title": "START-ON-3 suspended: Pat's upload to the family is refused",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-011",
+   "title": "START-ON-3 suspended: a member (Quinn) no longer finds the post",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-012",
+   "title": "START-ON-3 suspended: another family (Alex) still sees its own posts",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-013",
+   "title": "START-ON-3 within 30 days purge_soft_deleted keeps the suspended family (undo still possible)",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-014",
+   "title": "START-ON-3 undo without apply (the dry run) leaves it suspended",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-015",
+   "title": "START-ON-3 undo with apply clears spaces.deleted_at",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-016",
+   "title": "START-ON-3 after undo the family is unchanged (members, groups, posts, media, invites)",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-017",
+   "title": "START-ON-3 after undo Quinn sees the post again",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-018",
+   "title": "START-ON-3 after undo Pat can upload again",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-019",
+   "title": "START-ON-3 setup: an app-started family starts not known (capped)",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-020",
+   "title": "START-ON-3 known without apply (the dry run) leaves the cap on",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-021",
+   "title": "START-ON-3 known with apply sets started_families.known_at (cap lifted)",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-022",
+   "title": "START-ON-3 known does not suspend the family",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-023",
+   "title": "START-ON-3 an unknown space id suspends nothing",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-024",
+   "title": "START-ON-4 on without apply (the dry run) leaves the switch off",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-025",
+   "title": "START-ON-4 on with apply turns start_family_open on",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-026",
+   "title": "START-ON-4 no other feature flag changes",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-027",
+   "title": "START-ON-4 no family is made or removed",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-028",
+   "title": "START-ON-4 status changes nothing (still on)",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-029",
+   "title": "START-ON-4 off with apply turns start_family_open off",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-030",
+   "title": "START-ON-4 still no other feature flag changes",
+   "area": "Suspend-Family",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "SUSPEND-FAMILY-031",
+   "title": "START-ON-4 turning it off leaves existing families as they were",
+   "area": "Suspend-Family",
    "tickets": [],
    "where": "backend/tests/"
   },
@@ -8416,1435 +8843,1554 @@
   },
   {
    "id": "VIS-REGISTRY-027",
-   "title": "VIS-1 public.post_views has a reach class: add a vis_registry row",
+   "title": "VIS-1 public.post_events has a reach class: add a vis_registry row",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-028",
-   "title": "VIS-1 public.posts has a reach class: add a vis_registry row",
+   "title": "VIS-1 public.post_sayings has a reach class: add a vis_registry row",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-029",
-   "title": "VIS-1 public.profiles has a reach class: add a vis_registry row",
+   "title": "VIS-1 public.post_views has a reach class: add a vis_registry row",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-030",
-   "title": "VIS-1 public.push_tokens has a reach class: add a vis_registry row",
+   "title": "VIS-1 public.posts has a reach class: add a vis_registry row",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-031",
-   "title": "VIS-1 public.reactions has a reach class: add a vis_registry row",
+   "title": "VIS-1 public.profiles has a reach class: add a vis_registry row",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-032",
-   "title": "VIS-1 public.space_children has a reach class: add a vis_registry row",
+   "title": "VIS-1 public.push_tokens has a reach class: add a vis_registry row",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-033",
-   "title": "VIS-1 public.space_features has a reach class: add a vis_registry row",
+   "title": "VIS-1 public.reactions has a reach class: add a vis_registry row",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-034",
-   "title": "VIS-1 public.space_members has a reach class: add a vis_registry row",
+   "title": "VIS-1 public.space_children has a reach class: add a vis_registry row",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-035",
-   "title": "VIS-1 public.spaces has a reach class: add a vis_registry row",
+   "title": "VIS-1 public.space_features has a reach class: add a vis_registry row",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-036",
-   "title": "VIS-1 public.storage_purge_queue has a reach class: add a vis_registry row",
+   "title": "VIS-1 public.space_members has a reach class: add a vis_registry row",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-037",
-   "title": "VIS-1 every storage bucket has a reach class (no storage schema in this build)",
+   "title": "VIS-1 public.spaces has a reach class: add a vis_registry row",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-038",
-   "title": "VIS-1 public.account_exports is in reach self (07 mapping)",
+   "title": "VIS-1 public.storage_purge_queue has a reach class: add a vis_registry row",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-039",
-   "title": "VIS-1 public.chat_devices is in reach self (07 mapping)",
+   "title": "VIS-1 every storage bucket has a reach class (no storage schema in this build)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-040",
-   "title": "VIS-1 public.chat_groups is in reach container (07 mapping)",
+   "title": "VIS-1 public.account_exports is in reach self (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-041",
-   "title": "VIS-1 public.chat_key_packages is in reach container (07 mapping)",
+   "title": "VIS-1 public.chat_devices is in reach self (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-042",
-   "title": "VIS-1 public.chat_messages is in reach container (07 mapping)",
+   "title": "VIS-1 public.chat_groups is in reach container (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-043",
-   "title": "VIS-1 public.child_guardians is in reach person (07 mapping)",
+   "title": "VIS-1 public.chat_key_packages is in reach container (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-044",
-   "title": "VIS-1 public.children is in reach person (07 mapping)",
+   "title": "VIS-1 public.chat_messages is in reach container (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-045",
-   "title": "VIS-1 public.circle_links is in reach container (07 mapping)",
+   "title": "VIS-1 public.child_guardians is in reach person (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-046",
-   "title": "VIS-1 public.circle_members is in reach container (07 mapping)",
+   "title": "VIS-1 public.children is in reach person (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-047",
-   "title": "VIS-1 public.circle_people is in reach container (07 mapping)",
+   "title": "VIS-1 public.circle_links is in reach container (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-048",
-   "title": "VIS-1 public.circles is in reach container (07 mapping)",
+   "title": "VIS-1 public.circle_members is in reach container (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-049",
-   "title": "VIS-1 public.client_errors is in reach server (07 mapping)",
+   "title": "VIS-1 public.circle_people is in reach container (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-050",
-   "title": "VIS-1 public.comment_mode_log is in reach admin (07 mapping)",
+   "title": "VIS-1 public.circles is in reach container (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-051",
-   "title": "VIS-1 public.comments is in reach item (07 mapping)",
+   "title": "VIS-1 public.client_errors is in reach server (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-052",
-   "title": "VIS-1 public.household_members is in reach admin (07 mapping)",
+   "title": "VIS-1 public.comment_mode_log is in reach admin (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-053",
-   "title": "VIS-1 public.households is in reach admin (07 mapping)",
+   "title": "VIS-1 public.comments is in reach item (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-054",
-   "title": "VIS-1 public.invite_circles is in reach admin (07 mapping)",
+   "title": "VIS-1 public.household_members is in reach admin (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-055",
-   "title": "VIS-1 public.invites is in reach admin (07 mapping)",
+   "title": "VIS-1 public.households is in reach admin (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-056",
-   "title": "VIS-1 public.media_items is in reach item (07 mapping)",
+   "title": "VIS-1 public.invite_circles is in reach admin (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-057",
-   "title": "VIS-1 public.media_keys is in reach item (07 mapping)",
+   "title": "VIS-1 public.invites is in reach admin (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-058",
-   "title": "VIS-1 public.notification_outbox is in reach server (07 mapping)",
+   "title": "VIS-1 public.media_items is in reach item (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-059",
-   "title": "VIS-1 public.notification_prefs is in reach self (07 mapping)",
+   "title": "VIS-1 public.media_keys is in reach item (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-060",
-   "title": "VIS-1 public.post_audiences is in reach item (07 mapping)",
+   "title": "VIS-1 public.notification_outbox is in reach server (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-061",
-   "title": "VIS-1 public.post_children is in reach item (07 mapping)",
+   "title": "VIS-1 public.notification_prefs is in reach self (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-062",
-   "title": "VIS-1 public.post_views is in reach self (07 mapping)",
+   "title": "VIS-1 public.post_audiences is in reach item (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-063",
-   "title": "VIS-1 public.posts is in reach item (07 mapping)",
+   "title": "VIS-1 public.post_children is in reach item (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-064",
-   "title": "VIS-1 public.profiles is in reach person (07 mapping)",
+   "title": "VIS-1 public.post_views is in reach self (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-065",
-   "title": "VIS-1 public.push_tokens is in reach self (07 mapping)",
+   "title": "VIS-1 public.posts is in reach item (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-066",
-   "title": "VIS-1 public.reactions is in reach item (07 mapping)",
+   "title": "VIS-1 public.profiles is in reach person (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-067",
-   "title": "VIS-1 public.space_children is in reach admin (07 mapping)",
+   "title": "VIS-1 public.push_tokens is in reach self (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-068",
-   "title": "VIS-1 public.space_features is in reach admin (07 mapping)",
+   "title": "VIS-1 public.reactions is in reach item (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-069",
-   "title": "VIS-1 public.space_members is in reach admin (07 mapping)",
+   "title": "VIS-1 public.space_children is in reach admin (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-070",
-   "title": "VIS-1 public.spaces is in reach admin (07 mapping)",
+   "title": "VIS-1 public.space_features is in reach admin (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-071",
-   "title": "VIS-1 public.storage_purge_queue is in reach server (07 mapping)",
+   "title": "VIS-1 public.space_members is in reach admin (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-072",
-   "title": "VIS-1 every registry row says why it is in its reach (note)",
+   "title": "VIS-1 public.spaces is in reach admin (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-073",
-   "title": "VIS-3 public.account_exports has RLS enabled and forced",
+   "title": "VIS-1 public.storage_purge_queue is in reach server (07 mapping)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-074",
-   "title": "VIS-3 public.chat_devices has RLS enabled and forced",
+   "title": "VIS-1 every registry row says why it is in its reach (note)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-075",
-   "title": "VIS-3 public.chat_groups has RLS enabled and forced",
+   "title": "VIS-3 public.account_exports has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-076",
-   "title": "VIS-3 public.chat_key_packages has RLS enabled and forced",
+   "title": "VIS-3 public.chat_devices has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-077",
-   "title": "VIS-3 public.chat_messages has RLS enabled and forced",
+   "title": "VIS-3 public.chat_groups has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-078",
-   "title": "VIS-3 public.child_guardians has RLS enabled and forced",
+   "title": "VIS-3 public.chat_key_packages has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-079",
-   "title": "VIS-3 public.children has RLS enabled and forced",
+   "title": "VIS-3 public.chat_messages has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-080",
-   "title": "VIS-3 public.circle_links has RLS enabled and forced",
+   "title": "VIS-3 public.child_guardians has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-081",
-   "title": "VIS-3 public.circle_members has RLS enabled and forced",
+   "title": "VIS-3 public.children has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-082",
-   "title": "VIS-3 public.circle_people has RLS enabled and forced",
+   "title": "VIS-3 public.circle_links has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-083",
-   "title": "VIS-3 public.circles has RLS enabled and forced",
+   "title": "VIS-3 public.circle_members has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-084",
-   "title": "VIS-3 public.client_errors has RLS enabled and forced",
+   "title": "VIS-3 public.circle_people has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-085",
-   "title": "VIS-3 public.comment_mode_log has RLS enabled and forced",
+   "title": "VIS-3 public.circles has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-086",
-   "title": "VIS-3 public.comments has RLS enabled and forced",
+   "title": "VIS-3 public.client_errors has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-087",
-   "title": "VIS-3 public.family_dates has RLS enabled and forced",
+   "title": "VIS-3 public.comment_mode_log has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-088",
-   "title": "VIS-3 public.household_members has RLS enabled and forced",
+   "title": "VIS-3 public.comments has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-089",
-   "title": "VIS-3 public.households has RLS enabled and forced",
+   "title": "VIS-3 public.family_dates has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-090",
-   "title": "VIS-3 public.invite_circles has RLS enabled and forced",
+   "title": "VIS-3 public.household_members has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-091",
-   "title": "VIS-3 public.invites has RLS enabled and forced",
+   "title": "VIS-3 public.households has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-092",
-   "title": "VIS-3 public.media_items has RLS enabled and forced",
+   "title": "VIS-3 public.invite_circles has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-093",
-   "title": "VIS-3 public.media_keys has RLS enabled and forced",
+   "title": "VIS-3 public.invites has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-094",
-   "title": "VIS-3 public.notification_outbox has RLS enabled and forced",
+   "title": "VIS-3 public.media_items has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-095",
-   "title": "VIS-3 public.notification_prefs has RLS enabled and forced",
+   "title": "VIS-3 public.media_keys has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-096",
-   "title": "VIS-3 public.post_audiences has RLS enabled and forced",
+   "title": "VIS-3 public.notification_outbox has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-097",
-   "title": "VIS-3 public.post_children has RLS enabled and forced",
+   "title": "VIS-3 public.notification_prefs has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-098",
-   "title": "VIS-3 public.post_views has RLS enabled and forced",
+   "title": "VIS-3 public.post_audiences has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-099",
-   "title": "VIS-3 public.posts has RLS enabled and forced",
+   "title": "VIS-3 public.post_children has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-100",
-   "title": "VIS-3 public.profiles has RLS enabled and forced",
+   "title": "VIS-3 public.post_events has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-101",
-   "title": "VIS-3 public.push_tokens has RLS enabled and forced",
+   "title": "VIS-3 public.post_sayings has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-102",
-   "title": "VIS-3 public.reactions has RLS enabled and forced",
+   "title": "VIS-3 public.post_views has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-103",
-   "title": "VIS-3 public.space_children has RLS enabled and forced",
+   "title": "VIS-3 public.posts has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-104",
-   "title": "VIS-3 public.space_features has RLS enabled and forced",
+   "title": "VIS-3 public.profiles has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-105",
-   "title": "VIS-3 public.space_members has RLS enabled and forced",
+   "title": "VIS-3 public.push_tokens has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-106",
-   "title": "VIS-3 public.spaces has RLS enabled and forced",
+   "title": "VIS-3 public.reactions has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-107",
-   "title": "VIS-3 public.storage_purge_queue has RLS enabled and forced",
+   "title": "VIS-3 public.space_children has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-108",
-   "title": "VIS-3 no materialized view in an exposed schema (PRIV-VC-R2)",
+   "title": "VIS-3 public.space_features has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-109",
-   "title": "VIS-3 no policy for authenticated, anon or public is using (true)",
+   "title": "VIS-3 public.space_members has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-110",
-   "title": "VIS-3 anon has no table privilege on any exposed relation (PRIV-VC-R2)",
+   "title": "VIS-3 public.spaces has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-111",
-   "title": "VIS-3 server-reach public.client_errors has no select policy for app users",
+   "title": "VIS-3 public.storage_purge_queue has RLS enabled and forced",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-112",
-   "title": "VIS-3 server-reach public.notification_outbox has no select policy for app users",
+   "title": "VIS-3 no materialized view in an exposed schema (PRIV-VC-R2)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-113",
-   "title": "VIS-3 server-reach public.storage_purge_queue has no select policy for app users",
+   "title": "VIS-3 no policy for authenticated, anon or public is using (true)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-114",
-   "title": "VIS-4 the wrapper can_view_post calls private.sees_post",
+   "title": "VIS-3 anon has no table privilege on any exposed relation (PRIV-VC-R2)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-115",
-   "title": "VIS-4 the wrapper private.reply_ok (behind reply_visible) calls private.sees_post",
+   "title": "VIS-3 server-reach public.client_errors has no select policy for app users",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-116",
-   "title": "VIS-4 public.comments has exactly one permissive select policy (PRIV-VC-R4)",
+   "title": "VIS-3 server-reach public.notification_outbox has no select policy for app users",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-117",
-   "title": "VIS-4 public.media_items has exactly one permissive select policy (PRIV-VC-R4)",
+   "title": "VIS-3 server-reach public.storage_purge_queue has no select policy for app users",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-118",
-   "title": "VIS-4 public.post_audiences has exactly one permissive select policy (PRIV-VC-R4)",
+   "title": "VIS-4 the wrapper can_view_post calls private.sees_post",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-119",
-   "title": "VIS-4 public.post_children has exactly one permissive select policy (PRIV-VC-R4)",
+   "title": "VIS-4 the wrapper private.reply_ok (behind reply_visible) calls private.sees_post",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-120",
-   "title": "VIS-4 public.posts has exactly one permissive select policy (PRIV-VC-R4)",
+   "title": "VIS-4 public.comments has exactly one permissive select policy (PRIV-VC-R4)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-121",
-   "title": "VIS-4 public.reactions has exactly one permissive select policy (PRIV-VC-R4)",
+   "title": "VIS-4 public.media_items has exactly one permissive select policy (PRIV-VC-R4)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-122",
-   "title": "VIS-4 every select policy on public.comments calls private.sees_post (directly or via a wrapper)",
+   "title": "VIS-4 public.post_audiences has exactly one permissive select policy (PRIV-VC-R4)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-123",
-   "title": "VIS-4 every select policy on public.media_items calls private.sees_post (directly or via a wrapper)",
+   "title": "VIS-4 public.post_children has exactly one permissive select policy (PRIV-VC-R4)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-124",
-   "title": "VIS-4 every select policy on public.post_audiences calls private.sees_post (directly or via a wrapper)",
+   "title": "VIS-4 public.post_events has exactly one permissive select policy (PRIV-VC-R4)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-125",
-   "title": "VIS-4 every select policy on public.post_children calls private.sees_post (directly or via a wrapper)",
+   "title": "VIS-4 public.post_sayings has exactly one permissive select policy (PRIV-VC-R4)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-126",
-   "title": "VIS-4 every select policy on public.posts calls private.sees_post (directly or via a wrapper)",
+   "title": "VIS-4 public.posts has exactly one permissive select policy (PRIV-VC-R4)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-127",
-   "title": "VIS-4 every select policy on public.reactions calls private.sees_post (directly or via a wrapper)",
+   "title": "VIS-4 public.reactions has exactly one permissive select policy (PRIV-VC-R4)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-128",
-   "title": "VIS-5 the function registry vis.functions exists",
+   "title": "VIS-4 every select policy on public.comments calls private.sees_post (directly or via a wrapper)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-129",
-   "title": "VIS-5 add_comment(uuid,uuid,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-4 every select policy on public.media_items calls private.sees_post (directly or via a wrapper)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-130",
-   "title": "VIS-5 add_people_from(uuid,uuid,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-4 every select policy on public.post_audiences calls private.sees_post (directly or via a wrapper)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-131",
-   "title": "VIS-5 can(uuid,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-4 every select policy on public.post_children calls private.sees_post (directly or via a wrapper)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-132",
-   "title": "VIS-5 can_comment_in_space(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-4 every select policy on public.post_events calls private.sees_post (directly or via a wrapper)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-133",
-   "title": "VIS-5 can_post_in_space(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-4 every select policy on public.post_sayings calls private.sees_post (directly or via a wrapper)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-134",
-   "title": "VIS-5 can_see_circle(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-4 every select policy on public.posts calls private.sees_post (directly or via a wrapper)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-135",
-   "title": "VIS-5 can_see_profile(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-4 every select policy on public.reactions calls private.sees_post (directly or via a wrapper)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-136",
-   "title": "VIS-5 can_see_reply(uuid,uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 the function registry vis.functions exists",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-137",
-   "title": "VIS-5 can_send_to(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 add_comment(uuid,uuid,text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-138",
-   "title": "VIS-5 can_start_family() is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 add_people_from(uuid,uuid,text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-139",
-   "title": "VIS-5 can_view_post(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 can(uuid,text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-140",
-   "title": "VIS-5 chat_claim(uuid,uuid[]) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 can_comment_in_space(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-141",
-   "title": "VIS-5 chat_fetch(uuid,bigint,integer) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 can_post_in_space(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-142",
-   "title": "VIS-5 chat_key_package_count() is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 can_see_circle(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-143",
-   "title": "VIS-5 chat_list(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 can_see_profile(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-144",
-   "title": "VIS-5 chat_publish_device(text,text[]) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 can_see_reply(uuid,uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-145",
-   "title": "VIS-5 chat_roster(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 can_send_to(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-146",
-   "title": "VIS-5 chat_send(uuid,text,bigint,text,uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 can_start_family() is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-147",
-   "title": "VIS-5 chat_start(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 can_view_post(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-148",
-   "title": "VIS-5 child_birth_date(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 chat_claim(uuid,uuid[]) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-149",
-   "title": "VIS-5 create_invite(uuid,member_role,uuid[],invite_channel,text,text,interval,integer,text,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 chat_fetch(uuid,bigint,integer) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-150",
-   "title": "VIS-5 create_level(uuid,text,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 chat_key_package_count() is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-151",
-   "title": "VIS-5 create_post(uuid,uuid,text,uuid[],timestamp with time zone,uuid[],uuid,integer,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 chat_list(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-152",
-   "title": "VIS-5 delete_comment(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 chat_publish_device(text,text[]) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-153",
-   "title": "VIS-5 delete_family_date(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 chat_roster(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-154",
-   "title": "VIS-5 delete_post(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 chat_send(uuid,text,bigint,text,uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-155",
-   "title": "VIS-5 edit_post_words(uuid,text,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 chat_start(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-156",
-   "title": "VIS-5 export_my_data() is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 child_birth_date(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-157",
-   "title": "VIS-5 get_comments(uuid,integer) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 create_invite(uuid,member_role,uuid[],invite_channel,text,text,interval,integer,text,text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-158",
-   "title": "VIS-5 get_feed(uuid,timestamp with time zone,uuid,integer) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 create_level(uuid,text,text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-159",
-   "title": "VIS-5 get_timeline(uuid,timestamp with time zone,uuid,integer) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 create_post(uuid,uuid,text,uuid[],timestamp with time zone,uuid[],uuid,integer,text,text,jsonb) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-160",
-   "title": "VIS-5 get_timeline_years(uuid,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 delete_comment(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-161",
-   "title": "VIS-5 invite_preview(text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 delete_family_date(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-162",
-   "title": "VIS-5 is_child_guardian(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 delete_post(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-163",
-   "title": "VIS-5 is_circle_member(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 edit_post_words(uuid,text,text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-164",
-   "title": "VIS-5 is_household_member(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 export_my_data() is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-165",
-   "title": "VIS-5 is_post_author(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 get_comments(uuid,integer) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-166",
-   "title": "VIS-5 is_space_manager(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 get_feed(uuid,timestamp with time zone,uuid,integer) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-167",
-   "title": "VIS-5 is_space_member(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 get_timeline(uuid,timestamp with time zone,uuid,integer) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-168",
-   "title": "VIS-5 is_space_owner(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 get_timeline_years(uuid,text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-169",
-   "title": "VIS-5 link_level(uuid,uuid,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 invite_preview(text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-170",
-   "title": "VIS-5 list_family_dates(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 is_child_guardian(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-171",
-   "title": "VIS-5 mark_seen(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 is_circle_member(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-172",
-   "title": "VIS-5 my_circles(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 is_household_member(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-173",
-   "title": "VIS-5 my_features(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 is_post_author(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-174",
-   "title": "VIS-5 my_profile() is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 is_space_manager(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-175",
-   "title": "VIS-5 my_spaces() is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 is_space_member(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-176",
-   "title": "VIS-5 place_person(uuid,uuid,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 is_space_owner(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-177",
-   "title": "VIS-5 post_viewers(uuid[]) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 link_level(uuid,uuid,text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-178",
-   "title": "VIS-5 publish_post(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 list_family_dates(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-179",
-   "title": "VIS-5 reaction_summary(uuid[]) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 mark_seen(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-180",
-   "title": "VIS-5 redeem_invite(text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 my_circles(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-181",
-   "title": "VIS-5 register_push_token(text,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 my_features(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-182",
-   "title": "VIS-5 rename_circle(uuid,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 my_profile() is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-183",
-   "title": "VIS-5 reply_readers(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 my_spaces() is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-184",
-   "title": "VIS-5 reply_scope(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 place_person(uuid,uuid,text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-185",
-   "title": "VIS-5 report_client_error(text,text,text,text,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 post_viewers(uuid[]) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-186",
-   "title": "VIS-5 request_account_deletion() is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 publish_post(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-187",
-   "title": "VIS-5 request_account_export() is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 reaction_summary(uuid[]) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-188",
-   "title": "VIS-5 retire_level(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 redeem_invite(text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-189",
-   "title": "VIS-5 save_family_date(uuid,uuid,text,text,integer,integer,uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 register_push_token(text,text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-190",
-   "title": "VIS-5 search_posts(uuid,text,uuid,timestamp with time zone,timestamp with time zone,timestamp with time zone,uuid,integer) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 rename_circle(uuid,text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-191",
-   "title": "VIS-5 set_comment_mode(uuid,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 reply_readers(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-192",
-   "title": "VIS-5 set_my_birthday(uuid,integer,integer) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 reply_scope(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-193",
-   "title": "VIS-5 set_my_name(text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 report_client_error(text,text,text,text,text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-194",
-   "title": "VIS-5 set_notification_prefs(uuid,boolean,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 request_account_deletion() is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-195",
-   "title": "VIS-5 set_reaction(uuid,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 request_account_export() is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-196",
-   "title": "VIS-5 set_reply_audience(uuid,text) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 retire_level(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-197",
-   "title": "VIS-5 space_role(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 save_family_date(uuid,uuid,text,text,integer,integer,uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-198",
-   "title": "VIS-5 space_upload_quota(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 search_posts(uuid,text,uuid,timestamp with time zone,timestamp with time zone,timestamp with time zone,uuid,integer) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-199",
-   "title": "VIS-5 start_family(uuid,text,text[]) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 set_comment_mode(uuid,text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-200",
-   "title": "VIS-5 toggle_heart(uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 set_my_birthday(uuid,integer,integer) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-201",
-   "title": "VIS-5 unlink_level(uuid,uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 set_my_name(text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-202",
-   "title": "VIS-5 unplace_person(uuid,uuid) is registered in vis.functions (or allowlisted with a reason)",
+   "title": "VIS-5 set_notification_prefs(uuid,boolean,text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-203",
-   "title": "VIS-5 add_comment(uuid,uuid,text) calls its reach's rule",
+   "title": "VIS-5 set_reaction(uuid,text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-204",
-   "title": "VIS-5 can_see_circle(uuid) calls its reach's rule",
+   "title": "VIS-5 set_reply_audience(uuid,text) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-205",
-   "title": "VIS-5 can_see_reply(uuid,uuid) calls its reach's rule",
+   "title": "VIS-5 space_role(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-206",
-   "title": "VIS-5 can_send_to(uuid) calls its reach's rule",
+   "title": "VIS-5 space_upload_quota(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-207",
-   "title": "VIS-5 can_view_post(uuid) calls its reach's rule",
+   "title": "VIS-5 start_family(uuid,text,text[]) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-208",
-   "title": "VIS-5 chat_list(uuid) calls its reach's rule",
+   "title": "VIS-5 toggle_heart(uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-209",
-   "title": "VIS-5 chat_publish_device(text,text[]) calls its reach's rule",
+   "title": "VIS-5 unlink_level(uuid,uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-210",
-   "title": "VIS-5 create_invite(uuid,member_role,uuid[],invite_channel,text,text,interval,integer,text,text) calls its reach's rule",
+   "title": "VIS-5 unplace_person(uuid,uuid) is registered in vis.functions (or allowlisted with a reason)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-211",
-   "title": "VIS-5 create_level(uuid,text,text) calls its reach's rule",
+   "title": "VIS-5 add_comment(uuid,uuid,text) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-212",
-   "title": "VIS-5 delete_family_date(uuid) calls its reach's rule",
+   "title": "VIS-5 can_see_circle(uuid) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-213",
-   "title": "VIS-5 delete_post(uuid) calls its reach's rule",
+   "title": "VIS-5 can_see_reply(uuid,uuid) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-214",
-   "title": "VIS-5 edit_post_words(uuid,text,text) calls its reach's rule",
+   "title": "VIS-5 can_send_to(uuid) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-215",
-   "title": "VIS-5 get_comments(uuid,integer) calls its reach's rule",
+   "title": "VIS-5 can_view_post(uuid) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-216",
-   "title": "VIS-5 mark_seen(uuid) calls its reach's rule",
+   "title": "VIS-5 chat_list(uuid) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-217",
-   "title": "VIS-5 post_viewers(uuid[]) calls its reach's rule",
+   "title": "VIS-5 chat_publish_device(text,text[]) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-218",
-   "title": "VIS-5 publish_post(uuid) calls its reach's rule",
+   "title": "VIS-5 chat_roster(uuid) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-219",
-   "title": "VIS-5 reaction_summary(uuid[]) calls its reach's rule",
+   "title": "VIS-5 create_invite(uuid,member_role,uuid[],invite_channel,text,text,interval,integer,text,text) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-220",
-   "title": "VIS-5 register_push_token(text,text) calls its reach's rule",
+   "title": "VIS-5 create_level(uuid,text,text) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-221",
-   "title": "VIS-5 rename_circle(uuid,text) calls its reach's rule",
+   "title": "VIS-5 delete_family_date(uuid) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-222",
-   "title": "VIS-5 reply_readers(uuid) calls its reach's rule",
+   "title": "VIS-5 delete_post(uuid) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-223",
-   "title": "VIS-5 reply_scope(uuid) calls its reach's rule",
+   "title": "VIS-5 edit_post_words(uuid,text,text) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-224",
-   "title": "VIS-5 request_account_export() calls its reach's rule",
+   "title": "VIS-5 get_comments(uuid,integer) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-225",
-   "title": "VIS-5 save_family_date(uuid,uuid,text,text,integer,integer,uuid) calls its reach's rule",
+   "title": "VIS-5 list_family_dates(uuid) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-226",
-   "title": "VIS-5 set_notification_prefs(uuid,boolean,text) calls its reach's rule",
+   "title": "VIS-5 mark_seen(uuid) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-227",
-   "title": "VIS-5 set_reaction(uuid,text) calls its reach's rule",
+   "title": "VIS-5 my_circles(uuid) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-228",
-   "title": "VIS-5 set_reply_audience(uuid,text) calls its reach's rule",
+   "title": "VIS-5 my_spaces() calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-229",
-   "title": "VIS-5 space_upload_quota(uuid) calls its reach's rule",
+   "title": "VIS-5 post_viewers(uuid[]) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-230",
-   "title": "VIS-5 toggle_heart(uuid) calls its reach's rule",
+   "title": "VIS-5 publish_post(uuid) calls its reach's rule",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-REGISTRY-231",
+   "title": "VIS-5 reaction_summary(uuid[]) calls its reach's rule",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-232",
+   "title": "VIS-5 register_push_token(text,text) calls its reach's rule",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-233",
+   "title": "VIS-5 rename_circle(uuid,text) calls its reach's rule",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-234",
+   "title": "VIS-5 reply_readers(uuid) calls its reach's rule",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-235",
+   "title": "VIS-5 reply_scope(uuid) calls its reach's rule",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-236",
+   "title": "VIS-5 request_account_export() calls its reach's rule",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-237",
+   "title": "VIS-5 save_family_date(uuid,uuid,text,text,integer,integer,uuid) calls its reach's rule",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-238",
+   "title": "VIS-5 set_notification_prefs(uuid,boolean,text) calls its reach's rule",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-239",
+   "title": "VIS-5 set_reaction(uuid,text) calls its reach's rule",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-240",
+   "title": "VIS-5 set_reply_audience(uuid,text) calls its reach's rule",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-241",
+   "title": "VIS-5 space_upload_quota(uuid) calls its reach's rule",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-242",
+   "title": "VIS-5 toggle_heart(uuid) calls its reach's rule",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-243",
    "title": "VIS-5 every allowlisted function names its reason",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-244",
+   "title": "PRIV-VC-B2 my_spaces is registered with kind space (its rule: the caller is a live member, is_space_member or my_space_ids)",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-245",
+   "title": "PRIV-VC-B2 public.my_spaces() is registered with a kind and rule-checked, not allowlisted",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-246",
+   "title": "PRIV-VC-B2 public.my_circles(uuid) is registered with a kind and rule-checked, not allowlisted",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-247",
+   "title": "PRIV-VC-B2 public.chat_roster(uuid) is registered with a kind and rule-checked, not allowlisted",
+   "area": "Vis-Registry",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-REGISTRY-248",
+   "title": "VIS-5 list_family_dates is registered with kind family_date, not allowlisted (it returns other people's dates)",
    "area": "Vis-Registry",
    "tickets": [],
    "where": "backend/tests/"
@@ -9928,132 +10474,377 @@
   },
   {
    "id": "VIS-CORE-012",
-   "title": "VIS-7 the kinds can_see can't address by id (no uuid id) are exactly the 21 reviewed ones",
+   "title": "VIS-7 the fixture's family dates are checked in both directions (seen and not seen)",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-013",
-   "title": "VIS-22 vis.sees_item equals private.sees_post for every user and every post in the fixtures",
+   "title": "VIS-7 the fixture's children are checked in both directions (seen and not seen)",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-014",
-   "title": "VIS-22 ...and the comparison is not vacuous (someone sees something)",
+   "title": "VIS-7 Blair (guardian) sees Kit; Grandma Rivera (other family only) does not",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-015",
-   "title": "VIS-22 ...and someone is kept out of something",
+   "title": "VIS-18 every user and family: list_family_dates returns exactly the dates can_see allows",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-016",
-   "title": "VIS-24 private.sees_post(uuid,uuid) exists",
+   "title": "VIS-7 the kinds can_see can't address by id (no uuid id) are exactly the 21 reviewed ones",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-017",
-   "title": "VIS-24 vis.sees_item(uuid,uuid) exists",
+   "title": "R82 Alex's export has none of the dates he created in a deleted family (family C)",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-018",
-   "title": "VIS-24 vis.can_see(uuid,text,uuid) exists",
+   "title": "R82 ...and still has the date he created in his live family (A's anniversary)",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-019",
-   "title": "VIS-24 private.sees_post(uuid,uuid) lives in a schema PostgREST does not expose",
+   "title": "R82 Grandma Rivera's export keeps her own birthday from deleted family C (her own data)",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-020",
-   "title": "VIS-24 vis.sees_item(uuid,uuid) lives in a schema PostgREST does not expose",
+   "title": "VIS-22 vis.sees_item equals private.sees_post for every user and every post in the fixtures",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-021",
-   "title": "VIS-24 vis.can_see(uuid,text,uuid) lives in a schema PostgREST does not expose",
+   "title": "VIS-22 ...and the comparison is not vacuous (someone sees something)",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-022",
-   "title": "VIS-24 signed out (anon) can't execute private.sees_post(uuid,uuid)",
+   "title": "VIS-22 ...and someone is kept out of something",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-023",
-   "title": "VIS-24 signed out (anon) can't execute vis.sees_item(uuid,uuid)",
+   "title": "VIS-24 private.sees_post(uuid,uuid) exists",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-024",
-   "title": "VIS-24 signed out (anon) can't execute vis.can_see(uuid,text,uuid)",
+   "title": "VIS-24 vis.sees_item(uuid,uuid) exists",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-025",
-   "title": "VIS-24 private.sees_post(uuid,uuid) pins search_path to empty",
+   "title": "VIS-24 vis.can_see(uuid,text,uuid) exists",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-026",
-   "title": "VIS-24 vis.sees_item(uuid,uuid) pins search_path to empty",
+   "title": "VIS-24 private.sees_post(uuid,uuid) lives in a schema PostgREST does not expose",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-027",
-   "title": "VIS-24 vis.can_see(uuid,text,uuid) pins search_path to empty",
+   "title": "VIS-24 vis.sees_item(uuid,uuid) lives in a schema PostgREST does not expose",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-028",
-   "title": "VIS-24 a signed-in user (authenticated) can't execute vis.can_see",
+   "title": "VIS-24 vis.can_see(uuid,text,uuid) lives in a schema PostgREST does not expose",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-029",
-   "title": "VIS-24 no wrapper named sees_post, sees_item or can_see sits in an exposed schema",
+   "title": "VIS-24 signed out (anon) can't execute private.sees_post(uuid,uuid)",
    "area": "Vis-Core",
    "tickets": [],
    "where": "backend/tests/"
   },
   {
    "id": "VIS-CORE-030",
+   "title": "VIS-24 signed out (anon) can't execute vis.sees_item(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-031",
+   "title": "VIS-24 signed out (anon) can't execute vis.can_see(uuid,text,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-032",
+   "title": "VIS-24 private.sees_post(uuid,uuid) pins search_path to empty",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-033",
+   "title": "VIS-24 vis.sees_item(uuid,uuid) pins search_path to empty",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-034",
+   "title": "VIS-24 vis.can_see(uuid,text,uuid) pins search_path to empty",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-035",
+   "title": "VIS-24 a signed-in user (authenticated) can't execute vis.can_see",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-036",
+   "title": "VIS-24 no wrapper named sees_post, sees_item or can_see sits in an exposed schema",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-037",
+   "title": "PRIV-VC-B1 the private.vis_* viewer-id rules are exactly the nine pinned ones",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-038",
+   "title": "PRIV-VC-B1 signed out (anon) can't execute private.vis_comment_ok(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-039",
+   "title": "PRIV-VC-B1 signed out (anon) can't execute private.vis_media_ok(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-040",
+   "title": "PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_child(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-041",
+   "title": "PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_circle(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-042",
+   "title": "PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_family_date(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-043",
+   "title": "PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_household(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-044",
+   "title": "PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_invite(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-045",
+   "title": "PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_person(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-046",
+   "title": "PRIV-VC-B1 signed out (anon) can't execute private.vis_sees_space(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-047",
+   "title": "PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_comment_ok(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-048",
+   "title": "PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_media_ok(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-049",
+   "title": "PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_child(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-050",
+   "title": "PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_circle(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-051",
+   "title": "PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_family_date(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-052",
+   "title": "PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_household(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-053",
+   "title": "PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_invite(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-054",
+   "title": "PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_person(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-055",
+   "title": "PRIV-VC-B1 a signed-in user (authenticated) can't execute private.vis_sees_space(uuid,uuid)",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-056",
+   "title": "PRIV-VC-B1 private.vis_comment_ok(uuid,uuid) pins search_path to empty",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-057",
+   "title": "PRIV-VC-B1 private.vis_media_ok(uuid,uuid) pins search_path to empty",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-058",
+   "title": "PRIV-VC-B1 private.vis_sees_child(uuid,uuid) pins search_path to empty",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-059",
+   "title": "PRIV-VC-B1 private.vis_sees_circle(uuid,uuid) pins search_path to empty",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-060",
+   "title": "PRIV-VC-B1 private.vis_sees_family_date(uuid,uuid) pins search_path to empty",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-061",
+   "title": "PRIV-VC-B1 private.vis_sees_household(uuid,uuid) pins search_path to empty",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-062",
+   "title": "PRIV-VC-B1 private.vis_sees_invite(uuid,uuid) pins search_path to empty",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-063",
+   "title": "PRIV-VC-B1 private.vis_sees_person(uuid,uuid) pins search_path to empty",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-064",
+   "title": "PRIV-VC-B1 private.vis_sees_space(uuid,uuid) pins search_path to empty",
+   "area": "Vis-Core",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-CORE-065",
    "title": "VIS-24 Aunt Jo asking can_see whether Grandma sees a post is refused (42501), not answered",
    "area": "Vis-Core",
    "tickets": [],
@@ -10112,6 +10903,1336 @@
    "id": "VIS-CALENDAR-008",
    "title": "VIS-18 Grandma Rivera can't see B's reunion (not in family B)",
    "area": "Vis-Calendar",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-001",
+   "title": "VIS-8 harness: tests/vis_oracle/generate.sql defines vis_oracle.generate(seed integer)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-002",
+   "title": "VIS-11 harness: tests/vis_oracle/generate.sql defines vis_oracle.fixture_json()",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-003",
+   "title": "VIS-8 fixed seed: generate(42) twice gives the same rows, ids and times",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-004",
+   "title": "VIS-8 fixed seed: a different seed gives a different family",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-005",
+   "title": "VIS-11 fixture_json() is the same for the same seed",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-006",
+   "title": "VIS-11 backend/tests/vis_oracle/fixtures/seed-42.json equals vis_oracle.fixture_json() for seed 42 (regenerate it with nightly.sh --seed 42 --fixture)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-007",
+   "title": "VIS-8 shape: at least two generated households",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-008",
+   "title": "VIS-8 shape: at least three live generated families",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-009",
+   "title": "VIS-8 shape: a deleted family (its members must see nothing in it)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-010",
+   "title": "VIS-8 shape: at least 12 generated people",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-011",
+   "title": "VIS-8 shape: personas only (PERSONAS.md nicknames, emails at example.com)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-012",
+   "title": "VIS-8 shape: a co-parent: a parent in one family who is a relative in the other",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-013",
+   "title": "VIS-8 shape: overlapping groups (someone in two groups of one family)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-014",
+   "title": "VIS-8 shape: a removed member (wrote a post, no longer in that family)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-015",
+   "title": "VIS-8 shape: a demoted parent (wrote posts, now a relative in a family where relatives can't post)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-016",
+   "title": "VIS-8 shape: a share-history cutoff with posts on both sides of it",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-017",
+   "title": "VIS-8 shape: at least 40 live posts, a deleted post and a draft",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-018",
+   "title": "VIS-8 shape: Everyone, household, event and plain groups, and a retired group",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-019",
+   "title": "VIS-8 shape: a post sent only to a group that was retired since",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-020",
+   "title": "VIS-8 shape: at least 10 replies and a deleted reply",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-021",
+   "title": "VIS-8 shape: at least 10 reactions",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-022",
+   "title": "VIS-8 shape: one family keeps replies with the parents, another opens them to everyone",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-023",
+   "title": "VIS-8 shape: ready and unfinished media",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-024",
+   "title": "VIS-8 shape: a words-only post (SHARE-U-4)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-025",
+   "title": "VIS-8 shape: live news, event and saying posts (SHARE-U-4, posts.kind)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-026",
+   "title": "VIS-8 shape: at least two event rows and two saying rows (SHARE-U-15)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-027",
+   "title": "VIS-8 shape: life-calendar birthdays and a family date with no member",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-028",
+   "title": "VIS-8 shape: at least two chats",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-029",
+   "title": "VIS-8 shape: pending notices to people who can be reached (push token or email)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-030",
+   "title": "VIS-8 table (post) equals vis.can_see for every person: 1380 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-031",
+   "title": "VIS-8 table (comment) equals vis.can_see for every person: 820 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-032",
+   "title": "VIS-8 table (media_item) equals vis.can_see for every person: 1000 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-033",
+   "title": "VIS-8 table (profile) equals vis.can_see for every person: 400 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-034",
+   "title": "VIS-8 table (circle) equals vis.can_see for every person: 600 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-035",
+   "title": "VIS-8 table (space) equals vis.can_see for every person: 120 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-036",
+   "title": "VIS-8 table (family_date) equals vis.can_see for every person: 220 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-037",
+   "title": "VIS-8 table (notification_outbox) equals vis.can_see for every person: 5160 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-038",
+   "title": "VIS-8 post_audiences_table (post) equals vis.can_see for every person: 185 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-039",
+   "title": "VIS-8 feed (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-040",
+   "title": "VIS-8 timeline (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-041",
+   "title": "VIS-8 search (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-042",
+   "title": "VIS-8 post_by_id (post) equals vis.can_see for every person: 1380 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-043",
+   "title": "VIS-8 comments (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-044",
+   "title": "VIS-8 comments (comment) equals vis.can_see for every person: 680 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-045",
+   "title": "VIS-8 reply_readers (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-046",
+   "title": "VIS-8 reactions (post) equals vis.can_see for every person: 460 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-047",
+   "title": "VIS-8 reactions_table (post) equals vis.can_see for every person: 55 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-048",
+   "title": "VIS-8 post_viewers (post) equals vis.can_see for every person: 1220 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-049",
+   "title": "VIS-8 post_viewers:names (post) equals vis.can_see for every person: 980 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-050",
+   "title": "VIS-8 sign_media (post) equals vis.can_see for every person: 1380 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-051",
+   "title": "VIS-8 sign_media (media_item) equals vis.can_see for every person: 940 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-052",
+   "title": "VIS-8 family_dates (family_date) equals vis.can_see for every person: 220 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-053",
+   "title": "VIS-8 chat_roster (chat_group) equals vis.can_see for every person: 600 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-054",
+   "title": "VIS-8 chat_roster:people (profile) equals vis.can_see for every person: 156 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-055",
+   "title": "VIS-8 export (post) equals vis.can_see for every person: 1380 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-056",
+   "title": "VIS-8 export (comment) equals vis.can_see for every person: 41 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-057",
+   "title": "VIS-8 table (public.post_events) equals vis.can_see for every person, both ways (SHARE-U-15)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-058",
+   "title": "VIS-8 table (public.post_sayings) equals vis.can_see for every person, both ways (SHARE-U-15)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-059",
+   "title": "VIS-8 table (account_export) equals vis.can_see for every person: 20 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-060",
+   "title": "VIS-8 table (child) equals vis.can_see for every person: 20 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-061",
+   "title": "VIS-8 table (household) equals vis.can_see for every person: 80 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-062",
+   "title": "VIS-8 table (post_event) equals vis.can_see for every person: 160 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-063",
+   "title": "VIS-8 table (post_saying) equals vis.can_see for every person: 80 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-064",
+   "title": "VIS-8 table (push_token) equals vis.can_see for every person: 120 pairs, 0 wrong yes (P0), 0 wrong no (P1)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-065",
+   "title": "VIS-8 feed was checked both ways (someone allowed, someone excluded)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-066",
+   "title": "VIS-8 timeline was checked both ways (someone allowed, someone excluded)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-067",
+   "title": "VIS-8 search was checked both ways (someone allowed, someone excluded)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-068",
+   "title": "VIS-8 post_by_id was checked both ways (someone allowed, someone excluded)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-069",
+   "title": "VIS-8 comments was checked both ways (someone allowed, someone excluded)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-070",
+   "title": "VIS-8 post_viewers was checked both ways (someone allowed, someone excluded)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-071",
+   "title": "VIS-8 sign_media was checked both ways (someone allowed, someone excluded)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-072",
+   "title": "VIS-8 family_dates was checked both ways (someone allowed, someone excluded)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-073",
+   "title": "VIS-8 chat_roster was checked both ways (someone allowed, someone excluded)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-074",
+   "title": "VIS-9 can_view_post: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-075",
+   "title": "VIS-9 get_comments: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-076",
+   "title": "VIS-9 reply_readers: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-077",
+   "title": "VIS-9 reply_scope: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-078",
+   "title": "VIS-9 post_viewers: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-079",
+   "title": "VIS-9 reaction_summary: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-080",
+   "title": "VIS-9 mark_seen: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-081",
+   "title": "VIS-9 toggle_heart: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-082",
+   "title": "VIS-9 set_reaction: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-083",
+   "title": "VIS-9 add_comment: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-084",
+   "title": "VIS-9 edit_post_words: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-085",
+   "title": "VIS-9 delete_post: a post you can't see answers like one that doesn't exist (1191 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-086",
+   "title": "VIS-9 publish_post: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-087",
+   "title": "VIS-9 set_post_audience: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-088",
+   "title": "VIS-9 posts: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-089",
+   "title": "VIS-9 media_items: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-090",
+   "title": "VIS-9 comments: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-091",
+   "title": "VIS-9 reactions: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-092",
+   "title": "VIS-9 post_audiences: a post you can't see answers like one that doesn't exist (1195 hidden pairs, 0 differ)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-093",
+   "title": "VIS-9 exception: deleting your own already-deleted post again is a no-op that returns nothing (BETA-AUD-5; 4 pairs)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-094",
+   "title": "VIS-9 exception stays narrow: someone else's deleted post still says not found (P0002) to a non-author",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-095",
+   "title": "VIS-9 exception stays narrow: a non-author calling delete_post on any post hidden from them gets not found (P0002)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-096",
+   "title": "VIS-9 exception covers delete_post only",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-097",
+   "title": "VIS-9 a post that doesn't exist reads as P0002, false or empty for every person",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-098",
+   "title": "VIS-10 setup: relatives taken out of a post's groups after the notice was written can no longer see it",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-099",
+   "title": "VIS-10 the send claimed notices (the check below is not vacuous)",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-100",
+   "title": "VIS-10 every notice sent (new posts, replies, reactions) names only posts its recipient can see at send time",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "VIS-ORACLE-101",
+   "title": "VIS-10 a relative removed before the send, and a post deleted before the send, get no notice",
+   "area": "Vis-Oracle",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-001",
+   "title": "SHARE-U-12 my_features never lists post_kinds while no switch row exists (off by default)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-002",
+   "title": "SHARE-U-12 with post_kinds off, the owner's news post is refused 42501 post_kinds_off",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-003",
+   "title": "SHARE-U-12 with post_kinds off, an event is refused (42501)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-004",
+   "title": "SHARE-U-12 with post_kinds off, a saying is refused (42501)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-005",
+   "title": "SHARE-U-12 with post_kinds off, a photos post (p_kind photos) is still created",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-006",
+   "title": "SHARE-U-12 an older app build (no p_kind, no p_details) still creates a post",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-007",
+   "title": "SHARE-U-12 a post made without p_kind is kind photos",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-008",
+   "title": "SHARE-U-12 every existing post is kind photos after the migration",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-009",
+   "title": "SHARE-U-12 the family switch on but Hearth's global switch missing: still refused (42501)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-010",
+   "title": "SHARE-U-12 Hearth's global switch on but the family's off: still refused (42501)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-011",
+   "title": "SHARE-U-12 both switches on: my_features lists post_kinds for the owner",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-012",
+   "title": "SHARE-U-12 ...and never for a relative (parents only)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-013",
+   "title": "SHARE-U-4 the owner creates a news post (words only) for one group",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-014",
+   "title": "SHARE-U-4 a news post publishes with no media",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-015",
+   "title": "SHARE-U-4 news with blank words is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-016",
+   "title": "SHARE-U-4 news with no words is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-017",
+   "title": "SHARE-U-4 news with no audience is refused (23514, one post one audience)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-018",
+   "title": "SHARE-U-4 news with event fields is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-019",
+   "title": "SHARE-U-4 news with media: prepare_media_upload on a news post is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-020",
+   "title": "SHARE-U-4 news with media: a direct media insert on a news post is refused",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-021",
+   "title": "SHARE-U-4 stored as posts.kind news, words trimmed, no media, its one audience",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-022",
+   "title": "SHARE-U-4 no news, event or saying post has any media row",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-023",
+   "title": "SHARE-U-4 a photos draft with no media still can't be published (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-024",
+   "title": "SHARE-U-4 a photos post with kind fields is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-025",
+   "title": "SHARE-U-4 an unknown kind is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-026",
+   "title": "SHARE-U-11 the owner creates an event (what, when, where) for one group",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-027",
+   "title": "SHARE-U-11 an event publishes with no media",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-028",
+   "title": "SHARE-U-11 where is optional",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-029",
+   "title": "SHARE-U-11 an event without when is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-030",
+   "title": "SHARE-U-11 an event with a blank when is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-031",
+   "title": "SHARE-U-11 an event whose when isn't a date is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-032",
+   "title": "SHARE-U-11 an event without what is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-033",
+   "title": "SHARE-U-11 an event with blank what is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-034",
+   "title": "SHARE-U-11 an event with no fields is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-035",
+   "title": "SHARE-U-11 an event retry with the same client id returns the same post",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-036",
+   "title": "SHARE-U-11 ...and writes one event row, not two",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-037",
+   "title": "SHARE-U-11 stored as posts.kind event plus one post_events row with what, when and where",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-038",
+   "title": "SHARE-U-13 the owner creates a saying (words, who, age) for one group",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-039",
+   "title": "SHARE-U-13 a saying publishes with no media",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-040",
+   "title": "SHARE-U-13 age is optional",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-041",
+   "title": "SHARE-U-13 a saying without words is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-042",
+   "title": "SHARE-U-13 a saying with blank words is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-043",
+   "title": "SHARE-U-13 a saying without who is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-044",
+   "title": "SHARE-U-13 a saying with blank who is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-045",
+   "title": "SHARE-U-13 a negative age is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-046",
+   "title": "SHARE-U-13 an age over 120 is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-047",
+   "title": "SHARE-U-13 an age that isn't a number is refused (23514)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-048",
+   "title": "SHARE-U-13 stored as posts.kind saying plus one post_sayings row with the words and who said it",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-049",
+   "title": "SHARE-U-15 post_events and post_sayings are registered as item kinds on post_id, with no rule and no hook (no new visibility rule)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-050",
+   "title": "SHARE-U-15 RLS is on and forced on both",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-051",
+   "title": "SHARE-U-15 each has exactly one permissive read policy, vis.attach's (the post's own rule)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-052",
+   "title": "SHARE-U-15 app users can't write either table (create_post only), and anon can't read them",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-053",
+   "title": "SHARE-U-15 oracle setup: event and saying rows exist to check",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-054",
+   "title": "SHARE-U-15 VIS-8 for event and saying rows: what each person reads equals vis.can_see, both ways (someone allowed, someone not)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-055",
+   "title": "SHARE-U-5 allowed: Grandma Rivera (in the group) gets the news, event and saying in her feed, each with its kind",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-056",
+   "title": "SHARE-U-5 allowed: ...and on her timeline, with kind",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-057",
+   "title": "SHARE-U-5 allowed: ...and in search, with kind",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-058",
+   "title": "SHARE-U-5 allowed: ...search finds the news by its words",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-059",
+   "title": "SHARE-U-5 allowed: ...each opens by id",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-060",
+   "title": "SHARE-U-5 allowed: ...she reads the event's and the saying's fields",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-061",
+   "title": "SHARE-U-5 the excluded checks below are not vacuous: the news, event and saying are published and live",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-062",
+   "title": "SHARE-U-5 excluded: Grandma Chen (Everyone only) gets none of them in her feed",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-063",
+   "title": "SHARE-U-5 excluded: ...nor on her timeline",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-064",
+   "title": "SHARE-U-5 excluded: ...nor in search, by date or by words",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-065",
+   "title": "SHARE-U-5 excluded: ...nor by id (can_view_post false, the posts table shows nothing)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-066",
+   "title": "SHARE-U-5 excluded: ...she reads no event and no saying fields at all",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-067",
+   "title": "SHARE-U-5 excluded: ...post_viewers leaves them out",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-068",
+   "title": "SHARE-U-5 excluded: ...and her export carries none of their words",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-069",
+   "title": "SHARE-U-5 excluded: ...and the life calendar never lists the event",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-070",
+   "title": "SHARE-U-5 excluded: Blair (co-parent, not in the group) gets none of them, nor their fields",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-071",
+   "title": "SHARE-U-5 the author's own export has the news words and the event's and saying's fields",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-072",
+   "title": "SHARE-U-5 setup: the owner deletes the saying",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-073",
+   "title": "SHARE-U-5 once the saying is deleted, the person who saw it no longer reads its fields or the post",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-074",
+   "title": "SHARE-U-14 setup: with relatives allowed to post, Grandma Rivera can make a photos post",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-075",
+   "title": "SHARE-U-14 ...but her news is refused (42501, parents only)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-076",
+   "title": "SHARE-U-14 ...and her event (42501)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-077",
+   "title": "SHARE-U-14 ...and her saying (42501)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-078",
+   "title": "SHARE-U-14 a relative who can't post gets 42501 for news",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-079",
+   "title": "SHARE-U-14 an adult (second parent) gets post_kinds in my_features",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-080",
+   "title": "SHARE-U-14 an adult (second parent) can post news",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-081",
+   "title": "SHARE-U-14 the family turns post_kinds off again: the adult is refused (42501)",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-082",
+   "title": "R89 claim_notification_batches carries post_kinds for each batch",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-083",
+   "title": "R89 Grandma Rivera's batch with the news and event posts says their kinds are news and event",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-084",
+   "title": "R89 the claimed batches carry the kind only, never the words, what or saying",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-085",
+   "title": "NOTIFY-K-3 Grandma Rivera's batch counts its new posts per kind (news and event), and the counts add up to post_count",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-086",
+   "title": "NOTIFY-K-1 the claimed batches carry no event day, place, child's name or news words",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-087",
+   "title": "NOTIFY-K-4 setup: Grandma Rivera replies to the news post",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-088",
+   "title": "NOTIFY-K-4 Alex's reply batch names the kind replied on (news) with no new-post counts",
+   "area": "Post-Kinds",
+   "tickets": [],
+   "where": "backend/tests/"
+  },
+  {
+   "id": "POST-KINDS-089",
+   "title": "NOTIFY-K-4 the reply batch carries no reply words",
+   "area": "Post-Kinds",
    "tickets": [],
    "where": "backend/tests/"
   },

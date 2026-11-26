@@ -9,7 +9,7 @@ Every outside account Hearth uses, which login it's under, and where the name "H
 | Claude (claude.ai) | Project "Hearth Photo Sharing", cloud environment "Hearth" (holds `SUPABASE_ACCESS_TOKEN`, `EXPO_ACCESS_TOKEN`), published pages | Chase's personal email | Project and environment names, page titles | Easy (rename in settings) |
 | GitHub | Code, CI | `holroydchase-afk` | Repo `holroydchase-afk/Hearth` | Easy (GitHub redirects old links) |
 | Expo | App builds and push | Chase's personal email; owner `thefreighttrains-team` | Project slug `hearth`, `app/app.json` name and scheme | Easy until the first store build |
-| Supabase | Database, sign-in, functions | Chase's personal email | Project `jqvgjfbhzbvfdhtnvgzr` (project name in the dashboard), function and cron names `hearth-*` | Easy (display name only) |
+| Supabase | Database, sign-in, functions | Chase's personal email | Project `<project-ref>` (project name in the dashboard), function and cron names `hearth-*` | Easy (display name only) |
 | Resend | Sign-in code emails (custom SMTP), notices | Chase's personal email (set up Oct 17) | Sender name "Hearth"; sender email is `onboarding@resend.dev` until a domain is verified | Easy now; tied to the domain later |
 | Backblaze B2 | Photo storage (US East, `s3.us-east-005.backblazeb2.com`) | Chase's personal email (set up Oct 18) | None: bucket `family-photos-testing-kq7m` (milestone 1 test data, private, encrypted) | Easy (make a new bucket) |
 | Twilio (Verify) | Text-message sign-in codes (DEC-57, `docs/eng/SMS-PROVIDER.md`) | **Not created yet** (planned: Chase's personal email; $20 prepaid, auto-recharge off) | Verify service friendly name "Hearth", which appears in the code text | Easy (rename the service) |

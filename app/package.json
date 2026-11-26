@@ -18,6 +18,7 @@
     "e2e:site": "bash scripts/build-demo.sh && node ../e2e/node_modules/@playwright/test/cli.js test -c e2e-web/playwright.site.config.js",
     "test:contract:real": "bash scripts/contract-real.sh",
     "eas": "bash scripts/eas.sh",
+    "lint": "eslint .",
     "postinstall": "patch-package"
   },
   "dependencies": {
@@ -29,6 +30,7 @@
     "@noble/hashes": "2.0.1",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@supabase/supabase-js": "^2.118.0",
+    "babel-plugin-react-compiler": "^1.0.0",
     "expo": "~58.0.19",
     "expo-clipboard": "~58.0.4",
     "expo-constants": "~58.0.13",
@@ -63,17 +65,23 @@
     "ts-mls": "1.6.4"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
     "@hpke/chacha20poly1305": "1.8.0",
     "@react-native/jest-preset": "^0.88.0",
     "@testing-library/react-native": "^13.3.3",
     "@types/jest": "30.0.0",
     "@types/node": "^22.20.5",
     "@types/react": "~19.3.0",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-native": "^5.0.0",
+    "globals": "^17.14.0",
     "jest": "~30.5.2",
     "jest-expo": "~58.0.12",
     "patch-package": "8.0.1",
     "react-test-renderer": "19.3.0",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.74.0"
   },
   "private": true,
   "jest": {
@@ -98,5 +106,8 @@
       "<rootDir>/node_modules"
     ],
     "testEnvironment": "./jest.environment.js"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

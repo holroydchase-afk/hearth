@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-25T10:00:00-05:00",
+ "label": "Share's Event, News and Saying cards (SHARE-U-17..23) plus guards, after merging main ea3f08a: all suites 3x via test-all.sh (red: compiler rules, B31, also red on main)",
+ "passed": 13818,
+ "failed": 12,
+ "results": {},
+ "note": "3 runs of bash test-all.sh at a7d5c9e (merge of main ea3f08a into 8383d5e plus qa-tdd's 5 guard tests), identical each time: 24 suites passed, 1 failed (compiler rules: 4 bailouts not allowlisted, B31; the same 4 fail on main ea3f08a alone, and 2 of them on 53cffb7 before the engineer's change), 2 skipped (starter invites: no template; Deno not installed, CI runs it). Per run: jest 2542 passed (1 skipped, 1 todo), typecheck clean, e2e:demo 61, e2e:web 6, prototype 33, backend SQL 1964 passed, 0 failed. No test changed between the red tests (53cffb7) and the fix (8383d5e). New guards in shareKindsSave.test.tsx: SHARE-U-22 non-number Saying age (four, 4.5, -4, 1000: local notice, words kept, no createPost/publishPost) and the shared kit Notice still one alert with its words, OK outside (photo-flow denied notice); passed first run, and went red (5 of 5) with the alert role removed from Notice as a mutation check. failed counts the 4 compiler bailouts per run. Not run: Deno, starter invites, phones, screen readers on a device. e2e/results/share-kinds-green-3x-2026-11-25.txt"
+}

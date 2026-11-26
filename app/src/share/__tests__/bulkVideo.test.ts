@@ -12,7 +12,7 @@ const NY = { timeZone: 'America/New_York' };
 let n = 0;
 const photo = (date: string): PickedAsset => ({
   uri: `file:///picked/IMG_${++n}.jpg`, type: 'image', mimeType: 'image/jpeg', width: 4032, height: 3024,
-  exif: { DateTimeOriginal: date, OffsetTimeOriginal: '-04:00', GPSLatitude: 35.2271, GPSLongitude: -80.8431 },
+  exif: { DateTimeOriginal: date, OffsetTimeOriginal: '-04:00', GPSLatitude: 0.5123, GPSLongitude: -0.4567 },
 });
 const video = (date: number): PickedAsset => ({
   uri: `file:///picked/MOV_${++n}.mov`, type: 'video', mimeType: 'video/quicktime', width: 1280, height: 720, duration: 12_000,

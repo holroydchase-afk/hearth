@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-25T13:00:00-05:00",
+ "label": "B31 compiler bailouts fixed (QA-R1 closed): compiler rules, compiler bundle, jest, typecheck, e2e:demo, e2e:web 3x (green)",
+ "passed": 7833,
+ "failed": 0,
+ "results": {},
+ "note": "3 runs at d155041 (engineer's B31 fix on d7cef77) of only the suites the change can touch, identical each time: compiler rules 0 not allowlisted (175 files, 155 functions compiled, 24 bailouts, all allowlisted; was 4 not allowlisted in r96), compiler bundle 2 passed, jest 2542 passed (1 skipped, 1 todo; 188 suites), typecheck clean, e2e:demo 61, e2e:web 6. git diff d7cef77 d155041 changes no test or checker logic: compiler-check.js only gains a SignInScreen allowlist entry with its reason and drops the stale AddPhotoSpot entry. Backend SQL, prototype and the other test-all suites are untouched since r96 (a7d5c9e) and r96 stands for them. Bundle memo-cache sentinels read 162 in run 1 (the export left from r96, before the fix) and 168 in runs 2 and 3 (new export); passed every time, expected. passed = 3 x (2 + 2542 + 61 + 6). Not run: Deno, starter invites, phones, screen readers on a device. e2e/results/b31-compiler-fix-green-3x-2026-11-25.txt"
+}
