@@ -631,12 +631,16 @@ describe('VIEWER-23 the strip in each mode', () => {
     expect(screen.queryAllByRole('button', { name: STRIP_THUMB })).toHaveLength(3);
   });
 
-  it('VIEWER-23 Easy view Off: small photos are Photos-sized (under 48 pt), the named exception', async () => {
+  // UX-R4 (ux-reviewer, Nov 26; engineer): the hit area is now 48 pt, so the named exception is the drawn size only.
+  it('VIEWER-23 Easy view Off: small photos are drawn Photos-sized (under 48 pt), the named exception', async () => {
     await openViewer(false, 0);
     const small = within(screen.getByTestId('viewer-strip')).getAllByRole('button', { name: STRIP_THUMB })
       .filter((t) => t.props.accessibilityState?.selected !== true);
     expect(small.length).toBeGreaterThan(0);
-    for (const t of small) expect(size(t).h).toBeLessThan(48);
+    for (const t of small) {
+      const drawn = t.findAll((x) => typeof x.type === 'string' && Number(flat(x.props.style).height ?? 0) > 0).map((x) => Number(flat(x.props.style).height));
+      expect(Math.min(...drawn)).toBeLessThan(48);
+    }
   });
 
   it('VIEWER-23 Easy view On: every small photo is at least 48 by 48 and a tap never hides the strip', async () => {
@@ -647,5 +651,65 @@ describe('VIEWER-23 the strip in each mode', () => {
     act(() => gallery.tap());
     act(() => { jest.advanceTimersByTime(400); });
     expect(screen.queryAllByRole('button', { name: STRIP_THUMB })).toHaveLength(3);
+  });
+});
+
+// ---------------------------------------------------------------------------------------------------------------
+// ux-reviewer, Easy view Off (SPEC-VIEWER Review, Nov 26): UX-R1..R5. Engineer wrote these red first. Easy view On
+// keeps its sizes.
+describe('UX-R1..R5 Easy view Off polish', () => {
+  const thumbs = () => within(screen.getByTestId('viewer-strip')).getAllByRole('button', { name: STRIP_THUMB });
+  const isCurrent = (t: Inst) => t.props.accessibilityState?.selected === true;
+  const hosts = (n: Inst) => n.findAll((x) => typeof x.type === 'string');
+
+  it('UX-R4 every small photo has a 48 by 48 hit area, drawn about 40 pt tall inside it', async () => {
+    await openViewer(false, 0);
+    for (const t of thumbs()) {
+      expect({ label: t.props.accessibilityLabel, ...{ h: size(t).h >= 48, w: size(t).w >= 48 } }).toEqual({ label: t.props.accessibilityLabel, h: true, w: true });
+      const drawn = hosts(t).map((x) => Number(flat(x.props.style).height ?? 0)).filter((h) => h > 0 && h < 48);
+      expect(drawn.length).toBeGreaterThan(0);
+      expect(Math.max(...drawn)).toBeLessThanOrEqual(42);
+    }
+  });
+
+  it('UX-R4 the current small photo has a 2 pt white outline with a 2 pt dark ring inside it', async () => {
+    await openViewer(false, 0);
+    const cur = thumbs().find(isCurrent)!;
+    const rings = hosts(cur).map((x) => flat(x.props.style)).filter((s) => Number(s.borderWidth ?? 0) === 2).map((s) => String(s.borderColor).toUpperCase());
+    expect(rings).toEqual(expect.arrayContaining(['#FFFFFF', '#000000']));
+  });
+
+  it('UX-R1 the strip is quiet: other small photos at 60% opacity, the current one at full', async () => {
+    await openViewer(false, 0);
+    const op = (t: Inst) => Math.min(...[t, ...hosts(t)].map((x) => Number(flat(x.props.style).opacity ?? 1)));
+    for (const t of thumbs()) expect({ label: t.props.accessibilityLabel, op: op(t) }).toEqual({ label: t.props.accessibilityLabel, op: isCurrent(t) ? 1 : 0.6 });
+  });
+
+  it('UX-R3 UX-R5 Close and Save are 44 pt circles on a 20% white fill', async () => {
+    await openViewer(false, 0);
+    for (const name of ['Close', 'Save to my phone']) {
+      const circle = screen.getByRole('button', { name }).findAll((n) => typeof n.type === 'string' && flat(n.props.style).width === 44)[0]!;
+      expect({ name, fill: String(flat(circle.props.style).backgroundColor).replace(/\s/g, '') }).toEqual({ name, fill: 'rgba(255,255,255,0.2)' });
+    }
+  });
+
+  it('UX-R3 caption and strip keep 16 pt side gutters and 16 pt between them', async () => {
+    await openViewer(false, 0);
+    const cap = screen.getByText('Two at the lake');
+    expect(flat(cap.props.style).paddingHorizontal).toBe(16);
+    const strip = screen.getByTestId('viewer-strip');
+    expect(flat(strip.props.contentContainerStyle).paddingHorizontal).toBe(16);
+    expect(flat(screen.getByTestId('viewer-scrim').props.style).gap).toBe(16);
+  });
+
+  it('UX-R2 the caption has a 1 pt text shadow and the gradient reaches 70% black over at least the lower 160 pt', async () => {
+    await openViewer(false, 0);
+    const cap = flat(screen.getByText('Two at the lake').props.style);
+    expect(Number(cap.textShadowRadius ?? 0)).toBeGreaterThanOrEqual(1);
+    expect(String(cap.textShadowColor ?? '')).toMatch(/rgba\(0, ?0, ?0/);
+    const s = flat(screen.getByTestId('viewer-scrim').props.style);
+    expect(Number(s.minHeight ?? 0)).toBeGreaterThanOrEqual(160);
+    const paint = String(s.backgroundImage ?? s.experimental_backgroundImage ?? '');
+    expect(Math.max(...[...paint.matchAll(/rgba\(0, 0, 0, ([\d.]+)\)/g)].map((m) => Number(m[1])))).toBeGreaterThanOrEqual(0.7);
   });
 });

@@ -86,3 +86,33 @@ Done when VIEWER-1..19 and 21..23 are green 3x, grandparent-ux has passed the Ea
 1. Look: A, B or C? Recommend A.
 2. Confirm the Easy view Off exceptions to DS-2/3/4/6 and rule 3 (as DEC-66 did for tabs). Recommend yes; Easy view On keeps every rule.
 3. Easy view On "Zoom in" pill (VIEWER-11): kept by default (rule 3 needs a non-gesture zoom).
+
+## Review (grandparent-ux, Nov 26, 2026)
+
+Shots: `/mnt/project-files/design/viewer-2026-11-24/shots/` (390 and 360 wide, light and dark, Grandma Jo and Kevin, plus zoomed, saved and tap-hidden). **Measured** on the demo web build: every Easy view On button is at least 48 high (Close 79x48, Zoom in 103x48, pills 104-114x48, strip photos 52x56, current 72x56); text is 20 (pills), 22 (name), 17 (date, caption); nothing clipped or overlapping at 360; black backdrop in light and dark. **Inferred** (not run): 200% Android text, the video Play button (the demo has no video).
+
+**Verdict: Ready with changes, no P0.** Easy view On passes the walk: Close, Back, Save, Next and Zoom in are all words, never hide, and the strip is a bonus.
+
+| ID | P | Finding | Fix |
+|---|---|---|---|
+| GUX-R1 | P1 | At 200% text the top stack (22 pt name, wrapped date) plus caption, strip and pills may leave a sliver for the photo; pills are one line (`numberOfLines={1}`), so "Zoom in" and "Next" may clip. Inferred. | Test at 200%. If the photo is under about 35% of the height, hide the strip in Easy view On when text is large (Back and Next do the same job). |
+| GUX-R2 | P1 | The demo has no video, so Play was never seen. | Add one video to the demo. Check the "Play" button is 48+ and obvious at 360. |
+| GUX-R3 | P2 | The Save pill says "Save" (spoken name "Save to my phone"). Longer text doesn't fit three pills at 360. | Keep "Save". The "Saved to your phone." line covers it. Use "Save" in GRANDPARENT-GUIDE. Confirm with a relative. |
+| GUX-R4 | P2 | In landscape photos at 360 the Easy view photo is about 240 pt tall of 740. | Accept. Pinch or Zoom in is there. Confirm with a relative. |
+| GUX-R5 | P2 | Easy view Off has only a download icon for Save. A grandparent who turns Easy view Off loses the word. | Already a named exception; add to UAT. |
+
+Not checked: real-phone swipe feel (VIEWER-20).
+
+## Review (ux-reviewer, Easy view Off, Nov 26, 2026)
+
+Looked at `kevin-390-light/dark`, `kevin-360-light`, `kevin-390-light-tap-hidden` (web demo shots; no live device, no ux-rules run, so contrast and sizes are measured by eye). Score vs iPhone Photos: **6.5/10** (bar 8). Critic: "Why is my photo floating in a black box with a tiny arrow at the bottom?"
+
+| ID | Pri | Rule | Finding | Fix |
+|---|---|---|---|---|
+| UX-R1 | P1 | V1, V12 | Landscape photo sits mid-screen with ~270 pt of black above and ~270 below; Photos centers it too but the strip and caption pull the eye to the bottom, so the photo does not own the screen. | Make the strip the quietest thing: 36 pt thumbs at 60% opacity except the current one; keep photo centered in the space above the strip. |
+| UX-R2 | P1 | G7, V6 | Caption/scrim legibility was NOT tested: in every shot the caption sits on pure black. A tall or bright photo would put white text over snow or sky. | Shoot a portrait photo with a bright bottom edge; keep the gradient at 0 to 70% black over the lower 160 pt and add a 1 pt text shadow. |
+| UX-R3 | P1 | V3, V4 | Caption, strip and Save are stacked with 8 to 10 pt gaps; the Save icon sits alone at the far left under the strip, looks forgotten. Strip bleeds to the left edge (8 pt) while caption uses 16 pt. | Gutters 16 pt for caption and strip; 16 pt between caption and strip; Save 44 pt circle on a 20% white fill so it reads as a button. |
+| UX-R4 | P1 | G8, DS-1 | Strip thumbs look about 44 pt tall and 4 pt apart; under the 48 pt hit rule. | Thumbs 48 pt hit area (visual 40 pt plus padding); current photo outline 2 pt white with 2 pt black inset so it holds on a white-ish thumb. |
+| UX-R5 | P2 | V4 | Close glyph (16 px) and the name block do not share a baseline (X at y 76, name at 68); X has no circle so it reads as 16 px, not 44. | Draw the 44 pt circle at 20% white fill, center on the name line. |
+| UX-R6 | P2 | V6 | In light mode the pure white demo bar meets pure black with a hard seam; dark mode blends. | Demo only: dark bar over the viewer. In the app, black status bar with light content, top inset respected (confirm on device). |
+| UX-R7 | P2 | G7 | Date is 12 pt, about 70% white; thin on a phone. Named exception, but contrast was not measured. | Keep 12 pt, raise to 85% white. |

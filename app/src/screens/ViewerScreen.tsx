@@ -50,7 +50,9 @@ type Entry = { post: ReturnType<typeof useFeed>['posts'][number]; media: ReturnT
 
 /** VIEWER-21/23: the strip's small photos. Easy view Off is Photos-sized (a named exception to 48 pt); On is 48+. */
 const STRIP = {
-  off: { w: 30, current: 44, h: 44, gap: 2 },
+  // UX-R1 / UX-R4: drawn 36 (current 52) by 40 inside a 48 pt hit area; neighbours' hit areas overlap by 8 pt so
+  // the drawn photos sit 4 pt apart.
+  off: { w: 36, current: 52, h: 40, hit: 48, overlap: 4 },
   on: { w: 52, current: 72, h: 56, gap: 6 },
 } as const;
 
@@ -469,13 +471,17 @@ function Pill({ label, text, onPress, busy, wide }: { label: string; text: strin
  *  scroll view (one small photo per photo); only the ones near the current photo load their picture. */
 const STRIP_LOAD = 20;
 function Strip({ entries, cur, easy, animated, onPick }: { entries: Entry[]; cur: number; easy: boolean; animated: boolean; onPick: (i: number) => void }) {
-  const s = easy ? STRIP.on : STRIP.off;
   const list = useRef<React.ComponentRef<typeof ScrollView>>(null);
   const [width, setWidth] = useState(0);
-  const offset = (i: number) => 8 + i * (s.w + s.gap) + (i > cur ? s.current - s.w : 0);
+  const pad = easy ? 8 : 16;
+  // Each slot's width as laid out (Off: the hit area less the overlap on both sides).
+  const slot = easy
+    ? { other: STRIP.on.w + STRIP.on.gap, current: STRIP.on.current + STRIP.on.gap }
+    : { other: STRIP.off.hit - 2 * STRIP.off.overlap, current: STRIP.off.current + 8 - 2 * STRIP.off.overlap };
+  const offset = (i: number) => pad + i * slot.other + (i > cur ? slot.current - slot.other : 0);
   useEffect(() => {
     if (!width) return;
-    list.current?.scrollTo?.({ x: Math.max(0, offset(cur) + s.current / 2 - width / 2), y: 0, animated });
+    list.current?.scrollTo?.({ x: Math.max(0, offset(cur) + slot.current / 2 - width / 2), y: 0, animated });
   }, [cur, width]); // eslint-disable-line react-hooks/exhaustive-deps
   const m = entries.length;
   return (
@@ -486,27 +492,41 @@ function Strip({ entries, cur, easy, animated, onPick }: { entries: Entry[]; cur
       showsHorizontalScrollIndicator={false}
       onLayout={(ev) => setWidth(ev.nativeEvent.layout.width)}
       style={styles.strip}
-      contentContainerStyle={{ paddingHorizontal: 8 }}
+      contentContainerStyle={{ paddingHorizontal: pad }}
     >
       {entries.map((item, i) => {
         const on = i === cur;
+        const picture = Math.abs(i - cur) <= STRIP_LOAD
+          ? <MediaImage postId={item.post.post_id} mediaId={item.media.media_id} full={false} compact onBlack style={styles.thumbImage} />
+          : <View style={styles.thumbImage} />;
+        const common = {
+          accessibilityRole: 'button' as const,
+          accessibilityLabel: `Photo ${i + 1} of ${m}, from ${item.post.author_name}`,
+          accessibilityState: { selected: on },
+          'aria-selected': on,
+          onPress: () => onPick(i),
+        };
+        if (easy) {
+          const s = STRIP.on;
+          return (
+            <Pressable key={item.media.media_id} {...common}
+              style={[{ width: on ? s.current : s.w, height: s.h, marginRight: s.gap, minHeight: MIN_TARGET, minWidth: MIN_TARGET }, on ? styles.thumbOn : styles.thumb]}>
+              {picture}
+            </Pressable>
+          );
+        }
+        const s = STRIP.off;
         return (
-          <Pressable
-            key={item.media.media_id}
-            accessibilityRole="button"
-            accessibilityLabel={`Photo ${i + 1} of ${m}, from ${item.post.author_name}`}
-            accessibilityState={{ selected: on }}
-            aria-selected={on}
-            onPress={() => onPick(i)}
-            style={[
-              { width: on ? s.current : s.w, height: s.h, marginRight: s.gap },
-              easy ? { minHeight: MIN_TARGET, minWidth: MIN_TARGET } : null,
-              on ? styles.thumbOn : styles.thumb,
-            ]}
-          >
-            {Math.abs(i - cur) <= STRIP_LOAD
-              ? <MediaImage postId={item.post.post_id} mediaId={item.media.media_id} full={false} compact onBlack style={styles.thumbImage} />
-              : <View style={styles.thumbImage} />}
+          <Pressable key={item.media.media_id} {...common}
+            style={[styles.thumbHit, { width: on ? s.current + 8 : s.hit, height: s.hit, marginHorizontal: -s.overlap }]}>
+            {on ? (
+              // UX-R4: 2 pt white outline with a 2 pt dark ring inside, so it holds on a white-ish photo.
+              <View style={[styles.ringOut, { width: s.current, height: s.h }]}>
+                <View style={styles.ringIn}>{picture}</View>
+              </View>
+            ) : (
+              <View style={[styles.thumbQuiet, { width: s.w, height: s.h }]}>{picture}</View>
+            )}
           </Pressable>
         );
       })}
@@ -548,14 +568,19 @@ const styles = StyleSheet.create({
   offTop: { position: 'absolute', top: 0, left: 0, right: 0, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 4, paddingBottom: 16 },
   titles: { flex: 1, alignItems: 'center' },
   spacer: { width: MIN_TARGET, height: MIN_TARGET },
-  offBottom: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingTop: 40, gap: 8 },
-  offCaption: { paddingHorizontal: 16 },
-  offRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 4 },
+  // UX-R2 / UX-R3: the gradient covers at least the lower 160 pt; caption, strip and Save 16 pt apart.
+  offBottom: { position: 'absolute', left: 0, right: 0, bottom: 0, minHeight: 160, justifyContent: 'flex-end', paddingTop: 40, gap: 16 },
+  offCaption: { paddingHorizontal: 16, textShadowColor: 'rgba(0, 0, 0, 0.6)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 1 },
+  offRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14 },
   round: { width: MIN_TARGET, height: MIN_TARGET, alignItems: 'center', justifyContent: 'center' },
-  circle: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.45)' },
+  circle: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255, 255, 255, 0.2)' }, // UX-R3 / UX-R5
   msg: { backgroundColor: '#1C1C1E', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10 },
   strip: { flexGrow: 0 },
   thumb: { overflow: 'hidden', borderRadius: RADIUS.small, opacity: 0.85 },
+  thumbHit: { alignItems: 'center', justifyContent: 'center' },
+  thumbQuiet: { overflow: 'hidden', borderRadius: RADIUS.small, opacity: 0.6 }, // UX-R1
+  ringOut: { borderWidth: 2, borderColor: WHITE, borderRadius: RADIUS.small, overflow: 'hidden' },
+  ringIn: { flex: 1, borderWidth: 2, borderColor: BLACK, overflow: 'hidden' },
   thumbOn: { overflow: 'hidden', borderRadius: RADIUS.small, borderWidth: 2, borderColor: WHITE },
   thumbImage: { flex: 1, backgroundColor: '#1C1C1E' },
 });
