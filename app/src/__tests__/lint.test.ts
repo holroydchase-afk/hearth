@@ -23,11 +23,11 @@ describe('INTAKE-199 studio lint gate', () => {
     expect(read('app/eslint.config.mjs')).toContain('STUDIO_LINT_STRICT');
   });
 
-  it('LINT-3 a lint job runs on pull requests from app/ with the strict switch', () => {
+  it('LINT-3 a lint job runs on pull requests from app/ in strict mode', () => {
     const y = read('.github/workflows/lint.yml');
     expect(y).toMatch(/pull_request/);
     expect(y).toMatch(/working-directory: app/);
-    expect(y).toMatch(/STUDIO_LINT_STRICT: \$\{\{ vars\.STUDIO_LINT_STRICT \}\}/);
+    expect(y).toMatch(/STUDIO_LINT_STRICT: '1'/);
     expect(y).toMatch(/npm run lint/);
   });
 

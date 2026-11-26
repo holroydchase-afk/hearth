@@ -14,7 +14,8 @@ blockers:
 
 ## Nov 26: lint to strict, step 1 (intake #204, R113; branch claude/project-thread-is6w2s-disables, not pushed)
 - **Done, test-first** (LINT-6 red, then green): all 30 `eslint-disable` comments carry a `-- reason`; the 2 in `ui/typing.ts` that suppressed nothing are deleted; `reportUnusedDisableDirectives` is on (LINT-7). Comments only, no behaviour change.
-- **Next:** one PR per rule family (TRACKER R113), then strict. Coordinate `app/src/ui` and `app/src/platform` timing with the Building Blocks handover thread.
+- **Update:** the lint stack is built in order (disables, requires + unused vars, refs/hooks, strict in `lint.yml`); strict mode exits 0 with 0 errors. 158 warnings left (155 inline styles, for #192). 15 hooks sites carry a dated reasoned disable. **Next:** push in queue order; managed config after studio-agents PR 175.
+- (earlier plan) one PR per rule family (TRACKER R113), then strict. Coordinate `app/src/ui` and `app/src/platform` timing with the Building Blocks handover thread.
 ## Nov 26: birthday moves from Gallery to Me (Chase, DEC-90, R78, CAL-S1..S5; branch claude/birthday-in-settings, local, not pushed)
 - **Done, test-first** (qa-tdd red d0fc779): BirthdayCard and its Not-now helpers removed; Me has a "My birthday" section (every member, hidden quietly without 0029); its button opens /more/birthdays?add=mine. Privacy line now "The people who can see you in Hearth will see the month and day. Never the year."
 - **Open:** none for the saved confirmation: it now reads "Saved. December 8 is your birthday." (QA-R1/B24 fixed). Reminder notification: later idea.
