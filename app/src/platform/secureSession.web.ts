@@ -25,6 +25,14 @@ export interface SecureSessionStorage {
   removeItem(key: string): Promise<void>;
   /** Sign-out: removes every value this store wrote (session + messenger store) and deletes the key. */
   clear(): Promise<void>;
+  /**
+   * HRT-WEB.3 (ARCH-WEB-R1): AES-256-GCM on the SAME key, serial chain and memory switch, for the upload store's
+   * bytes. `name` is bound as additional data. Output is nonce ‖ ciphertext ‖ tag. null: cannot seal (key store or
+   * WebCrypto unavailable); never plain bytes.
+   */
+  sealBytes(name: string, bytes: Uint8Array): Promise<Uint8Array | null>;
+  /** null: wrong name, tampered, key gone or unavailable. Never creates a key. */
+  openBytes(name: string, sealed: Uint8Array): Promise<Uint8Array | null>;
 }
 
 /** Sealed values are kept under this prefix, so a sealed value is never mistaken for an old plain one. */
@@ -205,7 +213,37 @@ export function createSecureSessionStorage({ keys }: { keys: SessionKeyStore }):
     try { await keys.delete(); } catch { /* IndexedDB blocked: nothing was kept there */ }
   });
 
-  return { getItem, setItem, removeItem, clear };
+  const sealBytes = (name: string, bytes: Uint8Array) => serial(async (): Promise<Uint8Array | null> => {
+    if (memory) return null; // the sealed store is not available this visit: no plain bytes anywhere
+    try {
+      const k = (await sealingKey(true))!;
+      const nonce = globalThis.crypto.getRandomValues(new Uint8Array(NONCE));
+      const ct = new Uint8Array(await subtleCrypto()!.encrypt(
+        { name: 'AES-GCM', iv: nonce, additionalData: enc.encode(name) }, k, bytes as Uint8Array<ArrayBuffer>));
+      const out = new Uint8Array(NONCE + ct.length);
+      out.set(nonce);
+      out.set(ct, NONCE);
+      return out;
+    } catch {
+      goMemory();
+      return null;
+    }
+  });
+
+  const openBytes = (name: string, sealed: Uint8Array) => serial(async (): Promise<Uint8Array | null> => {
+    try {
+      if (sealed.length < NONCE + TAG) return null;
+      const k = await sealingKey(false);
+      if (!k) return null;
+      const pt = await subtleCrypto()!.decrypt(
+        { name: 'AES-GCM', iv: sealed.subarray(0, NONCE) as Uint8Array<ArrayBuffer>, additionalData: enc.encode(name) }, k, sealed.subarray(NONCE) as Uint8Array<ArrayBuffer>);
+      return new Uint8Array(pt);
+    } catch {
+      return null;
+    }
+  });
+
+  return { getItem, setItem, removeItem, clear, sealBytes, openBytes };
 }
 
 const DB = 'hearth.session';

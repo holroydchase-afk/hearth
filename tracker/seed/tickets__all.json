@@ -1713,6 +1713,19 @@
    "fixed": null
   },
   {
+   "id": "T47",
+   "kind": "test fix",
+   "layer": "app",
+   "severity": "Low",
+   "status": "open",
+   "title": "QA-R1 (HRT-WEB.3 green run, Nov 25): app/src/upload/queue.ts dropDraft() re-issues the idempotent create_post to delete an orphan draft when postId is unknown (engineer deviation 4) and no test covers it: webQueue.test.ts WEB-APP-31 checks only the failed state and the one code-only report. Add a case with a FakeApi job that has no postId: after open() the draft is deleted, createPost is called with the job clientId, no second post exists, and an offline createPost does not break open(). Test: app/src/upload/__tests__/webQueue.test.ts",
+   "tests": [
+    "app/src/upload/__tests__/webQueue.test.ts"
+   ],
+   "found": "2026-11-25",
+   "fixed": null
+  },
+  {
    "id": "B32",
    "kind": "bug",
    "layer": "app",

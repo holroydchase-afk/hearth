@@ -1,0 +1,9 @@
+{
+ "suite": "app",
+ "at": "2026-11-25T23:55:00-05:00",
+ "label": "HRT-WEB.3 photo sharing on the web + PRIV-WEB3-R1: all suites 3x (green, T47 gap)",
+ "passed": 8280,
+ "failed": 0,
+ "results": {},
+ "note": "3 identical runs on the final tree (HEAD f5f0ecf, main merged, check-unique-numbers ok): jest 2593 passed (1 skipped, 1 todo, 197 suites) x3, typecheck clean x3, e2e:web 57 passed (6 skipped) x3 incl. web-photo-share.spec.js, e2e:site 16 x3, e2e:demo 61 x3, prototype e2e 33 x3, compiler-bundle and compiler-rules ok x3, 17 cheap script suites (check-agents, unique numbers, expo-go, sync-agents, agent-runs, agents-check-skip, persona-checks, unique-numbers test, expo-go test, logs, spdx, grandparent guide, test-all helper, test totals, EAS, site analytics, site meta) ok x3. No flake. Not run: backend SQL, Deno, deploy script, WEB-APP-35/36 (manual, real Android phone). Deviation review: all 4 sound; one coverage gap (T47). e2e/results/web-photo-green-3x-2026-11-25/"
+}
