@@ -112,7 +112,7 @@ test('GUX-R1 CAL-S4 at 390x844 Me -> My birthday -> "Add my birthday" opens the 
   expect(errors).toEqual([]);
 });
 
-test('GUX-R2 CAL-S2 CAL-S4 after Save from Me, "Saved. Your family will see December 8." is on-screen at the top of Birthdays, and Me then shows "December 8"', async ({ page }) => {
+test('GUX-R2 CAL-S2 CAL-S4 after Save from Me, "Saved. December 8 is your birthday." is on-screen at the top of Birthdays, and Me then shows "December 8"', async ({ page }) => {
   await page.goto('/');
   await galleryLoaded(page);
   const section = await openMyBirthday(page);
@@ -120,7 +120,7 @@ test('GUX-R2 CAL-S2 CAL-S4 after Save from Me, "Saved. Your family will see Dece
   await page.getByRole('button', { name: 'December', exact: true }).filter({ visible: true }).click();
   await page.getByRole('button', { name: 'December 8', exact: true }).filter({ visible: true }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).filter({ visible: true }).click();
-  const saved = page.getByText('Saved. Your family will see December 8.').filter({ visible: true });
+  const saved = page.getByText('Saved. December 8 is your birthday.').filter({ visible: true });
   await expect(saved).toBeInViewport({ ratio: 1 });
   await expect(page.getByRole('heading', { name: 'Birthdays and dates' })).toBeVisible();
   await expect(page.getByRole('button', { name: /^(Back to )?Gallery$/ }).filter({ visible: true })).toHaveCount(0); // More's stack

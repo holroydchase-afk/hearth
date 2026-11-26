@@ -119,7 +119,7 @@ describe('CAL-S2 Me has a "My birthday" section', () => {
     fireEvent.press(choice('December')!);
     fireEvent.press(choice(/^(December )?8$/)!);
     fireEvent.press(screen.getByRole('button', { name: 'Save' }));
-    expect(await screen.findByText('Saved. Your family will see December 8.', {}, slow)).toBeTruthy();
+    expect(await screen.findByText('Saved. December 8 is your birthday.', {}, slow)).toBeTruthy();
     expect(await screen.findByRole('header', { name: 'Birthdays and dates' }, slow)).toBeTruthy();
     const rows = await as(be, 'chase').familyDates(SPACE);
     expect(rows.filter((r) => r.member_id === jo.id)).toEqual([expect.objectContaining({ month: 12, day: 8 })]);

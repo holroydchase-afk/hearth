@@ -13,7 +13,7 @@ blockers:
 
 ## Nov 26: birthday moves from Gallery to Me (Chase, DEC-90, R78, CAL-S1..S5; branch claude/birthday-in-settings, local, not pushed)
 - **Done, test-first** (qa-tdd red d0fc779): BirthdayCard and its Not-now helpers removed; Me has a "My birthday" section (every member, hidden quietly without 0029); its button opens /more/birthdays?add=mine. Privacy line now "The people who can see you in Hearth will see the month and day. Never the year."
-- **Open:** the saved confirmation still reads "Saved. Your family will see December 8." because tests pin it (birthdaySettings, demo-calendar); QA-R1 wording there needs a test change from qa-tdd. Reminder notification: later idea.
+- **Open:** none for the saved confirmation: it now reads "Saved. December 8 is your birthday." (QA-R1/B24 fixed). Reminder notification: later idea.
 
 ## Nov 25: post kinds ON for the web demo only (R98, DEMO-KINDS-1..14; branch claude/project-thread-jtelk5, local, not pushed)
 - **Done, test-first** (qa-tdd red 2f3f0a6, r115; engineer 801fd7c touched no test or spec): `app/src/demo/seed.ts` `seedDemo` turns `post_kinds` on (global flag plus the space flag), `demoSeedVersion` includes it so returning visitors get it, Try this step 4 (`DemoFrame.tsx`) names Share, Event, News, Saying, and the architecture overview footer line says so. Real builds stay off.

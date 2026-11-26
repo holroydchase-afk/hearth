@@ -109,7 +109,7 @@ function DateForm({ form, mine, onDone, onCancel }: {
         await api.saveFamilyDate({ space, id: form.mode === 'change' ? form.date.id : null, kind: memberId ? 'birthday' : kind,
           label: memberId ? null : label.trim(), month, day, memberId });
       }
-      onDone(form.mode === 'mine' ? `Saved. Your family will see ${dateWords(month, day)}.` : 'Saved.');
+      onDone(form.mode === 'mine' ? `Saved. ${dateWords(month, day)} is your birthday.` : 'Saved.');
     } catch (e) {
       if (calendarMissing(e)) { markMissing(api, space); onCancel(); } else setProblem(didntSave(e));
     } finally {
@@ -211,7 +211,7 @@ export function BirthdaysScreen({ backTo = 'More', onBack = backToMore, startMin
     <Screen key="list">
       <BackButton to={backTo} onPress={onBack} />
       <Txt variant="title1" role="header">Birthdays and dates</Txt>
-      {/* GUX-R2: "Saved. Your family will see December 8." at the top, in view (the list opens scrolled to the top) */}
+      {/* GUX-R2: "Saved. December 8 is your birthday." at the top, in view (the list opens scrolled to the top) */}
       {notice ? <Notice tone="good" text={notice} onClose={() => setNotice(null)} /> : null}
       <Txt tone="muted">Only your family can see these.</Txt>
       {cal.status === 'missing' ? <Txt>Birthdays aren't ready on Hearth yet. They're coming soon.</Txt> : null}
