@@ -43,7 +43,7 @@ jobs:
           fi
           echo "ok: $line"
       # Python is on the runner; Node is set up for repos whose verify command is npm-based.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
       - name: Agents line matches the run log (and qa-tdd's suites rerun on CI)
