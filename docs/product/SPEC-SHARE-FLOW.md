@@ -1,6 +1,6 @@
 # Spec: the two-step Share flow (all composers)
 
-Status: Chase's call, Nov 26, 2026 (DEC-90) · Owner: staff-pm · Persona check: `decisions/2026-11-26-share-flow.md` · TRACKER R99
+Status: Chase's call, Nov 26, 2026 (DEC-90) · Owner: staff-pm · Persona check: `decisions/2026-11-26-share-flow.md` · TRACKER R112
 Look source: the "Share flow, in two steps" tester, look B "Say it first" (a published tester; its source stays in the scratchpad, not the repo). Reads with SPEC-TYPE and DESIGN-SYSTEM (DS-1..DS-9).
 
 ## The bet

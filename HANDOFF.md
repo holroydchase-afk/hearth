@@ -11,6 +11,19 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 25: product review pilot fixes, first part (intake #170, R111; local branch, not pushed yet)
+- **Done:** README order (encryption honesty sentence first, Status above Start here); checks on items 1 and 6 recorded in R111.
+- **Next:** fresh screenshots and a grandparent-ux pass (item 4), then the contrast and reaction-row P2s test-first. **Beta status line done (Chase, Nov 26).
+
+## Nov 25: review of repo best-practices PR (intake #191, R110; branch local, not pushed yet)
+- **Done:** README AI wording matched to the claims register, CHANGELOG.md added. Docs only.
+- **Next:** push in the next turn; read CodeQL alerts once the Security tab can be read; P2s in R110.
+
+## Nov 26: ESLint gate (intake #199, R99; branch claude/project-thread-is6w2s, not pushed)
+- **Done, test-first** (LINT-1..5 in `app/src/__tests__/lint.test.ts`, red then green 3x): `app/eslint.config.mjs`, `npm run lint`, `.github/workflows/lint.yml`, `engines.node`, `.nvmrc`. Warnings only unless `STUDIO_LINT_STRICT=1`. **Warning count: 324, errors 0.** Jest 2630 pass, typecheck green.
+- **Follow-up:** studio-agents PR 175 (managed config) was not reachable from this thread. qa-tdd green 3x (`e2e/results/lint-gate-intake199-green-3x-2026-11-26.txt`); strict mode gives 166 errors.
+- **Next:** after studio-agents PR 175 merges, run studio-sync to swap in the managed config; fix warnings in small PRs; set `STUDIO_LINT_STRICT=1`. Open PR when the queue allows.
+
 ## Nov 25: post kinds ON for the web demo only (R98, DEMO-KINDS-1..14; branch claude/project-thread-jtelk5, local, not pushed)
 - **Done, test-first** (qa-tdd red 2f3f0a6, r115; engineer 801fd7c touched no test or spec): `app/src/demo/seed.ts` `seedDemo` turns `post_kinds` on (global flag plus the space flag), `demoSeedVersion` includes it so returning visitors get it, Try this step 4 (`DemoFrame.tsx`) names Share, Event, News, Saying, and the architecture overview footer line says so. Real builds stay off.
 - **Proof:** all suites 3x via `bash test-all.sh`, green (r125, `e2e/results/demo-kinds-green-2026-11-25/`): jest 2623, e2e:demo 72, e2e:web 47, prototype 33. Deno and the starter-invites suite were skipped here (CI runs them).

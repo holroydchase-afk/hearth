@@ -652,7 +652,7 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Chose:** look B "Say it first" from the live tester: step 1 is one big open box plus quiet chips (day, place, who it's about, age, by kind) and "Next: who gets it"; step 2 is "Who gets it?" with 2-across face tiles, nothing pre-picked, a summary line and "Send to ..."; then a sent page. Photos, Event, News and Saying all follow it. A bottom-sheet month calendar (Today, Tomorrow, Saturday chips) replaces the typed day. No underline fields and no "To:" line anywhere.
 - **Over:** look A "Soft fields" (every field shown in filled boxes) and look C "Fill in the post" (type into the post itself); keeping the one-page postcard with a "To:" line (DEC-73's card, SHARE-PC-1).
 - **Because:** a grandparent sees one question per page (A1); the audience is the one choice that can go wrong, so it gets a page of its own.
-- **Source:** `docs/product/SPEC-SHARE-FLOW.md`; persona check `decisions/2026-11-26-share-flow.md` (AG and PA Red, mitigated). TRACKER R99. Amends DEC-73's one-card postcard, DEC-79's ruled lines and To: line, DEC-84's kind card faces.
+- **Source:** `docs/product/SPEC-SHARE-FLOW.md`; persona check `decisions/2026-11-26-share-flow.md` (AG and PA Red, mitigated). TRACKER R112. Amends DEC-73's one-card postcard, DEC-79's ruled lines and To: line, DEC-84's kind card faces.
 
 ---
 Last updated: Nov 26, 2026 (DEC-90)
