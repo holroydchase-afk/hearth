@@ -1,9 +1,0 @@
-ok      AGENTSKIP-0 the 'Agents line in the PR body' run: block is found in agents-check.yml
-ok      AGENTSKIP-1 code PR + 'Agents: qa-tdd skipped: no run log' fails
-ok      AGENTSKIP-2 code PR + 'Agents: qa-tdd skipped: docs only' passes
-ok      AGENTSKIP-2 code PR + 'Agents: qa-tdd skipped: config only' passes
-ok      AGENTSKIP-3 code PR + 'Agents: qa-tdd red then green, 3x' passes
-ok      AGENTSKIP-3 docs-only PR + 'Agents: qa-tdd skipped: whatever' passes
-ok      AGENTSKIP-4 code PR with no qa-tdd on the Agents line fails
-ok      AGENTSKIP-4 PR body with no Agents line fails
-AGENTS SKIP RESULT: 8 passed, 0 failed

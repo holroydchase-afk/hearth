@@ -1,6 +1,0 @@
-ok      TS-GUX-R3 a step says "Type the 6 numbers into Hearth yourself"
-ok      TS-GUX-R3 no "always starts with" rule
-ok      TS-GUX-R3 every tab named is Gallery, Share, Feed or More
-ok      TS-GUX-R3 bigger words point to More, Easy view
-
-GRANDPARENT GUIDE RESULT: 4 passed, 0 failed

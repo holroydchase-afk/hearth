@@ -1,6 +1,0 @@
-== site run 1 (after T33 fix)
-  8 passed (23.1s)
-== site run 2 (after T33 fix)
-  8 passed (22.1s)
-== site run 3 (after T33 fix)
-  8 passed (22.1s)

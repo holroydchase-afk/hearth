@@ -1,5 +1,0 @@
-ok      LIC-1 flags a source file with no SPDX header, passes one with it
-ok      LIC-2 every file in app/src, the edge functions and packages/messenger has the AGPL-3.0-or-later header
-ok      LIC-3 app/package.json says AGPL-3.0-or-later
-
-SPDX CHECK RESULT: 3 passed, 0 failed
