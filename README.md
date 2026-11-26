@@ -23,6 +23,7 @@ Hearth is a working proof of concept, built in the open.
 | | |
 |---|---|
 | Works today | Sign in with a code, post photos to a chosen group, see, react and comment, on iPhone and the web. Every suite that runs in CI passes, and the public demo is checked before and after each publish |
+| Private beta | Coming soon, after the current polish work. No date yet |
 | Built, switched off | Text message sign-in, video, and starting a family from the app |
 | Known limits | Speed on a phone hasn't been measured ([performance](docs/eng/PERFORMANCE.md)). No outside security review ([threat model](docs/architecture/04-threat-model.md)). Hearth's server holds the photo keys ([encryption and keys](docs/architecture/03-encryption-and-keys.md)) |
 

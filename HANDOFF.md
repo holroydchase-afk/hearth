@@ -13,7 +13,7 @@ blockers:
 
 ## Nov 25: product review pilot fixes, first part (intake #170, R98; local branch, not pushed yet)
 - **Done:** README order (encryption honesty sentence first, Status above Start here); checks on items 1 and 6 recorded in R98.
-- **Next:** fresh screenshots and a grandparent-ux pass (item 4), then the contrast and reaction-row P2s test-first. **Needs Chase:** the beta status line (item 2).
+- **Next:** fresh screenshots and a grandparent-ux pass (item 4), then the contrast and reaction-row P2s test-first. **Beta status line done (Chase, Nov 26).
 
 ## Nov 25: review of repo best-practices PR (intake #191, R97; branch local, not pushed yet)
 - **Done:** README AI wording matched to the claims register, CHANGELOG.md added. Docs only.
