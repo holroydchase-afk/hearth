@@ -16,6 +16,8 @@ suite "unique numbers" quiet e2e/results/unique-numbers.txt bash scripts/tests/c
 suite "Expo Go SDK" bash scripts/check-expo-go.sh
 suite "Expo Go check test" quiet e2e/results/expo-go.txt bash scripts/tests/check_expo_go_test.sh
 suite "log check" quiet e2e/results/priv2-logs.txt bash scripts/tests/check_logs_test.sh
+suite "public privacy" bash scripts/check-public-privacy.sh
+suite "public privacy guard" quiet e2e/results/public-privacy.txt bash scripts/tests/check_public_privacy_test.sh
 suite "license headers" quiet e2e/results/spdx.txt bash scripts/tests/check_spdx_test.sh
 suite "grandparent guide" quiet e2e/results/grandparent-guide.txt bash scripts/tests/grandparent_guide_test.sh
 suite "test-all helper" quiet e2e/results/test-all.txt bash scripts/tests/test_all_test.sh
@@ -34,6 +36,7 @@ suite "app e2e web" quiet e2e/results/app-e2e-web.txt bash -c 'cd app && npm run
 suite "compiler bundle" quiet e2e/results/compiler-bundle.txt bash app/scripts/check-compiler-bundle.sh
 suite "compiler rules" quiet e2e/results/compiler-rules.txt node app/scripts/compiler-check.js
 suite "deploy script" quiet e2e/results/backend-deploy.txt bash -c 'cd backend && bash tests/deploy/deploy_test.sh'
+suite "project ref required" quiet e2e/results/ref-required.txt bash -c 'cd backend && bash tests/ref_required_test.sh'
 if pg_isready -q 2>/dev/null; then
   suite "backend SQL" quiet e2e/results/backend-sql.txt bash -c 'cd backend && bash tests/run.sh'
 else

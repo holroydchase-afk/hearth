@@ -12,7 +12,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-REF=${SUPABASE_PROJECT_REF:-jqvgjfbhzbvfdhtnvgzr}
+REF=${SUPABASE_PROJECT_REF:-}
+[[ -n $REF ]] || { echo "smoke-check: set SUPABASE_PROJECT_REF to your Supabase project ref (see ACCOUNTS.md)" >&2; exit 2; }
 BASE=https://api.supabase.com/v1/projects/$REF
 die() { echo "smoke-check: $*" >&2; exit 2; }
 [[ -n ${SUPABASE_ACCESS_TOKEN:-} ]] || die "missing SUPABASE_ACCESS_TOKEN (add it as an environment secret)"

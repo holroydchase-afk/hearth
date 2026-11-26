@@ -38,6 +38,10 @@ blockers:
 - **Test changes, flagged:** the e2e B-WEB3-1 case now expects Remove only (no Try again) per the grandparent-ux words; webQueue header likewise. The "closing Chrome would stop it" sentence is shown only by Share's QueueStatus (every tab keeps its own, and the e2e wants it once); other tabs say only "We'll keep trying while Chrome stays open." qa-tdd/grandparent-ux to confirm.
 - **Privacy fixes (engineer, Nov 25):** PRIV-WEB3-R1 done (`uploadStore.web.ts` generation counter bumped by wipe(): stage/put seal and write nothing after sign-out, no new key); R2/R3 in architecture 03; R4 tracked as TRACKER R97 (no code).
 - **Next:** qa-tdd green 3x, privacy-security, grandparent-ux, then commit and PR; WEB-APP-35/36 manual on a real Android phone.
+## Nov 26: intake #176 follow-ups (R100; branch local-176b, not pushed)
+- **Done, test-first** (qa-tdd red 1a5f35a): six backend scripts require `SUPABASE_PROJECT_REF` (one stderr line, before any call); `.mcp.json` reads `${SUPABASE_PROJECT_REF}` (vendor docs: expansion works in `url`); "Lake weekend" replaces the real-family event name in seeds, SQL, tests, app and docs; fictional city in the photo-strip fixture; `scripts/check-public-privacy.sh` guards it.
+- **Needs Chase:** set `SUPABASE_PROJECT_REF` in the environment secrets and wherever he runs deploy or the MCP server. **Next:** push and PR after Chase's word.
+
 ## Nov 25: privacy sweep of the public repo (intake #176, R96; branch claude/project-thread-6ew09x, PR)
 - **Done:** artifact links, backend project address (docs and `.env.example`), fixtures (address, family name, GPS test photo) and the family details in PERSONAS/STORY and the docs listed in R96 are generic now. Nicknames stay; who is related to whom, phones per person, places and the far-away relative are gone.
 - **Family-details decision (for #176):** the repo keeps nicknames and household shapes only, as fictional composites. The real key stays in the project's private files. **Needs Chase:** confirm that level, or say to go further (ages in PERSONA-CHECK).

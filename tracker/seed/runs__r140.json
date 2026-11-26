@@ -1,0 +1,9 @@
+{
+ "suite": "backend",
+ "at": "2026-11-26T09:00:00-05:00",
+ "label": "Intake #176 part 2 (INTAKE-176B REF-REQ-1..6, PRIV-PUB-1..6): failing tests and guard first (red)",
+ "passed": 15,
+ "failed": 8,
+ "results": {},
+ "note": "1 run each, before any fix, on local-176b (base ee47a4c). ref_required_test.sh 0 passed, 6 failed: all six backend scripts still fall back to a baked-in project ref and call curl when SUPABASE_PROJECT_REF is unset. check_public_privacy_test.sh 7 passed (the guard's own fixtures), 2 failed: PRIV-PUB-5 (the repo still has 6 REF defaults, 1 ref in .mcp.json, the real-family event name in 15 files, 23 hits in all) and PRIV-PUB-6 (wiring, since fixed). Existing backend shell suites stay green with the fake ref (deploy 28, smoke 28, start-on 50, sent-received 20, setup-api 34, setup-v2 15). Evidence: e2e/results/privacy-176b-red-2026-11-26/. Real ref never written."
+}

@@ -1,0 +1,11 @@
+ok      PRIV-PUB-1 a clean tree passes (env-only REF, env expansion in .mcp.json, no Charleston, no artifact link)
+ok      PRIV-PUB-2 a :-<20-char> REF default in backend/scripts fails, naming the file but not the ref
+ok      PRIV-PUB-3 a 20-char ref in .mcp.json fails, without printing it
+ok      PRIV-PUB-4a 'Charleston' in a doc fails; the frozen results history is left alone
+ok      PRIV-PUB-4b only the results history mentions it: passes
+ok      PRIV-PUB-4c a claude.ai artifact link fails
+ok      PRIV-PUB-4d a claude.ai/code/artifact link fails
+NOT OK  PRIV-PUB-5 this repo  [23 hits; first: PRIVACY: backend/scripts/suspend-family.sh has a project ref as a :- default; require SUPABASE_PROJECT_REF from the environment]
+ok      PRIV-PUB-6 test-all.sh and CI both run the guard
+
+PUBLIC PRIVACY RESULT: 8 passed, 1 failed

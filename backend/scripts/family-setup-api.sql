@@ -43,7 +43,7 @@ begin
       (5, 'household', 'Gigi and Bebar''s house'), (6, 'household', 'Memaw''s house'),
       (7, 'household', 'Pawpaw and Granny''s house'), (8, 'household', 'Great-Grandma''s house'),
       (9, 'household', 'Test house'),
-      (10, 'event', 'Charleston trip'), (11, 'event', 'Birthday at Gigi''s')) x(o, kind, name)
+      (10, 'event', 'Lake weekend'), (11, 'event', 'Birthday at Gigi''s')) x(o, kind, name)
     union all
     select 12, 'household', v_sister || '''s house' where v_sister is not null
     order by 1 loop
@@ -59,13 +59,13 @@ begin
       ('Chase''s side', 'Gigi and Bebar''s house'),
       ('Mom''s side', 'Memaw''s house'), ('Mom''s side', 'Pawpaw and Granny''s house'),
       ('Mom''s side', 'Great-Grandma''s house'),
-      ('Charleston trip', 'Pawpaw and Granny''s house'),
+      ('Lake weekend', 'Pawpaw and Granny''s house'),
       ('Birthday at Gigi''s', 'Grandaddy and Grandmomma''s house'), ('Birthday at Gigi''s', 'Gigi and Bebar''s house'),
       ('Birthday at Gigi''s', 'Pawpaw and Granny''s house')) x(parent, child)
     union all
     select 'Mom''s side', v_sister || '''s house' where v_sister is not null
     union all
-    select 'Charleston trip', v_sister || '''s house' where v_sister is not null loop
+    select 'Lake weekend', v_sister || '''s house' where v_sister is not null loop
     perform public.link_level(
       (select id from public.circles where space_id = v_space and name = r.parent and deleted_at is null),
       (select id from public.circles where space_id = v_space and name = r.child and deleted_at is null), 'all');

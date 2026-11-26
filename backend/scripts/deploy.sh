@@ -12,7 +12,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-REF=${SUPABASE_PROJECT_REF:-jqvgjfbhzbvfdhtnvgzr}
+REF=${SUPABASE_PROJECT_REF:-}
+[[ -n $REF ]] || { echo "deploy: set SUPABASE_PROJECT_REF to your Supabase project ref (see ACCOUNTS.md)" >&2; exit 1; }
 CLI=${SUPABASE_CLI:-npx --yes supabase@2.121.0}
 API=https://api.supabase.com/v1/projects/$REF/database/query
 ENV_FILE=${DEPLOY_ENV_FILE:-supabase/functions/.env}

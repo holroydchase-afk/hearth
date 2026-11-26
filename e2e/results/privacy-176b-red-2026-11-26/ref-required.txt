@@ -1,0 +1,8 @@
+FAIL - REF-REQ-1 deploy.sh without SUPABASE_PROJECT_REF  [rc=1, curl calls: 1, out: Exception ignored on flushing sys.stdout:|BrokenPipeError: [Errno 32] Broken pipe|]
+FAIL - REF-REQ-2 family-setup.sh without SUPABASE_PROJECT_REF  [rc=1, curl calls: 1, out: Exception ignored on flushing sys.stdout:|BrokenPipeError: [Errno 32] Broken pipe|]
+FAIL - REF-REQ-3 suspend-family.sh without SUPABASE_PROJECT_REF  [rc=1, curl calls: 1, out: Exception ignored on flushing sys.stdout:|BrokenPipeError: [Errno 32] Broken pipe|]
+FAIL - REF-REQ-4 start-family-switch.sh without SUPABASE_PROJECT_REF  [rc=1, curl calls: 1, out: Exception ignored on flushing sys.stdout:|BrokenPipeError: [Errno 32] Broken pipe|]
+FAIL - REF-REQ-5 smoke-check.sh without SUPABASE_PROJECT_REF  [rc=2, curl calls: 1, out: Exception ignored on flushing sys.stdout:|BrokenPipeError: [Errno 32] Broken pipe|]
+FAIL - REF-REQ-6 sent-vs-received.sh without SUPABASE_PROJECT_REF  [rc=2, curl calls: 1, out: Exception ignored on flushing sys.stdout:|BrokenPipeError: [Errno 32] Broken pipe|]
+
+REF REQUIRED RESULT: 0 passed, 6 failed
