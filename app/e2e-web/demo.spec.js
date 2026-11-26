@@ -1649,32 +1649,25 @@ test('GUX-T2 at 390 px the empty postcard is top-aligned: its top is within 32 p
   }
 });
 
-// GUX-T6 (P2): the demo shows Gallery's birthday card ("When's your birthday?", CAL-12) at first open. At 390 x 844 its
-// "Not now" starts under the floating tab bar; once it is scrolled to (as keyboard focus or a screen reader does:
-// the least scroll that brings it into the scroll area), all of it sits above the tab bar's top edge. Light only (the
-// layout is the same in dark).
-test('GUX-T6 at 390 x 844 Gallery\'s birthday card "Not now", once scrolled to, sits clear above the floating tab bar', async ({ page }) => {
+// GUX-T6 (P2) tested Gallery's birthday card "Not now" against the floating tab bar. CAL-S4 (Nov 26, Chase: "hide this
+// from the feed"): the card is gone, so that test was replaced by this one. At 390 x 844 nothing on Gallery asks for a
+// birthday, and Me's "My birthday" button, once scrolled to, sits clear above the tab bar (the same reach rule GUX-T6 held).
+test('GUX-T6 CAL-S4 at 390 x 844 Gallery has no birthday card, and Me\'s "Add my birthday", once scrolled to, sits clear above the floating tab bar', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await galleryLoaded(page);
-  const card = page.getByTestId('birthday-card');
-  await expect(card, 'the demo shows the birthday card on Gallery').toBeVisible();
-  const notNow = card.getByRole('button', { name: 'Not now' });
+  await expect(page.getByTestId('birthday-card')).toHaveCount(0);
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: 'Me', exact: true }).filter({ visible: true }).click();
+  const add = page.getByTestId('my-birthday').filter({ visible: true }).getByRole('button', { name: 'Add my birthday' });
   const bar = page.getByRole('tablist');
   await expect(bar).toBeVisible();
-  await notNow.scrollIntoViewIfNeeded();
+  await add.scrollIntoViewIfNeeded();
   await page.waitForTimeout(300);
-  const b = await notNow.boundingBox();
+  const b = await add.boundingBox();
   const barTop = (await bar.boundingBox()).y;
-  expect({ notNowBottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: b.y + b.height <= barTop })
-    .toEqual({ notNowBottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: true });
-  // Keyboard reach: Tab focus lands on it and it is not hidden behind the bar (WCAG 2.4.11).
-  await page.goto('/');
-  await galleryLoaded(page);
-  await notNow.focus();
-  await page.waitForTimeout(300);
-  const f = await notNow.boundingBox();
-  expect({ focusedBottom: Math.round(f.y + f.height), clear: f.y + f.height <= barTop }).toEqual({ focusedBottom: Math.round(f.y + f.height), clear: true });
+  expect({ bottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: b.y + b.height <= barTop })
+    .toEqual({ bottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: true });
 });
 
 // EF-HE-1-AC1/AC2 (intake #162, SPEC-EVAL-FIXES): supersedes the ff4543e guard ("Open" shown, "Open the chat …" spoken).

@@ -8,7 +8,6 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react-native';
 import { SymbolView } from 'expo-symbols';
 import React from 'react';
-import { StyleSheet, Text, TextInput } from 'react-native';
 import { ApiError, type HearthApi } from '../../api/HearthApi';
 import { FakeBackend, FIXTURE } from '../../api/fake/FakeBackend';
 import { problemText, problems } from '../../errors/problemLog';
@@ -27,7 +26,6 @@ const { jo, earl } = FIXTURE.users;
 const SPACE = FIXTURE.space.id;
 const slow = { timeout: 5000 };
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const QUESTION = /^When[’']s your birthday\?$/;
 const apos = (s: string) => new RegExp(`^${s.replace(/'/g, '[’\']').replace(/[?.]/g, '\\$&')}$`);
 
 /** The phone's own date, at 10 am, still ticking. Only Date moves; timers stay real so the screens load as usual.
@@ -55,7 +53,6 @@ const labelled = (be: FakeBackend, kind: DateKind, label: string, month: number,
 function choice(name: string | RegExp, root: ReturnType<typeof within> | typeof screen = screen) {
   return root.queryByRole('radio', { name }) ?? root.queryByRole('button', { name });
 }
-const flat = (s: unknown) => (StyleSheet.flatten(typeof s === 'function' ? s({ pressed: false }) : s) ?? {}) as Record<string, unknown>;
 
 async function openBirthdays(be: FakeBackend, user: FixtureUser, kv?: KV) {
   const r = await renderApp(<MoreScreen />, { be, user, kv });
@@ -64,102 +61,9 @@ async function openBirthdays(be: FakeBackend, user: FixtureUser, kv?: KV) {
   return r;
 }
 
-// GUX-R1 (Nov 24, grandparent-ux) changes CAL-12/13: the card is short (question, privacy line, "Add my birthday",
-// "Not now") and "Add my birthday" opens the Add my birthday form on Birthdays, where the month and day are picked.
-// The CAL-12/13 tests below were rewritten for that (they tested the old inline picker on the card).
-async function addFromCard(be: FakeBackend, kv: KV) {
-  const r = await renderApp(<GalleryScreen />, { be, user: 'jo', kv });
-  const card = await screen.findByTestId('birthday-card', {}, slow);
-  fireEvent.press(within(card).getByRole('button', { name: 'Add my birthday' }));
-  expect(await screen.findByRole('header', { name: 'Add my birthday' }, slow)).toBeTruthy();
-  return r;
-}
-
-describe('CAL-12/13 the birthday card on Gallery (GUX-R1: short card, the form on Birthdays)', () => {
-  it('CAL-12 GUX-R1 a member with no birthday saved sees "When\'s your birthday?", the privacy line, "Add my birthday" and "Not now", and no picker on the card', async () => {
-    await renderApp(<GalleryScreen />, { user: 'jo' });
-    const card = await screen.findByTestId('birthday-card', {}, slow);
-    const c = within(card);
-    expect(c.getByText(QUESTION)).toBeTruthy();
-    expect(c.getByText('Your family will see the month and day. Never the year.')).toBeTruthy();
-    expect(c.getByRole('button', { name: 'Add my birthday' })).toBeTruthy();
-    expect(c.getByRole('button', { name: 'Not now' })).toBeTruthy();
-    expect(MONTHS.filter((m) => choice(m, c))).toEqual([]); // the months live on the form now, not the card
-    expect(c.queryByRole('button', { name: 'Save' })).toBeNull();
-    expect(c.UNSAFE_queryAllByType(TextInput)).toHaveLength(0);
-  });
-
-  it('CAL-12 GUX-R1 "Add my birthday" opens the Add my birthday form on Birthdays: 12 months, the days, Save; no typing', async () => {
-    await addFromCard(FakeBackend.withFixture(), memoryKV());
-    expect(MONTHS.filter((m) => !choice(m))).toEqual([]);
-    fireEvent.press(choice('December')!);
-    const missingDays = Array.from({ length: 31 }, (_, i) => i + 1).filter((d) => !choice(new RegExp(`^(December )?${d}$`)));
-    expect(missingDays).toEqual([]);
-    expect(screen.getByRole('button', { name: 'Save' })).toBeTruthy();
-    expect(screen.getByText('Your family will see the month and day. Never the year.')).toBeTruthy();
-    expect(screen.UNSAFE_queryAllByType(TextInput)).toHaveLength(0);
-  });
-
-  it('CAL-12 every target on the card is 48 pt or more and every word 17 pt or more', async () => {
-    await renderApp(<GalleryScreen />, { user: 'jo' });
-    const card = await screen.findByTestId('birthday-card', {}, slow);
-    const targets = card.findAll((n) => typeof n.type === 'string' && typeof n.props.onResponderGrant === 'function' && n.props.accessible === true);
-    expect(targets.length).toBeGreaterThanOrEqual(2); // GUX-R1: Add my birthday and Not now
-    for (const t of targets) {
-      const s = flat(t.props.style);
-      const h = Number(s.minHeight ?? s.height ?? 0), w = Number(s.minWidth ?? s.width ?? (s.flex || s.alignSelf === 'stretch' ? 999 : 0));
-      expect({ label: t.props.accessibilityLabel, h: h >= 48, w: w >= 48 }).toEqual({ label: expect.stringMatching(/\S/), h: true, w: true });
-    }
-    for (const t of within(card).UNSAFE_queryAllByType(Text)) {
-      const size = flat(t.props.style).fontSize;
-      if (size !== undefined) expect({ text: String(t.props.children).slice(0, 30), big: Number(size) >= 17 }).toEqual({ text: expect.any(String), big: true });
-    }
-  });
-
-  it('CAL-12 a member whose birthday is saved never sees the card', async () => {
-    const be = FakeBackend.withFixture();
-    await as(be, 'jo').setMyBirthday(SPACE, 12, 8);
-    await renderApp(<GalleryScreen />, { be, user: 'jo' });
-    await screen.findByLabelText('Search photos', {}, slow);
-    expect(screen.queryByTestId('birthday-card')).toBeNull();
-  });
-
-  it('CAL-13 GUX-R2 Save on the form says "Saved. Your family will see December 8." at the top of Birthdays, saves it, and the card is gone for good', async () => {
-    const be = FakeBackend.withFixture();
-    const kv = memoryKV();
-    const first = await addFromCard(be, kv);
-    fireEvent.press(choice('December')!);
-    fireEvent.press(choice(/^(December )?8$/)!);
-    fireEvent.press(screen.getByRole('button', { name: 'Save' }));
-    expect(await screen.findByText('Saved. Your family will see December 8.', {}, slow)).toBeTruthy();
-    expect(await screen.findByRole('header', { name: 'Birthdays and dates' }, slow)).toBeTruthy(); // back on the list
-    const words = screenWords();
-    // at the top: above the buttons and the dates, not under the list
-    expect(words.indexOf('Saved. Your family will see December 8.')).toBeLessThan(words.indexOf('Change my birthday'));
-    expect(words.indexOf('Saved. Your family will see December 8.')).toBeLessThan(words.indexOf('December 8', words.indexOf('Change my birthday')));
-    const rows = await as(be, 'chase').familyDates(SPACE);
-    expect(rows.filter((r) => r.member_id === jo.id)).toEqual([expect.objectContaining({ month: 12, day: 8 })]);
-    first.unmount();
-    await renderApp(<GalleryScreen />, { be, user: 'jo', kv });
-    await screen.findByLabelText('Search photos', {}, slow);
-    expect(screen.queryByText(QUESTION)).toBeNull();
-  });
-
-  it('CAL-13 Not now hides it, it stays hidden in this family on this phone, and Birthdays still offers "Add my birthday"', async () => {
-    const be = FakeBackend.withFixture();
-    const kv = memoryKV();
-    const first = await renderApp(<GalleryScreen />, { be, user: 'jo', kv });
-    fireEvent.press(within(await screen.findByTestId('birthday-card', {}, slow)).getByRole('button', { name: 'Not now' }));
-    await waitFor(() => expect(screen.queryByText(QUESTION)).toBeNull());
-    first.unmount();
-    const second = await renderApp(<GalleryScreen />, { be, user: 'jo', kv });
-    await screen.findByLabelText('Search photos', {}, slow);
-    expect(screen.queryByText(QUESTION)).toBeNull();
-    second.unmount();
-    await openBirthdays(be, 'jo', kv);
-    expect(screen.getByRole('button', { name: 'Add my birthday' })).toBeTruthy();
-  });
-});
+// CAL-S4 (Nov 26, Chase: "hide this from the feed"): the Gallery card ("When's your birthday?", CAL-12/13) and its tests
+// (CAL-12 card words, picker and 48 pt, CAL-13 Not now, GUX-R1/R2 on the card) were removed. The own-birthday form and its
+// confirmation are now tested from Me in birthdaySettings.test.tsx (CAL-S2); Gallery never shows the card (CAL-S1).
 
 describe('CAL-14/15 More → Birthdays', () => {
   async function seeded() {
@@ -379,17 +283,18 @@ describe('CAL-17 a server without 0029 hides the calendar quietly', () => {
     return { api: api as unknown as HearthApi, report };
   }
 
-  it('CAL-17 Gallery: with 0029 the card shows; without it, no card, no line, no error words and no error report', async () => {
-    const live = await renderApp(<GalleryScreen />, { user: 'jo' });
-    expect(await screen.findByTestId('birthday-card', {}, slow)).toBeTruthy(); // control: the card is there on a 0029 server
-    live.unmount();
+  it('CAL-17 Gallery: with 0029 the "Today is" line shows; without it, no line, no error words and no error report', async () => {
     atDate(2025, 12, 8);
+    const seed = FakeBackend.withFixture();
+    await as(seed, 'jo').setMyBirthday(SPACE, 12, 8);
+    const live = await renderApp(<GalleryScreen />, { be: seed, user: 'chase' });
+    expect(await screen.findByText(apos("Today is Grandma Jo's birthday"), {}, slow)).toBeTruthy(); // control: the line is there on a 0029 server
+    live.unmount();
     const be = FakeBackend.withFixture();
     const { api, report } = oldServer(be);
     await renderApp(<GalleryScreen />, { be, user: 'jo', deps: { api } });
     await screen.findByLabelText('Search photos', {}, slow);
     await waitFor(() => expect(screen.queryByTestId('birthday-card')).toBeNull());
-    expect(screen.queryByText(QUESTION)).toBeNull();
     expect(screen.queryByText(/^Today( is|:)/)).toBeNull();
     expect(screenWords()).not.toMatch(/didn[’']t work|went wrong|try again|problem/i);
     expect(report).not.toHaveBeenCalled();
