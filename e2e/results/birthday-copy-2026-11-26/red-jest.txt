@@ -1,0 +1,558 @@
+FAIL src/screens/__tests__/birthdaySettings.test.tsx (14.7 s)
+  ● CAL-S2 Me has a "My birthday" section › CAL-S2 "Add my birthday" opens the form under More (Back goes to Birthdays, then More, never Gallery); Save returns with the confirmation
+
+    Unable to find an element with text: Saved. December 8 is your birthday.
+
+    [36m<View>[39m
+      [36m<RNSScreenStack>[39m
+        [36m<RNSScreen[39m
+          [33maria-hidden[39m=[32m{false}[39m
+        [36m>[39m
+          [36m<RNSScreenContentWrapper>[39m
+            [36m<View>[39m
+              [36m<RNSScreenStack>[39m
+                [36m<RNSScreen[39m
+                  [33maria-hidden[39m=[32m{false}[39m
+                [36m>[39m
+                  [36m<RNSScreenContentWrapper>[39m
+                    [36m<View>[39m
+                      [36m<RNSScreenStack>[39m
+                        [36m<RNSScreen[39m
+                          [33maria-hidden[39m=[32m{true}[39m
+                        [36m>[39m
+                          [36m<RNSScreenContentWrapper>[39m
+                            [36m<RNCSafeAreaView>[39m
+                              [36m<RCTScrollView>[39m
+                                [36m<View>[39m
+                                  [36m<Text[39m
+                                    [33maccessibilityRole[39m=[32m"header"[39m
+                                  [36m>[39m
+                                    [0mMore[0m
+                                  [36m</Text>[39m
+                                  [36m<View>[39m
+                                    [36m<View[39m
+                                      [33maccessibilityLabel[39m=[32m"Messages"[39m
+                                      [33maccessibilityRole[39m=[32m"button"[39m
+                                      [33maccessible[39m=[32m{true}[39m
+                                    [36m>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                      [36m<Text>[39m
+                                        [0mMessages[0m
+                                      [36m</Text>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                    [36m</View>[39m
+                                    [36m<View />[39m
+                                    [36m<View[39m
+                                      [33maccessibilityLabel[39m=[32m"Events"[39m
+                                      [33maccessibilityRole[39m=[32m"button"[39m
+                                      [33maccessible[39m=[32m{true}[39m
+                                    [36m>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                      [36m<Text>[39m
+                                        [0mEvents[0m
+                                      [36m</Text>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                    [36m</View>[39m
+                                    [36m<View />[39m
+                                    [36m<View[39m
+                                      [33maccessibilityLabel[39m=[32m"Birthdays"[39m
+                                      [33maccessibilityRole[39m=[32m"button"[39m
+                                      [33maccessible[39m=[32m{true}[39m
+                                    [36m>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                      [36m<Text>[39m
+                                        [0mBirthdays[0m
+                                      [36m</Text>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                    [36m</View>[39m
+                                    [36m<View />[39m
+                                    [36m<View[39m
+                                      [33maccessibilityLabel[39m=[32m"Easy view, On"[39m
+                                      [33maccessibilityRole[39m=[32m"button"[39m
+                                      [33maccessible[39m=[32m{true}[39m
+                                    [36m>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                      [36m<Text>[39m
+                                        [0mEasy view[0m
+                                      [36m</Text>[39m
+                                      [36m<Text>[39m
+                                        [0mOn[0m
+                                      [36m</Text>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                    [36m</View>[39m
+                                    [36m<View />[39m
+                                    [36m<View[39m
+                                      [33maccessibilityLabel[39m=[32m"Light or dark"[39m
+                                      [33maccessibilityRole[39m=[32m"button"[39m
+                                      [33maccessible[39m=[32m{true}[39m
+                                    [36m>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                      [36m<Text>[39m
+                                        [0mLight or dark[0m
+                                      [36m</Text>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                    [36m</View>[39m
+                                    [36m<View />[39m
+                                    [36m<View[39m
+                                      [33maccessibilityLabel[39m=[32m"Videos and data"[39m
+                                      [33maccessibilityRole[39m=[32m"button"[39m
+                                      [33maccessible[39m=[32m{true}[39m
+                                    [36m>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                      [36m<Text>[39m
+                                        [0mVideos and data[0m
+                                      [36m</Text>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                    [36m</View>[39m
+                                    [36m<View />[39m
+                                    [36m<View[39m
+                                      [33maccessibilityLabel[39m=[32m"Me"[39m
+                                      [33maccessibilityRole[39m=[32m"button"[39m
+                                      [33maccessible[39m=[32m{true}[39m
+                                    [36m>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                      [36m<Text>[39m
+                                        [0mMe[0m
+                                      [36m</Text>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                    [36m</View>[39m
+                                    [36m<View />[39m
+                                    [36m<View[39m
+                                      [33maccessibilityLabel[39m=[32m"Help"[39m
+                                      [33maccessibilityRole[39m=[32m"button"[39m
+                                      [33maccessible[39m=[32m{true}[39m
+                                    [36m>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                      [36m<Text>[39m
+                                        [0mHelp[0m
+                                      [36m</Text>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                    [36m</View>[39m
+                                  [36m</View>[39m
+                                [36m</View>[39m
+                              [36m</RCTScrollView>[39m
+                            [36m</RNCSafeAreaView>[39m
+                          [36m</RNSScreenContentWrapper>[39m
+                          [36m<RNSScreenStackHeaderConfig[39m
+                            [33mpointerEvents[39m=[32m"box-none"[39m
+                            [33mtitle[39m=[32m"index"[39m
+                          [36m/>[39m
+                        [36m</RNSScreen>[39m
+                        [36m<RNSScreen[39m
+                          [33maria-hidden[39m=[32m{true}[39m
+                        [36m>[39m
+                          [36m<RNSScreenContentWrapper>[39m
+                            [36m<RNCSafeAreaView>[39m
+                              [36m<RCTScrollView>[39m
+                                [36m<View>[39m
+                                  [36m<View[39m
+                                    [33maccessibilityLabel[39m=[32m"Back to More"[39m
+                                    [33maccessibilityRole[39m=[32m"button"[39m
+                                    [33maccessible[39m=[32m{true}[39m
+                                  [36m>[39m
+                                    [36m<View[39m
+                                      [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                      [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                    [36m>[39m
+                                      [36m<ViewManagerAdapter_SymbolModule />[39m
+                                    [36m</View>[39m
+                                    [36m<Text>[39m
+                                      [0mMore[0m
+                                    [36m</Text>[39m
+                                  [36m</View>[39m
+                                  [36m<Text[39m
+                                    [33maccessibilityRole[39m=[32m"header"[39m
+                                  [36m>[39m
+                                    [0mMe[0m
+                                  [36m</Text>[39m
+                                  [36m<View>[39m
+                                    [36m<Text>[39m
+                                      [0mSigned in as jo@example.com[0m
+                                    [36m</Text>[39m
+                                    [36m<Text>[39m
+                                      [0mYou can look at photos and write back.[0m
+                                    [36m</Text>[39m
+                                  [36m</View>[39m
+                                  [36m<View[39m
+                                    [33mtestID[39m=[32m"my-birthday"[39m
+                                  [36m>[39m
+                                    [36m<Text[39m
+                                      [33maccessibilityRole[39m=[32m"header"[39m
+                                    [36m>[39m
+                                      [0mMy birthday[0m
+                                    [36m</Text>[39m
+                                    [36m<Text>[39m
+                                      [0mDecember 8[0m
+                                    [36m</Text>[39m
+                                    [36m<Text>[39m
+                                      [0mThe people who can see you in Hearth will see the month and day. Never the year.[0m
+                                    [36m</Text>[39m
+                                    [36m<View[39m
+                                      [33maccessibilityLabel[39m=[32m"Change my birthday"[39m
+                                      [33maccessibilityRole[39m=[32m"button"[39m
+                                      [33maccessibilityState[39m=[32m{
+                                        {
+                                          "busy": false,
+                                          "disabled": false,
+                                          "selected": false,
+                                        }
+                                      }[39m
+                                      [33maccessible[39m=[32m{true}[39m
+                                    [36m>[39m
+                                      [36m<Text>[39m
+                                        [0mChange my birthday[0m
+                                      [36m</Text>[39m
+                                    [36m</View>[39m
+                                  [36m</View>[39m
+                                  [36m<View>[39m
+                                    [36m<Text[39m
+                                      [33maccessibilityRole[39m=[32m"header"[39m
+                                    [36m>[39m
+                                      [0mHow should we tell you about new photos?[0m
+                                    [36m</Text>[39m
+                                    [36m<View[39m
+                                      [33maccessibilityLabel[39m=[32m"A sound on your phone when there are new photos (Recommended)"[39m
+                                      [33maccessibilityRole[39m=[32m"radio"[39m
+                                      [33maccessibilityState[39m=[32m{
+                                        {
+                                          "checked": true,
+                                        }
+                                      }[39m
+                                      [33maccessible[39m=[32m{true}[39m
+                                    [36m>[39m
+                                      [36m<View>[39m
+                                        [36m<Text>[39m
+                                          [0mA sound on your phone when there are new photos (Recommended)[0m
+                                        [36m</Text>[39m
+                                      [36m</View>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                    [36m</View>[39m
+                                    [36m<View[39m
+                                      [33maccessibilityLabel[39m=[32m"An email every evening with the day's new photos"[39m
+                                      [33maccessibilityRole[39m=[32m"radio"[39m
+                                      [33maccessibilityState[39m=[32m{
+                                        {
+                                          "checked": false,
+                                        }
+                                      }[39m
+                                      [33maccessible[39m=[32m{true}[39m
+                                    [36m>[39m
+                                      [36m<View>[39m
+                                        [36m<Text>[39m
+                                          [0mAn email every evening with the day's new photos[0m
+                                        [36m</Text>[39m
+                                      [36m</View>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                    [36m</View>[39m
+                                    [36m<View[39m
+                                      [33maccessibilityLabel[39m=[32m"An email every Sunday morning"[39m
+                                      [33maccessibilityRole[39m=[32m"radio"[39m
+                                      [33maccessibilityState[39m=[32m{
+                                        {
+                                          "checked": false,
+                                        }
+                                      }[39m
+                                      [33maccessible[39m=[32m{true}[39m
+                                    [36m>[39m
+                                      [36m<View>[39m
+                                        [36m<Text>[39m
+                                          [0mAn email every Sunday morning[0m
+                                        [36m</Text>[39m
+                                      [36m</View>[39m
+                                      [36m<View[39m
+                                        [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                        [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                      [36m>[39m
+                                        [36m<ViewManagerAdapter_SymbolModule />[39m
+                                      [36m</View>[39m
+                                    [36m</View>[39m
+                                  [36m</View>[39m
+                                  [36m<View>[39m
+                                    [36m<Text[39m
+                                      [33maccessibilityRole[39m=[32m"header"[39m
+                                    [36m>[39m
+                                      [0mKeeping your photos private[0m
+                                    [36m</Text>[39m
+                                    [36m<Text>[39m
+                                      [0mYour photos stay in the United States.[0m
+                                    [36m</Text>[39m
+                                    [36m<Text>[39m
+                                      [0mNo one outside the family can see them. No ads, no strangers.[0m
+                                    [36m</Text>[39m
+                                    [36m<Text>[39m
+                                      [0mNo computer program learns from your photos.[0m
+                                    [36m</Text>[39m
+                                    [36m<Text>[39m
+                                      [0mPhotos don't show where they were taken.[0m
+                                    [36m</Text>[39m
+                                    [36m<Text>[39m
+                                      [0mChase can delete everything at any time.[0m
+                                    [36m</Text>[39m
+                                  [36m</View>[39m
+                                  [36m<View[39m
+                                    [33maccessibilityLabel[39m=[32m"Sign out of Hearth"[39m
+                                    [33maccessibilityRole[39m=[32m"button"[39m
+                                    [33maccessibilityState[39m=[32m{
+                                      {
+                                        "busy": false,
+                                        "disabled": false,
+                                        "selected": false,
+                                      }
+                                    }[39m
+                                    [33maccessible[39m=[32m{true}[39m
+                                  [36m>[39m
+                                    [36m<Text>[39m
+                                      [0mSign out of Hearth[0m
+                                    [36m</Text>[39m
+                                  [36m</View>[39m
+                                  [36m<View[39m
+                                    [33maccessibilityLabel[39m=[32m"Take me off Hearth"[39m
+                                    [33maccessibilityRole[39m=[32m"button"[39m
+                                    [33maccessibilityState[39m=[32m{
+                                      {
+                                        "busy": false,
+                                        "disabled": false,
+                                        "selected": false,
+                                      }
+                                    }[39m
+                                    [33maccessible[39m=[32m{true}[39m
+                                  [36m>[39m
+                                    [36m<Text>[39m
+                                      [0mTake me off Hearth[0m
+                                    [36m</Text>[39m
+                                  [36m</View>[39m
+                                [36m</View>[39m
+                              [36m</RCTScrollView>[39m
+                            [36m</RNCSafeAreaView>[39m
+                          [36m</RNSScreenContentWrapper>[39m
+                          [36m<RNSScreenStackHeaderConfig[39m
+                            [33mpointerEvents[39m=[32m"box-none"[39m
+                            [33mtitle[39m=[32m"me"[39m
+                          [36m/>[39m
+                        [36m</RNSScreen>[39m
+                        [36m<RNSScreen[39m
+                          [33maria-hidden[39m=[32m{false}[39m
+                        [36m>[39m
+                          [36m<RNSScreenContentWrapper>[39m
+                            [36m<RNCSafeAreaView>[39m
+                              [36m<RCTScrollView>[39m
+                                [36m<View>[39m
+                                  [36m<View[39m
+                                    [33maccessibilityLabel[39m=[32m"Back to More"[39m
+                                    [33maccessibilityRole[39m=[32m"button"[39m
+                                    [33maccessible[39m=[32m{true}[39m
+                                  [36m>[39m
+                                    [36m<View[39m
+                                      [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                                      [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+                                    [36m>[39m
+                                      [36m<ViewManagerAdapter_SymbolModule />[39m
+                                    [36m</View>[39m
+                                    [36m<Text>[39m
+                                      [0mMore[0m
+                                    [36m</Text>[39m
+                                  [36m</View>[39m
+                                  [36m<Text[39m
+                                    [33maccessibilityRole[39m=[32m"header"[39m
+                                  [36m>[39m
+                                    [0mBirthdays and dates[0m
+                                  [36m</Text>[39m
+                                  [36m<View>[39m
+                                    [36m<View[39m
+                                      [33maccessibilityRole[39m=[32m"alert"[39m
+                                      [33maccessible[39m=[32m{true}[39m
+                                    [36m>[39m
+                                      [36m<Text>[39m
+                                        [0mSaved. Your family will see December 8.[0m
+                                      [36m</Text>[39m
+                                    [36m</View>[39m
+                                    [36m<View[39m
+                                      [33maccessibilityLabel[39m=[32m"OK, hide this message"[39m
+                                      [33maccessibilityRole[39m=[32m"button"[39m
+                                      [33maccessibilityState[39m=[32m{
+                                        {
+                                          "busy": false,
+                                          "disabled": false,
+                                          "selected": false,
+                                        }
+                                      }[39m
+                                      [33maccessible[39m=[32m{true}[39m
+                                    [36m>[39m
+                                      [36m<Text>[39m
+                                        [0mOK[0m
+                                      [36m</Text>[39m
+                                    [36m</View>[39m
+                                  [36m</View>[39m
+                                  [36m<Text>[39m
+                                    [0mOnly your family can see these.[0m
+                                  [36m</Text>[39m
+                                  [36m<View[39m
+                                    [33maccessibilityLabel[39m=[32m"Change my birthday"[39m
+                                    [33maccessibilityRole[39m=[32m"button"[39m
+                                    [33maccessibilityState[39m=[32m{
+                                      {
+                                        "busy": false,
+                                        "disabled": false,
+                                        "selected": false,
+                                      }
+                                    }[39m
+                                    [33maccessible[39m=[32m{true}[39m
+                                  [36m>[39m
+                                    [36m<Text>[39m
+                                      [0mChange my birthday[0m
+                                    [36m</Text>[39m
+                                  [36m</View>[39m
+                                  [36m<View>[39m
+                                    [36m<View>[39m
+                                      [36m<View>[39m
+                                        [36m<View>[39m
+                                          [36m<Text>[39m
+                                            [0mGrandma Jo's birthday[0m
+                                          [36m</Text>[39m
+                                          [36m<View>[39m
+                                            [36m<Text>[39m
+                                              [0mDecember 8[0m
+                                            [36m</Text>[39m
+                                            [36m<Text>[39m
+                                              [0mIn 12 days[0m
+                                            [36m</Text>[39m
+                                          [36m</View>[39m
+                                        [36m</View>[39m
+                                      [36m</View>[39m
+                                    [36m</View>[39m
+                                  [36m</View>[39m
+                                [36m</View>[39m
+                              [36m</RCTScrollView>[39m
+                            [36m</RNCSafeAreaView>[39m
+                          [36m</RNSScreenContentWrapper>[39m
+                          [36m<RNSScreenStackHeaderConfig[39m
+                            [33mpointerEvents[39m=[32m"box-none"[39m
+                            [33mtitle[39m=[32m"birthdays"[39m
+                          [36m/>[39m
+                        [36m</RNSScreen>[39m
+                      [36m</RNSScreenStack>[39m
+                    [36m</View>[39m
+                  [36m</RNSScreenContentWrapper>[39m
+                  [36m<RNSScreenStackHeaderConfig[39m
+                    [33mpointerEvents[39m=[32m"box-none"[39m
+                    [33mtitle[39m=[32m"more"[39m
+                  [36m/>[39m
+                [36m</RNSScreen>[39m
+              [36m</RNSScreenStack>[39m
+            [36m</View>[39m
+          [36m</RNSScreenContentWrapper>[39m
+          [36m<RNSScreenStackHeaderConfig[39m
+            [33mpointerEvents[39m=[32m"box-none"[39m
+            [33mtitle[39m=[32m"(tabs)"[39m
+          [36m/>[39m
+        [36m</RNSScreen>[39m
+      [36m</RNSScreenStack>[39m
+    [36m</View>[39m
+
+      120 |     fireEvent.press(choice(/^(December )?8$/)!);
+      121 |     fireEvent.press(screen.getByRole('button', { name: 'Save' }));
+    > 122 |     expect(await screen.findByText('Saved. December 8 is your birthday.', {}, slow)).toBeTruthy();
+          |                         ^
+      123 |     expect(await screen.findByRole('header', { name: 'Birthdays and dates' }, slow)).toBeTruthy();
+      124 |     const rows = await as(be, 'chase').familyDates(SPACE);
+      125 |     expect(rows.filter((r) => r.member_id === jo.id)).toEqual([expect.objectContaining({ month: 12, day: 8 })]);
+
+      at Object.findByText (src/screens/__tests__/birthdaySettings.test.tsx:122:25)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 9 passed, 10 total
+Snapshots:   0 total
+Time:        14.807 s
+Ran all test suites matching src/screens/__tests__/birthdaySettings.test.tsx.
