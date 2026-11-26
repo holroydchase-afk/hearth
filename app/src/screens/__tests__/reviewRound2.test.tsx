@@ -11,7 +11,7 @@
 //   - The Post options rows stay buttons named "Edit description" and "Delete post".
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react-native';
 import React from 'react';
-import { ActivityIndicator, Platform, StyleSheet, Text, TextInput } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, Text } from 'react-native';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { MediaCache } from '../../media/cache';
 import { memoryKV } from '../../platform/kv';

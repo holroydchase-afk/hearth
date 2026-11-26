@@ -11,7 +11,7 @@ import React from 'react';
 import { ApiError, type HearthApi } from '../../api/HearthApi';
 import { FakeBackend, FIXTURE } from '../../api/fake/FakeBackend';
 import { problemText, problems } from '../../errors/problemLog';
-import { memoryKV, type KV } from '../../platform/kv';
+import { type KV } from '../../platform/kv';
 import { GalleryScreen, MoreScreen } from '../../test/redesignScreens';
 import { renderApp, screenWords, type FixtureUser } from '../../test/renderApp';
 
@@ -22,7 +22,7 @@ interface CalendarApi {
   saveFamilyDate(a: { space: string; id: string | null; kind: DateKind; label: string | null; month: number; day: number; memberId: string | null }): Promise<string>;
 }
 const cal = (api: HearthApi) => api as unknown as HearthApi & CalendarApi;
-const { jo, earl } = FIXTURE.users;
+const { earl } = FIXTURE.users;
 const SPACE = FIXTURE.space.id;
 const slow = { timeout: 5000 };
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];

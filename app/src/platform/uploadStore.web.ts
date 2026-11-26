@@ -8,7 +8,6 @@
 // Deleted when the post publishes or is removed (release), at sign-out (wipe: the whole database) and on the next
 // open for records no saved job points at (sweep). 150 MB cap; over it, or blocked, or full, or no WebCrypto: that
 // post stays in memory only (never refused), with one code-only report.
-import { ApiError } from '../api/HearthApi';
 import { uuid } from '../crypto/random';
 import { verifyClean } from '../media/clean';
 import type { Prepared, QueueItem } from '../upload/queue';

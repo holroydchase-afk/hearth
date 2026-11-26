@@ -30,6 +30,7 @@ export default [
         'react-native/no-unused-styles': 'warn',
         'react-native/no-inline-styles': 'warn',
         'react-native/no-raw-text': 'off',
+        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
       }),
     },
   },

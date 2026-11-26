@@ -141,8 +141,6 @@ function EventTimeline({ posts, fromList, more, onOpen, onClose }: {
   backTo?: string;
 }) {
   const { c } = useTheme();
-  const app = useApp();
-  const isParent = app.space?.role === 'owner' || app.space?.role === 'adult';
   const under = useTabBarSpace(); // RD-109: room under the web's floating tab bar
   const [person, setPerson] = useState<string | null>(null);
   const name = posts[0]?.event_name ?? '';

@@ -29,7 +29,6 @@ const FRUIT_NAMES = THEMES.filter((n) => n !== 'paper');
 const pal = (dark: boolean, name?: Name, high = false): Colors =>
   (paletteFor as unknown as (os: string, dark: boolean, n?: string, high?: boolean) => Colors)('ios', dark, name, high);
 const rgb = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
-const lum = (h: string) => contrast(h, '#000000');
 const SRC = path.join(__dirname, '..', '..');
 const walk = (dir: string): string[] => fs.readdirSync(dir, { withFileTypes: true }).flatMap((d) => {
   const p = path.join(dir, d.name);

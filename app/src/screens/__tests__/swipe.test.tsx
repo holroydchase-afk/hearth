@@ -57,7 +57,7 @@ describe('SWIPE: a post\'s photos, one at a time', () => {
   });
 
   it('SWIPE-1 the old stacked photos and "See all N photos" are gone', async () => {
-    const { be, id, cardId, el } = await one({ photos: 6 });
+    const { be, cardId, el } = await one({ photos: 6 });
     await renderApp(el, { be, user: 'jo' });
     await screen.findByTestId(cardId);
     expect(screen.queryByText(/See all/)).toBeNull();

@@ -19,7 +19,6 @@ import { PhotoCollage } from './PhotoCollage';
  *  away (See all, More), so the card no longer stacks full-width rows.
  *  Prototype: prototype/moments.html. No "Seen by" count (DEC-21, RV-U1): it counts who didn't look (A2). */
 const LABEL: Record<Reaction, string> = { '❤️': 'Love it', '😂': 'Haha', '👍': 'Like it', '🎉': 'Hooray' };
-const WORD: Record<Reaction, string> = { '❤️': 'love', '😂': 'haha', '👍': 'like', '🎉': 'hooray' };
 // REACT-11 (Chase, Nov 5: "the standard, not 3D emojis, not line icons"): the phone's own emoji, the same
 // ones on its keyboard. This replaces REACT-10's flat line icons.
 

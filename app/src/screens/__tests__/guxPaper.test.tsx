@@ -19,7 +19,7 @@ import { memoryKV } from '../../platform/kv';
 import { seedPost } from '../../test/seed';
 import { FeedScreen } from '../../test/redesignScreens';
 import { renderApp } from '../../test/renderApp';
-import { contrast, paletteFor } from '../../ui/theme';
+import { paletteFor } from '../../ui/theme';
 
 // qa-tdd, Nov 18: GUX-R15 loops every theme (RD-95/96, DEC-68) and saves prefs.theme (RD-98) instead of the family
 // color. Only the owner can pick a theme (RD-98), so the reaction is Chase's, on a post by Alex.
@@ -29,8 +29,7 @@ const COLOR_NAMES: ColorName[] = ['paper', 'avocado', 'pomegranate', 'blood-oran
 const pfTheme = paletteFor as unknown as (o: string, d: boolean, n?: string, h?: boolean) => ReturnType<typeof paletteFor>;
 import { ShareScreen } from '../ShareScreen';
 
-const { dadSide } = FIXTURE.circles;
-const { jo, chase } = FIXTURE.users;
+const { chase } = FIXTURE.users;
 const slow = { timeout: 5000 };
 const HOUR = 3600e3;
 const lookName = (dark: boolean) => (dark ? 'dark' : 'light');

@@ -27,7 +27,6 @@ const { dadSide } = FIXTURE.circles;
 const { jo, chase, earl, alex } = FIXTURE.users;
 const KEY = (u: string) => `hearth.lastSeen.v1.${u}`;
 const HOUR = 3600e3;
-const LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const GREETING = /^Good (morning|afternoon|evening), Grandma Jo$/;
 const slow = { timeout: 4000 };
 const light = (): Colors => paletteFor(Platform.OS as 'ios', false);

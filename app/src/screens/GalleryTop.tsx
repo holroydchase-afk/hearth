@@ -11,7 +11,7 @@ import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useApp } from '../state/AppContext';
 import { greeting } from '../ui/greeting';
 import { SystemIcon, Txt } from '../ui/kit';
-import { MIN_TARGET, RADIUS, SPACE, FONT, useTheme } from '../ui/theme';
+import { MIN_TARGET, RADIUS, SPACE, useTheme } from '../ui/theme';
 
 /** How the greeting moves between large and small. */
 export function titleMotion(reduceMotion: boolean): 'fade' | 'shrink' {

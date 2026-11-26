@@ -23,13 +23,12 @@ import { act, fireEvent, screen, waitFor, within } from '@testing-library/react-
 import fs from 'fs';
 import path from 'path';
 import React from 'react';
-import { AccessibilityInfo, Animated, Platform, StyleSheet, Text } from 'react-native';
+import { AccessibilityInfo, Animated, StyleSheet, Text } from 'react-native';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { memoryKV } from '../../platform/kv';
 import { seedPost } from '../../test/seed';
 import { FeedScreen, GalleryScreen, MoreScreen } from '../../test/redesignScreens';
 import { renderApp } from '../../test/renderApp';
-import { paletteFor, type Colors } from '../../ui/theme';
 
 const { dadSide } = FIXTURE.circles;
 const { jo } = FIXTURE.users;
@@ -38,7 +37,6 @@ const PREFS = (u: string) => `hearth.prefs.v1.${u}`;
 const HOUR = 3600e3;
 const slow = { timeout: 5000 };
 const GREETING = /^Good (morning|afternoon|evening), Grandma Jo$/;
-const pal = (dark: boolean): Colors => paletteFor(Platform.OS as 'ios', dark);
 const lookName = (dark: boolean) => (dark ? 'dark' : 'light');
 
 type Inst = ReturnType<typeof screen.getByTestId>;

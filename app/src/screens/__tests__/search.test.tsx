@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 // SEARCH-UI-1..8 (go-live item 9, docs/product/SPEC-SEARCH.md): "Search" on Photos finds posts by the words
 // people wrote, who sent them and the year. Plain words only; it never looks inside a photo.
-import { act, fireEvent, screen, within } from '@testing-library/react-native';
+import { act, fireEvent, screen } from '@testing-library/react-native';
 import { BackHandler } from 'react-native';
 import React from 'react';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';

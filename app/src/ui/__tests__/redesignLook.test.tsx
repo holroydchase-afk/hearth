@@ -3,7 +3,7 @@
 // RD-1..RD-3, RD-5, RD-6, RD-8 (docs/product/SPEC-REDESIGN.md, phase 1a "The look", DEC-59): white and true
 // black with one accent (Ember by default), the phone's own font, outline icons, Apple's corners.
 // Lint-style checks for RD-3, RD-4, RD-6, RD-7 and RD-8 live in redesignLint.test.ts.
-import { render, screen, within } from '@testing-library/react-native';
+import { render, screen } from '@testing-library/react-native';
 import { SymbolView } from 'expo-symbols';
 import React from 'react';
 import { Platform, StyleSheet, Text } from 'react-native';
@@ -35,7 +35,6 @@ const ThemeCtx = ((themeMod as Record<string, unknown>).ThemeContext ?? React.cr
 const NEUTRAL_KEYS = ['bg', 'surface', 'ink', 'muted', 'line', 'fill', 'photo'] as const;
 const rgb = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 /** Black-and-white means no warm (or any) tint: channels within 8 of each other (Apple's own grays pass). */
-const neutral = (h: string) => { const v = rgb(h); return Math.max(...v) - Math.min(...v) <= 8; };
 /** RD-84/85: warm paper grays, red ≥ green ≥ blue, and still a gray: channels within 40 of each other (paper itself
  *  spreads 31). qa-tdd: the cap keeps an accent (Ember #AD371D is R ≥ G ≥ B too) from passing as a page gray. */
 const paperFamily = (h: string) => { const [r, g, b] = rgb(h); return r! >= g! && g! >= b! && r! - b! <= 40; };

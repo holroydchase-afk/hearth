@@ -18,7 +18,6 @@ import { BigTextContext, contrast, iconSize, LABEL_SCALE_CAP, paletteFor, pinchZ
 // qa-tdd, Nov 18: HIG-7 loops every theme (RD-96, DEC-68) instead of every family color; the splash is the default Paper.
 const THEME_NAMES = (((themeMod as Record<string, unknown>).THEME_NAMES ?? []) as string[]);
 const pfTheme = paletteFor as unknown as (o: string, d: boolean, n?: string, h?: boolean) => ReturnType<typeof paletteFor>;
-import { GalleryScreen } from '../../test/redesignScreens';
 import { HearthTabBar, type TabName } from '../TabBar';
 import { PhotosScreen } from '../PhotosScreen';
 import { ViewerScreen } from '../ViewerScreen';
