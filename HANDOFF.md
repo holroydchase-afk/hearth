@@ -11,6 +11,10 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 26: STACK.md and architecture refresh (intake #207, R121; local-207, not pushed)
+- **Done:** `docs/eng/STACK.md`, `kind_counts` in 02/04, TypeScript decision (stay on ~6.0.3). Docs only.
+- **Next:** push after PRs 211, 212 and 210 merge; then #206 (fixed sleeps in e2e), #205, #213, #208.
+
 ## Nov 25: product review pilot fixes, first part (intake #170, R111; local branch, not pushed yet)
 - **Done:** README order (encryption honesty sentence first, Status above Start here); checks on items 1 and 6 recorded in R111.
 - **Next:** fresh screenshots and a grandparent-ux pass (item 4), then the contrast and reaction-row P2s test-first. **Beta status line done (Chase, Nov 26).
