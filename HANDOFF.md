@@ -13,6 +13,7 @@ blockers:
 
 ## Nov 26: ESLint gate (intake #199, R97; branch claude/project-thread-is6w2s, not pushed)
 - **Done, test-first** (LINT-1..5 in `app/src/__tests__/lint.test.ts`, red then green 3x): `app/eslint.config.mjs`, `npm run lint`, `.github/workflows/lint.yml`, `engines.node`, `.nvmrc`. Warnings only unless `STUDIO_LINT_STRICT=1`. **Warning count: 324, errors 0.** Jest 2630 pass, typecheck green.
+- **Follow-up:** studio-agents PR 175 (managed config) was not reachable from this thread. qa-tdd green 3x (`e2e/results/lint-gate-intake199-green-3x-2026-11-26.txt`); strict mode gives 166 errors.
 - **Next:** after studio-agents PR 175 merges, run studio-sync to swap in the managed config; fix warnings in small PRs; set `STUDIO_LINT_STRICT=1`. Open PR when the queue allows.
 
 ## Nov 25: privacy sweep of the public repo (intake #176, R96; branch claude/project-thread-6ew09x, PR)
