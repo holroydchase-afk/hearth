@@ -11,7 +11,7 @@
 // per-scroll-event translateY lagged on iPhone Safari and showed a strip of photo); on a phone it is still moved by
 // the scroll offset. Its backing spans the full width in the page color, and RD-82's shade sits under it while pinned.
 // The layout itself is feed/gallery.ts (pure, unit tested).
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Animated, Platform, Pressable, StyleSheet, Text, View, type LayoutChangeEvent, type ViewStyle } from 'react-native';
 import type { FeedPost } from '../api/HearthApi';
 import { galleryMonths, mosaicRows, type GridMonth, type GridTile } from '../feed/gallery';
@@ -49,7 +49,7 @@ export function GalleryGrid({ posts, scrollY, pinAt = 0, relayout = 0, onPinned 
   const grid = usePlace(relayout);
   const pinned = useRef(new Set<string>());
   const report = useRef(onPinned);
-  report.current = onPinned;
+  useLayoutEffect(() => { report.current = onPinned; });
   const onPin = useRef((key: string, on: boolean) => {
     const before = pinned.current.size > 0;
     if (on) pinned.current.add(key); else pinned.current.delete(key);

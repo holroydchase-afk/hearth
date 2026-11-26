@@ -6,7 +6,7 @@
 // a "Search photos" field under the greeting that pins under the bar once Gallery scrolls. One look on iPhone,
 // Android and the web (the iPhone's native large-title header is checked by hand, RD-28). Reduce Motion: the
 // titles fade instead of shrinking (DS-14).
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useApp } from '../state/AppContext';
 import { greeting } from '../ui/greeting';
@@ -78,7 +78,7 @@ export function SearchField({ onPress, testID }: { onPress: () => void; testID?:
 /** The solid top bar: the folded greeting, once Gallery scrolls past it. No buttons (RD-47). */
 export function GalleryTopBar({ words, folded }: { words: string | null; folded: boolean }) {
   const { c } = useTheme();
-  const show = useRef(new Animated.Value(folded ? 1 : 0)).current;
+  const [show] = useState(() => new Animated.Value(folded ? 1 : 0));
   useEffect(() => {
     Animated.timing(show, { toValue: folded ? 1 : 0, duration: 160, useNativeDriver: false }).start();
   }, [folded, show]);

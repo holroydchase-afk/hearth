@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Animated, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { REACTIONS, type FeedPost, type Reaction } from '../api/HearthApi';
@@ -487,7 +487,7 @@ function ReactionButton({ emoji, n, on, onPress }: { emoji: Reaction; n: number;
   const { fontScale } = useWindowDimensions();
   // One tabular digit is about 0.6 of the text size on every phone font; 0.7 leaves room.
   const slot = Math.ceil(type.subheadline.fontSize * 0.7 * Math.max(fontScale || 1, 1));
-  const scale = useRef(new Animated.Value(1)).current;
+  const [scale] = useState(() => new Animated.Value(1));
   const press = () => {
     if (!on && !reduceMotion) {
       const native = Platform.OS !== 'web';

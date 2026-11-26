@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 // Full-screen viewer (BETA-SEE-3/-5): Back / Next buttons AND swipe, labeled Close,
 // "From Chase · Sun, Oct 11", caption under the photo, "Save to my phone".
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { PanResponder, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { haptic } from '../platform/haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -82,10 +82,10 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
   // QA-R1: iPhone pinches with its scroll view; Android and the web watch two fingers here and step the zoom.
   const pinch = useRef<{ start: number; last: number } | null>(null);
   const zoomed = useRef(zoom);
-  zoomed.current = zoom;
+  useLayoutEffect(() => { zoomed.current = zoom; });
   const spread = (touches: readonly { pageX: number; pageY: number }[]) =>
     Math.hypot(touches[0]!.pageX - touches[1]!.pageX, touches[0]!.pageY - touches[1]!.pageY);
-  const pinchHandlers = useRef(PanResponder.create({
+  const [pinchHandlers] = useState(() => PanResponder.create({
     onMoveShouldSetPanResponderCapture: (e) => e.nativeEvent.touches.length === 2,
     onPanResponderGrant: (e) => {
       const t = e.nativeEvent.touches;
@@ -103,9 +103,9 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
       if (p && p.start > 0) setZoom(pinchZoom(p.last / p.start, zoomed.current));
     },
     onPanResponderTerminate: () => { pinch.current = null; },
-  })).current;
+  }));
   const swipeTo = useRef<(d: 'next' | 'back') => void>(() => {});
-  swipeTo.current = (d) => go(d === 'next' ? next : back);
+  useLayoutEffect(() => { swipeTo.current = (d) => go(d === 'next' ? next : back); });
 
   if (app.status !== 'ready') return <AppGate />;
 

@@ -4,7 +4,7 @@
 // web, Material 3 on Android. Every tappable thing is a Button or Choice: it always has an
 // accessibilityLabel, a visible word (DS-3), and a 48 pt minimum target (DS-1).
 import { SymbolView } from 'expo-symbols';
-import React, { useState, type ReactNode } from 'react';
+import React, { useLayoutEffect, useState, type ReactNode } from 'react';
 import {
   ActivityIndicator, Animated, Modal, PanResponder, Platform, Pressable, type PanResponderCallbacks, ScrollView, StyleSheet, Switch, Text, TextInput, View,
   useWindowDimensions, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
@@ -512,8 +512,8 @@ export function sheetPan(close: () => void): PanResponderCallbacks {
 export function BottomSheet({ testID, onClose, children }: { testID: string; onClose: () => void; children: ReactNode }) {
   const { c, os, reduceMotion } = useTheme();
   const close = React.useRef(onClose);
-  close.current = onClose;
-  const drag = React.useRef(PanResponder.create(sheetPan(() => close.current()))).current;
+  useLayoutEffect(() => { close.current = onClose; });
+  const [drag] = useState(() => PanResponder.create(sheetPan(() => close.current())));
   const corner = os === 'android' ? 28 : 14;
   return (
     <Modal transparent visible animationType={reduceMotion ? 'fade' : 'slide'} onRequestClose={onClose}>
