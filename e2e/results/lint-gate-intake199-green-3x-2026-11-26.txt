@@ -1,0 +1,6 @@
+Intake #199 ESLint gate, commit 7e2f8b0, branch claude/project-thread-is6w2s (qa-tdd, 2026-11-26)
+app jest (npm test), 3 runs: 196 suites passed, 2630 passed, 1 skipped, 1 todo (all 3 identical, incl. LINT-1..5)
+app typecheck, 3 runs: exit 0
+app npm run lint (no STUDIO_LINT_STRICT), 3 runs: exit 0, 324 warnings, 0 errors
+STUDIO_LINT_STRICT=1 npm run lint: exit 1, 166 errors, 158 warnings (expected: gate flips to red once strict)
+Findings: see QA-R1..QA-R4 in the qa block. No red-first run: tests were added with the code in one commit.

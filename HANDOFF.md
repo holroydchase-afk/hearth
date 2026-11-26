@@ -11,6 +11,29 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 25: product review pilot fixes, first part (intake #170, R111; local branch, not pushed yet)
+- **Done:** README order (encryption honesty sentence first, Status above Start here); checks on items 1 and 6 recorded in R111.
+- **Next:** fresh screenshots and a grandparent-ux pass (item 4), then the contrast and reaction-row P2s test-first. **Beta status line done (Chase, Nov 26).
+
+## Nov 25: review of repo best-practices PR (intake #191, R110; branch local, not pushed yet)
+- **Done:** README AI wording matched to the claims register, CHANGELOG.md added. Docs only.
+- **Next:** push in the next turn; read CodeQL alerts once the Security tab can be read; P2s in R110.
+
+## Nov 26: ESLint gate (intake #199, R99; branch claude/project-thread-is6w2s, not pushed)
+- **Done, test-first** (LINT-1..5 in `app/src/__tests__/lint.test.ts`, red then green 3x): `app/eslint.config.mjs`, `npm run lint`, `.github/workflows/lint.yml`, `engines.node`, `.nvmrc`. Warnings only unless `STUDIO_LINT_STRICT=1`. **Warning count: 324, errors 0.** Jest 2630 pass, typecheck green.
+- **Follow-up:** studio-agents PR 175 (managed config) was not reachable from this thread. qa-tdd green 3x (`e2e/results/lint-gate-intake199-green-3x-2026-11-26.txt`); strict mode gives 166 errors.
+- **Next:** after studio-agents PR 175 merges, run studio-sync to swap in the managed config; fix warnings in small PRs; set `STUDIO_LINT_STRICT=1`. Open PR when the queue allows.
+
+## Nov 25: post kinds ON for the web demo only (R98, DEMO-KINDS-1..14; branch claude/project-thread-jtelk5, local, not pushed)
+- **Done, test-first** (qa-tdd red 2f3f0a6, r115; engineer 801fd7c touched no test or spec): `app/src/demo/seed.ts` `seedDemo` turns `post_kinds` on (global flag plus the space flag), `demoSeedVersion` includes it so returning visitors get it, Try this step 4 (`DemoFrame.tsx`) names Share, Event, News, Saying, and the architecture overview footer line says so. Real builds stay off.
+- **Proof:** all suites 3x via `bash test-all.sh`, green (r125, `e2e/results/demo-kinds-green-2026-11-25/`): jest 2623, e2e:demo 72, e2e:web 47, prototype 33. Deno and the starter-invites suite were skipped here (CI runs them).
+- **Turn it off:** remove the two flag lines in `seedDemo` (global and space `post_kinds`); the seed version moves back by itself, so visitors reseed.
+- **Still to do:** live check on the published demo once it is published (Photos / Event / News / Saying all tappable; Grandma Jo sees no Share tab).
+## Nov 25: photo sharing on the web built (HRT-WEB.3, WEB-APP-25..34; branch claude/project-thread-o1dwht, not committed)
+- **Done (engineer, on qa-tdd's red tests):** `platform/uploadStore.web.ts` (sealed cleaned bytes in IndexedDB `hearth.uploads`, 150 MB cap, memory-only fallback; phone no-op `uploadStore.ts`), `sealBytes`/`openBytes` in `secureSession.web.ts` (one key owner), queue `store` hooks (sweep + fail missing photos before the first send, `release` on publish/remove; the orphan draft is deleted), staging before enqueue in ShareScreen ("Getting 12 of 48 photos ready…"), QueueStatus words, images-only pickers on the real-backend web build (`deps.noVideo`), wipe at sign-out. Architecture 03 and mediaStore.web.ts updated (ARCH-WEB-R2). No new dependency.
+- **Test changes, flagged:** the e2e B-WEB3-1 case now expects Remove only (no Try again) per the grandparent-ux words; webQueue header likewise. The "closing Chrome would stop it" sentence is shown only by Share's QueueStatus (every tab keeps its own, and the e2e wants it once); other tabs say only "We'll keep trying while Chrome stays open." qa-tdd/grandparent-ux to confirm.
+- **Privacy fixes (engineer, Nov 25):** PRIV-WEB3-R1 done (`uploadStore.web.ts` generation counter bumped by wipe(): stage/put seal and write nothing after sign-out, no new key); R2/R3 in architecture 03; R4 tracked as TRACKER R97 (no code).
+- **Next:** qa-tdd green 3x, privacy-security, grandparent-ux, then commit and PR; WEB-APP-35/36 manual on a real Android phone.
 ## Nov 26: intake #176 follow-ups (R100; branch local-176b, not pushed)
 - **Done, test-first** (qa-tdd red 1a5f35a): six backend scripts require `SUPABASE_PROJECT_REF` (one stderr line, before any call); `.mcp.json` reads `${SUPABASE_PROJECT_REF}` (vendor docs: expansion works in `url`); "Lake weekend" replaces the real-family event name in seeds, SQL, tests, app and docs; fictional city in the photo-strip fixture; `scripts/check-public-privacy.sh` guards it.
 - **Needs Chase:** set `SUPABASE_PROJECT_REF` in the environment secrets and wherever he runs deploy or the MCP server. **Next:** push and PR after Chase's word.
