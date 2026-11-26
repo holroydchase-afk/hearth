@@ -49,9 +49,11 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await page.getByRole('button', { name: /^Add photos, up to \d+ at a time$/ }).click();
   await (await chooser).setFiles(FIXTURE);
   await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible(); // DEC-73 postcard
-  await page.getByLabel('Add a note (optional)').fill('Pumpkin patch');
+  await page.getByLabel('Say something, optional').fill('Pumpkin patch');
+  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-90: step 2
   await page.getByLabel(/^Grandparents – Dad's side, 2 people, not picked$/).click(); // Jo hasn't joined yet
   await page.getByRole('button', { name: /^Send to / }).click();
+  await page.getByRole('button', { name: 'See it in Feed' }).click(); // DEC-90: the sent page
   await onFeed(page);
   await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
   await expect(page.getByText(/can see this\.$/).first()).toBeVisible(); // RD-58 (UX-R15): one who-can-see line; the group's name is in Post options

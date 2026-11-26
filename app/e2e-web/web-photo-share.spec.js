@@ -31,7 +31,8 @@ async function pickAndSend(page, file, note) {
   const chooser = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: /^Add photos, up to \d+ at a time$/ }).click();
   await (await chooser).setFiles(file);
-  await page.getByLabel('Add a note (optional)').fill(note);
+  await page.getByLabel('Say something, optional').fill(note);
+  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-90: step 2
   await page.getByLabel(/^Grandparents – Dad's side, 2 people, not picked$/).click();
   await page.getByRole('button', { name: /^Send to / }).click();
 }

@@ -57,3 +57,12 @@ export function tileColumns(o: { names: string[]; rowWidth: number; fontSize: nu
 }
 /** A face tile's padding on both sides together (kit's `face` style). */
 export const TILE_INSET = 8;
+
+/** DEC-90 (FLOW-9): step 2's tiles lay out 2 across; 1 across in Easy view, or when the longest word of any name would
+ *  be wider than a 2-across tile (names are never shortened or cut). */
+export function shareTileColumns(o: { names: string[]; rowWidth: number; fontSize: number; fontScale: number; bigText: boolean }): 1 | 2 {
+  if (o.bigText) return 1;
+  const room = o.rowWidth / 2 - TILE_INSET;
+  const widest = Math.max(0, ...o.names.flatMap((n) => n.split(/\s+/)).map(wordEm));
+  return widest * o.fontSize * Math.max(1, o.fontScale) > room ? 1 : 2;
+}

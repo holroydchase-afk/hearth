@@ -13,19 +13,21 @@ import { PhotosScreen } from '../PhotosScreen';
 import { MoreScreen } from '../../test/redesignScreens'; // RD-15: Messages and Events are rows in More
 import { ShareScreen } from '../ShareScreen';
 
+const slow = { timeout: 5000 };
 const DAD = "Grandparents – Dad's side";
 
 describe('WORDS grandparent-ux words pass', () => {
   // Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-3/9), flagged for qa-tdd: the one note field promises no one;
   // the To: line names who gets it, by name, once picked.
-  it('WORDS-1 DEC-73 the note never promises "Grandma will see this": the To: line names the people picked', async () => {
+  it('WORDS-1 (DEC-90) DEC-73 the note never promises "Grandma will see this": on step 2 the summary line names the people picked', async () => {
     await renderApp(<ShareScreen />, { user: 'chase' });
     fireEvent.press(await screen.findByRole('button', { name: /^Add photos, up to \d+ at a time$/ }));
     await screen.findByRole('header', { name: 'New post' });
-    const note = screen.getByLabelText('Add a note (optional)');
+    const note = screen.getByLabelText('Say something, optional');
     expect(String(note.props.placeholder ?? '')).not.toMatch(/will see|Grandma|Gammy/);
+    fireEvent.press(screen.getByRole('button', { name: 'Next: who gets it' }));
     fireEvent.press(await screen.findByLabelText(`${DAD}, 3 people, not picked`));
-    expect(screen.getByText('Grandma Jo and Grandpa Earl')).toBeTruthy();
+    expect(screen.getByTestId('share-summary')).toHaveTextContent('Grandma Jo and Grandpa Earl will see your photos.');
   });
 
   it('WORDS-2 if changing the words is refused, the sheet says the old words are kept', async () => {
@@ -50,9 +52,10 @@ describe('WORDS grandparent-ux words pass', () => {
 
   // Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-5), flagged for qa-tdd: a face tile shows the group's name
   // alone and "3 people" on its own line, never "name · 3 people".
-  it('WORDS-4 DEC-73 a group tile on Share shows its name alone, with "3 people" under it', async () => {
+  it('WORDS-4 (DEC-90) DEC-73 a group tile on Share shows its name alone, with "3 people" under it', async () => {
     await renderApp(<ShareScreen />, { user: 'chase' });
     fireEvent.press(await screen.findByRole('button', { name: /^Add photos, up to \d+ at a time$/ }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' }, slow)); // DEC-90: step 2
     const tile = await screen.findByLabelText(`${DAD}, 3 people, not picked`);
     expect(within(tile).getByText(DAD)).toBeTruthy();
     expect(within(tile).getByText('3 people')).toBeTruthy();

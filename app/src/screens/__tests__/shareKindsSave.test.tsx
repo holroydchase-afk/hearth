@@ -26,6 +26,8 @@
 //     words that say the words were kept (/kept/i), with no code and not the photo line "Pick who should see it.";
 //     every typed word stays in the card. Branch on error.code.
 //   - SHARE-U-23: every new tap target is labelled and 48 pt+; text through useTheme().type / <Txt> (typeScale lint).
+// DEC-90 (Nov 26, qa-tdd): Share is two steps now (docs/product/SPEC-SHARE-FLOW.md). The helpers below drive step 1's one
+// big box and chips and step 2's tiles; the old field labels map onto them. Superseded tests are rewritten, IDs kept.
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { Keyboard, Platform, ScrollView, StyleSheet, Text, TextInput } from 'react-native';
@@ -77,11 +79,14 @@ async function start(opts: { user?: FixtureUser; be?: FakeBackend; kv?: KV } = {
   const be = opts.be ?? kindsOn();
   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', be, kv: opts.kv, deps: { pickBulk, pickPhotos } });
   await screen.findByRole('header', { name: 'New post' }, slow);
+  for (const k of Object.keys(chipNow)) delete chipNow[k];
   return { ...r, be };
 }
 
+const isoOf = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const TODAY_ISO = isoOf(new Date());
 const KINDS = {
-  event: { label: 'Add an event', required: { "What's happening": 'Pumpkin patch', 'What day': '2026-10-31' }, optional: { 'Where, optional': '' } },
+  event: { label: 'Add an event', required: { "What's happening": 'Pumpkin patch', 'What day': TODAY_ISO }, optional: { 'Where, optional': '' } },
   news: { label: 'Share news', required: { 'Your news': 'Leo lost his first tooth' }, optional: {} },
   saying: { label: 'Add a saying', required: { 'What they said': 'Pawpaw, your beard is a cloud', 'Who said it': 'Leo' }, optional: { 'Age then, optional': '' } },
 } as const;
@@ -92,48 +97,82 @@ async function openKind(k: K) {
   fireEvent.press(await screen.findByRole('button', { name: KINDS[k].label }, slow));
   await screen.findByTestId(`share-kind-card-${k}`, {}, slow);
 }
-const type = (label: string, v: string) => fireEvent.changeText(screen.getByLabelText(label), v);
-const pickBtn = () => screen.getByRole('button', { name: 'Pick who gets it' });
+const WORDS_LABELS = ["What's happening", 'Your news', 'What they said'];
+const wordsBox = () => screen.getByLabelText(/^(What's happening\?|What's your news\?|What did they say\?)$/);
+const chipNow: Record<string, string | RegExp> = {};
+const CHIP: Record<string, { start: string; input: string; value: (v: string) => string }> = {
+  'Where, optional': { start: 'Add a place', input: 'Where', value: (v) => v },
+  'Who said it': { start: 'Who said it?', input: 'Who said it', value: (v) => `Said by ${v}` },
+  'Age then, optional': { start: 'Add their age', input: 'Age', value: (v) => `Age ${v}` },
+};
+function pickDay(iso: string) {
+  fireEvent.press(screen.getByRole('button', { name: chipNow['What day'] ?? 'Pick a day' }));
+  fireEvent.press(screen.getByTestId(`day-${iso}`));
+  fireEvent.press(screen.getByRole('button', { name: 'Done' }));
+}
+/** Old field label -> the new control: the one big box, the day sheet, or a chip's editor. */
+const type = (label: string, v: string) => {
+  if (WORDS_LABELS.includes(label)) return fireEvent.changeText(wordsBox(), v);
+  if (label === 'What day') return pickDay(v);
+  const c = CHIP[label]!;
+  if (!screen.queryByLabelText(c.input)) fireEvent.press(screen.getByRole('button', { name: chipNow[label] ?? c.start }));
+  fireEvent.changeText(screen.getByLabelText(c.input), v);
+  chipNow[label] = v.trim() ? c.value(v.trim()) : c.start;
+};
+const pickBtn = () => screen.getByRole('button', { name: 'Next: who gets it' });
 const isDisabled = (b: Inst) => !!(b.props.accessibilityState?.disabled ?? b.props['aria-disabled']);
 const tiles = () => screen.queryAllByLabelText(/^.+, \d+ (person|people), (not )?picked$/);
 const fill = (k: K, extra: Record<string, string> = {}) => {
   for (const [l, v] of Object.entries({ ...KINDS[k].required, ...extra })) type(l, v);
 };
 const emptyAgain = async () => {
+  // DEC-90: a sent page first, then "Share another" gives the empty card.
+  await waitFor(() => expect(screen.queryByTestId('share-kinds') ?? screen.queryByRole('button', { name: 'Share another' })).toBeTruthy(), slow);
+  const another = screen.queryByRole('button', { name: 'Share another' });
+  if (another) fireEvent.press(another);
   await screen.findByTestId('share-kinds', {}, slow);
   expect(screen.getByRole('button', { name: /^Add photos( or videos)?, up to \d+ at a time$/ })).toBeTruthy();
   for (const k of ALL) expect(screen.queryByTestId(`share-kind-card-${k}`)).toBeNull();
 };
+/** Step 2 stayed after a refusal: go Back to read the words; Next again keeps the group picks (FLOW-8, FLOW-14). */
+const backToWords = async () => {
+  fireEvent.press(screen.getByRole('button', { name: 'Back' }));
+  await screen.findByText('Step 1 of 2', {}, slow);
+};
+const toWhoAgain = async () => {
+  fireEvent.press(pickBtn());
+  await screen.findByRole('header', { name: 'Who gets it?' }, slow);
+};
 
 afterEach(() => jest.restoreAllMocks());
 
-describe('SHARE-U-17 "Pick who gets it" opens up only when the required fields are filled', () => {
+describe('SHARE-U-17 (DEC-90) "Next: who gets it" opens up only when the required fields are filled', () => {
   for (const k of ALL) {
-    it(`SHARE-U-17 ${k}: off while empty, off with any one required field blank or spaces only, on with every required one filled and the optional ones blank`, async () => {
+    it(`SHARE-U-17 (DEC-90) ${k}: off while empty, off with any one required field blank or spaces only, on with every required one filled and the optional ones blank`, async () => {
       await start();
       await openKind(k);
       expect(isDisabled(pickBtn())).toBe(true);
-      const req = Object.entries(KINDS[k].required);
+      const req = Object.entries(KINDS[k].required).filter(([l]) => l !== 'What day');
       for (const [skip] of req) {
         for (const [l, v] of req) type(l, l === skip ? '   ' : v);
         expect({ blank: skip, disabled: isDisabled(pickBtn()) }).toEqual({ blank: skip, disabled: true });
       }
       fill(k);
-      for (const l of Object.keys(KINDS[k].optional)) type(l, '');
       expect({ k, disabled: isDisabled(pickBtn()) }).toEqual({ k, disabled: false });
     });
   }
 });
 
-describe('SHARE-U-18 it opens the same who-gets-it picker as photos, nothing pre-picked (SHARE-U-3, DEC-73/79)', () => {
+describe('SHARE-U-18 (DEC-90) step 2 is the same who-gets-it picker as photos, nothing pre-picked (SHARE-U-3, DEC-73/79)', () => {
   for (const k of ALL) {
-    it(`SHARE-U-18 ${k}: the group tiles show, none picked even with a saved last audience; a pick names the people on Send`, async () => {
+    it(`SHARE-U-18 (DEC-90) ${k}: the group tiles show on step 2, none picked even with a saved last audience; a pick names the people on Send`, async () => {
       const kv = memoryKV({ [`hearth.lastAudience.v1.${FIXTURE.users.chase.id}`]: JSON.stringify([FIXTURE.circles.dadSide.id]) });
       await start({ kv });
       await openKind(k);
-      expect(tiles()).toHaveLength(0); // the picker is behind the button
+      expect(tiles()).toHaveLength(0); // the picker is on step 2, behind the button
       fill(k);
       fireEvent.press(pickBtn());
+      await screen.findByRole('header', { name: 'Who gets it?' }, slow);
       await waitFor(() => expect(tiles().length).toBe(3), slow);
       for (const t of tiles()) expect({ t: t.props.accessibilityLabel, picked: !!t.props.accessibilityState?.selected }).toEqual({ t: t.props.accessibilityLabel, picked: false });
       fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
@@ -146,6 +185,7 @@ async function toSend(k: K, extra: Record<string, string> = {}) {
   await openKind(k);
   fill(k, extra);
   fireEvent.press(pickBtn());
+  await screen.findByRole('header', { name: 'Who gets it?' }, slow);
   await waitFor(() => expect(tiles().length).toBe(3), slow);
   fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
   return screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' });
@@ -153,7 +193,7 @@ async function toSend(k: K, extra: Record<string, string> = {}) {
 
 const WANT: Record<K, Record<string, unknown>> = {
   news: { kind: 'news', caption: 'Leo lost his first tooth' },
-  event: { kind: 'event', event: expect.objectContaining({ what: 'Pumpkin patch', when: '2026-10-31' }) },
+  event: { kind: 'event', event: expect.objectContaining({ what: 'Pumpkin patch', when: TODAY_ISO }) },
   saying: { kind: 'saying', saying: { words: 'Pawpaw, your beard is a cloud', who: 'Leo', age: 4 } },
 };
 
@@ -191,7 +231,7 @@ describe('SHARE-U-19 Send makes exactly one post of that kind, published with no
     expect(Object.keys(be.state.posts).length).toBe(before + 1);
   });
 
-  it('SHARE-U-19 Send again after a failed publish reuses the client id: still one post, now published', async () => {
+  it('SHARE-U-19 (DEC-90) Send again after a failed publish reuses the client id: still one post, now published', async () => {
     const { be } = await start();
     const before = Object.keys(be.state.posts).length;
     const create = jest.spyOn(be, 'createPost');
@@ -199,7 +239,9 @@ describe('SHARE-U-19 Send makes exactly one post of that kind, published with no
     jest.spyOn(be, 'publishPost').mockImplementationOnce(() => { throw new ApiError('NETWORK'); }).mockImplementation(real);
     fireEvent.press(await toSend('news'));
     await screen.findByRole('alert', {}, slow);
-    expect(screen.getByLabelText('Your news').props.value).toBe('Leo lost his first tooth');
+    await backToWords(); // DEC-90: the notice sits on step 2; Back shows the kept words, Next keeps the pick
+    expect(wordsBox().props.value).toBe('Leo lost his first tooth');
+    await toWhoAgain();
     fireEvent.press(screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' }));
     await emptyAgain();
     const ids = new Set(create.mock.calls.map((c) => c[1].clientId));
@@ -262,19 +304,28 @@ describe('SHARE-U-20 the post in Feed: a large-type card for its kind, the names
   });
 });
 
-describe('SHARE-U-21 PRIV-VC-D1 the Saying card says who will see who said it, before sending', () => {
-  it(`SHARE-U-21 the Saying card shows "${SAYING_LINE}" where screen readers reach it, 17 pt+`, async () => {
+describe('SHARE-U-21 (DEC-90) PRIV-VC-D1 the Saying says who will see who said it, before sending (now in the step 2 summary)', () => {
+  it('SHARE-U-21 (DEC-90) on step 2 the Saying summary names what is shown ("these words and who said them"), reachable by screen readers, 17 pt+', async () => {
     await start();
     await openKind('saying');
-    const line = screen.getByText(SAYING_LINE);
+    fill('saying');
+    fireEvent.press(pickBtn());
+    await screen.findByRole('header', { name: 'Who gets it?' }, slow);
+    fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+    const line = screen.getByTestId('share-summary');
     expect(hiddenFromReaders(line)).toBe(false);
-    expect(Number(flat(line.props.style).fontSize ?? 0)).toBeGreaterThanOrEqual(17);
+    expect(wordsIn(line)).toContain('these words and who said them');
+    for (const t of line.findAll((x: Inst) => x.type === Text) as Inst[]) expect(Number(flat(t.props.style).fontSize ?? 0)).toBeGreaterThanOrEqual(17);
   });
   for (const k of ['event', 'news'] as const) {
-    it(`SHARE-U-21 the ${k} card does not show the saying line`, async () => {
+    it(`SHARE-U-21 (DEC-90) the ${k} summary does not show the saying line`, async () => {
       await start();
       await openKind(k);
-      expect(screen.queryByText(SAYING_LINE)).toBeNull();
+      fill(k);
+      fireEvent.press(pickBtn());
+      await screen.findByRole('header', { name: 'Who gets it?' }, slow);
+      fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      expect(wordsIn(screen.getByTestId('share-summary'))).not.toMatch(/who said them/);
     });
   }
 });
@@ -286,7 +337,7 @@ describe('SHARE-U-22 a refusal shows a plain notice and keeps every word (A1)', 
   ];
   for (const [name, err] of cases) {
     for (const k of ['event', 'saying'] as const) {
-      it(`SHARE-U-22 ${name} on ${k}: a notice that says the words were kept; the card and its words stay; nothing published`, async () => {
+      it(`SHARE-U-22 (DEC-90) ${name} on ${k}: a notice that says the words were kept; the card and its words stay; nothing published`, async () => {
         const { be } = await start();
         jest.spyOn(be, 'createPost').mockImplementation(() => { throw err; });
         const publish = jest.spyOn(be, 'publishPost');
@@ -295,8 +346,10 @@ describe('SHARE-U-22 a refusal shows a plain notice and keeps every word (A1)', 
         const said = wordsIn(notice);
         expect(said).toMatch(/kept/i);
         expect(said).not.toMatch(/42501|23514|post_kinds|Pick who should see it\./);
+        expect(screen.getByRole('header', { name: 'Who gets it?' })).toBeTruthy(); // DEC-90: step 2 stays
+        await backToWords();
         expect(screen.getByTestId(`share-kind-card-${k}`)).toBeTruthy();
-        for (const [l, v] of Object.entries(KINDS[k].required)) expect({ l, v: screen.getByLabelText(l).props.value }).toEqual({ l, v });
+        expect(wordsBox().props.value).toBe(Object.entries(KINDS[k].required)[0]![1]);
         expect(publish).not.toHaveBeenCalled();
       });
     }
@@ -314,23 +367,24 @@ describe('SHARE-U-23 grandparent UX on the working cards', () => {
 });
 
 // Guards added by qa-tdd after 8383d5e (Nov 24): the age check and the shared Notice change.
-describe('SHARE-U-22 guards: a non-number age, and every existing notice still announces itself', () => {
-  for (const age of ['four', '4.5', '-4', '1000']) {
-    it(`SHARE-U-22 Saying age "${age}": a local notice asks for a number, every word stays, and nothing reaches the server`, async () => {
+describe('SHARE-U-22 (DEC-90) guards: the age takes digits only, and every existing notice still announces itself', () => {
+  for (const age of ['four', '4.5', '-4']) {
+    it(`SHARE-U-22 (DEC-90) Saying age "${age}": only the digits are kept, so no non-number notice can show and nothing bad reaches the server`, async () => {
       const { be } = await start();
       const create = jest.spyOn(be, 'createPost');
-      const publish = jest.spyOn(be, 'publishPost');
-      // GUX-SK-R2 (Nov 25): the age is now checked when "Pick who gets it" is tapped, before the tiles open.
       await openKind('saying');
-      fill('saying', { 'Age then, optional': age });
+      fill('saying');
+      fireEvent.press(screen.getByRole('button', { name: 'Add their age' }));
+      fireEvent.changeText(screen.getByLabelText('Age'), age);
+      expect(screen.getByLabelText('Age').props.value).toMatch(/^\d*$/);
       fireEvent.press(pickBtn());
-      const notice = await screen.findByRole('alert', {}, slow);
-      expect(wordsIn(notice)).toBe('Type the age as a number, like 4, or leave it blank. Your words are kept.');
-      expect(tiles()).toHaveLength(0);
-      expect(create).not.toHaveBeenCalled();
-      expect(publish).not.toHaveBeenCalled();
-      expect(screen.getByTestId('share-kind-card-saying')).toBeTruthy();
-      for (const [l, v] of Object.entries({ ...KINDS.saying.required, 'Age then, optional': age })) expect({ l, v: screen.getByLabelText(l).props.value }).toEqual({ l, v });
+      await screen.findByRole('header', { name: 'Who gets it?' }, slow);
+      expect(screen.queryByRole('alert')).toBeNull();
+      fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      fireEvent.press(sendBtn());
+      await screen.findByRole('header', { name: 'Sent' }, slow);
+      const sent = create.mock.calls[0]![1].saying?.age;
+      expect(sent === null || Number.isInteger(sent)).toBe(true);
     });
   }
 
@@ -380,29 +434,23 @@ const scrollProto = ScrollView.prototype as unknown as { scrollTo: Mocked; scrol
 const clearScroll = () => { scrollProto.scrollTo.mockClear(); scrollProto.scrollToEnd.mockClear(); };
 const scrolledToTop = () => scrollProto.scrollTo.mock.calls.some((c) => Number((c[0] as { y?: number } | undefined)?.y ?? -1) === 0);
 
-describe('GUX-SK-R1 (P1) Event "What day": checked before the picker opens, plain words for a bad day', () => {
-  it('GUX-SK-R1 the field is labelled "What day" (not "When") with the placeholder "Like 2026-12-24"', async () => {
+describe('GUX-SK-R1 (DEC-90) Event "What day": picked on the day sheet, so a bad typed day can no longer happen', () => {
+  it('GUX-SK-R1 (DEC-90) the chip is "Pick a day" (not "When", not a typed field with "Like 2026-12-24"); no day text input exists', async () => {
     await start();
     await openKind('event');
-    expect(screen.getByText('What day')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Pick a day' })).toBeTruthy();
     expect(screen.queryByText('When')).toBeNull();
-    expect(screen.getByLabelText('What day').props.placeholder).toBe('Like 2026-12-24');
+    expect(screen.queryByLabelText('What day')).toBeNull();
+    expect(screen.queryByPlaceholderText('Like 2026-12-24')).toBeNull();
   });
-  for (const bad of ['Saturday', '2026-13-40']) {
-    it(`GUX-SK-R1 What day "${bad}": a local notice, the tiles stay closed, createPost never called, words kept`, async () => {
-      const { be } = await start();
-      const create = jest.spyOn(be, 'createPost');
-      await openKind('event');
-      fill('event', { 'What day': bad });
-      fireEvent.press(pickBtn());
-      const notice = await screen.findByRole('alert', {}, slow);
-      expect(wordsIn(notice)).toBe(GUX_DAY);
-      expect(tiles()).toHaveLength(0);
-      expect(create).not.toHaveBeenCalled();
-      expect(screen.getByLabelText('What day').props.value).toBe(bad);
-      expect(screen.getByLabelText("What's happening").props.value).toBe('Pumpkin patch');
-    });
-  }
+  it('GUX-SK-R1 (DEC-90) the typed-day notice is gone: sending a picked day never shows "year-month-day"', async () => {
+    const { be } = await start();
+    const create = jest.spyOn(be, 'createPost');
+    fireEvent.press(await toSend('event'));
+    await screen.findByRole('header', { name: 'Sent' }, slow);
+    expect(create.mock.calls[0]![1].event?.when).toBe(TODAY_ISO);
+    expect(screen.queryByText(GUX_DAY)).toBeNull();
+  });
   it('GUX-SK-R1 a 23514 from the server says exactly how the day should look', async () => {
     const { be } = await start();
     jest.spyOn(be, 'createPost').mockImplementation(() => { throw new ApiError('23514', 'an event needs a real date'); });
@@ -411,27 +459,8 @@ describe('GUX-SK-R1 (P1) Event "What day": checked before the picker opens, plai
   });
 });
 
-describe('GUX-SK-R2 (P1) the age is checked before the picker opens; every notice scrolls to the top', () => {
-  it('GUX-SK-R2 Saying age "four": the age notice shows on "Pick who gets it", the tiles stay closed, the page scrolls to the top', async () => {
-    await start();
-    await openKind('saying');
-    fill('saying', { 'Age then, optional': 'four' });
-    clearScroll();
-    fireEvent.press(pickBtn());
-    expect(wordsIn(await screen.findByRole('alert', {}, slow))).toBe(AGE_NOT_NUMBER_WORDS);
-    expect(tiles()).toHaveLength(0);
-    expect(scrolledToTop()).toBe(true);
-  });
-  it('GUX-SK-R2 a bad day (local notice) scrolls the page to the top', async () => {
-    await start();
-    await openKind('event');
-    fill('event', { 'What day': 'Saturday' });
-    clearScroll();
-    fireEvent.press(pickBtn());
-    await screen.findByRole('alert', {}, slow);
-    expect(scrolledToTop()).toBe(true);
-  });
-  it('GUX-SK-R2 a server notice (42501) scrolls the page to the top', async () => {
+describe('GUX-SK-R2 (DEC-90) every notice scrolls to the top (the local age and day notices are gone with the typed fields)', () => {
+  it('GUX-SK-R2 a server notice (42501) on step 2 scrolls the page to the top', async () => {
     const { be } = await start();
     jest.spyOn(be, 'createPost').mockImplementation(() => { throw new ApiError('42501', 'post_kinds_off'); });
     const send = await toSend('news');
@@ -442,35 +471,37 @@ describe('GUX-SK-R2 (P1) the age is checked before the picker opens; every notic
   });
 });
 
-describe('GUX-SK-R3 (P1) a line says what to fill in while "Pick who gets it" is off', () => {
+const FLOW_HINT: Record<K, string> = {
+  event: "Add what's happening and the day to go on.",
+  saying: 'Add what they said and who said it to go on.',
+  news: 'Add your news to go on.',
+};
+describe('GUX-SK-R3 (DEC-90) a hint line says what is missing while "Next: who gets it" is off (wording moves to FLOW-5)', () => {
   for (const k of ALL) {
-    it(`GUX-SK-R3 ${k}: "${R3_LINE[k]}" shows while the button is off and is gone once it is on`, async () => {
+    it(`GUX-SK-R3 (DEC-90) ${k}: "${FLOW_HINT[k]}" shows while the button is off and is empty once it is on`, async () => {
       await start();
       await openKind(k);
       expect(isDisabled(pickBtn())).toBe(true);
-      const line = screen.getByText(R3_LINE[k]);
+      const line = screen.getByText(FLOW_HINT[k]);
       expect(hiddenFromReaders(line)).toBe(false);
       fill(k);
       expect(isDisabled(pickBtn())).toBe(false);
-      expect(screen.queryByText(R3_LINE[k])).toBeNull();
+      expect(screen.queryByText(FLOW_HINT[k])).toBeNull();
     });
   }
 });
 
-describe('GUX-SK-R4 (P1) opening the tiles puts the keyboard away and brings "To:" into view', () => {
+describe('GUX-SK-R4 (DEC-90) "Next: who gets it" puts the keyboard away (no scroll to tiles: step 2 is its own page)', () => {
   for (const k of ALL) {
-    it(`GUX-SK-R4 ${k}: Keyboard.dismiss() and a scroll down to the tiles`, async () => {
+    it(`GUX-SK-R4 (DEC-90) ${k}: Keyboard.dismiss() on Next, and the tiles are on their own page`, async () => {
       await start();
       await openKind(k);
       fill(k);
       const dismiss = jest.spyOn(Keyboard, 'dismiss');
-      clearScroll();
       fireEvent.press(pickBtn());
+      await screen.findByRole('header', { name: 'Who gets it?' }, slow);
       await waitFor(() => expect(tiles().length).toBe(3), slow);
       expect(dismiss).toHaveBeenCalled();
-      const down = scrollProto.scrollToEnd.mock.calls.length > 0
-        || scrollProto.scrollTo.mock.calls.some((c) => Number((c[0] as { y?: number } | undefined)?.y ?? 0) > 0);
-      expect(down).toBe(true);
     });
   }
 });
@@ -508,17 +539,18 @@ describe('GUX-SK-R7 (P2) the Feed event line names the weekday', () => {
   });
 });
 
-describe('GUX-SK-R8 (P2) the Saying line names the words, who said them, and the age only when there is one', () => {
-  it('GUX-SK-R8 blank age: "...these words and who said them."; an age typed: "...these words, who said them, and the age."; cleared: back again', async () => {
-    await start();
-    await openKind('saying');
-    expect(screen.getByText(SAYING_LINE)).toBeTruthy();
-    expect(screen.queryByText(SAYING_LINE_AGE)).toBeNull();
-    type('Age then, optional', '4');
-    expect(screen.getByText(SAYING_LINE_AGE)).toBeTruthy();
-    expect(screen.queryByText(SAYING_LINE)).toBeNull();
-    type('Age then, optional', '  ');
-    expect(screen.getByText(SAYING_LINE)).toBeTruthy();
+describe('GUX-SK-R8 (DEC-90) the Saying summary names the words, who said them, and the age only when there is one', () => {
+  it('GUX-SK-R8 (DEC-90) blank age: "...these words and who said them"; an age typed: "...these words, who said them, and the age"', async () => {
+    for (const age of ['', '4']) {
+      const { unmount } = await start();
+      await openKind('saying');
+      fill('saying', age ? { 'Age then, optional': age } : {});
+      fireEvent.press(pickBtn());
+      await screen.findByRole('header', { name: 'Who gets it?' }, slow);
+      fireEvent.press(screen.getByLabelText(new RegExp(`^${DAD}, \\d+ people, not picked$`)));
+      expect(wordsIn(screen.getByTestId('share-summary'))).toContain(age ? 'these words, who said them, and the age' : 'these words and who said them');
+      unmount();
+    }
   });
 });
 
@@ -536,18 +568,14 @@ describe('GUX-SK-R9 (P2) kind tile words are type.headline', () => {
   }
 });
 
-describe('GUX-SK-R10 (P2) kind card field underlines use c.tabLine', () => {
+describe('GUX-SK-R10 (DEC-90) kind cards have no field underlines at all (FLOW-2, FLOW-24)', () => {
   for (const k of ALL) {
-    it(`GUX-SK-R10 ${k}: every field's underline is c.tabLine, not c.line`, async () => {
+    it(`GUX-SK-R10 (DEC-90) ${k}: its one box has no bottom border and no ruled line`, async () => {
       await start();
       await openKind(k);
-      const tabLines = [false, true].map((d) => paletteFor(Platform.OS as 'ios', d, 'paper').tabLine.toUpperCase());
       const inputs = screen.getByTestId(`share-kind-card-${k}`).findAll((x: Inst) => x.type === TextInput) as Inst[];
-      expect(inputs.length).toBeGreaterThan(0);
-      for (const i of inputs) {
-        const color = String(flat(i.props.style).borderBottomColor ?? '').toUpperCase();
-        expect({ field: i.props.accessibilityLabel, tabLine: tabLines.includes(color) }).toEqual({ field: i.props.accessibilityLabel, tabLine: true });
-      }
+      expect(inputs).toHaveLength(1);
+      expect(flat(inputs[0]!.props.style).borderBottomWidth ?? 0).toBe(0);
     });
   }
 });
@@ -570,7 +598,7 @@ describe('GUX-SK-R11 (P2) Cancel on a card with words asks first', () => {
       await screen.findByRole('header', { name: 'Throw away this card?' }, slow);
       fireEvent.press(screen.getByRole('button', { name: 'Keep writing' }));
       await waitFor(() => expect(screen.queryByRole('header', { name: 'Throw away this card?' })).toBeNull(), slow);
-      expect(screen.getByLabelText(label).props.value).toBe(value);
+      expect(wordsBox().props.value).toBe(value);
       fireEvent.press(screen.getByRole('button', { name: 'Cancel this post' }));
       await screen.findByRole('header', { name: 'Throw away this card?' }, slow);
       fireEvent.press(screen.getByRole('button', { name: 'Throw away' }));
@@ -632,7 +660,9 @@ describe('PRIV-SK-R1 (P1) Send again never publishes the old groups or the old w
     commitThenLose(be);
     fireEvent.press(await toSend('news'));
     await screen.findByRole('alert', {}, slow);
+    await backToWords();
     type('Your news', 'Leo lost his second tooth');
+    await toWhoAgain();
     fireEvent.press(sendBtn());
     await emptyAgain();
     const mine = published(be).filter((p) => !before.has(p.id));

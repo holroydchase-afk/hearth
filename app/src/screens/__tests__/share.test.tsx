@@ -29,33 +29,45 @@ async function newPost(opts: { user?: FixtureUser; kv?: KV; be?: FakeBackend; de
   await screen.findByRole('header', { name: 'New post' }, slow);
   return r;
 }
+/** DEC-90: the tiles live on step 2; "Next: who gets it" gets there. */
+async function toWho() {
+  fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' }, slow));
+  await screen.findByRole('header', { name: 'Who gets it?' }, slow);
+}
 const tileFor = (name: string, picked = false) => screen.getByLabelText(new RegExp(`^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}, \\d+ people, ${picked ? '' : 'not '}picked$`));
 
 describe('Share screen', () => {
-  it('DEC-73 SHARE-PC-7 (was BETA-AUD-2 / B8 preselect): THIS user\'s last group is not ticked any more', async () => {
+  it('(DEC-90) DEC-73 SHARE-PC-7 (was BETA-AUD-2 / B8 preselect): THIS user\'s last group is not ticked any more', async () => {
     const kv = memoryKV();
     await saveLastAudience(kv, FIXTURE.users.chase.id, [FIXTURE.circles.dadSide.id]);
     await newPost({ user: 'chase', kv });
+    await toWho();
     expect(tileFor(DAD)).toBeTruthy();
     expect(tileFor(MOM)).toBeTruthy();
     expect(screen.queryByLabelText(/, picked$/)).toBeNull();
   });
 
-  it("B8 never another user's default on a shared phone; Send stays off with no group", async () => {
+  it("B8 (DEC-90) never another user's default on a shared phone; Send stays off with no group", async () => {
     const kv = memoryKV();
     await saveLastAudience(kv, FIXTURE.users.chase.id, [FIXTURE.circles.dadSide.id]);
     await newPost({ user: 'alex', kv });
+    await toWho();
     expect(screen.queryByLabelText(/, picked$/)).toBeNull();
-    expect(screen.getByRole('button', { name: 'Pick who gets it' }).props.accessibilityState).toMatchObject({ disabled: true });
+    expect(screen.getByRole('button', { name: /^Send/ }).props.accessibilityState).toMatchObject({ disabled: true });
   });
 
-  it('BETA-SHARE-1 DEC-73 pick → note → tap a group → Send: it sends to that group only and lands on Feed', async () => {
+  it('BETA-SHARE-1 (DEC-90) DEC-73 pick → note → tap a group → Send: it sends to that group only and lands on Feed', async () => {
     const be = FakeBackend.withFixture();
     const { nav } = await newPost({ be, user: 'chase' });
-    fireEvent.changeText(screen.getByLabelText('Add a note (optional)'), 'First snow!');
+    fireEvent.changeText(screen.getByLabelText('Say something, optional'), 'First snow!');
+    await toWho();
     fireEvent.press(tileFor(DAD));
     fireEvent.press(screen.getByRole('button', { name: /^Send to / }));
-    await waitFor(() => expect((nav as unknown as { goFeed: jest.Mock }).goFeed).toHaveBeenCalled());
+    const goFeed = (nav as unknown as { goFeed: jest.Mock }).goFeed;
+    await screen.findByRole('header', { name: 'Sent' }, slow);
+    expect(goFeed).not.toHaveBeenCalled(); // DEC-90: only "See it in Feed" goes there
+    fireEvent.press(screen.getByRole('button', { name: 'See it in Feed' }));
+    expect(goFeed).toHaveBeenCalledTimes(1);
     expect(nav.goPhotos).not.toHaveBeenCalled();
     await waitFor(async () => expect(await be.clientFor(FIXTURE.users.jo.id).getFeed({ space: FIXTURE.space.id })).toHaveLength(1));
     expect(await be.clientFor(FIXTURE.users.ruth.id).getFeed({ space: FIXTURE.space.id })).toHaveLength(0);
@@ -66,13 +78,14 @@ describe('Share screen', () => {
     const api = be.clientFor(null, { trackAppSession: true });
     jest.spyOn(api, 'createPost').mockRejectedValue(new ApiError('NETWORK'));
     await newPost({ be, user: 'chase', deps: { api } });
+    await toWho();
     fireEvent.press(tileFor(DAD));
     fireEvent.press(screen.getByRole('button', { name: /^Send to / }));
     expect(await screen.findByText(/Waiting to send/)).toBeTruthy();
   });
 
   // QA-R2 (staff-pm, Nov 19): the postcard keeps a labelled Remove for the photo showing, when there is more than one.
-  it('DEC-73 QA-R2 the photo showing can be removed with a labeled button; with one photo there is none', async () => {
+  it('DEC-73 QA-R2 (DEC-90) the photo showing can be removed with a labeled button; with one photo there is none', async () => {
     const three = Array.from({ length: 3 }, (_, i) => ({ uri: `file:///pick/r${i}.jpg`, kind: 'photo' as const, width: 4032, height: 3024 }));
     await newPost({ user: 'chase', deps: { pickPhotos: jest.fn(async () => ({ items: three })) } });
     expect(screen.getByText('1 of 3')).toBeTruthy();
@@ -82,7 +95,7 @@ describe('Share screen', () => {
     fireEvent.press(remove);
     expect(await screen.findByText(/^\d of 2$/)).toBeTruthy();
     fireEvent.press(screen.getByRole('button', { name: /^Remove photo / }));
-    await waitFor(() => expect(screen.queryByText(/ of \d$/)).toBeNull());
+    await waitFor(() => expect(screen.queryByText(/^\d+ of \d+$/)).toBeNull());
     expect(screen.queryByRole('button', { name: /^Remove photo / })).toBeNull();
     expect(screen.getByRole('header', { name: 'New post' })).toBeTruthy();
     expectGrandparentSafe();
@@ -109,8 +122,10 @@ describe('Share screen', () => {
     expectGrandparentSafe();
   });
 
-  it('is grandparent-safe', async () => {
+  it('is grandparent-safe (DEC-90: step 1 and step 2)', async () => {
     await newPost({ user: 'chase' });
+    expectGrandparentSafe();
+    await toWho();
     await waitFor(() => expect(tileFor(DAD)).toBeTruthy());
     expectGrandparentSafe();
   });
