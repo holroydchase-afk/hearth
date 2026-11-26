@@ -37,6 +37,9 @@ jobs:
       - run: bash scripts/check-public-privacy.sh
       - run: bash scripts/tests/check_no_fixed_sleeps_test.sh
       - run: bash scripts/check-no-fixed-sleeps.sh
+      # INTAKE-205-2: a secret scan on every PR (the demo-site grep only ran after merge).
+      - run: bash scripts/tests/check_secrets_test.sh
+      - run: bash scripts/check-secrets.sh
 
   # PRIV-2 (CLAUDE.md rule 2): no console.* call logs a key, URL, caption, email or raw error.
   logs:
@@ -201,6 +204,15 @@ jobs:
       # INTAKE-80-4 / B32: a component the React Compiler newly skips fails the PR that adds it.
       - name: React Compiler rules check (INTAKE-80-3)
         run: node scripts/compiler-check.js
+      # INTAKE-205-1: a real build (no fake or demo flag) carries no sample family and no demo frame (ENG-R5).
+      - run: bash scripts/tests/release_bundle_test.sh
+      - name: Real web build has no fakes
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: https://example.invalid
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: not-a-real-key
+        run: |
+          npx expo export --platform web --output-dir dist-real --clear
+          bash scripts/check-release-bundle.sh dist-real
 
   # QA-R2 (Nov 19 review, TRACKER R52): the browser tests run on every pull request, not only on a laptop:
   # the public demo build (e2e:demo) and the core loop on the fake backend (e2e:web).

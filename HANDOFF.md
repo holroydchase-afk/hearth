@@ -11,6 +11,10 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 26: missing CI gates (intake #205, R123; local-205, not pushed)
+- **Done:** secret scan, real-build bundle check, Dependabot for visibility, typecheck in agents.verify. SHA pins and `eas.json` not done (see R123).
+- **Next:** push after the ESLint thread's PR; then #213, #208.
+
 ## Nov 26: fixed sleeps out of the web e2e (intake #206, R122; PR)
 - **Done:** 27 `waitForTimeout` replaced (helpers/settle.js), guard script and test, wired into test-all.sh and CI. e2e not run locally; CI is the proof.
 - **Next:** #205, #213, #208. Open P2: the 2 jest real-timer cases (not named in the intake).
