@@ -11,6 +11,10 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 26: fixed sleeps out of the web e2e (intake #206, R122; PR)
+- **Done:** 27 `waitForTimeout` replaced (helpers/settle.js), guard script and test, wired into test-all.sh and CI. e2e not run locally; CI is the proof.
+- **Next:** #205, #213, #208. Open P2: the 2 jest real-timer cases (not named in the intake).
+
 ## Nov 26: STACK.md and architecture refresh (intake #207, R121; PR)
 - **Done:** `docs/eng/STACK.md`, `kind_counts` in 02/04, TypeScript decision (stay on ~6.0.3). Docs only.
 - **Next:** #206 (fixed sleeps in e2e), then #205, #213, #208.

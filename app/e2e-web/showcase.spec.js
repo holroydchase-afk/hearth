@@ -6,6 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const { test, expect } = require('../../e2e/node_modules/@playwright/test');
+const { pageReady } = require('./helpers/settle');
 
 const DIR = process.env.SHOWCASE_DIR;
 const FIXTURE = path.join(__dirname, 'fixtures', 'park-gps.jpg');
@@ -30,7 +31,7 @@ for (const size of SIZES) {
       page.on('requestfailed', (r) => problems.push({ tag, url: r.url(), text: `request failed: ${r.failure()?.errorText}` }));
       let n = 0;
       const shot = async (name) => {
-        await page.waitForTimeout(400);
+        await pageReady(page);
         n += 1;
         const base = path.join(DIR, `${tag}-${String(n).padStart(2, '0')}-${name}`);
         await page.screenshot({ path: `${base}.png` });

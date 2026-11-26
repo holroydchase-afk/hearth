@@ -4,6 +4,7 @@
 // Phone shots hide the demo bar so the app's own screens show; the laptop shot keeps the whole demo.
 const path = require('path');
 const { test, expect } = require('../../e2e/node_modules/@playwright/test');
+const { pageReady } = require('./helpers/settle');
 
 // DEMO-BAR: Grandma's view and Reset live in the Details drawer.
 const details = async (page) => {
@@ -17,7 +18,7 @@ const HIDE_BAR = '[data-testid="demo-bar"] { display: none !important; }';
 
 test('portfolio screenshots from the demo', async ({ page }) => {
   test.skip(!DIR, 'set SNAPSHOT_DIR to take portfolio screenshots');
-  const shot = async (name) => { await page.waitForTimeout(600); await page.screenshot({ path: path.join(DIR, `${name}.png`) }); };
+  const shot = async (name) => { await pageReady(page); await page.screenshot({ path: path.join(DIR, `${name}.png`) }); };
 
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/');

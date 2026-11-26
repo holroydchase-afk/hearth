@@ -7,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const { test, expect } = require('../../e2e/node_modules/@playwright/test');
+const { pageReady } = require('./helpers/settle');
 
 // DEMO-BAR: Grandma's view and Reset live in the Details drawer.
 const details = async (page) => {
@@ -42,7 +43,7 @@ for (const size of SIZES) {
       const shot = async (name) => {
         // UI-5: wait for the screen's own header, not a fixed delay (a cold tab takes ~750 ms to draw).
         await page.getByRole('heading').first().waitFor({ timeout: 3000 }).catch(() => {}); // the full-screen viewer has none
-        await page.waitForTimeout(300);
+        await pageReady(page);
         const sideways = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
         if (sideways) problems.push({ tag, url: page.url(), text: `sideways scroll on ${name}` });
         n += 1;

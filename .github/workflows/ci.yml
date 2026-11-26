@@ -35,6 +35,8 @@ jobs:
       - run: bash scripts/check-unique-numbers.sh
       - run: bash scripts/tests/check_public_privacy_test.sh
       - run: bash scripts/check-public-privacy.sh
+      - run: bash scripts/tests/check_no_fixed_sleeps_test.sh
+      - run: bash scripts/check-no-fixed-sleeps.sh
 
   # PRIV-2 (CLAUDE.md rule 2): no console.* call logs a key, URL, caption, email or raw error.
   logs:

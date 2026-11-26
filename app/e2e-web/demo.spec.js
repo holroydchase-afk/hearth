@@ -2,6 +2,9 @@
 // No sign-in, a sample family with pictures, a demo bar, Grandma Jo's view, and add / edit / reload / start over.
 const path = require('path');
 const { test, expect } = require('../../e2e/node_modules/@playwright/test');
+const { settle: settleWith, pageReady, frames, SLOW } = require('./helpers/settle');
+// INTAKE-206: every settle here follows a click, wheel or theme change, so it must stay still for ~400 ms (QA-R2).
+const settle = (page, read) => settleWith(page, read, SLOW);
 
 // DEMO-BAR: Grandma's view and Reset live in the Details drawer.
 const details = async (page) => {
@@ -22,6 +25,8 @@ const galleryLoaded = async (page) => {
   await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible();
   await expect.poll(() => page.evaluate(() => [...document.images].filter((i) => i.complete && i.naturalWidth > 0).length)).toBeGreaterThan(0);
 };
+// INTAKE-206: after a wheel, wait for the month titles to stop moving (not a fixed sleep).
+const settleMonths = (page) => settle(page, () => page.getByText(MONTH).evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().top))));
 const onFeed = async (page) => {
   await page.getByRole('tab', { name: /^Feed/ }).click();
   // DEMO-PHOTO-8: the newest post (Eliza's balance bike ride) tops Feed.
@@ -623,7 +628,7 @@ test('R18 the current month title sticks under the pinned search field while Gal
   const tops = await page.getByText(MONTH).evaluateAll((els) => els.map((e) => e.getBoundingClientRect().top));
   expect(tops.length).toBeGreaterThanOrEqual(2);
   await page.mouse.wheel(0, Math.round(tops[1] - (fieldAt.y + fieldAt.height)) + 200);
-  await page.waitForTimeout(400);
+  await settleMonths(page);
   const field = await page.getByLabel('Search photos').first().boundingBox();
   const heads = await page.getByText(MONTH).evaluateAll((els) => els.map((e) => { const r = e.getBoundingClientRect(); return { top: r.top, bottom: r.bottom }; }));
   // Some month title sits just under the field (within 24 px), not scrolled away above it.
@@ -639,12 +644,12 @@ test('RD-83 greeting, search bar and month title stay one pinned block after scr
   await galleryLoaded(page);
   await page.mouse.move(196, 600);
   await page.mouse.wheel(0, 1600); // mouse.wheel fires RN-web's onScroll; scrollTo does not
-  await page.waitForTimeout(400);
+  await settleMonths(page);
   // engineer, flagged for qa-tdd: back up 250, not 500. The demo's Gallery scrolls about 990 px in all, so 500 landed
   // 17 px above where the first month reaches the bar (its title then scrolls with the page, as RD-83's jest allows),
   // which measured that release point, not a pinned title. `reached` below proves the title is pinned here.
   await page.mouse.wheel(0, -250);
-  await page.waitForTimeout(400);
+  await settleMonths(page);
   const got = await page.getByLabel('Search photos').first().evaluate((field) => {
     // The backing: the sticky wrapper's child that holds the field (RD-82's full-width bar).
     let el = field;
@@ -683,8 +688,7 @@ test('R23 Gallery, Share, Feed and More each have exactly one h1', async ({ page
   const got = {};
   for (const tab of ['Gallery', 'Share', 'Feed', 'More']) {
     await page.getByRole('tab', { name: new RegExp(`^${tab}`) }).click();
-    await page.waitForTimeout(500);
-    got[tab] = await h1s();
+    got[tab] = await settle(page, h1s);
   }
   expect(Object.fromEntries(Object.entries(got).map(([k, v]) => [k, v.length]))).toEqual({ Gallery: 1, Share: 1, Feed: 1, More: 1 });
   expect(got.Gallery[0]).toMatch(/^Good (morning|afternoon|evening)/);
@@ -813,7 +817,7 @@ test('RD-92 RD-94 Paper, photo shadows and the reaction pop in the demo, light a
   const loveOff = async () => {
     if ((await love().getAttribute('aria-selected')) === 'true' || (await love().getAttribute('aria-pressed')) === 'true') {
       await love().click();
-      await page.waitForTimeout(400);
+      await settle(page, () => love().boundingBox());
     }
   };
   // Sample for 400 ms from just before the tap: the biggest scale drawn inside the heart, when it first passed 1, and
@@ -928,9 +932,9 @@ test('RD-117 RD-116 Avocado (Hass) light and dark; a picked ❤️ is a 2 px acc
     const before = await countOf();
     await love().click();
     await expect.poll(countOf).not.toBe(before);
-    if ((await countOf()) < before) { await page.waitForTimeout(300); await love().click(); await expect.poll(countOf).toBe(before); }
+    if ((await countOf()) < before) { await settle(page, () => love().boundingBox()); await love().click(); await expect.poll(countOf).toBe(before); }
   };
-  const turnOff = async () => { await turnOn(); const n = await countOf(); await page.waitForTimeout(300); await love().click(); await expect.poll(countOf).toBe(n - 1); };
+  const turnOff = async () => { await turnOn(); const n = await countOf(); await settle(page, () => love().boundingBox()); await love().click(); await expect.poll(countOf).toBe(n - 1); };
   const look = () => love().evaluate((btn) => {
     const s = getComputedStyle(btn);
     const count = [...btn.querySelectorAll('*')].find((n) => n.children.length === 0 && /^\d+$/.test((n.textContent || '').trim()));
@@ -956,7 +960,7 @@ test('RD-117 RD-116 Avocado (Hass) light and dark; a picked ❤️ is a 2 px acc
     await page.reload();
     await galleryLoaded(page);
     await pick('avocado');
-    await page.waitForTimeout(300); // soft, so one red run also shows the reaction checks below
+    await settle(page, themeBg); // soft, so one red run also shows the reaction checks below
     expect.soft({ mode, page: await themeBg() }).toEqual({ mode, page: PAGE.avocado[mode] });
     await page.screenshot({ path: path.join(shots, `rd-117-avocado-${mode}.png`) });
     if (mode === 'dark') {
@@ -972,15 +976,15 @@ test('RD-117 RD-116 Avocado (Hass) light and dark; a picked ❤️ is a 2 px acc
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
   for (const theme of ['paper', 'avocado', 'pomegranate']) {
     await pick(theme);
-    await page.waitForTimeout(300);
+    await settle(page, themeBg);
     expect.soft({ theme, page: await themeBg() }).toEqual({ theme, page: PAGE[theme].light });
     await onFeed(page);
     await turnOff();
-    await page.waitForTimeout(300);
+    await settle(page, look);
     const off = await look();
     expect.soft({ theme, offClear: clear(off.bg), offWidths: off.widths }).toEqual({ theme, offClear: true, offWidths: ['1px', '1px', '1px', '1px'] });
     await love().click();
-    await page.waitForTimeout(300);
+    await settle(page, look);
     const on = await look();
     expect.soft({ theme, clear: clear(on.bg), bg: clear(on.bg) ? 'clear' : on.bg, widths: on.widths, color: on.color, count: on.count })
       .toEqual({ theme, clear: true, bg: 'clear', widths: ['2px', '2px', '2px', '2px'], color: ACCENT[theme], count: ACCENT[theme] });
@@ -1413,9 +1417,9 @@ const drag = async (page, from, to, { fast = false, release = true } = {}) => {
   const steps = fast ? 3 : 15;
   for (let i = 1; i <= steps; i++) {
     await page.mouse.move(from.x + ((to.x - from.x) * i) / steps, from.y + ((to.y - from.y) * i) / steps);
-    if (!fast) await page.waitForTimeout(20);
+    if (!fast) await frames(page, 1); // one pacing step of about 30 ms, in frames
   }
-  if (!fast) await page.waitForTimeout(250);
+  if (!fast) await frames(page, 8); // hold still before letting go (about 250 ms), so there is no flick
   if (release) await page.mouse.up();
 };
 const mid = async (page) => { const p = await visiblePhoto(page); return { x: p.left + p.vw / 2, y: p.top + p.vh / 2, p }; };
@@ -1552,9 +1556,9 @@ test('QA-R2 VIEWER-5 VIEWER-6 after a double-click zoom, a long drag down pans a
   const before = await visiblePhoto(page);
   const { x, y } = await mid(page);
   await page.mouse.dblclick(x, y);
-  await page.waitForTimeout(370); // just after the zoom starts, before its animation ends
+  await expect.poll(async () => (await visiblePhoto(page)).w).toBeGreaterThan(before.w * 1.05); // the zoom has started, its animation not ended
   await drag(page, { x, y: y - 150 }, { x, y: y + 200 }, { fast: true });
-  await page.waitForTimeout(400);
+  await settle(page, async () => Math.round((await visiblePhoto(page)).w));
   expect((await visiblePhoto(page)).w / before.w).toBeGreaterThan(2.7);
   await expect(page.getByTestId('viewer-backdrop')).toBeVisible();
   expect(await backdropFade(page)).toBeGreaterThan(0.99);
@@ -1577,7 +1581,6 @@ test('VIEWER-7 VIEWER-23 Kevin: a click hides the controls and the strip, a seco
   await openPhoto(page);
   const { x, y } = await mid(page);
   await page.mouse.click(x, y);
-  await page.waitForTimeout(600);
   await expect(page.getByRole('button', { name: 'Close', exact: true })).toBeHidden();
   await expect(page.getByRole('button', { name: VSTRIP })).toHaveCount(0);
   await page.mouse.click(x, y);
@@ -1660,7 +1663,7 @@ test('VIEWER-21 VIEWER-22 Kevin: the strip sits above Save, marks the current ph
   await expect(strip.getByRole('button', { name, exact: true })).toHaveAttribute('aria-selected', 'true');
   await expect.poll(async () => Math.round((await visiblePhoto(page)).w)).toBe(Math.round(p.w));
   // Swipe on several photos: the current small photo stays inside the screen.
-  for (let i = 0; i < 6; i++) { await page.keyboard.press('ArrowRight'); await page.waitForTimeout(150); }
+  for (let i = 0; i < 6; i++) { await page.keyboard.press('ArrowRight'); await settle(page, () => strip.locator('[aria-selected="true"]').boundingBox()); }
   const cb = await strip.locator('[aria-selected="true"]').boundingBox();
   expect(cb.x).toBeGreaterThanOrEqual(0);
   expect(cb.x + cb.width).toBeLessThanOrEqual(390);
@@ -1683,7 +1686,7 @@ test('VIEWER-22 VIEWER-23 Grandma Jo: small photos are 48 by 48 or more, named, 
   // A click on the photo never hides the strip in Easy view On.
   const { x, y } = await mid(page);
   await page.mouse.click(x, y);
-  await page.waitForTimeout(600);
+  await pageReady(page); // a hide, if it were going to happen, has finished
   await expect(page.getByTestId('viewer-strip')).toBeVisible();
 });
 
@@ -2000,7 +2003,7 @@ test('GUX-T6 CAL-S4 at 390 x 844 Gallery has no birthday card, and Me\'s "Add my
   const bar = page.getByRole('tablist');
   await expect(bar).toBeVisible();
   await add.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(300);
+  await settle(page, () => add.boundingBox());
   const b = await add.boundingBox();
   const barTop = (await bar.boundingBox()).y;
   expect({ bottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: b.y + b.height <= barTop })
