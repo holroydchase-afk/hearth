@@ -647,5 +647,24 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** Chase asked for video (Oct 29), it is the most finished of the three dark features, and family video is a reason grandparents open the app. Keeping it costs a few small fixes, not a rebuild.
 - **Source:** `docs/reviews/2026-11-19-tech-debt/pm.md` PM-R5; `docs/product/SPEC-MEDIA.md` section 4; persona check `decisions/2026-11-19-keep-video.md`
 
+### DEC-91 · Share is two steps in every composer: the words, then "Who gets it?" on its own page (FLOW-1..26)
+- **When / status:** Nov 26 · Chase: "I don't like the lines, the to: line... overwhelming... everything should be broken into flows, at most 1-2 steps. Always move who it's to to its own step. Make the rest look better." · Specced; failing tests next
+- **Chose:** look B "Say it first" from the live tester: step 1 is one big open box plus quiet chips (day, place, who it's about, age, by kind) and "Next: who gets it"; step 2 is "Who gets it?" with 2-across face tiles, nothing pre-picked, a summary line and "Send to ..."; then a sent page. Photos, Event, News and Saying all follow it. A bottom-sheet month calendar (Today, Tomorrow, Saturday chips) replaces the typed day. No underline fields and no "To:" line anywhere.
+- **Over:** look A "Soft fields" (every field shown in filled boxes) and look C "Fill in the post" (type into the post itself); keeping the one-page postcard with a "To:" line (DEC-73's card, SHARE-PC-1).
+- **Because:** a grandparent sees one question per page (A1); the audience is the one choice that can go wrong, so it gets a page of its own.
+- **Source:** `docs/product/SPEC-SHARE-FLOW.md`; persona check `decisions/2026-11-26-share-flow.md` (AG and PA Red, mitigated). TRACKER R112. Amends DEC-73's one-card postcard, DEC-79's ruled lines and To: line, DEC-84's kind card faces.
+### DEC-90 · The birthday card leaves Gallery; the birthday lives in Me (Settings)
+- **When / status:** Nov 26 · Chase: "hide this from the feed. for now i'd want it in the settings and maybe a notification in the future" / "its weird in the main gallery and feed" · built on branch claude/birthday-in-settings, not pushed
+- **Chose:** remove the "When's your birthday?" card from Gallery and Feed; add a "My birthday" section to Me (More, Me) for every member; keep the Today line and More, Birthdays. The privacy line now reads "The people who can see you in Hearth will see the month and day. Never the year." A reminder notification is a later idea.
+- **Over:** the optional onboarding card on Gallery (DEC-81).
+- **Because:** the card felt out of place among photos. Photos stay the first thing a grandparent sees (A1).
+- **Source:** `docs/product/SPEC-LIFE-CALENDAR.md` CAL-S1..S5; persona check `decisions/2026-11-26-birthday-in-settings.md`
+### DEC-92 · Full-screen viewer: iPhone Photos look plus a strip of small photos (R113, VIEWER-*)
+- **When / status:** Nov 24 · Chase picked "B. A plus a photo strip" on the viewer card after trying the live tester; he also asked why not the system viewer · Specced, tests next
+- **Chose:** black backdrop, photo edge to edge, swipe, pinch and double tap zoom, swipe down to close, tap hides controls (Easy view Off), Easy view keeps labelled pills that never hide, plus a strip of small photos to jump around. Built on an open-source gallery component (react-native-zoom-toolkit, MIT), not hand-built gestures.
+- **Over:** A (no strip); C (page color behind the photo); the iPhone's own Quick Look viewer (no sender, caption or Easy view, needs decrypted copies on disk, no Expo Go or web); hand-building the gestures.
+- **Because:** Chase called the viewer "the worst aspect of the product"; Photos is what every relative already knows; a proven component means less of our own gesture code to break.
+- **Source:** `docs/product/SPEC-VIEWER.md`; persona check `decisions/2026-11-24-photo-viewer.md`; the live viewer tester (claude.ai artifact).
+
 ---
-Last updated: Nov 25, 2026 (DEC-89)
+Last updated: Nov 26, 2026 (DEC-92)

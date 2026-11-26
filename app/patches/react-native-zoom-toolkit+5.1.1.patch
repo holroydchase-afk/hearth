@@ -1,0 +1,76 @@
+diff --git a/node_modules/react-native-zoom-toolkit/lib/module/components/gallery/Gallery.js b/node_modules/react-native-zoom-toolkit/lib/module/components/gallery/Gallery.js
+index da2f746..087d6bb 100644
+--- a/node_modules/react-native-zoom-toolkit/lib/module/components/gallery/Gallery.js
++++ b/node_modules/react-native-zoom-toolkit/lib/module/components/gallery/Gallery.js
+@@ -181,10 +181,27 @@ const Gallery = props => {
+     translate.y.value = animate ? withTiming(0) : 0;
+     scale.value = animate ? withTiming(1) : 1;
+   }
++  // Hearth patch (SPEC-VIEWER VIEWER-11): zoom the current item to a scale, keeping `position` (a point of the item,
++  // its center when left out) where it is on screen, so a "Zoom in" button or a double-click can drive the Gallery.
++  function zoom(newScale, position, animate = true) {
++    const toScale = clamp(newScale, 1, maxScale.value);
++    const cw = rootChildSize.width.value;
++    const ch = rootChildSize.height.value;
++    const fx = position ? clamp(position.x, 0, cw) : cw / 2;
++    const fy = position ? clamp(position.y, 0, ch) : ch / 2;
++    const bx = Math.max(0, cw * toScale - rootSize.width.value) / 2;
++    const by = Math.max(0, ch * toScale - rootSize.height.value) / 2;
++    const tx = clamp(-(fx - cw / 2) * (toScale - 1), -bx, bx);
++    const ty = clamp(-(fy - ch / 2) * (toScale - 1), -by, by);
++    translate.x.value = animate ? withTiming(tx) : tx;
++    translate.y.value = animate ? withTiming(ty) : ty;
++    scale.value = animate ? withTiming(toScale) : toScale;
++  }
+   useImperativeHandle(reference, () => ({
+     setIndex,
+     reset,
+-    getState: getState
++    getState: getState,
++    zoom
+   }));
+   return /*#__PURE__*/_jsxs(Animated.View, {
+     testID: 'root',
+diff --git a/node_modules/react-native-zoom-toolkit/lib/module/components/gallery/GalleryGestureHandler.js b/node_modules/react-native-zoom-toolkit/lib/module/components/gallery/GalleryGestureHandler.js
+index 3bbf4a4..93c0aaa 100644
+--- a/node_modules/react-native-zoom-toolkit/lib/module/components/gallery/GalleryGestureHandler.js
++++ b/node_modules/react-native-zoom-toolkit/lib/module/components/gallery/GalleryGestureHandler.js
+@@ -176,7 +176,12 @@ const GalleryGestureHandler = ({
+   useAnimatedReaction(() => ({
+     width: rootSize.width.value,
+     height: rootSize.height.value
+-  }), () => reset(0, 0, minScale, false), [rootSize]);
++  }), (size, previous) => {
++    // Hearth patch (SPEC-VIEWER, web): reset only when the size really changed; react-native-web reruns this
++    // reaction on unrelated updates, which undid every zoom and every pull.
++    if (previous && previous.width === size.width && previous.height === size.height) return;
++    reset(0, 0, minScale, false);
++  }, [rootSize]);
+   const onGestureEndWrapper = () => {
+     overflow.value = 'hidden';
+     hideAdjacentItems.value = false;
+@@ -239,6 +244,8 @@ const GalleryGestureHandler = ({
+     }
+     const isVerticalPan = Math.abs(e.velocityY) > Math.abs(e.velocityX);
+     isPullingVertical.value = isVerticalPan && scale.value === 1 && !vertical;
++      // Hearth patch (SPEC-VIEWER VIEWER-6): a new drag that starts during the last pull's spring back is not released.
++      pullReleased.value = false;
+     isScrolling.value = true;
+ 
+     // @ts-ignore
+diff --git a/node_modules/react-native-zoom-toolkit/lib/typescript/src/components/gallery/types.d.ts b/node_modules/react-native-zoom-toolkit/lib/typescript/src/components/gallery/types.d.ts
+index 8af0c55..79bb81d 100644
+--- a/node_modules/react-native-zoom-toolkit/lib/typescript/src/components/gallery/types.d.ts
++++ b/node_modules/react-native-zoom-toolkit/lib/typescript/src/components/gallery/types.d.ts
+@@ -48,5 +48,10 @@ export interface GalleryRefType {
+     setIndex: (index: number) => void;
+     reset: (animate: boolean | undefined) => void;
+     getState: () => CommonZoomState<number>;
++    /** Hearth patch (VIEWER-11): zoom the current item to newScale, keeping position (its center when left out) in place. */
++    zoom: (newScale: number, position?: {
++        x: number;
++        y: number;
++    }, animate?: boolean) => void;
+ }
+ //# sourceMappingURL=types.d.ts.map
+\ No newline at end of file

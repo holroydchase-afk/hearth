@@ -94,3 +94,25 @@ jest.mock('expo-video', () => {
     clearVideoCacheAsync: async () => {},
   };
 });
+
+// SPEC-VIEWER: the viewer's gallery (react-native-zoom-toolkit) runs on reanimated worklets, which jest can't drive.
+// Every test gets the stand-in in src/test/mockZoomGallery.tsx (viewer.test drives it); the viewer only needs
+// worklets' runtime check and scheduleOnRN (the package's own mock swaps requestAnimationFrame for every test).
+jest.mock('react-native-worklets', () => ({
+  isRNRuntime: () => true,
+  scheduleOnRN: (fn, ...args) => fn(...args),
+  runOnJS: (fn) => fn,
+}));
+jest.mock('react-native-zoom-toolkit', () => require('./src/test/mockZoomGallery').zoomToolkitMock);
+
+// SPEC-VIEWER: the viewer wraps itself in GestureHandlerRootView. gesture-handler's own jestSetup schedules native
+// bindings that spin forever after a test with fake timers, so tests get a plain View (only the viewer imports it).
+jest.mock('react-native-gesture-handler', () => {
+  const { View } = require('react-native');
+  return { GestureHandlerRootView: View };
+});
+
+// SPEC-VIEWER (VIEWER-1): the viewer draws a light StatusBar. RN's StatusBar sends its props to the native bar on a
+// setImmediate; once a test has used fake timers that queue spins forever on the next unmount, and jest has no
+// native bar anyway, so the send is a no-op here. Tests still read the StatusBar element's props.
+require('react-native').StatusBar._updatePropsStack = () => {};

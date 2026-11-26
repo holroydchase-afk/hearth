@@ -21,7 +21,7 @@ import { Button, Card, Loading, Notice, Txt } from '../ui/kit';
 import { andList } from '../ui/format';
 import { useTheme } from '../ui/theme';
 import { AppGate } from './AppGate';
-import { BirthdayCard, TodayLine } from './Birthdays';
+import { TodayLine } from './Birthdays';
 import { EventCard, EventsScreen, EventUpdate, type EventsView } from './EventsScreen';
 import { FOLD_AT, GalleryTopBar, LargeGreeting, SearchField, greeting, useFamilyName } from './GalleryTop';
 import { GalleryGrid, shadeLine } from './GalleryGrid';
@@ -170,8 +170,6 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
       {/* SHARE-PC-11 (DEC-73): after a Send, Feed says who it went to, by name, until closed. */}
       {app.shared && !gallery ? <Notice tone="good" text={app.shared} onClose={() => app.setShared(null)} /> : null}
       {app.space.can_post ? <YourName /> : null}
-      {/* CAL-12/13: "When's your birthday?" until Save or Not now; it lives on Gallery so every way in reaches it. */}
-      {gallery ? <BirthdayCard /> : null}
       <QueueStatus />
       {app.pushAsk && state.posts.length ? <PushAsk /> : null}
       {state.notice ? <Notice text={state.notice} onClose={() => feed.clearNotice()} /> : null}

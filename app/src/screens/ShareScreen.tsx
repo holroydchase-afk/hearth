@@ -1,24 +1,24 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Share (BETA-SHARE-1, BETA-AUD-1): pick photos, then one "New post" postcard (DEC-73, SPEC-REDESIGN 1j, SHARE-PC-1..14):
-// the big photo, a note, and "To:" face tiles on one card, with a pinned "Send to <names>" button. Nothing is
-// picked to start (SHARE-PC-7; was BETA-AUD-2's preselect). DEC-79 (SPEC-REDESIGN 1j-2, round 3 "Quiet postcard",
-// SHARE-ST-19..27): before any photo is picked, Share is the same postcard, empty and wordless: the whole card is one
-// "Add photos" button (a parent with Easy view off picks up to 100 and 11+ go to bulk review; anyone else up to 10),
-// with a stamp in the photo spot and blank ruled lines where the note and To: go.
+// Share (BETA-SHARE-1, BETA-AUD-1) in two steps (DEC-91, SPEC-SHARE-FLOW, FLOW-1..26): pick photos or a kind (Event,
+// News, Saying), then step 1 is the words (one big open box and quiet chips), step 2 is "Who gets it?" on its own page
+// (face tiles 2 across, one summary line, a pinned "Send to <names>"), then a "Sent" page. Nothing is picked to start
+// (SHARE-PC-7). DEC-79 (SHARE-ST-19..27): before any photo is picked, Share is the empty postcard, wordless: the whole
+// card is one "Add photos" button (a parent with Easy view off picks up to 100 and 11+ go to bulk review; anyone else
+// up to 10), with a stamp in the photo spot.
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Image, Keyboard, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { BackHandler, Image, Keyboard, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { Circle } from '../api/HearthApi';
 import { messageFor } from '../errors/messages';
 import { saveLastAudience } from '../share/audienceMemory';
 import { pickedItems, planBatch, skippedVideosLine, type PickedAsset } from '../share/bulk';
 import { applyHelpers, findLookAlikes, helperLines, helperSwitches, type LookResult } from '../share/helpers';
-import { othersIn, recipientsLine, tileColumns, tileName } from '../share/postcard';
+import { othersIn, recipientsLine, shareTileColumns, tileName } from '../share/postcard';
 import { loadSent, recordSent } from '../share/sentBefore';
-import { useApp } from '../state/AppContext';
+import { useApp, useJobs } from '../state/AppContext';
 import { useNav } from '../state/nav';
-import { AddPhotoCard, AddTile, AlertDialog, PostcardStamp, Button, FaceTile, Field, Loading, Notice, Screen, Txt } from '../ui/kit';
+import { AddPhotoCard, AddTile, AlertDialog, BackButton, PostcardStamp, Button, FaceTile, Loading, Notice, Screen, SystemIcon, Txt } from '../ui/kit';
 import { photos } from '../ui/format';
 import { RADIUS, photoShadow, useTheme } from '../ui/theme';
 import type { QueueItem } from '../upload/queue';
@@ -27,9 +27,12 @@ import { AppGate } from './AppGate';
 import { BatchReview } from './BatchReview';
 import { QueueStatus } from './QueueStatus';
 import { uuid } from '../crypto/random';
-import { AGE_NOT_NUMBER, DAY_NOT_REAL, KIND_HINT, KindCard, KindsRow, kindDetails, kindFilled, kindHasWords, kindSendMessage, showsKinds, type KindWords, type PostKind } from './ShareKinds';
+import { DaySheet } from './DaySheet';
+import { AGE_NOT_NUMBER, DAY_NOT_REAL, KindFace, KindsRow, OpenInput, POST_KINDS, kindDetails, kindFilled, kindHasWords, kindMissing, kindSendMessage, sayingSeen, showsKinds, type ChipKey, type KindWords, type PostKind } from './ShareKinds';
 
 const MAX = 10;
+type Step = 'words' | 'who' | 'sent';
+const NOUN: Record<PostKind | 'photos', string> = { photos: 'your photos', event: 'this event', news: 'your news', saying: 'this saying' };
 const DENIED = 'Hearth needs your OK to see your photos. Tap "Allow" when your phone asks.';
 
 /** BETA-AUD-17 (SPEC-GROUPS): Everyone first (1 tap), then groups and households, then events. */
@@ -39,6 +42,12 @@ export function shareOrder(list: Circle[]): Circle[] {
     .map((x, i) => ({ x, i }))
     .sort((a, b) => (KIND_ORDER[a.x.kind ?? 'group'] ?? 1) - (KIND_ORDER[b.x.kind ?? 'group'] ?? 1) || a.i - b.i)
     .map((a) => a.x);
+}
+
+/** GUX-FL-R7: the first few words of a post, for the sent page. */
+function firstWords(t: string | undefined): string {
+  const w = (t ?? '').trim().split(/\s+/).filter(Boolean);
+  return w.length ? `${w.slice(0, 8).join(' ')}${w.length > 8 ? '…' : ''}` : '';
 }
 
 export function ShareScreen() {
@@ -57,7 +66,14 @@ export function ShareScreen() {
   // who-gets-it tiles are open, and one client id per draft (reused on a double tap or a Send again, so one post).
   const [kind, setKind] = useState<PostKind | null>(null);
   const [kindWords, setKindWords] = useState<KindWords>({});
-  const [kindTo, setKindTo] = useState(false);
+  // FLOW-7: which page of the two steps (and the sent page) shows; the words and picks live above it, so Back keeps them.
+  const [step, setStep] = useState<Step>('words');
+  const [sentWho, setSentWho] = useState('');
+  const [editing, setEditing] = useState<ChipKey | null>(null); // a chip's open editor
+  const [daySheet, setDaySheet] = useState(false);
+  const [sentWords, setSentWords] = useState(''); // FLOW-13 / GUX-FL-R7: the first words of what was sent
+  const [dockH, setDockH] = useState(0); // GUX-FL-R2: the pinned block's height, so the page never ends under it
+  const jobs = useJobs();
   const [askThrow, setAskThrow] = useState(false); // GUX-SK-R11: "Throw away this card?" is showing
   // PRIV-SK-R1: the draft remembers what its createPost was sent with (kind, words, groups); a Send with anything
   // different makes a new client id, so a changed pick or changed words never publish the old draft.
@@ -65,10 +81,11 @@ export function ShareScreen() {
   const sending = useRef(false);
   // SHARE-PC-2: which picked photo is the big one.
   const [cur, setCur] = useState(0);
-  // SHARE-PC-9: my own name, so the To: line names the others, not me.
+  // SHARE-PC-9: my own name, so the summary names the others, not me.
   const [myName, setMyName] = useState<string | null>(null);
   const scroller = useRef<React.ComponentRef<typeof ScrollView>>(null);
   const { c, type, os, dark, bigText } = useTheme();
+  const tall = { minHeight: bigText ? 60 : 48 }; // FLOW-19: 60 pt targets in Easy view
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   // HRT-WEB.3: "Getting 12 of 48 photos ready…" while the web build cleans and saves each photo before the post is saved.
@@ -97,6 +114,12 @@ export function ShareScreen() {
     })().catch(() => {});
     return () => { alive = false; };
   }, [picked, previewBytes, switches]); // eslint-disable-line react-hooks/exhaustive-deps
+  // FLOW-21: a hardware or gesture Back on step 2 returns to step 1 (never out of Share).
+  useEffect(() => {
+    if (step !== 'who') return;
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => { setNotice(null); setStep('words'); return true; });
+    return () => sub.remove();
+  }, [step]);
   const spaceId = app.space?.space_id;
   const canPost = !!app.space?.can_post;
   // Oct 17 decision: "Pick lots of photos" is for parents only, never a relative allowed to post.
@@ -128,7 +151,7 @@ export function ShareScreen() {
   }, [spaceId, userId, canPost]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (app.status !== 'ready' || !app.space) return <AppGate />;
-  if (!canPost || !app.queue) return <Screen><Txt variant="title2">You can't do that here.</Txt></Screen>;
+  if (!canPost || !app.queue) return <Screen><Txt variant="title2">{"You can't do that here."}</Txt></Screen>;
 
   const pick = async () => {
     setNotice(null);
@@ -224,34 +247,38 @@ export function ShareScreen() {
 
   const reset = () => {
     setItems([]); setNote(''); setChosen([]); setCur(0); setNotice(null); setKind(null);
-    setKindWords({}); setKindTo(false); draft.current = null;
+    setKindWords({}); setStep('words'); setSentWho(''); setSentWords(''); setEditing(null); setDaySheet(false); draft.current = null;
   };
-  const pickKind = (k: PostKind) => { setKind(k); setKindWords({}); setKindTo(false); setChosen([]); draft.current = null; };
-  const typeKind = (label: string, text: string) => {
+  const pickKind = (k: PostKind) => { setKind(k); setKindWords({}); setChosen([]); setEditing(null); setStep('words'); draft.current = null; };
+  const typeKind = (key: keyof KindWords, text: string) => {
     // Words changed after a draft was made: sendKind sees they differ from the draft and makes a new one (PRIV-SK-R1).
-    setKindWords((o) => ({ ...o, [label]: text }));
+    setKindWords((o) => ({ ...o, [key]: text }));
   };
   const kindOk = !!kind && kindFilled(kind, kindWords);
-  // GUX-SK-R2: every notice on a kind card shows at the top of the page, so the page scrolls there.
+  // GUX-SK-R2: every notice shows at the top of the page, so the page scrolls there.
   const sayKind = (words: string) => { setNotice(words); scroller.current?.scrollTo({ y: 0, animated: true }); };
-  // GUX-SK-R1/R2: the day and the age are checked on "Pick who gets it", before the tiles open; GUX-SK-R4: then the
-  // keyboard goes away and the page scrolls down to the "To:" tiles.
-  const openKindTo = () => {
-    if (!kind) return;
-    const details = kindDetails(kind, kindWords);
-    if (details === 'age') { sayKind(AGE_NOT_NUMBER); return; }
-    if (details === 'day') { sayKind(DAY_NOT_REAL); return; }
+  // FLOW-7: Next goes to step 2 and the keyboard goes away. The day and the age are checked before (they can't be wrong
+  // from the day sheet and the number keypad, FLOW-16 and FLOW-18, but the guard stays).
+  const goWho = () => {
+    if (kind) {
+      if (!kindOk) return;
+      const details = kindDetails(kind, kindWords);
+      if (details === 'age') { sayKind(AGE_NOT_NUMBER); return; }
+      if (details === 'day') { sayKind(DAY_NOT_REAL); return; }
+    } else if (!items.length) return;
     setNotice(null);
     Keyboard.dismiss();
-    setKindTo(true);
-    requestAnimationFrame(() => scroller.current?.scrollToEnd({ animated: true }));
+    setEditing(null);
+    setStep('who');
+    scroller.current?.scrollTo({ y: 0, animated: false });
   };
+  const goBack = () => { setNotice(null); setStep('words'); };
   // GUX-SK-R11: Cancel on a kind card with words asks first; an empty card (or the photo postcard) cancels at once.
   const cancel = () => { if (kind && !items.length && kindHasWords(kindWords)) setAskThrow(true); else reset(); };
-  const kindReady = kindOk && kindTo && chosen.length > 0 && !!toLine;
+  const kindReady = kindOk && chosen.length > 0 && !!toLine;
 
-  // SHARE-U-19: one post of this kind, no media: createPost then publishPost; Share empties and Feed shows it.
-  // SHARE-U-22: a refusal says the words were kept, by error.code; the card and every word stay.
+  // SHARE-U-19: one post of this kind, no media: createPost then publishPost; then the sent page (FLOW-13).
+  // SHARE-U-22 / FLOW-14: a refusal says the words were kept, by error.code; step 2 and every word and pick stay.
   const sendKind = async () => {
     if (!kind || !kindReady || !userId || sending.current) return;
     const details = kindDetails(kind, kindWords);
@@ -268,10 +295,10 @@ export function ShareScreen() {
       const id = await app.deps.api.createPost({ ...details, clientId: d.clientId, space: app.space!.space_id, circleIds: chosen, title: null, takenAt: null });
       await app.deps.api.publishPost(id);
       await saveLastAudience(app.deps.kv, userId, chosen).catch(() => {});
-      app.setShared(`Shared with ${toLine}.`);
-      reset();
       void app.feed?.refresh().catch(() => {});
-      nav.goFeed();
+      setSentWho(toLine);
+      setSentWords(firstWords(kindWords.words));
+      setStep('sent');
     } catch (e) {
       sayKind(kindSendMessage(e));
     } finally {
@@ -280,9 +307,10 @@ export function ShareScreen() {
     }
   };
 
-  // SHARE-PC-11: Send goes through today's upload queue, then Feed shows the post on top and "Shared with <names>."
+  // SHARE-PC-11: Send goes through today's upload queue, then the sent page; "See it in Feed" shows the post on top.
   const send = async () => {
-    if (!ready || !app.queue || !userId) return;
+    if (!ready || !app.queue || !userId || sending.current) return;
+    sending.current = true;
     setBusy(true);
     try {
       await saveLastAudience(app.deps.kv, userId, chosen);
@@ -293,14 +321,15 @@ export function ShareScreen() {
         void app.deps.uploadStore?.release({ items: staged! });
         throw e;
       }
-      app.setShared(`Shared with ${toLine}.`);
-      reset();
-      nav.goFeed();
+      setSentWho(toLine);
+      setSentWords(firstWords(note));
+      setStep('sent');
     } catch (e) {
       // SHARE-PC-12: say what went wrong at the top of the page; the photos, note and picks stay.
       setNotice(messageFor(e, { inviter: app.helper, action: 'post' }));
       scroller.current?.scrollTo({ y: 0, animated: true });
     } finally {
+      sending.current = false;
       setBusy(false);
     }
   };
@@ -321,153 +350,177 @@ export function ShareScreen() {
 
   // SHARE-ST-19..26 (DEC-79 round 3, A "Quiet postcard"): before any photo is picked, the same page holds the empty
   // postcard, and the whole card is the one "Add photos" button (a browser won't open a file chooser by itself). No
-  // words but "Add photos", "To:" and the stamp: blank ruled lines show where the note and To: go, hidden from screen
-  // readers, and a tap on them opens the picker like the rest of the card. Same page as the postcard, so "New post"
-  // stays put when photos arrive.
+  // words but "Add photos" and the stamp. Same page as the postcard, so "New post" stays put when photos arrive.
   const empty = !items.length;
   const bulkOk = isParent && !!app.deps.pickBulk && !bigText; // SHARE-ST-21: Easy view picks 10, like everyone else
   const limit = bulkOk ? 100 : MAX;
   const addWords = videos ? 'Add photos or videos' : 'Add photos';
-  const rule = { height: 1, backgroundColor: c.tabLine }; // GUX-W4: c.line was too faint on the card
   const emptyCard = (
     <AddPhotoCard testID="share-card" spotTestID="share-spot" label={`${addWords}, up to ${limit} at a time`} title={addWords}
       cardStyle={[styles.card, { backgroundColor: c.surface }, photoShadow(dark)]} inSpot={<PostcardStamp testID="share-stamp" />}
-      onPress={() => void (bulkOk ? pickMany() : pick())}>
-      <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" aria-hidden>
-        <View style={styles.lines}>
-          <View testID="share-note-rule" style={rule} />
-          <View testID="share-note-rule" style={rule} />
-        </View>
-        <View style={styles.toRow}>
-          <Text accessible={false} style={{ color: c.muted, ...type.headline }}>To:</Text>
-          <View testID="share-to-rule" style={[rule, styles.toRule]} />
-        </View>
-      </View>
-    </AddPhotoCard>
+      onPress={() => void (bulkOk ? pickMany() : pick())} />
   );
 
   const shown = Math.max(0, Math.min(cur, items.length - 1));
   const big = items[shown];
   const removeShown = () => { setItems((all) => all.filter((_, j) => j !== shown)); setCur((i) => Math.max(0, Math.min(i, items.length - 2))); };
   // GUX-R1: no name ever spills out of its tile. Until the row is laid out, its width comes from the window
-  // (page padding 16 + grid padding 10, each side).
-  const across = tileColumns({
-    names: list.map((g) => tileName(g, myName, isParent)), rowWidth: gridW ?? win.width - 52,
+  // (page padding 16, each side).
+  const across = shareTileColumns({
+    names: list.map((g) => tileName(g, myName, isParent)), rowWidth: gridW ?? win.width - 32,
     fontSize: type.headline.fontSize, fontScale: win.fontScale ?? 1, bigText,
   });
+  const composing = !!big || !!kind; // a post is being written: step 1, step 2 and the sent page apply
+  const noun = NOUN[big ? 'photos' : kind ?? 'photos'];
+  const pickedAny = chosen.length > 0 && !!toLine;
+  const kindWord = kind ? POST_KINDS.find((k) => k.kind === kind)!.label : 'New post';
 
-  // SHARE-PC-5..9: To: names the people; the tiles fill it in. Nothing is picked to start (SHARE-PC-7). The kind cards
-  // use the same tiles once "Pick who gets it" opens them (SHARE-U-18).
-  const toSection = (
-    <View testID="share-to" style={styles.to}>
-      <View style={styles.toLine}>
-        <Text style={{ color: c.muted, ...type.body }}>To:</Text>
-        {toLine ? <Text style={{ flexShrink: 1, color: c.ink, ...type.headline }}>{toLine}</Text> : null}
+  // HARD-3: no group to send to is said in words, on step 1 (before the words are typed) and on step 2.
+  const noGroups = circles?.length === 0 && !notice ? (
+    <Txt variant="headline">{isParent ? 'There is no group to send to yet. Make one on the Groups tab.' : `There is no group to send to yet. Ask ${app.helper ?? 'a parent'} to add you to one.`}</Txt>
+  ) : null;
+
+  const sentPage = (
+    <>
+      <View style={styles.head}><View style={styles.headTitle}><Txt variant="title2" level={1} role="header">Sent</Txt></View></View>
+      <QueueStatus full />
+      <View testID="share-sent-check" accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[styles.check, { backgroundColor: c.safeSoft }]}>
+        <SystemIcon icon={{ sf: 'checkmark', md: 'check' }} color={c.safe} size={32} />
+      </View>
+      <View testID="share-sent-who"><Txt variant="headline">{`${sentWho} will see it.`}</Txt></View>
+      {sentWords ? <View testID="share-sent-words"><Txt tone="muted">{`\u201c${sentWords}\u201d`}</Txt></View> : null}
+      {jobs.some((j) => j.state !== 'published' && j.state !== 'failed') ? <Txt tone="muted" testID="share-still-sending">Still sending…</Txt> : null}
+      <Button variant="tinted" label="See it in Feed" style={[styles.wide, tall]} onPress={() => { reset(); nav.goFeed(); }} />
+      <Button variant="secondary" label="Share another" style={[styles.wide, tall]} onPress={reset} />
+    </>
+  );
+
+  // FLOW-9..11: step 2, on its own page: the group tiles 2 across, one summary line, then the pinned Send.
+  const whoPage = (
+    <>
+      <View style={styles.head}>
+        <View style={styles.headTitle}><BackButton to="Back" label="Back" ink onPress={goBack} style={tall} /></View>
+        <Button variant="quiet" label="Cancel this post" text="Cancel" style={[styles.headCancel, tall]} onPress={cancel} />
+      </View>
+      <QueueStatus full />
+      {readyLine ? <View accessibilityLiveRegion="polite"><Txt tone="muted">{readyLine}</Txt></View> : null}
+      {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
+      <View style={styles.titles}>
+        <Txt tone="muted">Step 2 of 2</Txt>
+        <Txt variant="title2" level={1} role="header">Who gets it?</Txt>
       </View>
       {circles === null ? <Loading words="Loading your groups…" /> : null}
-      {circles?.length === 0 && !notice ? (
-        <View style={styles.inset}>
-          <Txt variant="headline">{isParent ? 'There is no group to send to yet. Make one on the Groups tab.' : `There is no group to send to yet. Ask ${app.helper ?? 'a parent'} to add you to one.`}</Txt>
-        </View>
-      ) : null}
-      <View style={styles.grid} onLayout={(e) => setGridW(Math.max(0, e.nativeEvent.layout.width - 20))}>
+      {noGroups}
+      <View testID="share-card" style={styles.page2}>
+      <View testID="share-tiles-grid" {...({ 'data-columns': across } as object)} style={styles.grid} onLayout={(e) => setGridW(Math.max(0, e.nativeEvent.layout.width))}>
         {list.map((g) => (
           <FaceTile key={g.circle_id} name={tileName(g, myName, isParent)} count={g.member_count} faces={othersIn(g, myName)}
             picked={chosen.includes(g.circle_id)} onPress={() => toggle(g.circle_id)} across={across} />
         ))}
       </View>
-    </View>
+      <View testID="share-summary" style={styles.summary}>
+        <Txt variant="headline">{pickedAny ? `${toLine} will see ${noun}.` : 'Nothing is picked yet. Tap one or more.'}</Txt>
+        {pickedAny && kind === 'saying' ? <Txt tone="muted">{sayingSeen(kindWords.age)}</Txt> : null}
+      </View>
+      </View>
+    </>
   );
+
+  // FLOW-1..6: step 1, the words: a kind's one big open box and chips, or the photos with their note.
+  const wordsPage = (
+    <>
+      {/* GUX-W3: the title sits in one row in both states, so it never moves; Cancel joins it after photos. */}
+      <View style={styles.head}>
+        <View style={styles.headTitle}>
+          <Txt variant="title2" level={1} role="header">{kindWord}</Txt>
+          {composing ? <Txt tone="muted">Step 1 of 2</Txt> : null}
+        </View>
+        {empty && !kind ? null : <Button variant="quiet" label="Cancel this post" text="Cancel" style={[styles.headCancel, tall]} onPress={cancel} />}
+      </View>
+      {composing ? noGroups : null}
+      <QueueStatus full />
+      {readyLine ? <View accessibilityLiveRegion="polite"><Txt tone="muted">{readyLine}</Txt></View> : null}
+      {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
+
+      {/* GUX-T2: the empty postcard sits right under the title, the kinds row right under it. */}
+      {!big && kind ? <KindFace kind={kind} values={kindWords} onChange={typeKind} editing={editing} onEdit={setEditing} onDay={() => setDaySheet(true)} /> : null}
+      {!big && !kind ? (
+        <View testID="share-empty-wrap" style={styles.emptyWrap}>
+          {emptyCard}
+          {/* SHARE-ST-30..33: Event, News and Saying under the postcard, for parents with post_kinds on. */}
+          {showsKinds(app.features, app.space?.role) ? <KindsRow onPick={pickKind} /> : null}
+        </View>
+      ) : null}
+      {!big ? null : (
+        <View testID="share-card" style={[styles.card, { backgroundColor: c.surface }, photoShadow(dark)]}>
+          <View>
+            <Image source={{ uri: big.uri }} style={styles.big} resizeMode="cover"
+              accessibilityLabel={items.length > 1 ? `Photo ${shown + 1} of ${items.length}` : 'Your photo'} accessibilityIgnoresInvertColors />
+            {items.length > 1 ? (
+              <View style={styles.count} pointerEvents="none">
+                <Text style={{ color: '#FFFFFF', ...type.headline }}>{`${shown + 1} of ${items.length}`}</Text>
+              </View>
+            ) : null}
+            {/* GUX-W2: the stamp stays on the filled postcard, top-right over the big photo. */}
+            <PostcardStamp testID="share-stamp" />
+          </View>
+
+          {/* SHARE-PC-2: small photos to pick the big one, then Add (the phone's picker again, 10 at most). */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.thumbs} keyboardShouldPersistTaps="handled">
+            {items.length > 1 ? items.map((it, i) => (
+              <Pressable key={`${it.uri}-${i}`} accessibilityRole="button" accessibilityLabel={`Show photo ${i + 1}`}
+                accessibilityState={{ selected: i === shown }} onPress={() => setCur(i)}
+                style={[styles.thumb, { borderColor: i === shown ? c.ink : 'transparent' }]}>
+                <Image source={{ uri: it.uri }} style={styles.thumbImg} accessibilityIgnoresInvertColors />
+              </Pressable>
+            )) : null}
+            {items.length < MAX ? (
+              <AddTile label={videos ? 'Add photos or videos' : 'Add photos'} onPress={() => void pick()} />
+            ) : null}
+          </ScrollView>
+          {items.length > 1 ? (
+            <View style={styles.inset}>
+              {/* QA-R2 (staff-pm): the photo showing can be taken out, with a labelled button. */}
+              <Button variant="quiet" ink label={`Remove photo ${shown + 1}`} text="Remove" style={styles.flush}
+                icon={{ sf: 'trash', md: 'delete' }} onPress={removeShown} />
+            </View>
+          ) : null}
+
+          {/* SHARE-PC-3 / FLOW-6: one open note box, optional; no title on new posts (DEC-73 amends DEC-39). */}
+          <View style={styles.words}>
+            <OpenInput note label="Say something, optional" value={note} onChangeText={setNote} maxLength={2000} />
+          </View>
+        </View>
+      )}
+    </>
+  );
+
+  const showDock = composing && step !== 'sent';
+  const hint = step === 'who' ? (pickedAny ? '' : 'Pick who gets it to send.') : kind ? kindMissing(kind, kindWords) : '';
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={os === 'ios' ? 'padding' : undefined}>
-        <ScrollView ref={scroller} contentContainerStyle={[styles.page, empty ? { flexGrow: 1, paddingBottom: 32 + under } : null]} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
-          {/* GUX-W3: "New post" sits in one row in both states, so it never moves; Cancel joins it after photos. */}
-          <View style={styles.head}>
-            <View style={styles.headTitle}><Txt variant="title2" level={1} role="header">New post</Txt></View>
-            {empty && !kind ? null : <Button variant="quiet" label="Cancel this post" text="Cancel" style={styles.headCancel} onPress={cancel} />}
-          </View>
-          <QueueStatus full />
-          {readyLine ? <View accessibilityLiveRegion="polite"><Txt tone="muted">{readyLine}</Txt></View> : null}
-          {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
-
-          {/* SHARE-PC-1: one card holds the post as the family will see it, and who it goes to. */}
-          {/* GUX-T2: the empty postcard sits right under "New post", the kinds row right under it. */}
-          {!big && kind ? <KindCard kind={kind} values={kindWords} onChange={typeKind} to={kindTo ? toSection : undefined} /> : null}
-          {!big && !kind ? (
-            <View testID="share-empty-wrap" style={styles.emptyWrap}>
-              {emptyCard}
-              {/* SHARE-ST-30..33: Event, News and Saying under the postcard, for parents with post_kinds on. */}
-              {showsKinds(app.features, app.space?.role) ? <KindsRow onPick={pickKind} /> : null}
-            </View>
-          ) : null}
-          {!big ? null : (
-          <View testID="share-card" style={[styles.card, { backgroundColor: c.surface }, photoShadow(dark)]}>
-              <View>
-                <Image source={{ uri: big.uri }} style={styles.big} resizeMode="cover"
-                  accessibilityLabel={items.length > 1 ? `Photo ${shown + 1} of ${items.length}` : 'Your photo'} accessibilityIgnoresInvertColors />
-                {items.length > 1 ? (
-                  <View style={styles.count} pointerEvents="none">
-                    <Text style={{ color: '#FFFFFF', ...type.headline }}>{`${shown + 1} of ${items.length}`}</Text>
-                  </View>
-                ) : null}
-                {/* GUX-W2: the stamp stays on the filled postcard, top-right over the big photo. */}
-                <PostcardStamp testID="share-stamp" />
-              </View>
-
-              {/* SHARE-PC-2: small photos to pick the big one, then Add (the phone's picker again, 10 at most). */}
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.thumbs} keyboardShouldPersistTaps="handled">
-                {items.length > 1 ? items.map((it, i) => (
-                  <Pressable key={`${it.uri}-${i}`} accessibilityRole="button" accessibilityLabel={`Show photo ${i + 1}`}
-                    accessibilityState={{ selected: i === shown }} onPress={() => setCur(i)}
-                    style={[styles.thumb, { borderColor: i === shown ? c.ink : 'transparent' }]}>
-                    <Image source={{ uri: it.uri }} style={styles.thumbImg} accessibilityIgnoresInvertColors />
-                  </Pressable>
-                )) : null}
-                {items.length < MAX ? (
-                  <AddTile label={videos ? 'Add photos or videos' : 'Add photos'} onPress={() => void pick()} />
-                ) : null}
-              </ScrollView>
-              {items.length > 1 ? (
-                <View style={styles.inset}>
-                  {/* QA-R2 (staff-pm): the photo showing can be taken out, with a labelled button. */}
-                  <Button variant="quiet" ink label={`Remove photo ${shown + 1}`} text="Remove" style={styles.flush}
-                    icon={{ sf: 'trash', md: 'delete' }} onPress={removeShown} />
-                </View>
-              ) : null}
-
-              {/* SHARE-PC-3: one note, its label always shown; no title on new posts (DEC-73 amends DEC-39). */}
-              <View style={styles.words}>
-                <Field underline label="Add a note (optional)" value={note} onChangeText={setNote} multiline maxLength={2000} />
-              </View>
-
-              <View style={styles.dashClip}>
-                <View style={[styles.dash, { borderColor: c.line }]} />
-              </View>
-
-              {toSection}
-          </View>
-          )}
+        <ScrollView ref={scroller} contentContainerStyle={[styles.page, empty && !kind && step === 'words' ? { flexGrow: 1, paddingBottom: 32 + under } : showDock ? { paddingBottom: Math.max(24, dockH) } : null]} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
+          {step === 'sent' ? sentPage : step === 'who' && composing ? whoPage : wordsPage}
         </ScrollView>
 
-        {/* SHARE-PC-10: pinned under the page, above the keyboard and the tab bar. Not on the empty postcard (SHARE-ST-3). */}
-        {/* SHARE-U-17..19: a kind card uses the same pinned button: "Pick who gets it" opens the tiles once the
-            required fields hold words, then "Send to <names>" sends it. */}
-        {empty && !kind ? null : (
-          <View style={[styles.dock, { backgroundColor: c.bg, borderTopColor: c.line, paddingBottom: 12 + under }]}>
-            {/* GUX-SK-R3: while the button is off, one line says what to fill in. */}
-            {kind && !big && !kindTo && !kindOk ? <Txt tone="muted" style={styles.hint}>{KIND_HINT[kind]}</Txt> : null}
-            {kind && !big ? (
-              <Button label={kindReady ? `Send to ${toLine}` : 'Pick who gets it'} busy={busy}
-                disabled={kindTo ? !kindReady : !kindOk}
-                onPress={() => { if (kindTo) void sendKind(); else openKindTo(); }} />
+        {/* SHARE-PC-10 / FLOW-1: pinned under the page, above the keyboard and the tab bar. Not on the empty postcard
+            (SHARE-ST-3). Step 1 says "Next: who gets it" (off until the required words are in, the hint says what is
+            missing); step 2 says "Send to <names>". */}
+        {showDock ? (
+          <View testID="share-dock" onLayout={(e) => setDockH(Math.ceil(e.nativeEvent.layout.height))} style={[styles.dock, { backgroundColor: c.bg, borderTopColor: c.line, paddingBottom: 12 + under }]}>
+            <View testID="share-hint" style={hint ? styles.hint : undefined}>{hint ? <Txt tone="muted">{hint}</Txt> : null}</View>
+            {step === 'who' ? (
+              <Button label={pickedAny ? `Send to ${toLine}` : 'Send'} busy={busy} style={tall}
+                disabled={kind ? !kindReady : !ready} onPress={() => void (kind ? sendKind() : send())} />
             ) : (
-              <Button label={ready ? `Send to ${toLine}` : 'Pick who gets it'} onPress={() => void send()} disabled={!ready} busy={busy} />
+              <Button label="Next: who gets it" style={tall} disabled={kind ? !kindOk : !items.length} onPress={goWho} />
             )}
           </View>
-        )}
+        ) : null}
       </KeyboardAvoidingView>
+      {daySheet ? <DaySheet value={kindWords.day ?? ''} onPick={(iso) => typeKind('day', iso)} onClose={() => setDaySheet(false)} /> : null}
       {askThrow ? (
         <AlertDialog title="Throw away this card?" keep="Keep writing" destroy="Throw away"
           onKeep={() => setAskThrow(false)} onDestroy={() => { setAskThrow(false); reset(); }} />
@@ -477,14 +530,11 @@ export function ShareScreen() {
 }
 
 const styles = StyleSheet.create({
-  // SHARE-ST-23: the empty card's blank note lines and To: line, as in the option A reference.
-  lines: { paddingHorizontal: 6, paddingTop: 22, gap: 26 },
-  toRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 10, paddingHorizontal: 6, paddingTop: 18, paddingBottom: 6 },
-  toRule: { flex: 1, marginBottom: 6 },
   page: { padding: 16, gap: 16, paddingBottom: 24 },
   head: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 48 }, // same height with or without Cancel
   headTitle: { flex: 1, flexShrink: 1 },
   headCancel: { paddingHorizontal: 0 },
+  titles: { gap: 4 },
   emptyWrap: { flex: 1 }, // GUX-T2: top-aligned under "New post" (supersedes GUX-W1's centring)
   // No overflow clip on the card, so its shadow is never cut; the big photo rounds its own top corners.
   card: { borderRadius: RADIUS.photo },
@@ -494,13 +544,12 @@ const styles = StyleSheet.create({
   thumb: { width: 64, height: 64, borderRadius: RADIUS.medium, borderWidth: 3, overflow: 'hidden' },
   thumbImg: { width: '100%', height: '100%' },
   inset: { paddingHorizontal: 16 },
-  words: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 16, minHeight: 48 },
-  // A dashed line on one side only isn't drawn the same on every phone, so a dashed box is clipped to its top edge.
-  dashClip: { height: 2, overflow: 'hidden' },
-  dash: { height: 6, borderWidth: 2, borderStyle: 'dashed', marginHorizontal: -2 },
-  to: { paddingTop: 12, paddingBottom: 10, gap: 4 },
-  toLine: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline', gap: 8, paddingHorizontal: 16, minHeight: 32 },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 10 },
+  words: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12 },
+  grid: { flexDirection: 'row', flexWrap: 'wrap' },
+  summary: { gap: 4 },
+  page2: { gap: 16 },
+  wide: { alignSelf: 'stretch' },
+  check: { alignSelf: 'flex-start', width: 64, height: 64, borderRadius: RADIUS.pill, alignItems: 'center', justifyContent: 'center' },
   hint: { marginBottom: 8 },
   dock: { paddingHorizontal: 16, paddingTop: 10, paddingBottom: 12, borderTopWidth: StyleSheet.hairlineWidth },
   // A text button whose words start on the 16 pt edge, like the title above it.

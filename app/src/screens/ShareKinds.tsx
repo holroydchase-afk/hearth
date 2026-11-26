@@ -5,11 +5,13 @@
 // kind's card face. SHARE-U-17..23 (SPEC-VISIBILITY-CORE "One Share composer"): ShareScreen holds the card's words,
 // opens the photo flow's who-gets-it tiles once the required fields hold words, and sends one post of that kind.
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import type { CreatePostArgs } from '../api/HearthApi';
 import { toApiError } from '../errors/messages';
-import { Field, SystemIcon, Txt, type Icon } from '../ui/kit';
-import { RADIUS, SPACE, photoShadow, useTheme } from '../ui/theme';
+import { dayLabel, parseIso } from '../share/dayPicker';
+import { Button, SystemIcon, noWebOutline, type Icon } from '../ui/kit';
+import { FONT, RADIUS, SPACE, photoShadow, useTheme } from '../ui/theme';
+import { useTypingField } from '../ui/typing';
 
 export type PostKind = 'event' | 'news' | 'saying';
 
@@ -41,51 +43,62 @@ export function KindsRow({ onPick }: { onPick: (k: PostKind) => void }) {
   );
 }
 
-export type KindWords = Record<string, string>;
+/** DEC-91 (SPEC-SHARE-FLOW): a kind's words are one big open box; the rest are chips. Keys of `KindWords`. */
+export type KindWords = { words?: string; day?: string; where?: string; who?: string; age?: string };
+export type ChipKey = 'day' | 'where' | 'who' | 'age';
 
-/** Each kind's fields, in order; the required ones must hold words (spaces alone don't count). SHARE-U-17. */
-// GUX-SK-R1: the event's day is "What day" (was "When"), with an example of how to type it.
-const FIELDS: Record<PostKind, { label: string; required: boolean; multiline?: boolean; placeholder?: string }[]> = {
-  event: [{ label: "What's happening", required: true }, { label: 'What day', required: true, placeholder: 'Like 2026-12-24' }, { label: 'Where, optional', required: false }],
-  news: [{ label: 'Your news', required: true, multiline: true }],
-  saying: [{ label: 'What they said', required: true, multiline: true }, { label: 'Who said it', required: true }, { label: 'Age then, optional', required: false }],
+/** FLOW-2: the question each kind asks, as the box's placeholder and spoken name. */
+export const KIND_QUESTION: Record<PostKind, string> = { event: "What's happening?", news: "What's your news?", saying: 'What did they say?' };
+
+/** FLOW-3: each kind's chips, in order: the verb before it is set, and the editor's spoken name. */
+const CHIPS: Record<PostKind, { key: ChipKey; ask: string; icon: Icon; editor?: string }[]> = {
+  event: [
+    { key: 'day', ask: 'Pick a day', icon: { sf: 'calendar', md: 'event' } },
+    { key: 'where', ask: 'Add a place', icon: { sf: 'mappin.and.ellipse', md: 'location_on' }, editor: 'Where' },
+  ],
+  news: [],
+  saying: [
+    { key: 'who', ask: 'Who said it?', icon: { sf: 'person', md: 'person' }, editor: 'Who said it' },
+    { key: 'age', ask: 'Add their age', icon: { sf: 'birthday.cake', md: 'cake' }, editor: 'Age' },
+  ],
 };
 
 const has = (v: string | undefined) => !!v && v.trim().length > 0;
 
-/** SHARE-U-17: every required field of this kind holds words. */
-export function kindFilled(kind: PostKind, v: KindWords): boolean {
-  return FIELDS[kind].every((f) => !f.required || has(v[f.label]));
+/** FLOW-5: what step 1 still needs, in the words of the hint line; '' when nothing is missing. */
+export function kindMissing(kind: PostKind, v: KindWords): string {
+  const need: string[] = [];
+  if (kind === 'event') {
+    if (!has(v.words)) need.push("what's happening");
+    if (!has(v.day)) need.push('the day');
+  } else if (kind === 'saying') {
+    if (!has(v.words)) need.push('what they said');
+    if (!has(v.who)) need.push('who said it');
+  } else if (!has(v.words)) need.push('your news');
+  return need.length ? `Add ${need.join(' and ')} to go on.` : '';
 }
 
-/** GUX-SK-R3: the one line under a kind card while "Pick who gets it" is off, saying what to fill in. */
-export const KIND_HINT: Record<PostKind, string> = {
-  event: "Fill in What's happening and What day to go on.",
-  saying: 'Fill in What they said and Who said it to go on.',
-  news: 'Write your news to go on.',
-};
+/** SHARE-U-17: every required field of this kind holds words (spaces alone don't count). */
+export const kindFilled = (kind: PostKind, v: KindWords): boolean => kindMissing(kind, v) === '';
 
-/** GUX-SK-R1: a real calendar day typed as YYYY-MM-DD (2026-02-30 and 2026-13-40 are not). */
+/** GUX-SK-R1: a real calendar day as YYYY-MM-DD (2026-02-30 and 2026-13-40 are not). */
 export function realDay(s: string): boolean {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
-  if (!m) return false;
-  const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
-  const t = new Date(Date.UTC(y, mo - 1, d));
-  return t.getUTCFullYear() === y && t.getUTCMonth() === mo - 1 && t.getUTCDate() === d;
+  return parseIso(s) !== null;
 }
 
 /** SHARE-U-19: the createPost fields for this kind (news words are the caption), or 'age' when the age isn't a number,
- *  or 'day' when the event's day isn't a real YYYY-MM-DD date (GUX-SK-R1). */
+ *  or 'day' when the event's day isn't a real YYYY-MM-DD date. The day sheet and the number keypad make both
+ *  unreachable (FLOW-16, FLOW-18); the guard stays before a send. */
 export function kindDetails(kind: PostKind, v: KindWords): Pick<CreatePostArgs, 'kind' | 'caption' | 'event' | 'saying'> | 'age' | 'day' {
-  const t = (l: string) => (v[l] ?? '').trim();
-  if (kind === 'news') return { kind, caption: t('Your news') };
+  const t = (x: string | undefined) => (x ?? '').trim();
+  if (kind === 'news') return { kind, caption: t(v.words) };
   if (kind === 'event') {
-    if (!realDay(t('What day'))) return 'day';
-    return { kind, caption: null, event: { what: t("What's happening"), when: t('What day'), where: t('Where, optional') || null } };
+    if (!realDay(t(v.day))) return 'day';
+    return { kind, caption: null, event: { what: t(v.words), when: t(v.day), where: t(v.where) || null } };
   }
-  const age = t('Age then, optional');
+  const age = t(v.age);
   if (age && !/^\d{1,3}$/.test(age)) return 'age';
-  return { kind, caption: null, saying: { words: t('What they said'), who: t('Who said it'), age: age ? Number(age) : null } };
+  return { kind, caption: null, saying: { words: t(v.words), who: t(v.who), age: age ? Number(age) : null } };
 }
 
 /** SHARE-U-22: plain words for a refused send, by error.code; they say what happens to the words (A1).
@@ -103,7 +116,7 @@ export function kindSendMessage(e: unknown): string {
 export const AGE_NOT_NUMBER = 'Type the age as a number, like 4, or leave it blank. Your words are kept.';
 export const DAY_NOT_REAL = 'Type the day as year-month-day, like 2026-12-24. Your words are kept.';
 const DAY_SERVER = 'The day needs to look like 2026-12-24. Your words are kept.';
-/** SHARE-U-21 / GUX-SK-R8: the Saying line names the age only once one is typed. */
+/** SHARE-U-21 / GUX-SK-R8: the Saying line names the age only once one is typed (now on step 2's summary). */
 export const sayingSeen = (age: string | undefined) => (has(age)
   ? 'Everyone you send this to will see these words, who said them, and the age.'
   : 'Everyone you send this to will see these words and who said them.');
@@ -111,29 +124,73 @@ export const sayingSeen = (age: string | undefined) => (has(age)
 /** GUX-SK-R11: the card holds words worth asking about before Cancel throws them away. */
 export const kindHasWords = (v: KindWords) => Object.values(v).some(has);
 
-/** SHARE-ST-31 / SHARE-U-17..21: a kind's card face (tester option A): its fields, then "To:". Before the picker
- *  opens, "To:" is a blank ruled line; once open, `to` holds the photo flow's face tiles. */
-export function KindCard({ kind, values, onChange, to }: { kind: PostKind; values: KindWords; onChange: (label: string, text: string) => void; to?: React.ReactNode }) {
-  const { c, type, dark } = useTheme();
-  const field = (f: { label: string; multiline?: boolean; placeholder?: string }) => (
-    <Field key={f.label} underline strongLine label={f.label} value={values[f.label] ?? ''} multiline={f.multiline} placeholder={f.placeholder}
-      onChangeText={(x) => onChange(f.label, x)} />
+/** FLOW-2: a text box with no label row, no rule and no edge. The question is its placeholder and spoken name. */
+export function OpenInput({ label, placeholder, value, onChangeText, big, note, keyboardType, autoFocus, onSubmitEditing, maxLength }: {
+  label: string; placeholder?: string; value: string; onChangeText: (t: string) => void; big?: boolean; note?: boolean;
+  keyboardType?: 'default' | 'number-pad'; autoFocus?: boolean; onSubmitEditing?: () => void; maxLength?: number;
+}) {
+  const { c, type } = useTheme();
+  const typing = useTypingField(); // UX-R1: the tab bar steps aside while this box is focused
+  const many = !!big || !!note; // the kind's big box, or Photos' note box: several lines
+  const s = big ? type.title3 : type.body;
+  const input = (
+    <TextInput
+      testID={big ? 'share-words' : undefined}
+      accessibilityLabel={label} placeholder={placeholder ?? label} placeholderTextColor={c.muted}
+      value={value} onChangeText={onChangeText} multiline={many} maxLength={maxLength} keyboardType={keyboardType} autoFocus={autoFocus}
+      returnKeyType={many ? undefined : 'done'} onSubmitEditing={onSubmitEditing} blurOnSubmit={!many}
+      onFocus={typing.onFocus} onBlur={typing.onBlur}
+      style={[styles.input, { color: c.ink, fontFamily: FONT.regular, fontSize: s.fontSize, lineHeight: s.lineHeight },
+        big ? styles.inputBig : note ? styles.inputNote : styles.inputOne, noWebOutline()]}
+    />
   );
-  const rule = { height: 1, backgroundColor: c.tabLine };
+  // GUX-FL-R1: a closed 3:1 outline (never a bottom line) around the box, so it reads as a place to type; Photos' note sits open on its card.
+  return note ? input : <View style={[styles.outlined, { borderColor: c.tabLine }]}>{input}</View>;
+}
+
+/** FLOW-3 / FLOW-4: a quiet pill with an icon and a verb; once set, it shows the value. 48 pt (60 in Easy view). */
+export function Chip({ icon, label, set, onPress }: { icon: Icon; label: string; set: boolean; onPress: () => void }) {
+  const { c, type, os, bigText } = useTheme();
   return (
-    <View style={styles.face}>
-      <View testID={`share-kind-card-${kind}`} style={[styles.card, { backgroundColor: c.surface }, photoShadow(dark)]}>
-        {kind === 'saying' ? <Txt variant="title2" tone="muted" style={styles.quote}>{'\u201c'}</Txt> : null}
-        {FIELDS[kind].map(field)}
-        {/* SHARE-U-21 (PRIV-VC-D1): say it before sending, where a screen reader reaches it. */}
-        {kind === 'saying' ? <Txt tone="muted">{sayingSeen(values['Age then, optional'])}</Txt> : null}
-        {to ?? (
-          <View style={styles.toRow} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" aria-hidden>
-            <Text accessible={false} style={{ ...type.headline, color: c.muted }}>To:</Text>
-            <View style={[rule, styles.toRule]} />
-          </View>
-        )}
-      </View>
+    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} android_ripple={{ color: c.line }}
+      style={({ pressed }) => [styles.chip, { minHeight: bigText ? 60 : 48, backgroundColor: c.accentSoft, borderColor: c.tabLine, opacity: pressed && os !== 'android' ? 0.7 : 1 }]}>
+      <View testID="chip-icon"><SystemIcon icon={icon} color={c.accent} /></View>
+      <Text numberOfLines={2} style={[{ flexShrink: 1, color: c.ink }, set ? type.headline : type.body]}>{label}</Text>
+    </Pressable>
+  );
+}
+
+/** FLOW-1..4: step 1 of a kind: one big open box, then the kind's chips; a tapped chip's editor opens under them
+ *  (the day's editor is the day sheet, which ShareScreen shows). */
+export function KindFace({ kind, values, onChange, editing, onEdit, onDay }: {
+  kind: PostKind; values: KindWords; onChange: (key: keyof KindWords, text: string) => void;
+  editing: ChipKey | null; onEdit: (k: ChipKey | null) => void; onDay: () => void;
+}) {
+  const { c } = useTheme();
+  const open = CHIPS[kind].find((x) => x.key === editing && x.editor);
+  const press = (k: ChipKey) => {
+    if (k === 'day') { onEdit(null); onDay(); } else onEdit(editing === k ? null : k);
+  };
+  return (
+    <View testID={`share-kind-card-${kind}`} style={styles.face}>
+      <OpenInput big label={KIND_QUESTION[kind]} value={values.words ?? ''} onChangeText={(t) => onChange('words', t)} maxLength={2000} />
+      {CHIPS[kind].length ? (
+        <View style={styles.chips}>
+          {CHIPS[kind].map((x) => {
+            const v = x.key === 'day' ? dayLabel(values.day ?? '') : x.key === 'who' ? (has(values.who) ? `Said by ${values.who!.trim()}` : '') : x.key === 'age' ? (has(values.age) ? `Age ${values.age!.trim()}` : '') : (values[x.key] ?? '').trim();
+            return <Chip key={x.key} icon={x.icon} label={v || x.ask} set={!!v} onPress={() => press(x.key)} />;
+          })}
+        </View>
+      ) : null}
+      {open ? (
+        <View style={[styles.editor, { borderColor: c.line }]}>
+          <OpenInput key={open.key} label={open.editor!} value={values[open.key] ?? ''} autoFocus
+            keyboardType={open.key === 'age' ? 'number-pad' : 'default'} maxLength={open.key === 'age' ? 3 : 120}
+            onChangeText={(t) => onChange(open.key, open.key === 'age' ? t.replace(/\D/g, '').slice(0, 3) : t)}
+            onSubmitEditing={() => onEdit(null)} />
+          <Button variant="quiet" label={`Save ${open.editor!.toLowerCase()}`} text="Done" onPress={() => onEdit(null)} />
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -145,8 +202,12 @@ const styles = StyleSheet.create({
   // Easy view: full width, the icon left of the word, 60 pt+ tall.
   tileEasy: { alignSelf: 'stretch', flexDirection: 'row', minHeight: 60, borderRadius: 16, alignItems: 'center', gap: SPACE.md, paddingHorizontal: SPACE.lg, paddingVertical: SPACE.sm },
   face: { gap: SPACE.lg },
-  card: { borderRadius: RADIUS.photo, padding: SPACE.lg, gap: SPACE.md },
-  quote: { marginBottom: -SPACE.sm },
-  toRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 10, paddingTop: SPACE.sm, paddingBottom: 6 },
-  toRule: { flex: 1, marginBottom: 6 },
+  outlined: { borderWidth: 2, borderRadius: RADIUS.medium },
+  input: { borderWidth: 0, borderRadius: RADIUS.medium, paddingHorizontal: SPACE.lg, paddingVertical: SPACE.md },
+  inputBig: { minHeight: 160, textAlignVertical: 'top' },
+  inputNote: { minHeight: 96, textAlignVertical: 'top' },
+  inputOne: { minHeight: 56 },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACE.sm },
+  chip: { minWidth: 48, borderWidth: 2, flexDirection: 'row', alignItems: 'center', gap: SPACE.sm, paddingHorizontal: SPACE.lg, paddingVertical: SPACE.sm, borderRadius: RADIUS.pill, maxWidth: '100%' },
+  editor: { gap: SPACE.xs },
 });

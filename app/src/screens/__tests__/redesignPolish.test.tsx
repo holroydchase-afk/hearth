@@ -419,11 +419,12 @@ describe('GUX-R9 neutral avatars and accent check marks', () => {
   });
 
   // Retargeted Nov 19 by qa-tdd for DEC-73 (SHARE-PC-7/8): nothing is pre-picked, so the tile is tapped first.
-  it('GUX-R9 DEC-73 Share: a tapped face tile has no tinted fill and shows an accent check mark', async () => {
+  it('GUX-R9 (DEC-91) DEC-73 Share: a tapped face tile has no tinted fill and shows an accent check mark', async () => {
     const kv = memoryKV();
     await saveLastAudience(kv, FIXTURE.users.chase.id, [dadSide.id]);
     await openNewPost(kv);
-    fireEvent.press(screen.getByLabelText(/^Grandparents – Dad's side, \d+ people, not picked$/));
+    fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' }, slow)); // DEC-91: tiles are on step 2
+    fireEvent.press(await screen.findByLabelText(/^Grandparents – Dad's side, \d+ people, not picked$/, {}, slow));
     const picked = screen.getByLabelText(/^Grandparents – Dad's side, \d+ people, picked$/);
     expect(neutral(flat(picked.props.style).backgroundColor)).toBe(true);
     expect(accentCheck(picked)).toBe(true);
