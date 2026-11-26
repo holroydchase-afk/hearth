@@ -23,7 +23,7 @@ scan "AWS access key id"      '(^|[^A-Z0-9])AKIA[0-9A-Z]{16}([^A-Z0-9]|$)'
 scan "Supabase secret key"    'sb_secret_[A-Za-z0-9_-]{20,}'
 scan "GitHub token"           '(ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}'
 scan "Stripe live key"        '(sk|rk)_live_[A-Za-z0-9]{20,}'
-scan "Resend API key"         're_[A-Za-z0-9]{8,}_[A-Za-z0-9]{20,}'
+scan "Resend API key"         '(^|[^A-Za-z0-9_])re_[A-Za-z0-9]{8,}_[A-Za-z0-9]{20,}'
 scan "JWT-shaped key"         'eyJ[A-Za-z0-9_-]{20,}\.eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}'
 [ $rc -eq 0 ] && echo "check-secrets: ok"
 exit $rc
