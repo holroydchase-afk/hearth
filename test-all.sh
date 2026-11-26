@@ -20,6 +20,9 @@ suite "public privacy" bash scripts/check-public-privacy.sh
 suite "public privacy guard" quiet e2e/results/public-privacy.txt bash scripts/tests/check_public_privacy_test.sh
 suite "no fixed sleeps" bash scripts/check-no-fixed-sleeps.sh
 suite "no fixed sleeps guard" quiet e2e/results/no-fixed-sleeps.txt bash scripts/tests/check_no_fixed_sleeps_test.sh
+suite "secret scan" bash scripts/check-secrets.sh
+suite "secret scan guard" quiet e2e/results/secrets.txt bash scripts/tests/check_secrets_test.sh
+suite "real bundle guard" quiet e2e/results/release-bundle.txt bash app/scripts/tests/release_bundle_test.sh
 suite "license headers" quiet e2e/results/spdx.txt bash scripts/tests/check_spdx_test.sh
 suite "grandparent guide" quiet e2e/results/grandparent-guide.txt bash scripts/tests/grandparent_guide_test.sh
 suite "test-all helper" quiet e2e/results/test-all.txt bash scripts/tests/test_all_test.sh

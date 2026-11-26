@@ -37,6 +37,32 @@ jobs:
       - run: bash scripts/check-public-privacy.sh
       - run: bash scripts/tests/check_no_fixed_sleeps_test.sh
       - run: bash scripts/check-no-fixed-sleeps.sh
+      # INTAKE-205-2: a secret scan on every PR (the demo-site grep only ran after merge).
+      - run: bash scripts/tests/check_secrets_test.sh
+      - run: bash scripts/check-secrets.sh
+
+  # INTAKE-213: known-vulnerability check on what ships (npm audit, production dependencies only). A critical finding
+  # blocks the PR; high and moderate ones print as warnings here and are tracked in TRACKER R124, because the open ones
+  # sit in Expo's build tooling and the fix is an Expo upgrade (CLAUDE.md rule 8), not a `npm audit fix`.
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        dir: [app, e2e]
+    defaults:
+      run:
+        working-directory: ${{ matrix.dir }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Critical vulnerabilities block
+        run: npm audit --omit=dev --audit-level=critical --package-lock-only
+      - name: High and moderate vulnerabilities warn
+        run: npm audit --omit=dev --package-lock-only || echo "::warning::npm audit reports vulnerabilities in ${{ matrix.dir }} (see TRACKER R124)"
 
   # PRIV-2 (CLAUDE.md rule 2): no console.* call logs a key, URL, caption, email or raw error.
   logs:
@@ -201,6 +227,15 @@ jobs:
       # INTAKE-80-4 / B32: a component the React Compiler newly skips fails the PR that adds it.
       - name: React Compiler rules check (INTAKE-80-3)
         run: node scripts/compiler-check.js
+      # INTAKE-205-1: a real build (no fake or demo flag) carries no sample family and no demo frame (ENG-R5).
+      - run: bash scripts/tests/release_bundle_test.sh
+      - name: Real web build has no fakes
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: https://example.invalid
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: not-a-real-key
+        run: |
+          npx expo export --platform web --output-dir dist-real --clear
+          bash scripts/check-release-bundle.sh dist-real
 
   # QA-R2 (Nov 19 review, TRACKER R52): the browser tests run on every pull request, not only on a laptop:
   # the public demo build (e2e:demo) and the core loop on the fake backend (e2e:web).
