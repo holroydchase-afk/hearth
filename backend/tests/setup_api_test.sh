@@ -96,8 +96,8 @@ ok $? "SETUP-API: the set groups are Chase's side and Mom's side (no v1 groups t
 [ "$(q "select string_agg(name, ',' order by name) from public.circles where space_id = '$SPACE' and kind = 'household'")" = \
   "Gammy's house,Gigi and Bebar's house,Grandaddy and Grandmomma's house,Great-Grandma's house,Memaw's house,Pawpaw and Granny's house,Test house" ]
 ok $? "SETUP-API: the family's houses (SPEC-GROUPS section 2) plus a Test house for account B"
-[ "$(q "select string_agg(name, ',' order by name) from public.circles where space_id = '$SPACE' and kind = 'event'")" = "Birthday at Gigi's,Charleston trip" ]
-ok $? "SETUP-API: the Charleston trip and Birthday at Gigi's events"
+[ "$(q "select string_agg(name, ',' order by name) from public.circles where space_id = '$SPACE' and kind = 'event'")" = "Birthday at Gigi's,Lake weekend" ]
+ok $? "SETUP-API: the Lake weekend and Birthday at Gigi's events"
 [ "$(q "select count(*) from public.circle_links l join public.circles g on g.id = l.parent_id join public.circles h on h.id = l.child_id
         where g.space_id = '$SPACE' and g.name = 'Chase''s side' and h.name in ('Gammy''s house', 'Grandaddy and Grandmomma''s house', 'Gigi and Bebar''s house')")" = 3 ]
 ok $? "SETUP-API: Chase's parents' houses sit under Chase's side"

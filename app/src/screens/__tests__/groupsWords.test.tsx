@@ -12,7 +12,7 @@ import { MeScreen } from '../MeScreen';
 import { ShareScreen } from '../ShareScreen';
 
 const SHAPE: Circle[] = [
-  { circle_id: 'e1', name: 'Charleston trip', member_count: 3, member_names: ['Pawpaw', 'Granny', 'Tess'], kind: 'event', parent_ids: [] },
+  { circle_id: 'e1', name: 'Lake weekend', member_count: 3, member_names: ['Pawpaw', 'Granny', 'Tess'], kind: 'event', parent_ids: [] },
   { circle_id: 'g1', name: "Mom's side", member_count: 4, member_names: ['Memaw', 'Pawpaw', 'Granny', 'Tess'], kind: 'group', parent_ids: [] },
   { circle_id: 'h1', name: "Pawpaw and Granny's house", member_count: 2, member_names: ['Pawpaw', 'Granny'], kind: 'household', parent_ids: ['g1', 'e1'] },
   { circle_id: 'all', name: 'Everyone', member_count: 6, member_names: ['Memaw', 'Pawpaw', 'Granny', 'Tess', 'Gammy', 'Grandaddy'], kind: 'everyone', parent_ids: [] },
@@ -46,7 +46,7 @@ describe('UX-G share sheet words (BETA-AUD-17)', () => {
     await renderApp(<ShareScreen />, { be, user: 'chase', deps: { api } });
     fireEvent.press(await screen.findByRole('button', { name: /^Add photos/ }));
     await screen.findByLabelText('Everyone, 6 people, not picked');
-    expect(tileLabels().map((l) => l.split(',')[0])).toEqual(['Everyone', "Mom's side", "Pawpaw and Granny's house", 'Charleston trip']);
+    expect(tileLabels().map((l) => l.split(',')[0])).toEqual(['Everyone', "Mom's side", "Pawpaw and Granny's house", 'Lake weekend']);
     expectGrandparentSafe();
   });
 
@@ -57,7 +57,7 @@ describe('UX-G share sheet words (BETA-AUD-17)', () => {
     await renderApp(<ShareScreen />, { be, user: 'ruth', deps: { api } });
     fireEvent.press(await screen.findByRole('button', { name: /^Add photos/ }));
     await waitFor(() => expect(tileLabels().length).toBe(3));
-    expect(tileLabels().filter((l) => /Everyone|Mom's side|house|Charleston/.test(l))).toEqual([]);
+    expect(tileLabels().filter((l) => /Everyone|Mom's side|house|Lake/.test(l))).toEqual([]);
     expect(tileLabels()[0]).toMatch(/^Memaw, Pawpaw and 2 more, 4 people, not picked$/);
   });
 });
@@ -68,7 +68,7 @@ describe('UX-G Groups screen invites (BETA-AUD-19)', () => {
     await renderApp(<GroupsScreen />, { be, user: 'chase', deps: { api } });
     expect(await screen.findByRole('button', { name: "Invite someone to Pawpaw and Granny's house" })).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Invite someone to Everyone' })).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Invite someone to Charleston trip' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Invite someone to Lake weekend' })).toBeNull();
     expect(screen.queryByRole('button', { name: "Invite someone to Mom's side" })).toBeNull();
     // and the parent is told where to go instead
     expect(screen.getAllByText('To invite someone, use their household below.').length).toBeGreaterThan(0);

@@ -11,6 +11,10 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 26: intake #176 follow-ups (R100; branch local-176b, not pushed)
+- **Done, test-first** (qa-tdd red 1a5f35a): six backend scripts require `SUPABASE_PROJECT_REF` (one stderr line, before any call); `.mcp.json` reads `${SUPABASE_PROJECT_REF}` (vendor docs: expansion works in `url`); "Lake weekend" replaces the real-family event name in seeds, SQL, tests, app and docs; fictional city in the photo-strip fixture; `scripts/check-public-privacy.sh` guards it.
+- **Needs Chase:** set `SUPABASE_PROJECT_REF` in the environment secrets and wherever he runs deploy or the MCP server. **Next:** push and PR after Chase's word.
+
 ## Nov 25: privacy sweep of the public repo (intake #176, R96; branch claude/project-thread-6ew09x, PR)
 - **Done:** artifact links, backend project address (docs and `.env.example`), fixtures (address, family name, GPS test photo) and the family details in PERSONAS/STORY and the docs listed in R96 are generic now. Nicknames stay; who is related to whom, phones per person, places and the far-away relative are gone.
 - **Family-details decision (for #176):** the repo keeps nicknames and household shapes only, as fictional composites. The real key stays in the project's private files. **Needs Chase:** confirm that level, or say to go further (ages in PERSONA-CHECK).
