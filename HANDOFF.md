@@ -11,6 +11,10 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 26: fixed sleeps out of the web e2e (intake #206, R122; local-206, not pushed)
+- **Done:** 20 `waitForTimeout` replaced (helpers/settle.js), guard script and test, wired into test-all.sh and CI. e2e not run locally; CI is the proof.
+- **Next:** push after #207 and PRs 211, 212, 210; open P2: the 2 jest real-timer cases.
+
 ## Nov 25: product review pilot fixes, first part (intake #170, R111; local branch, not pushed yet)
 - **Done:** README order (encryption honesty sentence first, Status above Start here); checks on items 1 and 6 recorded in R111.
 - **Next:** fresh screenshots and a grandparent-ux pass (item 4), then the contrast and reaction-row P2s test-first. **Beta status line done (Chase, Nov 26).

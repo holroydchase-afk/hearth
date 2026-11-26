@@ -4,6 +4,7 @@
 // 390 × 844 is an iPhone 14/15 in points; 360 × 740 is a 4-year-old Galaxy A.
 const path = require('path');
 const { test, expect } = require('../../e2e/node_modules/@playwright/test');
+const { pageReady } = require('./helpers/settle');
 
 const DIR = process.env.SNAPSHOT_DIR;
 const FIXTURE = path.join(__dirname, 'fixtures', 'park-gps.jpg');
@@ -16,7 +17,7 @@ for (const phone of PHONES) {
   test(`snapshot (${phone.name})`, async ({ page }) => {
     test.skip(!DIR, 'set SNAPSHOT_DIR to take snapshots');
     await page.setViewportSize({ width: phone.width, height: phone.height });
-    const shot = (name) => page.screenshot({ path: path.join(DIR, `${phone.name}-${name}.png`) });
+    const shot = async (name) => { await pageReady(page); return page.screenshot({ path: path.join(DIR, `${phone.name}-${name}.png`) }); };
     const signIn = async (email) => {
       await page.goto('/sign-in');
       await page.getByLabel('Your email').fill(email);
@@ -44,14 +45,12 @@ for (const phone of PHONES) {
     await shot('03-photos-poster');
     await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Groups is a row in More
     await page.getByRole('button', { name: /^Groups(,|$)/ }).click();
-    await page.waitForTimeout(500);
     await shot('04-groups');
     await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Me is a row in More
     await page.getByRole('button', { name: /^Me(,|$)/ }).click();
-    await page.waitForTimeout(500);
     await shot('05-me');
     await page.getByRole('button', { name: 'Sign out of Hearth' }).click();
-    await page.waitForTimeout(300);
+    await expect(page.getByRole('button', { name: 'Sign out', exact: true })).toBeVisible();
     await shot('06-confirm');
     await page.getByRole('button', { name: 'Sign out', exact: true }).click();
 
@@ -71,7 +70,6 @@ for (const phone of PHONES) {
     await page.getByRole('button', { name: 'Close' }).click();
     await page.getByRole('tab', { name: /^More/ }).click(); // RD-15: Help is a row in More
     await page.getByRole('button', { name: /^Help(,|$)/ }).click();
-    await page.waitForTimeout(500);
     await shot('10-help');
   });
 }
