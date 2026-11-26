@@ -37,10 +37,11 @@ blockers:
 - **Proof:** jest 2752, typecheck clean, e2e:demo 84, e2e:web 59.
 - **Next:** Chase's merge word (app/**). Then manual M1-11..13 on a real phone; open P2s GUX-FL-R4, R9, R10, R11 in the spec.
 
-## Nov 26: lint to strict, step 1 (intake #204, R113; branch claude/project-thread-is6w2s-disables, not pushed)
-- **Done, test-first** (LINT-6 red, then green): all 30 `eslint-disable` comments carry a `-- reason`; the 2 in `ui/typing.ts` that suppressed nothing are deleted; `reportUnusedDisableDirectives` is on (LINT-7). Comments only, no behaviour change.
-- **Update:** the lint stack is built in order (disables, requires + unused vars, refs/hooks, strict in `lint.yml`); strict mode exits 0 with 0 errors. 158 warnings left (155 inline styles, for #192). 15 hooks sites carry a dated reasoned disable. **Next:** push in queue order; managed config after studio-agents PR 175.
-- (earlier plan) one PR per rule family (TRACKER R113), then strict. Coordinate `app/src/ui` and `app/src/platform` timing with the Building Blocks handover thread.
+## Nov 26: lint to strict (intake #204, R125; branch claude/project-thread-is6w2s, PR)
+- **Done, test-first** (LINT-6/7 red then green; LINT-STRICT-1, 3 added by qa-tdd): one commit per rule family. Every `eslint-disable` carries a `-- reason`, unused ones are reported. `require()` is allowed in tests and CommonJS scripts only. Unused variables removed. Refs family: Animated values, PanResponders and the typing id use lazy `useState`; latest-value refs are set in a layout effect. **Strict is on in `lint.yml`; strict lint exits 0 (0 errors).** 150 warnings left, almost all inline styles (155 earlier), which wait for the library hand-over (#192).
+- **Reasoned, dated disables (15 sites):** PanResponder/ref objects, `usePlace`, the viewer's two ref reads, 7 load-on-id-change effects, expo-video `.muted`. Refactoring them changes gesture and loading timing, which needs a phone check (TRACKER R125).
+- **Next:** Chase's merge word (app/**); managed config once studio-agents PR 175 merges; then the inline-style findings with #192.
+
 ## Nov 26: birthday moves from Gallery to Me (Chase, DEC-90, R78, CAL-S1..S5; branch claude/birthday-in-settings, local, not pushed)
 - **Done, test-first** (qa-tdd red d0fc779): BirthdayCard and its Not-now helpers removed; Me has a "My birthday" section (every member, hidden quietly without 0029); its button opens /more/birthdays?add=mine. Privacy line now "The people who can see you in Hearth will see the month and day. Never the year."
 - **Open:** none for the saved confirmation: it now reads "Saved. December 8 is your birthday." (QA-R1/B24 fixed). Reminder notification: later idea.
