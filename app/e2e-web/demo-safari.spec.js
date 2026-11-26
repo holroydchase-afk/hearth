@@ -80,9 +80,11 @@ test("DEMO-SAFARI-3 phone, Safari quota: Chase's new post to Dad's side survives
   await page.goto('/');
   await galleryLoaded(page);
   await openNewPost(page, [FIXTURE]);
-  await page.getByLabel('Add a note (optional)').fill('Leaf pile');
+  await page.getByLabel('Say something, optional').fill('Leaf pile');
+  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-91: step 2
   await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
   await page.getByRole('button', { name: /^Send to / }).click();
+  await page.getByRole('button', { name: 'See it in Feed' }).click(); // DEC-91: the sent page
   await onFeed(page);
   await expect(page.getByText('Leaf pile', { exact: true }).filter({ visible: true })).toBeVisible();
   await page.reload();

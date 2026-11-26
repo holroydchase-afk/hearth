@@ -152,8 +152,8 @@ ok $? "setup v2 apply: Gammy is placed in Gammy's house, under Chase's side"
 [ "$(q "select count(*) from public.circle_people cp join public.circles h on h.id = cp.circle_id join public.profiles p on p.id = cp.user_id
         where h.name = 'Pawpaw and Granny''s house' and p.display_name in ('Pawpaw', 'Granny')")" = 2 ]
 ok $? "setup v2 apply: Pawpaw and Granny share one house"
-[ "$(q "select count(*) from public.circles where space_id = t.space() and kind = 'event' and name in ('Charleston trip', 'Birthday at Gigi''s')")" = 2 ]
-ok $? "setup v2 apply: the Charleston trip and Birthday at Gigi's events exist"
+[ "$(q "select count(*) from public.circles where space_id = t.space() and kind = 'event' and name in ('Lake weekend', 'Birthday at Gigi''s')")" = 2 ]
+ok $? "setup v2 apply: the Lake weekend and Birthday at Gigi's events exist"
 echo "$out" | grep -q "^Test viewer: " && echo "$out2$out" | grep -qi "not placed"; ok $? "setup v2: a person it can't place by name (Test viewer) is reported as not placed, not silently dropped"
 n1=$(q "select count(*) from public.circles where space_id = t.space()")
 psql -d "$DB" -X -q -v chase_email=chase@example.com -v space_name='Our kids' -v apply=yes -f "$SCRIPT" >/dev/null 2>&1

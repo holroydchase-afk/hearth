@@ -4,7 +4,7 @@
 // UX-G1..G6 are this review's acceptance criteria; the BETA ID each serves is in the title.
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import { FakeBackend } from '../../api/fake/FakeBackend';
+import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import type { Circle } from '../../api/HearthApi';
 import { expectGrandparentSafe, renderApp } from '../../test/renderApp';
 import { GroupsScreen } from '../GroupsScreen';
@@ -12,7 +12,7 @@ import { MeScreen } from '../MeScreen';
 import { ShareScreen } from '../ShareScreen';
 
 const SHAPE: Circle[] = [
-  { circle_id: 'e1', name: 'Charleston trip', member_count: 3, member_names: ['Pawpaw', 'Granny', 'Tess'], kind: 'event', parent_ids: [] },
+  { circle_id: 'e1', name: 'Lake weekend', member_count: 3, member_names: ['Pawpaw', 'Granny', 'Tess'], kind: 'event', parent_ids: [] },
   { circle_id: 'g1', name: "Mom's side", member_count: 4, member_names: ['Memaw', 'Pawpaw', 'Granny', 'Tess'], kind: 'group', parent_ids: [] },
   { circle_id: 'h1', name: "Pawpaw and Granny's house", member_count: 2, member_names: ['Pawpaw', 'Granny'], kind: 'household', parent_ids: ['g1', 'e1'] },
   { circle_id: 'all', name: 'Everyone', member_count: 6, member_names: ['Memaw', 'Pawpaw', 'Granny', 'Tess', 'Gammy', 'Grandaddy'], kind: 'everyone', parent_ids: [] },
@@ -31,33 +31,38 @@ const tileLabels = () => screen.UNSAFE_root.findAll((n: { type: unknown; props: 
   .map((n: { props: Record<string, unknown> }) => String(n.props.accessibilityLabel));
 
 describe('UX-G share sheet words (BETA-AUD-17)', () => {
-  it('UX-G1 BETA-AUD-17 DEC-73 picking Everyone says "To: Everyone in the family" (never "Only Everyone")', async () => {
+  it('UX-G1 (DEC-91) BETA-AUD-17 DEC-73 picking Everyone says "Everyone in the family" (never "Only Everyone")', async () => {
     const { be, api } = shapedApi();
     await renderApp(<ShareScreen />, { be, user: 'chase', deps: { api } });
     fireEvent.press(await screen.findByRole('button', { name: /^Add photos/ }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' })); // DEC-91: step 2
     fireEvent.press(await screen.findByLabelText('Everyone, 6 people, not picked'));
-    expect(await screen.findByText('Everyone in the family')).toBeTruthy();
+    expect(await screen.findByText('Everyone in the family will see your photos.')).toBeTruthy(); // the step 2 summary line
     expect(screen.getByRole('button', { name: 'Send to Everyone in the family' })).toBeTruthy();
     expect(screen.queryByText(/Only Everyone/)).toBeNull();
   });
 
-  it('UX-G2 BETA-AUD-17 DEC-73 Everyone first, then the groups and households, events last', async () => {
+  it('UX-G2 (DEC-91) BETA-AUD-17 DEC-73 Everyone first, then the groups and households, events last', async () => {
     const { be, api } = shapedApi();
     await renderApp(<ShareScreen />, { be, user: 'chase', deps: { api } });
     fireEvent.press(await screen.findByRole('button', { name: /^Add photos/ }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' })); // DEC-91: step 2
     await screen.findByLabelText('Everyone, 6 people, not picked');
-    expect(tileLabels().map((l) => l.split(',')[0])).toEqual(['Everyone', "Mom's side", "Pawpaw and Granny's house", 'Charleston trip']);
+    expect(tileLabels().map((l) => l.split(',')[0])).toEqual(['Everyone', "Mom's side", "Pawpaw and Granny's house", 'Lake weekend']);
     expectGrandparentSafe();
   });
 
-  it('UX-G3 BETA-AUD-21 DEC-73 a relative allowed to post is never offered Everyone, and sees people, not group names', async () => {
+  it('UX-G3 (DEC-91) BETA-AUD-21 DEC-73 a relative allowed to post is never offered Everyone, and sees people, not group names', async () => {
     const { be, api } = shapedApi();
     const real = be.mySpaces.bind(be);
     jest.spyOn(be, 'mySpaces').mockImplementation((u) => real(u).map((s) => ({ ...s, can_post: true })));
+    const poster = be.isPoster.bind(be); // like shareStart's relativeCanPost
+    jest.spyOn(be, 'isPoster').mockImplementation((sp, u) => u === FIXTURE.users.ruth.id || poster(sp, u));
     await renderApp(<ShareScreen />, { be, user: 'ruth', deps: { api } });
     fireEvent.press(await screen.findByRole('button', { name: /^Add photos/ }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' })); // DEC-91: step 2
     await waitFor(() => expect(tileLabels().length).toBe(3));
-    expect(tileLabels().filter((l) => /Everyone|Mom's side|house|Charleston/.test(l))).toEqual([]);
+    expect(tileLabels().filter((l) => /Everyone|Mom's side|house|Lake/.test(l))).toEqual([]);
     expect(tileLabels()[0]).toMatch(/^Memaw, Pawpaw and 2 more, 4 people, not picked$/);
   });
 });
@@ -68,7 +73,7 @@ describe('UX-G Groups screen invites (BETA-AUD-19)', () => {
     await renderApp(<GroupsScreen />, { be, user: 'chase', deps: { api } });
     expect(await screen.findByRole('button', { name: "Invite someone to Pawpaw and Granny's house" })).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Invite someone to Everyone' })).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Invite someone to Charleston trip' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Invite someone to Lake weekend' })).toBeNull();
     expect(screen.queryByRole('button', { name: "Invite someone to Mom's side" })).toBeNull();
     // and the parent is told where to go instead
     expect(screen.getAllByText('To invite someone, use their household below.').length).toBeGreaterThan(0);

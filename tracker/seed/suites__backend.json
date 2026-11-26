@@ -3278,7 +3278,7 @@
   },
   {
    "id": "GROUPS-018",
-   "title": "BETA-AUD-18 allowed: Pawpaw, Granny, the sister and both parents see the Charleston trip post",
+   "title": "BETA-AUD-18 allowed: Pawpaw, Granny, the sister and both parents see the Lake weekend post",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
@@ -3432,7 +3432,7 @@
   },
   {
    "id": "GROUPS-040",
-   "title": "BETA-REPLY-8 allowed: Granny's comment on the Charleston trip reaches Pawpaw, the sister (event rule), the parents and the author",
+   "title": "BETA-REPLY-8 allowed: Granny's comment on the Lake weekend reaches Pawpaw, the sister (event rule), the parents and the author",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
@@ -3460,7 +3460,7 @@
   },
   {
    "id": "GROUPS-044",
-   "title": "BETA-REPLY-8 mixed audience (Everyone + Charleston trip): Granny's comment reaches the event (Pawpaw, the sister) and the parents",
+   "title": "BETA-REPLY-8 mixed audience (Everyone + Lake weekend): Granny's comment reaches the event (Pawpaw, the sister) and the parents",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
@@ -3558,7 +3558,7 @@
   },
   {
    "id": "GROUPS-058",
-   "title": "BETA-REPLY-11 event: Granny's readers on the Charleston trip = Pawpaw, the sister, Chase, Mom",
+   "title": "BETA-REPLY-11 event: Granny's readers on the Lake weekend = Pawpaw, the sister, Chase, Mom",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"
@@ -4020,7 +4020,7 @@
   },
   {
    "id": "GROUPS-124",
-   "title": "BETA-AUD-20: Memaw's house added to the Charleston trip with \"Share all past photos\": Memaw sees the trip's earlier post",
+   "title": "BETA-AUD-20: Memaw's house added to the Lake weekend with \"Share all past photos\": Memaw sees the trip's earlier post",
    "area": "Groups, households, events",
    "tickets": [],
    "where": "backend/tests/groups_test.sql"

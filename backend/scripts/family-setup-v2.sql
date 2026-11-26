@@ -1,6 +1,6 @@
 -- family-setup v2 (docs/product/SPEC-GROUPS.md section 2 and section 8 step 3; privacy review item 14).
 -- Re-seeds Chase's family into the fixed shape, AS CHASE, through the same RPCs and RLS the app uses:
---   Everyone; set groups Chase's side and Mom's side; households under them; the Charleston trip and
+--   Everyone; set groups Chase's side and Mom's side; households under them; the Lake weekend and
 --   Birthday at Gigi's events. People are placed by the name the family uses (their display name).
 --   Posts Chase sent to a v1 group move to the matching household; then the v1 groups are retired.
 -- This CHANGES WHO SEES WHAT, so by default it is a DRY RUN: it does everything inside a transaction, prints
@@ -11,7 +11,7 @@
 --        [-v sister_name='Mom''s sister'] [-v apply=yes] -f backend/scripts/family-setup-v2.sql
 --
 -- sister_name (optional): the name Mom's sister uses; she is placed in Memaw's house AND Pawpaw and
--- Granny's house (the sibling workaround), and gets her own house in the Charleston trip.
+-- Granny's house (a relative who belongs to two households), and gets her own house in the Lake weekend.
 -- Safe to re-run: it reuses everything it made before. Never run against hosted without the dry run first.
 \set ON_ERROR_STOP 1
 
@@ -82,7 +82,7 @@ begin
       (3, 'household', 'Gammy''s house'), (4, 'household', 'Grandaddy and Grandmomma''s house'),
       (5, 'household', 'Gigi and Bebar''s house'), (6, 'household', 'Memaw''s house'),
       (7, 'household', 'Pawpaw and Granny''s house'), (8, 'household', 'Great-Grandma''s house'),
-      (9, 'event', 'Charleston trip'), (10, 'event', 'Birthday at Gigi''s')) x(o, kind, name)
+      (9, 'event', 'Lake weekend'), (10, 'event', 'Birthday at Gigi''s')) x(o, kind, name)
     union all
     select 11, 'household', v_sister || '''s house' where v_sister is not null
     order by 1 loop
@@ -97,11 +97,11 @@ begin
       ('Chase''s side', 'Gigi and Bebar''s house'),
       ('Mom''s side', 'Memaw''s house'), ('Mom''s side', 'Pawpaw and Granny''s house'),
       ('Mom''s side', 'Great-Grandma''s house'),
-      ('Charleston trip', 'Pawpaw and Granny''s house'),
+      ('Lake weekend', 'Pawpaw and Granny''s house'),
       ('Birthday at Gigi''s', 'Grandaddy and Grandmomma''s house'), ('Birthday at Gigi''s', 'Gigi and Bebar''s house'),
       ('Birthday at Gigi''s', 'Pawpaw and Granny''s house')) x(parent, child)
     union all
-    select 'Charleston trip', v_sister || '''s house' where v_sister is not null loop
+    select 'Lake weekend', v_sister || '''s house' where v_sister is not null loop
     perform public.link_level(
       (select id from public.circles where space_id = v_space and name = r.parent and deleted_at is null),
       (select id from public.circles where space_id = v_space and name = r.child and deleted_at is null), 'all');

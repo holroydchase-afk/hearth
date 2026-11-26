@@ -228,6 +228,8 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
       setS({ ...SIGNED_OUT, status: 'noSpace', session });
       return;
     }
+    // PRIV-FL-R1: the old "Last shared" line's key is never read now; delete the orphan once at startup.
+    void deps.kv.removeItem(`hearth.lastShared.v1.${session.userId}`).catch(() => {});
     const prefs = await loadPrefs(deps.kv, session.userId, space.role);
     const media = new MediaCache(deps.api, { disk: deps.mediaDisk ? { ...deps.mediaDisk, userId: session.userId } : null, videoFiles: deps.videoFiles ?? null });
     media.clearVideos(); // VID-18: any decrypted video a crash left behind

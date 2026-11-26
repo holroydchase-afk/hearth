@@ -1,5 +1,5 @@
 # Decision: Overhaul the full-screen photo viewer to iPhone Photos standards (look A)
-Date: Nov 24, 2026 · Status: proposed · Source: Chase, Nov 24: "We need to overhaul the full screen photo viewer. It is now the worst aspect of the product." · Spec: `docs/product/SPEC-VIEWER.md` (VIEWER-1..20), TRACKER R112
+Date: Nov 24, 2026 · Status: proposed · Source: Chase, Nov 24: "We need to overhaul the full screen photo viewer. It is now the worst aspect of the product." · Spec: `docs/product/SPEC-VIEWER.md` (VIEWER-1..20), TRACKER R113
 
 What changes: black backdrop, photo fills the screen, swipe with the finger, pinch and double-tap zoom, swipe down to close. Easy view Off: round icon Close and Save, tap to hide controls, no counter. Easy view On: labelled pills, counter, controls never hide.
 Over: today's pale page with five pills; one look for both modes.

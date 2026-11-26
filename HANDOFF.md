@@ -11,11 +11,18 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
-## Nov 26: full-screen viewer overhaul built (R112, SPEC-VIEWER look B, DEC-90; branch claude/project-thread-47ve1x, merged with origin/main, not pushed)
+## Nov 26: full-screen viewer overhaul built (R113, SPEC-VIEWER look B, DEC-92; branch claude/project-thread-47ve1x, merged with origin/main Nov 26 after PRs 203, 211, 212; pushed)
 - **Done (engineer):** `ViewerScreen` on react-native-zoom-toolkit's `Gallery` (black, photo edge to edge, finger-following swipes, pinch/double tap to 3x, swipe down to close; Easy view Off round icons + tap-to-hide, On pills + counter + Zoom pill; photo strip). New deps `react-native-reanimated` 4.7.1, `react-native-worklets` 0.13.0 (expo install), `react-native-zoom-toolkit` 5.1.1 and dev `patch-package` 8.0.1 with `app/patches/react-native-zoom-toolkit+5.1.1.patch` (postinstall). `viewerMotion.ts`, `VIEWER_TYPE`; jest stand-ins in `jest.setup.js`. Old core-loop e2e line updated to the new name line. No storage, transfer or encryption change (no `docs/architecture/` update).
-- **Reviews:** qa-tdd QA-R1..R3 fixed; grandparent-ux and ux-reviewer passed with changes, UX-R1..R5 fixed; open items in TRACKER R112.
+- **Reviews:** qa-tdd QA-R1..R3 fixed; grandparent-ux and ux-reviewer passed with changes, UX-R1..R5 fixed; open items in TRACKER R113.
 - **Next exact step:** open the PR; then VIEWER-20 on Chase's iPhone (Expo Go).
 - **Portfolio / public presence:** the public demo's photo viewer becomes the black Photos-style viewer with the strip once this merges.
+## Nov 26: two-step Share flow (DEC-91, R112, PR #212; branch claude/project-thread-jtelk5)
+- **Done, test-first** (FLOW-1..26 in `docs/product/SPEC-SHARE-FLOW.md`; qa-tdd red then green 3x): step 1 one open box plus chips, step 2 "Who gets it?" on its own page, day sheet, sent page, for Photos, Event, News and Saying. No underline fields, no "To:" line. grandparent-ux P1 (outline contrast) fixed; privacy-security no P0/P1.
+- **Proof:** jest 2752, typecheck clean, e2e:demo 84, e2e:web 59.
+- **Next:** Chase's merge word (app/**). Then manual M1-11..13 on a real phone; open P2s GUX-FL-R4, R9, R10, R11 in the spec.
+## Nov 26: birthday moves from Gallery to Me (Chase, DEC-90, R78, CAL-S1..S5; branch claude/birthday-in-settings, local, not pushed)
+- **Done, test-first** (qa-tdd red d0fc779): BirthdayCard and its Not-now helpers removed; Me has a "My birthday" section (every member, hidden quietly without 0029); its button opens /more/birthdays?add=mine. Privacy line now "The people who can see you in Hearth will see the month and day. Never the year."
+- **Open:** none for the saved confirmation: it now reads "Saved. December 8 is your birthday." (QA-R1/B24 fixed). Reminder notification: later idea.
 
 ## Nov 25: product review pilot fixes, first part (intake #170, R111; local branch, not pushed yet)
 - **Done:** README order (encryption honesty sentence first, Status above Start here); checks on items 1 and 6 recorded in R111.
@@ -40,6 +47,10 @@ blockers:
 - **Test changes, flagged:** the e2e B-WEB3-1 case now expects Remove only (no Try again) per the grandparent-ux words; webQueue header likewise. The "closing Chrome would stop it" sentence is shown only by Share's QueueStatus (every tab keeps its own, and the e2e wants it once); other tabs say only "We'll keep trying while Chrome stays open." qa-tdd/grandparent-ux to confirm.
 - **Privacy fixes (engineer, Nov 25):** PRIV-WEB3-R1 done (`uploadStore.web.ts` generation counter bumped by wipe(): stage/put seal and write nothing after sign-out, no new key); R2/R3 in architecture 03; R4 tracked as TRACKER R97 (no code).
 - **Next:** qa-tdd green 3x, privacy-security, grandparent-ux, then commit and PR; WEB-APP-35/36 manual on a real Android phone.
+## Nov 26: intake #176 follow-ups (R100; branch local-176b, not pushed)
+- **Done, test-first** (qa-tdd red 1a5f35a): six backend scripts require `SUPABASE_PROJECT_REF` (one stderr line, before any call); `.mcp.json` reads `${SUPABASE_PROJECT_REF}` (vendor docs: expansion works in `url`); "Lake weekend" replaces the real-family event name in seeds, SQL, tests, app and docs; fictional city in the photo-strip fixture; `scripts/check-public-privacy.sh` guards it.
+- **Needs Chase:** set `SUPABASE_PROJECT_REF` in the environment secrets and wherever he runs deploy or the MCP server. **Next:** push and PR after Chase's word.
+
 ## Nov 25: privacy sweep of the public repo (intake #176, R96; branch claude/project-thread-6ew09x, PR)
 - **Done:** artifact links, backend project address (docs and `.env.example`), fixtures (address, family name, GPS test photo) and the family details in PERSONAS/STORY and the docs listed in R96 are generic now. Nicknames stay; who is related to whom, phones per person, places and the far-away relative are gone.
 - **Family-details decision (for #176):** the repo keeps nicknames and household shapes only, as fictional composites. The real key stays in the project's private files. **Needs Chase:** confirm that level, or say to go further (ages in PERSONA-CHECK).

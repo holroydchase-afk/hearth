@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Full-screen viewer (SPEC-VIEWER, look B, DEC-84): black, the photo edge to edge, and it behaves like iPhone Photos.
+// Full-screen viewer (SPEC-VIEWER, look B, DEC-92): black, the photo edge to edge, and it behaves like iPhone Photos.
 // react-native-zoom-toolkit's Gallery owns the photo (finger-following swipes, pinch and double tap to 3x, pan when
 // zoomed, swipe down); Hearth's own controls sit on top. Easy view Off (parents): round Close and Save icons, the
 // sender and date on top, the caption on a dark gradient, a strip of small photos; a single tap hides them all.

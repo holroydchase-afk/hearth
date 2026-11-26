@@ -143,7 +143,7 @@ async function start(opts: { user?: FixtureUser; kv?: KV; be?: FakeBackend; deps
   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
 }
 const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
-const TO = 'To:'; // SHARE-ST-23 (was "To: you pick after your photos", SHARE-ST-15; "To: pick after your photos", SHARE-ST-3)
+const TO = 'To:'; // SHARE-ST-23 (DEC-91: now asserted ABSENT; was "To: you pick after your photos", SHARE-ST-15; "To: pick after your photos", SHARE-ST-3)
 const HIDDEN = { includeHiddenElements: true } as const;
 const spotOf = () => screen.getByTestId('share-spot', HIDDEN);
 /** Every word under `root`, hidden parts included. */
@@ -272,13 +272,13 @@ describe('SHARE-ST-4 a parent taps Add photos: one picker, up to 100', () => {
     });
   }
 
-  it('SHARE-ST-4 nothing picked (Cancel) leaves the empty postcard as it was', async () => {
+  it('SHARE-ST-4 (DEC-91) nothing picked (Cancel) leaves the empty postcard as it was', async () => {
     const { pickBulk } = await start();
     fireEvent.press(target(100));
     await waitFor(() => expect(pickBulk).toHaveBeenCalled());
     await new Promise((r) => setTimeout(r, 20));
     expect(target(100)).toBeTruthy();
-    expect(screen.getByText(TO, HIDDEN)).toBeTruthy(); // SHARE-ST-23: "To:" stays, hidden from screen readers
+    expect(screen.queryAllByText(TO, HIDDEN)).toHaveLength(0); // DEC-91: no "To:" on the empty card
     expect(screen.queryByRole('button', { name: 'Cancel this post' })).toBeNull();
     expect(screen.queryByRole('alert')).toBeNull();
   });
@@ -331,12 +331,13 @@ describe('SHARE-ST-6 the postcard\'s Add tile still adds up to 10 for everyone',
 });
 
 describe('SHARE-ST-7 privacy: a parent\'s 1-10 pick through pickBulk sends no EXIF or GPS (SHARE-2, BETA-BULK-1)', () => {
-  it('SHARE-ST-7 3 photos with GPS EXIF picked through pickBulk: only uri, size and the date reach the upload; nothing in the backend carries EXIF or GPS', async () => {
+  it('SHARE-ST-7 (DEC-91) 3 photos with GPS EXIF picked through pickBulk: only uri, size and the date reach the upload; nothing in the backend carries EXIF or GPS', async () => {
     const be = FakeBackend.withFixture();
     const { deps, pickBulk } = await start({ be, deps: { pickBulk: jest.fn(async () => ({ assets: assets(3) })) } });
     fireEvent.press(target(100));
     await waitFor(() => expect(pickBulk).toHaveBeenCalled());
     await screen.findByText('1 of 3', {}, slow);
+    fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' }, slow)); // DEC-91: step 2
     fireEvent.press(await screen.findByLabelText(/^Grandparents – Dad's side, \d+ people, not picked$/, {}, slow));
     fireEvent.press(screen.getByRole('button', { name: /^Send to / }));
     await waitFor(() => expect((deps.prepare as jest.Mock).mock.calls.length).toBe(3), slow);
@@ -477,9 +478,10 @@ const GONE = [/Add a note \(optional\)/, /To: you pick after your photos/, /To: 
 function cardTokens(): string[] {
   return wordsIn(screen.getByTestId('share-card')).split(' ').filter(Boolean).map((w) => w.toUpperCase()).sort();
 }
+// DEC-91: no "To:" token any more.
 function allowedTokens(title = 'Add photos'): string[] {
   const now = new Date();
-  return [...title.toUpperCase().split(' '), 'TO:', MONTHS[now.getMonth()]!, String(now.getDate())].sort();
+  return [...title.toUpperCase().split(' '), MONTHS[now.getMonth()]!, String(now.getDate())].sort();
 }
 /** Host nodes in the card that a screen reader or keyboard could stop on, other than the one button. */
 function extraStops(btn: Inst): Inst[] {
@@ -581,38 +583,26 @@ describe('SHARE-ST-22 the stamp sits top-right inside the photo spot', () => {
   });
 });
 
-describe('SHARE-ST-23 below the spot: two blank ruled lines, "To:" and one ruled line, all decoration', () => {
+describe('SHARE-ST-23 (DEC-91) below the spot: no ruled lines and no "To:", the empty card keeps only the spot and the stamp', () => {
   const cases = [
-    { name: 'light', p: { look: 'light' }, dark: false },
-    { name: 'dark', p: { look: 'dark' }, dark: true },
-    { name: 'Easy view', p: { look: 'light', easyView: true }, dark: false },
+    { name: 'light', p: { look: 'light' } },
+    { name: 'dark', p: { look: 'dark' } },
+    { name: 'Easy view', p: { look: 'light', easyView: true } },
   ];
   for (const k of cases) {
-    it(`SHARE-ST-23 (${k.name}) 2 note rules, "To:" (>= 4.5:1, full opacity), 1 To: rule; all hidden from VoiceOver/TalkBack; none of the old words`, async () => {
+    it(`SHARE-ST-23 (DEC-91) (${k.name}) no share-note-rule, no share-to-rule, no "To:"; the card's words are only "Add photos" and the stamp's`, async () => {
       await start({ kv: prefs('chase', k.p) });
-      const c = pal(k.dark);
-      const card = screen.getByTestId('share-card');
-      const noteRules = screen.queryAllByTestId('share-note-rule', HIDDEN);
-      const toRules = screen.queryAllByTestId('share-to-rule', HIDDEN);
-      expect({ note: noteRules.length, to: toRules.length }).toEqual({ note: 2, to: 1 });
-      const to = screen.getByText(TO, HIDDEN);
-      for (const n of [...noteRules, ...toRules, to]) {
-        expect({ id: n.props.testID ?? wordsIn(n), inCard: within(n, card), hidden: hiddenFromReaders(n), blank: n.props.testID ? wordsIn(n) === '' : true })
-          .toEqual({ id: n.props.testID ?? wordsIn(n), inCard: true, hidden: true, blank: true });
-      }
-      const color = String(flat(to.props.style).color);
-      expect({ opacity: opacityOf(to), ok: contrast(color, c.surface) >= 4.5 }).toEqual({ opacity: 1, ok: true });
-      // The note area and To: come after the spot (below it), not inside it.
-      expect({ noteInSpot: noteRules.some((r) => within(r, spotOf())), toInSpot: within(to, spotOf()) }).toEqual({ noteInSpot: false, toInSpot: false });
+      expect(screen.queryAllByTestId('share-note-rule', HIDDEN)).toHaveLength(0);
+      expect(screen.queryAllByTestId('share-to-rule', HIDDEN)).toHaveLength(0);
+      expect(screen.queryAllByText(TO, HIDDEN)).toHaveLength(0);
+      expect(allWords()).not.toMatch(/To:/);
       for (const g of GONE) expect({ g: String(g), found: screen.queryAllByText(g, HIDDEN).length }).toEqual({ g: String(g), found: 0 });
       expect(allWords()).not.toMatch(/Everyone|Dad's side|Mom's side|Grandparents|Grandma Jo|Nana Ruth|Grandpa Earl|Alex/);
       for (const id of ['share-to', 'share-to-faces', 'share-to-names', 'share-last']) {
         expect({ id, found: screen.queryAllByTestId(id, HIDDEN).length }).toEqual({ id, found: 0 });
       }
-      expect(screen.queryAllByRole('checkbox').length + screen.queryAllByRole('switch').length).toBe(0);
       expect(screen.UNSAFE_queryAllByType(TextInput)).toHaveLength(0);
-      expect(screen.queryByRole('button', { name: /^(Send to |Pick who gets it$)/ })).toBeNull();
-      // The empty card's words are only "Add photos", "To:" and the stamp's month and day.
+      expect(screen.queryByRole('button', { name: /^(Send to |Pick who gets it$|Next: who gets it$)/ })).toBeNull();
       expect(cardTokens()).toEqual(allowedTokens());
     });
   }
@@ -620,16 +610,12 @@ describe('SHARE-ST-23 below the spot: two blank ruled lines, "To:" and one ruled
 
 describe('SHARE-ST-24 a tap anywhere on the empty card opens the picker; the card is one element', () => {
   for (const user of ['chase', 'ruth'] as const) {
-    it(`SHARE-ST-24 ${user}: spot, ruled lines, "To:" and the card's padding each open the picker; no "Add photos first" hint`, async () => {
+    it(`SHARE-ST-24 (DEC-91) ${user}: the spot and the card's padding each open the picker (no ruled lines or "To:" left to tap); no "Add photos first" hint`, async () => {
       const be = user === 'ruth' ? relativeCanPost() : undefined;
       const { pickBulk, pickPhotos } = await start({ user, be });
       const picks = () => pickBulk.mock.calls.length + pickPhotos.mock.calls.length;
       const parts: Array<[string, () => Inst]> = [
         ['the spot', () => spotOf()],
-        ['the first note rule', () => screen.getAllByTestId('share-note-rule', HIDDEN)[0]!],
-        ['the second note rule', () => screen.getAllByTestId('share-note-rule', HIDDEN)[1]!],
-        ['"To:"', () => screen.getByText(TO, HIDDEN)],
-        ['the To: rule', () => screen.getByTestId('share-to-rule', HIDDEN)],
         ['the card padding', () => screen.getByTestId('share-card')],
       ];
       let want = 0;
@@ -653,27 +639,28 @@ describe('SHARE-ST-24 a tap anywhere on the empty card opens the picker; the car
     expectGrandparentSafe();
   });
 
-  it('SHARE-ST-24 SHARE-ST-17 a press on "To:" gives the same 0.98 scale over 120 ms; none with Reduce Motion', async () => {
-    // engineer, flagged for qa-tdd: SHARE-ST-17's Reduce Motion case sets RN's mocked isReduceMotionEnabled to true and
-    // restoreAllMocks doesn't undo it on that preset mock, so say "off" here or this case depends on test order.
+  it('SHARE-ST-24 SHARE-ST-17 (DEC-91) a press on the card gives the same 0.98 scale over 120 ms (nothing to press at "To:" any more)', async () => {
     jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(false);
     await start();
     const calls = spyTiming();
-    fireEvent(screen.getByText(TO, HIDDEN), 'pressIn');
+    expect(screen.queryAllByText(TO, HIDDEN)).toHaveLength(0);
+    fireEvent(screen.getByTestId('share-card'), 'pressIn');
     expect(calls.filter((c) => c.toValue === 0.98).map((c) => c.duration)).toEqual([120]);
-    fireEvent(screen.getByText(TO, HIDDEN), 'pressOut');
+    fireEvent(screen.getByTestId('share-card'), 'pressOut');
     expect(calls[calls.length - 1]).toEqual({ toValue: 1, duration: 120 });
   });
 });
 
 describe('SHARE-ST-25 no words under the card', () => {
-  it('SHARE-ST-25 a parent sends to Dad\'s side: back on the start and on a fresh open, no "Last shared" line and no words under the card', async () => {
+  it('SHARE-ST-25 (DEC-91) a parent sends to Dad\'s side: back on the start and on a fresh open, no "Last shared" line and no words under the card', async () => {
     const be = FakeBackend.withFixture();
     const kv = memoryKV();
     const { unmount } = await start({ be, kv, deps: { pickBulk: jest.fn(async () => ({ assets: assets(1) })) } });
     fireEvent.press(target(100));
+    fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' }, slow)); // DEC-91: step 2
     fireEvent.press(await screen.findByLabelText(/^Grandparents – Dad's side, \d+ people, not picked$/, {}, slow));
     fireEvent.press(screen.getByRole('button', { name: /^Send to / }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Share another' }, slow)); // DEC-91: the sent page first
     await screen.findByTestId('share-spot', HIDDEN, slow);
     await waitFor(() => expect(Object.values(be.state.posts).filter((p) => p.status === 'published')).toHaveLength(1), slow);
     await new Promise((r) => setTimeout(r, 50));
@@ -688,7 +675,7 @@ describe('SHARE-ST-25 no words under the card', () => {
   it('SHARE-ST-25 a saved last audience at open: still no line and the page words are only "New post" and the card\'s', async () => {
     const kv = memoryKV({
       [`hearth.lastAudience.v1.${FIXTURE.users.chase.id}`]: JSON.stringify([FIXTURE.circles.dadSide.id]),
-      [`hearth.lastShared.v1.${FIXTURE.users.chase.id}`]: JSON.stringify({ at: new Date().toISOString(), ids: [FIXTURE.circles.dadSide.id] }),
+      // PRIV-FL-R1 (DEC-91): hearth.lastShared.v1.<id> is an orphan key (nothing reads it); it is no longer seeded here.
     });
     await start({ kv });
     await new Promise((r) => setTimeout(r, 50));
@@ -698,17 +685,20 @@ describe('SHARE-ST-25 no words under the card', () => {
 });
 
 describe('SHARE-ST-26 after a pick, the DEC-73 postcard opens unchanged', () => {
-  it('SHARE-ST-26 a parent picks 3: the postcard with its note box, To: tiles and Send; the card is no longer a button; nothing picked for you', async () => {
+  it('SHARE-ST-26 (DEC-91) a parent picks 3: step 1 with its note box and "Next: who gets it" (tiles are on step 2); the card is no longer a button; nothing picked for you', async () => {
     await start({ deps: { pickBulk: jest.fn(async () => ({ assets: assets(3) })) } });
     fireEvent.press(screen.getByTestId('share-card'));
     expect(await screen.findByText('1 of 3', {}, slow)).toBeTruthy();
     expect(screen.UNSAFE_queryAllByType(TextInput).length).toBeGreaterThan(0);
-    const tile = await screen.findByLabelText(/^Grandparents – Dad's side, \d+ people, not picked$/, {}, slow);
-    expect(screen.queryAllByLabelText(/, picked$/)).toHaveLength(0);
+    expect(screen.getByText('Step 1 of 2')).toBeTruthy();
+    expect(screen.queryAllByLabelText(/, \d+ (person|people), (not )?picked$/)).toHaveLength(0);
     let cardIsButton = false;
     for (let p: Inst | null = screen.getByTestId('share-card'); p; p = p.parent) if (p.props.accessibilityRole === 'button' || typeof p.props.onPress === 'function') cardIsButton = true;
     expect(cardIsButton).toBe(false);
     expect(screen.queryByTestId('share-spot', HIDDEN)).toBeNull();
+    fireEvent.press(screen.getByRole('button', { name: 'Next: who gets it' }));
+    const tile = await screen.findByLabelText(/^Grandparents – Dad's side, \d+ people, not picked$/, {}, slow);
+    expect(screen.queryAllByLabelText(/, picked$/)).toHaveLength(0);
     fireEvent.press(tile);
     expect(screen.getByRole('button', { name: /^Send to / })).toBeTruthy();
   });
@@ -788,28 +778,21 @@ describe('GUX-W3 P2 "New post" does not move when photos arrive', () => {
   }, 10000);
 });
 
-describe('GUX-W4 P2 the ruled lines are visible (>= 1.5:1 on the card)', () => {
+describe('GUX-W4 (DEC-91) there are no ruled lines to be visible', () => {
   for (const dark of [false, true]) {
-    it(`GUX-W4 (${dark ? 'dark' : 'light'}) note and To: rules use c.tabLine, opaque, >= 1.5:1 on c.surface`, async () => {
+    it(`GUX-W4 (DEC-91) (${dark ? 'dark' : 'light'}) no note rule and no To: rule on the empty card`, async () => {
       await start({ kv: prefs('chase', { look: dark ? 'dark' : 'light' }) });
-      const c = pal(dark);
-      const rules = [...screen.getAllByTestId('share-note-rule', HIDDEN), ...screen.getAllByTestId('share-to-rule', HIDDEN)];
-      expect(rules).toHaveLength(3);
-      for (const r of rules) {
-        const color = String(flat(r.props.style).backgroundColor);
-        const ratio = /^#[0-9A-Fa-f]{6}$/.test(color) ? contrast(color, c.surface) : 0;
-        expect({ id: r.props.testID, color, enough: ratio >= 1.5, opacity: opacityOf(r) })
-          .toEqual({ id: r.props.testID, color: c.tabLine, enough: true, opacity: 1 });
-      }
+      expect(screen.queryAllByTestId('share-note-rule', HIDDEN)).toHaveLength(0);
+      expect(screen.queryAllByTestId('share-to-rule', HIDDEN)).toHaveLength(0);
     });
   }
 });
 
 describe('GUX-W5 P2 the filled note field has no example hint', () => {
-  it('GUX-W5 no "Like:" anywhere; the note field still reads "Add a note (optional)"', async () => {
+  it('GUX-W5 (DEC-91) no "Like:" anywhere; the note field now reads "Say something, optional"', async () => {
     await filled(3);
-    const input = screen.getByLabelText('Add a note (optional)');
-    expect([undefined, '', 'Add a note (optional)']).toContain(input.props.placeholder);
+    const input = screen.getByLabelText('Say something, optional');
+    expect([undefined, '', 'Say something, optional']).toContain(input.props.placeholder);
     expect(screen.UNSAFE_queryAllByType(TextInput).filter((x) => /Like:/.test(String(x.props.placeholder ?? '')))).toHaveLength(0);
     expect(allWords()).not.toMatch(/Like:/);
   });
@@ -954,17 +937,18 @@ describe('SHARE-ST-33 post_kinds on, not a parent: no tiles', () => {
 
 describe('SHARE-ST-31 / SHARE-ST-33 a tap on a kind shows its empty card face (tester option A)', () => {
   for (const K of KINDS) {
-    it(`SHARE-ST-31 "${K.label}" opens the ${K.k} card: its fields, "To:", a disabled "Pick who gets it"; the photo card and kinds row step aside; nothing sent`, async () => {
+    it(`SHARE-ST-31 "${K.label}" opens the ${K.k} card: (DEC-91) its one big box and chips, "Step 1 of 2" and a disabled "Next: who gets it", no "To:"; the photo card and kinds row step aside; nothing sent`, async () => {
       const { be } = await start({ be: kindsOn() });
       const before = Object.keys(be.state.posts).length;
       fireEvent.press(await screen.findByRole('button', { name: K.label }, slow));
       const face = await screen.findByTestId(`share-kind-card-${K.k}`, {}, slow);
       const labels = (face.findAll((x: Inst) => x.type === TextInput) as Inst[]).map((x) => x.props.accessibilityLabel);
-      for (const f of K.fields) expect({ f, found: labels.includes(f) }).toEqual({ f, found: true });
-      expect(wordsIn(face).split(' ')).toContain('To:');
-      const pick = screen.getByRole('button', { name: 'Pick who gets it' });
+      expect(labels).toEqual([{ event: "What's happening?", news: "What's your news?", saying: 'What did they say?' }[K.k]]);
+      expect(wordsIn(face).split(' ')).not.toContain('To:');
+      expect(screen.getByText('Step 1 of 2')).toBeTruthy();
+      const pick = screen.getByRole('button', { name: 'Next: who gets it' });
       expect(pick.props.accessibilityState?.disabled ?? pick.props['aria-disabled']).toBe(true);
-      expect(screen.getByRole('header', { name: 'New post' })).toBeTruthy();
+      expect(screen.getByRole('header', { name: K.label })).toBeTruthy(); // DEC-91: the kind's verb is the title
       expect(screen.queryByTestId('share-kinds', HIDDEN)).toBeNull();
       expect(screen.queryByRole('button', { name: /^Add photos( or videos)?, up to \d+ at a time$/ })).toBeNull();
       expect(Object.keys(be.state.posts).length).toBe(before);
@@ -993,29 +977,19 @@ describe('GUX-T2 P1 the empty postcard is top-aligned under "New post"', () => {
 // GUX-T5 (P2): in every theme (paper and the nine fruits), light and dark, and with the phone's Increase Contrast on,
 // the empty card's "To:" is >= 4.5:1 on the card (text) and the ruled lines are >= 1.5:1 (decoration; qa-tdd keeps
 // GUX-W4's floor, since the lines carry no meaning a person must read). Rendered as Chase (owner, can pick a theme).
-describe('GUX-T5 P2 "To:" and the ruled lines on the empty card, every theme, light and dark', () => {
+describe('GUX-T5 (DEC-91) the stamp and the Add photos words stay readable in every theme, light and dark; no "To:" or rules left', () => {
   for (const theme of THEME_NAMES) {
     for (const dark of [false, true]) {
-      it(`GUX-T5 ${theme} (${dark ? 'dark' : 'light'}) "To:" >= 4.5:1 and rules >= 1.5:1 on c.surface`, async () => {
+      it(`GUX-T5 (DEC-91) ${theme} (${dark ? 'dark' : 'light'}) the empty card has no "To:" and no rules; its surface is c.surface`, async () => {
         await start({ kv: prefs('chase', { look: dark ? 'dark' : 'light', theme }) });
         const card = screen.getByTestId('share-card');
         const surface = String(flat(card.props.style).backgroundColor);
         const want = paletteFor(Platform.OS as 'ios', dark, theme);
         expect({ theme, surface }).toEqual({ theme, surface: want.surface });
-        const to = String(flat(screen.getByText(TO, HIDDEN).props.style).color);
-        const rules = [...screen.getAllByTestId('share-note-rule', HIDDEN), ...screen.getAllByTestId('share-to-rule', HIDDEN)]
-          .map((r) => String(flat(r.props.style).backgroundColor));
-        const ratio = (x: string) => (/^#[0-9A-Fa-f]{6}$/.test(x) ? Math.round(contrast(x, surface) * 100) / 100 : 0);
-        expect({ theme, to: ratio(to) >= 4.5, rules: rules.map((r) => ratio(r) >= 1.5) })
-          .toEqual({ theme, to: true, rules: [true, true, true] });
+        expect(screen.queryAllByText(TO, HIDDEN)).toHaveLength(0);
+        expect(screen.queryAllByTestId('share-note-rule', HIDDEN)).toHaveLength(0);
+        expect(screen.queryAllByTestId('share-to-rule', HIDDEN)).toHaveLength(0);
       }, 10000);
     }
-    it(`GUX-T5 ${theme} Increase Contrast (light and dark): c.muted >= 4.5:1 and c.tabLine >= 1.5:1 on c.surface`, () => {
-      for (const dark of [false, true]) {
-        const c = paletteFor(Platform.OS as 'ios', dark, theme, true);
-        expect({ theme, dark, to: contrast(c.muted, c.surface) >= 4.5, rule: contrast(c.tabLine, c.surface) >= 1.5 })
-          .toEqual({ theme, dark, to: true, rule: true });
-      }
-    });
   }
 });
