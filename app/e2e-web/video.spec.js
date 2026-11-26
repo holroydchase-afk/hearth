@@ -52,7 +52,8 @@ test('VID-18 a video post shows its poster with a Play word button on Photos and
   const chooser = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: /^Add photos or videos, up to \d+ at a time$/ }).click();
   await (await chooser).setFiles(VIDEO);
-  await page.getByLabel('Add a note (optional)').fill('Leo on the slide');
+  await page.getByLabel('Say something, optional').fill('Leo on the slide');
+  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-91: step 2
   await page.getByLabel(/^Grandparents – Dad's side, 2 people, not picked$/).click();
   await page.getByRole('button', { name: /^Send to / }).click();
   await page.getByRole('tab', { name: /^Feed/ }).click(); // RD-18: the post card (and its Play button) is on Feed

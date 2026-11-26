@@ -11,6 +11,10 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 26: two-step Share flow (DEC-91, R112, PR #212; branch claude/project-thread-jtelk5)
+- **Done, test-first** (FLOW-1..26 in `docs/product/SPEC-SHARE-FLOW.md`; qa-tdd red then green 3x): step 1 one open box plus chips, step 2 "Who gets it?" on its own page, day sheet, sent page, for Photos, Event, News and Saying. No underline fields, no "To:" line. grandparent-ux P1 (outline contrast) fixed; privacy-security no P0/P1.
+- **Proof:** jest 2752, typecheck clean, e2e:demo 84, e2e:web 59.
+- **Next:** Chase's merge word (app/**). Then manual M1-11..13 on a real phone; open P2s GUX-FL-R4, R9, R10, R11 in the spec.
 ## Nov 26: birthday moves from Gallery to Me (Chase, DEC-90, R78, CAL-S1..S5; branch claude/birthday-in-settings, local, not pushed)
 - **Done, test-first** (qa-tdd red d0fc779): BirthdayCard and its Not-now helpers removed; Me has a "My birthday" section (every member, hidden quietly without 0029); its button opens /more/birthdays?add=mine. Privacy line now "The people who can see you in Hearth will see the month and day. Never the year."
 - **Open:** none for the saved confirmation: it now reads "Saved. December 8 is your birthday." (QA-R1/B24 fixed). Reminder notification: later idea.

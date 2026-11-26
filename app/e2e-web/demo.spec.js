@@ -115,9 +115,11 @@ test('RR-14 add a photo, reload keeps it, Start over brings back the sample fami
   await galleryLoaded(page);
   // Retargeted Nov 19 by qa-tdd for DEC-73 (SHARE-PC): the postcard's note, a face tile and "Send to ...".
   await openNewPost(page, [FIXTURE]);
-  await page.getByLabel('Add a note (optional)').fill('Leaf pile');
+  await page.getByLabel('Say something, optional').fill('Leaf pile');
+  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-91: step 2
   await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
   await page.getByRole('button', { name: /^Send to / }).click();
+  await page.getByRole('button', { name: 'See it in Feed' }).click(); // DEC-91: the sent page
   await onFeed(page); // RD-18: captions live on Feed (Gallery may stay mounted behind it, so only what shows counts)
   await expect(page.getByText('Leaf pile', { exact: true }).filter({ visible: true })).toBeVisible();
   await page.reload();
@@ -1042,7 +1044,7 @@ test('DEMO-EASY-1 on a laptop, Grandma Jo\'s Easy view leaves the story panel th
 });
 // SHARE-PC-13 (SPEC-REDESIGN 1j, DEC-73, Chase Nov 19): the postcard Share in the public demo at 393 px. Written first
 // (red), Nov 19, by qa-tdd. Soft expects after the page opens, so one run shows every part still missing.
-test('SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to ...", Feed says "Shared with ..."; Jo sees names only', async ({ page }) => {
+test('SHARE-PC-13 (DEC-91) postcard Share: 3 photos, step 1, Next, nothing picked, two groups, "Send to ...", sent page, See it in Feed; Jo sees names only', async ({ page }) => {
   const shots = path.join(__dirname, '..', 'test-results', 'share-pc-13');
   await page.setViewportSize({ width: 393, height: 852 });
   await page.emulateMedia({ colorScheme: 'light' });
@@ -1051,11 +1053,15 @@ test('SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to
   await openNewPost(page, [FIXTURE, FIXTURE, FIXTURE]);
   await expect(page.getByText('1 of 3', { exact: true })).toBeVisible();
   const tiles = page.getByLabel(/, \d+ people, (not )?picked$/).filter({ visible: true });
-  expect.soft(await tiles.count()).toBeGreaterThan(1);
   expect.soft(await page.getByLabel(/, \d+ people, picked$/).count()).toBe(0);
-  const off = page.getByRole('button', { name: 'Pick who gets it' });
-  await expect.soft(off, 'Pick who gets it shows').toBeVisible();
-  await expect.soft(off, 'Pick who gets it is off with nothing picked').toBeDisabled();
+  // DEC-91: step 1 has no tiles; "Next: who gets it" opens step 2, where nothing is picked and Send is off.
+  expect.soft(await tiles.count(), 'no group tile on step 1').toBe(0);
+  await expect.soft(page.getByText('Step 1 of 2')).toBeVisible();
+  await page.getByRole('button', { name: 'Next: who gets it' }).click();
+  await expect(page.getByRole('heading', { name: 'Who gets it?' })).toBeVisible();
+  expect.soft(await tiles.count()).toBeGreaterThan(1);
+  const off = page.getByRole('button', { name: /^Send/ });
+  await expect.soft(off, 'Send is off with nothing picked').toBeDisabled();
   expect.soft(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: path.join(shots, 'share-pc-13-light.png') });
   await page.emulateMedia({ colorScheme: 'dark' });
@@ -1068,7 +1074,9 @@ test('SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to
   await expect(send).toBeEnabled();
   const names = String(await send.getAttribute('aria-label') ?? await send.innerText()).replace(/^Send to /, '');
   await send.click();
-  await expect(page.getByText(`Shared with ${names}.`).filter({ visible: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Sent' })).toBeVisible(); // DEC-91: the sent page, no banner
+  await expect(page.getByText(/^Shared with /)).toHaveCount(0);
+  await page.getByRole('button', { name: 'See it in Feed' }).click();
   // T39 (QA-R13): wait for the new post itself, then check it is on top. Every demo seed post is 3+ hours old, so
   // the new one is the only post that reads "Just now". "The first visible post" alone could be an older one
   // under load. Sending runs in the browser (resize, strip, encrypt 3 photos); under full-suite load it was still
@@ -1086,6 +1094,7 @@ test('SHARE-PC-13 postcard Share: 3 photos, nothing picked, two groups, "Send to
   const joShare = page.getByRole('tab', { name: /^Share/ });
   if (await joShare.count()) {
     await openNewPost(page, [FIXTURE]);
+    await page.getByRole('button', { name: 'Next: who gets it' }).click();
     const labels = await page.getByLabel(/, \d+ people, (not )?picked$/).evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')));
     expect.soft(labels.filter((l) => /Grandparents|Dad's side|Mom's side|^Everyone/.test(l))).toEqual([]);
   }
@@ -1102,6 +1111,7 @@ for (const width of [360, 390]) {
     await page.goto('/');
     await galleryLoaded(page);
     await openNewPost(page, [FIXTURE]);
+    await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-91: the tiles are on step 2
     const tiles = page.getByLabel(/, \d+ people, (not )?picked$/).filter({ visible: true });
     await expect(tiles.first()).toBeVisible();
     const found = await tiles.evaluateAll((els) => els.map((el) => {
@@ -1227,10 +1237,12 @@ test('RD-110-R3 the bar shrunk on Share comes back whole on Feed after sending',
   await page.goto('/');
   await galleryLoaded(page);
   await openNewPost(page, [FIXTURE]);
+  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-91: the tiles are on step 2
   await wheel(page, await appMiddle(page), 800);
   await expect(page.getByRole('tab')).toHaveCount(1);
   await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
   await page.getByRole('button', { name: /^Send to / }).click();
+  await page.getByRole('button', { name: 'See it in Feed' }).click(); // DEC-91: the sent page comes first
   await expect(page.getByRole('tab', { name: /^Feed/ })).toHaveAttribute('aria-selected', 'true');
   await expect(page.getByRole('tab')).toHaveCount(4);
   await resetDemo(page);
@@ -1245,7 +1257,7 @@ test('RD-110-R3 the bar shrunk on Share comes back whole on Feed after sending',
 // are "Add photos", "To:" and the stamp's month and day. Soft expects, so one run shows every part still missing.
 // QA-R (staff-pm): the demo's Grandma Jo is a viewer with no Share tab (RD-9), so her "up to 10" can't be reached here;
 // it runs only if the demo ever lets her post, and the jest SHARE-ST-21 cases cover it meanwhile.
-test('SHARE-ST-8 SHARE-ST-27 wordless Share start: only "New post", "Add photos", "To:" and the stamp; one card button; a tap on a ruled line with 3 photos shows "1 of 3"', async ({ page }) => {
+test('SHARE-ST-8 SHARE-ST-27 (DEC-91) wordless Share start: only "New post", "Add photos" and the stamp (no To:, no ruled lines); one card button; a tap on the card with 3 photos shows "1 of 3"', async ({ page }) => {
   const shots = path.join(__dirname, '..', 'test-results', 'share-st-27');
   await page.setViewportSize({ width: 393, height: 852 });
   await page.emulateMedia({ colorScheme: 'light' });
@@ -1265,11 +1277,12 @@ test('SHARE-ST-8 SHARE-ST-27 wordless Share start: only "New post", "Add photos"
       const holds = await add.first().evaluate((b) => b.getAttribute('data-testid') === 'share-card' || !!b.querySelector('[data-testid="share-card"]') || ['share-spot', 'share-note-rule', 'share-to-rule'].every((id) => !!b.querySelector(`[data-testid="${id}"]`)));
       expect.soft(holds).toBe(true);
     }
-    for (const id of ['share-spot', 'share-stamp', 'share-to-rule']) await expect.soft(page.getByTestId(id).filter({ visible: true })).toHaveCount(1);
-    await expect.soft(page.getByTestId('share-note-rule').filter({ visible: true })).toHaveCount(2);
+    for (const id of ['share-spot', 'share-stamp']) await expect.soft(page.getByTestId(id).filter({ visible: true })).toHaveCount(1);
+    // DEC-91: no ruled lines and no "To:" on the empty card.
+    for (const id of ['share-note-rule', 'share-to-rule']) await expect.soft(page.getByTestId(id)).toHaveCount(0);
     // Only these words in the card: "Add photos", "To:", the stamp's month and day.
     const now = new Date();
-    const want = ['ADD', 'PHOTOS', 'TO:', MONTHS[now.getMonth()], String(now.getDate())].sort();
+    const want = ['ADD', 'PHOTOS', MONTHS[now.getMonth()], String(now.getDate())].sort();
     if (await card.count()) {
       // engineer, flagged for qa-tdd: on the web expo-symbols draws the add-photo icon as a Material Symbols glyph (a
       // private-use character in an aria-hidden Text), which innerText includes; it is not a word, so it is dropped.
@@ -1279,7 +1292,7 @@ test('SHARE-ST-8 SHARE-ST-27 wordless Share start: only "New post", "Add photos"
     }
     // None of the older start-page words anywhere on the page.
     await expect.soft(page.getByText(/Only the people you pick|For your family, nobody else|Up to \d+ at a time|To: you pick after|Add a note \(optional\)|Last shared|Add photos first|Pick lots of photos|Lots of photos\?|Share photos|Pick photos/)).toHaveCount(0);
-    await expect.soft(page.getByRole('button', { name: /^(Send to |Pick who gets it$)/ })).toHaveCount(0);
+    await expect.soft(page.getByRole('button', { name: /^(Send to |Next: who gets it$|Pick who gets it$)/ })).toHaveCount(0);
     // "Add photos" stays inside the spot; the card is at least 48 px; the page never scrolls sideways.
     const spot = page.getByTestId('share-spot').filter({ visible: true }).first();
     if (await spot.count()) {
@@ -1315,10 +1328,10 @@ test('SHARE-ST-8 SHARE-ST-27 wordless Share start: only "New post", "Add photos"
   await page.getByRole('button', { name: 'Easy view, On' }).click();
   await page.getByRole('radio', { name: 'Off', exact: true }).click();
 
-  // As Chase, a tap on a ruled line (not the spot) opens the chooser; 3 photos open the postcard at "1 of 3".
+  // As Chase, a tap on the card (DEC-91: no ruled lines left to tap) opens the chooser; 3 photos open the postcard at "1 of 3".
   await page.getByRole('tab', { name: /^Share/ }).click();
   const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
-  await page.getByTestId('share-note-rule').filter({ visible: true }).first().click();
+  await page.getByTestId('share-card').filter({ visible: true }).first().click();
   await (await chooser).setFiles([FIXTURE, FIXTURE, FIXTURE]);
   await expect(page.getByText('1 of 3', { exact: true })).toBeVisible();
   await page.screenshot({ path: path.join(shots, 'chase-1-of-3.png') });
@@ -1531,14 +1544,27 @@ test('DEMO-KINDS-9 a returning visitor whose browser saved an earlier demo famil
   expect(await page.evaluate(() => localStorage.getItem('hearth.demoSeed'))).not.toBe('wofmn');
 });
 
-// The walk: Graham picks a kind, types words, "Pick who gets it", picks a group, Send; Feed shows the card.
+// The walk (DEC-91): Graham picks a kind, writes in the one big box, sets the chips, Next, picks a group, Send, "See it in Feed".
+const BOX = /^(What's happening\?|What's your news\?|What did they say\?)$/;
+const pickDayOnSheet = async (page, iso) => {
+  await page.getByRole('button', { name: 'Pick a day' }).click();
+  for (let i = 0; i < 14 && !(await page.getByTestId(`day-${iso}`).filter({ visible: true }).count()); i++) await page.getByRole('button', { name: 'Later month' }).click();
+  await page.getByTestId(`day-${iso}`).filter({ visible: true }).click();
+  await page.getByRole('button', { name: 'Done' }).click();
+};
+const CHIPS = { 'Where, optional': ['Add a place', 'Where'], 'Who said it': ['Who said it?', 'Who said it'], 'Age then, optional': ['Add their age', 'Age'] };
 const sendKind = async (page, kindLabel, fields, groupTile) => {
   await page.getByRole('tab', { name: /^Share/ }).click();
   await page.getByRole('button', { name: kindLabel }).click();
-  for (const [label, text] of Object.entries(fields)) await page.getByLabel(label, { exact: true }).fill(text);
-  await page.getByRole('button', { name: 'Pick who gets it' }).click();
+  for (const [label, text] of Object.entries(fields)) {
+    if (label === 'What day') await pickDayOnSheet(page, text);
+    else if (CHIPS[label]) { await page.getByRole('button', { name: CHIPS[label][0] }).click(); await page.getByLabel(CHIPS[label][1], { exact: true }).fill(text); }
+    else await page.getByLabel(BOX).fill(text);
+  }
+  await page.getByRole('button', { name: 'Next: who gets it' }).click();
   await page.getByRole('button', { name: groupTile }).click();
   await page.getByRole('button', { name: /^Send to / }).click();
+  await page.getByRole('button', { name: 'See it in Feed' }).click();
 };
 const EVERYONE = /^Everyone, \d+ people, not picked$/;
 const MOM_SIDE = /^Grandparents . Mom's side, \d+ people, not picked$/;
@@ -1598,14 +1624,17 @@ test('DEMO-KINDS-13 Saying walk: the card says who sees the words and the age; F
   await galleryLoaded(page);
   await page.getByRole('tab', { name: /^Share/ }).click();
   await page.getByRole('button', { name: 'Add a saying' }).click();
-  await page.getByLabel('What they said', { exact: true }).fill('The moon is following our car');
+  await page.getByLabel(BOX).fill('The moon is following our car');
+  await page.getByRole('button', { name: 'Who said it?' }).click();
   await page.getByLabel('Who said it', { exact: true }).fill('Leo');
-  await expect(page.getByText('Everyone you send this to will see these words and who said them.')).toBeVisible();
-  await page.getByLabel('Age then, optional', { exact: true }).fill('4');
-  await expect(page.getByText('Everyone you send this to will see these words, who said them, and the age.')).toBeVisible(); // the age line
-  await page.getByRole('button', { name: 'Pick who gets it' }).click();
+  await page.getByRole('button', { name: 'Add their age' }).click();
+  await page.getByLabel('Age', { exact: true }).fill('4');
+  await page.getByRole('button', { name: 'Next: who gets it' }).click();
   await page.getByRole('button', { name: EVERYONE }).click();
+  // DEC-91: the summary on step 2 says who sees the words and the age.
+  await expect(page.getByTestId('share-summary')).toContainText('these words, who said them, and the age');
   await page.getByRole('button', { name: /^Send to / }).click();
+  await page.getByRole('button', { name: 'See it in Feed' }).click();
   await inFeed(page);
   const card = page.locator('[data-testid^="kind-"]').filter({ visible: true }).first();
   await expect(card).toContainText('The moon is following our car');

@@ -49,7 +49,8 @@ async function sharePhoto(page) {
   const chooser = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: /^Add photos, up to \d+ at a time$/ }).click();
   await (await chooser).setFiles(FIXTURE);
-  await page.getByLabel('Add a note (optional)').fill('Pumpkin patch with the whole family after school on Saturday');
+  await page.getByLabel('Say something, optional').fill('Pumpkin patch with the whole family after school on Saturday');
+  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-91: step 2
   await page.getByLabel(/^Grandparents – Dad's side, 2 people, not picked$/).click();
   await page.getByRole('button', { name: /^Send to / }).click();
   await page.getByRole('tab', { name: /^Feed/ }).click();

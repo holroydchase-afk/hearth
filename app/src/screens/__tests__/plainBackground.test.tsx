@@ -141,11 +141,11 @@ describe('RD-34 content screens sit on the plain background, no grey card fill',
 
     // Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-1), flagged for qa-tdd: the postcard is the one c.surface
     // card on Share by design (Chase's direction B); nothing else on the page is a grey box.
-    it(`RD-34 DEC-73 Share (${name}): the only grey on the page is the postcard itself (fields and buttons may keep their fill)`, async () => {
+    it(`RD-34 (DEC-91) DEC-73 Share (${name}): the only grey on the page is the postcard itself (fields and buttons may keep their fill)`, async () => {
       await renderApp(<ShareScreen />, { user: 'chase', kv: look(dark, chase.id) });
       fireEvent.press(await screen.findByRole('button', { name: /^Add photos, up to \d+ at a time$/ }, slow));
       await screen.findByRole('header', { name: 'New post' }, slow);
-      await screen.findByLabelText(/^Grandparents – Dad's side, 3 people, not picked$/, {}, slow);
+      await screen.findByRole('button', { name: 'Next: who gets it' }, slow); // DEC-91: step 1 (tiles are on step 2)
       // Retargeted Nov 24 by engineer for GUX-W2, flagged for qa-tdd: the paper stamp (c.surface) rides on the filled
       // postcard's big photo, inside the card; it is part of the postcard, not a grey box on the page.
       expect(greyBoxes(pal(dark))).toEqual([`View#share-card bg ${pal(dark).surface}`, `View#share-stamp bg ${pal(dark).surface}`]);
