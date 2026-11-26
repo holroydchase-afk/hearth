@@ -8,7 +8,7 @@
 // Use it in a test file with:
 //   jest.mock('react-native-zoom-toolkit', () => require('../../test/mockZoomGallery').zoomToolkitMock, { virtual: true });
 // and drive it with `gallery` (swipeTo, tap, doubleTap, pinchTo, pull).
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useLayoutEffect, useState } from 'react';
 import { View } from 'react-native';
 
 type AnyProps = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -85,9 +85,12 @@ const Gallery = forwardRef<unknown, AnyProps>(function MockGallery(props, ref) {
   const n = props.data?.length ?? 0;
   const start = Math.max(0, Math.min(n - 1, props.initialIndex ?? 0));
   const [index, setIndex] = useState(start);
-  setIndexState = setIndex;
-  gallery.props = props;
-  gallery.index = index;
+  // React Compiler (INTAKE-80-3): the driver is updated after each render, never during it.
+  useLayoutEffect(() => {
+    setIndexState = setIndex;
+    gallery.props = props;
+    gallery.index = index;
+  });
   useImperativeHandle(ref, () => ({
     setIndex: (i: number) => { gallery.calls.setIndex.push(i); moveTo(gallery, i); },
     reset: (animate?: boolean) => { gallery.calls.reset.push(animate); setScale(gallery, 1); },
