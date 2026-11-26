@@ -1,0 +1,117 @@
+qa-tdd, 2026-11-24, at 88e605c + qa-tdd's loadBackTo.test.ts. 3 runs of bash test-all.sh; backend SQL also run as the postgres user (run 1's test-all SQL failed on peer auth from a PGUSER=postgres export in my shell, not the code).
+
+=== run 1
+FAIL src/feed/__tests__/loadBackTo.test.ts
+Tests:       1 failed, 1 skipped, 1 todo, 2222 passed, 2225 total
+Expo Go check OK: the app and the App Store's Expo Go are both on SDK 58
+  33 passed (8.4s)
+  44 passed (2.9m)
+  5 passed (41.0s)
+deploy: 20 passed, 0 failed
+starter scripts: 14 passed, 3 failed
+FAILED: app jest
+FAILED: backend SQL
+FAILED: Supabase starter scripts
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SKIPPED: Deno functions (Deno isn't installed; CI runs them)
+SUITES: 20 passed, 3 failed, 2 skipped
+
+=== run 2
+FAIL src/feed/__tests__/loadBackTo.test.ts
+Tests:       1 failed, 1 skipped, 1 todo, 2222 passed, 2225 total
+Expo Go check OK: the app and the App Store's Expo Go are both on SDK 58
+  33 passed (8.5s)
+  44 passed (2.9m)
+  5 passed (40.9s)
+deploy: 20 passed, 0 failed
+starter scripts: 17 passed, 0 failed
+FAILED: app jest
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SKIPPED: Deno functions (Deno isn't installed; CI runs them)
+SUITES: 22 passed, 1 failed, 2 skipped
+
+=== run 3
+FAIL src/feed/__tests__/loadBackTo.test.ts
+Tests:       1 failed, 1 skipped, 1 todo, 2222 passed, 2225 total
+Expo Go check OK: the app and the App Store's Expo Go are both on SDK 58
+  33 passed (8.7s)
+  44 passed (2.9m)
+  5 passed (39.4s)
+deploy: 20 passed, 0 failed
+starter scripts: 17 passed, 0 failed
+FAILED: app jest
+SKIPPED: Supabase starter invites (set STUDIO_SUPABASE_TEMPLATE to studio-agents/templates/supabase; CI runs it)
+SKIPPED: Deno functions (Deno isn't installed; CI runs them)
+SUITES: 22 passed, 1 failed, 2 skipped
+
+=== backend SQL as postgres, run 1 (rc 0)
+RESULT: 120 passed, 0 failed
+API RESULT: 174 passed, 0 failed
+NOTIFY RESULT: 60 passed, 0 failed
+SETUP RESULT: 5 passed, 0 failed
+REPLY RESULT: 47 passed, 0 failed
+TIMELINE RESULT: 39 passed, 0 failed
+GROUPS RESULT: 167 passed, 0 failed
+TIMELINE-FUTURE RESULT: 6 passed, 0 failed
+PRIVACY-AUDIT RESULT: 15 passed, 0 failed
+GROUPS-V2 RESULT: 118 passed, 0 failed
+CHAT RESULT: 57 passed, 0 failed
+HELPERS RESULT: 13 passed, 0 failed
+REACTIONS RESULT: 22 passed, 0 failed
+CAPTIONS RESULT: 32 passed, 0 failed
+VIDEO CAP RESULT: 14 passed, 0 failed
+WHO RESULT: 7 passed, 0 failed
+START FAMILY RESULT: 88 passed, 0 failed
+SEARCH RESULT: 34 passed, 0 failed
+SMS RESULT: 35 passed, 0 failed
+GROUP NAMES RESULT: 4 passed, 0 failed
+AUTH NO PASSWORDS RESULT: 12 passed, 0 failed
+AUD-16 RESULT: 11 passed, 0 failed
+GRP-1 RESULT: 10 passed, 0 failed
+SETUP V2 RESULT: 15 passed, 0 failed
+SETUP API RESULT: 34 passed, 0 failed
+        | RESULT: sent 12, received 11, lost 1
+SENT-RECEIVED RESULT: 20 passed, 0 failed
+        | SMOKE RESULT: 9 ok, 0 failed
+ok      D1 smoke: ends with "SMOKE RESULT: N ok, 0 failed"
+SMOKE CHECK TEST RESULT: 28 passed, 0 failed
+AUTH CONFIG TEST RESULT: 6 passed, 0 failed
+RELAY RESULT: 24 passed, 0 failed
+
+=== backend SQL as postgres, run 2 (rc 0)
+RESULT: 120 passed, 0 failed
+API RESULT: 174 passed, 0 failed
+NOTIFY RESULT: 60 passed, 0 failed
+SETUP RESULT: 5 passed, 0 failed
+REPLY RESULT: 47 passed, 0 failed
+TIMELINE RESULT: 39 passed, 0 failed
+GROUPS RESULT: 167 passed, 0 failed
+TIMELINE-FUTURE RESULT: 6 passed, 0 failed
+PRIVACY-AUDIT RESULT: 15 passed, 0 failed
+GROUPS-V2 RESULT: 118 passed, 0 failed
+CHAT RESULT: 57 passed, 0 failed
+HELPERS RESULT: 13 passed, 0 failed
+REACTIONS RESULT: 22 passed, 0 failed
+CAPTIONS RESULT: 32 passed, 0 failed
+VIDEO CAP RESULT: 14 passed, 0 failed
+WHO RESULT: 7 passed, 0 failed
+START FAMILY RESULT: 88 passed, 0 failed
+SEARCH RESULT: 34 passed, 0 failed
+SMS RESULT: 35 passed, 0 failed
+GROUP NAMES RESULT: 4 passed, 0 failed
+AUTH NO PASSWORDS RESULT: 12 passed, 0 failed
+AUD-16 RESULT: 11 passed, 0 failed
+GRP-1 RESULT: 10 passed, 0 failed
+SETUP V2 RESULT: 15 passed, 0 failed
+SETUP API RESULT: 34 passed, 0 failed
+        | RESULT: sent 12, received 11, lost 1
+SENT-RECEIVED RESULT: 20 passed, 0 failed
+        | SMOKE RESULT: 9 ok, 0 failed
+ok      D1 smoke: ends with "SMOKE RESULT: N ok, 0 failed"
+SMOKE CHECK TEST RESULT: 28 passed, 0 failed
+AUTH CONFIG TEST RESULT: 6 passed, 0 failed
+RELAY RESULT: 24 passed, 0 failed
+
+=== re-run with a clean shell (no PGUSER), replacing run 1's env failure
+starter scripts: 17 passed, 0 failed
+backend SQL tests/run.sh: rc 0; 1217 passed, 0 failed per run (3 runs: 3651 passed, 0 failed)

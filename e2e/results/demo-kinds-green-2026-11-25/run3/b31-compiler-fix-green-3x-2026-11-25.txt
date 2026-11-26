@@ -1,0 +1,46 @@
+B31 / QA-R1 fix check, qa-tdd, 2026-11-25, at d155041 (engineer's B31 fix on d7cef77).
+git diff d7cef77 d155041: only kit.tsx, autoplay.ts, compiler-check.js ALLOWED (+SignInScreen with a reason, -stale AddPhotoSpot), build_seed.py B31 row, seed, agent log. No test or checker logic changed.
+Ran 3x only what this can touch: compiler rules, compiler bundle, app jest, typecheck, e2e:demo, e2e:web. Backend SQL and prototype untouched since r96 (a7d5c9e); r96 stands for them.
+Compiler bundle sentinels: run 1 read the r96 export (built before the fix, 162); runs 2 and 3 read the new export from run 1's e2e:demo (168; 155 functions compiled vs 152). Pass both times; expected, not flaky.
+== run 1
+compiler exit 0
+INTAKE-80-3: 175 files, 155 functions compiled, 24 bailouts (0 not allowlisted)
+bundle exit 0
+ok   - INTAKE-80-2 dist-demo is compiled (162 memo-cache sentinels)
+2 passed, 0 failed
+jest exit 0
+Test Suites: 188 passed, 188 total
+Tests:       1 skipped, 1 todo, 2542 passed, 2544 total
+typecheck exit 0
+demo exit 0
+  61 passed (3.9m)
+web exit 0
+  6 passed (44.8s)
+== run 2
+compiler exit 0
+INTAKE-80-3: 175 files, 155 functions compiled, 24 bailouts (0 not allowlisted)
+bundle exit 0
+ok   - INTAKE-80-2 dist-demo is compiled (168 memo-cache sentinels)
+2 passed, 0 failed
+jest exit 0
+Test Suites: 188 passed, 188 total
+Tests:       1 skipped, 1 todo, 2542 passed, 2544 total
+typecheck exit 0
+demo exit 0
+  61 passed (3.9m)
+web exit 0
+  6 passed (44.1s)
+== run 3
+compiler exit 0
+INTAKE-80-3: 175 files, 155 functions compiled, 24 bailouts (0 not allowlisted)
+bundle exit 0
+ok   - INTAKE-80-2 dist-demo is compiled (168 memo-cache sentinels)
+2 passed, 0 failed
+jest exit 0
+Test Suites: 188 passed, 188 total
+Tests:       1 skipped, 1 todo, 2542 passed, 2544 total
+typecheck exit 0
+demo exit 0
+  61 passed (3.9m)
+web exit 0
+  6 passed (44.6s)

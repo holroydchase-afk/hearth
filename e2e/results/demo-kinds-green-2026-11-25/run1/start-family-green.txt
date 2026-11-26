@@ -1,0 +1,5 @@
+Start a family (DEC-55, 0024) green pass, 2026-11-07, branch claude/project-thread-eaq4hr, qa-tdd
+run1: jest 1 skipped, 814 passed, 815 total; typecheck ok; e2e:web 4 passed (28.4s) / 11 skipped; e2e:demo 9 passed (32.7s) / 5 skipped; backend 1126 passed 0 failed (START FAMILY 88/88); check-agents ok; check-persona-checks ok
+run2: jest 1 skipped, 814 passed, 815 total; typecheck ok; e2e:web 4 passed (27.3s) / 11 skipped; e2e:demo 9 passed (32.8s) / 5 skipped; backend 1126 passed 0 failed (START FAMILY 88/88); check-agents ok; check-persona-checks ok
+run3: jest 1 skipped, 814 passed, 815 total; typecheck ok; e2e:web 4 passed (27.7s) / 11 skipped; e2e:demo 9 passed (32.9s) / 5 skipped; backend 1126 passed 0 failed (START FAMILY 88/88); check-agents ok; check-persona-checks ok
+Skipped: SupabaseApi real-stack contract (no HEARTH_API_URL); snapshot/showcase specs (no SNAPSHOT_DIR/SHOWCASE_DIR).

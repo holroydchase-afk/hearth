@@ -1,0 +1,65 @@
+running 23 tests from ./supabase/functions/notify/index_test.ts
+names: 1, 2, 3 and 4+ people read naturally ... ok (725µs)
+BETA-NOTIFY-2: push says who and opens the post; no image, caption or child's name ... ok (436µs)
+BETA-NOTIFY-4: 3 posts in one batch are 1 push that opens the newest ... ok (215µs)
+BETA-REPLY-3: replies read as replies ... ok (130µs)
+BETA-NOTIFY-5: email links to the post and carries no photo or caption ... ok (1ms)
+email: names are HTML-escaped ... ok (220µs)
+BETA-NOTIFY-7: push and email name the real sender, never a generic notice ... ok (253µs)
+BETA-NOTIFY-7: an email never goes out without a real person's name ... ok (266µs)
+email: with no website yet (APP_LINK_BASE unset), there is no dead link, just plain words ... ok (331µs)
+email: a reply email says 'see it', new photos say 'see them' ... ok (167µs)
+BETA-NOTIFY-7: a sender name can't break the email subject either ... ok (30ms)
+BETA-NOTIFY-7: a sender name can't break the email From header ... ok (380µs)
+security: only the service role (cron) may run the sender ... ok (11ms)
+run: claims, sends 1 push and 1 email, reports counts only ... ok (2ms)
+run: a failed Expo call puts those notices back for the next run ...
+------- output -------
+notify: 1 batch(es) failed, released for retry
+----- output end -----
+run: a failed Expo call puts those notices back for the next run ... ok (1ms)
+run: a failed Resend call puts the email back ...
+------- output -------
+notify: 1 batch(es) failed, released for retry
+----- output end -----
+run: a failed Resend call puts the email back ... ok (966µs)
+run: DeviceNotRegistered tokens are forgotten ... ok (688µs)
+privacy: the sender never logs tokens, emails or URLs ... ok (721µs)
+BETA-BULK-6: a bulk import push reads 'Alex added 48 photos from July 2024' (full month: grandparent-ux) ... ok (20ms)
+BETA-BULK-6: a batch across months or years names the span; no dates, no month ... ok (809µs)
+BETA-BULK-6: the month follows Eastern time (a Jul 31, 11 pm photo is July) ... ok (398µs)
+BETA-BULK-6: an ordinary post batch still says 'shared new photos' ... ok (142µs)
+BETA-SMS-13: an email batch with a null address is skipped; the run still sends the push and succeeds ... ok (541µs)
+running 4 tests from ./supabase/functions/sign-media/index_test.ts
+upload then view round-trips the data key; URLs are 10-minute SigV4 ... ok (71ms)
+view denied -> 404, no key lookups ... ok (413µs)
+exif not stripped -> 422; no auth -> 401 ... ok (351µs)
+FLAG-4 video_posting off -> sign-media refuses a video upload (403 video_posting_off), signs nothing ... ok (672µs)
+running 2 tests from ./supabase/functions/sign-media/sigv4_test.ts
+matches AWS documented presigned GET example ... ok (2ms)
+uriEncode keeps unreserved, encodes others ... ok (69µs)
+running 4 tests from ./tests/templates/templates_test.ts
+JOIN-2: magic_link email has the code, plain words, and no link ... ok (892µs)
+JOIN-2: confirmation email has the code, plain words, and no link ... ok (258µs)
+JOIN-2: config.toml uses both templates with a code in the subject ... ok (335µs)
+BETA-SMS-7: the [auth.sms] template, with code 123456, is Hearth's words in one GSM-7 segment ... FAILED (1ms)
+
+ ERRORS 
+
+BETA-SMS-7: the [auth.sms] template, with code 123456, is Hearth's words in one GSM-7 segment => ./tests/templates/templates_test.ts:37:6
+error: Error: starts "Hearth code: 123456" (got "Your code is 123456")
+function assert(c: unknown, m: string): asserts c { if (!c) throw new Error(m); }
+                                                                  ^
+    at assert (file:///home/user/Hearth/backend/tests/templates/templates_test.ts:7:67)
+    at file:///home/user/Hearth/backend/tests/templates/templates_test.ts:43:3
+
+ FAILURES 
+
+BETA-SMS-7: the [auth.sms] template, with code 123456, is Hearth's words in one GSM-7 segment => ./tests/templates/templates_test.ts:37:6
+
+FAILED | 32 passed | 1 failed (375ms)
+
+error: Test failed
+
+Stack backtrace:
+   0: <unknown>

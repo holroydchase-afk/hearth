@@ -1,0 +1,6 @@
+Text message sign-in (DEC-56, 0025, BETA-SMS-1..15) final gate, 2026-11-10, branch claude/project-thread-y94vb7 (322182f..6102798), qa-tdd
+run1: backend tests/run.sh 26 suites 1165 passed 0 failed (SMS 35/35, AUTH CONFIG 4/4); auth_config_test.sh 4/0; jest 106 suites, 878 passed, 1 skipped, 0 failed; typecheck ok; log check 13/0; persona checks ok (31 decisions, 8 personas)
+run2: backend 1165 passed 0 failed; auth_config_test.sh 4/0; jest 878 passed, 1 skipped, 0 failed; typecheck ok; log check 13/0; persona checks ok
+run3: backend 1165 passed 0 failed; auth_config_test.sh 4/0; jest 878 passed, 1 skipped, 0 failed; typecheck ok; log check 13/0; persona checks ok
+BETA-SMS coverage that ran: jest SMS-1,2,3,4,5,6,8,9,10,11,12,14,15 (56 tests passed); SQL SMS-8 (17), -9 (7), -13 (7), -15 (5).
+Not run here: Deno (not installed) so BETA-SMS-7 template and the BETA-SMS-13 notify half are unverified; e2e:web (Playwright wants chromium_headless_shell-1194, only 1243 in /opt/pw-browsers; 15 of 15 failed at browser launch); SupabaseApi real-stack contract (no HEARTH_API_URL).

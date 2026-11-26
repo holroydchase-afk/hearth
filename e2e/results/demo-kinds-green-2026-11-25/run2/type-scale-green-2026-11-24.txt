@@ -1,0 +1,49 @@
+qa-tdd green gate, type scale (SPEC-TYPE TYPE-1..14, DEC-84) + Share start round 4 (SHARE-ST-28..34)
+At 79cef37 (claude/project-thread-4ulu9i) plus qa-tdd's new SHARE-ST-34 test in app/e2e-web/demo.spec.js (uncommitted). 2026-11-24.
+SHARE-ST-34 substitution: Grandma Jo is a viewer with no Share tab in the demo, so her Easy view column is checked as Kevin with Easy view on (noted in the test).
+SHARE-ST-34 written after the build: passed first run; no red shown (old demo build not rebuilt).
+
+== jest run 1
+Test Suites: 173 passed, 173 total
+Tests:       1 skipped, 1 todo, 2347 passed, 2349 total
+== jest run 2
+Test Suites: 173 passed, 173 total
+Tests:       1 skipped, 1 todo, 2347 passed, 2349 total
+== jest run 3
+Test Suites: 173 passed, 173 total
+Tests:       1 skipped, 1 todo, 2347 passed, 2349 total
+== typecheck run 1: clean (exit 0)
+== typecheck run 2: clean (exit 0)
+== typecheck run 3: clean (exit 0)
+== check-expo-go run 1: OK, SDK 58
+== check-expo-go run 2: OK, SDK 58
+== check-expo-go run 3: OK, SDK 58
+== e2e:demo: one fresh export:web:demo, then 3 runs
+run 1:
+  56 passed, 5 skipped (4.1m)
+run 2:
+  56 passed, 5 skipped (4.0m)
+run 3:
+  56 passed, 5 skipped (4.0m)
+== e2e:web: one fresh export:web:fake, then 3 runs
+run 1:
+  6 skipped
+  5 passed (40.1s)
+run 2:
+  6 skipped
+  5 passed (39.8s)
+run 3:
+  6 skipped
+  5 passed (39.5s)
+
+Not run: backend SQL, Deno (no backend change), prototype e2e, phones (TYPE-9, TYPE-13, TYPE-14 manual).
+
+Review of the engineer's test edits and calls:
+- font.test.tsx: skipping Txt's <Text style={[v, style]}> and spread named styles keeps FONT-2 (the spread carries an Atkinson family; TYPE-4 checks those). OK.
+- redesignLint RD-4: allowlists all of ShareKinds.tsx for c.accent (QA-R4 P2: file-wide, narrow to the icon color). Disabled 'Pick who gets it' exemption is exact. OK.
+- plainBackground: c.surface on KindsRow/KindCard matches SHARE-ST-31 ("tiles in the surface color"). OK.
+- New post level={1}: title2 size, the page's one h1 (A11Y-1). OK.
+- Reply field 1.3x line: Standard 22 = body; Easy 28 vs body's 26 (QA-R3 P2).
+- PostCard face initials fixed at Standard headline in Easy view: 17 meets TYPE-3 but departs from the table (QA-R2 P2).
+- Author names and the inline post title in FONT.medium: TYPE-4 says Medium belongs to no style (QA-R1 P2).
+- TYPE-10 expects Feed's inline post title at body 17; SPEC-TYPE map says post titles are title2 (QA-R5 P2, spec map vs RD-71).

@@ -1,0 +1,43 @@
+
+Running 10 tests using 1 worker
+
+  ✓   1 e2e-web/demo.spec.js:25:1 › DEMO-1/2/3 opens straight into the sample family: no sign-in, pictures, a demo bar (2.3s)
+  ✓   2 e2e-web/demo.spec.js:37:1 › DEMO-10 Grandma Jo's view hides the Mom's-side posts; the parent's view shows them again (4.3s)
+  ✓   3 e2e-web/demo.spec.js:54:1 › RR-14 add a photo, reload keeps it, Start over brings back the sample family (6.9s)
+  ✓   4 e2e-web/demo.spec.js:73:1 › DEMO-6 / NF-1 laptop shows the story panel beside the app; an unknown link shows plain words (2.4s)
+  ✓   5 e2e-web/demo.spec.js:86:1 › HARD-7 storage blocked (private window, strict cookie settings): the demo still opens with the sample family (2.2s)
+  ✓   6 e2e-web/demo.spec.js:102:3 › DEMO-BAR at 390 px: collapsed and slim, pushes the app down, Esc closes, Hearth's font and no accent badge (2.4s)
+  ✓   7 e2e-web/demo.spec.js:102:3 › DEMO-BAR at 1280 px: collapsed and slim, pushes the app down, Esc closes, Hearth's font and no accent badge (2.3s)
+  ✓   8 e2e-web/demo.spec.js:138:1 › DEMO-BAR no sideways scroll down to 320 px, back link still there (2.3s)
+  ✓   9 e2e-web/demo.spec.js:146:1 › DEMO-BAR Reset asks first: Keep changes nothing; Reset restores and says so once (4.4s)
+  ✘  10 e2e-web/demo.spec.js:164:1 › RD-27 Kai switches Family color to Forest and the demo recolors; Grandma Jo stays Ember with no picker (17.3s)
+
+
+  1) e2e-web/demo.spec.js:164:1 › RD-27 Kai switches Family color to Forest and the demo recolors; Grandma Jo stays Ember with no picker 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Family color' })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 15000ms
+      - waiting for getByRole('heading', { name: 'Family color' })
+
+
+      171 |   await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
+      172 |   await page.getByRole('tab', { name: 'Me', exact: true }).click();
+    > 173 |   await expect(page.getByRole('heading', { name: 'Family color' })).toBeVisible();
+          |                                                                     ^
+      174 |   await expect(page.getByRole('radio', { name: 'Ember' })).toBeChecked();
+      175 |   expect(await pickedTabColor('Me')).toBe(EMBER);
+      176 |   await page.getByRole('radio', { name: 'Forest' }).click();
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:173:69
+
+    Error Context: test-results/e2e-demo-artifacts/demo-RD-27-Kai-switches-Fa-5ceaf--stays-Ember-with-no-picker/error-context.md
+
+  1 failed
+    e2e-web/demo.spec.js:164:1 › RD-27 Kai switches Family color to Forest and the demo recolors; Grandma Jo stays Ember with no picker 
+  9 passed (48.1s)

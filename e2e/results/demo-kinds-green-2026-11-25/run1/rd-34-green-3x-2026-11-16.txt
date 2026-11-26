@@ -1,0 +1,25 @@
+RD-34 / DEC-60 / DEC-61 green gate, qa-tdd, 2026-11-16, at 7ac44ff (engineer) on red tests d6734ab, 241b265. 3 runs each.
+jest run 1: Tests:       1 skipped, 1150 passed, 1151 total
+jest run 2: Tests:       1 skipped, 1150 passed, 1151 total
+jest run 3: Tests:       1 skipped, 1150 passed, 1151 total
+typecheck run 1: clean (0 TS errors)
+typecheck run 2: clean (0 TS errors)
+typecheck run 3: clean (0 TS errors)
+e2e:web run 1: 11 skipped 5 passed (31.6s)
+e2e:web run 2: 11 skipped 5 passed (31.1s)
+e2e:web run 3: 11 skipped 5 passed (31.3s)
+e2e:demo run 1: 5 skipped 12 passed (30.5s)
+e2e:demo run 2: 5 skipped 12 passed (31.0s)
+e2e:demo run 3: 5 skipped 12 passed (31.3s)
+e2e:site run 1: 14 passed (18.1s)
+e2e:site run 2: 14 passed (18.3s)
+e2e:site run 3: 14 passed (18.0s)
+backend tests/run.sh run 1 (postgres user, PG16): 1199 passed, 0 failed
+backend tests/run.sh run 2 (postgres user, PG16): 1199 passed, 0 failed
+backend tests/run.sh run 3 (postgres user, PG16): 1199 passed, 0 failed
+agents.verify run 1: exit 0
+agents.verify run 2: exit 0
+agents.verify run 3: exit 0
+Skipped: 1 jest (contract stub, no HEARTH_API_URL). GUX-R6 names-line tests now run (DEC-60).
+Test edit review: plainBackground.test.tsx allows grey only on the TextInput host itself (a grey wrapper View around it still fails) and on kit Field in the source scan; Share cards and every other content box still checked. redesignLook.test.tsx RD-8 corner and no-nesting moved to GroupedSection, the only boxed component now; Card's plainness is held by the RD-34 source allowlist (Card not on it). No guarantee weakened.
+Not run: Deno function tests, GitHub CI, real phone.

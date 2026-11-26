@@ -1,0 +1,22 @@
+GUX-R15 reworked (no outline; stronger picked tint) red run, 1 run, Nov 18, at 3a0e5b2 plus the reworked tests. qa-tdd.
+typecheck clean.
+
+== jest (full, npx jest --ci) ==
+  ● GUX-R15 (P1) a picked reaction shows a stronger tint on paper, with no outline › GUX-R15 (dark) unpicked reactions have no background and no border
+  ● GUX-R15 (P1) a picked reaction shows a stronger tint on paper, with no outline › GUX-R15 (dark, ember) picked ❤️ tint is ≥ 3:1 against c.bg, its "1" ≥ 4.5:1 on the tint, no border
+  ● GUX-R15 (P1) a picked reaction shows a stronger tint on paper, with no outline › GUX-R15 (dark, forest) picked ❤️ tint is ≥ 3:1 against c.bg, its "1" ≥ 4.5:1 on the tint, no border
+  ● GUX-R15 (P1) a picked reaction shows a stronger tint on paper, with no outline › GUX-R15 (dark, plum) picked ❤️ tint is ≥ 3:1 against c.bg, its "1" ≥ 4.5:1 on the tint, no border
+  ● GUX-R15 (P1) a picked reaction shows a stronger tint on paper, with no outline › GUX-R15 (light) unpicked reactions have no background and no border
+  ● GUX-R15 (P1) a picked reaction shows a stronger tint on paper, with no outline › GUX-R15 (light, ember) picked ❤️ tint is ≥ 3:1 against c.bg, its "1" ≥ 4.5:1 on the tint, no border
+  ● GUX-R15 (P1) a picked reaction shows a stronger tint on paper, with no outline › GUX-R15 (light, forest) picked ❤️ tint is ≥ 3:1 against c.bg, its "1" ≥ 4.5:1 on the tint, no border
+  ● GUX-R15 (P1) a picked reaction shows a stronger tint on paper, with no outline › GUX-R15 (light, plum) picked ❤️ tint is ≥ 3:1 against c.bg, its "1" ≥ 4.5:1 on the tint, no border
+  ● GUX-R15 (P1) a picked reaction shows a stronger tint on paper, with no outline › GUX-R15 turning ❤️ on and off moves the emoji ≤ 0.5 px (same border widths, padding and size both ways)
+  ● MOMENT: one compact card per upload › LIVE-3 my reaction shows as a soft fill, not a heavy outlined pill (Chase, Nov 5)
+  ● R21 (P2) the reaction row starts at the 16 pt content edge › R21 the first emoji sits 16 pt in, like the name, the photos and the words
+  ● RD 1a source scans › RD-4 the accent is used only by the tab bar, the kit (switch On, link words, main tap word or chip), New for you and the new-message dot
+Test Suites: 4 failed, 146 passed, 150 total
+Tests:       12 failed, 1 skipped, 1 todo, 1404 passed, 1418 total
+
+
+Measured at 3a0e5b2 (picked tint = accentSoft): tint vs page 1.10:1 light, 1.35:1 dark (need 3:1); count c.ink on tint 12.9 / 12.0 (fine).
+LIVE-3, R21, RD-4 and the unpicked/no-move GUX-R15 cases fail only on the 1.5 pt outline; the engineer's revert fixes them.

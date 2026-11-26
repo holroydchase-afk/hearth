@@ -1,0 +1,34 @@
+VID-14..21 + GUX-R1..R4 + QA-R3 after 3eed39e, Nov 10. All suites 3x.
+app jest: 804 passed, 1 skipped, 0 failed (x3)
+typecheck: clean (x3)
+backend run1:
+RESULT: 120 passed, 0 failed;API RESULT: 174 passed, 0 failed;NOTIFY RESULT: 60 passed, 0 failed;SETUP RESULT: 5 passed, 0 failed;REPLY RESULT: 47 passed, 0 failed;TIMELINE RESULT: 39 passed, 0 failed;GROUPS RESULT: 167 passed, 0 failed;TIMELINE-FUTURE RESULT: 6 passed, 0 failed;PRIVACY-AUDIT RESULT: 15 passed, 0 failed;GROUPS-V2 RESULT: 118 passed, 0 failed;CHAT RESULT: 57 passed, 0 failed;HELPERS RESULT: 13 passed, 0 failed;REACTIONS RESULT: 22 passed, 0 failed;CAPTIONS RESULT: 32 passed, 0 failed;VIDEO CAP RESULT: 14 passed, 0 failed;WHO RESULT: 7 passed, 0 failed;AUD-16 RESULT: 11 passed, 0 failed;GRP-1 RESULT: 10 passed, 0 failed;SETUP V2 RESULT: 15 passed, 0 failed;SETUP API RESULT: 34 passed, 0 failed;SENT-RECEIVED RESULT: 20 passed, 0 failed;SMOKE CHECK TEST RESULT: 28 passed, 0 failed;  RELAY RESULT: 24 passed, 0 failed;
+backend run2:
+RESULT: 120 passed, 0 failed;API RESULT: 174 passed, 0 failed;NOTIFY RESULT: 60 passed, 0 failed;SETUP RESULT: 5 passed, 0 failed;REPLY RESULT: 47 passed, 0 failed;TIMELINE RESULT: 39 passed, 0 failed;GROUPS RESULT: 167 passed, 0 failed;TIMELINE-FUTURE RESULT: 6 passed, 0 failed;PRIVACY-AUDIT RESULT: 15 passed, 0 failed;GROUPS-V2 RESULT: 118 passed, 0 failed;CHAT RESULT: 57 passed, 0 failed;HELPERS RESULT: 13 passed, 0 failed;REACTIONS RESULT: 22 passed, 0 failed;CAPTIONS RESULT: 32 passed, 0 failed;VIDEO CAP RESULT: 14 passed, 0 failed;WHO RESULT: 7 passed, 0 failed;AUD-16 RESULT: 11 passed, 0 failed;GRP-1 RESULT: 10 passed, 0 failed;SETUP V2 RESULT: 15 passed, 0 failed;SETUP API RESULT: 34 passed, 0 failed;SENT-RECEIVED RESULT: 20 passed, 0 failed;SMOKE CHECK TEST RESULT: 28 passed, 0 failed;  RELAY RESULT: 24 passed, 0 failed;
+backend run3:
+RESULT: 120 passed, 0 failed;API RESULT: 174 passed, 0 failed;NOTIFY RESULT: 60 passed, 0 failed;SETUP RESULT: 5 passed, 0 failed;REPLY RESULT: 47 passed, 0 failed;TIMELINE RESULT: 39 passed, 0 failed;GROUPS RESULT: 167 passed, 0 failed;TIMELINE-FUTURE RESULT: 6 passed, 0 failed;PRIVACY-AUDIT RESULT: 15 passed, 0 failed;GROUPS-V2 RESULT: 118 passed, 0 failed;CHAT RESULT: 57 passed, 0 failed;HELPERS RESULT: 13 passed, 0 failed;REACTIONS RESULT: 22 passed, 0 failed;CAPTIONS RESULT: 32 passed, 0 failed;VIDEO CAP RESULT: 14 passed, 0 failed;WHO RESULT: 7 passed, 0 failed;AUD-16 RESULT: 11 passed, 0 failed;GRP-1 RESULT: 10 passed, 0 failed;SETUP V2 RESULT: 15 passed, 0 failed;SETUP API RESULT: 34 passed, 0 failed;SENT-RECEIVED RESULT: 20 passed, 0 failed;SMOKE CHECK TEST RESULT: 28 passed, 0 failed;  RELAY RESULT: 24 passed, 0 failed;
+web e2e run1:
+  ✓   1 e2e-web/core-loop.spec.js:40:1 › core loop: share → Jo sees it → Ruth does not → heart → comment → delete (14.7s)
+  ✓   7 e2e-web/invite-link.spec.js:7:1 › ONB-4 a link from "Make the invite" opens the "invited you" preview in the web build (4.1s)
+  ✓   8 e2e-web/messages.spec.js:5:1 › MSG-4 the bundled app makes an MLS group and sends a sealed message (1.9s)
+  ✓   9 e2e-web/perf.spec.js:10:1 › PERF-FEED-1 cold start to the first photo on screen is under 2 s (5.6s)
+  ✓  16 e2e-web/video.spec.js:39:1 › VID-18 a video post shows its poster with a Play word button on Photos and the post screen; Play opens the player (4.4s)
+  11 skipped
+  5 passed (32.2s)
+web e2e run2:
+  ✓   1 e2e-web/core-loop.spec.js:40:1 › core loop: share → Jo sees it → Ruth does not → heart → comment → delete (14.7s)
+  ✓   7 e2e-web/invite-link.spec.js:7:1 › ONB-4 a link from "Make the invite" opens the "invited you" preview in the web build (4.5s)
+  ✓   8 e2e-web/messages.spec.js:5:1 › MSG-4 the bundled app makes an MLS group and sends a sealed message (1.9s)
+  ✓   9 e2e-web/perf.spec.js:10:1 › PERF-FEED-1 cold start to the first photo on screen is under 2 s (5.4s)
+  ✓  16 e2e-web/video.spec.js:39:1 › VID-18 a video post shows its poster with a Play word button on Photos and the post screen; Play opens the player (4.4s)
+  11 skipped
+  5 passed (32.3s)
+web e2e run3:
+  ✓   1 e2e-web/core-loop.spec.js:40:1 › core loop: share → Jo sees it → Ruth does not → heart → comment → delete (14.5s)
+  ✓   7 e2e-web/invite-link.spec.js:7:1 › ONB-4 a link from "Make the invite" opens the "invited you" preview in the web build (4.0s)
+  ✓   8 e2e-web/messages.spec.js:5:1 › MSG-4 the bundled app makes an MLS group and sends a sealed message (1.8s)
+  ✓   9 e2e-web/perf.spec.js:10:1 › PERF-FEED-1 cold start to the first photo on screen is under 2 s (5.4s)
+  ✓  16 e2e-web/video.spec.js:39:1 › VID-18 a video post shows its poster with a Play word button on Photos and the post screen; Play opens the player (3.9s)
+  11 skipped
+  5 passed (30.9s)
+check-agents: exit 0 (x3)

@@ -524,10 +524,10 @@ TIMELINE RESULT: 39 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('b8203319-21a7-42ce-8165-1a56fac05793'))
-psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('388d990d-cd63-4935-864c-3cf54c88f3e7'))
-psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('af80d1d9-2819-4774-914d-b2e92cae0446'))
-psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '98b71a80-224f-4bb2-ae40-0961ebaf0879')
+psql:tests/groups_test.sql:888: WARNING:  as memaw: P0002 not found (select public.retire_level('e5cd0978-3447-4159-80bc-534bd95ff937'))
+psql:tests/groups_test.sql:888: WARNING:  as mom: P0002 not found (select public.retire_level('00da219a-8bbf-4839-80b7-59bd451f5d38'))
+psql:tests/groups_test.sql:891: WARNING:  as chase: 23514 Everyone stays (select public.retire_level('9fe466c4-6240-444f-b315-8d2bfb5130d2'))
+psql:tests/groups_test.sql:1025: WARNING:  as chase: 42601 INTO used with a command that cannot return data (update public.circles set name = name where id = '7f0f14ea-d550-42af-8628-311ce6c28c97')
   n  | result |                                                                                  description                                                                                   
 -----+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    1 | ok     | BETA-AUD-11 shape: circles.kind exists (everyone | group | household | event)
@@ -1022,13 +1022,13 @@ CAPTIONS RESULT: 32 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
- n  | result |                                               description                                               
-----+--------+---------------------------------------------------------------------------------------------------------
+ n  | result |                                                description                                                 
+----+--------+------------------------------------------------------------------------------------------------------------
   1 | ok     | S14 setup: Alex has a second free space and a post in it
   2 | ok     | S14-1 Alex sends 4 more videos in space A (5 of 10 this month)
   3 | ok     | S14-1 and 5 in his new space (10 of 10)
-  4 | ok     | S14-1 the 11th video is refused even in a brand-new space  [P0001 free_video_cap_reached]
-  5 | ok     | S14-1 and in the first space too  [P0001 free_video_cap_reached]
+  4 | ok     | S14-1 the 11th video is refused even in a brand-new space (ENG-R11: HF002)  [HF002 free_video_cap_reached]
+  5 | ok     | S14-1 and in the first space too (ENG-R11: HF002)  [HF002 free_video_cap_reached]
   6 | ok     | S14-2 the new space's quota shows Alex's own 10 of 10, not a fresh 0
   7 | ok     | S14-2 and so does space A
   8 | ok     | S14-3 the refused video made no media row
@@ -1041,6 +1041,44 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
 
 
 VIDEO CAP RESULT: 14 passed, 0 failed
+psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
+psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
+psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
+ n  | result |                                                  description                                                  
+----+--------+---------------------------------------------------------------------------------------------------------------
+  1 | ok     | ENG-R2 setup: Alex's count this month is readable
+  2 | ok     | ENG-R2-1 a video upload restarted 3x (drafts thrown away while pending) counts once
+  3 | ok     | ENG-R2-2 setup: preparing a video counts it
+  4 | ok     | ENG-R2-2 sign-media marks the upload failed
+  5 | ok     | ENG-R2-2 a failed video gives the month's count back
+  6 | ok     | ENG-R2-3 Alex deletes his failed video row
+  7 | ok     | ENG-R2-3 deleting an already-failed video does not give it back a second time
+  8 | ok     | ENG-R2-4 Alex deletes a pending video row
+  9 | ok     | ENG-R2-4 a pending video that is deleted gives its count back
+ 10 | ok     | ENG-R2-5 setup: the video uploaded (ready)
+ 11 | ok     | ENG-R2-5 deleting an uploaded video (post deleted, row purged) keeps it counted
+ 12 | ok     | ENG-R2-6 Alex sends videos up to 10 this month
+ 13 | ok     | ENG-R2-6 the 11th is still refused (free_video_cap_reached)
+ 14 | ok     | ENG-R2-6 the counter stops at 10
+ 15 | ok     | ENG-R2-6 once one of the 10 fails, Alex can send one more
+ 16 | ok     | ENG-R2-6 and then he is at the cap again
+ 17 | ok     | ENG-R2-7 marking a video failed when the counter is already 0 does not error
+ 18 | ok     | ENG-R2-7 nor does deleting a pending one
+ 19 | ok     | ENG-R2-7 the counter stays at 0, never negative
+ 20 | ok     | ENG-R2-8 a paid family's video can fail
+ 21 | ok     | ENG-R2-8 and still has no free-cap usage row
+ 22 | ok     | ENG-R11 the free video cap is refused with SQLSTATE HF002, not generic P0001  [HF002 free_video_cap_reached]
+ 23 | ok     | ENG-R11 the message is still free_video_cap_reached
+ 24 | ok     | SEC-R7 PUBLIC has no EXECUTE on private.videos_this_month(uuid)
+ 25 | ok     | SEC-R7 authenticated has no EXECUTE on private.videos_this_month(uuid)
+ 26 | ok     | SEC-R7 anon has no EXECUTE on private.videos_this_month(uuid)
+ 27 | ok     | SEC-R7 Blair can't read Alex's video count directly  [42501 permission denied for function videos_this_month]
+ 28 | ok     | SEC-R7 Alex still sees his own count through space_upload_quota
+ 29 | ok     | PRIV-R1 authenticated has no privilege on private.video_refundable
+ 30 | ok     | PRIV-R1 anon has no privilege on private.video_refundable
+
+
+VIDEO REFUND RESULT: 30 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
@@ -1769,7 +1807,7 @@ VIS CALENDAR RESULT: 8 passed, 0 failed
 psql:supabase/migrations/0001_init.sql:25: NOTICE:  extension "pgcrypto" already exists, skipping
 psql:supabase/migrations/0026_sms_sign_in.sql:41: NOTICE:  trigger "invites_phone_e164" for relation "public.invites" does not exist, skipping
 psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_passwords" for relation "auth.users" does not exist, skipping
-Time: 0.076 ms
+Time: 0.080 ms
 
 VIS ORACLE MATRIX seed=42 seconds=11
          path         |        kind         | checked | wrong_yes | wrong_no 
@@ -2035,9 +2073,9 @@ psql:supabase/migrations/0028_no_passwords.sql:22: NOTICE:  trigger "no_password
 Narrowing for Chase (readable before 0011 only through "members see each other's replies"):
      reader     |  kind   |                                 reply_id                                  
 ----------------+---------+---------------------------------------------------------------------------
- Grandma Rivera | comment | c7ea76f0-ab72-436d-b26b-c499af65b621
+ Grandma Rivera | comment | 7eee4ef5-8423-4d32-974a-235412af8dcd
  Grandma Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a2
- Grandpa Rivera | comment | 10d19f69-5cf4-40ff-bfff-5cec758ff792
+ Grandpa Rivera | comment | 39beb08a-69a5-486e-a34a-8578a6adac01
  Grandpa Rivera | heart   | 55555555-0000-0000-0000-0000000000a1/a0000000-0000-0000-0000-0000000000a1
 
  n  | result |                                                     description                                                      
@@ -2148,8 +2186,8 @@ ok      SETUP-API: before Chase has an account it says "sign in once in the app"
 ok      SETUP-API: ... and changes nothing
 ok      SETUP-API: fresh setup runs without error
         | Family "Chase's kids" is ready: Everyone, Chase's side, Mom's side, 7 houses, 2 events.
-        | Test viewer invite (account B): code M3ZRYTKKHG, works once until Dec 02, link https://thefreighttrains-team-hearth.expo.app/join/6cd7c6eccde08c213a208ae776f13c0c443e0711
-        | Mom's poster invite: code RX72A53VWS, works once until Dec 02, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/a3ceab2b071910921dad6b04d38abb63a14ef754
+        | Test viewer invite (account B): code N9QT2SVQ96, works once until Dec 02, link https://thefreighttrains-team-hearth.expo.app/join/1c8f68ace3d5f79f4c6ca799a48c4fb20cace05c
+        | Mom's poster invite: code MQNADYNKCR, works once until Dec 02, only for mom@example.com, link https://thefreighttrains-team-hearth.expo.app/join/a7df04fdfe108338c93854016d601dd87ca360d1
 ok      SETUP-API: Chase owns one family, named as given (an apostrophe in the name is kept, not a SQL error)
 ok      SETUP-API: one Everyone
 ok      SETUP-API: the set groups are Chase's side and Mom's side (no v1 groups to retire later)
@@ -2208,7 +2246,7 @@ ok      QA-3: a visible post with a photo not ready counts as missing, and says 
 SENT-RECEIVED RESULT: 20 passed, 0 failed
 ok      D1 smoke: backend/scripts/smoke-check.sh exists
 ok      D1 smoke: without SUPABASE_ACCESS_TOKEN it stops and names the secret
-        | ok    all 33 migrations applied
+        | ok    all 34 migrations applied
         | ok    RLS is on for every public table
         | ok    cron job hearth-notify
         | ok    cron job hearth-purge-client-errors
@@ -2220,7 +2258,7 @@ ok      D1 smoke: without SUPABASE_ACCESS_TOKEN it stops and names the secret
         | SMOKE RESULT: 9 ok, 0 failed
 ok      D1 smoke: a healthy project passes (exit 0)
 ok      D1 smoke: ends with "SMOKE RESULT: N ok, 0 failed"
-ok      D1 smoke: says all 33 local migrations are applied
+ok      D1 smoke: says all 34 local migrations are applied
 ok      D1 smoke: never prints a secret value
 ok      D1 smoke: never prints the token
 ok      D1 smoke: its SQL runs inside a read-only transaction (no write attempted)
@@ -2246,7 +2284,7 @@ ok      PRIV-1 smoke: IP addresses in Supabase Auth's audit log are a warning wi
 ok      PRIV-1 smoke: ... and the address itself is never printed
 
 SMOKE CHECK TEST RESULT: 28 passed, 0 failed
-ok      START-ON setup: Pat started a family (got 'd81e8ee2-3fc0-4235-ad52-4b1d1222bf0e')
+ok      START-ON setup: Pat started a family (got '26a76261-3934-4dd8-9420-e76c0477bed7')
 ok      START-ON-3 backend/scripts/suspend-family.sh exists
 ok      START-ON-3 without SUPABASE_ACCESS_TOKEN it stops and names the secret
 ok      START-ON-3 without --space it stops, says what's missing and sends nothing
@@ -2254,7 +2292,7 @@ ok      START-ON-3 a --space that isn't a uuid is refused before anything is sen
 ok      START-ON-3 an unknown option is refused before anything is sent
 ok      START-ON-3 --undo and --known together are refused (one action at a time)
 ok      START-ON-3 the dry run runs without error
-        | Dry run: would suspend family d81e8ee2-3fc0-4235-ad52-4b1d1222bf0e. Nothing changed. Add --apply to suspend it.
+        | Dry run: would suspend family 26a76261-3934-4dd8-9420-e76c0477bed7. Nothing changed. Add --apply to suspend it.
         | --undo brings it back unchanged. purge_soft_deleted can remove families suspended over 30 days ago, but it is not scheduled, so nothing (photos included) is deleted on its own.
 ok      START-ON-3 without --apply nothing changes (dry run is the default)
 ok      START-ON-3 the dry run says it is a dry run and to add --apply
@@ -2263,9 +2301,9 @@ ok      SEC-R1 the dry run says the purge is not scheduled, never that it runs o
 ok      START-ON-3 the dry run names the space id
 ok      START-ON-3 the dry run prints no family, side or member name and no email
 ok      START-ON-3 --apply runs without error
-        | Suspended family d81e8ee2-3fc0-4235-ad52-4b1d1222bf0e: every member now finds nothing and uploads to it are refused.
+        | Suspended family 26a76261-3934-4dd8-9420-e76c0477bed7: every member now finds nothing and uploads to it are refused.
         | --undo brings it back unchanged. purge_soft_deleted can remove families suspended over 30 days ago, but it is not scheduled, so nothing (photos included) is deleted on its own.
-        | To undo: bash scripts/suspend-family.sh --space d81e8ee2-3fc0-4235-ad52-4b1d1222bf0e --undo --apply
+        | To undo: bash scripts/suspend-family.sh --space 26a76261-3934-4dd8-9420-e76c0477bed7 --undo --apply
 ok      START-ON-3 --apply suspends the family (spaces.deleted_at set)
 ok      START-ON-3 --apply names purge_soft_deleted and 30 days
 ok      SEC-R1 --apply says the purge is not scheduled
@@ -2332,7 +2370,7 @@ ok      ARCH-VC-R1 bites: a scratch edit to migration 0031 alone fails the check
 ok      ARCH-VC-R1 a missing migration fails the check, not passes it
 VIS CORE COPY RESULT: 4 passed, 0 failed
 ok      VIS-12 tests/vis_oracle/nightly.sh exists
-ok      VIS-12 --seed 4242 writes a dated matrix: tests/results/vis-oracle-2026-11-25-seed4242.txt
+ok      VIS-12 --seed 4242 writes a dated matrix: tests/results/vis-oracle-2026-11-26-seed4242.txt
 ok      VIS-12 the matrix names its seed
 ok      VIS-12 the matrix has path, kind, checked, wrong_yes, wrong_no
 ok      VIS-12 the matrix has a row for every read path

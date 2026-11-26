@@ -1,0 +1,14 @@
+T26 (QA-R2) BETA-SMS-4 countdown test fix, Nov 20, at 1486b58 + test-only edit. qa-tdd. Verdict: green.
+Red first: e2e/results/t26-sms4-red-2026-11-20.txt (2.1 s simulated load -> 'new code in 58 seconds', regex wanted 60|59).
+Fix: app/src/screens/__tests__/smsSignIn.test.tsx runs that test on jest fake timers; reads exactly 60, advances 1 s, reads 59.
+-- run 1 (npx jest --ci)
+Test Suites: 162 passed, 162 total
+Tests:       1 skipped, 1 todo, 1615 passed, 1617 total
+-- run 2 (npx jest --ci)
+Test Suites: 162 passed, 162 total
+Tests:       1 skipped, 1 todo, 1615 passed, 1617 total
+-- run 3 (npx jest --ci)
+Test Suites: 162 passed, 162 total
+Tests:       1 skipped, 1 todo, 1615 passed, 1617 total
+Reused from r51 at 1486b58 (no product file changed): typecheck clean x3, e2e:web 5 passed (6 skipped) x3, e2e:demo 36 passed (5 skipped) x3.
+Stress run (8 busy loops on 4 cores, 1 run): 1614 passed, 1 failed: B19 oldTabLinks '/me opens More -> Me' (T27, QA-R1). BETA-SMS-4 passed in it.

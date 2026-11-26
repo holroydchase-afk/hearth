@@ -1,0 +1,48 @@
+qa-tdd, 2026-11-24. RED evidence.
+1) 8f768cb (EF-HE red commit), app/src/screens/__tests__/evalFindings.test.tsx, 1 run:
+Tests:       19 failed, 6 passed, 25 total
+
+2) 88e605c + qa-tdd's app/src/feed/__tests__/loadBackTo.test.ts (QA-R1, refresh mid-walk leaves a hole), 1 run (same result in 3 more runs):
+FAIL src/feed/__tests__/loadBackTo.test.ts
+  ● EF-HE-9 B18 FeedStore.loadBackTo edges › EF-HE-9 B18 a refresh that lands mid-walk (with new posts on the server) leaves no hole in the feed
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 6
+    + Received  + 0
+
+    @@ -2,16 +2,10 @@
+        "659e41f9-d86d-4fa4-ba00-8d78456203df",
+        "13f9926e-e72a-447d-b8b7-25ef85c3c57a",
+        "8474d5a7-c28b-4a66-a731-8d90f64db8e1",
+        "50f93ca8-7b61-4296-b8b3-58f9a6a4dfeb",
+        "f92bb3b7-2bc2-471d-b969-7ae5cf5fb671",
+    -   "3170bd06-52fd-4304-a2cd-87d206293b8d",
+    -   "8466a4c1-2de1-467a-a99f-b91127140618",
+    -   "e5d775d0-dffd-4d3b-af1e-0e25b9b36827",
+    -   "8ae9162d-3c28-4dfb-8e84-054e600c5cc5",
+    -   "6926f3dd-cc69-4e00-aece-a1f7aaf9aa82",
+    -   "4239752c-538d-417a-ac7d-e0f2e7400b08",
+        "0945136c-0bbd-4f7d-afaa-8828555a2a10",
+        "cc07a160-04d3-49de-894a-9887f837b75e",
+        "cbd9b144-d1be-40ab-a843-76813bc8c1bf",
+        "b9a5d48e-8b06-47e2-8d7d-eadb791ab0c4",
+        "efdcb8f2-e369-43ae-8957-3f036f292d67",
+
+      130 |     // Every post the server has, newest first, with none missing between the first page and the oldest loaded.
+      131 |     const server = be.getFeed(jo.id, { space: SPACE, limit: 50 }).map((p) => p.post_id);
+    > 132 |     expect(ids(s)).toEqual(server);
+          |                    ^
+      133 |   });
+      134 | });
+      135 |
+
+      at Object.toEqual (src/feed/__tests__/loadBackTo.test.ts:132:20)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 4 passed, 5 total
+Snapshots:   0 total
+Time:        0.432 s, estimated 1 s
+Ran all test suites matching src/feed/__tests__/loadBackTo.test.ts.

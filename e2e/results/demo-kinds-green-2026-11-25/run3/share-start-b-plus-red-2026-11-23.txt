@@ -1,0 +1,3229 @@
+FAIL src/screens/__tests__/shareStart.test.tsx (230.938 s)
+  ● SHARE-ST-1 the Share tab opens on "New post", an empty postcard › SHARE-ST-1 chase: large title "New post", the DEC-73 card; none of the old start page (subline: SHARE-ST-10)
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-1 the Share tab opens on "New post", an empty postcard › SHARE-ST-1 ruth: large title "New post", the DEC-73 card; none of the old start page (subline: SHARE-ST-10)
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-2 the photo spot is one "Add photos" button › SHARE-ST-2 a parent: icon, "Add photos", "Up to 100 at a time"; spoken "Add photos, up to 100 at a time"; inside the card, where the big photo goes
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-2 the photo spot is one "Add photos" button › SHARE-ST-2 an adult parent (Alex) also reads "Up to 100 at a time"
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-2 the photo spot is one "Add photos" button › SHARE-ST-2 a relative who can post reads "Up to 10 at a time"
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-2 the photo spot is one "Add photos" button › SHARE-ST-2 videos on: "Add photos or videos", spoken "Add photos or videos, up to 100 at a time"
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos or videos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos or videos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos or videos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-2 the photo spot is one "Add photos" button › SHARE-ST-2 Easy view and Bigger text (chase): the words stay inside the target (no cut lines, no fixed height)
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-2 the photo spot is one "Add photos" button › SHARE-ST-2 Easy view and Bigger text (jo): the words stay inside the target (no cut lines, no fixed height)
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-3 the note and To: wait below, faded and out of reach › SHARE-ST-3 (light) "Add a note (optional)" and the To: line: words 4.5:1, hidden from VoiceOver/TalkBack, not tappable; no Send
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-3 the note and To: wait below, faded and out of reach › SHARE-ST-3 (dark) "Add a note (optional)" and the To: line: words 4.5:1, hidden from VoiceOver/TalkBack, not tappable; no Send
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-4 a parent taps Add photos: one picker, up to 100 › SHARE-ST-4 3 picked: pickBulk (not pickPhotos) opens; the postcard shows them in picked order, "1 of 3"
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-4 a parent taps Add photos: one picker, up to 100 › SHARE-ST-4 10 picked still opens the postcard, "1 of 10"
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-4 a parent taps Add photos: one picker, up to 100 › SHARE-ST-4 11 picked open today's bulk review (BETA-BULK)
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-4 a parent taps Add photos: one picker, up to 100 › SHARE-ST-4 100 picked open today's bulk review (BETA-BULK)
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-4 a parent taps Add photos: one picker, up to 100 › SHARE-ST-4 nothing picked (Cancel) leaves the empty postcard as it was
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-5 a relative who can post: one picker, up to 10; bulk never › SHARE-ST-5 pickPhotos (10), never pickBulk; 3 picked open the postcard
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-5 a relative who can post: one picker, up to 10; bulk never › SHARE-ST-5 13 back from a picker that ignores the limit: the first 10, and HARD-2's notice with no "Pick lots of photos" hint
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-6 the postcard's Add tile still adds up to 10 for everyone › SHARE-ST-6 a parent at 8 adds 5 through the Add tile: 10 kept, HARD-2's notice with no "Pick lots of photos" hint
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-6 the postcard's Add tile still adds up to 10 for everyone › SHARE-ST-6 a relative at 9 adds 2 through the Add tile: 10 kept, the same notice
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-7 privacy: a parent's 1-10 pick through pickBulk sends no EXIF or GPS (SHARE-2, BETA-BULK-1) › SHARE-ST-7 3 photos with GPS EXIF picked through pickBulk: only uri, size and the date reach the upload; nothing in the backend carries EXIF or GPS
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-7 privacy: a parent's 1-10 pick through pickBulk sends no EXIF or GPS (SHARE-2, BETA-BULK-1) › SHARE-ST-7 denied access shows today's "Hearth needs your OK" notice on the empty postcard
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-10 the subline says who sees it › SHARE-ST-10 chase: "Only the people you pick will see it." muted, 17 pt+; the old subline is gone
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-10 the subline says who sees it › SHARE-ST-10 ruth: "Only the people you pick will see it." muted, 17 pt+; the old subline is gone
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-11 the photo spot is a dashed outline on the card › SHARE-ST-11 (light) 4:3, 2 px dashed accent border, 14 px corners, surface (no tint), 12 px in from the card
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-11 the photo spot is a dashed outline on the card › SHARE-ST-11 (dark) 4:3, 2 px dashed accent border, 14 px corners, surface (no tint), 12 px in from the card
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-12 inside the spot: tinted circle, icon, "Add photos", helper › SHARE-ST-12 a parent, Easy view off: 72 px accent-tint circle, 32 px icon, "Add photos" 22 pt SemiBold accent, "Up to 100 at a time"
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-12 inside the spot: tinted circle, icon, "Add photos", helper › SHARE-ST-12 a parent with Easy view on reads and hears "Up to 10 at a time"
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-12 inside the spot: tinted circle, icon, "Add photos", helper › SHARE-ST-12 a relative (Easy view off) reads and hears "Up to 10 at a time"
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-13 a decorative stamp in the corner › SHARE-ST-13 44 x 52, rotated 4 degrees, postmark with today's day and month; not tappable, hidden from VoiceOver/TalkBack
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-14 the note and To: at full contrast › SHARE-ST-14 (light) "Add a note (optional)" and the To: words: no lowered opacity, >= 4.5:1 on the surface
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-14 the note and To: at full contrast › SHARE-ST-14 (dark) "Add a note (optional)" and the To: words: no lowered opacity, >= 4.5:1 on the surface
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-14 the note and To: at full contrast › SHARE-ST-14 (Easy view) "Add a note (optional)" and the To: words: no lowered opacity, >= 4.5:1 on the surface
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-15 To: shows who it can go to › SHARE-ST-15 a parent: "To: you pick after your photos", a 32 px face stack, one line of group names (no people)
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-15 To: shows who it can go to › SHARE-ST-15 a relative: people's names (Chase, Alex), never a group title
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-15 To: shows who it can go to › SHARE-ST-15 the To: row is not a button and does nothing when tapped
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-16 "Last shared" under the card › SHARE-ST-16 nothing sent yet: no "Last shared" line
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-16 "Last shared" under the card › SHARE-ST-16 a parent sends to Dad's side: back on the start, and on a fresh open, "Last shared today, to ... Dad's side"
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-16 "Last shared" under the card › SHARE-ST-16 a relative sends to Mom's side: the line names people, not the group
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-17 press feedback on the photo spot › SHARE-ST-17 pressIn scales to 0.98 over 120 ms; pressOut goes back to 1
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-17 press feedback on the photo spot › SHARE-ST-17 Reduce Motion on: no scale on press
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-18 nothing moves on by itself › SHARE-ST-18 the start page never opens a picker by itself
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-18 nothing moves on by itself › SHARE-ST-18 3 picked with a saved last audience: the postcard waits, nothing picked for you, nothing sent
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● SHARE-ST-18 nothing moves on by itself › SHARE-ST-18 a parent picks 11: bulk review opens and waits for a tap; nothing picked or sent
+
+    Unable to find an element with role: header, name: New post
+
+    [36m<RNCSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<View>[39m
+          [36m<Text[39m
+            [33maccessibilityRole[39m=[32m"header"[39m
+          [36m>[39m
+            [0mShare photos[0m
+          [36m</Text>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mPick photos, add a note, then pick who gets them.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick photos from your phone"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<View[39m
+                [33maccessibilityElementsHidden[39m=[32m{true}[39m
+                [33mimportantForAccessibility[39m=[32m"no-hide-descendants"[39m
+              [36m>[39m
+                [36m<ViewManagerAdapter_SymbolModule />[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mPick photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text[39m
+              [33maccessibilityRole[39m=[32m"header"[39m
+            [36m>[39m
+              [0mLots of photos?[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mPick up to 100. Hearth puts them in order by the day they were taken.[0m
+            [36m</Text>[39m
+            [36m<View[39m
+              [33maccessibilityLabel[39m=[32m"Pick up to 100 photos at once"[39m
+              [33maccessibilityRole[39m=[32m"button"[39m
+              [33maccessibilityState[39m=[32m{
+                {
+                  "busy": false,
+                  "disabled": false,
+                  "selected": false,
+                }
+              }[39m
+              [33maccessible[39m=[32m{true}[39m
+            [36m>[39m
+              [36m<Text>[39m
+                [0mPick lots of photos[0m
+              [36m</Text>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+    [36m</RNCSafeAreaView>[39m
+
+      89 |   const pickPhotos = jest.fn(async () => ({ items: [] as ReturnType<typeof items> }));
+      90 |   const r = await renderApp(<ShareScreen />, { user: opts.user ?? 'chase', kv: opts.kv, be: opts.be, deps: { pickBulk, pickPhotos, ...opts.deps } });
+    > 91 |   await screen.findByRole('header', { name: 'New post' }, slow);
+         |                ^
+      92 |   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
+      93 | }
+      94 | const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
+
+      at findByRole (src/screens/__tests__/shareStart.test.tsx:91:16)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       43 failed, 43 total
+Snapshots:   0 total
+Time:        231.086 s
+Ran all test suites matching src/screens/__tests__/shareStart.test.tsx.

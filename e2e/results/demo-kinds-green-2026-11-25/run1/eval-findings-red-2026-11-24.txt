@@ -1,0 +1,153 @@
+# Intake #162 eval findings, BEFORE run (qa-tdd, 2026-11-24). App code = ff4543e (HEAD 41da54e changes docs only).
+## jest: npx jest --ci src/screens/__tests__/evalFindings.test.tsx
+  console.error
+    An update to VirtualizedList inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      at node_modules/react-test-renderer/cjs/react-test-renderer.development.js:15383:19
+      at runWithFiberInDEV (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2506:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:15382:9)
+      at scheduleUpdateOnFiber (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:12986:9)
+      at Object.enqueueSetState (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:17949:13)
+      at VirtualizedList.process.env.NODE_ENV.Component.setState (node_modules/react/cjs/react.development.js:730:20)
+      at node_modules/@babel/runtime/helpers/superPropGet.js:6:14
+      at VirtualizedList.setState (node_modules/@react-native/virtualized-lists/Lists/StateSafePureComponent.js:40:7)
+      at VirtualizedList.setState [as _updateCellsToRender] (node_modules/@react-native/virtualized-lists/Lists/VirtualizedList.js:1946:10)
+      at Timeout._updateCellsToRender [as _onTimeout] (node_modules/@react-native/virtualized-lists/Lists/VirtualizedList.js:1843:16)
+
+  console.error
+    An update to VirtualizedList inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      at node_modules/react-test-renderer/cjs/react-test-renderer.development.js:15383:19
+      at runWithFiberInDEV (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2506:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:15382:9)
+      at scheduleUpdateOnFiber (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:12986:9)
+      at Object.enqueueSetState (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:17949:13)
+      at VirtualizedList.process.env.NODE_ENV.Component.setState (node_modules/react/cjs/react.development.js:730:20)
+      at node_modules/@babel/runtime/helpers/superPropGet.js:6:14
+      at VirtualizedList.setState (node_modules/@react-native/virtualized-lists/Lists/StateSafePureComponent.js:40:7)
+      at VirtualizedList.setState [as _updateCellsToRender] (node_modules/@react-native/virtualized-lists/Lists/VirtualizedList.js:1946:10)
+      at Timeout._updateCellsToRender [as _onTimeout] (node_modules/@react-native/virtualized-lists/Lists/VirtualizedList.js:1843:16)
+
+FAIL src/screens/__tests__/evalFindings.test.tsx
+  ● EF-HE-9 B18 New for you past the first page › EF-HE-9 B18 25 new posts since the last visit: the walk counts all 25 and starts at the oldest
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "New photos: 1 of 25"
+    Received: "New photos: 1 of 20"
+
+      36 |     const walk = screen.getByTestId('new-one-at-a-time');
+      37 |     const heading = screen.getAllByRole('header').map((h) => String(h.props.accessibilityLabel ?? '')).find((n) => n.startsWith('New photos:'));
+    > 38 |     expect(heading).toBe(`New photos: 1 of ${N}`);
+         |                     ^
+      39 |     expect(within(walk).queryByText('New 0')).toBeTruthy(); // the oldest new post first
+      40 |   });
+      41 | });
+
+      at Object.toBe (src/screens/__tests__/evalFindings.test.tsx:38:21)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 2 passed, 3 total
+Snapshots:   0 total
+Time:        4.074 s, estimated 11 s
+Ran all test suites matching src/screens/__tests__/evalFindings.test.tsx.
+
+## demo e2e (dist-demo exported from ff4543e): playwright -c e2e-web/playwright.demo.config.js -g EF-HE-1
+
+  ✓  1 e2e-web/demo.spec.js:1267:1 › EF-HE-1 at 390 px: each Messages "Open" button has a distinct accessible name holding its chat title (2.9s)
+
+  1 passed (3.6s)
+
+## EF-HE-10 / T27 reproduction attempt (8 busy loops on 4 cores)
+oldTabLinks.test.tsx alone x10: 10/10 runs 5 passed 0 failed
+full jest x2 under the same load: Tests:       1 failed, 1 skipped, 1 todo, 2195 passed, 2198 total Tests:       1 failed, 1 skipped, 1 todo, 2195 passed, 2198 total  (only failure both runs: EF-HE-9 above; oldTabLinks passed)
+
+## SPEC-EVAL-FIXES section 1 red (qa-tdd, branch claude/project-thread-6ew09x at c71e48d, app code unchanged since ff4543e): npx jest src/screens/__tests__/evalFindings.test.tsx
+## EF-HE-1 guard ("Open the chat …") superseded by EF-HE-1-AC1/AC2 in the same file and in demo.spec.js. Guards that pass now by design: EF-HE-1-AC3 (auto part; phone part is manual M-20), EF-HE-2-AC3, EF-HE-5-AC3, EF-HE-6-AC2 (labels exist).
+    Expected: "New photos: 1 of 25"
+    Received: "New photos: 1 of 20"
+    Expected: "Open Everyone"
+    Received: "Open the chat Everyone"
+    Expected: 3
+    Received: 1
+    Expected: 2
+    Received: 1
+    - Expected  - 1
+    + Received  + 1
+    - Expected  - 1
+    + Received  + 1
+    - Expected  - 2
+    + Received  + 2
+    Expected: "circle"
+    Received: undefined
+    Expected: "circle"
+    Received: undefined
+    Expected: "circle"
+    Received: undefined
+    Expected: "circle"
+    Received: undefined
+    Expected: "circle"
+    Received: undefined
+    Received: null
+    - Expected  - 3
+    + Received  + 1
+    Received: null
+    Received: null
+    Received: null
+Tests:       17 failed, 4 passed, 21 total
+
+## demo e2e (dist-demo exported from ff4543e; app/src unchanged since): playwright -c e2e-web/playwright.demo.config.js -g EF-HE-1
+    Expected: "Open"
+    Received: "Open the chat Everyone"
+  1 failed
+## per-test status (same run, --json)
+FAIL EF-HE-9 B18 25 new posts since the last visit: the walk counts all 25 and starts at the oldest
+FAIL EF-HE-1-AC1 chatOpenLabel: "Open <name>" for a named group or event, "Open chat with <people>" for people
+FAIL EF-HE-1-AC1 chase: no two Open buttons show the same text, and each shows its chat
+FAIL EF-HE-1-AC1 jo: no two Open buttons show the same text, and each shows its chat
+FAIL EF-HE-1-AC2 chase: each Open button speaks exactly the words it shows (WCAG 2.5.3)
+FAIL EF-HE-1-AC2 jo: each Open button speaks exactly the words it shows (WCAG 2.5.3)
+PASS EF-HE-1-AC3 (auto part; the phone check is manual M-20) a long chat title is never cut off: no line limit, 17 pt+, 48 pt+
+FAIL EF-HE-2-AC1 Easy view and Light or dark: unpicked rows show an empty ring, the picked row a filled ring in accent
+FAIL EF-HE-2-AC1 the shared Choice radio: picking another row moves the filled ring, the old row goes back to an empty ring
+FAIL EF-HE-2-AC2 (paper, dark false) the unpicked ring has 3:1 or better against its row (WCAG 1.4.11)
+FAIL EF-HE-2-AC2 (paper, dark true) the unpicked ring has 3:1 or better against its row (WCAG 1.4.11)
+FAIL EF-HE-2-AC2 (avocado, dark false) the unpicked ring has 3:1 or better against its row (WCAG 1.4.11)
+FAIL EF-HE-2-AC2 (avocado, dark true) the unpicked ring has 3:1 or better against its row (WCAG 1.4.11)
+PASS EF-HE-2-AC3 (guard) checked state is still spoken the same way and the whole row is still the 48 pt target
+FAIL EF-HE-5-AC1 a parent reads the honest line, and never "People never see group names"
+FAIL EF-HE-5-AC2 New group is the one filled main button; Rename stays secondary
+PASS EF-HE-5-AC3 (guard, GRP-15) a relative never reaches Your groups or its line
+FAIL EF-HE-6-AC1 relative jo with no events reads what an event is, and no how-to-make line
+FAIL EF-HE-6-AC1 relative ruth with no events reads what an event is, and no how-to-make line
+FAIL EF-HE-6-AC2 a parent with no events reads the same two lines plus how to make one
+PASS EF-HE-6-AC2 the how-to words match the real labels: More has Groups, Groups has New group, New group has "This group is for an event"
+## full app jest, 1 run (red on purpose): Test Suites: 1 failed, 168 passed, 169 total / Tests: 17 failed, 1 skipped, 1 todo, 2197 passed, 2216 total. Only failures: the 17 in evalFindings.test.tsx above. typecheck clean.
+
+## EF-HE-4 (Chase yes, Nov 24: only in More) red, same branch, app code unchanged: npx jest src/screens/__tests__/evalFindings.test.tsx --json
+FAIL EF-HE-4-AC1 chase: Me shows neither the Easy view nor the Light or dark section
+FAIL EF-HE-4-AC1 jo: Me shows neither the Easy view nor the Light or dark section
+PASS EF-HE-4-AC2 chase: More still has an Easy view row and a Light or dark row, each opening its page
+PASS EF-HE-4-AC2 jo: More still has an Easy view row and a Light or dark row, each opening its page
+file: 19 failed, 6 passed
+EF-HE-4-AC1 failure (both users): Expected [] Received ["Easy view", "Light or dark screen"] (headers still on Me). EF-HE-4-AC2 is a guard and passes now (More rows exist).

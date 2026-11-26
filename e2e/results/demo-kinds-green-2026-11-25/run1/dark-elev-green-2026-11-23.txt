@@ -1,0 +1,56 @@
+DARK-ELEV green run, qa-tdd, 2026-11-23 (intake #155). Label: GREEN 3x at 10b0657 plus qa-tdd's DARK-ELEV-6 extension (uncommitted; test file only).
+
+DARK-ELEV-6 'SKIPPED' report: not reproduced. The test has no skip and runs in the demo config's only project (390x844). The 5 skipped in every e2e:demo run are the env-gated screenshot specs (demo-screens 1, demo-showcase 4; SNAPSHOT_DIR / SHOWCASE_DIR unset, T24). DARK-ELEV-6 is listed as passed (test 44 of 44) in each run below.
+qa-tdd extended DARK-ELEV-6 (no check removed): explicit 390x844 viewport; after the first-screen scan, scroll 300 px so search-bar-shade is on screen and re-scan (no drop shadows; shade box-shadow none); then light: the shade keeps a drop shadow.
+
+== red check of the extended DARK-ELEV-6 on origin/main 1341595 (worktree, dist-demo rebuilt) ==
+first-screen scan: ["tablist: rgba(0, 0, 0, 0.5) 0px 6px 24px 0px"]
+with the first expect made soft (mutation check only): scrolled scan ["search-bar-shade: rgba(0, 0, 0, 0.12) 0px 2px 3px 0px", "tablist: rgba(0, 0, 0, 0.5) 0px 6px 24px 0px"]; shade box-shadow "rgba(0, 0, 0, 0.12) 0px 2px 3px 0px" (expected none). 1 failed.
+
+== app suites x3 (cd app) ==
+== run 1 jest ==
+Test Suites: 166 passed, 166 total
+Tests:       1 skipped, 1 todo, 1704 passed, 1706 total
+== run 1 typecheck ==
+typecheck clean
+== run 1 expo-go ==
+Expo Go check OK: the app and the App Store's Expo Go are both on SDK 58
+== run 1 e2e:demo ==
+  5 skipped
+  39 passed (2.5m)
+== run 1 e2e:web ==
+  6 skipped
+  5 passed (43.2s)
+== run 2 jest ==
+Test Suites: 166 passed, 166 total
+Tests:       1 skipped, 1 todo, 1704 passed, 1706 total
+== run 2 typecheck ==
+typecheck clean
+== run 2 expo-go ==
+Expo Go check OK: the app and the App Store's Expo Go are both on SDK 58
+== run 2 e2e:demo ==
+  5 skipped
+  39 passed (2.5m)
+== run 2 e2e:web ==
+  6 skipped
+  5 passed (40.2s)
+== run 3 jest ==
+Test Suites: 166 passed, 166 total
+Tests:       1 skipped, 1 todo, 1704 passed, 1706 total
+== run 3 typecheck ==
+typecheck clean
+== run 3 expo-go ==
+Expo Go check OK: the app and the App Store's Expo Go are both on SDK 58
+== run 3 e2e:demo ==
+  5 skipped
+  39 passed (2.5m)
+== run 3 e2e:web ==
+  6 skipped
+  5 passed (40.2s)
+
+== backend SQL x3 (cd backend && bash tests/run.sh; local Postgres 16 started for this run) ==
+run 1: 29 suites, 1217 passed, 0 failed, exit 0
+run 2: 29 suites, 1217 passed, 0 failed, exit 0
+run 3: 29 suites, 1217 passed, 0 failed, exit 0
+
+Not run: Deno (not installed; no function changed), e2e:site, prototype e2e, real phones.

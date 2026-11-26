@@ -11,6 +11,12 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 25: post kinds ON for the web demo only (R95, DEMO-KINDS-1..14; branch claude/project-thread-jtelk5, local, not pushed)
+- **Done, test-first** (qa-tdd red 2f3f0a6, r115; engineer 801fd7c touched no test or spec): `app/src/demo/seed.ts` `seedDemo` turns `post_kinds` on (global flag plus the space flag), `demoSeedVersion` includes it so returning visitors get it, Try this step 4 (`DemoFrame.tsx`) names Share, Event, News, Saying, and the architecture overview footer line says so. Real builds stay off.
+- **Proof:** all suites 3x via `bash test-all.sh`, green (r122, `e2e/results/demo-kinds-green-2026-11-25/`): jest 2623, e2e:demo 72, e2e:web 47, prototype 33. Deno and the starter-invites suite were skipped here (CI runs them).
+- **Turn it off:** remove the two flag lines in `seedDemo` (global and space `post_kinds`); the seed version moves back by itself, so visitors reseed.
+- **Still to do:** live check on the published demo once it is published (Photos / Event / News / Saying all tappable; Grandma Jo sees no Share tab).
+
 ## Nov 25: duplicate-number check (NUM-1..6; branch claude/project-thread-hl5ax4, not pushed)
 - **Done, test-first:** `scripts/check-unique-numbers.sh [root]` fails on a repeated migration prefix, DEC heading, ticket id or run id; passes on the real repo. Test `scripts/tests/check_unique_numbers_test.sh` 6/6. **Next:** wire into `test-all.sh`/CI if staff-pm agrees.
 

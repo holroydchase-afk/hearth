@@ -1,0 +1,534 @@
+RD-84..RD-92 (SPEC-REDESIGN 1h, DEC-67) red run, 1 run each, Nov 18, at 81d021d plus the new tests. qa-tdd.
+
+== jest (full, npx jest --ci) ==
+Test Suites: 3 failed, 145 passed, 148 total
+Tests:       22 failed, 1 skipped, 1 todo, 1376 passed, 1400 total
+  ● RD-84 light mode is warm paper › RD-84 docs/design/tokens.json mirrors the paper palette
+  ● RD-84 light mode is warm paper › RD-84 fill is 4.5% darker paper (#E6DFC9 ±1) and line 9% darker (#DBD4BF ±1)
+  ● RD-84 light mode is warm paper › RD-84 ink is a warm near-black and muted a warm gray (R ≥ G ≥ B)
+  ● RD-84 light mode is warm paper › RD-84 no cool gray from before remains in any light palette (every family color, normal and high)
+  ● RD-84 light mode is warm paper › RD-84 page bg is paper #F1E9D2
+  ● RD-84 light mode is warm paper › RD-84 surface and photo are paper-family too (warm, light)
+  ● RD-85 dark mode is a warm near-black › RD-85 fill, line, surface and photo are warm dark grays (R ≥ G ≥ B), lighter than the page
+  ● RD-85 dark mode is a warm near-black › RD-85 ink is a warm near-white and muted a warm gray
+  ● RD-85 dark mode is a warm near-black › RD-85 no #000000 page and no cool gray remains in any dark palette
+  ● RD-85 dark mode is a warm near-black › RD-85 page bg is #14100D, not true black
+  ● RD-86 contrast (WCAG AA) on paper and warm black › RD-86 Increase Contrast keeps the paper page and its high-contrast set (DS-14: muted ≥ 7:1)
+  ● RD-87 every page backing is paper (c.bg) › RD-87 Feed (dark): the page draws on #14100D, with no white or black backing anywhere
+  ● RD-87 every page backing is paper (c.bg) › RD-87 Feed (light): the page draws on #F1E9D2, with no white or black backing anywhere
+  ● RD-87 every page backing is paper (c.bg) › RD-87 Gallery (dark): the page draws on #14100D, with no white or black backing anywhere
+  ● RD-87 every page backing is paper (c.bg) › RD-87 Gallery (light): the page draws on #F1E9D2, with no white or black backing anywhere
+  ● RD-87 every page backing is paper (c.bg) › RD-87 More (dark): the page draws on #14100D, with no white or black backing anywhere
+  ● RD-87 every page backing is paper (c.bg) › RD-87 More (light): the page draws on #F1E9D2, with no white or black backing anywhere
+  ● RD-88 soft photo shadows, light mode only › RD-88 Feed (light): every post photo has one soft warm shadow on a wrapper that does not clip or change layout
+  ● RD-88 soft photo shadows, light mode only › RD-88 Gallery (light): every Gallery tile and New for you tile has one soft warm shadow on a wrapper that does not clip or change layout
+  ● RD-89 reaction pop › RD-89 during the pop the count, the other emoji and the heart button keep their layout
+  ● RD-89 reaction pop › RD-89 tapping ❤️ on: the emoji scales 1 → 1.25 → 1 in ≤ 250 ms, by transform, on the native driver
+  ● portfolio claims › RD-1 the case study never claims more decisions than the log has, and is no more than 10 behind
+
+== jest failure detail (warmPaper suites) ==
+Summary of all failing tests
+FAIL src/ui/__tests__/warmPaper.test.ts
+  ● RD-84 light mode is warm paper › RD-84 page bg is paper #F1E9D2
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "#F1E9D2"
+    Received: "#FFFFFF"
+
+      34 | describe('RD-84 light mode is warm paper', () => {
+      35 |   it('RD-84 page bg is paper #F1E9D2', () => {
+    > 36 |     expect(light().bg).toBe('#F1E9D2');
+         |                        ^
+      37 |   });
+      38 |
+      39 |   it('RD-84 fill is 4.5% darker paper (#E6DFC9 ±1) and line 9% darker (#DBD4BF ±1)', () => {
+
+      at Object.toBe (src/ui/__tests__/warmPaper.test.ts:36:24)
+
+  ● RD-84 light mode is warm paper › RD-84 fill is 4.5% darker paper (#E6DFC9 ±1) and line 9% darker (#DBD4BF ±1)
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "fill": "#F2F2F7",
+    -   "near": true,
+    +   "near": false,
+      }
+
+      39 |   it('RD-84 fill is 4.5% darker paper (#E6DFC9 ±1) and line 9% darker (#DBD4BF ±1)', () => {
+      40 |     const c = light();
+    > 41 |     expect({ fill: c.fill, near: near(c.fill, '#E6DFC9') }).toEqual({ fill: c.fill, near: true });
+         |                                                             ^
+      42 |     expect({ line: c.line, near: near(c.line, '#DBD4BF') }).toEqual({ line: c.line, near: true });
+      43 |   });
+      44 |
+
+      at Object.toEqual (src/ui/__tests__/warmPaper.test.ts:41:61)
+
+  ● RD-84 light mode is warm paper › RD-84 ink is a warm near-black and muted a warm gray (R ≥ G ≥ B)
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "dark": true,
+        "ink": "#1C1C1E",
+    -   "warm": true,
+    +   "warm": false,
+      }
+
+      45 |   it('RD-84 ink is a warm near-black and muted a warm gray (R ≥ G ≥ B)', () => {
+      46 |     const c = light();
+    > 47 |     expect({ ink: c.ink, warm: warm(c.ink), dark: lum(c.ink) < 1.5 }).toEqual({ ink: c.ink, warm: true, dark: true });
+         |                                                                       ^
+      48 |     expect({ muted: c.muted, warm: warm(c.muted) }).toEqual({ muted: c.muted, warm: true });
+      49 |   });
+      50 |
+
+      at Object.toEqual (src/ui/__tests__/warmPaper.test.ts:47:71)
+
+  ● RD-84 light mode is warm paper › RD-84 surface and photo are paper-family too (warm, light)
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "k": "surface",
+        "light": true,
+        "v": "#F7F7F9",
+    -   "warm": true,
+    +   "warm": false,
+      }
+
+      52 |     const c = light();
+      53 |     for (const k of ['surface', 'photo', 'fill', 'line'] as const) {
+    > 54 |       expect({ k, v: c[k], warm: warm(c[k]), light: lum(c[k]) > 10 }).toEqual({ k, v: c[k], warm: true, light: true });
+         |                                                                       ^
+      55 |     }
+      56 |   });
+      57 |
+
+      at Object.toEqual (src/ui/__tests__/warmPaper.test.ts:54:71)
+
+  ● RD-84 light mode is warm paper › RD-84 no cool gray from before remains in any light palette (every family color, normal and high)
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 9
+
+      Object {
+        "high": false,
+    -   "left": Array [],
+    +   "left": Array [
+    +     "bg #FFFFFF",
+    +     "surface #F7F7F9",
+    +     "ink #1C1C1E",
+    +     "muted #5F5F64",
+    +     "line #D1D1D6",
+    +     "fill #F2F2F7",
+    +     "photo #EFEFF4",
+    +   ],
+        "n": "ember",
+      }
+
+      61 |         const c = light(n, high);
+      62 |         const left = PAGE_KEYS.filter((k) => LIGHT_COOL.includes(c[k].toUpperCase())).map((k) => `${k} ${c[k]}`);
+    > 63 |         expect({ n, high, left }).toEqual({ n, high, left: [] });
+         |                                   ^
+      64 |       }
+      65 |     }
+      66 |   });
+
+      at toEqual (src/ui/__tests__/warmPaper.test.ts:63:35)
+      at Object._loop (src/ui/__tests__/warmPaper.test.ts:60:39)
+
+  ● RD-84 light mode is warm paper › RD-84 docs/design/tokens.json mirrors the paper palette
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 2
+    + Received  + 2
+
+      Object {
+    -   "dark": "#14100D",
+    -   "light": "#F1E9D2",
+    +   "dark": "#000000",
+    +   "light": "#FFFFFF",
+      }
+
+      69 |     const file = path.join(__dirname, '..', '..', '..', '..', 'docs', 'design', 'tokens.json');
+      70 |     const t = JSON.parse(fs.readFileSync(file, 'utf8')) as { color: { light: Colors; dark: Colors } };
+    > 71 |     expect({ light: t.color.light.bg, dark: t.color.dark.bg }).toEqual({ light: '#F1E9D2', dark: '#14100D' });
+         |                                                                ^
+      72 |     expect(t.color.light).toEqual({ ...paletteFor('web', false) });
+      73 |   });
+      74 | });
+
+      at Object.toEqual (src/ui/__tests__/warmPaper.test.ts:71:64)
+
+  ● RD-85 dark mode is a warm near-black › RD-85 page bg is #14100D, not true black
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "#14100D"
+    Received: "#000000"
+
+      76 | describe('RD-85 dark mode is a warm near-black', () => {
+      77 |   it('RD-85 page bg is #14100D, not true black', () => {
+    > 78 |     expect(dark().bg).toBe('#14100D');
+         |                       ^
+      79 |   });
+      80 |
+      81 |   it('RD-85 ink is a warm near-white and muted a warm gray', () => {
+
+      at Object.toBe (src/ui/__tests__/warmPaper.test.ts:78:23)
+
+  ● RD-85 dark mode is a warm near-black › RD-85 ink is a warm near-white and muted a warm gray
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "ink": "#F5F5F7",
+        "light": true,
+    -   "warm": true,
+    +   "warm": false,
+      }
+
+      81 |   it('RD-85 ink is a warm near-white and muted a warm gray', () => {
+      82 |     const c = dark();
+    > 83 |     expect({ ink: c.ink, warm: warm(c.ink), light: lum(c.ink) > 15 }).toEqual({ ink: c.ink, warm: true, light: true });
+         |                                                                       ^
+      84 |     expect({ muted: c.muted, warm: warm(c.muted) }).toEqual({ muted: c.muted, warm: true });
+      85 |   });
+      86 |
+
+      at Object.toEqual (src/ui/__tests__/warmPaper.test.ts:83:71)
+
+  ● RD-85 dark mode is a warm near-black › RD-85 fill, line, surface and photo are warm dark grays (R ≥ G ≥ B), lighter than the page
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "aboveBg": true,
+        "dark": true,
+        "k": "fill",
+        "v": "#2C2C2E",
+    -   "warm": true,
+    +   "warm": false,
+      }
+
+      88 |     const c = dark();
+      89 |     for (const k of ['fill', 'line', 'surface', 'photo'] as const) {
+    > 90 |       expect({ k, v: c[k], warm: warm(c[k]), dark: lum(c[k]) < 3, aboveBg: lum(c[k]) >= lum(c.bg) }).toEqual({ k, v: c[k], warm: true, dark: true, aboveBg: true });
+         |                                                                                                      ^
+      91 |     }
+      92 |   });
+      93 |
+
+      at Object.toEqual (src/ui/__tests__/warmPaper.test.ts:90:102)
+
+  ● RD-85 dark mode is a warm near-black › RD-85 no #000000 page and no cool gray remains in any dark palette
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 9
+
+      Object {
+        "high": false,
+    -   "left": Array [],
+    +   "left": Array [
+    +     "bg #000000",
+    +     "surface #1C1C1E",
+    +     "ink #F5F5F7",
+    +     "muted #AEAEB2",
+    +     "line #38383A",
+    +     "fill #2C2C2E",
+    +     "photo #1C1C1E",
+    +   ],
+        "n": "ember",
+      }
+
+       97 |         const c = dark(n, high);
+       98 |         const left = PAGE_KEYS.filter((k) => DARK_COOL.includes(c[k].toUpperCase())).map((k) => `${k} ${c[k]}`);
+    >  99 |         expect({ n, high, left }).toEqual({ n, high, left: [] });
+          |                                   ^
+      100 |       }
+      101 |     }
+      102 |   });
+
+      at toEqual (src/ui/__tests__/warmPaper.test.ts:99:35)
+      at Object._loop2 (src/ui/__tests__/warmPaper.test.ts:96:39)
+
+  ● RD-86 contrast (WCAG AA) on paper and warm black › RD-86 Increase Contrast keeps the paper page and its high-contrast set (DS-14: muted ≥ 7:1)
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "bg": "#F1E9D2",
+    +   "bg": "#FFFFFF",
+        "muted7": true,
+        "n": "ember",
+      }
+
+      151 |     for (const n of COLOR_NAMES) {
+      152 |       const p = light(n, true);
+    > 153 |       expect({ n, bg: p.bg, muted7: contrast(p.muted, p.bg) >= 7 }).toEqual({ n, bg: '#F1E9D2', muted7: true });
+          |                                                                     ^
+      154 |       const d = dark(n, true);
+      155 |       expect({ n, bg: d.bg, muted7: contrast(d.muted, d.bg) >= 7 }).toEqual({ n, bg: '#14100D', muted7: true });
+      156 |     }
+
+      at Object.toEqual (src/ui/__tests__/warmPaper.test.ts:153:69)
+
+FAIL src/screens/__tests__/warmPaper.test.tsx (12.437 s)
+  ● RD-87 every page backing is paper (c.bg) › RD-87 Gallery (light): the page draws on #F1E9D2, with no white or black backing anywhere
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "pageColor": true,
+    +   "pageColor": false,
+      }
+
+      155 |         const hosts = screen.UNSAFE_root.findAll(isHost) as Inst[];
+      156 |         const bgs = hosts.map((n) => String(flat(n.props.style).backgroundColor ?? '').toUpperCase());
+    > 157 |         expect({ pageColor: bgs.includes(want) }).toEqual({ pageColor: true });
+          |                                                   ^
+      158 |         const BW = /^(#FFF|#FFFFFF|#000|#000000|WHITE|BLACK|RGB\(255, ?255, ?255\)|RGB\(0, ?0, ?0\))$/;
+      159 |         expect(hosts.filter((n) => BW.test(String(flat(n.props.style).backgroundColor ?? '').toUpperCase())).map(name)).toEqual([]);
+      160 |       }, 20000);
+
+      at Object.toEqual (src/screens/__tests__/warmPaper.test.tsx:157:51)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD-87 every page backing is paper (c.bg) › RD-87 Feed (light): the page draws on #F1E9D2, with no white or black backing anywhere
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "pageColor": true,
+    +   "pageColor": false,
+      }
+
+      155 |         const hosts = screen.UNSAFE_root.findAll(isHost) as Inst[];
+      156 |         const bgs = hosts.map((n) => String(flat(n.props.style).backgroundColor ?? '').toUpperCase());
+    > 157 |         expect({ pageColor: bgs.includes(want) }).toEqual({ pageColor: true });
+          |                                                   ^
+      158 |         const BW = /^(#FFF|#FFFFFF|#000|#000000|WHITE|BLACK|RGB\(255, ?255, ?255\)|RGB\(0, ?0, ?0\))$/;
+      159 |         expect(hosts.filter((n) => BW.test(String(flat(n.props.style).backgroundColor ?? '').toUpperCase())).map(name)).toEqual([]);
+      160 |       }, 20000);
+
+      at Object.toEqual (src/screens/__tests__/warmPaper.test.tsx:157:51)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD-87 every page backing is paper (c.bg) › RD-87 More (light): the page draws on #F1E9D2, with no white or black backing anywhere
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "pageColor": true,
+    +   "pageColor": false,
+      }
+
+      155 |         const hosts = screen.UNSAFE_root.findAll(isHost) as Inst[];
+      156 |         const bgs = hosts.map((n) => String(flat(n.props.style).backgroundColor ?? '').toUpperCase());
+    > 157 |         expect({ pageColor: bgs.includes(want) }).toEqual({ pageColor: true });
+          |                                                   ^
+      158 |         const BW = /^(#FFF|#FFFFFF|#000|#000000|WHITE|BLACK|RGB\(255, ?255, ?255\)|RGB\(0, ?0, ?0\))$/;
+      159 |         expect(hosts.filter((n) => BW.test(String(flat(n.props.style).backgroundColor ?? '').toUpperCase())).map(name)).toEqual([]);
+      160 |       }, 20000);
+
+      at Object.toEqual (src/screens/__tests__/warmPaper.test.tsx:157:51)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD-87 every page backing is paper (c.bg) › RD-87 Gallery (dark): the page draws on #14100D, with no white or black backing anywhere
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "pageColor": true,
+    +   "pageColor": false,
+      }
+
+      155 |         const hosts = screen.UNSAFE_root.findAll(isHost) as Inst[];
+      156 |         const bgs = hosts.map((n) => String(flat(n.props.style).backgroundColor ?? '').toUpperCase());
+    > 157 |         expect({ pageColor: bgs.includes(want) }).toEqual({ pageColor: true });
+          |                                                   ^
+      158 |         const BW = /^(#FFF|#FFFFFF|#000|#000000|WHITE|BLACK|RGB\(255, ?255, ?255\)|RGB\(0, ?0, ?0\))$/;
+      159 |         expect(hosts.filter((n) => BW.test(String(flat(n.props.style).backgroundColor ?? '').toUpperCase())).map(name)).toEqual([]);
+      160 |       }, 20000);
+
+      at Object.toEqual (src/screens/__tests__/warmPaper.test.tsx:157:51)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD-87 every page backing is paper (c.bg) › RD-87 Feed (dark): the page draws on #14100D, with no white or black backing anywhere
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "pageColor": true,
+    +   "pageColor": false,
+      }
+
+      155 |         const hosts = screen.UNSAFE_root.findAll(isHost) as Inst[];
+      156 |         const bgs = hosts.map((n) => String(flat(n.props.style).backgroundColor ?? '').toUpperCase());
+    > 157 |         expect({ pageColor: bgs.includes(want) }).toEqual({ pageColor: true });
+          |                                                   ^
+      158 |         const BW = /^(#FFF|#FFFFFF|#000|#000000|WHITE|BLACK|RGB\(255, ?255, ?255\)|RGB\(0, ?0, ?0\))$/;
+      159 |         expect(hosts.filter((n) => BW.test(String(flat(n.props.style).backgroundColor ?? '').toUpperCase())).map(name)).toEqual([]);
+      160 |       }, 20000);
+
+      at Object.toEqual (src/screens/__tests__/warmPaper.test.tsx:157:51)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● RD-87 every page backing is paper (c.bg) › RD-87 More (dark): the page draws on #14100D, with no white or black backing anywhere
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+
+== e2e:demo -g RD-92 ==
+
+Running 1 test using 1 worker
+
+  ✘  1 e2e-web/demo.spec.js:571:1 › RD-92 warm paper, photo shadows and the reaction pop in the demo, light and dark, with reduced motion (6.6s)
+
+
+  1) e2e-web/demo.spec.js:571:1 › RD-92 warm paper, photo shadows and the reaction pop in the demo, light and dark, with reduced motion 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 2
+    + Received  + 2
+
+      Object {
+    -   "gallery": "rgb(241, 233, 210)",
+    -   "page": "rgb(241, 233, 210)",
+    +   "gallery": "rgb(255, 255, 255)",
+    +   "page": "rgb(255, 255, 255)",
+      }
+
+      638 |   await page.goto('/');
+      639 |   await galleryLoaded(page);
+    > 640 |   expect.soft(await backings()).toEqual({ page: PAPER, gallery: PAPER });
+          |                                 ^
+      641 |   expect.soft(await shadowNear(galleryTile())).not.toBe('none');
+      642 |   await page.screenshot({ path: path.join(shots, 'rd-92-light-gallery.png') });
+      643 |   await onFeed(page);
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:640:33
+
+    Error: expect(received).not.toBe(expected) // Object.is equality
+
+    Expected: not "none"
+
+      639 |   await galleryLoaded(page);
+      640 |   expect.soft(await backings()).toEqual({ page: PAPER, gallery: PAPER });
+    > 641 |   expect.soft(await shadowNear(galleryTile())).not.toBe('none');
+          |                                                    ^
+      642 |   await page.screenshot({ path: path.join(shots, 'rd-92-light-gallery.png') });
+      643 |   await onFeed(page);
+      644 |   expect.soft(await shadowNear(feedPhoto())).not.toBe('none');
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:641:52
+
+    Error: expect(received).not.toBe(expected) // Object.is equality
+
+    Expected: not "none"
+
+      642 |   await page.screenshot({ path: path.join(shots, 'rd-92-light-gallery.png') });
+      643 |   await onFeed(page);
+    > 644 |   expect.soft(await shadowNear(feedPhoto())).not.toBe('none');
+          |                                                  ^
+      645 |   await loveOff();
+      646 |   const pop = await tapAndSample();
+      647 |   expect.soft({ popped: pop.maxScale > 1, inTime: pop.firstAbove1 !== null && pop.firstAbove1 <= 250, heartShift: pop.heartShift <= 0.5, hahaShift: pop.hahaShift <= 0.5 })
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:644:50
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 2
+    + Received  + 2
+
+      Object {
+        "hahaShift": true,
+        "heartShift": true,
+    -   "inTime": true,
+    -   "popped": true,
+    +   "inTime": false,
+    +   "popped": false,
+      }
+
+      646 |   const pop = await tapAndSample();
+      647 |   expect.soft({ popped: pop.maxScale > 1, inTime: pop.firstAbove1 !== null && pop.firstAbove1 <= 250, heartShift: pop.heartShift <= 0.5, hahaShift: pop.hahaShift <= 0.5 })
+    > 648 |     .toEqual({ popped: true, inTime: true, heartShift: true, hahaShift: true });
+          |      ^
+      649 |   await page.screenshot({ path: path.join(shots, 'rd-92-light-feed.png') });
+      650 |
+      651 |   // Reduced motion: no scale
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:648:6
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 2
+    + Received  + 2
+
+      Object {
+    -   "gallery": "rgb(20, 16, 13)",
+    -   "page": "rgb(20, 16, 13)",
+    +   "gallery": "rgb(0, 0, 0)",
+    +   "page": "rgb(255, 255, 255)",
+      }
+
+      664 |   await page.getByRole('tab', { name: /^Gallery/ }).click();
+      665 |   await galleryLoaded(page);
+    > 666 |   expect.soft(await backings()).toEqual({ page: WARM_BLACK, gallery: WARM_BLACK });
+          |                                 ^
+      667 |   expect.soft(await shadowNear(galleryTile())).toBe('none');
+      668 |   await page.screenshot({ path: path.join(shots, 'rd-92-dark-gallery.png') });
+      669 |   await onFeed(page);
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:666:33
+
+    Error Context: test-results/e2e-demo-artifacts/demo-RD-92-warm-paper-phot-ae6b7-nd-dark-with-reduced-motion/error-context.md
+
+  1 failed
+    e2e-web/demo.spec.js:571:1 › RD-92 warm paper, photo shadows and the reaction pop in the demo, light and dark, with reduced motion 

@@ -1,0 +1,138 @@
+qa-tdd GUX-SK-R1..R11 red run, 2026-11-25, HEAD 2fffaa9 + test-only change
+Label: RED (expected) - tests written first; product code unchanged
+Command: cd app && npx jest --ci --verbose src/screens/__tests__/shareKindsSave.test.tsx (1 run)
+Typecheck: npx tsc --noEmit -> exit 0
+
+Failing tests:
+  - SHARE-U-17 "Pick who gets it" opens up only when the required fields are filled › SHARE-U-17 event: off while empty, off with any one required field blank or spaces only, on with every required one filled and the optional ones blank
+  - SHARE-U-18 it opens the same who-gets-it picker as photos, nothing pre-picked (SHARE-U-3, DEC-73/79) › SHARE-U-18 event: the group tiles show, none picked even with a saved last audience; a pick names the people on Send
+  - SHARE-U-19 Send makes exactly one post of that kind, published with no media, and Share empties › SHARE-U-19 event: one createPost with the fields as details and the picked group, then publishPost; no upload; back to the empty postcard
+  - SHARE-U-21 PRIV-VC-D1 the Saying card says who will see who said it, before sending › SHARE-U-21 the Saying card shows "Everyone you send this to will see these words and who said them." where screen readers reach it, 17 pt+
+  - SHARE-U-22 a refusal shows a plain notice and keeps every word (A1) › SHARE-U-22 42501 post_kinds_off on event: a notice that says the words were kept; the card and its words stay; nothing published
+  - SHARE-U-22 a refusal shows a plain notice and keeps every word (A1) › SHARE-U-22 23514 a bad field on event: a notice that says the words were kept; the card and its words stay; nothing published
+  - SHARE-U-23 grandparent UX on the working cards › SHARE-U-23 event: with the picker open and a group picked, every tap target is labelled and 48 pt+, every text 17 pt+
+  - SHARE-U-22 guards: a non-number age, and every existing notice still announces itself › SHARE-U-22 Saying age "four": a local notice asks for a number, every word stays, and nothing reaches the server
+  - SHARE-U-22 guards: a non-number age, and every existing notice still announces itself › SHARE-U-22 Saying age "4.5": a local notice asks for a number, every word stays, and nothing reaches the server
+  - SHARE-U-22 guards: a non-number age, and every existing notice still announces itself › SHARE-U-22 Saying age "-4": a local notice asks for a number, every word stays, and nothing reaches the server
+  - SHARE-U-22 guards: a non-number age, and every existing notice still announces itself › SHARE-U-22 Saying age "1000": a local notice asks for a number, every word stays, and nothing reaches the server
+  - GUX-SK-R1 (P1) Event "What day": checked before the picker opens, plain words for a bad day › GUX-SK-R1 the field is labelled "What day" (not "When") with the placeholder "Like 2026-12-24"
+  - GUX-SK-R1 (P1) Event "What day": checked before the picker opens, plain words for a bad day › GUX-SK-R1 What day "Saturday": a local notice, the tiles stay closed, createPost never called, words kept
+  - GUX-SK-R1 (P1) Event "What day": checked before the picker opens, plain words for a bad day › GUX-SK-R1 What day "2026-13-40": a local notice, the tiles stay closed, createPost never called, words kept
+  - GUX-SK-R1 (P1) Event "What day": checked before the picker opens, plain words for a bad day › GUX-SK-R1 a 23514 from the server says exactly how the day should look
+  - GUX-SK-R2 (P1) the age is checked before the picker opens; every notice scrolls to the top › GUX-SK-R2 Saying age "four": the age notice shows on "Pick who gets it", the tiles stay closed, the page scrolls to the top
+  - GUX-SK-R2 (P1) the age is checked before the picker opens; every notice scrolls to the top › GUX-SK-R2 a bad day (local notice) scrolls the page to the top
+  - GUX-SK-R3 (P1) a line says what to fill in while "Pick who gets it" is off › GUX-SK-R3 event: "Fill in What's happening and What day to go on." shows while the button is off and is gone once it is on
+  - GUX-SK-R3 (P1) a line says what to fill in while "Pick who gets it" is off › GUX-SK-R3 news: "Write your news to go on." shows while the button is off and is gone once it is on
+  - GUX-SK-R3 (P1) a line says what to fill in while "Pick who gets it" is off › GUX-SK-R3 saying: "Fill in What they said and Who said it to go on." shows while the button is off and is gone once it is on
+  - GUX-SK-R4 (P1) opening the tiles puts the keyboard away and brings "To:" into view › GUX-SK-R4 event: Keyboard.dismiss() and a scroll down to the tiles
+  - GUX-SK-R4 (P1) opening the tiles puts the keyboard away and brings "To:" into view › GUX-SK-R4 news: Keyboard.dismiss() and a scroll down to the tiles
+  - GUX-SK-R4 (P1) opening the tiles puts the keyboard away and brings "To:" into view › GUX-SK-R4 saying: Keyboard.dismiss() and a scroll down to the tiles
+  - GUX-SK-R5 / R6 exact words for signed out and switched off › GUX-SK-R5 (P1) AUTH on event: the notice reads exactly "You're signed out, so this didn't send. Signing in again clears this card, so copy your words first if you need them."
+  - GUX-SK-R5 / R6 exact words for signed out and switched off › GUX-SK-R5 (P1) AUTH on news: the notice reads exactly "You're signed out, so this didn't send. Signing in again clears this card, so copy your words first if you need them."
+  - GUX-SK-R5 / R6 exact words for signed out and switched off › GUX-SK-R6 (P2) 42501 on event: the notice reads exactly "This can't be sent right now. Your words are kept. Tap Cancel, or ask whoever set up your family."
+  - GUX-SK-R5 / R6 exact words for signed out and switched off › GUX-SK-R6 (P2) 42501 on news: the notice reads exactly "This can't be sent right now. Your words are kept. Tap Cancel, or ask whoever set up your family."
+  - GUX-SK-R7 (P2) the Feed event line names the weekday › GUX-SK-R7 eventDay: "Saturday, October 31" this year; "Wednesday, December 24, 2025" another year
+  - GUX-SK-R7 (P2) the Feed event line names the weekday › GUX-SK-R7 in Feed, Grandma Jo sees "Saturday, October 31 · Grandpa Earl’s farm"
+  - GUX-SK-R8 (P2) the Saying line names the words, who said them, and the age only when there is one › GUX-SK-R8 blank age: "...these words and who said them."; an age typed: "...these words, who said them, and the age."; cleared: back again
+  - GUX-SK-R9 (P2) kind tile words are type.headline › GUX-SK-R9 Easy view off: Event, News and Saying words are headline (17 pt, SemiBold)
+  - GUX-SK-R9 (P2) kind tile words are type.headline › GUX-SK-R9 Easy view on: Event, News and Saying words are headline (21 pt, SemiBold)
+  - GUX-SK-R10 (P2) kind card field underlines use c.tabLine › GUX-SK-R10 event: every field's underline is c.tabLine, not c.line
+  - GUX-SK-R10 (P2) kind card field underlines use c.tabLine › GUX-SK-R10 news: every field's underline is c.tabLine, not c.line
+  - GUX-SK-R10 (P2) kind card field underlines use c.tabLine › GUX-SK-R10 saying: every field's underline is c.tabLine, not c.line
+  - GUX-SK-R11 (P2) Cancel on a card with words asks first › GUX-SK-R11 event with words: "Throw away this card?"; "Keep writing" keeps every word, "Throw away" empties Share
+  - GUX-SK-R11 (P2) Cancel on a card with words asks first › GUX-SK-R11 news with words: "Throw away this card?"; "Keep writing" keeps every word, "Throw away" empties Share
+  - GUX-SK-R11 (P2) Cancel on a card with words asks first › GUX-SK-R11 saying with words: "Throw away this card?"; "Keep writing" keeps every word, "Throw away" empties Share
+
+Test Suites: 1 failed, 1 total
+Tests:       38 failed, 21 passed, 59 total
+
+Failure reasons (first lines):
+  ● SHARE-U-17 "Pick who gets it" opens up only when the required fields are filled › SHARE-U-17 event: off while empty, off with any one required field blank or spaces only, on with every required one filled and the optional ones blank
+    Unable to find an element with accessibility label: What day
+  ● SHARE-U-18 it opens the same who-gets-it picker as photos, nothing pre-picked (SHARE-U-3, DEC-73/79) › SHARE-U-18 event: the group tiles show, none picked even with a saved last audience; a pick names the people on Send
+    Unable to find an element with accessibility label: What day
+  ● SHARE-U-19 Send makes exactly one post of that kind, published with no media, and Share empties › SHARE-U-19 event: one createPost with the fields as details and the picked group, then publishPost; no upload; back to the empty postcard
+    Unable to find an element with accessibility label: What day
+  ● SHARE-U-21 PRIV-VC-D1 the Saying card says who will see who said it, before sending › SHARE-U-21 the Saying card shows "Everyone you send this to will see these words and who said them." where screen readers reach it, 17 pt+
+    Unable to find an element with text: Everyone you send this to will see these words and who said them.
+  ● SHARE-U-22 a refusal shows a plain notice and keeps every word (A1) › SHARE-U-22 42501 post_kinds_off on event: a notice that says the words were kept; the card and its words stay; nothing published
+    Unable to find an element with accessibility label: What day
+  ● SHARE-U-22 a refusal shows a plain notice and keeps every word (A1) › SHARE-U-22 23514 a bad field on event: a notice that says the words were kept; the card and its words stay; nothing published
+    Unable to find an element with accessibility label: What day
+  ● SHARE-U-23 grandparent UX on the working cards › SHARE-U-23 event: with the picker open and a group picked, every tap target is labelled and 48 pt+, every text 17 pt+
+    Unable to find an element with accessibility label: What day
+  ● SHARE-U-22 guards: a non-number age, and every existing notice still announces itself › SHARE-U-22 Saying age "four": a local notice asks for a number, every word stays, and nothing reaches the server
+    Unable to find an element with role: alert
+  ● SHARE-U-22 guards: a non-number age, and every existing notice still announces itself › SHARE-U-22 Saying age "4.5": a local notice asks for a number, every word stays, and nothing reaches the server
+    Unable to find an element with role: alert
+  ● SHARE-U-22 guards: a non-number age, and every existing notice still announces itself › SHARE-U-22 Saying age "-4": a local notice asks for a number, every word stays, and nothing reaches the server
+    Unable to find an element with role: alert
+  ● SHARE-U-22 guards: a non-number age, and every existing notice still announces itself › SHARE-U-22 Saying age "1000": a local notice asks for a number, every word stays, and nothing reaches the server
+    Unable to find an element with role: alert
+  ● GUX-SK-R1 (P1) Event "What day": checked before the picker opens, plain words for a bad day › GUX-SK-R1 the field is labelled "What day" (not "When") with the placeholder "Like 2026-12-24"
+    Unable to find an element with text: What day
+  ● GUX-SK-R1 (P1) Event "What day": checked before the picker opens, plain words for a bad day › GUX-SK-R1 What day "Saturday": a local notice, the tiles stay closed, createPost never called, words kept
+    Unable to find an element with accessibility label: What day
+  ● GUX-SK-R1 (P1) Event "What day": checked before the picker opens, plain words for a bad day › GUX-SK-R1 What day "2026-13-40": a local notice, the tiles stay closed, createPost never called, words kept
+    Unable to find an element with accessibility label: What day
+  ● GUX-SK-R1 (P1) Event "What day": checked before the picker opens, plain words for a bad day › GUX-SK-R1 a 23514 from the server says exactly how the day should look
+    Unable to find an element with accessibility label: What day
+  ● GUX-SK-R2 (P1) the age is checked before the picker opens; every notice scrolls to the top › GUX-SK-R2 Saying age "four": the age notice shows on "Pick who gets it", the tiles stay closed, the page scrolls to the top
+    Unable to find an element with role: alert
+  ● GUX-SK-R2 (P1) the age is checked before the picker opens; every notice scrolls to the top › GUX-SK-R2 a bad day (local notice) scrolls the page to the top
+    Unable to find an element with accessibility label: What day
+  ● GUX-SK-R3 (P1) a line says what to fill in while "Pick who gets it" is off › GUX-SK-R3 event: "Fill in What's happening and What day to go on." shows while the button is off and is gone once it is on
+    Unable to find an element with text: Fill in What's happening and What day to go on.
+  ● GUX-SK-R3 (P1) a line says what to fill in while "Pick who gets it" is off › GUX-SK-R3 news: "Write your news to go on." shows while the button is off and is gone once it is on
+    Unable to find an element with text: Write your news to go on.
+  ● GUX-SK-R3 (P1) a line says what to fill in while "Pick who gets it" is off › GUX-SK-R3 saying: "Fill in What they said and Who said it to go on." shows while the button is off and is gone once it is on
+    Unable to find an element with text: Fill in What they said and Who said it to go on.
+  ● GUX-SK-R4 (P1) opening the tiles puts the keyboard away and brings "To:" into view › GUX-SK-R4 event: Keyboard.dismiss() and a scroll down to the tiles
+    Unable to find an element with accessibility label: What day
+  ● GUX-SK-R4 (P1) opening the tiles puts the keyboard away and brings "To:" into view › GUX-SK-R4 news: Keyboard.dismiss() and a scroll down to the tiles
+    Received number of calls:    0
+  ● GUX-SK-R4 (P1) opening the tiles puts the keyboard away and brings "To:" into view › GUX-SK-R4 saying: Keyboard.dismiss() and a scroll down to the tiles
+    Received number of calls:    0
+  ● GUX-SK-R5 / R6 exact words for signed out and switched off › GUX-SK-R5 (P1) AUTH on event: the notice reads exactly "You're signed out, so this didn't send. Signing in again clears this card, so copy your words first if you need them."
+    Unable to find an element with accessibility label: What day
+  ● GUX-SK-R5 / R6 exact words for signed out and switched off › GUX-SK-R5 (P1) AUTH on news: the notice reads exactly "You're signed out, so this didn't send. Signing in again clears this card, so copy your words first if you need them."
+    Expected: "You're signed out, so this didn't send. Signing in again clears this card, so copy your words first if you need them."
+    Received: "Please sign in again. Your words are kept on this screen until you leave it."
+  ● GUX-SK-R5 / R6 exact words for signed out and switched off › GUX-SK-R6 (P2) 42501 on event: the notice reads exactly "This can't be sent right now. Your words are kept. Tap Cancel, or ask whoever set up your family."
+    Unable to find an element with accessibility label: What day
+  ● GUX-SK-R5 / R6 exact words for signed out and switched off › GUX-SK-R6 (P2) 42501 on news: the notice reads exactly "This can't be sent right now. Your words are kept. Tap Cancel, or ask whoever set up your family."
+    Expected: "This can't be sent right now. Your words are kept. Tap Cancel, or ask whoever set up your family."
+    Received: "Events, news and sayings are switched off for this family right now. Your words are kept."
+  ● GUX-SK-R7 (P2) the Feed event line names the weekday › GUX-SK-R7 eventDay: "Saturday, October 31" this year; "Wednesday, December 24, 2025" another year
+    Expected: "Saturday, October 31"
+    Received: "October 31"
+  ● GUX-SK-R7 (P2) the Feed event line names the weekday › GUX-SK-R7 in Feed, Grandma Jo sees "Saturday, October 31 · Grandpa Earl’s farm"
+    Expected substring: "Saturday, October 31 · Grandpa Earl’s farm"
+    Received string:    "C Chase Pumpkin patch October 31 · Grandpa Earl’s farm ❤️ 😂 👍 🎉 Just now Alex and 2 more can see this. Post Alex and Chase will read this."
+  ● GUX-SK-R8 (P2) the Saying line names the words, who said them, and the age only when there is one › GUX-SK-R8 blank age: "...these words and who said them."; an age typed: "...these words, who said them, and the age."; cleared: back again
+    Unable to find an element with text: Everyone you send this to will see these words and who said them.
+  ● GUX-SK-R9 (P2) kind tile words are type.headline › GUX-SK-R9 Easy view off: Event, News and Saying words are headline (17 pt, SemiBold)
+    -   "family": "AtkinsonHyperlegibleNext_600SemiBold",
+    +   "family": "AtkinsonHyperlegibleNext_400Regular",
+    -   "size": 17,
+    +   "size": 15,
+  ● GUX-SK-R9 (P2) kind tile words are type.headline › GUX-SK-R9 Easy view on: Event, News and Saying words are headline (21 pt, SemiBold)
+    -   "family": "AtkinsonHyperlegibleNext_600SemiBold",
+    +   "family": "AtkinsonHyperlegibleNext_400Regular",
+    -   "size": 21,
+    +   "size": 19,
+  ● GUX-SK-R10 (P2) kind card field underlines use c.tabLine › GUX-SK-R10 event: every field's underline is c.tabLine, not c.line
+    -   "tabLine": true,
+    +   "tabLine": false,
+  ● GUX-SK-R10 (P2) kind card field underlines use c.tabLine › GUX-SK-R10 news: every field's underline is c.tabLine, not c.line
+    -   "tabLine": true,
+    +   "tabLine": false,
+  ● GUX-SK-R10 (P2) kind card field underlines use c.tabLine › GUX-SK-R10 saying: every field's underline is c.tabLine, not c.line
+    -   "tabLine": true,
+    +   "tabLine": false,
+  ● GUX-SK-R11 (P2) Cancel on a card with words asks first › GUX-SK-R11 event with words: "Throw away this card?"; "Keep writing" keeps every word, "Throw away" empties Share
+    Unable to find an element with role: header, name: Throw away this card?
+  ● GUX-SK-R11 (P2) Cancel on a card with words asks first › GUX-SK-R11 news with words: "Throw away this card?"; "Keep writing" keeps every word, "Throw away" empties Share
+    Unable to find an element with role: header, name: Throw away this card?
+  ● GUX-SK-R11 (P2) Cancel on a card with words asks first › GUX-SK-R11 saying with words: "Throw away this card?"; "Keep writing" keeps every word, "Throw away" empties Share
+    Unable to find an element with role: header, name: Throw away this card?

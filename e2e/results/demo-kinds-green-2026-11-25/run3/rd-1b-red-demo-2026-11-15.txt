@@ -1,0 +1,151 @@
+
+> hearth-app@1.0.0 e2e:demo
+> npm run export:web:demo && PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers node ../e2e/node_modules/@playwright/test/cli.js test -c e2e-web/playwright.demo.config.js -g RD-
+
+
+> hearth-app@1.0.0 export:web:demo
+> EXPO_PUBLIC_HEARTH_DEMO=1 expo export --platform web --output-dir dist-demo --clear
+
+Using src/app as the root directory for Expo Router.
+Starting Metro Bundler
+
+warning: Bundler cache is empty, rebuilding (this may take a minute)
+Web Bundled 25752ms node_modules/expo-router/entry.js (1295 modules)
+
+› Assets (19):
+node_modules/@expo-google-fonts/material-symbols/400Regular/MaterialSymbols_400Regular.6b4f0c2d698edccb36b0f132059c0205.ttf (972KB)
+node_modules/expo-router/assets/arrow_down.017bc6ba3fc25503e5eb5e53826d48a8.png (9.5KB)
+node_modules/expo-router/assets/error.d1ea1496f9057eb392d5bbf3732a61b7.png (469B)
+node_modules/expo-router/assets/file.19eeb73b9593a38f8e9f418337fc7d10.png (138B)
+node_modules/expo-router/assets/forward.d8b800c443b8972542883e0b9de2bdc6.png (188B)
+node_modules/expo-router/assets/pkg.ab19f4cbc543357183a20571f68380a3.png (364B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon-mask.0a328cd9c1afd0afe8e3b1ec5165b1b4.png (653B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon.35ba0eaec5a4f5ed12ca16fabeae451d.png (207B)
+node_modules/expo-router/assets/react-navigation/elements/clear-icon.c94f6478e7ae0cdd9f15de1fcb9e5e55.png (4 variations | 425B)
+node_modules/expo-router/assets/react-navigation/elements/close-icon.808e1b1b9b53114ec2838071a7e6daa7.png (4 variations | 235B)
+node_modules/expo-router/assets/react-navigation/elements/search-icon.286d67d3f74808a60a78d3ebf1a5fb57.png (928B)
+node_modules/expo-router/assets/sitemap.412dd9275b6b48ad28f5e3d81bb1f626.png (465B)
+node_modules/expo-router/assets/unmatched.20e71bdf79e3a97bf55fd9e164041578.png (4.8KB)
+
+› web bundles (20):
+_expo/static/css/native-tabs.module-78b0f59737571f455720970791a36bdd.css (2.5KB)
+_expo/static/js/web/__common-31783869e71bed5b99e6a5fb13078beb.js (599KB)
+_expo/static/js/web/__expo-metro-runtime-8c088df87a31e4e6accd81c554ec290d.js (3.8KB)
+_expo/static/js/web/_layout-331e2a8cf1b3e8d5160a18b312e81e6b.js (344KB)
+_expo/static/js/web/_layout-4a185bf50695cbd384722a0cc3f26615.js (52KB)
+_expo/static/js/web/[code]-49fa948f2ee75ac35b96d8ea16e3376f.js (3.6KB)
+_expo/static/js/web/[postId]-50bb0bb1d433e7c1c617da497fb3a7a4.js (371B)
+_expo/static/js/web/+not-found-711d03d647551d44389c524e3131ef5c.js (743B)
+_expo/static/js/web/ed448-e4defc6c7d618b9f8d3abb7d6d238adc.js (12KB)
+_expo/static/js/web/entry-9989d2194c4c1e8fc0c17aced7019bfc.js (1.1MB)
+_expo/static/js/web/groups-bd88e82ab48ac50ef8b1bb527be9b0ac.js (11KB)
+_expo/static/js/web/help-0e043926df94148933b0a41f5acc2918.js (1.3KB)
+_expo/static/js/web/index-4cbe241e406871ca6e70d86342652d30.js (429B)
+_expo/static/js/web/index-b8ee99e4eef30d3b6855b56b346f5e61.js (413B)
+_expo/static/js/web/me-30b098cfaa19a72f78f7598401a70f7e.js (2.6KB)
+_expo/static/js/web/mod-d8d902fc97b65e667253ace340b5f0cb.js (14KB)
+_expo/static/js/web/nist-4b64f20a5781992dba511394587a7fd5.js (21KB)
+_expo/static/js/web/photos-a34d5ec5739c08d6890e4aeec222e842.js (293KB)
+_expo/static/js/web/share-956626b7677420a2ec1fa21f4764102c.js (11KB)
+_expo/static/js/web/sign-in-e3871926da1e1c19b1bad5c9eecfc928.js (1.1KB)
+
+› Files (3):
+favicon.ico (15KB)
+index.html (1.6KB)
+metadata.json (49B)
+
+Exported: dist-demo
+
+Running 3 tests using 1 worker
+
+  ✘  1 e2e-web/demo.spec.js:86:1 › HARD-7 storage blocked (private window, strict cookie settings): the demo still opens with the sample family (15.5s)
+  ✘  2 e2e-web/demo.spec.js:164:1 › RD-27 Kai switches Family color to Forest and the demo recolors; Grandma Jo stays Ember with no picker (1.5m)
+  ✘  3 e2e-web/demo.spec.js:194:1 › RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma Jo gets three tabs (16.4s)
+
+
+  1) e2e-web/demo.spec.js:86:1 › HARD-7 storage blocked (private window, strict cookie settings): the demo still opens with the sample family 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 15000ms
+      - waiting for getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })
+
+
+      93 |   page.on('pageerror', (e) => mine.push(String(e)));
+      94 |   await page.goto('/');
+    > 95 |   await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ } /* RD-11 */)).toBeVisible();
+         |                                                                                                      ^
+      96 |   await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
+      97 |   expect(mine).toEqual([]);
+      98 | });
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:95:102
+
+    Error Context: test-results/e2e-demo-artifacts/demo-HARD-7-storage-blocke-a6ddd-pens-with-the-sample-family/error-context.md
+
+  2) e2e-web/demo.spec.js:164:1 › RD-27 Kai switches Family color to Forest and the demo recolors; Grandma Jo stays Ember with no picker 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.click: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByRole('tab', { name: /^More/ })
+
+
+      170 |   await page.goto('/');
+      171 |   await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
+    > 172 |   await page.getByRole('tab', { name: /^More/ }).click();
+          |                                                  ^
+      173 |   await page.getByRole('button', { name: 'Family color' }).click();
+      174 |   await expect(page.getByRole('heading', { name: 'Family color' })).toBeVisible();
+      175 |   await expect(page.getByRole('radio', { name: 'Ember' })).toBeChecked();
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:172:50
+
+    Error Context: test-results/e2e-demo-artifacts/demo-RD-27-Kai-switches-Fa-5ceaf--stays-Ember-with-no-picker/error-context.md
+
+  3) e2e-web/demo.spec.js:194:1 › RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma Jo gets three tabs 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: getByRole('tab')
+    Timeout: 15000ms
+    - Expected  - 3
+    + Received  + 3
+
+      Array [
+    -   /Gallery/,
+    +   "Photos",
+        "Share",
+    -   /Feed/,
+    -   /More/,
+    +   "Groups",
+    +   "Me",
+      ]
+
+    Call log:
+      - Expect "toHaveText" with timeout 15000ms
+      - waiting for getByRole('tab')
+        19 × locator resolved to 4 elements
+
+
+      196 |   await page.goto('/');
+      197 |   await expect(page.getByText('Mia turned 5!', { exact: true })).toBeVisible();
+    > 198 |   await expect(page.getByRole('tab')).toHaveText([/Gallery/, /Share/, /Feed/, /More/]);
+          |                                       ^
+      199 |   await expect(page.getByRole('tab', { name: 'Gallery' })).toHaveAttribute('aria-selected', 'true');
+      200 |   await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible();
+      201 |   await page.getByRole('tab', { name: /^More/ }).click();
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:198:39
+
+    Error Context: test-results/e2e-demo-artifacts/demo-RD-9-RD-10-RD-15-Gall-54f93--Grandma-Jo-gets-three-tabs/error-context.md
+
+  3 failed
+    e2e-web/demo.spec.js:86:1 › HARD-7 storage blocked (private window, strict cookie settings): the demo still opens with the sample family 
+    e2e-web/demo.spec.js:164:1 › RD-27 Kai switches Family color to Forest and the demo recolors; Grandma Jo stays Ember with no picker 
+    e2e-web/demo.spec.js:194:1 › RD-9 RD-10 RD-15 Gallery opens first; More is a full-screen menu; Grandma Jo gets three tabs 
+exit 1

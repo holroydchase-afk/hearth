@@ -1,0 +1,144 @@
+PR #174 fix round, red run (qa-tdd, 2026-11-24). Branch claude/project-thread-4ulu9i at 8c6d28a + test edits only, no product code.
+
+=== jest: npx jest src/ui/__tests__/redesignLint.test.ts src/screens/__tests__/shareStart.test.tsx -t 'QA-R4|GUX-T2|GUX-T5|RD-4' --verbose ===
+FAIL src/ui/__tests__/redesignLint.test.ts
+  ● RD 1a source scans › QA-R4 RD-4 ShareKinds.tsx uses the accent only for the kind icon (SystemIcon color), nowhere else: no other c.accent, no tone="accent"
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "screens/ShareKinds.tsx:58 tone=\"accent\"",
+    + ]
+
+      90 |     const notIcon = uses.filter((u) => !/<SystemIcon\b[^>]*\bcolor=\{c\.accent\}/.test(text[parseInt(u.split(':')[1]!, 10) - 1] ?? ''));
+      91 |     expect(notIcon).toEqual([]);
+    > 92 |     expect(find(/tone=["']accent["']|tone=\{["']accent["']\}/, file)).toEqual([]);
+         |                                                                       ^
+      93 |   });
+      94 |
+      95 |   it('RD-4 a spinner is never the accent color', () => {
+
+      at Object.toEqual (src/ui/__tests__/redesignLint.test.ts:92:71)
+
+FAIL src/screens/__tests__/shareStart.test.tsx (7.574 s)
+  ● GUX-T2 P1 the empty postcard is top-aligned under "New post" › GUX-T2 (light) "share-empty-wrap" does not center the card: justifyContent unset or flex-start
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "justifyContent": "center",
+    -   "topAligned": true,
+    +   "topAligned": false,
+      }
+
+      983 |       const jc = flat(wrap.props.style).justifyContent;
+      984 |       expect({ justifyContent: jc ?? 'unset', topAligned: jc === undefined || jc === 'flex-start' })
+    > 985 |         .toEqual({ justifyContent: jc ?? 'unset', topAligned: true });
+          |          ^
+      986 |       expect(within(screen.getByTestId('share-card'), wrap)).toBe(true);
+      987 |     });
+      988 |   }
+
+      at Object.toEqual (src/screens/__tests__/shareStart.test.tsx:985:10)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● GUX-T2 P1 the empty postcard is top-aligned under "New post" › GUX-T2 (dark) "share-empty-wrap" does not center the card: justifyContent unset or flex-start
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "justifyContent": "center",
+    -   "topAligned": true,
+    +   "topAligned": false,
+      }
+
+      983 |       const jc = flat(wrap.props.style).justifyContent;
+      984 |       expect({ justifyContent: jc ?? 'unset', topAligned: jc === undefined || jc === 'flex-start' })
+    > 985 |         .toEqual({ justifyContent: jc ?? 'unset', topAligned: true });
+          |          ^
+      986 |       expect(within(screen.getByTestId('share-card'), wrap)).toBe(true);
+      987 |     });
+      988 |   }
+
+      at Object.toEqual (src/screens/__tests__/shareStart.test.tsx:985:10)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 2 failed, 2 total
+Tests:       3 failed, 72 skipped, 32 passed, 107 total
+Snapshots:   0 total
+Time:        7.877 s, estimated 10 s
+Ran all test suites matching src/ui/__tests__/redesignLint.test.ts|src/screens/__tests__/shareStart.test.tsx with tests matching "QA-R4|GUX-T2|GUX-T5|RD-4".
+
+=== Playwright demo (390x844, dist-demo): node ../e2e/node_modules/@playwright/test/cli.js test -c e2e-web/playwright.demo.config.js e2e-web/demo.spec.js -g 'GUX-T2|GUX-T6' ===
+      1486 |     await expect(card).toBeVisible();
+      1487 |     const gap = Math.round((await card.boundingBox()).y - (await rowBottom(heading)));
+    > 1488 |     expect.soft({ scheme, gap, close: gap >= 0 && gap <= 32 }).toEqual({ scheme, gap, close: true });
+           |                                                                ^
+      1489 |   }
+      1490 | });
+      1491 |
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:1488:64
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "close": true,
+    +   "close": false,
+        "gap": 125,
+        "scheme": "dark",
+      }
+
+      1486 |     await expect(card).toBeVisible();
+      1487 |     const gap = Math.round((await card.boundingBox()).y - (await rowBottom(heading)));
+    > 1488 |     expect.soft({ scheme, gap, close: gap >= 0 && gap <= 32 }).toEqual({ scheme, gap, close: true });
+           |                                                                ^
+      1489 |   }
+      1490 | });
+      1491 |
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:1488:64
+
+    Error Context: test-results/e2e-demo-artifacts/demo-GUX-T2-at-390-px-the--608ab-he-New-post-row-light-dark-/error-context.md
+
+  2) e2e-web/demo.spec.js:1496:1 › GUX-T6 at 390 x 844 Gallery's birthday card "Not now", once scrolled to, sits clear above the floating tab bar 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "barTop": 764,
+    -   "clear": true,
+    +   "clear": false,
+        "notNowBottom": 844,
+      }
+
+      1508 |   const barTop = (await bar.boundingBox()).y;
+      1509 |   expect({ notNowBottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: b.y + b.height <= barTop })
+    > 1510 |     .toEqual({ notNowBottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: true });
+           |      ^
+      1511 |   // Keyboard reach: Tab focus lands on it and it is not hidden behind the bar (WCAG 2.4.11).
+      1512 |   await page.goto('/');
+      1513 |   await galleryLoaded(page);
+        at /home/user/Hearth/app/e2e-web/demo.spec.js:1510:6
+
+    Error Context: test-results/e2e-demo-artifacts/demo-GUX-T6-at-390-x-844-G-42b25--above-the-floating-tab-bar/error-context.md
+
+  2 failed
+    e2e-web/demo.spec.js:1476:1 › GUX-T2 at 390 px the empty postcard is top-aligned: its top is within 32 px of the "New post" row (light, dark) 
+    e2e-web/demo.spec.js:1496:1 › GUX-T6 at 390 x 844 Gallery's birthday card "Not now", once scrolled to, sits clear above the floating tab bar 

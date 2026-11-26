@@ -1,0 +1,66 @@
+Redesign 1b gate, qa-tdd, 2026-11-15, at f2695cb (engineer b298503 on red tests 2613c20): requested suites green 3x; e2e:site red once (QA-R1)
+=== RUN 1 jest
+exit 0
+Test Suites: 125 passed, 125 total
+Tests:       1 skipped, 1087 passed, 1088 total
+=== RUN 1 typecheck
+exit 0
+=== RUN 1 e2e:demo
+exit 0
+  5 skipped
+  11 passed (29.1s)
+=== RUN 1 e2e:web
+exit 0
+  11 skipped
+  5 passed (29.8s)
+=== RUN 1 backend tests/run.sh
+exit 0
+backend: every RESULT line 0 failed (1208 passed in total)
+=== RUN 1 agents.verify
+exit 0
+=== RUN 2 jest
+exit 0
+Test Suites: 125 passed, 125 total
+Tests:       1 skipped, 1087 passed, 1088 total
+=== RUN 2 typecheck
+exit 0
+=== RUN 2 e2e:demo
+exit 0
+  5 skipped
+  11 passed (34.9s)
+=== RUN 2 e2e:web
+exit 0
+  11 skipped
+  5 passed (28.7s)
+=== RUN 2 backend tests/run.sh
+exit 0
+backend: every RESULT line 0 failed (1208 passed in total)
+=== RUN 2 agents.verify
+exit 0
+=== RUN 3 jest
+exit 0
+Test Suites: 125 passed, 125 total
+Tests:       1 skipped, 1087 passed, 1088 total
+=== RUN 3 typecheck
+exit 0
+=== RUN 3 e2e:demo
+exit 0
+  5 skipped
+  11 passed (29.3s)
+=== RUN 3 e2e:web
+exit 0
+  11 skipped
+  5 passed (29.0s)
+=== RUN 3 backend tests/run.sh
+exit 0
+backend: every RESULT line 0 failed (1208 passed in total)
+=== RUN 3 agents.verify
+exit 0
+DONE
+(backend run as the postgres user, local Postgres 16. agents.verify = studio-checks.json agents.verify. e2e:site not run; site.spec.js DEMO-5 edit unexercised here.)
+=== e2e:site once at f2695cb (1b only; later 1c test edits stashed)
+  ✘   4 e2e-web/site.spec.js:20:3 › DEMO-5 a cold load of /demo/hearth/groups works with no server fallback (15.1s)
+  ✘   5 e2e-web/site.spec.js:20:3 › DEMO-5 a cold load of /demo/hearth/me works with no server fallback (15.2s)
+  2 failed
+  11 passed (48.6s)
+QA-R1 / B19: /groups and /me were 1b's removed tabs; only /photos redirects.

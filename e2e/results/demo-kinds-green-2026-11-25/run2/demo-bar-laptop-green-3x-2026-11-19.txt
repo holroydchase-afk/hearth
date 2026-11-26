@@ -1,0 +1,13 @@
+DEC-71 R60 demo bar laptop + DEMO-LINK, 2026-11-19, branch claude/project-thread-mmmmnh (dist-demo rebuilt first)
+== run 1
+Tests:       1 skipped, 1 todo, 1507 passed, 1509 total
+typecheck exit 0
+  25 passed (1.3m)
+== run 2
+Tests:       1 skipped, 1 todo, 1507 passed, 1509 total
+typecheck exit 0
+  25 passed (1.2m)
+== run 3
+Tests:       1 skipped, 1 todo, 1507 passed, 1509 total
+typecheck exit 0
+  25 passed (1.2m)

@@ -1,0 +1,25 @@
+GUX polish green gate, qa-tdd, 2026-11-16, at 133a70f (engineer) on red tests ad655d6. 3 runs each.
+jest run 1: Tests:       4 skipped, 1133 passed, 1137 total
+jest run 2: Tests:       4 skipped, 1133 passed, 1137 total
+jest run 3: Tests:       4 skipped, 1133 passed, 1137 total
+typecheck run 1: clean (0 TS errors)
+typecheck run 2: clean (0 TS errors)
+typecheck run 3: clean (0 TS errors)
+e2e:web run 1: 11 skipped 5 passed (31.7s)
+e2e:web run 2: 11 skipped 5 passed (30.6s)
+e2e:web run 3: 11 skipped 5 passed (30.3s)
+e2e:demo run 1: 5 skipped 12 passed (32.8s)
+e2e:demo run 2: 5 skipped 12 passed (33.4s)
+e2e:demo run 3: 5 skipped 12 passed (31.8s)
+e2e:site run 1: 14 passed (18.4s)
+e2e:site run 2: 14 passed (18.4s)
+e2e:site run 3: 14 passed (18.2s)
+backend tests/run.sh run 1 (postgres user, PG16): 1199 passed, 0 failed
+backend tests/run.sh run 2 (postgres user, PG16): 1199 passed, 0 failed
+backend tests/run.sh run 3 (postgres user, PG16): 1199 passed, 0 failed
+agents.verify run 1: exit 0
+agents.verify run 2: exit 0
+agents.verify run 3: exit 0
+Skipped by decision: redesignPolish.test.tsx GUX-R6 names-line tests (3), waiting on Chase (reverses WHO-10/LIVE-4, Nov 5). GUX-R6 privacy pair and Who-sheet tests run. who.test.tsx WHO-10/LIVE-4 and firstMin.test.tsx FIRSTMIN-2 initials tests restored as at origin/main.
+Diff origin/main..HEAD PII grep: only phone is tel:+13045550100 (555-01xx reserved fictional); names are persona nicknames; founder copyright line pre-exists on main.
+Not run: Deno function tests, GitHub CI, real phone.

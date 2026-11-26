@@ -1,0 +1,140 @@
+
+> hearth-app@1.0.0 e2e:web
+> npm run export:web:fake && node ../e2e/node_modules/@playwright/test/cli.js test -c e2e-web/playwright.config.js
+
+
+> hearth-app@1.0.0 export:web:fake
+> EXPO_PUBLIC_HEARTH_FAKE=1 expo export --platform web --output-dir dist-fake --clear
+
+Using src/app as the root directory for Expo Router.
+React Compiler enabled
+Starting Metro Bundler
+
+warning: Bundler cache is empty, rebuilding (this may take a minute)
+Web Bundled 16933ms node_modules/expo-router/entry.js (1339 modules)
+
+› Assets (22):
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/400Regular/AtkinsonHyperlegibleNext_400Regular.86635252a71fd7c43fd5b0c41bdc5d54.ttf (48KB)
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/500Medium/AtkinsonHyperlegibleNext_500Medium.2d5d6c0565845615ac6982fc8abf1095.ttf (48KB)
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/600SemiBold/AtkinsonHyperlegibleNext_600SemiBold.5cf92f89d6fa6a976d135e61e9ffde1f.ttf (48KB)
+node_modules/@expo-google-fonts/material-symbols/400Regular/MaterialSymbols_400Regular.6b4f0c2d698edccb36b0f132059c0205.ttf (972KB)
+node_modules/expo-router/assets/arrow_down.017bc6ba3fc25503e5eb5e53826d48a8.png (9.5KB)
+node_modules/expo-router/assets/error.d1ea1496f9057eb392d5bbf3732a61b7.png (469B)
+node_modules/expo-router/assets/file.19eeb73b9593a38f8e9f418337fc7d10.png (138B)
+node_modules/expo-router/assets/forward.d8b800c443b8972542883e0b9de2bdc6.png (188B)
+node_modules/expo-router/assets/pkg.ab19f4cbc543357183a20571f68380a3.png (364B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon-mask.0a328cd9c1afd0afe8e3b1ec5165b1b4.png (653B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon.35ba0eaec5a4f5ed12ca16fabeae451d.png (207B)
+node_modules/expo-router/assets/react-navigation/elements/clear-icon.c94f6478e7ae0cdd9f15de1fcb9e5e55.png (4 variations | 425B)
+node_modules/expo-router/assets/react-navigation/elements/close-icon.808e1b1b9b53114ec2838071a7e6daa7.png (4 variations | 235B)
+node_modules/expo-router/assets/react-navigation/elements/search-icon.286d67d3f74808a60a78d3ebf1a5fb57.png (928B)
+node_modules/expo-router/assets/sitemap.412dd9275b6b48ad28f5e3d81bb1f626.png (465B)
+node_modules/expo-router/assets/unmatched.20e71bdf79e3a97bf55fd9e164041578.png (4.8KB)
+
+› web bundles (39):
+_expo/static/css/native-tabs.module-78b0f59737571f455720970791a36bdd.css (2.5KB)
+_expo/static/js/web/__common-eea8ece076c184f35ab7ae54a7d0913d.js (944KB)
+_expo/static/js/web/__expo-metro-runtime-8c088df87a31e4e6accd81c554ec290d.js (3.8KB)
+_expo/static/js/web/_layout-2c8ded674d037a4fc53eed4d6b78834a.js (399KB)
+_expo/static/js/web/_layout-30df0d72c01a14c7c94968945ac2266a.js (57KB)
+_expo/static/js/web/_layout-65e2b0b2571d9cfcbb8a2f19d0dd760c.js (320B)
+_expo/static/js/web/_layout-a620b6957bba0e0e62a7da5610ee1435.js (320B)
+_expo/static/js/web/_layout-c4718481da54e3aa287001f83cacbfc2.js (320B)
+_expo/static/js/web/[code]-181e98c620bc8b080546dd19845b152d.js (4.4KB)
+_expo/static/js/web/[postId]-bdd2a11ef366194808f2a6650511a817.js (466B)
+_expo/static/js/web/+not-found-7636392b8a8faa4c562177e40f95fc54.js (910B)
+_expo/static/js/web/birthdays-608d34d543a091031bdd8de3629b68d9.js (444B)
+_expo/static/js/web/birthdays-bfd6c81737c66608a4cdd6bfba3c94cc.js (557B)
+_expo/static/js/web/easy-view-5c12384548cf5c7265373c2f4a9cf2ad.js (444B)
+_expo/static/js/web/ed448-e432b3749a807358268f944d136c5d9e.js (12KB)
+_expo/static/js/web/entry-839f35871a6447416df0a750631d06b1.js (1.1MB)
+_expo/static/js/web/events-ed178b61145b4851f4f5479983398023.js (422B)
+_expo/static/js/web/groups-4264ece480211661208fa2c246d13e95.js (404B)
+_expo/static/js/web/groups-cc0aacc7e3f5e84fa6b07883897646b7.js (12KB)
+_expo/static/js/web/help-385f4f9625da981c7de528593419a980.js (3.1KB)
+_expo/static/js/web/help-a0c4cf22b08076e74224dc8ed635a88f.js (402B)
+_expo/static/js/web/index-3e57106cefe9b2745e248ed4c2d6a0d8.js (473B)
+_expo/static/js/web/index-5447b001b8fbfcd93f0d196f77966dd0.js (599B)
+_expo/static/js/web/index-72c94e67446647d7fc818690605e2fa0.js (525B)
+_expo/static/js/web/index-81b40892c61183e1879e9b282f96d2b5.js (700B)
+_expo/static/js/web/index-9df31d8a20b819448811374d72855207.js (640B)
+_expo/static/js/web/look-34eddef2c11f72999deea3d88689a36a.js (436B)
+_expo/static/js/web/me-ad199ea1fea1745edb1d09c421524f44.js (4.6KB)
+_expo/static/js/web/me-f6a93e50446e8c122ef1e141a03ece29.js (400B)
+_expo/static/js/web/messages-b6a1ff898f98db48dc792cf96f4d91e7.js (6.4KB)
+_expo/static/js/web/mod-8fb3c44a04113abb5ceec4df72f7e3ca.js (14KB)
+_expo/static/js/web/nist-aa8143d7a705d9a8f5b64211bf7c38d8.js (21KB)
+_expo/static/js/web/photos-0b48f053703b72b30f0f88a24664a364.js (386B)
+_expo/static/js/web/search-4c49f84d29210f1668050b1d7ff4e86e.js (5.8KB)
+_expo/static/js/web/share-1a9cc837299c0372531130990eb28b7c.js (22KB)
+_expo/static/js/web/sign-in-f7361284e257830130738d2f999cfdca.js (1.3KB)
+_expo/static/js/web/theme-c7a27727099fbbb62e56fa34f6fc1a06.js (438B)
+_expo/static/js/web/timeline-e91accc53fb9709053c992ed8aa83cdc.js (693B)
+_expo/static/js/web/videos-data-9bfb5d3df971769fa6d309c693bdfe06.js (430B)
+
+› Files (3):
+favicon.ico (15KB)
+index.html (2.1KB)
+metadata.json (49B)
+
+Exported: dist-fake
+
+Running 53 tests using 1 worker
+
+  ✓   1 e2e-web/android-screens.spec.js:162:11 › 360x800, light, Easy view off › WEB-APP-19 Gallery at 360x800, light, Easy view off: no sideways scroll, text 17px+ or a named secondary style (SPEC-TYPE), targets 48x48, no cut text (3.3s)
+  ✓   2 e2e-web/android-screens.spec.js:162:11 › 360x800, light, Easy view off › WEB-APP-19 Share at 360x800, light, Easy view off: no sideways scroll, text 17px+ or a named secondary style (SPEC-TYPE), targets 48x48, no cut text (1.8s)
+  ✓   3 e2e-web/android-screens.spec.js:162:11 › 360x800, light, Easy view off › WEB-APP-19 Feed at 360x800, light, Easy view off: no sideways scroll, text 17px+ or a named secondary style (SPEC-TYPE), targets 48x48, no cut text (3.2s)
+  ✓   4 e2e-web/android-screens.spec.js:162:11 › 360x800, light, Easy view off › WEB-APP-19 More at 360x800, light, Easy view off: no sideways scroll, text 17px+ or a named secondary style (SPEC-TYPE), targets 48x48, no cut text (2.3s)
+  ✓   5 e2e-web/android-screens.spec.js:177:9 › 360x800, light, Easy view off › WEB-APP-20 tab bar at 360x800, light, Easy view off: four tabs inside the screen, 48x48, spoken names kept (1.4s)
+  ✓   6 e2e-web/android-screens.spec.js:162:11 › 360x800, light, Easy view on › WEB-APP-19 Gallery at 360x800, light, Easy view on: no sideways scroll, text 17px+, targets 48x48, no cut text (4.9s)
+  ✓   7 e2e-web/android-screens.spec.js:162:11 › 360x800, light, Easy view on › WEB-APP-19 Share at 360x800, light, Easy view on: no sideways scroll, text 17px+, targets 48x48, no cut text (4.1s)
+  ✓   8 e2e-web/android-screens.spec.js:162:11 › 360x800, light, Easy view on › WEB-APP-19 Feed at 360x800, light, Easy view on: no sideways scroll, text 17px+, targets 48x48, no cut text (4.8s)
+  ✓   9 e2e-web/android-screens.spec.js:162:11 › 360x800, light, Easy view on › WEB-APP-19 More at 360x800, light, Easy view on: no sideways scroll, text 17px+, targets 48x48, no cut text (3.2s)
+  ✓  10 e2e-web/android-screens.spec.js:177:9 › 360x800, light, Easy view on › WEB-APP-20 tab bar at 360x800, light, Easy view on: four tabs inside the screen, 48x48, words uncut (3.1s)
+  ✓  11 e2e-web/android-screens.spec.js:162:11 › 412x915, light, Easy view off › WEB-APP-19 Gallery at 412x915, light, Easy view off: no sideways scroll, text 17px+ or a named secondary style (SPEC-TYPE), targets 48x48, no cut text (3.1s)
+  ✓  12 e2e-web/android-screens.spec.js:162:11 › 412x915, light, Easy view off › WEB-APP-19 Share at 412x915, light, Easy view off: no sideways scroll, text 17px+ or a named secondary style (SPEC-TYPE), targets 48x48, no cut text (2.8s)
+  ✓  13 e2e-web/android-screens.spec.js:162:11 › 412x915, light, Easy view off › WEB-APP-19 Feed at 412x915, light, Easy view off: no sideways scroll, text 17px+ or a named secondary style (SPEC-TYPE), targets 48x48, no cut text (3.5s)
+  ✓  14 e2e-web/android-screens.spec.js:162:11 › 412x915, light, Easy view off › WEB-APP-19 More at 412x915, light, Easy view off: no sideways scroll, text 17px+ or a named secondary style (SPEC-TYPE), targets 48x48, no cut text (2.7s)
+  ✓  15 e2e-web/android-screens.spec.js:177:9 › 412x915, light, Easy view off › WEB-APP-20 tab bar at 412x915, light, Easy view off: four tabs inside the screen, 48x48, spoken names kept (1.5s)
+  ✓  16 e2e-web/android-screens.spec.js:162:11 › 412x915, light, Easy view on › WEB-APP-19 Gallery at 412x915, light, Easy view on: no sideways scroll, text 17px+, targets 48x48, no cut text (4.8s)
+  ✓  17 e2e-web/android-screens.spec.js:162:11 › 412x915, light, Easy view on › WEB-APP-19 Share at 412x915, light, Easy view on: no sideways scroll, text 17px+, targets 48x48, no cut text (4.0s)
+  ✓  18 e2e-web/android-screens.spec.js:162:11 › 412x915, light, Easy view on › WEB-APP-19 Feed at 412x915, light, Easy view on: no sideways scroll, text 17px+, targets 48x48, no cut text (5.2s)
+  ✓  19 e2e-web/android-screens.spec.js:162:11 › 412x915, light, Easy view on › WEB-APP-19 More at 412x915, light, Easy view on: no sideways scroll, text 17px+, targets 48x48, no cut text (3.2s)
+  ✓  20 e2e-web/android-screens.spec.js:177:9 › 412x915, light, Easy view on › WEB-APP-20 tab bar at 412x915, light, Easy view on: four tabs inside the screen, 48x48, words uncut (3.1s)
+  ✓  21 e2e-web/android-screens.spec.js:162:11 › 360x800, dark, Easy view off › WEB-APP-21 Gallery at 360x800, dark, Easy view off: no sideways scroll, text 17px+ or a named secondary style (SPEC-TYPE), targets 48x48, no cut text (3.5s)
+  ✓  22 e2e-web/android-screens.spec.js:162:11 › 360x800, dark, Easy view off › WEB-APP-21 Share at 360x800, dark, Easy view off: no sideways scroll, text 17px+ or a named secondary style (SPEC-TYPE), targets 48x48, no cut text (2.3s)
+  ✓  23 e2e-web/android-screens.spec.js:162:11 › 360x800, dark, Easy view off › WEB-APP-21 Feed at 360x800, dark, Easy view off: no sideways scroll, text 17px+ or a named secondary style (SPEC-TYPE), targets 48x48, no cut text (3.1s)
+  ✓  24 e2e-web/android-screens.spec.js:162:11 › 360x800, dark, Easy view off › WEB-APP-21 More at 360x800, dark, Easy view off: no sideways scroll, text 17px+ or a named secondary style (SPEC-TYPE), targets 48x48, no cut text (2.3s)
+  ✓  25 e2e-web/android-screens.spec.js:177:9 › 360x800, dark, Easy view off › WEB-APP-21 WEB-APP-20 tab bar at 360x800, dark, Easy view off: four tabs inside the screen, 48x48, spoken names kept (1.4s)
+  ✓  26 e2e-web/android-screens.spec.js:162:11 › 360x800, dark, Easy view on › WEB-APP-21 Gallery at 360x800, dark, Easy view on: no sideways scroll, text 17px+, targets 48x48, no cut text (5.2s)
+  ✓  27 e2e-web/android-screens.spec.js:162:11 › 360x800, dark, Easy view on › WEB-APP-21 Share at 360x800, dark, Easy view on: no sideways scroll, text 17px+, targets 48x48, no cut text (4.0s)
+  ✓  28 e2e-web/android-screens.spec.js:162:11 › 360x800, dark, Easy view on › WEB-APP-21 Feed at 360x800, dark, Easy view on: no sideways scroll, text 17px+, targets 48x48, no cut text (4.8s)
+  ✓  29 e2e-web/android-screens.spec.js:162:11 › 360x800, dark, Easy view on › WEB-APP-21 More at 360x800, dark, Easy view on: no sideways scroll, text 17px+, targets 48x48, no cut text (3.2s)
+  ✓  30 e2e-web/android-screens.spec.js:177:9 › 360x800, dark, Easy view on › WEB-APP-21 WEB-APP-20 tab bar at 360x800, dark, Easy view on: four tabs inside the screen, 48x48, words uncut (3.1s)
+  ✓  31 e2e-web/core-loop.spec.js:44:1 › core loop: share → Jo sees it → Ruth does not → heart → comment → delete (21.6s)
+  ✓  32 e2e-web/install.spec.js:30:1 › WEB-APP-13 index.html has one manifest link, a light and a dark theme-color, and the viewport meta (14ms)
+  ✓  33 e2e-web/install.spec.js:47:1 › WEB-APP-14 the manifest is served as JSON: Hearth, standalone, relative start_url and scope, Paper colours (6ms)
+  ✓  34 e2e-web/install.spec.js:64:1 › WEB-APP-15 the manifest icons: 192 and 512 PNG (any) and a 512 maskable PNG, each 200 at its real size (239ms)
+  ✓  35 e2e-web/install.spec.js:80:1 › WEB-APP-16 the maskable icon keeps its outer 10% ring solid Paper, so Android's crop never cuts the mark (255ms)
+  ✓  36 e2e-web/install.spec.js:105:1 › WEB-APP-17 Chromium finds the export installable (no installability errors) with no service worker (1.5s)
+  ✓  37 e2e-web/install.spec.js:118:1 › WEB-APP-17 QA-R1 Chromium still finds the manifest and the app installable from a nested address (/more/easy-view) (2.3s)
+  ✓  38 e2e-web/invite-link.spec.js:15:1 › ONB-4 a link from "Make the invite" opens the "invited you" preview in the web build (5.3s)
+  ✓  39 e2e-web/messages.spec.js:5:1 › MSG-4 the bundled app makes an MLS group and sends a sealed message (3.2s)
+PERF-FEED-1 cold start to first photo: 889, 894, 907 ms (median 894 ms)
+  ✓  40 e2e-web/perf.spec.js:10:1 › PERF-FEED-1 cold start to the first photo on screen is under 2 s (5.5s)
+  -  41 e2e-web/showcase.spec.js:21:5 › showcase phone light
+  -  42 e2e-web/showcase.spec.js:21:5 › showcase phone dark
+  -  43 e2e-web/showcase.spec.js:21:5 › showcase laptop light
+  -  44 e2e-web/showcase.spec.js:21:5 › showcase laptop dark
+  -  45 e2e-web/snapshot.spec.js:16:3 › snapshot (iphone)
+  -  46 e2e-web/snapshot.spec.js:16:3 › snapshot (android)
+  ✓  47 e2e-web/start-family.spec.js:9:1 › START-ON-5 a parent with no family starts one with Two sides, makes the first invite and lands on Gallery (3.9s)
+  ✓  48 e2e-web/video.spec.js:39:1 › VID-18 a video post shows its poster with a Play word button on Photos and the post screen; Play opens the player (4.8s)
+  ✓  49 e2e-web/web-session.spec.js:66:1 › WEB-APP-1 signed in on web, the page reloads: Gallery, still signed in, no sign-in screen (2.3s)
+  ✓  50 e2e-web/web-session.spec.js:73:1 › WEB-APP-2 the tab is closed and Hearth opened again in a new tab: still signed in (2.9s)
+  ✓  51 e2e-web/web-session.spec.js:82:1 › WEB-APP-3 WEB-APP-4 in real Chromium the store writes only sealed values and keeps one non-extractable AES-GCM key in IndexedDB (3.1s)
+  ✓  52 e2e-web/web-session.spec.js:96:1 › WEB-APP-6 sign out removes the sealed store and the IndexedDB key, and a reload shows the sign-in screen (5.0s)
+  ✓  53 e2e-web/web-session.spec.js:110:1 › HRT-WEB.1 persist: navigator.storage.persist() is requested after sign-in on web, not before (2.3s)
+
+  6 skipped
+  47 passed (2.7m)

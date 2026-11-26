@@ -1,0 +1,74 @@
+Review round 1 red run, 2026-11-17, branch claude/project-thread-iyml94 (tests only, before any fix). typecheck: clean.
+
+== jest (1 run) ==
+passed 1134 failed 32 skipped 1
+FAIL redesignPolish.test.tsx | GUX-R7 after Done, Gallery no longer shows New for you or its "N new" chip for those photos | Error: Unable to find an element with role: button, name: Next new photo
+FAIL redesignPolish.test.tsx | GUX-R8 from step 2, Previous and Next (Done on the last) share one row, Previous first | Error: Unable to find an element with role: button, name: Next new photo
+FAIL opening.test.tsx | OPEN-7 GUX-R7 the full post card, the heading "New photos: 1 of 2", and Next and Back to Gallery with words at 48 pt | Error: Unable to find an element with accessibility label: Add a comment for Chase
+FAIL opening.test.tsx | OPEN-7 GUX-R8 Next (Done on the last) is the filled step button; from step 2 "Previous" sits left of it on one row; never a bare "Back" | Error: expect(received).toEqual(expected) // deep equality
+FAIL opening.test.tsx | OPEN-8 GUX-R8 oldest first; Next and Previous move one post; on the last, "Done" (spoken "Done, back to Gallery") returns to Photos | Error: Unable to find an element with role: button, name: Next new photo
+FAIL redesignGallery.test.tsx | RD-21 a "See all" text button (no swipe needed, DS-4) opens the same walk; Done returns to Gallery | Error: Unable to find an element with role: button, name: Next new photo
+FAIL redesignNav.test.tsx | RD-17 Feed keeps today's posts list: newest first, reactions, who can see it by name, replies | Error: Unable to find an element with accessibility label: Add a comment for Chase
+FAIL familyShape.test.tsx | BETA-REPLY-11 after Send it still names them | Error: Unable to find an element with accessibility label: Add a comment for Chase
+FAIL familyShape.test.tsx | BETA-TIME-2 tapping a timeline card opens that post with Love it and a reply box | Error: Unable to find an element with accessibility label: Add a comment for Chase
+FAIL photos.test.tsx | BETA-REPLY-2: writing back shows the comment and says who will see it | Error: Unable to find an element with accessibility label: Add a comment for Chase
+FAIL photos.test.tsx | BETA-REPLY-6: the words name who can read a comment, never only Chase and never a vague "everyone" | Error: Unable to find an element with accessibility label: Add a comment for Chase
+FAIL photos.test.tsx | BETA-REPLY-11: without a reader list (older server) the box falls back to the scope words | Error: Unable to find an element with accessibility label: Add a comment for Chase
+FAIL photos.test.tsx | BETA-AUD-10: when the family opens replies to everyone, the box names who | Error: Unable to find an element with accessibility label: Add a comment for Chase
+FAIL photos.test.tsx | B6: a half-typed comment survives incoming hearts | Error: Unable to find an element with accessibility label: Add a comment for Chase
+FAIL sessions.test.tsx | MOMENT-7 a reply written from a card goes to that card's post | Error: Unable to find an element with accessibility label: Add a comment for Chase
+FAIL demoBar.test.tsx | DEMO-10 UX-R12 the drawer switches to Grandma Jo's view and back in one tap | Error: Unable to find an element with text: /You're Chase, a parent/
+FAIL seed.test.ts | DEMO-3 UX-R12 the demo parent is "Chase"; the rest are made-up names and no surname or "Kai" appears | Error: expect(received).toEqual(expected) // deep equality
+FAIL moments.test.tsx | REACT-7 UX-R5 (Chase, Oct 25 / Nov 17) Love, Haha, Like and Hooray sit in one row as icons only, each labeled for screen readers | Error: expect(received).toEqual(expected) // deep equality
+FAIL moments.test.tsx | MOMENT-4 UX-R5 the reply box is one row with Post beside it, says who will read it, and no Delete sits on the card | Error: Unable to find an element with accessibility label: Add a comment for Chase
+FAIL reviewRound1.test.tsx | UX-R1 while the comment field is focused the tab bar hides; on blur it comes back | Error: expect(received).toHaveLength(expected)
+FAIL reviewRound1.test.tsx | UX-R1 any text field (kit Field, e.g. Share's caption) hides the tab bar while focused | Error: expect(received).toHaveLength(expected)
+FAIL reviewRound1.test.tsx | UX-R2 one bottom bar outside the scroll, hairline on top: Previous (left, disabled on the first) and "Next photo" | Error: Unable to find an element with testID: walk-bar
+FAIL reviewRound1.test.tsx | UX-R2 on the last post the same bar holds Previous (enabled) and Done | Error: Unable to find an element with testID: walk-bar
+FAIL reviewRound1.test.tsx | UX-R5 the reaction row is the four emoji only (REACT-7 stands): no 💬, no words under them | Error: expect(received).toEqual(expected) // deep equality
+FAIL reviewRound1.test.tsx | UX-R5 a post with no comments still shows "Comments", an "Add a comment…" field and Post | Error: Unable to find an element with role: header, name: Comments
+FAIL reviewRound1.test.tsx | UX-R5 typing and Post adds the comment (the field still sends) | Error: Unable to find an element with accessibility label: Add a comment for Chase
+FAIL reviewRound1.test.tsx | UX-R5 on your own post the field is spoken "Add a comment" | Error: Unable to find an element with accessibility label: Add a comment
+FAIL reviewRound1.test.tsx | UX-R6 "Comments" is a visible heading above the field (not only a placeholder) | Error: Unable to find an element with role: header, name: Comments
+FAIL reviewRound1.test.tsx | UX-R6 Post is a text button: grey and disabled when empty, accent and enabled once there is text | Error: Unable to find an element with role: button, name: Post
+FAIL reviewRound1.test.tsx | UX-R8 heading, avatar row, title, caption and reactions all start 16 pt from the edge | Error: expect(received).toEqual(expected) // deep equality
+FAIL reviewRound1.test.tsx | UX-R9 "‹ Gallery" and "Options" are ink; the only accent control is the forward button | Error: expect(received).toEqual(expected) // deep equality
+FAIL reviewRound1.test.tsx | UX-R10 replies open to everyone who can see it: "Your comment goes to the same people." and no second names line | Error: Unable to find an element with text: Your comment goes to the same people.
+
+== e2e:demo (1 run) ==
+  -   1 e2e-web/demo-screens.spec.js:18:1 › portfolio screenshots from the demo
+  -   2 e2e-web/demo-showcase.spec.js:33:5 › demo showcase phone light
+  -   3 e2e-web/demo-showcase.spec.js:33:5 › demo showcase phone dark
+  -   4 e2e-web/demo-showcase.spec.js:33:5 › demo showcase laptop light
+  -   5 e2e-web/demo-showcase.spec.js:33:5 › demo showcase laptop dark
+  1) e2e-web/demo.spec.js:48:1 › DEMO-10 RD-17 Grandma Jo's view hides the Mom's-side posts; the parent's view shows them again 
+    Error: locator.click: Test timeout of 90000ms exceeded.
+      - waiting for getByRole('button', { name: 'Back to Chase\'s view, the parent' })
+  2) e2e-web/demo.spec.js:274:1 › UX-R12 the demo greets the parent as Chase and "Kai" appears nowhere 
+    Error: expect(locator).toBeVisible() failed
+    Error: element(s) not found
+      - Expect "toBeVisible" with timeout 15000ms
+      - waiting for getByRole('heading', { name: /^Good (morning|afternoon|evening), Chase$/ })
+  3) e2e-web/demo.spec.js:283:1 › UX-R7 Gallery grid tiles are square, three across, edge to edge at a 390 px phone 
+    Error: expect(received).toEqual(expected) // deep equality
+    - Expected  - 2
+    + Received  + 2
+    -   "left": 0,
+    -   "right": 390,
+    +   "left": 15,
+    +   "right": 375,
+  4) e2e-web/demo.spec.js:301:1 › UX-R1 focusing the walk's comment field hides the tab bar and keeps the field uncovered when the keyboard opens 
+    Error: expect(locator).toHaveCount(expected) failed
+      - Expect "toHaveCount" with timeout 15000ms
+      - waiting for getByRole('tab')
+           - unexpected value "4"
+  4 failed
+  5 skipped
+  11 passed (2.7m)
+
+== e2e:web (1 run) ==
+  1) e2e-web/core-loop.spec.js:44:1 › core loop: share → Jo sees it → Ruth does not → heart → comment → delete 
+      - waiting for getByLabel('Add a comment for Chase')
+  1 failed
+  11 skipped
+  4 passed (1.8m)
