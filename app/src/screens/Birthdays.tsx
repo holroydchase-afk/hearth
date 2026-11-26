@@ -1,38 +1,27 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Life calendar v1 (SPEC-LIFE-CALENDAR, DEC-81): the "When's your birthday?" card on Gallery (CAL-12/13), the "Today is
+// Life calendar v1 (SPEC-LIFE-CALENDAR, DEC-81): My birthday now lives in Me (CAL-S2, Chase Nov 26; the Gallery card is gone), the "Today is
 // Grandma Jo's birthday" line (CAL-16) and More → Birthdays, "Birthdays and dates" (CAL-14/15). Month and day only:
 // never a year or an age. No typing to give a birthday: 12 worded month buttons, then numbered day buttons, every
 // target 48 pt (DS-1), every word 17 pt+ (DS-2). On a server without 0029 all of it hides quietly (CAL-17).
 // CAL-18: labels are shown on screen only; nothing here logs them or puts them in a report.
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { isApiError, type FamilyDate, type FamilyDateKind } from '../api/HearthApi';
 import { MONTHS, dateName, dateWords, daysIn, soonestFirst, todayLine, whenWords } from '../calendar/dates';
 import { calendarMissing, markMissing, useFamilyDates } from '../calendar/useFamilyDates';
-import type { KV } from '../platform/kv';
 import { useApp } from '../state/AppContext';
 import { AlertDialog, BackButton, Button, Card, Choice, Field, Loading, Notice, Screen, SystemIcon, Txt } from '../ui/kit';
 import { MIN_TARGET, useTheme } from '../ui/theme';
 import { backToMore } from './MoreScreen';
 
-const PRIVACY = 'Your family will see the month and day. Never the year.';
+// CAL-S5 (QA-R1/B24): under PRIV-R2 not everyone sees it, so say who plainly.
+export const PRIVACY = 'The people who can see you in Hearth will see the month and day. Never the year.';
 const CHECK = { sf: 'checkmark', md: 'check' };     // GUX-R5: the picked month and day carry a checkmark
 const CHEVRON = { sf: 'chevron.forward', md: 'chevron_right' }; // GUX-R8: a row you can tap says so
 // GUX-R3: from Gallery, Birthdays opens in Gallery's own stack, so its back button reads "Gallery" and returns there.
 const openBirthdays = () => router.push('/gallery/birthdays');
-// GUX-R1: the card's "Add my birthday" opens the Add my birthday form there.
-const addMine = () => router.push('/gallery/birthdays?add=mine');
-
-/** CAL-13: "Not now" on the card holds for this person in this family on this phone (kept on the phone only). */
-const askKey = (user: string, space: string) => `hearth.birthdayAsk.v1.${user}.${space}`;
-async function askedBefore(kv: KV, user: string, space: string): Promise<boolean> {
-  try { return (await kv.getItem(askKey(user, space))) === 'done'; } catch { return false; }
-}
-async function stopAsking(kv: KV, user: string, space: string): Promise<void> {
-  try { await kv.setItem(askKey(user, space), 'done'); } catch { /* the card may come back once; harmless */ }
-}
 
 /** Plain words for a failed save; never the label, never server text. */
 function didntSave(e: unknown): string {
@@ -81,35 +70,6 @@ export function TodayLine() {
   );
 }
 
-/** CAL-12/13, GUX-R1: "When's your birthday?" on Gallery for a member with none saved, until they save one or tap
- *  Not now. Short: the question, the privacy line, "Add my birthday" (the form on Birthdays) and "Not now". */
-export function BirthdayCard() {
-  const app = useApp();
-  const me = app.session?.userId ?? null;
-  const space = app.space?.space_id ?? null;
-  const kv = app.deps.kv;
-  const cal = useFamilyDates(app.deps.api, space);
-  const [asked, setAsked] = useState<boolean | null>(null);
-  useEffect(() => {
-    if (!me || !space) return;
-    let live = true;
-    void askedBefore(kv, me, space).then((a) => { if (live) setAsked(a); });
-    return () => { live = false; };
-  }, [kv, me, space]);
-  if (!me || !space) return null;
-  if (cal.status !== 'ready' || asked !== false || cal.dates.some((d) => d.member_id === me)) return null;
-
-  const notNow = () => { setAsked(true); void stopAsking(kv, me, space); };
-  return (
-    <Card testID="birthday-card">
-      <Txt variant="title2" role="header">When's your birthday?</Txt>
-      <Txt>{PRIVACY}</Txt>
-      <Button label="Add my birthday" variant="tinted" icon={{ sf: 'gift', md: 'cake' }} onPress={addMine} />
-      <Button label="Not now" variant="quiet" onPress={notNow} />
-    </Card>
-  );
-}
-
 type Form = { mode: 'mine' } | { mode: 'add' } | { mode: 'change'; date: FamilyDate };
 
 const KINDS: { kind: FamilyDateKind; title: string; field: string; hint: string }[] = [
@@ -149,7 +109,7 @@ function DateForm({ form, mine, onDone, onCancel }: {
         await api.saveFamilyDate({ space, id: form.mode === 'change' ? form.date.id : null, kind: memberId ? 'birthday' : kind,
           label: memberId ? null : label.trim(), month, day, memberId });
       }
-      onDone(form.mode === 'mine' ? `Saved. Your family will see ${dateWords(month, day)}.` : 'Saved.');
+      onDone(form.mode === 'mine' ? `Saved. ${dateWords(month, day)} is your birthday.` : 'Saved.');
     } catch (e) {
       if (calendarMissing(e)) { markMissing(api, space); onCancel(); } else setProblem(didntSave(e));
     } finally {
@@ -214,7 +174,7 @@ function DateRow({ d, open, onPress }: { d: FamilyDate & { days: number }; open:
 }
 
 /** CAL-14/15: More → Birthdays, "Birthdays and dates". From Gallery (GUX-R3) it sits in Gallery's stack and its
- *  back button reads "Gallery"; `startMine` (GUX-R1, the card's "Add my birthday") opens on the Add my birthday form. */
+ *  back button reads "Gallery"; `startMine` (GUX-R1, Me's "Add my birthday") opens on the Add my birthday form. */
 export function BirthdaysScreen({ backTo = 'More', onBack = backToMore, startMine = false }: {
   backTo?: string; onBack?: () => void; startMine?: boolean;
 } = {}) {
@@ -251,7 +211,7 @@ export function BirthdaysScreen({ backTo = 'More', onBack = backToMore, startMin
     <Screen key="list">
       <BackButton to={backTo} onPress={onBack} />
       <Txt variant="title1" role="header">Birthdays and dates</Txt>
-      {/* GUX-R2: "Saved. Your family will see December 8." at the top, in view (the list opens scrolled to the top) */}
+      {/* GUX-R2: "Saved. December 8 is your birthday." at the top, in view (the list opens scrolled to the top) */}
       {notice ? <Notice tone="good" text={notice} onClose={() => setNotice(null)} /> : null}
       <Txt tone="muted">Only your family can see these.</Txt>
       {cal.status === 'missing' ? <Txt>Birthdays aren't ready on Hearth yet. They're coming soon.</Txt> : null}

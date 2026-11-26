@@ -647,5 +647,12 @@ Status: **Built** (in `main`), **Decided** (agreed, not built yet), **Replaced**
 - **Because:** Chase asked for video (Oct 29), it is the most finished of the three dark features, and family video is a reason grandparents open the app. Keeping it costs a few small fixes, not a rebuild.
 - **Source:** `docs/reviews/2026-11-19-tech-debt/pm.md` PM-R5; `docs/product/SPEC-MEDIA.md` section 4; persona check `decisions/2026-11-19-keep-video.md`
 
+### DEC-90 · The birthday card leaves Gallery; the birthday lives in Me (Settings)
+- **When / status:** Nov 26 · Chase: "hide this from the feed. for now i'd want it in the settings and maybe a notification in the future" / "its weird in the main gallery and feed" · built on branch claude/birthday-in-settings, not pushed
+- **Chose:** remove the "When's your birthday?" card from Gallery and Feed; add a "My birthday" section to Me (More, Me) for every member; keep the Today line and More, Birthdays. The privacy line now reads "The people who can see you in Hearth will see the month and day. Never the year." A reminder notification is a later idea.
+- **Over:** the optional onboarding card on Gallery (DEC-81).
+- **Because:** the card felt out of place among photos. Photos stay the first thing a grandparent sees (A1).
+- **Source:** `docs/product/SPEC-LIFE-CALENDAR.md` CAL-S1..S5; persona check `decisions/2026-11-26-birthday-in-settings.md`
+
 ---
-Last updated: Nov 25, 2026 (DEC-89)
+Last updated: Nov 26, 2026 (DEC-90)

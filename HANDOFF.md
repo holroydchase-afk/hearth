@@ -11,6 +11,10 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 26: birthday moves from Gallery to Me (Chase, DEC-90, R78, CAL-S1..S5; branch claude/birthday-in-settings, local, not pushed)
+- **Done, test-first** (qa-tdd red d0fc779): BirthdayCard and its Not-now helpers removed; Me has a "My birthday" section (every member, hidden quietly without 0029); its button opens /more/birthdays?add=mine. Privacy line now "The people who can see you in Hearth will see the month and day. Never the year."
+- **Open:** none for the saved confirmation: it now reads "Saved. December 8 is your birthday." (QA-R1/B24 fixed). Reminder notification: later idea.
+
 ## Nov 25: product review pilot fixes, first part (intake #170, R111; local branch, not pushed yet)
 - **Done:** README order (encryption honesty sentence first, Status above Start here); checks on items 1 and 6 recorded in R111.
 - **Next:** fresh screenshots and a grandparent-ux pass (item 4), then the contrast and reaction-row P2s test-first. **Beta status line done (Chase, Nov 26).

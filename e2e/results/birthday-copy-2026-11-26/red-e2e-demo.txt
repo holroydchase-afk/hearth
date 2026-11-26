@@ -1,0 +1,121 @@
+
+> hearth-app@1.0.0 e2e:demo
+> npm run export:web:demo && node ../e2e/node_modules/@playwright/test/cli.js test -c e2e-web/playwright.demo.config.js demo-calendar
+
+
+> hearth-app@1.0.0 export:web:demo
+> EXPO_PUBLIC_HEARTH_DEMO=1 expo export --platform web --output-dir dist-demo --clear
+
+Using src/app as the root directory for Expo Router.
+React Compiler enabled
+Starting Metro Bundler
+
+warning: Bundler cache is empty, rebuilding (this may take a minute)
+Web Bundled 15257ms node_modules/expo-router/entry.js (1342 modules)
+
+› Assets (22):
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/400Regular/AtkinsonHyperlegibleNext_400Regular.86635252a71fd7c43fd5b0c41bdc5d54.ttf (48KB)
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/500Medium/AtkinsonHyperlegibleNext_500Medium.2d5d6c0565845615ac6982fc8abf1095.ttf (48KB)
+node_modules/@expo-google-fonts/atkinson-hyperlegible-next/600SemiBold/AtkinsonHyperlegibleNext_600SemiBold.5cf92f89d6fa6a976d135e61e9ffde1f.ttf (48KB)
+node_modules/@expo-google-fonts/material-symbols/400Regular/MaterialSymbols_400Regular.6b4f0c2d698edccb36b0f132059c0205.ttf (972KB)
+node_modules/expo-router/assets/arrow_down.017bc6ba3fc25503e5eb5e53826d48a8.png (9.5KB)
+node_modules/expo-router/assets/error.d1ea1496f9057eb392d5bbf3732a61b7.png (469B)
+node_modules/expo-router/assets/file.19eeb73b9593a38f8e9f418337fc7d10.png (138B)
+node_modules/expo-router/assets/forward.d8b800c443b8972542883e0b9de2bdc6.png (188B)
+node_modules/expo-router/assets/pkg.ab19f4cbc543357183a20571f68380a3.png (364B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon-mask.0a328cd9c1afd0afe8e3b1ec5165b1b4.png (653B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon.35ba0eaec5a4f5ed12ca16fabeae451d.png (207B)
+node_modules/expo-router/assets/react-navigation/elements/clear-icon.c94f6478e7ae0cdd9f15de1fcb9e5e55.png (4 variations | 425B)
+node_modules/expo-router/assets/react-navigation/elements/close-icon.808e1b1b9b53114ec2838071a7e6daa7.png (4 variations | 235B)
+node_modules/expo-router/assets/react-navigation/elements/search-icon.286d67d3f74808a60a78d3ebf1a5fb57.png (928B)
+node_modules/expo-router/assets/sitemap.412dd9275b6b48ad28f5e3d81bb1f626.png (465B)
+node_modules/expo-router/assets/unmatched.20e71bdf79e3a97bf55fd9e164041578.png (4.8KB)
+
+› web bundles (39):
+_expo/static/css/native-tabs.module-78b0f59737571f455720970791a36bdd.css (2.5KB)
+_expo/static/js/web/__common-3c0f36a35c586b627e3870f5f6bd4a91.js (950KB)
+_expo/static/js/web/__expo-metro-runtime-8c088df87a31e4e6accd81c554ec290d.js (3.8KB)
+_expo/static/js/web/_layout-3b09e9f410b2228ee8f6960d6c573dba.js (57KB)
+_expo/static/js/web/_layout-65e2b0b2571d9cfcbb8a2f19d0dd760c.js (320B)
+_expo/static/js/web/_layout-a620b6957bba0e0e62a7da5610ee1435.js (320B)
+_expo/static/js/web/_layout-c4718481da54e3aa287001f83cacbfc2.js (320B)
+_expo/static/js/web/_layout-e9281189b02d9dda6883e3e18c93aa42.js (418KB)
+_expo/static/js/web/[code]-ab5b051946d717721d08835cb72b7fa2.js (4.4KB)
+_expo/static/js/web/[postId]-cc3f66c5a0bcd0fb531a382bd859dcdb.js (466B)
+_expo/static/js/web/+not-found-2cb896e4d9107daab13e6cd701a78242.js (910B)
+_expo/static/js/web/birthdays-bfd6c81737c66608a4cdd6bfba3c94cc.js (557B)
+_expo/static/js/web/birthdays-e6cbc02453d1483ea821d4ba3d295840.js (488B)
+_expo/static/js/web/easy-view-5c12384548cf5c7265373c2f4a9cf2ad.js (444B)
+_expo/static/js/web/ed448-ac61159154d9e3761dfaba5d2c074538.js (12KB)
+_expo/static/js/web/entry-39da3dccc5933c0786f883d264b9d547.js (1.1MB)
+_expo/static/js/web/events-ed178b61145b4851f4f5479983398023.js (422B)
+_expo/static/js/web/groups-4264ece480211661208fa2c246d13e95.js (404B)
+_expo/static/js/web/groups-cc0aacc7e3f5e84fa6b07883897646b7.js (12KB)
+_expo/static/js/web/help-385f4f9625da981c7de528593419a980.js (3.1KB)
+_expo/static/js/web/help-a0c4cf22b08076e74224dc8ed635a88f.js (402B)
+_expo/static/js/web/index-3d1075325ec61805f93b373cdb9da06a.js (599B)
+_expo/static/js/web/index-3e57106cefe9b2745e248ed4c2d6a0d8.js (473B)
+_expo/static/js/web/index-72c94e67446647d7fc818690605e2fa0.js (525B)
+_expo/static/js/web/index-81b40892c61183e1879e9b282f96d2b5.js (700B)
+_expo/static/js/web/index-9df31d8a20b819448811374d72855207.js (640B)
+_expo/static/js/web/look-34eddef2c11f72999deea3d88689a36a.js (436B)
+_expo/static/js/web/me-4997b574c166f19ee053b98ba51327d3.js (6KB)
+_expo/static/js/web/me-f6a93e50446e8c122ef1e141a03ece29.js (400B)
+_expo/static/js/web/messages-3d0ae1d2ab94cf4dc087a54a434a553a.js (6.4KB)
+_expo/static/js/web/mod-384450d7432c78f08d1e6b6438aafc21.js (14KB)
+_expo/static/js/web/nist-eac120282a323a06c825114b1d0562dd.js (21KB)
+_expo/static/js/web/photos-0b48f053703b72b30f0f88a24664a364.js (386B)
+_expo/static/js/web/search-4c49f84d29210f1668050b1d7ff4e86e.js (5.8KB)
+_expo/static/js/web/share-b5368e9edf9f6b687e746c89a99ae6da.js (27KB)
+_expo/static/js/web/sign-in-dac2cd96c9790cd7a6f59778c60269c3.js (1.3KB)
+_expo/static/js/web/theme-c7a27727099fbbb62e56fa34f6fc1a06.js (438B)
+_expo/static/js/web/timeline-e91accc53fb9709053c992ed8aa83cdc.js (693B)
+_expo/static/js/web/videos-data-9bfb5d3df971769fa6d309c693bdfe06.js (430B)
+
+› Files (3):
+favicon.ico (15KB)
+index.html (2.1KB)
+metadata.json (49B)
+
+Exported: dist-demo
+
+Running 8 tests using 1 worker
+
+  ✓  1 e2e-web/demo-calendar.spec.js:28:1 › DEMO-NAMES-5 CAL-19 a fresh visit's Gallery says "Today is Grandma Jo's birthday" and See birthdays opens the list (2.0s)
+  ✓  2 e2e-web/demo-calendar.spec.js:38:1 › DEMO-NAMES-5 CAL-19 DEMO-PHOTO-9 Birthdays lists Grandma Jo today, Grandpa Hollis in 9 days, Clara's birthday and Graham and Eliza's anniversary (2.7s)
+  ✓  3 e2e-web/demo-calendar.spec.js:48:1 › CAL-19 a returning visitor with a pre-calendar demo saved gets the dates too (2.0s)
+  ✓  4 e2e-web/demo-calendar.spec.js:57:1 › DEMO-NAMES-5 CAL-19 Grandma Jo's view: her only action on Birthdays is "Change my birthday" (3.6s)
+  ✓  5 e2e-web/demo-calendar.spec.js:91:1 › CAL-S4 a fresh visit's Gallery shows no "When's your birthday?" card (it lives in Me now), but keeps the "Today is" line (1.0s)
+  ✓  6 e2e-web/demo-calendar.spec.js:100:1 › GUX-R1 CAL-S4 at 390x844 Me -> My birthday -> "Add my birthday" opens the form, and after month and day Save is fully on-screen above the tab bar (3.7s)
+  ✘  7 e2e-web/demo-calendar.spec.js:115:1 › GUX-R2 CAL-S2 CAL-S4 after Save from Me, "Saved. December 8 is your birthday." is on-screen at the top of Birthdays, and Me then shows "December 8" (18.6s)
+  ✓  8 e2e-web/demo-calendar.spec.js:133:1 › GUX-R3 Gallery → See birthdays → the back button reads "Gallery" and goes back to Gallery (2.0s)
+
+
+  1) e2e-web/demo-calendar.spec.js:115:1 › GUX-R2 CAL-S2 CAL-S4 after Save from Me, "Saved. December 8 is your birthday." is on-screen at the top of Birthdays, and Me then shows "December 8" 
+
+    Error: expect(locator).toBeInViewport() failed
+
+    Locator: getByText('Saved. December 8 is your birthday.').visible()
+    Expected: in viewport
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeInViewport" getByText('Saved. December 8 is your birthday.').visible() with timeout 15000ms
+      - waiting for getByText('Saved. December 8 is your birthday.').visible()
+
+
+      122 |   await page.getByRole('button', { name: 'Save', exact: true }).filter({ visible: true }).click();
+      123 |   const saved = page.getByText('Saved. December 8 is your birthday.').filter({ visible: true });
+    > 124 |   await expect(saved).toBeInViewport({ ratio: 1 });
+          |                       ^
+      125 |   await expect(page.getByRole('heading', { name: 'Birthdays and dates' })).toBeVisible();
+      126 |   await expect(page.getByRole('button', { name: /^(Back to )?Gallery$/ }).filter({ visible: true })).toHaveCount(0); // More's stack
+      127 |   await page.getByRole('button', { name: /^(Back to )?More$/ }).filter({ visible: true }).click();
+        at /home/user/Hearth/app/e2e-web/demo-calendar.spec.js:124:23
+
+    Error Context: test-results/e2e-demo-artifacts/demo-calendar-GUX-R2-CAL-S-a341b-d-Me-then-shows-December-8-/error-context.md
+
+  1 failed
+    e2e-web/demo-calendar.spec.js:115:1 › GUX-R2 CAL-S2 CAL-S4 after Save from Me, "Saved. December 8 is your birthday." is on-screen at the top of Birthdays, and Me then shows "December 8" 
+  7 passed (36.7s)
