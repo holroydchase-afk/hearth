@@ -23,6 +23,7 @@ suite "test totals" quiet e2e/results/test-totals.txt bash scripts/tests/test_to
 suite "EAS script" quiet e2e/results/app-eas.txt bash app/scripts/tests/eas_test.sh
 suite "site analytics" quiet e2e/results/site-analytics.txt bash app/scripts/tests/site_analytics_test.sh
 suite "site meta" quiet e2e/results/site-meta.txt bash app/scripts/tests/site_meta_test.sh
+suite "site bar" quiet e2e/results/site-bar.txt bash app/scripts/tests/site_bar_test.sh
 suite "prototype e2e" bash -c 'cd e2e && npx playwright test'
 # QA-R1 (Nov 19 review): the app's own suites, so "everything" means everything.
 suite "app jest" quiet e2e/results/app-jest.txt bash -c 'cd app && npx jest --ci --silent'

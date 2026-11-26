@@ -1,0 +1,57 @@
+# Intake #183 SITEBAR-1..4, red step (qa-tdd, 2026-11-25), before any fix
+
+## SITEBAR-1/2: bash app/scripts/tests/site_bar_test.sh
+FAIL - SITEBAR-1: the script exists
+FAIL - SITEBAR-1: the run passes
+FAIL - SITEBAR-1: every index.html gets the tag exactly once, right before </body>
+ok   - SITEBAR-1: the rest of the page is untouched
+ok   - SITEBAR-1: files not named index.html are left alone
+FAIL - SITEBAR-1: running twice passes and adds no second tag
+ok   - SITEBAR-1: no other host is loaded (no http address in any script tag it adds)
+FAIL - SITEBAR-1: the script itself names no outside host
+ok   - SITEBAR-1: a missing SITE_DIR fails with usage
+FAIL - SITEBAR-2: build-demo.sh runs it on the site build
+FAIL - SITEBAR-2: it runs next to add-site-analytics.sh, after the route copies
+ok   - SITEBAR-2: nothing in the app's own code loads demo-bar.js
+SITE BAR RESULT: 5 passed, 7 failed
+exit 1
+
+## SITEBAR-3: npx jest --verbose siteBarFrame darkElevation (DARK-ELEV-4 light retargeted to #FFFFFF)
+    - Expected  - 1
+    + Received  + 1
+    -   "bg": "#FFFFFF",
+    +   "bg": "#F7F7F4",
+    - Expected  - 1
+    + Received  + 1
+    -   "bg": "#FFFFFF",
+    +   "bg": "#F6F5E4",
+    - Expected  - 1
+    + Received  + 1
+    -   "bg": "#FFFFFF",
+    +   "bg": "#FBF5E9",
+    Expected: "#FFFFFF"
+    Received: "#F7F7F4"
+Test Suites: 2 failed, 2 total
+Tests:       4 failed, 22 passed, 26 total
+Failing:
+  ● SITEBAR-3 the laptop demo frame matches the white site bar in light › SITEBAR-3 (paper, light) the demo-frame row is #FFFFFF, not the theme page color
+  ● SITEBAR-3 the laptop demo frame matches the white site bar in light › SITEBAR-3 (avocado, light) the demo-frame row is #FFFFFF, not the theme page color
+  ● SITEBAR-3 the laptop demo frame matches the white site bar in light › SITEBAR-3 (pomegranate, light) the demo-frame row is #FFFFFF, not the theme page color
+  ● Console
+  ● DARK-ELEV-4 the laptop demo frame (1280 px) lifts the phone column with a surface step, not a shadow, in dark › DARK-ELEV-4 (light) unchanged: the phone column keeps its soft shadow on the page color
+
+## SITEBAR-4: demo-panel.spec.js (e2e:demo config, simulated 52px bar)
+  ✓  1 e2e-web/demo-panel.spec.js:7:3 › TD-UX-R1 at 1280 x 800 the story panel's first and last lines can be seen (633ms)
+  ✓  2 e2e-web/demo-panel.spec.js:7:3 › TD-UX-R1 at 1280 x 720 the story panel's first and last lines can be seen (635ms)
+  ✘  3 e2e-web/demo-panel.spec.js:46:1 › SITEBAR-4 at 1280 x 800 under a 52 px site bar the laptop frame still fits: panel and phone column below the bar, no side scroll (629ms)
+  ✘  4 e2e-web/demo-panel.spec.js:63:1 › SITEBAR-4 at 390 wide under a 52 px site bar the app is usable: greeting below the bar, tab bar on screen and works, no side scroll (1.8s)
+  1) e2e-web/demo-panel.spec.js:46:1 › SITEBAR-4 at 1280 x 800 under a 52 px site bar the laptop frame still fits: panel and phone column below the bar, no side scroll 
+    Expected: <= 801
+    Received:    828
+  2) e2e-web/demo-panel.spec.js:63:1 › SITEBAR-4 at 390 wide under a 52 px site bar the app is usable: greeting below the bar, tab bar on screen and works, no side scroll 
+    Expected: <= 844
+    Received:    876
+  2 failed
+    e2e-web/demo-panel.spec.js:46:1 › SITEBAR-4 at 1280 x 800 under a 52 px site bar the laptop frame still fits: panel and phone column below the bar, no side scroll 
+    e2e-web/demo-panel.spec.js:63:1 › SITEBAR-4 at 390 wide under a 52 px site bar the app is usable: greeting below the bar, tab bar on screen and works, no side scroll 
+  2 passed (4.9s)

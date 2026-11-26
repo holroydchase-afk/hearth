@@ -14,7 +14,7 @@ Who can see a post, who can send to whom, and who reads a reply. The short versi
 | Link | Allowed | Meaning |
 |---|---|---|
 | household → group | Yes | Gammy's house sits under Chase's side |
-| household → event | Yes | A house that came to the Charleston trip |
+| household → event | Yes | A house that came to the lake weekend |
 | group → event | Yes | A whole side invited to a birthday |
 | anything else | No | Refused by one check, `private.link_allowed`, in a trigger, so a direct insert can't bypass it |
 

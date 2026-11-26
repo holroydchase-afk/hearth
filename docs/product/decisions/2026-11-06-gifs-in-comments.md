@@ -1,7 +1,7 @@
 # Decision: picture replies and a GIF shelf in comments
 Date: Nov 6, 2026 · Status: Chase picked "Picture reply + GIF shelf" on the decision card · DEC-53
 
-Chase, Nov 5: "support memes and gifs in the comments... essentially slack meets instagram." Plan doc: https://claude.ai/artifact/N3wzTESDf3LXhhRYnBdgUi
+Chase, Nov 5: "support memes and gifs in the comments... essentially slack meets instagram."
 
 What changes (after the Nov 22 beta; not in BETA-SPEC yet):
 - **GIF-1 Picture reply:** a comment can carry one picture or GIF from the person's own phone (a saved meme counts), through the same media path as photos: location stripped on the phone, encrypted, US storage.

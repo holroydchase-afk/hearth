@@ -1,9 +1,9 @@
 {
  "suite": "app",
- "at": "2026-11-26T01:30:00-05:00",
- "label": "DEMO-KINDS-1..14 post_kinds on for the web demo only: all suites 3x after the build at 801fd7c (green)",
- "passed": 8325,
+ "at": "2026-11-25T18:30:00-05:00",
+ "label": "Intake #176 privacy sweep: jest, typecheck, persona and agents checks 3x (green; e2e:web left to CI)",
+ "passed": 7632,
  "failed": 0,
  "results": {},
- "note": "3 identical runs of bash test-all.sh (26 suites passed, 0 failed, 2 skipped each), no flake. jest 2623 passed (1 skipped, 1 todo) x3, typecheck clean x3, e2e:demo 72 passed x3 (DEMO-KINDS-7..14 and SHARE-ST-34 included), e2e:web 47 passed x3, prototype e2e 33 x3, backend SQL 0 not ok x3. git diff 2f3f0a6 801fd7c touches no test or spec (only DemoFrame.tsx, seed.ts, the architecture overview and the agent-run log). Skipped: Deno functions (Deno not installed here; CI runs them), Supabase starter invites (needs STUDIO_SUPABASE_TEMPLATE; CI runs it). Harness note: an earlier attempt hit the 10-minute tool cap and left a stale dist server on port 8089, so e2e:web failed 3x on the port; killed it and redid all 3 runs from scratch (the failure was my harness, not the product). Not done: live check on the published demo (after the next publish). e2e/results/demo-kinds-green-2026-11-25/"
+ "note": "3 identical runs on priv-176: jest 192 suites, 2544 passed (1 skipped, 1 todo); typecheck clean; check-persona-checks and check-agents exit 0. e2e:web did not run in the cloud worktree (Playwright missing), so the changed park-gps.jpg fixture is covered by CI."
 }

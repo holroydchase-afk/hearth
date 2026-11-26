@@ -13,7 +13,7 @@ const CHASE = FIXTURE.users.chase.id;
 const SECRET_URI = 'file:///var/mobile/Containers/Data/Application/ABC/tmp/IMG_0001.HEIC';
 const CAPTION = 'Mia at the park';
 /** A prepare error whose message carries everything that must never leave the phone. */
-const leaky = (code: string) => new ApiError(code as ApiErrorCode, `${SECRET_URI} "${CAPTION}" GPS 38.3498,-81.6326 dek=c2VjcmV0a2V5 https://b2.example/put?sig=abc`);
+const leaky = (code: string) => new ApiError(code as ApiErrorCode, `${SECRET_URI} "${CAPTION}" GPS 0.5123,-0.4567 dek=c2VjcmV0a2V5 https://b2.example/put?sig=abc`);
 
 async function run(prepareError: unknown) {
   const be = FakeBackend.withFixture();
@@ -38,7 +38,7 @@ describe('non-retryable prepare failure is reported by code only', () => {
     expect(sign).not.toHaveBeenCalled();
     expect(reports).toEqual([{ appVersion: expect.any(String), os: expect.any(String), screen: 'upload', kind: 'ApiError', code }]);
     const sent = JSON.stringify(reports);
-    for (const s of ['file:', 'IMG_0001', CAPTION, '38.3498', 'c2VjcmV0a2V5', 'https:', 'sig=']) expect({ s, leaked: sent.includes(s) }).toEqual({ s, leaked: false });
+    for (const s of ['file:', 'IMG_0001', CAPTION, '0.5123', 'c2VjcmV0a2V5', 'https:', 'sig=']) expect({ s, leaked: sent.includes(s) }).toEqual({ s, leaked: false });
   });
 
   it('MEDIA-3 BETA-OPS-1 a retryable prepare failure (no signal) is not reported', async () => {
