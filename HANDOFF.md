@@ -11,6 +11,11 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 26: two-step Share flow (DEC-90, R112, PR #212; branch claude/project-thread-jtelk5)
+- **Done, test-first** (FLOW-1..26 in `docs/product/SPEC-SHARE-FLOW.md`; qa-tdd red then green 3x): step 1 one open box plus chips, step 2 "Who gets it?" on its own page, day sheet, sent page, for Photos, Event, News and Saying. No underline fields, no "To:" line. grandparent-ux P1 (outline contrast) fixed; privacy-security no P0/P1.
+- **Proof:** jest 2752, typecheck clean, e2e:demo 84, e2e:web 59.
+- **Next:** Chase's merge word (app/**). Then manual M1-11..13 on a real phone; open P2s GUX-FL-R4, R9, R10, R11 in the spec.
+
 ## Nov 25: product review pilot fixes, first part (intake #170, R111; local branch, not pushed yet)
 - **Done:** README order (encryption honesty sentence first, Status above Start here); checks on items 1 and 6 recorded in R111.
 - **Next:** fresh screenshots and a grandparent-ux pass (item 4), then the contrast and reaction-row P2s test-first. **Beta status line done (Chase, Nov 26).
