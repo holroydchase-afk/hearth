@@ -22,6 +22,16 @@ mk 'var x=1;'
 out=$(bash "$G" "$T/d"); rc=$?
 (( rc != 0 )) && echo "$out" | grep -q 'lacks the fakeRuntime.off stub' && ok "RELBUNDLE-3 a bundle without the .off stub fails (the swap may not have happened)" || bad "RELBUNDLE-3 [rc=$rc: $out]"
 
+# RELBUNDLE-5/6 (found by CI on the first run): with a real-sized bundle, `cat | grep -q` closes the pipe early and
+# `pipefail` turns a match into a failure, so a present stub looked missing and a present marker looked absent.
+big() { rm -rf "$T/d"; mkdir -p "$T/d/_expo/static/js/web"; { printf '%s\n' "$1"; head -c 3000000 /dev/zero | tr '\0' 'x'; echo; } > "$T/d/_expo/static/js/web/entry.js"; }
+big 'throw new Error("This build has no sample backend.")'
+out=$(bash "$G" "$T/d"); rc=$?
+(( rc == 0 )) && ok "RELBUNDLE-5 a large real bundle with the .off stub passes (no broken-pipe false alarm)" || bad "RELBUNDLE-5 [rc=$rc: $out]"
+big 'a="Nana Eloise";throw new Error("This build has no sample backend.")'
+out=$(bash "$G" "$T/d"); rc=$?
+(( rc != 0 )) && echo "$out" | grep -q 'sample-family marker' && ok "RELBUNDLE-6 a sample marker at the start of a large bundle still fails (no broken-pipe false pass)" || bad "RELBUNDLE-6 [rc=$rc: $out]"
+
 rm -rf "$T/e"; mkdir -p "$T/e"
 out=$(bash "$G" "$T/e"); rc=$?
 (( rc != 0 )) && ok "RELBUNDLE-4 an empty folder fails, so a missing export can't pass" || bad "RELBUNDLE-4 [rc=$rc: $out]"

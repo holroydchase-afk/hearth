@@ -7,6 +7,7 @@
 #   bash app/scripts/check-release-bundle.sh <dist dir>        (CI: app job "Real build has no fakes")
 # Fails when the JS contains a sample-family marker, and when it lacks the ".off" stub's own sentence (so an empty
 # or wrong folder can't pass). Never prints bundle contents, only which marker matched.
+# grep reads the files itself: `cat | grep -q` closes the pipe early and `pipefail` then reports a match as a miss.
 set -uo pipefail
 DIR=${1:-}
 [[ -n $DIR && -d $DIR ]] || { echo "usage: check-release-bundle.sh <dist dir>" >&2; exit 2; }
@@ -16,9 +17,9 @@ rc=0
 # Sample-family strings from app/src/demo/seed.ts and the fake backend; each must be absent.
 MARKERS=("First ride on the balance bike" "Sample data restored." "Nana Eloise" "Grandpa Hollis")
 for m in "${MARKERS[@]}"; do
-  if cat "$JS"/*/*.js | grep -qF "$m"; then echo "FAIL - the real build contains a sample-family marker (#${#m}-char marker: ${m:0:6}...)"; rc=1; fi
+  if grep -qF -- "$m" "$JS"/*/*.js; then echo "FAIL - the real build contains a sample-family marker (#${#m}-char marker: ${m:0:6}...)"; rc=1; fi
 done
-if ! cat "$JS"/*/*.js | grep -qF "This build has no sample backend."; then
+if ! grep -qF -- "This build has no sample backend." "$JS"/*/*.js; then
   echo "FAIL - the real build lacks the fakeRuntime.off stub, so the swap may not have happened"; rc=1
 fi
 (( rc == 0 )) && echo "ok - the real build has no sample family or demo frame"
