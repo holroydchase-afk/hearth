@@ -9,6 +9,7 @@ import appJson from '../../../app.json';
 import { FakeBackend } from '../../api/fake/FakeBackend';
 import { pushStatus, registerForPush } from '../../notify/push';
 import { haptic } from '../../platform/haptics';
+import { gallery } from '../../test/mockZoomGallery';
 import { seedPost } from '../../test/seed';
 import { renderApp } from '../../test/renderApp';
 import { sheetPan } from '../../ui/kit';
@@ -24,10 +25,12 @@ import { PhotosScreen } from '../PhotosScreen';
 import { ViewerScreen } from '../ViewerScreen';
 
 jest.mock('../../platform/haptics', () => ({ haptic: jest.fn() }));
+jest.mock('react-native-zoom-toolkit', () => require('../../test/mockZoomGallery').zoomToolkitMock, { virtual: true });
 
 const push = { status: jest.mocked(pushStatus), register: jest.mocked(registerForPush) };
 
 beforeEach(() => {
+  gallery.reset();
   jest.mocked(haptic).mockClear();
   push.register.mockClear();
   push.status.mockReset();
@@ -89,36 +92,36 @@ describe('HIG-1 notifications are asked for after the first photo, with a Hearth
 });
 
 describe('HIG-2 / BETA-SEE-4 photos zoom', () => {
+  // qa-tdd, Nov 24 (SPEC-VIEWER): retargeted to the Gallery viewer. The Zoom pill stays in Easy view On only (VIEWER-11);
+  // double tap and pinch belong to the Gallery (maxScale 3, VIEWER-4/5). Jest drives its callbacks (mockZoomGallery).
   async function viewer() {
     const be = FakeBackend.withFixture();
     const p = await seedPost(be, { caption: 'Two at the lake', photos: 2 });
     await renderApp(<ViewerScreen postId={p.id} index={0} />, { be, user: 'jo' });
-    await screen.findByText('Photo 1 of 2');
+    await screen.findByText(/Photo 1 of 2$/);
   }
 
-  it('HIG-2 a Zoom button zooms in and back out (never gesture-only, DS-4)', async () => {
+  it('HIG-2 VIEWER-11 a Zoom pill zooms in and back out in Easy view On (never gesture-only, DS-4)', async () => {
     await viewer();
-    expect(screen.queryByTestId('viewer-zoomed')).toBeNull();
     fireEvent.press(screen.getByRole('button', { name: 'Zoom in' }));
-    expect(await screen.findByTestId('viewer-zoomed')).toBeTruthy();
-    fireEvent.press(screen.getByRole('button', { name: 'Zoom out' }));
-    await waitFor(() => expect(screen.queryByTestId('viewer-zoomed')).toBeNull());
+    await waitFor(() => expect(gallery.scale).toBeGreaterThan(1));
+    fireEvent.press(await screen.findByRole('button', { name: 'Zoom out' }));
+    await waitFor(() => expect(gallery.scale).toBe(1));
+    expect(await screen.findByRole('button', { name: 'Zoom in' })).toBeTruthy();
   });
 
-  it('HIG-2 a double tap on the photo zooms, and the next photo starts unzoomed', async () => {
+  it('HIG-2 VIEWER-4 VIEWER-5 a double tap zooms, and the next photo starts unzoomed', async () => {
     await viewer();
-    const photo = screen.getByTestId('viewer-photo');
-    fireEvent.press(photo);
-    fireEvent.press(photo);
-    expect(await screen.findByTestId('viewer-zoomed')).toBeTruthy();
+    act(() => gallery.doubleTap());
+    expect(await screen.findByRole('button', { name: 'Zoom out' })).toBeTruthy();
     fireEvent.press(screen.getByRole('button', { name: 'Next photo' }));
-    expect(await screen.findByText('Photo 2 of 2')).toBeTruthy();
-    expect(screen.queryByTestId('viewer-zoomed')).toBeNull();
+    expect(await screen.findByText(/Photo 2 of 2$/)).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'Zoom in' })).toBeTruthy();
   });
 
-  it('HIG-2 the photo can be pinched on iPhone (the scroll view zooms up to 4x)', async () => {
+  it('HIG-2 VIEWER-5 the photo pinches up to 3x', async () => {
     await viewer();
-    expect(screen.getByTestId('viewer-pinch').props.maximumZoomScale).toBe(4);
+    expect(gallery.props?.maxScale).toBe(3);
   });
 });
 
@@ -283,14 +286,14 @@ describe('QA-R1 HIG-2 pinch works on Android and the web too', () => {
     expect(pinchZoom(0.9, true)).toBe(true);
   });
 
-  it('QA-R1 the viewer listens for two fingers off iPhone', async () => {
+  it('QA-R1 VIEWER-5 the viewer pinches off iPhone too (the Gallery\'s zoom is never turned off on Android)', async () => {
     jest.replaceProperty(Platform, 'OS', 'android');
     const be = FakeBackend.withFixture();
     const p = await seedPost(be, { caption: 'At the lake' });
     await renderApp(<ViewerScreen postId={p.id} index={0} />, { be, user: 'jo' });
-    const area = await screen.findByTestId('viewer-gestures');
-    const twoFingers = { nativeEvent: { touches: [{ pageX: 0, pageY: 0 }, { pageX: 100, pageY: 0 }] }, touchHistory: { touchBank: [] } };
-    expect(area.props.onMoveShouldSetResponderCapture(twoFingers)).toBe(true);
+    await screen.findByText('At the lake');
+    expect(gallery.props).not.toBeNull();
+    expect(gallery.props?.zoomEnabled).not.toBe(false);
   });
 });
 

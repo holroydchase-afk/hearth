@@ -68,7 +68,8 @@ function shortCircles(): Circle[] {
   ];
 }
 
-async function openPostcard(opts: { circles?: Circle[]; kv?: KV } = {}) {
+/** DEC-91: lands on step 2 (the tiles) unless `step1` asks to stay on the words. */
+async function openPostcard(opts: { circles?: Circle[]; kv?: KV; step1?: boolean } = {}) {
   const be = FakeBackend.withFixture();
   const api = be.clientFor(null, { trackAppSession: true });
   if (opts.circles) jest.spyOn(api, 'myCircles').mockResolvedValue(opts.circles);
@@ -80,6 +81,9 @@ async function openPostcard(opts: { circles?: Circle[]; kv?: KV } = {}) {
     expect(pickPhotos.mock.calls.length).toBeGreaterThan(0);
   }, slow);
   await screen.findByRole('header', { name: 'New post' }, slow);
+  if (opts.step1) return;
+  fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' }, slow));
+  await screen.findByRole('header', { name: 'Who gets it?' }, slow);
   await waitFor(() => expect(tiles().length).toBe(3), slow);
 }
 
@@ -98,13 +102,13 @@ describe('GUX-R1 face-tile names stay inside their tile', () => {
     expect(tiles().map(across)).toEqual([2, 2, 2]);
   });
 
-  it('GUX-R1 360 px phone with only short words ("Everyone", "Our house", "Cousins"): 3 across stays', async () => {
+  it('GUX-R1 (DEC-91) 360 px phone with only short words ("Everyone", "Our house", "Cousins"): 2 across (FLOW-9: never 3 any more)', async () => {
     phone(360);
     await openPostcard({ circles: shortCircles() });
-    expect(tiles().map(across)).toEqual([3, 3, 3]);
+    expect(tiles().map(across)).toEqual([2, 2, 2]);
   });
 
-  it('GUX-R1 the phone\'s text at 130%: 2 across even with short names on a wide phone; 120% keeps 3', async () => {
+  it('GUX-R1 (DEC-91) the phone\'s text at 130% and at 120%: 2 across with short names on a wide phone (a name that would spill goes 1 across)', async () => {
     phone(430, 1.3);
     await openPostcard({ circles: shortCircles() });
     expect(tiles().map(across)).toEqual([2, 2, 2]);
@@ -112,14 +116,14 @@ describe('GUX-R1 face-tile names stay inside their tile', () => {
     jest.restoreAllMocks();
     phone(430, 1.2);
     await openPostcard({ circles: shortCircles() });
-    expect(tiles().map(across)).toEqual([3, 3, 3]);
+    expect(tiles().map(across)).toEqual([2, 2, 2]);
   });
 
-  it('GUX-R1 Easy view On: 2 across with short names too', async () => {
+  it('GUX-R1 (DEC-91) Easy view On: 1 across, even with short names (FLOW-9)', async () => {
     phone(430);
     const kv = memoryKV({ [`hearth.prefs.v1.${FIXTURE.users.chase.id}`]: JSON.stringify({ easyView: true }) });
     await openPostcard({ circles: shortCircles(), kv });
-    expect(tiles().map(across)).toEqual([2, 2, 2]);
+    expect(tiles().map(across)).toEqual([1, 1, 1]);
   });
 
   it('GUX-R1 names are never shortened: the whole group name shows, with no line limit or "…"', async () => {
@@ -134,8 +138,8 @@ describe('GUX-R1 face-tile names stay inside their tile', () => {
 });
 
 describe('GUX-R2 the Add tile is an outline, not a grey box', () => {
-  it('GUX-R2 Add: dashed c.line border, no fill, "Add" in the accent', async () => {
-    await openPostcard();
+  it('GUX-R2 (DEC-91) Add: dashed c.line border, no fill, "Add" in the accent (on step 1, where the photos are)', async () => {
+    await openPostcard({ step1: true });
     const c = light();
     const add = screen.getAllByRole('button').find((b) => wordsIn(b) === 'Add')!;
     expect(add).toBeTruthy();
@@ -152,11 +156,11 @@ describe('GUX-R2 the Add tile is an outline, not a grey box', () => {
 });
 
 describe('GUX-R3 the note sits on the card', () => {
-  it('GUX-R3 note field: no fill; a hairline c.line underline only', async () => {
-    await openPostcard();
+  it('GUX-R3 (DEC-91) note field: no fill and no underline (the open box)', async () => {
+    await openPostcard({ step1: true });
     const c = light();
     const input = screen.UNSAFE_getByType(TextInput);
-    expect(input.props.accessibilityLabel).toBe('Add a note (optional)');
+    expect(input.props.accessibilityLabel).toBe('Say something, optional');
     // The input and its own wrapper (the field), up to the card.
     const chain: Inst[] = [];
     for (let n: Inst | null = input, i = 0; n && i < 3 && n.props.testID !== 'share-card'; n = n.parent, i++) chain.push(n);
@@ -164,7 +168,7 @@ describe('GUX-R3 the note sits on the card', () => {
     const fills = styles.map((s) => s.backgroundColor).filter((b) => b !== undefined && b !== 'transparent');
     const underline = styles.find((s) => s.borderBottomWidth === StyleSheet.hairlineWidth && (s.borderBottomColor ?? s.borderColor) === c.line);
     const box = styles.find((s) => Number(s.borderWidth ?? 0) > 0 && s.borderColor !== 'transparent' && s.borderBottomWidth === undefined);
-    expect({ fills, underline: !!underline, boxEdge: !!box }).toEqual({ fills: [], underline: true, boxEdge: false });
+    expect({ fills, underline: !!underline, boxEdge: !!box }).toEqual({ fills: [], underline: false, boxEdge: false });
   });
 });
 

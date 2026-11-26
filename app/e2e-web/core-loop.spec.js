@@ -49,9 +49,11 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await page.getByRole('button', { name: /^Add photos, up to \d+ at a time$/ }).click();
   await (await chooser).setFiles(FIXTURE);
   await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible(); // DEC-73 postcard
-  await page.getByLabel('Add a note (optional)').fill('Pumpkin patch');
+  await page.getByLabel('Say something, optional').fill('Pumpkin patch');
+  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-91: step 2
   await page.getByLabel(/^Grandparents – Dad's side, 2 people, not picked$/).click(); // Jo hasn't joined yet
   await page.getByRole('button', { name: /^Send to / }).click();
+  await page.getByRole('button', { name: 'See it in Feed' }).click(); // DEC-91: the sent page
   await onFeed(page);
   await expect(page.getByText('Pumpkin patch', { exact: true })).toBeVisible();
   await expect(page.getByText(/can see this\.$/).first()).toBeVisible(); // RD-58 (UX-R15): one who-can-see line; the group's name is in Post options
@@ -99,7 +101,7 @@ test('core loop: share → Jo sees it → Ruth does not → heart → comment �
   await expect(page.getByText(/^Sent\. .+ will read it\.$/)).toBeVisible(); // BETA-REPLY-6/11: names the readers (AUD-8 default: the parents)
   // Full screen and back (BETA-SEE-3).
   await page.getByRole('button', { name: /^Open photo 1 of 1 full screen/ }).click();
-  await expect(page.getByText(/^From Chase · /)).toBeVisible();
+  await expect(page.getByTestId('viewer-backdrop').getByText(/^(From )?Chase$/)).toBeVisible(); // VIEWER-9; QA-R1: inside the viewer (Feed underneath has a hidden "Chase")
   await expect(page.getByRole('button', { name: 'Save to my phone' })).toBeVisible();
   await page.getByRole('button', { name: 'Close' }).click();
   await signOut(page, 'Help');

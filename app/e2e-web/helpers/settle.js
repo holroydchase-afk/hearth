@@ -1,7 +1,7 @@
 // INTAKE-206 (QA-A8, HEA-FR111): wait on a condition, never on a fixed sleep.
 // `settle` reads a value every animation frame until it has been the same for `need` reads in a row;
 // `pageReady` is that for a screenshot: fonts loaded, images finished, layout and scroll position still.
-const nextFrame = (page) => page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+const nextFrame = (page) => page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));  // two frames
 
 async function settle(page, read, { need = 4, timeout = 5000 } = {}) {
   const end = Date.now() + timeout;
@@ -33,4 +33,7 @@ const pageReady = async (page, opts) => {
   );
 };
 
-module.exports = { settle, pageReady, nextFrame };
+// Pace a gesture in animation frames (about 16 ms each), not wall-clock sleeps.
+const frames = async (page, n) => { for (let i = 0; i < n; i++) await nextFrame(page); };
+
+module.exports = { settle, pageReady, nextFrame, frames };
