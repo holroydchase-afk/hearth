@@ -200,7 +200,7 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
       <Txt tone="muted">Each photo goes only to the groups you pick. Only parents see these names; everyone else sees people's names.</Txt>
       {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
       {/* STATES-19: how to invite, once, whenever a group exists. */}
-      {(circles ?? []).length ? <Txt tone="muted">To invite someone, tap Invite someone under a group.</Txt> : null}
+      {(circles ?? []).length && inviteTarget ? <Txt tone="muted">To invite someone, tap Invite someone under a group.</Txt> : null}
       {(circles ?? []).length && !inviteTarget ? <Txt tone="muted">To invite someone, first make a group, then tap Invite someone under it.</Txt> : null}
       {circles === null && failedWords ? (
         <ErrorState line={`${failedWords.title}. ${failedWords.line}`} onRetry={() => { setFailed(null); void load(); }} />

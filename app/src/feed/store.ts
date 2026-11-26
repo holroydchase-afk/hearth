@@ -106,10 +106,9 @@ export class FeedStore {
   /** B24: bumped by every refresh; an older page that started before it is dropped, not appended after the new first page. */
   private gen = 0;
 
-  /** STATES-2/3: the "Try again" button. The failure words step aside at once (so a tap is seen to do something) and
-   *  come back if it fails again. */
+  /** STATES-2/3: the "Try again" button. The failure line stays until a refresh works (QA-R1); the screen shows
+   *  "Loading" instead of the failure words when there are no photos yet. */
   async retry(): Promise<void> {
-    this.set({ failed: null });
     await this.refresh();
   }
 

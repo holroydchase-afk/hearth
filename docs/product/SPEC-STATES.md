@@ -59,7 +59,7 @@ Error words (all screens; the first load only):
 | STATES-16 | auto | Groups, loaded, no groups: title "No groups yet"; line "A group is the people who get a photo, like Grandparents or Cousins. Make one to choose who sees your photos."; button "Make a group" (opens the New group form). |
 | STATES-17 | auto | Groups, **"New group" is no longer a filled button** (not on DS-9's list): it becomes a `tinted` capsule reading "New group", 48 pt. "Make a group" in STATES-16 is the same button, not a second one. |
 | STATES-18 | auto | A group that cannot take an invite shows a button "Invite someone" in place of the "To invite someone, use their household below." text; tapping it opens the invite form for the family's household (or the first group that can take one) with the title "Invite someone to {that group}". If none can, the line reads "To invite someone, first make a group, then tap Invite someone under it." and "Make a group" shows. |
-| STATES-19 | auto | At the top of Groups, under "Your groups", one muted line says how: "To invite someone, tap Invite someone under a group." (shown whenever at least one group exists). |
+| STATES-19 | auto | At the top of Groups, under "Your groups", one muted line says how: "To invite someone, tap Invite someone under a group." (shown whenever at least one group can take an invite; when none can, only the "first make a group" line of STATES-18 shows, QA-R2). |
 
 ## Help (STATES-20..22)
 | ID | Type | Criterion |

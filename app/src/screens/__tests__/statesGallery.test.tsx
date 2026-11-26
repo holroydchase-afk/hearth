@@ -73,14 +73,41 @@ describe('STATES-3 a failed refresh with photos already on the phone', () => {
     await screen.findByText('Pumpkins today');
     first.unmount();
     const api = apiFor(be, 'jo');
-    const spy = jest.spyOn(api, 'getFeed').mockRejectedValue(offline());
+    jest.spyOn(api, 'getFeed').mockRejectedValueOnce(offline());
     await renderApp(<FeedScreen />, { be, user: 'jo', kv, deps: { api } });
     expect(await screen.findByText('Pumpkins today')).toBeTruthy();
     expect(await screen.findByText('No signal right now. Showing the photos saved on this phone.')).toBeTruthy();
     expect(screen.queryByText('OK, hide this message')).toBeNull();
-    spy.mockRestore();
-    fireEvent.press(screen.getByRole('button', { name: 'Try again' }));
+    await act(async () => { fireEvent.press(screen.getByRole('button', { name: 'Try again' })); });
     await waitFor(() => expect(screen.queryByText('No signal right now. Showing the photos saved on this phone.')).toBeNull());
+    expect(screen.getByText('Pumpkins today')).toBeTruthy();
+  });
+
+  // QA-R1 (qa-tdd Nov 26): FeedStore.retry() clears `failed` before refreshing, so the line vanishes the instant Try
+  // again is tapped. SPEC-STATES STATES-3: "the line stays until a refresh succeeds". Red until the engineer holds it.
+  it('STATES-3 the no-signal line is still there while Try again is in flight, and goes only when the refresh works', async () => {
+    const be = FakeBackend.withFixture();
+    await seedPost(be, { caption: 'Pumpkins today' });
+    const kv = memoryKV();
+    const first = await renderApp(<FeedScreen />, { be, user: 'jo', kv });
+    await screen.findByText('Pumpkins today');
+    first.unmount();
+    const api = apiFor(be, 'jo');
+    const real = api.getFeed.bind(api);
+    let release: () => void = () => {};
+    const gate = new Promise<void>((r) => { release = r; });
+    jest.spyOn(api, 'getFeed')
+      .mockRejectedValueOnce(offline())
+      .mockImplementationOnce(async (a) => { await gate; return real(a); });
+    await renderApp(<FeedScreen />, { be, user: 'jo', kv, deps: { api } });
+    const LINE = 'No signal right now. Showing the photos saved on this phone.';
+    await screen.findByText(LINE);
+    fireEvent.press(screen.getByRole('button', { name: 'Try again' }));
+    // the retry is pending: the line must not have stepped aside
+    expect(screen.getByText(LINE)).toBeTruthy();
+    expect(screen.getByText('Pumpkins today')).toBeTruthy();
+    await act(async () => { release(); });
+    await waitFor(() => expect(screen.queryByText(LINE)).toBeNull());
     expect(screen.getByText('Pumpkins today')).toBeTruthy();
   });
 });
