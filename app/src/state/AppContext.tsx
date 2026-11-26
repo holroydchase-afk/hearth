@@ -22,6 +22,9 @@ export interface AppDeps {
   kv: KV;
   /** Phone number behind "Call Chase" (EXPO_PUBLIC_HELP_PHONE). */
   helpPhone?: string | null;
+  /** STATES-23: this build's help number is the inviter's, so Help may show it and offer "Call {name}"
+   *  (EXPO_PUBLIC_HELP_PHONE_IS_INVITERS=true). Default false: the name shows, the number does not. */
+  helpPhoneIsInviters?: boolean;
   /** START-ON-1/2: where "Email Hearth" writes to (EXPO_PUBLIC_HEARTH_HELP_EMAIL). Absent or null: Help has no
    *  "Something wrong?" section and nobody can start a family. */
   helpEmail?: string | null;
@@ -107,7 +110,7 @@ export function useSaveData(): boolean {
   return useContext(Ctx)?.dataPrefs.saveData === true;
 }
 
-const EMPTY_FEED: FeedState = { posts: [], status: 'loading', loaded: false, hasMore: false, notice: null, comments: {}, drafts: {}, opened: {}, fetchedAt: null };
+const EMPTY_FEED: FeedState = { posts: [], status: 'loading', loaded: false, hasMore: false, notice: null, failed: null, comments: {}, drafts: {}, opened: {}, fetchedAt: null };
 
 export function useFeed(): FeedState {
   const { feed } = useApp();

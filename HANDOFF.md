@@ -11,6 +11,10 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 26: error, empty and help states (intake #208, R125, STATES-1..24; branch claude/project-thread-6ew09x, committed, not pushed)
+- **Done:** `FeedStore.failed` / `retry()`, `TimelineStore.failed` / `yearsFailed`, `errors/loadFailed.ts` (words), `ErrorState` and `EmptyState` in `ui/kit.tsx` (for the #192 library hand-over), screens Gallery/Feed, Timeline, Events, Groups, Help. New dep flag `helpPhoneIsInviters` (env `EXPO_PUBLIC_HELP_PHONE_IS_INVITERS`). Jest 209 suites green; typecheck only the two known ViewerScreen module errors. Test fixes where the old test was wrong: statesTimeline (`beforeAt`), statesGallery STATES-6 (two tabs mounted; check `router.navigate('/share')`), statesHelp STATES-22 (clear spy history), plus old tests changed by the spec (evalFindings, photos, groupsWords) and the harness default `helpPhoneIsInviters: true`.
+- **Next:** phone check STATES-M1..M5; ux-reviewer shots at 390 px; set the env flag for the beta build; then #213 leftovers.
+
 ## Nov 26: dev-loop basics part 1 (intake #213, R124; branch claude/project-thread-6ew09x)
 - **Done:** `.editorconfig`, CODEOWNERS, dependency audit job (critical blocks, rest warns). First audit found 11 open vulnerabilities in Expo tooling deps (R124).
 - **Next:** formatter, pre-commit and a11y lint after the ESLint thread's PR; the Expo patch upgrade clears the audit findings; then #208.

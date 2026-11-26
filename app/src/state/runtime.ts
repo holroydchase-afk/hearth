@@ -86,7 +86,7 @@ export function createRuntime(): AppDeps | { error: string } {
   if (FAKE_MODE) {
     // START-ON-1/2: a fake help address (never a real one) so Help and the start button behave as deployed.
     const api = createFakeApi();
-    return { ...withUploads(api), api, helpPhone: '+1 304 555 0100', helpEmail: 'help@example.test' };
+    return { ...withUploads(api), api, helpPhone: '+1 304 555 0100', helpPhoneIsInviters: true, helpEmail: 'help@example.test' };
   }
   const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
@@ -96,7 +96,7 @@ export function createRuntime(): AppDeps | { error: string } {
   });
   const api = new SupabaseApi({ url, anonKey, client });
   return {
-    ...withUploads(api), api, helpPhone: process.env.EXPO_PUBLIC_HELP_PHONE ?? null,
+    ...withUploads(api), api, helpPhone: process.env.EXPO_PUBLIC_HELP_PHONE ?? null, helpPhoneIsInviters: process.env.EXPO_PUBLIC_HELP_PHONE_IS_INVITERS === 'true',
     // START-ON-1/2: set in the EAS environment, never in the repo. Unset or blank: no "Something wrong?" and no start button.
     helpEmail: process.env.EXPO_PUBLIC_HEARTH_HELP_EMAIL || null,
   };

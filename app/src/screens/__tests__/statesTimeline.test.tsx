@@ -31,7 +31,7 @@ describe('STATES-9 timeline first open fails', () => {
     const first = spy.mock.calls[0]![0];
     fireEvent.press(screen.getByRole('button', { name: 'Try again' }));
     expect(await screen.findByText('Fourth of July')).toBeTruthy();
-    expect(spy.mock.calls[1]![0]).toMatchObject({ before: (first as { before?: unknown }).before });
+    expect(spy.mock.calls[1]![0]).toMatchObject({ beforeAt: (first as { beforeAt?: unknown }).beforeAt });
     expect(screen.queryByText(NO_SIGNAL_TITLE)).toBeNull();
   });
 });

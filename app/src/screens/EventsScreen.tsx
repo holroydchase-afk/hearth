@@ -9,12 +9,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { FeedPost } from '../api/HearthApi';
 import { eventCountWords, eventList, eventPosts, updateWords } from '../feed/events';
 import { eventContributors, eventTimeline, type EventPhoto, type EventTimelineRow } from '../feed/eventTimeline';
-import { BackButton, Button, Card, Txt } from '../ui/kit';
+import { loadFailedWords } from '../errors/loadFailed';
+import { BackButton, Button, Card, ErrorState, Txt } from '../ui/kit';
 import { RADIUS, useTheme } from '../ui/theme';
 import { PhotoSwipe } from './PhotoSwipe';
 import { PostCard } from './PostCard';
 import { useTabBarSpace } from '../ui/tabBarSpace';
-import { useApp } from '../state/AppContext';
+import { useApp, useFeed } from '../state/AppContext';
 
 /** EVT-2: the first post of an event, bigger, under the event's name. */
 export function EventCard({ eventId, eventName, post, onOpen }: { eventId: string; eventName: string; post: FeedPost; onOpen: () => void }) {
@@ -61,6 +62,8 @@ export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, on
   const app = useApp();
   const isParent = app.space?.role === 'owner' || app.space?.role === 'adult';
   const under = useTabBarSpace(); // RD-109: room under the web's floating tab bar
+  // STATES-13: the list is built from the Feed, so a Feed that failed to load is an error here, never "No events yet."
+  const failed = useFeed().failed;
   const more = hasMore ? <Button label="Show older photos" variant="secondary" busy={loadingMore} onPress={onLoadMore} /> : null;
 
   if (view.eventId) {
@@ -86,14 +89,16 @@ export function EventsScreen({ posts, view, hasMore, loadingMore, onLoadMore, on
             <Txt variant="title1" role="header">Events</Txt>
           </View>
         }
-        ListEmptyComponent={
+        ListEmptyComponent={failed && posts.length === 0 ? (
+          <ErrorState {...loadFailedWords(failed, { helper: app.helper, photos: true })} onRetry={() => void app.feed?.retry()} />
+        ) : (
           // EF-HE-6: say what an event is; parents also read how to make one (the real labels).
           <View style={{ gap: 8 }}>
             <Txt variant="headline">No events yet.</Txt>
             <Txt tone="muted">An event is photos from one day, like a birthday or a trip. When someone adds you to one, it shows up here.</Txt>
             {isParent ? <Txt tone="muted">To make one, open Groups in More, tap New group, and tick "This group is for an event."</Txt> : null}
           </View>
-        }
+        )}
         ListFooterComponent={more ?? undefined}
         contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 32 + under }}
         removeClippedSubviews={false}

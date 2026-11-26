@@ -2,6 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 // STATES-1..8, STATES-24 (SPEC-STATES, intake #208): Gallery and Feed say what happened when the list fails, and what
 // to do when it is empty. Red until the engineer builds ErrorState / EmptyState (qa-tdd Nov 26).
+import { router } from 'expo-router';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { FakeBackend } from '../../api/fake/FakeBackend';
@@ -129,10 +130,13 @@ describe('STATES-4/5 Gallery and Feed first load fails', () => {
 describe('STATES-6/7/8 empty Gallery and Feed', () => {
   it('STATES-6 Gallery, no posts, a parent: "No photos yet", the line, and a "Share photos" button that opens Share', async () => {
     await renderApp(<AppRoutes at="/gallery" tabs />, { user: 'chase' });
+    const navigate = jest.spyOn(router, 'navigate');
     expect(await screen.findByText('No photos yet')).toBeTruthy();
-    expect(screen.getByText('Share your first photos and your family will see them here.')).toBeTruthy();
-    fireEvent.press(screen.getByRole('button', { name: 'Share photos' }));
-    await waitFor(() => expect(screen.getByRole('tab', { name: 'Share' }).props.accessibilityState).toMatchObject({ selected: true }));
+    // The real tab layout also mounts the Feed tab, which shows the same empty state: take the first of each.
+    expect(screen.getAllByText('Share your first photos and your family will see them here.').length).toBeGreaterThan(0);
+    fireEvent.press(screen.getAllByRole('button', { name: 'Share photos' })[0]!);
+    // A parent has Easy view Off, so the phone's own tab bar draws (no tab roles to read): check where it went.
+    await waitFor(() => expect(navigate).toHaveBeenCalledWith('/share'));
   });
 
   it('STATES-7 Gallery, no posts, a viewer: names the helper; "Check again" runs a refresh', async () => {

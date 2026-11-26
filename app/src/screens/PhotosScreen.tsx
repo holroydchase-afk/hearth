@@ -17,7 +17,8 @@ import { loadLastSeen, saveLastSeen } from '../state/lastSeen';
 import { photosRows, type PhotosRow } from '../feed/events';
 import { newForYou } from '../feed/newForYou';
 import { earlierGroups, isFromEarlier, monthSpan, startOfNextMonth, type EarlierGroup } from '../feed/timeline';
-import { Button, Card, Loading, Notice, Txt } from '../ui/kit';
+import { loadFailedWords } from '../errors/loadFailed';
+import { Button, Card, EmptyState, ErrorState, Loading, Notice, Txt } from '../ui/kit';
 import { andList } from '../ui/format';
 import { useTheme } from '../ui/theme';
 import { AppGate } from './AppGate';
@@ -39,6 +40,25 @@ function EarlierCard({ g, onOpen }: { g: EarlierGroup; onOpen: () => void }) {
       <Txt>{`${g.authorName} added ${g.photoCount === 1 ? '1 older photo' : `${g.photoCount} older photos`} from ${monthSpan(g.fromAt, g.openAt)}.`}</Txt>
       <Button variant="secondary" label={`See ${g.authorName}'s older photos by date`} text="See them" onPress={onOpen} />
     </Card>
+  );
+}
+
+/** STATES-7/24: the empty viewer page's "Check again": "Checking…" at once, and "Still nothing yet…" if it comes back empty. */
+function CheckAgain({ helper, onCheck }: { helper: string | null; onCheck: () => Promise<void> }) {
+  const [checking, setChecking] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const live = useRef(true);
+  useEffect(() => () => { live.current = false; }, []);
+  const check = () => {
+    setChecking(true);
+    void onCheck().finally(() => { if (live.current) { setChecking(false); setChecked(true); } });
+  };
+  return (
+    <EmptyState
+      title="No photos yet"
+      line={checked ? "Still nothing yet. We'll show photos here as soon as they're shared." : `When ${helper ?? 'your family'} shares photos, they'll show up here.`}
+      button={{ label: 'Check again', text: checking ? 'Checking…' : 'Check again', busy: checking, onPress: check }}
+    />
   );
 }
 
@@ -173,6 +193,10 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
       <QueueStatus />
       {app.pushAsk && state.posts.length ? <PushAsk /> : null}
       {state.notice ? <Notice text={state.notice} onClose={() => feed.clearNotice()} /> : null}
+      {/* STATES-3: a failed refresh with photos on the phone keeps them, and this line stays until a refresh works. */}
+      {state.failed && state.posts.length ? (
+        <ErrorState line={state.failed === 'network' ? 'No signal right now. Showing the photos saved on this phone.' : 'Something went wrong. Showing the photos saved on this phone.'} onRetry={() => void feed.retry()} />
+      ) : null}
       {/* BETA-TIME-1 on Feed; on Gallery old photos sit in their own months in the grid (RD-18, QA-R2). */}
       {gallery ? null : earlier.map((g) => (
         <EarlierCard key={g.authorId} g={g} onOpen={() => openTimeline(startOfNextMonth(g.openAt))} />
@@ -180,15 +204,27 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
     </View>
   );
 
-  const empty = state.loaded && (gallery ? state.posts.length : earlier.length) ? null : !state.loaded ? (
+  // STATES-1..8: failed, loading, or empty, in that order of care. "Failed" is never read as "empty".
+  const failedWords = state.failed ? loadFailedWords(state.failed, { helper: app.helper, photos: true }) : null;
+  const empty = state.failed && !state.posts.length ? (
+    <View style={side}>
+      {state.status === 'idle' && failedWords
+        ? <ErrorState title={failedWords.title} line={failedWords.line} onRetry={() => void feed.retry()} />
+        : <Loading words="Loading the photos…" />}
+    </View>
+  ) : state.loaded && (gallery ? state.posts.length : earlier.length) ? null : !state.loaded ? (
     <View style={side}><Loading words="Loading the photos…" /></View>
   ) : (
     <View style={side}>
-      <Txt tone="muted">
-        {app.space.can_post
-          ? 'Nothing shared yet. Tap Share to send your first photos.'
-          : `No photos yet. When ${app.helper ?? 'your family'} shares photos, they'll show up here.`}
-      </Txt>
+      {app.space.can_post ? (
+        <EmptyState
+          title="No photos yet"
+          line="Share your first photos and your family will see them here."
+          button={{ label: 'Share photos', onPress: () => router.navigate('/share') }}
+        />
+      ) : (
+        <CheckAgain helper={app.helper} onCheck={() => feed.refresh()} />
+      )}
     </View>
   );
 

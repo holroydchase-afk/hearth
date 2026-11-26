@@ -167,13 +167,13 @@ describe('EF-HE-5 Your groups', () => {
     expect(screen.queryByText(/People never see group names/)).toBeNull();
   });
 
-  it('EF-HE-5-AC2 New group is the one filled main button; Rename stays secondary', async () => {
+  it('EF-HE-5-AC2 (STATES-17: New group is a tinted capsule now, DS-9) no filled accent button on Groups; Rename stays secondary', async () => {
     await renderApp(<GroupsScreen />, { user: 'chase' });
     await screen.findByRole('button', { name: 'New group' });
     const c = paletteFor(os, false);
     const bg = (b: Node) => StyleSheet.flatten(typeof b.props.style === 'function' ? b.props.style({ pressed: false }) : b.props.style)?.backgroundColor;
     const filled = screen.getAllByRole('button').filter((b) => bg(b) === c.accent).map((b) => b.props.accessibilityLabel);
-    expect(filled).toEqual(['New group']);
+    expect(filled).toEqual([]);
     const renames = screen.getAllByRole('button', { name: /^Rename / });
     expect(renames.length).toBeGreaterThan(0);
     for (const r of renames) expect(bg(r)).not.toBe(c.accent);

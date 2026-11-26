@@ -1,16 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 // STATES-20..23 (SPEC-STATES, intake #208): Help opens on who to call; the owner's block says what to do; works offline.
-// STATES-23 needs a way to mark the build-wide number as the inviter's: assumed deps.helpPhoneIsInviters (boolean),
-// the engineer may rename it and update this file (qa-tdd flag, spec says only "marked").
-import { screen } from '@testing-library/react-native';
+// STATES-23: deps.helpPhoneIsInviters (boolean, default false) marks the build-wide number as the inviter's.
+import { act, screen } from '@testing-library/react-native';
 import React from 'react';
 import { FakeBackend } from '../../api/fake/FakeBackend';
 import { renderApp, screenWords } from '../../test/renderApp';
 import { apiFor, offline } from '../../test/states';
 import { HelpScreen } from '../HelpScreen';
 
-const MARKED = { helpPhoneIsInviters: true } as never;
+const MARKED = { helpPhoneIsInviters: true };
 const headers = () => screen.getAllByRole('header').map((h) => String(h.props.children));
 
 describe('STATES-20 "Who to call" comes first', () => {
@@ -69,6 +68,9 @@ describe('STATES-22 Help offline', () => {
     await screen.findByText('Chase can help.');
     const calls = Object.keys(api).filter((k) => typeof (api as unknown as Record<string, unknown>)[k] === 'function');
     const spies = calls.map((k) => jest.spyOn(api as never, k as never).mockRejectedValue(offline() as never));
+    // mySpaces was spied above (the app read the family through it), so its history holds that load: count from here.
+    spies.forEach((sp) => sp.mockClear());
+    await act(async () => { await new Promise((r) => setTimeout(r, 50)); });
     expect(screen.getByText('Chase can help.')).toBeTruthy();
     expect(screen.queryByText('Try again')).toBeNull();
     expect(screen.queryByText('No signal right now')).toBeNull();
@@ -79,13 +81,13 @@ describe('STATES-22 Help offline', () => {
 
 describe('STATES-23 the number only when it is the inviter\'s', () => {
   it('STATES-23 not marked: the name shows, "Ask Chase for help.", no number, no Call button', async () => {
-    await renderApp(<HelpScreen />, { user: 'jo', deps: { helpPhone: '+1 304 555 0100', helpPhoneIsInviters: false } as never });
+    await renderApp(<HelpScreen />, { user: 'jo', deps: { helpPhone: '+1 304 555 0100', helpPhoneIsInviters: false } });
     expect(await screen.findByText('Ask Chase for help.')).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Call Chase' })).toBeNull();
     expect(screenWords()).not.toContain('555');
   });
   it('STATES-23 marked as the inviter\'s: "Call Chase" and the number show', async () => {
-    await renderApp(<HelpScreen />, { user: 'jo', deps: { helpPhone: '+1 304 555 0100', helpPhoneIsInviters: true } as never });
+    await renderApp(<HelpScreen />, { user: 'jo', deps: { helpPhone: '+1 304 555 0100', helpPhoneIsInviters: true } });
     expect(await screen.findByRole('button', { name: 'Call Chase' })).toBeTruthy();
     expect(screenWords()).toContain('555');
   });

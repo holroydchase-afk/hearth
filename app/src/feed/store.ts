@@ -4,6 +4,7 @@
 // and optimistic hearts, comments and deletes. Framework-free; React reads it through useFeed().
 import type { CommentRow, FeedPost, HearthApi, PostViewer, Reaction, ReactionCounts } from '../api/HearthApi';
 import { uuid as realUuid } from '../crypto/random';
+import { loadFailure, type LoadFailure } from '../errors/loadFailed';
 import { messageFor } from '../errors/messages';
 import type { KV } from '../platform/kv';
 
@@ -19,6 +20,9 @@ export interface FeedState {
   loaded: boolean;
   hasMore: boolean;
   notice: string | null;
+  /** STATES-1..3: the last refresh failed (no signal or another error). Cleared by the next one that works. Never a
+   *  dismissible notice: the screens say it in words with "Try again" until it clears. */
+  failed: LoadFailure | null;
   comments: Record<string, CommentView[]>;
   drafts: Record<string, string>;
   /** BETA-TIME-2: posts opened from the timeline that aren't on a loaded feed page (hearts and replies still work). */
@@ -47,7 +51,7 @@ export async function clearFeedCache(kv: KV, user: string, space: string): Promi
 }
 
 export class FeedStore {
-  private state: FeedState = { posts: [], status: 'idle', loaded: false, hasMore: false, notice: null, comments: {}, drafts: {}, opened: {}, fetchedAt: null };
+  private state: FeedState = { posts: [], status: 'idle', loaded: false, hasMore: false, notice: null, failed: null, comments: {}, drafts: {}, opened: {}, fetchedAt: null };
   private listeners = new Set<() => void>();
   private pendingHearts = new Map<string, Pick<FeedPost, 'i_hearted' | 'heart_count' | 'my_reaction' | 'reaction_counts'>>();
   private heartSeq = new Map<string, number>();
@@ -102,19 +106,25 @@ export class FeedStore {
   /** B24: bumped by every refresh; an older page that started before it is dropped, not appended after the new first page. */
   private gen = 0;
 
+  /** STATES-2/3: the "Try again" button. The failure words step aside at once (so a tap is seen to do something) and
+   *  come back if it fails again. */
+  async retry(): Promise<void> {
+    this.set({ failed: null });
+    await this.refresh();
+  }
+
   async refresh(): Promise<void> {
     this.gen += 1;
     this.set({ status: this.state.loaded ? 'refreshing' : 'loading' });
     const startedAt = new Date().toISOString();
     try {
       const rows = await this.o.api.getFeed({ space: this.o.spaceId, limit: this.pageSize });
-      this.set({ posts: this.overlay(rows), loaded: true, hasMore: rows.length >= this.pageSize, status: 'idle', fetchedAt: startedAt });
+      this.set({ posts: this.overlay(rows), loaded: true, hasMore: rows.length >= this.pageSize, status: 'idle', fetchedAt: startedAt, failed: null });
       this.o.onRefreshed?.(rows);
       const withReactions = await this.addReactions(rows);
       void this.o.kv.setItem(cacheKey(this.o.userId, this.o.spaceId), JSON.stringify(withReactions)).catch(() => {});
     } catch (e) {
-      this.set({ status: 'idle' });
-      this.notice(e);
+      this.set({ status: 'idle', failed: loadFailure(e) });
     }
   }
 

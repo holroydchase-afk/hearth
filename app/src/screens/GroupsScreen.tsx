@@ -2,13 +2,14 @@
 // Copyright (C) 2026 Chase Holroyd
 // Groups (parents only): see groups and who is in them; make a group (GRP-15/16); each group's comment setting
 // (GRP-17); basic rename; invite someone to one or more groups (GRP-18). Relatives never see any of this.
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 import type { Circle, CommentMode, Person, ShareHistory } from '../api/HearthApi';
+import { loadFailedWords, loadFailure, type LoadFailure } from '../errors/loadFailed';
 import { messageFor } from '../errors/messages';
 import { textsOn, usE164 } from '../api/phone';
 import { useApp } from '../state/AppContext';
-import { Button, Card, Choice, Field, Loading, Notice, Screen, Txt, BackButton } from '../ui/kit';
+import { Button, Card, Choice, ErrorState, Field, Loading, Notice, Screen, Txt, BackButton } from '../ui/kit';
 import { BAD_NUMBER } from './TextCodeFlow';
 import { andList, people } from '../ui/format';
 import { useTheme } from '../ui/theme';
@@ -51,6 +52,7 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
   const [name, setName] = useState('');
   const [invite, setInvite] = useState<{ circle: string; link: string; code: string; byPhone?: boolean } | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [failed, setFailed] = useState<LoadFailure | null>(null); // STATES-15: the first load failed; circles stays null
   const [asking, setAsking] = useState<string | null>(null); // circle id whose invite form is open
   const [inviteName, setInviteName] = useState('');
   // BETA-SMS-10: texts on, the invite asks for their mobile number first; only that number can open it.
@@ -72,13 +74,16 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
   // Groups, comment settings and invites are for parents only (a relative allowed to post still never sees them).
   const isParent = app.space?.role === 'owner' || app.space?.role === 'adult';
 
+  const circlesRef = useRef<Circle[] | null>(null);
+  circlesRef.current = circles;
   const load = useCallback(async () => {
     if (!spaceId) return;
     try {
       setCircles(await app.deps.api.myCircles(spaceId));
+      setFailed(null);
     } catch (e) {
-      setCircles([]);
-      setNotice(messageFor(e));
+      // STATES-15: never "no groups". With nothing on the page yet it is an error state; later reloads keep the list.
+      if (circlesRef.current === null) { setFailed(loadFailure(e)); setCircles(null); } else setNotice(messageFor(e));
     }
   }, [app.deps.api, spaceId]);
 
@@ -182,6 +187,11 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
   const invitable = (g: Circle) =>
     g.kind === 'household' || ((g.kind ?? 'group') === 'group' && !(circles ?? []).some((o) => o.parent_ids?.includes(g.circle_id)));
 
+  const startGroup = () => { closeForm(); setDraft(NEW_GROUP); };
+  // STATES-18: "Invite someone" opens the form for the household, or the first group that can take one.
+  const inviteTarget = (circles ?? []).find((g) => g.kind === 'household') ?? (circles ?? []).find(invitable);
+  const failedWords = failed ? loadFailedWords(failed, { helper: app.helper }) : null;
+
   return (
     <Screen>
       {onBack ? <BackButton to="More" onPress={onBack} /> : null}
@@ -189,7 +199,13 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
       {/* EF-HE-5: honest about who sees group names (DEC-49). */}
       <Txt tone="muted">Each photo goes only to the groups you pick. Only parents see these names; everyone else sees people's names.</Txt>
       {notice ? <Notice text={notice} onClose={() => setNotice(null)} /> : null}
-      {circles === null ? <Loading words="Loading your groups…" /> : null}
+      {/* STATES-19: how to invite, once, whenever a group exists. */}
+      {(circles ?? []).length ? <Txt tone="muted">To invite someone, tap Invite someone under a group.</Txt> : null}
+      {(circles ?? []).length && !inviteTarget ? <Txt tone="muted">To invite someone, first make a group, then tap Invite someone under it.</Txt> : null}
+      {circles === null && failedWords ? (
+        <ErrorState line={`${failedWords.title}. ${failedWords.line}`} onRetry={() => { setFailed(null); void load(); }} />
+      ) : null}
+      {circles === null && !failed ? <Loading words="Loading your groups…" /> : null}
       {draft ? (
         <Card>
           <Txt variant="title2" role="header">New group</Txt>
@@ -239,10 +255,17 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
           <Button variant="secondary" label="Make the group" onPress={() => void makeGroup()} softDisabled={!draft.name.trim() || !draft.history} busy={draft.busy} />
           <Button label="Cancel" variant="secondary" onPress={() => setDraft(null)} />
         </Card>
-      ) : (
-        // EF-HE-5: the one filled main button here (DS-9); Rename and Invite stay secondary.
-        <Button label="New group" onPress={() => { closeForm(); setDraft(NEW_GROUP); }} />
+      ) : circles === null ? null : (
+        // STATES-16/17: a tinted capsule (not on DS-9's filled list). With no group yet, or none that can take an
+        // invite, it reads "Make a group" (STATES-16/18): one button, not two.
+        <Button variant="tinted" label={circles.length && inviteTarget ? 'New group' : 'Make a group'} onPress={startGroup} />
       )}
+      {circles !== null && circles.length === 0 && !draft ? (
+        <>
+          <Txt variant="title2" role="header">No groups yet</Txt>
+          <Txt tone="muted">A group is the people who get a photo, like Grandparents or Cousins. Make one to choose who sees your photos.</Txt>
+        </>
+      ) : null}
       {/* one main action per screen: while making a group, the list waits */}
       {(draft ? [] : circles ?? []).map((g) => (
         <Card key={g.circle_id}>
@@ -341,10 +364,10 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
             </>
           ) : invitable(g) ? (
             <Button label={`Invite someone to ${g.name}`} text="Invite someone" variant="secondary" onPress={() => { closeForm(); setAsking(g.circle_id); }} />
-          ) : (
-            // RR-11: only point to a household when the family has one; plain groups otherwise.
-            <Txt tone="muted">{(circles ?? []).some((o) => o.kind === 'household') ? 'To invite someone, use their household below.' : 'To invite someone, use one of the groups below.'}</Txt>
-          )}
+          ) : inviteTarget ? (
+            // STATES-18: a button, not a sentence; it opens the form for the household (or first group that can take one).
+            <Button label="Invite someone" variant="secondary" onPress={() => { closeForm(); setAsking(inviteTarget.circle_id); }} />
+          ) : null}
         </Card>
       ))}
     </Screen>
