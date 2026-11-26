@@ -674,3 +674,8 @@ run("r121", suite="app", at="2026-11-25T05:45:00-05:00", label="Intake #183 site
 run("r122", suite="app", at="2026-11-25T18:30:00-05:00", label="Intake #176 privacy sweep: jest, typecheck, persona and agents checks 3x (green; e2e:web left to CI)",
     passed=3 * 2544, failed=0, results={},
     note="3 identical runs on priv-176: jest 192 suites, 2544 passed (1 skipped, 1 todo); typecheck clean; check-persona-checks and check-agents exit 0. e2e:web did not run in the cloud worktree (Playwright missing), so the changed park-gps.jpg fixture is covered by CI.")
+
+run("r140", suite="backend", at="2026-11-26T09:00:00-05:00", label="Intake #176 part 2 (INTAKE-176B REF-REQ-1..6, PRIV-PUB-1..6): failing tests and guard first (red)",
+    passed=7 + 8, failed=6 + 2, results={},
+    note="1 run each, before any fix, on local-176b (base ee47a4c). ref_required_test.sh 0 passed, 6 failed: all six backend scripts still fall back to a baked-in project ref and call curl when SUPABASE_PROJECT_REF is unset. check_public_privacy_test.sh 7 passed (the guard's own fixtures), 2 failed: PRIV-PUB-5 (the repo still has 6 REF defaults, 1 ref in .mcp.json, Charleston in 15 files, 23 hits in all) and PRIV-PUB-6 (wiring, since fixed). Existing backend shell suites stay green with the fake ref (deploy 28, smoke 28, start-on 50, sent-received 20, setup-api 34, setup-v2 15). Evidence: e2e/results/privacy-176b-red-2026-11-26/. Real ref never written.")
+
