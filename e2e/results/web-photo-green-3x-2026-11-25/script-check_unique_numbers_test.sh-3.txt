@@ -1,0 +1,7 @@
+ok      NUM-1 duplicate migration prefix fails and names it
+ok      NUM-2 duplicate DEC heading fails and names it
+ok      NUM-3 duplicate ticket id fails and names it
+ok      NUM-4 duplicate run id fails and names it
+ok      NUM-5 clean fixture passes
+ok      NUM-6 the real repo passes
+NUM RESULT: 6 passed, 0 failed

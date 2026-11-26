@@ -1,0 +1,13 @@
+ok   - EXPO-1: script exists
+ok   - EXPO-1: EXPO_ACCESS_TOKEN alone reaches the CLI as EXPO_TOKEN
+ok   - EXPO-1: an explicit EXPO_TOKEN wins
+ok   - EXPO-1: no token fails with a clear message and never calls the CLI
+ok   - EXPO-1: npm run eas uses the wrapper
+ok   - EXPO-2: app.json links the Expo project (eas init) and adds no permissions
+ok   - NAME-1: ACCOUNTS.md records the name as not final yet
+ok   - NAME-1: eas build refuses while the name isn't final, says why, and never calls the CLI
+ok   - NAME-1: eas submit refuses while the name isn't final, says why, and never calls the CLI
+ok   - NAME-1: other EAS commands still run
+ok   - EXPO-4: eas update refuses when Expo Go has moved past our SDK, says why, never calls the CLI
+ok   - NAME-1: once the name is final, eas build runs
+eas: 12 passed, 0 failed

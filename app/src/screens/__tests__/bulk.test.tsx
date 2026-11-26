@@ -87,7 +87,8 @@ describe('BETA-BULK-3 batch review screen', () => {
     // either can spell "GPS" by chance. The bytes themselves are checked for EXIF by the
     // pipeline tests before encryption.
     const { objects: _ciphertext, ...meta } = be.state;
-    const noKeys = JSON.stringify(meta, (k, v) => (k === 'dek' ? undefined : v));
+    // Timestamps are cut out first; an invite expiry like "...:35.221Z" spells "35.22" by chance.
+    const noKeys = JSON.stringify(meta, (k, v) => (k === 'dek' ? undefined : v)).replace(/\d{4}-\d\d-\d\dT[\d:.]+Z/g, '');
     expect(noKeys).not.toMatch(/GPS|35\.22|Apple|DateTimeOriginal/);
   });
 

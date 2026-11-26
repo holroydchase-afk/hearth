@@ -64,6 +64,8 @@ export interface Job {
   /** BETA-BULK-4/6: posts from one bulk pick share a batch id; batchSize = posts in the batch. */
   batchId?: string;
   batchSize?: number;
+  /** HRT-WEB.3 (WEB-APP-31): the saved copy of a photo is gone (cleared site data, an old blob: job). Retrying can only fail again. */
+  photoGone?: boolean;
 }
 
 export interface EnqueueInput { space: string; caption: string | null; title?: string | null; circleIds: string[]; items: QueueItem[] }
@@ -90,6 +92,16 @@ export interface QueueDeps {
   setTimer?: (fn: () => void, ms: number) => () => void;
   uuid?: () => string;
   onPublished?: (job: Job) => void;
+  /**
+   * HRT-WEB.3: where a web job's photo bytes are saved (platform/uploadStore.web.ts). Absent on phones: no change.
+   * open() sweeps records no unpublished job points at, then fails any such job whose copy is gone, before the first
+   * send. release is called when a job publishes and from remove(), never otherwise.
+   */
+  store?: {
+    has(uri: string): Promise<boolean>;
+    release(job: Job): Promise<void> | void;
+    sweep(liveUris: string[]): Promise<void>;
+  };
 }
 
 export function backoffMs(attempt: number): number {
@@ -146,8 +158,59 @@ export class UploadQueue {
     }
     // Anything that was mid-flight when the app died is due now.
     for (const j of q.mine()) if (j.state === 'failed-retryable') j.nextAttemptAt = q.now();
+    await q.checkSaved();
     q.kick();
     return q;
+  }
+
+  /**
+   * HRT-WEB.3 (WEB-APP-31, ARCH-WEB-R4): before the first send, drop saved bytes no unpublished job points at (a crash
+   * between put and save), then end as failed any unpublished job whose photo copy is gone (a dead blob: URL from the
+   * build before this, or a record lost with the site data), so it never shows "Sending…" forever.
+   */
+  private async checkSaved(): Promise<void> {
+    const store = this.d.store;
+    if (!store) return;
+    const open = this.all.filter((j) => j.state !== 'published');
+    try { await store.sweep(open.flatMap((j) => j.items.map((i) => i.uri))); } catch { /* the sweep is housekeeping */ }
+    let changed = false;
+    for (const j of open) {
+      if (j.userId !== this.d.userId || j.state === 'failed') continue;
+      let gone = false;
+      for (const i of j.items) {
+        if (/^(blob|data):/i.test(i.uri)) { gone = true; break; }
+        let there = false;
+        try { there = await store.has(i.uri); } catch { there = false; }
+        if (!there) { gone = true; break; }
+      }
+      if (!gone) continue;
+      j.resumeAt = (j.state === 'failed-retryable' ? j.resumeAt : j.state) as ActiveState | undefined;
+      j.state = 'failed';
+      j.photoGone = true;
+      j.errorCode = 'UNKNOWN';
+      j.nextAttemptAt = undefined;
+      changed = true;
+      await this.dropDraft(j); // the unpublished draft goes, so nothing of this post is left on the server
+      this.report(new ApiError('UNKNOWN'), j); // code only: the message is just the code, never a URL or caption
+    }
+    if (changed) { try { await this.save(); } catch { /* stopped */ } }
+  }
+
+  /**
+   * Deletes a job's unpublished draft. The app may have died between create_post and saving the post id, so when the id
+   * is unknown, create_post is repeated: it is idempotent on the job's client id and hands back the same draft.
+   */
+  private async dropDraft(j: Job): Promise<void> {
+    try {
+      const id = j.postId ?? await this.d.api.createPost({
+        clientId: j.clientId, space: j.space, caption: j.caption, circleIds: j.circleIds,
+        ...(j.takenAt ? { takenAt: j.takenAt } : {}), ...(j.title ? { title: j.title } : {}),
+        ...(j.batchId ? { batchId: j.batchId, batchSize: j.batchSize ?? null } : {}),
+      });
+      await this.d.api.deletePost(id);
+    } catch { /* offline or already gone: an unpublished draft is never shown to anyone */ }
+    j.postId = undefined;
+    j.mediaIds = undefined;
   }
 
   /** This user's jobs, oldest first. */
@@ -239,6 +302,7 @@ export class UploadQueue {
     const j = this.find(id);
     if (!j) return;
     if (j.postId && j.state !== 'published') this.d.api.deletePost(j.postId).catch(() => {});
+    if (j.state !== 'published') this.releaseBytes(j); // a published job's bytes went when it published
     this.all = this.all.filter((x) => x.id !== id);
     this.grants.delete(id);
     this.prepared.delete(id);
@@ -255,6 +319,10 @@ export class UploadQueue {
   // ---------------- internals ----------------
   private mine(): Job[] {
     return this.all.filter((j) => j.userId === this.d.userId);
+  }
+  /** HRT-WEB.3: free a job's saved photo bytes; never lets a failure touch the queue. */
+  private releaseBytes(job: Job): void {
+    try { void Promise.resolve(this.d.store?.release({ ...job })).catch(() => {}); } catch { /* never break the queue */ }
   }
   private find(id: string): Job | undefined {
     return this.mine().find((j) => j.id === id);
@@ -476,6 +544,7 @@ export class UploadQueue {
     this.prepared.delete(job.id);
     this.grants.delete(job.id);
     await this.save();
+    this.releaseBytes(job);
     this.d.onPublished?.({ ...job });
   }
 }

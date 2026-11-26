@@ -1,0 +1,4 @@
+qa-tdd, 2026-11-25, HRT-WEB.3 final tree (HEAD f5f0ecf, uncommitted tracker seed). 3 runs, identical, no flake. Raw output beside this file.
+jest 2593 passed (1 skipped, 1 todo), 197 suites; typecheck clean; e2e:web 57 passed (6 skipped); e2e:site 16; e2e:demo 61; prototype e2e 33; compiler-bundle ok; compiler-rules ok; 17 cheap script suites ok (rc.txt).
+Not run: backend SQL, Deno, deploy script (no backend change); WEB-APP-35/36 manual.
+Red re-proved on a worktree: c1237dc jest 16 failed/5 passed over the 4 new files; 9ea12f1 PRIV-WEB3-R1 1 failed (Expected 0, Received 1). Playwright WEB-APP-25..28,30,31 red not re-run (no recorded output).
