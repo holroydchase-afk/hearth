@@ -6,6 +6,8 @@
 #   bash tests/deploy/deploy_test.sh
 set -uo pipefail
 cd "$(dirname "$0")/../.."
+# INTAKE-176B: the scripts take the project ref from the environment only; tests use a fake one.
+export SUPABASE_PROJECT_REF=abcdefghijklmnopqrst
 PASS=0; FAIL=0
 ok()  { echo "ok   - $1"; PASS=$((PASS + 1)); }
 bad() { echo "FAIL - $1"; FAIL=$((FAIL + 1)); }

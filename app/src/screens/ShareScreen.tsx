@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// Share (BETA-SHARE-1, BETA-AUD-1) in two steps (DEC-90, SPEC-SHARE-FLOW, FLOW-1..26): pick photos or a kind (Event,
+// Share (BETA-SHARE-1, BETA-AUD-1) in two steps (DEC-91, SPEC-SHARE-FLOW, FLOW-1..26): pick photos or a kind (Event,
 // News, Saying), then step 1 is the words (one big open box and quiet chips), step 2 is "Who gets it?" on its own page
 // (face tiles 2 across, one summary line, a pinned "Send to <names>"), then a "Sent" page. Nothing is picked to start
 // (SHARE-PC-7). DEC-79 (SHARE-ST-19..27): before any photo is picked, Share is the empty postcard, wordless: the whole

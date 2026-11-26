@@ -1,6 +1,6 @@
 # Spec: the two-step Share flow (all composers)
 
-Status: Chase's call, Nov 26, 2026 (DEC-90) · Owner: staff-pm · Persona check: `decisions/2026-11-26-share-flow.md` · TRACKER R112
+Status: Chase's call, Nov 26, 2026 (DEC-91) · Owner: staff-pm · Persona check: `decisions/2026-11-26-share-flow.md` · TRACKER R112
 Look source: the "Share flow, in two steps" tester, look B "Say it first" (a published tester; its source stays in the scratchpad, not the repo). Reads with SPEC-TYPE and DESIGN-SYSTEM (DS-1..DS-9).
 
 ## The bet
@@ -52,7 +52,7 @@ No underline fields, no ruled lines and no "To:" line on any Share page, empty c
 
 ## Superseded tests
 
-These assert the old look and are rewritten (not deleted) in the qa-tdd red step; each keeps its ID in the new title with "(DEC-90)".
+These assert the old look and are rewritten (not deleted) in the qa-tdd red step; each keeps its ID in the new title with "(DEC-91)".
 - `app/src/screens/__tests__/shareStart.test.tsx`: SHARE-ST-23 (two ruled lines, "To:", one To: rule), SHARE-ST-24's "To:" and rule presses, SHARE-ST-17 "To:" press scale, GUX-W4 and GUX-T5 (rule and "To:" contrast), SHARE-ST-31 (kind card shows "To:" and a disabled "Pick who gets it"), SHARE-ST-26 (postcard with note box, To: tiles and Send in one card), GUX-R1 and GUX-R3 as they point at the "share-to" row.
 - `app/src/screens/__tests__/sharePostcard.test.tsx`: SHARE-PC-1 (the card holds photo, note, dashed divider and To:), SHARE-PC-6, SHARE-PC-7, SHARE-PC-9 (the `To: <names>` line; the naming rules move to the summary line), SHARE-PC-10 (the "Pick who gets it" button becomes "Next: who gets it" then "Send to ...").
 - `app/src/screens/__tests__/share.test.tsx` (the "Pick who gets it" disabled button) and `wordsPass.test.tsx` WORDS-1 (the To: line).
@@ -60,7 +60,7 @@ These assert the old look and are rewritten (not deleted) in the qa-tdd red step
 - `app/src/screens/__tests__/reviewRound2.test.tsx` R19 (the note label and "To:" start 16 pt in).
 - `app/src/ui/__tests__/redesignLint.test.ts` and `typeScale.test.tsx` where they list Share's underline fields or "To:" `testID`s.
 - `app/src/demo/__tests__/demoFrame.test.tsx`, `demoKinds.test.ts` and e2e `demo.spec.js` DEMO-KINDS-7..14 and SHARE-ST-34 where they type the fields or tap "Pick who gets it".
-- Also reconciled after the build (qa-tdd, Nov 26): `shareGux.test.tsx` GUX-R1 (tiles 2 across, 1 across in Easy view, never 3), GUX-R2 and GUX-R3 (the note is an open box, no underline); `sharePostcard.test.tsx` SHARE-PC-5 Easy (1 across); `shareStart.test.tsx` SHARE-ST-4, ST-7, ST-25, GUX-W5; `share.test.tsx` BETA-SHARE-1 (goFeed only after "See it in Feed"), QA-R2 and "is grandparent-safe"; `guxPaper.test.tsx` GUX-R3; `wordsPass.test.tsx` WORDS-4; `groupsWords.test.tsx` UX-G1..3; `problemDetails.test.tsx` DBG-3/4; `uploadFailure.test.tsx` MEDIA-3; `plainBackground.test.tsx` RD-34 Share; `redesignPolish.test.tsx` GUX-R9; `shareKindsSave.test.tsx` SHARE-U-19 retry. Each carries "(DEC-90)".
+- Also reconciled after the build (qa-tdd, Nov 26): `shareGux.test.tsx` GUX-R1 (tiles 2 across, 1 across in Easy view, never 3), GUX-R2 and GUX-R3 (the note is an open box, no underline); `sharePostcard.test.tsx` SHARE-PC-5 Easy (1 across); `shareStart.test.tsx` SHARE-ST-4, ST-7, ST-25, GUX-W5; `share.test.tsx` BETA-SHARE-1 (goFeed only after "See it in Feed"), QA-R2 and "is grandparent-safe"; `guxPaper.test.tsx` GUX-R3; `wordsPass.test.tsx` WORDS-4; `groupsWords.test.tsx` UX-G1..3; `problemDetails.test.tsx` DBG-3/4; `uploadFailure.test.tsx` MEDIA-3; `plainBackground.test.tsx` RD-34 Share; `redesignPolish.test.tsx` GUX-R9; `shareKindsSave.test.tsx` SHARE-U-19 retry. Each carries "(DEC-91)".
 Unchanged on purpose: SHARE-ST-19..22 (empty card is one Add photos button), SHARE-U-19/22 and PRIV-SK-R1 (send paths), `bulk.test.tsx`, all contract tests.
 
 ## Review findings (Nov 26, grandparent-ux and privacy-security)

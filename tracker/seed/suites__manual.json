@@ -112,7 +112,7 @@
    "id": "M-15",
    "title": "BETA-AUD-17 Share sheet: Everyone first, then Groups, then Events",
    "area": "iPhone",
-   "steps": "On Chase's iPhone, Chase and then Mom each share one photo to Everyone and one to the Charleston trip. Then ask each: who sees this one?",
+   "steps": "On Chase's iPhone, Chase and then Mom each share one photo to Everyone and one to the Lake weekend. Then ask each: who sees this one?",
    "expected": "Everyone is first and takes 1 tap; Groups then Events follow, each as name plus 'N people'; both answer 'who sees this?' correctly from the screen alone (2 of 2).",
    "tickets": []
   },
@@ -238,7 +238,7 @@
   },
   {
    "id": "M1-11",
-   "title": "FLOW-20 (DEC-90) Two-step Share with VoiceOver and TalkBack",
+   "title": "FLOW-20 (DEC-91) Two-step Share with VoiceOver and TalkBack",
    "area": "iPhone + Android",
    "steps": "Turn on VoiceOver (then TalkBack). On Share, open Photos, Event, News and Saying in turn: step 1, Next, step 2, Send.",
    "expected": "Step 1 reads title, 'Step 1 of 2', the box, each chip as a button with its value, the hint, then the button. Step 2 reads title, 'Step 2 of 2', each tile with picked or not picked, the summary, the button. Focus moves to the step's title on each change.",
@@ -246,7 +246,7 @@
   },
   {
    "id": "M1-12",
-   "title": "FLOW-25 (DEC-90) First-time tester posts an event with a day and a place",
+   "title": "FLOW-25 (DEC-91) First-time tester posts an event with a day and a place",
    "area": "A real phone",
    "steps": "Hand a grandparent (or Chase's wife) the phone on Share. Ask: 'Tell the family about Saturday at the farm.' Time it. Do not help.",
    "expected": "Done with no help in under 60 seconds. If two grandparents tap Back from step 2 to hunt for a To field, stop and rework step 2's title.",
@@ -254,7 +254,7 @@
   },
   {
    "id": "M1-13",
-   "title": "FLOW-26 (DEC-90) First-time tester sends a photo to one group",
+   "title": "FLOW-26 (DEC-91) First-time tester sends a photo to one group",
    "area": "A real phone",
    "steps": "Same tester: 'Send this photo to Dad's side.' Time it. Do not help.",
    "expected": "Done with no help in under 60 seconds and no tap on Back from step 2.",

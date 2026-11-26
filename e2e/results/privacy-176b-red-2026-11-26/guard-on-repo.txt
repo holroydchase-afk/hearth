@@ -1,0 +1,23 @@
+PRIVACY: backend/scripts/suspend-family.sh has a project ref as a :- default; require SUPABASE_PROJECT_REF from the environment
+PRIVACY: backend/scripts/family-setup.sh has a project ref as a :- default; require SUPABASE_PROJECT_REF from the environment
+PRIVACY: backend/scripts/deploy.sh has a project ref as a :- default; require SUPABASE_PROJECT_REF from the environment
+PRIVACY: backend/scripts/start-family-switch.sh has a project ref as a :- default; require SUPABASE_PROJECT_REF from the environment
+PRIVACY: backend/scripts/smoke-check.sh has a project ref as a :- default; require SUPABASE_PROJECT_REF from the environment
+PRIVACY: backend/scripts/sent-vs-received.sh has a project ref as a :- default; require SUPABASE_PROJECT_REF from the environment
+PRIVACY: .mcp.json carries a 20-character project ref; use ${SUPABASE_PROJECT_REF}
+PRIVACY: ./app/src/test/jpeg.ts: the word Charleston (a real-family detail; say 'Lake weekend')
+PRIVACY: ./app/src/screens/__tests__/evalFindings.test.tsx: the word Charleston (a real-family detail; say 'Lake weekend')
+PRIVACY: ./app/src/screens/__tests__/groupsWords.test.tsx: the word Charleston (a real-family detail; say 'Lake weekend')
+PRIVACY: ./app/src/screens/MessagesScreen.tsx: the word Charleston (a real-family detail; say 'Lake weekend')
+PRIVACY: ./backend/scripts/family-setup-api.sql: the word Charleston (a real-family detail; say 'Lake weekend')
+PRIVACY: ./backend/scripts/family-setup-v2.sql: the word Charleston (a real-family detail; say 'Lake weekend')
+PRIVACY: ./backend/tests/setup_api_test.sh: the word Charleston (a real-family detail; say 'Lake weekend')
+PRIVACY: ./backend/tests/setup_v2_test.sh: the word Charleston (a real-family detail; say 'Lake weekend')
+PRIVACY: ./backend/tests/chat_test.sql: the word Charleston (a real-family detail; say 'Lake weekend')
+PRIVACY: ./backend/tests/groups_test.sql: the word Charleston (a real-family detail; say 'Lake weekend')
+PRIVACY: ./tracker/seed/suites__backend.json: the word Charleston (a real-family detail; say 'Lake weekend')
+PRIVACY: ./tracker/seed/suites__manual.json: the word Charleston (a real-family detail; say 'Lake weekend')
+PRIVACY: ./tracker/build_seed.py: the word Charleston (a real-family detail; say 'Lake weekend')
+PRIVACY: ./docs/product/SPEC-EVAL-FIXES.md: the word Charleston (a real-family detail; say 'Lake weekend')
+PRIVACY: ./docs/product/MILESTONE-1.md: the word Charleston (a real-family detail; say 'Lake weekend')
+PRIVACY: ./docs/product/TRACKER.md: the word Charleston (a real-family detail; say 'Lake weekend')

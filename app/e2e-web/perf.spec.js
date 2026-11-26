@@ -18,7 +18,7 @@ test('PERF-FEED-1 cold start to the first photo on screen is under 2 s', async (
   await page.getByRole('button', { name: /^Add photos, up to \d+ at a time$/ }).click();
   await (await chooser).setFiles(FIXTURE);
   await page.getByLabel('Say something, optional').fill('Cold start');
-  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-90: step 2
+  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-91: step 2
   await page.getByLabel(/^Grandparents – Dad's side, 2 people, not picked$/).click();
   await page.getByRole('button', { name: /^Send to / }).click();
   await page.getByRole('tab', { name: /^Feed/ }).click(); // RD-18: captions are on Feed; Gallery is the photo grid

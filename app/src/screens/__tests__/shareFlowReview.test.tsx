@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// grandparent-ux and privacy-security review of the built two-step Share flow (DEC-90), Nov 26, 2026. Written first
+// grandparent-ux and privacy-security review of the built two-step Share flow (DEC-91), Nov 26, 2026. Written first
 // (red) by qa-tdd: GUX-FL-R1, R2, R3, R5, R6 (R6 also in shareFlow.test.tsx FLOW-15/16), R7, R8 and PRIV-FL-R1.
 // Seams (behaviour is what is checked): testID "share-dock" on the pinned bottom block, which reports its height by
 // onLayout; the page's ScrollView contentContainerStyle.paddingBottom is at least that height (R2). testID

@@ -116,10 +116,10 @@ test('RR-14 add a photo, reload keeps it, Start over brings back the sample fami
   // Retargeted Nov 19 by qa-tdd for DEC-73 (SHARE-PC): the postcard's note, a face tile and "Send to ...".
   await openNewPost(page, [FIXTURE]);
   await page.getByLabel('Say something, optional').fill('Leaf pile');
-  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-90: step 2
+  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-91: step 2
   await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
   await page.getByRole('button', { name: /^Send to / }).click();
-  await page.getByRole('button', { name: 'See it in Feed' }).click(); // DEC-90: the sent page
+  await page.getByRole('button', { name: 'See it in Feed' }).click(); // DEC-91: the sent page
   await onFeed(page); // RD-18: captions live on Feed (Gallery may stay mounted behind it, so only what shows counts)
   await expect(page.getByText('Leaf pile', { exact: true }).filter({ visible: true })).toBeVisible();
   await page.reload();
@@ -1044,7 +1044,7 @@ test('DEMO-EASY-1 on a laptop, Grandma Jo\'s Easy view leaves the story panel th
 });
 // SHARE-PC-13 (SPEC-REDESIGN 1j, DEC-73, Chase Nov 19): the postcard Share in the public demo at 393 px. Written first
 // (red), Nov 19, by qa-tdd. Soft expects after the page opens, so one run shows every part still missing.
-test('SHARE-PC-13 (DEC-90) postcard Share: 3 photos, step 1, Next, nothing picked, two groups, "Send to ...", sent page, See it in Feed; Jo sees names only', async ({ page }) => {
+test('SHARE-PC-13 (DEC-91) postcard Share: 3 photos, step 1, Next, nothing picked, two groups, "Send to ...", sent page, See it in Feed; Jo sees names only', async ({ page }) => {
   const shots = path.join(__dirname, '..', 'test-results', 'share-pc-13');
   await page.setViewportSize({ width: 393, height: 852 });
   await page.emulateMedia({ colorScheme: 'light' });
@@ -1054,7 +1054,7 @@ test('SHARE-PC-13 (DEC-90) postcard Share: 3 photos, step 1, Next, nothing picke
   await expect(page.getByText('1 of 3', { exact: true })).toBeVisible();
   const tiles = page.getByLabel(/, \d+ people, (not )?picked$/).filter({ visible: true });
   expect.soft(await page.getByLabel(/, \d+ people, picked$/).count()).toBe(0);
-  // DEC-90: step 1 has no tiles; "Next: who gets it" opens step 2, where nothing is picked and Send is off.
+  // DEC-91: step 1 has no tiles; "Next: who gets it" opens step 2, where nothing is picked and Send is off.
   expect.soft(await tiles.count(), 'no group tile on step 1').toBe(0);
   await expect.soft(page.getByText('Step 1 of 2')).toBeVisible();
   await page.getByRole('button', { name: 'Next: who gets it' }).click();
@@ -1074,7 +1074,7 @@ test('SHARE-PC-13 (DEC-90) postcard Share: 3 photos, step 1, Next, nothing picke
   await expect(send).toBeEnabled();
   const names = String(await send.getAttribute('aria-label') ?? await send.innerText()).replace(/^Send to /, '');
   await send.click();
-  await expect(page.getByRole('heading', { name: 'Sent' })).toBeVisible(); // DEC-90: the sent page, no banner
+  await expect(page.getByRole('heading', { name: 'Sent' })).toBeVisible(); // DEC-91: the sent page, no banner
   await expect(page.getByText(/^Shared with /)).toHaveCount(0);
   await page.getByRole('button', { name: 'See it in Feed' }).click();
   // T39 (QA-R13): wait for the new post itself, then check it is on top. Every demo seed post is 3+ hours old, so
@@ -1111,7 +1111,7 @@ for (const width of [360, 390]) {
     await page.goto('/');
     await galleryLoaded(page);
     await openNewPost(page, [FIXTURE]);
-    await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-90: the tiles are on step 2
+    await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-91: the tiles are on step 2
     const tiles = page.getByLabel(/, \d+ people, (not )?picked$/).filter({ visible: true });
     await expect(tiles.first()).toBeVisible();
     const found = await tiles.evaluateAll((els) => els.map((el) => {
@@ -1237,12 +1237,12 @@ test('RD-110-R3 the bar shrunk on Share comes back whole on Feed after sending',
   await page.goto('/');
   await galleryLoaded(page);
   await openNewPost(page, [FIXTURE]);
-  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-90: the tiles are on step 2
+  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-91: the tiles are on step 2
   await wheel(page, await appMiddle(page), 800);
   await expect(page.getByRole('tab')).toHaveCount(1);
   await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
   await page.getByRole('button', { name: /^Send to / }).click();
-  await page.getByRole('button', { name: 'See it in Feed' }).click(); // DEC-90: the sent page comes first
+  await page.getByRole('button', { name: 'See it in Feed' }).click(); // DEC-91: the sent page comes first
   await expect(page.getByRole('tab', { name: /^Feed/ })).toHaveAttribute('aria-selected', 'true');
   await expect(page.getByRole('tab')).toHaveCount(4);
   await resetDemo(page);
@@ -1257,7 +1257,7 @@ test('RD-110-R3 the bar shrunk on Share comes back whole on Feed after sending',
 // are "Add photos", "To:" and the stamp's month and day. Soft expects, so one run shows every part still missing.
 // QA-R (staff-pm): the demo's Grandma Jo is a viewer with no Share tab (RD-9), so her "up to 10" can't be reached here;
 // it runs only if the demo ever lets her post, and the jest SHARE-ST-21 cases cover it meanwhile.
-test('SHARE-ST-8 SHARE-ST-27 (DEC-90) wordless Share start: only "New post", "Add photos" and the stamp (no To:, no ruled lines); one card button; a tap on the card with 3 photos shows "1 of 3"', async ({ page }) => {
+test('SHARE-ST-8 SHARE-ST-27 (DEC-91) wordless Share start: only "New post", "Add photos" and the stamp (no To:, no ruled lines); one card button; a tap on the card with 3 photos shows "1 of 3"', async ({ page }) => {
   const shots = path.join(__dirname, '..', 'test-results', 'share-st-27');
   await page.setViewportSize({ width: 393, height: 852 });
   await page.emulateMedia({ colorScheme: 'light' });
@@ -1278,7 +1278,7 @@ test('SHARE-ST-8 SHARE-ST-27 (DEC-90) wordless Share start: only "New post", "Ad
       expect.soft(holds).toBe(true);
     }
     for (const id of ['share-spot', 'share-stamp']) await expect.soft(page.getByTestId(id).filter({ visible: true })).toHaveCount(1);
-    // DEC-90: no ruled lines and no "To:" on the empty card.
+    // DEC-91: no ruled lines and no "To:" on the empty card.
     for (const id of ['share-note-rule', 'share-to-rule']) await expect.soft(page.getByTestId(id)).toHaveCount(0);
     // Only these words in the card: "Add photos", "To:", the stamp's month and day.
     const now = new Date();
@@ -1328,7 +1328,7 @@ test('SHARE-ST-8 SHARE-ST-27 (DEC-90) wordless Share start: only "New post", "Ad
   await page.getByRole('button', { name: 'Easy view, On' }).click();
   await page.getByRole('radio', { name: 'Off', exact: true }).click();
 
-  // As Chase, a tap on the card (DEC-90: no ruled lines left to tap) opens the chooser; 3 photos open the postcard at "1 of 3".
+  // As Chase, a tap on the card (DEC-91: no ruled lines left to tap) opens the chooser; 3 photos open the postcard at "1 of 3".
   await page.getByRole('tab', { name: /^Share/ }).click();
   const chooser = page.waitForEvent('filechooser', { timeout: 15_000 });
   await page.getByTestId('share-card').filter({ visible: true }).first().click();
@@ -1544,7 +1544,7 @@ test('DEMO-KINDS-9 a returning visitor whose browser saved an earlier demo famil
   expect(await page.evaluate(() => localStorage.getItem('hearth.demoSeed'))).not.toBe('wofmn');
 });
 
-// The walk (DEC-90): Graham picks a kind, writes in the one big box, sets the chips, Next, picks a group, Send, "See it in Feed".
+// The walk (DEC-91): Graham picks a kind, writes in the one big box, sets the chips, Next, picks a group, Send, "See it in Feed".
 const BOX = /^(What's happening\?|What's your news\?|What did they say\?)$/;
 const pickDayOnSheet = async (page, iso) => {
   await page.getByRole('button', { name: 'Pick a day' }).click();
@@ -1631,7 +1631,7 @@ test('DEMO-KINDS-13 Saying walk: the card says who sees the words and the age; F
   await page.getByLabel('Age', { exact: true }).fill('4');
   await page.getByRole('button', { name: 'Next: who gets it' }).click();
   await page.getByRole('button', { name: EVERYONE }).click();
-  // DEC-90: the summary on step 2 says who sees the words and the age.
+  // DEC-91: the summary on step 2 says who sees the words and the age.
   await expect(page.getByTestId('share-summary')).toContainText('these words, who said them, and the age');
   await page.getByRole('button', { name: /^Send to / }).click();
   await page.getByRole('button', { name: 'See it in Feed' }).click();
@@ -1678,32 +1678,25 @@ test('GUX-T2 at 390 px the empty postcard is top-aligned: its top is within 32 p
   }
 });
 
-// GUX-T6 (P2): the demo shows Gallery's birthday card ("When's your birthday?", CAL-12) at first open. At 390 x 844 its
-// "Not now" starts under the floating tab bar; once it is scrolled to (as keyboard focus or a screen reader does:
-// the least scroll that brings it into the scroll area), all of it sits above the tab bar's top edge. Light only (the
-// layout is the same in dark).
-test('GUX-T6 at 390 x 844 Gallery\'s birthday card "Not now", once scrolled to, sits clear above the floating tab bar', async ({ page }) => {
+// GUX-T6 (P2) tested Gallery's birthday card "Not now" against the floating tab bar. CAL-S4 (Nov 26, Chase: "hide this
+// from the feed"): the card is gone, so that test was replaced by this one. At 390 x 844 nothing on Gallery asks for a
+// birthday, and Me's "My birthday" button, once scrolled to, sits clear above the tab bar (the same reach rule GUX-T6 held).
+test('GUX-T6 CAL-S4 at 390 x 844 Gallery has no birthday card, and Me\'s "Add my birthday", once scrolled to, sits clear above the floating tab bar', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await galleryLoaded(page);
-  const card = page.getByTestId('birthday-card');
-  await expect(card, 'the demo shows the birthday card on Gallery').toBeVisible();
-  const notNow = card.getByRole('button', { name: 'Not now' });
+  await expect(page.getByTestId('birthday-card')).toHaveCount(0);
+  await page.getByRole('tab', { name: /^More/ }).click();
+  await page.getByRole('button', { name: 'Me', exact: true }).filter({ visible: true }).click();
+  const add = page.getByTestId('my-birthday').filter({ visible: true }).getByRole('button', { name: 'Add my birthday' });
   const bar = page.getByRole('tablist');
   await expect(bar).toBeVisible();
-  await notNow.scrollIntoViewIfNeeded();
+  await add.scrollIntoViewIfNeeded();
   await page.waitForTimeout(300);
-  const b = await notNow.boundingBox();
+  const b = await add.boundingBox();
   const barTop = (await bar.boundingBox()).y;
-  expect({ notNowBottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: b.y + b.height <= barTop })
-    .toEqual({ notNowBottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: true });
-  // Keyboard reach: Tab focus lands on it and it is not hidden behind the bar (WCAG 2.4.11).
-  await page.goto('/');
-  await galleryLoaded(page);
-  await notNow.focus();
-  await page.waitForTimeout(300);
-  const f = await notNow.boundingBox();
-  expect({ focusedBottom: Math.round(f.y + f.height), clear: f.y + f.height <= barTop }).toEqual({ focusedBottom: Math.round(f.y + f.height), clear: true });
+  expect({ bottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: b.y + b.height <= barTop })
+    .toEqual({ bottom: Math.round(b.y + b.height), barTop: Math.round(barTop), clear: true });
 });
 
 // EF-HE-1-AC1/AC2 (intake #162, SPEC-EVAL-FIXES): supersedes the ff4543e guard ("Open" shown, "Open the chat …" spoken).

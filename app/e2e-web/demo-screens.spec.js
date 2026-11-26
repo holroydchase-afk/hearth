@@ -36,7 +36,7 @@ test('portfolio screenshots from the demo', async ({ page }) => {
   await (await chooser).setFiles(PICTURE);
   await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible(); // DEC-73 postcard
   await page.getByLabel('Say something, optional').fill('First snow!');
-  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-90: step 2
+  await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-91: step 2
   await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
   await shot('iphone-02-share');
   await page.getByRole('button', { name: /^Send to / }).click();

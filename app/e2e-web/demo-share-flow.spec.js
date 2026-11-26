@@ -1,4 +1,4 @@
-// FLOW-17 and FLOW-22 (DEC-90, docs/product/SPEC-SHARE-FLOW.md): the two-step Share flow in the public demo.
+// FLOW-17 and FLOW-22 (DEC-91, docs/product/SPEC-SHARE-FLOW.md): the two-step Share flow in the public demo.
 // Written first (red), Nov 26, 2026, by qa-tdd. Soft expects where several parts can be missing, so one run shows all.
 const path = require('path');
 const { test, expect } = require('../../e2e/node_modules/@playwright/test');

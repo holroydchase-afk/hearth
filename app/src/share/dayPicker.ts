@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// FLOW-15..17 (DEC-90, SPEC-SHARE-FLOW): the words and dates behind Share's day sheet. Plain functions, no phone
+// FLOW-15..17 (DEC-91, SPEC-SHARE-FLOW): the words and dates behind Share's day sheet. Plain functions, no phone
 // APIs: names are fixed English tables so a test (and every phone) says the same thing. Days travel as `YYYY-MM-DD`.
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];

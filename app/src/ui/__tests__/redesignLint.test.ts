@@ -119,7 +119,7 @@ describe('RD 1a source scans', () => {
       if (SIGN_IN.has(file)) continue;
       // DEC-73 (SHARE-PC-10; engineer, flagged for qa-tdd): the postcard's pinned "Send to <names>" replaces Post.
       if (file === 'screens/ShareScreen.tsx' && /\bPost\b|Send to|Next: who gets it/.test(words) && /primary/.test(variant)) continue;
-      // DEC-90: a kind's step 1 shows the same pinned "Next: who gets it" (ShareKinds.tsx or ShareScreen.tsx).
+      // DEC-91: a kind's step 1 shows the same pinned "Next: who gets it" (ShareKinds.tsx or ShareScreen.tsx).
       if ((file === 'screens/ShareKinds.tsx' || file === 'screens/ShareScreen.tsx') && words === 'Next: who gets it' && /primary/.test(variant)) continue;
       if (file === 'ui/kit.tsx' && /\{yes\}/.test(b.props)) continue; // Confirm's yes: checked for Delete/Leave below
       if (/danger/.test(variant) && /\b(Delete|Leave)\b/.test(words)) continue;

@@ -43,7 +43,7 @@ export function KindsRow({ onPick }: { onPick: (k: PostKind) => void }) {
   );
 }
 
-/** DEC-90 (SPEC-SHARE-FLOW): a kind's words are one big open box; the rest are chips. Keys of `KindWords`. */
+/** DEC-91 (SPEC-SHARE-FLOW): a kind's words are one big open box; the rest are chips. Keys of `KindWords`. */
 export type KindWords = { words?: string; day?: string; where?: string; who?: string; age?: string };
 export type ChipKey = 'day' | 'where' | 'who' | 'age';
 

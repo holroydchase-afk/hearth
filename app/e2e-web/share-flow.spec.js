@@ -1,4 +1,4 @@
-// FLOW-23 (DEC-90, docs/product/SPEC-SHARE-FLOW.md): the two-step Share flow on the real app bundle (FakeApi web build)
+// FLOW-23 (DEC-91, docs/product/SPEC-SHARE-FLOW.md): the two-step Share flow on the real app bundle (FakeApi web build)
 // at 360 and 412 px wide: FLOW-1..14 hold, no sideways scroll, the pinned button sits above the floating tab bar
 // (RD-109, useTabBarSpace). Written first (red), Nov 26, 2026, by qa-tdd.
 const path = require('path');

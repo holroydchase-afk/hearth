@@ -26,7 +26,7 @@
 //     words that say the words were kept (/kept/i), with no code and not the photo line "Pick who should see it.";
 //     every typed word stays in the card. Branch on error.code.
 //   - SHARE-U-23: every new tap target is labelled and 48 pt+; text through useTheme().type / <Txt> (typeScale lint).
-// DEC-90 (Nov 26, qa-tdd): Share is two steps now (docs/product/SPEC-SHARE-FLOW.md). The helpers below drive step 1's one
+// DEC-91 (Nov 26, qa-tdd): Share is two steps now (docs/product/SPEC-SHARE-FLOW.md). The helpers below drive step 1's one
 // big box and chips and step 2's tiles; the old field labels map onto them. Superseded tests are rewritten, IDs kept.
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
@@ -126,7 +126,7 @@ const fill = (k: K, extra: Record<string, string> = {}) => {
   for (const [l, v] of Object.entries({ ...KINDS[k].required, ...extra })) type(l, v);
 };
 const emptyAgain = async () => {
-  // DEC-90: a sent page first, then "Share another" gives the empty card.
+  // DEC-91: a sent page first, then "Share another" gives the empty card.
   await waitFor(() => expect(screen.queryByTestId('share-kinds') ?? screen.queryByRole('button', { name: 'Share another' })).toBeTruthy(), slow);
   const another = screen.queryByRole('button', { name: 'Share another' });
   if (another) fireEvent.press(another);
@@ -146,9 +146,9 @@ const toWhoAgain = async () => {
 
 afterEach(() => jest.restoreAllMocks());
 
-describe('SHARE-U-17 (DEC-90) "Next: who gets it" opens up only when the required fields are filled', () => {
+describe('SHARE-U-17 (DEC-91) "Next: who gets it" opens up only when the required fields are filled', () => {
   for (const k of ALL) {
-    it(`SHARE-U-17 (DEC-90) ${k}: off while empty, off with any one required field blank or spaces only, on with every required one filled and the optional ones blank`, async () => {
+    it(`SHARE-U-17 (DEC-91) ${k}: off while empty, off with any one required field blank or spaces only, on with every required one filled and the optional ones blank`, async () => {
       await start();
       await openKind(k);
       expect(isDisabled(pickBtn())).toBe(true);
@@ -163,9 +163,9 @@ describe('SHARE-U-17 (DEC-90) "Next: who gets it" opens up only when the require
   }
 });
 
-describe('SHARE-U-18 (DEC-90) step 2 is the same who-gets-it picker as photos, nothing pre-picked (SHARE-U-3, DEC-73/79)', () => {
+describe('SHARE-U-18 (DEC-91) step 2 is the same who-gets-it picker as photos, nothing pre-picked (SHARE-U-3, DEC-73/79)', () => {
   for (const k of ALL) {
-    it(`SHARE-U-18 (DEC-90) ${k}: the group tiles show on step 2, none picked even with a saved last audience; a pick names the people on Send`, async () => {
+    it(`SHARE-U-18 (DEC-91) ${k}: the group tiles show on step 2, none picked even with a saved last audience; a pick names the people on Send`, async () => {
       const kv = memoryKV({ [`hearth.lastAudience.v1.${FIXTURE.users.chase.id}`]: JSON.stringify([FIXTURE.circles.dadSide.id]) });
       await start({ kv });
       await openKind(k);
@@ -231,7 +231,7 @@ describe('SHARE-U-19 Send makes exactly one post of that kind, published with no
     expect(Object.keys(be.state.posts).length).toBe(before + 1);
   });
 
-  it('SHARE-U-19 (DEC-90) Send again after a failed publish reuses the client id: still one post, now published', async () => {
+  it('SHARE-U-19 (DEC-91) Send again after a failed publish reuses the client id: still one post, now published', async () => {
     const { be } = await start();
     const before = Object.keys(be.state.posts).length;
     const create = jest.spyOn(be, 'createPost');
@@ -239,7 +239,7 @@ describe('SHARE-U-19 Send makes exactly one post of that kind, published with no
     jest.spyOn(be, 'publishPost').mockImplementationOnce(() => { throw new ApiError('NETWORK'); }).mockImplementation(real);
     fireEvent.press(await toSend('news'));
     await screen.findByRole('alert', {}, slow);
-    await backToWords(); // DEC-90: the notice sits on step 2; Back shows the kept words, Next keeps the pick
+    await backToWords(); // DEC-91: the notice sits on step 2; Back shows the kept words, Next keeps the pick
     expect(wordsBox().props.value).toBe('Leo lost his first tooth');
     await toWhoAgain();
     fireEvent.press(screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' }));
@@ -304,8 +304,8 @@ describe('SHARE-U-20 the post in Feed: a large-type card for its kind, the names
   });
 });
 
-describe('SHARE-U-21 (DEC-90) PRIV-VC-D1 the Saying says who will see who said it, before sending (now in the step 2 summary)', () => {
-  it('SHARE-U-21 (DEC-90) on step 2 the Saying summary names what is shown ("these words and who said them"), reachable by screen readers, 17 pt+', async () => {
+describe('SHARE-U-21 (DEC-91) PRIV-VC-D1 the Saying says who will see who said it, before sending (now in the step 2 summary)', () => {
+  it('SHARE-U-21 (DEC-91) on step 2 the Saying summary names what is shown ("these words and who said them"), reachable by screen readers, 17 pt+', async () => {
     await start();
     await openKind('saying');
     fill('saying');
@@ -318,7 +318,7 @@ describe('SHARE-U-21 (DEC-90) PRIV-VC-D1 the Saying says who will see who said i
     for (const t of line.findAll((x: Inst) => x.type === Text) as Inst[]) expect(Number(flat(t.props.style).fontSize ?? 0)).toBeGreaterThanOrEqual(17);
   });
   for (const k of ['event', 'news'] as const) {
-    it(`SHARE-U-21 (DEC-90) the ${k} summary does not show the saying line`, async () => {
+    it(`SHARE-U-21 (DEC-91) the ${k} summary does not show the saying line`, async () => {
       await start();
       await openKind(k);
       fill(k);
@@ -337,7 +337,7 @@ describe('SHARE-U-22 a refusal shows a plain notice and keeps every word (A1)', 
   ];
   for (const [name, err] of cases) {
     for (const k of ['event', 'saying'] as const) {
-      it(`SHARE-U-22 (DEC-90) ${name} on ${k}: a notice that says the words were kept; the card and its words stay; nothing published`, async () => {
+      it(`SHARE-U-22 (DEC-91) ${name} on ${k}: a notice that says the words were kept; the card and its words stay; nothing published`, async () => {
         const { be } = await start();
         jest.spyOn(be, 'createPost').mockImplementation(() => { throw err; });
         const publish = jest.spyOn(be, 'publishPost');
@@ -346,7 +346,7 @@ describe('SHARE-U-22 a refusal shows a plain notice and keeps every word (A1)', 
         const said = wordsIn(notice);
         expect(said).toMatch(/kept/i);
         expect(said).not.toMatch(/42501|23514|post_kinds|Pick who should see it\./);
-        expect(screen.getByRole('header', { name: 'Who gets it?' })).toBeTruthy(); // DEC-90: step 2 stays
+        expect(screen.getByRole('header', { name: 'Who gets it?' })).toBeTruthy(); // DEC-91: step 2 stays
         await backToWords();
         expect(screen.getByTestId(`share-kind-card-${k}`)).toBeTruthy();
         expect(wordsBox().props.value).toBe(Object.entries(KINDS[k].required)[0]![1]);
@@ -367,9 +367,9 @@ describe('SHARE-U-23 grandparent UX on the working cards', () => {
 });
 
 // Guards added by qa-tdd after 8383d5e (Nov 24): the age check and the shared Notice change.
-describe('SHARE-U-22 (DEC-90) guards: the age takes digits only, and every existing notice still announces itself', () => {
+describe('SHARE-U-22 (DEC-91) guards: the age takes digits only, and every existing notice still announces itself', () => {
   for (const age of ['four', '4.5', '-4']) {
-    it(`SHARE-U-22 (DEC-90) Saying age "${age}": only the digits are kept, so no non-number notice can show and nothing bad reaches the server`, async () => {
+    it(`SHARE-U-22 (DEC-91) Saying age "${age}": only the digits are kept, so no non-number notice can show and nothing bad reaches the server`, async () => {
       const { be } = await start();
       const create = jest.spyOn(be, 'createPost');
       await openKind('saying');
@@ -434,8 +434,8 @@ const scrollProto = ScrollView.prototype as unknown as { scrollTo: Mocked; scrol
 const clearScroll = () => { scrollProto.scrollTo.mockClear(); scrollProto.scrollToEnd.mockClear(); };
 const scrolledToTop = () => scrollProto.scrollTo.mock.calls.some((c) => Number((c[0] as { y?: number } | undefined)?.y ?? -1) === 0);
 
-describe('GUX-SK-R1 (DEC-90) Event "What day": picked on the day sheet, so a bad typed day can no longer happen', () => {
-  it('GUX-SK-R1 (DEC-90) the chip is "Pick a day" (not "When", not a typed field with "Like 2026-12-24"); no day text input exists', async () => {
+describe('GUX-SK-R1 (DEC-91) Event "What day": picked on the day sheet, so a bad typed day can no longer happen', () => {
+  it('GUX-SK-R1 (DEC-91) the chip is "Pick a day" (not "When", not a typed field with "Like 2026-12-24"); no day text input exists', async () => {
     await start();
     await openKind('event');
     expect(screen.getByRole('button', { name: 'Pick a day' })).toBeTruthy();
@@ -443,7 +443,7 @@ describe('GUX-SK-R1 (DEC-90) Event "What day": picked on the day sheet, so a bad
     expect(screen.queryByLabelText('What day')).toBeNull();
     expect(screen.queryByPlaceholderText('Like 2026-12-24')).toBeNull();
   });
-  it('GUX-SK-R1 (DEC-90) the typed-day notice is gone: sending a picked day never shows "year-month-day"', async () => {
+  it('GUX-SK-R1 (DEC-91) the typed-day notice is gone: sending a picked day never shows "year-month-day"', async () => {
     const { be } = await start();
     const create = jest.spyOn(be, 'createPost');
     fireEvent.press(await toSend('event'));
@@ -459,7 +459,7 @@ describe('GUX-SK-R1 (DEC-90) Event "What day": picked on the day sheet, so a bad
   });
 });
 
-describe('GUX-SK-R2 (DEC-90) every notice scrolls to the top (the local age and day notices are gone with the typed fields)', () => {
+describe('GUX-SK-R2 (DEC-91) every notice scrolls to the top (the local age and day notices are gone with the typed fields)', () => {
   it('GUX-SK-R2 a server notice (42501) on step 2 scrolls the page to the top', async () => {
     const { be } = await start();
     jest.spyOn(be, 'createPost').mockImplementation(() => { throw new ApiError('42501', 'post_kinds_off'); });
@@ -476,9 +476,9 @@ const FLOW_HINT: Record<K, string> = {
   saying: 'Add what they said and who said it to go on.',
   news: 'Add your news to go on.',
 };
-describe('GUX-SK-R3 (DEC-90) a hint line says what is missing while "Next: who gets it" is off (wording moves to FLOW-5)', () => {
+describe('GUX-SK-R3 (DEC-91) a hint line says what is missing while "Next: who gets it" is off (wording moves to FLOW-5)', () => {
   for (const k of ALL) {
-    it(`GUX-SK-R3 (DEC-90) ${k}: "${FLOW_HINT[k]}" shows while the button is off and is empty once it is on`, async () => {
+    it(`GUX-SK-R3 (DEC-91) ${k}: "${FLOW_HINT[k]}" shows while the button is off and is empty once it is on`, async () => {
       await start();
       await openKind(k);
       expect(isDisabled(pickBtn())).toBe(true);
@@ -491,9 +491,9 @@ describe('GUX-SK-R3 (DEC-90) a hint line says what is missing while "Next: who g
   }
 });
 
-describe('GUX-SK-R4 (DEC-90) "Next: who gets it" puts the keyboard away (no scroll to tiles: step 2 is its own page)', () => {
+describe('GUX-SK-R4 (DEC-91) "Next: who gets it" puts the keyboard away (no scroll to tiles: step 2 is its own page)', () => {
   for (const k of ALL) {
-    it(`GUX-SK-R4 (DEC-90) ${k}: Keyboard.dismiss() on Next, and the tiles are on their own page`, async () => {
+    it(`GUX-SK-R4 (DEC-91) ${k}: Keyboard.dismiss() on Next, and the tiles are on their own page`, async () => {
       await start();
       await openKind(k);
       fill(k);
@@ -539,8 +539,8 @@ describe('GUX-SK-R7 (P2) the Feed event line names the weekday', () => {
   });
 });
 
-describe('GUX-SK-R8 (DEC-90) the Saying summary names the words, who said them, and the age only when there is one', () => {
-  it('GUX-SK-R8 (DEC-90) blank age: "...these words and who said them"; an age typed: "...these words, who said them, and the age"', async () => {
+describe('GUX-SK-R8 (DEC-91) the Saying summary names the words, who said them, and the age only when there is one', () => {
+  it('GUX-SK-R8 (DEC-91) blank age: "...these words and who said them"; an age typed: "...these words, who said them, and the age"', async () => {
     for (const age of ['', '4']) {
       const { unmount } = await start();
       await openKind('saying');
@@ -568,9 +568,9 @@ describe('GUX-SK-R9 (P2) kind tile words are type.headline', () => {
   }
 });
 
-describe('GUX-SK-R10 (DEC-90) kind cards have no field underlines at all (FLOW-2, FLOW-24)', () => {
+describe('GUX-SK-R10 (DEC-91) kind cards have no field underlines at all (FLOW-2, FLOW-24)', () => {
   for (const k of ALL) {
-    it(`GUX-SK-R10 (DEC-90) ${k}: its one box has no bottom border and no ruled line`, async () => {
+    it(`GUX-SK-R10 (DEC-91) ${k}: its one box has no bottom border and no ruled line`, async () => {
       await start();
       await openKind(k);
       const inputs = screen.getByTestId(`share-kind-card-${k}`).findAll((x: Inst) => x.type === TextInput) as Inst[];

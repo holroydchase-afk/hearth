@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// FLOW-1..FLOW-24 (DEC-90, docs/product/SPEC-SHARE-FLOW.md): the two-step Share flow for Photos, Event, News and Saying.
+// FLOW-1..FLOW-24 (DEC-91, docs/product/SPEC-SHARE-FLOW.md): the two-step Share flow for Photos, Event, News and Saying.
 // Written first (red), Nov 26, 2026, by qa-tdd. FLOW-20, 25, 26 are manual (tracker M-cases); FLOW-17, 22, 23 also
 // have Playwright specs (app/e2e-web/share-flow.spec.js).
 //
@@ -421,7 +421,7 @@ describe('FLOW-12 Send makes the same API call as today, once', () => {
 });
 
 describe('FLOW-13 the sent page', () => {
-  it('FLOW-13 (DEC-90) shows "Sent", who will see it, "See it in Feed" (goFeed) and "Share another" (clean step 1); no "Shared with" banner', async () => {
+  it('FLOW-13 (DEC-91) shows "Sent", who will see it, "See it in Feed" (goFeed) and "Share another" (clean step 1); no "Shared with" banner', async () => {
     const { nav } = await open('news');
     await toStep2('news');
     fireEvent.press(tile(DAD));
@@ -431,7 +431,7 @@ describe('FLOW-13 the sent page', () => {
     expect(pageWords()).not.toMatch(/Shared with/);
     expect(nav.goFeed).not.toHaveBeenCalled();
     fireEvent.press(screen.getByRole('button', { name: 'Share another' }));
-    // (DEC-90, GUX-FL-R8) the wordless empty card: no "Step 1 of 2" until a kind is picked
+    // (DEC-91, GUX-FL-R8) the wordless empty card: no "Step 1 of 2" until a kind is picked
     await screen.findByTestId('share-kinds', {}, slow);
     expect(screen.queryByText(/Step 1 of 2/)).toBeNull();
     expect(screen.queryByRole('header', { name: 'Sent' })).toBeNull();

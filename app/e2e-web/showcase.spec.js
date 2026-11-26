@@ -55,7 +55,7 @@ for (const size of SIZES) {
       await (await chooser).setFiles(FIXTURE);
       await expect(page.getByRole('heading', { name: 'New post' })).toBeVisible(); // DEC-73 postcard
       await page.getByLabel('Say something, optional').fill('Pumpkin patch');
-      await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-90: step 2
+      await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-91: step 2
       await page.getByLabel(/^Grandparents – Dad's side, 2 people, not picked$/).click();
       await shot('share-filled');
       await page.getByRole('button', { name: /^Send to / }).click();

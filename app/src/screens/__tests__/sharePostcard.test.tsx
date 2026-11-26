@@ -69,7 +69,7 @@ async function openPostcard(opts: { user?: FixtureUser; n?: number; kv?: KV; be?
   return { ...r, pickPhotos: r.deps.pickPhotos as jest.Mock };
 }
 
-/** DEC-90: the tiles live on step 2; "Next: who gets it" gets there. */
+/** DEC-91: the tiles live on step 2; "Next: who gets it" gets there. */
 async function toWho() {
   fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' }, slow));
   await screen.findByRole('header', { name: 'Who gets it?' }, slow);
@@ -77,7 +77,7 @@ async function toWho() {
 const tile = (name: string | RegExp) => screen.getByLabelText(typeof name === 'string' ? new RegExp(`^${esc(name)}, \\d+ (person|people), (not )?picked$`) : name);
 const tiles = () => screen.UNSAFE_root.findAll((n: Inst) => isHost(n) && /, \d+ (person|people), (not )?picked$/.test(String(n.props.accessibilityLabel ?? ''))) as Inst[];
 const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-/** DEC-90: the summary line on step 2 ("<names> will see your photos."), with its "will see" tail dropped; '' when nothing is picked. */
+/** DEC-91: the summary line on step 2 ("<names> will see your photos."), with its "will see" tail dropped; '' when nothing is picked. */
 function toWords(): string {
   const t = wordsIn(screen.getByTestId('share-summary'));
   return /^Nothing is picked/.test(t) ? '' : t.replace(/ will see .*$/, '');
@@ -100,7 +100,7 @@ function sixCircles(): Circle[] {
 afterEach(() => jest.restoreAllMocks());
 
 describe('SHARE-PC-1 one "New post" page holding a card', () => {
-  it('SHARE-PC-1 (DEC-90) the card (c.surface, photo shadow) holds the big photo and the note box, in that order; no dashed divider, no To:; nothing but the pinned Next button below it', async () => {
+  it('SHARE-PC-1 (DEC-91) the card (c.surface, photo shadow) holds the big photo and the note box, in that order; no dashed divider, no To:; nothing but the pinned Next button below it', async () => {
     await openPostcard({ n: 3 });
     const card = screen.getByTestId('share-card');
     const c = light();
@@ -156,7 +156,7 @@ describe('SHARE-PC-2 the big photo, thumbnails and Add', () => {
 });
 
 describe('SHARE-PC-3 one note field, no title', () => {
-  it('SHARE-PC-3 (DEC-90) exactly one text field, "Say something, optional" (placeholder and label); no Title, no "What\'s happening?"', async () => {
+  it('SHARE-PC-3 (DEC-91) exactly one text field, "Say something, optional" (placeholder and label); no Title, no "What\'s happening?"', async () => {
     await openPostcard({ n: 1 });
     const inputs = screen.UNSAFE_queryAllByType(TextInput);
     expect(inputs.map((i) => i.props.accessibilityLabel)).toEqual(['Say something, optional']);
@@ -222,7 +222,7 @@ describe('SHARE-PC-5 face tiles inside the card (parents)', () => {
     return null;
   };
 
-  it('SHARE-PC-5 (DEC-90) Everyone and 5 groups: 6 tiles on step 2 (in share-tiles-grid), Everyone first, each "<name>, N people, not picked", 2 across here (GUX-R1), no sideways scroll', async () => {
+  it('SHARE-PC-5 (DEC-91) Everyone and 5 groups: 6 tiles on step 2 (in share-tiles-grid), Everyone first, each "<name>, N people, not picked", 2 across here (GUX-R1), no sideways scroll', async () => {
     await six();
     const card = screen.getByTestId('share-tiles-grid');
     const all = tiles();
@@ -238,7 +238,7 @@ describe('SHARE-PC-5 face tiles inside the card (parents)', () => {
     expectGrandparentSafe();
   });
 
-  it('SHARE-PC-5 (DEC-90) Easy view On: 1 across (FLOW-9)', async () => {
+  it('SHARE-PC-5 (DEC-91) Easy view On: 1 across (FLOW-9)', async () => {
     await six(easyKV('chase'));
     expect(tiles().map(across)).toEqual(Array(6).fill(1));
     expectGrandparentSafe();
@@ -246,7 +246,7 @@ describe('SHARE-PC-5 face tiles inside the card (parents)', () => {
 });
 
 describe('SHARE-PC-6 a relative who can post sees people, never group names', () => {
-  it('SHARE-PC-6 (DEC-90) tiles and the summary line name people (≤2, then "and N more"); no group name anywhere; no Everyone (BETA-AUD-21)', async () => {
+  it('SHARE-PC-6 (DEC-91) tiles and the summary line name people (≤2, then "and N more"); no group name anywhere; no Everyone (BETA-AUD-21)', async () => {
     const be = FakeBackend.withFixture();
     const api = be.clientFor(null, { trackAppSession: true });
     const space: Space = { space_id: FIXTURE.space.id, name: FIXTURE.space.name, role: 'viewer', inviter_name: 'Chase', can_post: true, reply_audience: 'parents' };
@@ -271,7 +271,7 @@ describe('SHARE-PC-6 a relative who can post sees people, never group names', ()
 });
 
 describe('SHARE-PC-7 nothing is picked at the start', () => {
-  it('SHARE-PC-7 (DEC-90) a saved last audience ticks nothing: every tile "not picked", the summary says "Nothing is picked yet. Tap one or more."', async () => {
+  it('SHARE-PC-7 (DEC-91) a saved last audience ticks nothing: every tile "not picked", the summary says "Nothing is picked yet. Tap one or more."', async () => {
     const kv = memoryKV();
     await saveLastAudience(kv, chase.id, [FIXTURE.circles.dadSide.id]);
     await openPostcard({ kv });
@@ -314,7 +314,7 @@ describe('SHARE-PC-8 tapping a tile picks it', () => {
   });
 });
 
-describe('SHARE-PC-9 (DEC-90) the summary line names the people', () => {
+describe('SHARE-PC-9 (DEC-91) the summary line names the people', () => {
   const namesLine = (names: string[]): string => (require('../../share/postcard') as { namesLine: (n: string[]) => string }).namesLine(names); // eslint-disable-line @typescript-eslint/no-require-imports
   it('SHARE-PC-9 unit: ≤2 names, then "and N more"', () => {
     expect(namesLine([])).toBe('');
@@ -339,7 +339,7 @@ describe('SHARE-PC-9 (DEC-90) the summary line names the people', () => {
 });
 
 describe('SHARE-PC-10 the pinned button', () => {
-  it('SHARE-PC-10 (DEC-90) step 1 "Next: who gets it"; step 2 nothing picked: Send off; a pick: "Send to <names>", on', async () => {
+  it('SHARE-PC-10 (DEC-91) step 1 "Next: who gets it"; step 2 nothing picked: Send off; a pick: "Send to <names>", on', async () => {
     await openPostcard();
     expect(screen.getByRole('button', { name: 'Next: who gets it' })).toBeTruthy();
     await toWho();
@@ -352,7 +352,7 @@ describe('SHARE-PC-10 the pinned button', () => {
     expect(screen.queryByRole('button', { name: 'Post' })).toBeNull();
   });
 
-  it('SHARE-PC-10 (DEC-90) the button sits outside the scrolling page (pinned above the keyboard and tab bar)', async () => {
+  it('SHARE-PC-10 (DEC-91) the button sits outside the scrolling page (pinned above the keyboard and tab bar)', async () => {
     await openPostcard();
     const btn = screen.getByRole('button', { name: 'Next: who gets it' });
     const card = screen.getByTestId('share-card');
@@ -364,7 +364,7 @@ describe('SHARE-PC-10 the pinned button', () => {
 });
 
 describe('SHARE-PC-11 Send lands on Feed', () => {
-  it('SHARE-PC-11 (DEC-90) Send queues the post to the picked groups, shows the sent page; "See it in Feed" goes to Feed (not Gallery); no "Shared with" banner', async () => {
+  it('SHARE-PC-11 (DEC-91) Send queues the post to the picked groups, shows the sent page; "See it in Feed" goes to Feed (not Gallery); no "Shared with" banner', async () => {
     const be = FakeBackend.withFixture();
     const enqueue = jest.spyOn(UploadQueue.prototype, 'enqueue');
     const { nav } = await openPostcard({ be, withFeed: true, n: 2 });
@@ -386,7 +386,7 @@ describe('SHARE-PC-11 Send lands on Feed', () => {
 });
 
 describe('SHARE-PC-12 a send error keeps everything', () => {
-  it('SHARE-PC-12 (DEC-90) the notice shows on step 2; photos, note and picks stay; no Feed', async () => {
+  it('SHARE-PC-12 (DEC-91) the notice shows on step 2; photos, note and picks stay; no Feed', async () => {
     jest.spyOn(UploadQueue.prototype, 'enqueue').mockRejectedValue(new ApiError('FAMILY_FULL'));
     const { nav } = await openPostcard({ n: 3 });
     fireEvent.changeText(screen.getByLabelText('Say something, optional'), 'Leaf pile');
@@ -394,7 +394,7 @@ describe('SHARE-PC-12 a send error keeps everything', () => {
     fireEvent.press(tile(DAD));
     fireEvent.press(screen.getByRole('button', { name: 'Send to Grandma Jo and Grandpa Earl' }));
     expect(await screen.findByText(/Your family is full for now/)).toBeTruthy();
-    expect(screen.getByRole('header', { name: 'Who gets it?' })).toBeTruthy(); // DEC-90: step 2 stays
+    expect(screen.getByRole('header', { name: 'Who gets it?' })).toBeTruthy(); // DEC-91: step 2 stays
     expect(screen.getByLabelText(new RegExp(`^${esc(DAD)}, \\d+ people, picked$`))).toBeTruthy();
     fireEvent.press(screen.getByRole('button', { name: 'Back' }));
     expect(await screen.findByText('1 of 3', {}, slow)).toBeTruthy();

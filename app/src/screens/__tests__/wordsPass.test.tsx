@@ -19,7 +19,7 @@ const DAD = "Grandparents – Dad's side";
 describe('WORDS grandparent-ux words pass', () => {
   // Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-3/9), flagged for qa-tdd: the one note field promises no one;
   // the To: line names who gets it, by name, once picked.
-  it('WORDS-1 (DEC-90) DEC-73 the note never promises "Grandma will see this": on step 2 the summary line names the people picked', async () => {
+  it('WORDS-1 (DEC-91) DEC-73 the note never promises "Grandma will see this": on step 2 the summary line names the people picked', async () => {
     await renderApp(<ShareScreen />, { user: 'chase' });
     fireEvent.press(await screen.findByRole('button', { name: /^Add photos, up to \d+ at a time$/ }));
     await screen.findByRole('header', { name: 'New post' });
@@ -52,10 +52,10 @@ describe('WORDS grandparent-ux words pass', () => {
 
   // Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-5), flagged for qa-tdd: a face tile shows the group's name
   // alone and "3 people" on its own line, never "name · 3 people".
-  it('WORDS-4 (DEC-90) DEC-73 a group tile on Share shows its name alone, with "3 people" under it', async () => {
+  it('WORDS-4 (DEC-91) DEC-73 a group tile on Share shows its name alone, with "3 people" under it', async () => {
     await renderApp(<ShareScreen />, { user: 'chase' });
     fireEvent.press(await screen.findByRole('button', { name: /^Add photos, up to \d+ at a time$/ }));
-    fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' }, slow)); // DEC-90: step 2
+    fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' }, slow)); // DEC-91: step 2
     const tile = await screen.findByLabelText(`${DAD}, 3 people, not picked`);
     expect(within(tile).getByText(DAD)).toBeTruthy();
     expect(within(tile).getByText('3 people')).toBeTruthy();

@@ -65,7 +65,7 @@ for (const size of SIZES) {
       await page.getByRole('button', { name: /^Add photos, up to \d+ at a time$/ }).click();
       await (await chooser).setFiles(PICTURE);
       await page.getByLabel('Say something, optional').fill('First snow!');
-      await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-90: step 2
+      await page.getByRole('button', { name: 'Next: who gets it' }).click(); // DEC-91: step 2
       await page.getByLabel(/^Grandparents – Dad's side, \d+ people, not picked$/).click();
       await shot('share-filled');
       await page.getByRole('button', { name: /^Send to / }).click();

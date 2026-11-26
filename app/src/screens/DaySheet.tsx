@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-// FLOW-15..17 (DEC-90, SPEC-SHARE-FLOW): the day sheet. A month grid in a bottom sheet replaces the typed day: weekday
+// FLOW-15..17 (DEC-91, SPEC-SHARE-FLOW): the day sheet. A month grid in a bottom sheet replaces the typed day: weekday
 // initials, the month and year, earlier and later month buttons, today ringed, quick chips (Today, Tomorrow, the
 // coming Saturday) and Done. Every cell is 48 pt tall and at least 44 wide; day numbers are `body`. A tap on the
 // page behind (the scrim) closes it too, and a day is always a real `YYYY-MM-DD`.

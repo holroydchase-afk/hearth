@@ -143,7 +143,7 @@ async function start(opts: { user?: FixtureUser; kv?: KV; be?: FakeBackend; deps
   return { ...r, pickBulk: r.deps.pickBulk as jest.Mock, pickPhotos: r.deps.pickPhotos as jest.Mock };
 }
 const target = (limit?: number) => screen.getByRole('button', { name: limit ? `Add photos, up to ${limit} at a time` : /^Add photos( or videos)?, up to \d+ at a time$/ });
-const TO = 'To:'; // SHARE-ST-23 (DEC-90: now asserted ABSENT; was "To: you pick after your photos", SHARE-ST-15; "To: pick after your photos", SHARE-ST-3)
+const TO = 'To:'; // SHARE-ST-23 (DEC-91: now asserted ABSENT; was "To: you pick after your photos", SHARE-ST-15; "To: pick after your photos", SHARE-ST-3)
 const HIDDEN = { includeHiddenElements: true } as const;
 const spotOf = () => screen.getByTestId('share-spot', HIDDEN);
 /** Every word under `root`, hidden parts included. */
@@ -272,13 +272,13 @@ describe('SHARE-ST-4 a parent taps Add photos: one picker, up to 100', () => {
     });
   }
 
-  it('SHARE-ST-4 (DEC-90) nothing picked (Cancel) leaves the empty postcard as it was', async () => {
+  it('SHARE-ST-4 (DEC-91) nothing picked (Cancel) leaves the empty postcard as it was', async () => {
     const { pickBulk } = await start();
     fireEvent.press(target(100));
     await waitFor(() => expect(pickBulk).toHaveBeenCalled());
     await new Promise((r) => setTimeout(r, 20));
     expect(target(100)).toBeTruthy();
-    expect(screen.queryAllByText(TO, HIDDEN)).toHaveLength(0); // DEC-90: no "To:" on the empty card
+    expect(screen.queryAllByText(TO, HIDDEN)).toHaveLength(0); // DEC-91: no "To:" on the empty card
     expect(screen.queryByRole('button', { name: 'Cancel this post' })).toBeNull();
     expect(screen.queryByRole('alert')).toBeNull();
   });
@@ -331,13 +331,13 @@ describe('SHARE-ST-6 the postcard\'s Add tile still adds up to 10 for everyone',
 });
 
 describe('SHARE-ST-7 privacy: a parent\'s 1-10 pick through pickBulk sends no EXIF or GPS (SHARE-2, BETA-BULK-1)', () => {
-  it('SHARE-ST-7 (DEC-90) 3 photos with GPS EXIF picked through pickBulk: only uri, size and the date reach the upload; nothing in the backend carries EXIF or GPS', async () => {
+  it('SHARE-ST-7 (DEC-91) 3 photos with GPS EXIF picked through pickBulk: only uri, size and the date reach the upload; nothing in the backend carries EXIF or GPS', async () => {
     const be = FakeBackend.withFixture();
     const { deps, pickBulk } = await start({ be, deps: { pickBulk: jest.fn(async () => ({ assets: assets(3) })) } });
     fireEvent.press(target(100));
     await waitFor(() => expect(pickBulk).toHaveBeenCalled());
     await screen.findByText('1 of 3', {}, slow);
-    fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' }, slow)); // DEC-90: step 2
+    fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' }, slow)); // DEC-91: step 2
     fireEvent.press(await screen.findByLabelText(/^Grandparents – Dad's side, \d+ people, not picked$/, {}, slow));
     fireEvent.press(screen.getByRole('button', { name: /^Send to / }));
     await waitFor(() => expect((deps.prepare as jest.Mock).mock.calls.length).toBe(3), slow);
@@ -478,7 +478,7 @@ const GONE = [/Add a note \(optional\)/, /To: you pick after your photos/, /To: 
 function cardTokens(): string[] {
   return wordsIn(screen.getByTestId('share-card')).split(' ').filter(Boolean).map((w) => w.toUpperCase()).sort();
 }
-// DEC-90: no "To:" token any more.
+// DEC-91: no "To:" token any more.
 function allowedTokens(title = 'Add photos'): string[] {
   const now = new Date();
   return [...title.toUpperCase().split(' '), MONTHS[now.getMonth()]!, String(now.getDate())].sort();
@@ -583,14 +583,14 @@ describe('SHARE-ST-22 the stamp sits top-right inside the photo spot', () => {
   });
 });
 
-describe('SHARE-ST-23 (DEC-90) below the spot: no ruled lines and no "To:", the empty card keeps only the spot and the stamp', () => {
+describe('SHARE-ST-23 (DEC-91) below the spot: no ruled lines and no "To:", the empty card keeps only the spot and the stamp', () => {
   const cases = [
     { name: 'light', p: { look: 'light' } },
     { name: 'dark', p: { look: 'dark' } },
     { name: 'Easy view', p: { look: 'light', easyView: true } },
   ];
   for (const k of cases) {
-    it(`SHARE-ST-23 (DEC-90) (${k.name}) no share-note-rule, no share-to-rule, no "To:"; the card's words are only "Add photos" and the stamp's`, async () => {
+    it(`SHARE-ST-23 (DEC-91) (${k.name}) no share-note-rule, no share-to-rule, no "To:"; the card's words are only "Add photos" and the stamp's`, async () => {
       await start({ kv: prefs('chase', k.p) });
       expect(screen.queryAllByTestId('share-note-rule', HIDDEN)).toHaveLength(0);
       expect(screen.queryAllByTestId('share-to-rule', HIDDEN)).toHaveLength(0);
@@ -610,7 +610,7 @@ describe('SHARE-ST-23 (DEC-90) below the spot: no ruled lines and no "To:", the 
 
 describe('SHARE-ST-24 a tap anywhere on the empty card opens the picker; the card is one element', () => {
   for (const user of ['chase', 'ruth'] as const) {
-    it(`SHARE-ST-24 (DEC-90) ${user}: the spot and the card's padding each open the picker (no ruled lines or "To:" left to tap); no "Add photos first" hint`, async () => {
+    it(`SHARE-ST-24 (DEC-91) ${user}: the spot and the card's padding each open the picker (no ruled lines or "To:" left to tap); no "Add photos first" hint`, async () => {
       const be = user === 'ruth' ? relativeCanPost() : undefined;
       const { pickBulk, pickPhotos } = await start({ user, be });
       const picks = () => pickBulk.mock.calls.length + pickPhotos.mock.calls.length;
@@ -639,7 +639,7 @@ describe('SHARE-ST-24 a tap anywhere on the empty card opens the picker; the car
     expectGrandparentSafe();
   });
 
-  it('SHARE-ST-24 SHARE-ST-17 (DEC-90) a press on the card gives the same 0.98 scale over 120 ms (nothing to press at "To:" any more)', async () => {
+  it('SHARE-ST-24 SHARE-ST-17 (DEC-91) a press on the card gives the same 0.98 scale over 120 ms (nothing to press at "To:" any more)', async () => {
     jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(false);
     await start();
     const calls = spyTiming();
@@ -652,15 +652,15 @@ describe('SHARE-ST-24 a tap anywhere on the empty card opens the picker; the car
 });
 
 describe('SHARE-ST-25 no words under the card', () => {
-  it('SHARE-ST-25 (DEC-90) a parent sends to Dad\'s side: back on the start and on a fresh open, no "Last shared" line and no words under the card', async () => {
+  it('SHARE-ST-25 (DEC-91) a parent sends to Dad\'s side: back on the start and on a fresh open, no "Last shared" line and no words under the card', async () => {
     const be = FakeBackend.withFixture();
     const kv = memoryKV();
     const { unmount } = await start({ be, kv, deps: { pickBulk: jest.fn(async () => ({ assets: assets(1) })) } });
     fireEvent.press(target(100));
-    fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' }, slow)); // DEC-90: step 2
+    fireEvent.press(await screen.findByRole('button', { name: 'Next: who gets it' }, slow)); // DEC-91: step 2
     fireEvent.press(await screen.findByLabelText(/^Grandparents – Dad's side, \d+ people, not picked$/, {}, slow));
     fireEvent.press(screen.getByRole('button', { name: /^Send to / }));
-    fireEvent.press(await screen.findByRole('button', { name: 'Share another' }, slow)); // DEC-90: the sent page first
+    fireEvent.press(await screen.findByRole('button', { name: 'Share another' }, slow)); // DEC-91: the sent page first
     await screen.findByTestId('share-spot', HIDDEN, slow);
     await waitFor(() => expect(Object.values(be.state.posts).filter((p) => p.status === 'published')).toHaveLength(1), slow);
     await new Promise((r) => setTimeout(r, 50));
@@ -675,7 +675,7 @@ describe('SHARE-ST-25 no words under the card', () => {
   it('SHARE-ST-25 a saved last audience at open: still no line and the page words are only "New post" and the card\'s', async () => {
     const kv = memoryKV({
       [`hearth.lastAudience.v1.${FIXTURE.users.chase.id}`]: JSON.stringify([FIXTURE.circles.dadSide.id]),
-      // PRIV-FL-R1 (DEC-90): hearth.lastShared.v1.<id> is an orphan key (nothing reads it); it is no longer seeded here.
+      // PRIV-FL-R1 (DEC-91): hearth.lastShared.v1.<id> is an orphan key (nothing reads it); it is no longer seeded here.
     });
     await start({ kv });
     await new Promise((r) => setTimeout(r, 50));
@@ -685,7 +685,7 @@ describe('SHARE-ST-25 no words under the card', () => {
 });
 
 describe('SHARE-ST-26 after a pick, the DEC-73 postcard opens unchanged', () => {
-  it('SHARE-ST-26 (DEC-90) a parent picks 3: step 1 with its note box and "Next: who gets it" (tiles are on step 2); the card is no longer a button; nothing picked for you', async () => {
+  it('SHARE-ST-26 (DEC-91) a parent picks 3: step 1 with its note box and "Next: who gets it" (tiles are on step 2); the card is no longer a button; nothing picked for you', async () => {
     await start({ deps: { pickBulk: jest.fn(async () => ({ assets: assets(3) })) } });
     fireEvent.press(screen.getByTestId('share-card'));
     expect(await screen.findByText('1 of 3', {}, slow)).toBeTruthy();
@@ -778,9 +778,9 @@ describe('GUX-W3 P2 "New post" does not move when photos arrive', () => {
   }, 10000);
 });
 
-describe('GUX-W4 (DEC-90) there are no ruled lines to be visible', () => {
+describe('GUX-W4 (DEC-91) there are no ruled lines to be visible', () => {
   for (const dark of [false, true]) {
-    it(`GUX-W4 (DEC-90) (${dark ? 'dark' : 'light'}) no note rule and no To: rule on the empty card`, async () => {
+    it(`GUX-W4 (DEC-91) (${dark ? 'dark' : 'light'}) no note rule and no To: rule on the empty card`, async () => {
       await start({ kv: prefs('chase', { look: dark ? 'dark' : 'light' }) });
       expect(screen.queryAllByTestId('share-note-rule', HIDDEN)).toHaveLength(0);
       expect(screen.queryAllByTestId('share-to-rule', HIDDEN)).toHaveLength(0);
@@ -789,7 +789,7 @@ describe('GUX-W4 (DEC-90) there are no ruled lines to be visible', () => {
 });
 
 describe('GUX-W5 P2 the filled note field has no example hint', () => {
-  it('GUX-W5 (DEC-90) no "Like:" anywhere; the note field now reads "Say something, optional"', async () => {
+  it('GUX-W5 (DEC-91) no "Like:" anywhere; the note field now reads "Say something, optional"', async () => {
     await filled(3);
     const input = screen.getByLabelText('Say something, optional');
     expect([undefined, '', 'Say something, optional']).toContain(input.props.placeholder);
@@ -937,7 +937,7 @@ describe('SHARE-ST-33 post_kinds on, not a parent: no tiles', () => {
 
 describe('SHARE-ST-31 / SHARE-ST-33 a tap on a kind shows its empty card face (tester option A)', () => {
   for (const K of KINDS) {
-    it(`SHARE-ST-31 "${K.label}" opens the ${K.k} card: (DEC-90) its one big box and chips, "Step 1 of 2" and a disabled "Next: who gets it", no "To:"; the photo card and kinds row step aside; nothing sent`, async () => {
+    it(`SHARE-ST-31 "${K.label}" opens the ${K.k} card: (DEC-91) its one big box and chips, "Step 1 of 2" and a disabled "Next: who gets it", no "To:"; the photo card and kinds row step aside; nothing sent`, async () => {
       const { be } = await start({ be: kindsOn() });
       const before = Object.keys(be.state.posts).length;
       fireEvent.press(await screen.findByRole('button', { name: K.label }, slow));
@@ -948,7 +948,7 @@ describe('SHARE-ST-31 / SHARE-ST-33 a tap on a kind shows its empty card face (t
       expect(screen.getByText('Step 1 of 2')).toBeTruthy();
       const pick = screen.getByRole('button', { name: 'Next: who gets it' });
       expect(pick.props.accessibilityState?.disabled ?? pick.props['aria-disabled']).toBe(true);
-      expect(screen.getByRole('header', { name: K.label })).toBeTruthy(); // DEC-90: the kind's verb is the title
+      expect(screen.getByRole('header', { name: K.label })).toBeTruthy(); // DEC-91: the kind's verb is the title
       expect(screen.queryByTestId('share-kinds', HIDDEN)).toBeNull();
       expect(screen.queryByRole('button', { name: /^Add photos( or videos)?, up to \d+ at a time$/ })).toBeNull();
       expect(Object.keys(be.state.posts).length).toBe(before);
@@ -977,10 +977,10 @@ describe('GUX-T2 P1 the empty postcard is top-aligned under "New post"', () => {
 // GUX-T5 (P2): in every theme (paper and the nine fruits), light and dark, and with the phone's Increase Contrast on,
 // the empty card's "To:" is >= 4.5:1 on the card (text) and the ruled lines are >= 1.5:1 (decoration; qa-tdd keeps
 // GUX-W4's floor, since the lines carry no meaning a person must read). Rendered as Chase (owner, can pick a theme).
-describe('GUX-T5 (DEC-90) the stamp and the Add photos words stay readable in every theme, light and dark; no "To:" or rules left', () => {
+describe('GUX-T5 (DEC-91) the stamp and the Add photos words stay readable in every theme, light and dark; no "To:" or rules left', () => {
   for (const theme of THEME_NAMES) {
     for (const dark of [false, true]) {
-      it(`GUX-T5 (DEC-90) ${theme} (${dark ? 'dark' : 'light'}) the empty card has no "To:" and no rules; its surface is c.surface`, async () => {
+      it(`GUX-T5 (DEC-91) ${theme} (${dark ? 'dark' : 'light'}) the empty card has no "To:" and no rules; its surface is c.surface`, async () => {
         await start({ kv: prefs('chase', { look: dark ? 'dark' : 'light', theme }) });
         const card = screen.getByTestId('share-card');
         const surface = String(flat(card.props.style).backgroundColor);

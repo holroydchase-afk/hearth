@@ -1,5 +1,5 @@
 # Decision: Share is two steps in every composer: the words, then "Who gets it?" on its own page
-Date: Nov 26, 2026 · Status: Chase's call ("everything should be broken into flows, at most 1-2 steps. Always move who it's to to its own step"; picked look B "Say it first") · DEC-90
+Date: Nov 26, 2026 · Status: Chase's call ("everything should be broken into flows, at most 1-2 steps. Always move who it's to to its own step"; picked look B "Say it first") · DEC-91
 
 What changes: no underline fields and no "To:" line; one big open box plus quiet chips for the words; a 2-across face-tile page for the audience; a month-calendar sheet for the day. `docs/product/SPEC-SHARE-FLOW.md`, FLOW-1..26.
 

@@ -182,7 +182,7 @@ describe('RD-116 turning a reaction on or off never changes the capsule\'s outer
 // Retargeted Nov 19 by engineer for DEC-73 (SHARE-PC-3), flagged for qa-tdd: the postcard has one field, the note.
 // Retargeted again Nov 19 by engineer for GUX-R3, flagged for qa-tdd: the note writes on the card, with no fill and a
 // hairline c.line underline, on every phone (the other fields keep GUX-R16's filled box).
-describe("GUX-R16 → GUX-R3 (DEC-90) Share's note is an open box: no fill, no underline", () => {
+describe("GUX-R16 → GUX-R3 (DEC-91) Share's note is an open box: no fill, no underline", () => {
   const FIELDS = ['Say something, optional'];
   const fieldStyle = (label: string) => flat(screen.getByLabelText(label).props.style);
   const openNote = async () => {
@@ -192,7 +192,7 @@ describe("GUX-R16 → GUX-R3 (DEC-90) Share's note is an open box: no fill, no u
 
   for (const os of ['ios', 'web', 'android'] as const) {
     for (const dark of [false, true]) {
-      it(`GUX-R3 ${os} (${lookName(dark)}): the note field has no fill and no underline (DEC-90)`, async () => {
+      it(`GUX-R3 ${os} (${lookName(dark)}): the note field has no fill and no underline (DEC-91)`, async () => {
         jest.replaceProperty(Platform, 'OS', os);
         const c = paletteFor(os, dark);
         await renderApp(<ShareScreen />, { user: 'chase', kv: memoryKV(prefs(chase.id, dark)) });

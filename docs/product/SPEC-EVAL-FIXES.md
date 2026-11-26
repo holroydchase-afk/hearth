@@ -4,7 +4,7 @@ Staff PM, Nov 24, 2026. Chase's rule: accessibility is high priority. One small 
 
 ## 1. In this PR
 **EF-HE-1 (P0, Chase yes): every Open button on Messages says which chat it opens.**
-- EF-HE-1-AC1 (auto): Given Messages with 3 chats, when it renders, then no two buttons show the same text. Named groups and events show "Open Everyone" or "Open Charleston trip". People show "Open chat with Alex and Grandpa Earl".
+- EF-HE-1-AC1 (auto): Given Messages with 3 chats, when it renders, then no two buttons show the same text. Named groups and events show "Open Everyone" or "Open Lake weekend". People show "Open chat with Alex and Grandpa Earl".
 - EF-HE-1-AC2 (auto): the spoken name is exactly the visible text, so WCAG 2.5.3 still holds. `chatOpenLabel` returns the same string the button shows.
 - EF-HE-1-AC3 (manual): with Easy view on, at the phone's largest text size, a long title wraps inside the button and is never cut off with "…". The button is at least 48 pt tall and the text at least 17 pt.
 

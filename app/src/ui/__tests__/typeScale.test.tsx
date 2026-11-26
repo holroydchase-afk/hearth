@@ -230,7 +230,7 @@ describe('TYPE-6 each screen element carries its named style (Standard and Easy 
       expect(sizeOf(who)).toEqual(want('body', easy));
     });
 
-    it(`TYPE-6 (${mode}) (DEC-90, GUX-FL-R3) FaceTile "N people" ("face-count") is subheadline (Easy view: body, 21), muted; the name stays headline`, () => {
+    it(`TYPE-6 (${mode}) (DEC-91, GUX-FL-R3) FaceTile "N people" ("face-count") is subheadline (Easy view: body, 21), muted; the name stays headline`, () => {
       const c = theme.paletteFor('ios', false);
       render(<BigTextContext.Provider value={easy}><kit.FaceTile name="Everyone" count={4} faces={['Jo', 'Ruth']} picked={false} onPress={() => {}} across={3} /></BigTextContext.Provider>);
       const count = screen.getByTestId('face-count');

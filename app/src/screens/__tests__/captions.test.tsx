@@ -17,14 +17,14 @@ describe('CAP post titles', () => {
   // Retargeted Nov 19 by engineer for DEC-73 (amends DEC-39 / CAP-1; SHARE-PC-3), flagged for qa-tdd: a new post
   // has one note and no Title box; the note goes out as the caption and the title stays empty. Old titles still show
   // (CAP-3 below, SHARE-PC-4).
-  it('CAP-1 (DEC-90) DEC-73 Share has no Title box any more: the note goes out as the caption, with no title', async () => {
+  it('CAP-1 (DEC-91) DEC-73 Share has no Title box any more: the note goes out as the caption, with no title', async () => {
     const be = FakeBackend.withFixture();
     const { nav } = await renderApp(<ShareScreen />, { be, user: 'chase' });
     fireEvent.press(await screen.findByRole('button', { name: /^Add photos, up to \d+ at a time$/ }));
     await screen.findByRole('header', { name: 'New post' });
     expect(screen.queryByLabelText('Title (optional)')).toBeNull();
     fireEvent.changeText(screen.getByLabelText('Say something, optional'), "Lily's 5th birthday");
-    fireEvent.press(screen.getByRole('button', { name: 'Next: who gets it' })); // DEC-90: step 2
+    fireEvent.press(screen.getByRole('button', { name: 'Next: who gets it' })); // DEC-91: step 2
     fireEvent.press(await screen.findByLabelText(`${DAD}, 3 people, not picked`));
     fireEvent.press(screen.getByRole('button', { name: /^Send to / }));
     await screen.findByRole('header', { name: 'Sent' });
