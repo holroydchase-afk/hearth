@@ -2,7 +2,9 @@
 // No sign-in, a sample family with pictures, a demo bar, Grandma Jo's view, and add / edit / reload / start over.
 const path = require('path');
 const { test, expect } = require('../../e2e/node_modules/@playwright/test');
-const { settle, pageReady, frames } = require('./helpers/settle');
+const { settle: settleWith, pageReady, frames, SLOW } = require('./helpers/settle');
+// INTAKE-206: every settle here follows a click, wheel or theme change, so it must stay still for ~400 ms (QA-R2).
+const settle = (page, read) => settleWith(page, read, SLOW);
 
 // DEMO-BAR: Grandma's view and Reset live in the Details drawer.
 const details = async (page) => {
