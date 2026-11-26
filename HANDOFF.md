@@ -11,6 +11,14 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 25: product review pilot fixes, first part (intake #170, R111; local branch, not pushed yet)
+- **Done:** README order (encryption honesty sentence first, Status above Start here); checks on items 1 and 6 recorded in R111.
+- **Next:** fresh screenshots and a grandparent-ux pass (item 4), then the contrast and reaction-row P2s test-first. **Beta status line done (Chase, Nov 26).
+
+## Nov 25: review of repo best-practices PR (intake #191, R110; branch local, not pushed yet)
+- **Done:** README AI wording matched to the claims register, CHANGELOG.md added. Docs only.
+- **Next:** push in the next turn; read CodeQL alerts once the Security tab can be read; P2s in R110.
+
 ## Nov 26: ESLint gate (intake #199, R99; branch claude/project-thread-is6w2s, not pushed)
 - **Done, test-first** (LINT-1..5 in `app/src/__tests__/lint.test.ts`, red then green 3x): `app/eslint.config.mjs`, `npm run lint`, `.github/workflows/lint.yml`, `engines.node`, `.nvmrc`. Warnings only unless `STUDIO_LINT_STRICT=1`. **Warning count: 324, errors 0.** Jest 2630 pass, typecheck green.
 - **Follow-up:** studio-agents PR 175 (managed config) was not reachable from this thread. qa-tdd green 3x (`e2e/results/lint-gate-intake199-green-3x-2026-11-26.txt`); strict mode gives 166 errors.

@@ -2,7 +2,7 @@
 
 [![ci](https://github.com/holroydchase-afk/hearth/actions/workflows/ci.yml/badge.svg)](https://github.com/holroydchase-afk/hearth/actions/workflows/ci.yml)
 
-**A private photo app for split families and for grandparents who stay off social media.** Every photo goes to an audience you pick, by name. Photos are encrypted on the phone and stored in the US. There are no ads, no trackers and no AI training.
+**A private photo app for split families and for grandparents who stay off social media.** Every photo goes to an audience you pick, by name. Photos are encrypted on the phone and stored in the US, but today Hearth's server holds the photo keys and no outside party has reviewed the security. There are no ads, no trackers and no AI training.
 
 Built by Chase Holroyd, a product manager, as a working proof of concept: one person, a $20/month AI plan, and a team of Claude agents, test-first from day one.
 
@@ -16,6 +16,19 @@ Built by Chase Holroyd, a product manager, as a working proof of concept: one pe
 
 **Try it, no sign-in:** [chaseholroyd.com/hearth](https://chaseholroyd.com/hearth/). It's a made-up family kept only in your browser. On a phone it's the app itself; on a laptop a short guide sits beside it. Open **Details** in the Demo bar and pick **See it as Grandma Jo** to see that each photo reaches only the people it was shared with.
 
+## Status
+
+Hearth is a working proof of concept, built in the open.
+
+| | |
+|---|---|
+| Works today | Sign in with a code, post photos to a chosen group, see, react and comment, on iPhone and the web. Every suite that runs in CI passes, and the public demo is checked before and after each publish |
+| Private beta | Coming soon, after the current polish work. No date yet |
+| Built, switched off | Text message sign-in, video, and starting a family from the app |
+| Known limits | Speed on a phone hasn't been measured ([performance](docs/eng/PERFORMANCE.md)). No outside security review ([threat model](docs/architecture/04-threat-model.md)). Hearth's server holds the photo keys ([encryption and keys](docs/architecture/03-encryption-and-keys.md)) |
+
+License: AGPL-3.0 ([LICENSE](LICENSE)). The repo is public. [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## Start here
 
 | To see | Read |
@@ -23,6 +36,7 @@ Built by Chase Holroyd, a product manager, as a working proof of concept: one pe
 | How it works and what it protects | [Architecture](docs/architecture/) (system overview, data flow, encryption and keys, threat model) |
 | Why each call was made | [Decision log](docs/product/DECISION-LOG.md): every decision, what it beat, and why |
 | How it's tested | [Testing](docs/eng/TESTING.md), plus `bash scripts/test-totals.sh` for the real totals |
+| What changed so far | [Changelog](CHANGELOG.md): what a user or visitor can see, in plain words |
 | What's in scope | [Beta spec](docs/product/BETA-SPEC.md): the acceptance criteria each feature is tested against |
 | What went wrong and what changed | [Lessons](docs/eng/LESSONS.md): six post mortems, each with the rule or guard it added |
 
@@ -79,18 +93,6 @@ bash scripts/test-totals.sh             # app test and database check totals
 
 **Try the demo, no accounts:** `cd app && npm run build:demo-site` builds the public demo (a made-up family with sample pictures, kept in the browser, no backend) into `app/dist-demo-site/`; GitHub Pages publishes it at chaseholroyd.com/hearth/ on every app change to `main`. To click through it locally: `npm run export:web:demo && node scripts/serve-dist.js dist-demo 8090`, then open http://127.0.0.1:8090. On a laptop it shows the app at phone width beside a short guide; the Demo bar's Details drawer switches to Grandma Jo's view.
 
-## Status
-
-Hearth is a working proof of concept, built in the open.
-
-| | |
-|---|---|
-| Works today | Sign in with a code, post photos to a chosen group, see, react and comment, on iPhone and the web. Every suite that runs in CI passes, and the public demo is checked before and after each publish |
-| Built, switched off | Text message sign-in, video, and starting a family from the app |
-| Known limits | Speed on a phone hasn't been measured ([performance](docs/eng/PERFORMANCE.md)). No outside security review ([threat model](docs/architecture/04-threat-model.md)). Hearth's server holds the photo keys ([encryption and keys](docs/architecture/03-encryption-and-keys.md)) |
-
-License: AGPL-3.0 ([LICENSE](LICENSE)). The repo is public. [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Code of Conduct](CODE_OF_CONDUCT.md).
-
 ## How this is built
 
-Built with Claude Code (AI-assisted code, tests and docs). The maintainer directs the work and decides what ships. Tests and CI run on every pull request; the current state is in HANDOFF.md.
+Built with Claude Code (AI-assisted code, tests and docs). The app itself runs no AI on photos or metadata. The maintainer directs the work and decides what ships. Tests and CI run on every pull request; the current state is in HANDOFF.md.
