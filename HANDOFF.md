@@ -11,6 +11,10 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 26: ESLint gate (intake #199, R97; branch claude/project-thread-is6w2s, not pushed)
+- **Done, test-first** (LINT-1..5 in `app/src/__tests__/lint.test.ts`, red then green 3x): `app/eslint.config.mjs`, `npm run lint`, `.github/workflows/lint.yml`, `engines.node`, `.nvmrc`. Warnings only unless `STUDIO_LINT_STRICT=1`. **Warning count: 324, errors 0.** Jest 2630 pass, typecheck green.
+- **Next:** after studio-agents PR 175 merges, run studio-sync to swap in the managed config; fix warnings in small PRs; set `STUDIO_LINT_STRICT=1`. Open PR when the queue allows.
+
 ## Nov 25: privacy sweep of the public repo (intake #176, R96; branch claude/project-thread-6ew09x, PR)
 - **Done:** artifact links, backend project address (docs and `.env.example`), fixtures (address, family name, GPS test photo) and the family details in PERSONAS/STORY and the docs listed in R96 are generic now. Nicknames stay; who is related to whom, phones per person, places and the far-away relative are gone.
 - **Family-details decision (for #176):** the repo keeps nicknames and household shapes only, as fictional composites. The real key stays in the project's private files. **Needs Chase:** confirm that level, or say to go further (ages in PERSONA-CHECK).

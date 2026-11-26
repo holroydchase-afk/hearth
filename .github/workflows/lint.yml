@@ -1,0 +1,27 @@
+name: lint
+# Studio lint gate (intake #199). Warnings only until the repository variable STUDIO_LINT_STRICT is 1.
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  lint:
+    name: Lint (ESLint)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+        env:
+          STUDIO_LINT_STRICT: ${{ vars.STUDIO_LINT_STRICT }}
