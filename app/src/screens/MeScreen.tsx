@@ -1,11 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { last4 } from '../api/phone';
 import { DEMO_MODE } from '../demo/flags';
 import { useApp } from '../state/AppContext';
-import { BackButton, GroupedSection, Screen, Txt } from '../ui/kit';
+import { dateWords } from '../calendar/dates';
+import { useFamilyDates } from '../calendar/useFamilyDates';
+import { BackButton, Button, GroupedSection, Screen, Txt } from '../ui/kit';
 import { AppGate } from './AppGate';
+import { PRIVACY } from './Birthdays';
 import { NoticeTiming } from './NoticeTiming';
 import { ProblemDetailsCard } from './ProblemDetails';
 import { DeleteAccount, HowToTell, PhotoHelpers, Privacy, ReplyAudience, SignOut } from './Preferences';
@@ -36,6 +40,23 @@ function WhoYouAre() {
   return <Txt>{name ? `You're ${name}, in the made-up sample family.` : "You're in the made-up sample family."}</Txt>;
 }
 
+/** CAL-S2 (Chase, Nov 26): the birthday lives here, not on Gallery. Every member; hidden quietly on a server without 0029. */
+function MyBirthday() {
+  const app = useApp();
+  const me = app.session?.userId ?? null;
+  const cal = useFamilyDates(app.deps.api, app.space?.space_id ?? null);
+  if (!me || cal.status !== 'ready') return null;
+  const mine = cal.dates.find((d) => d.member_id === me);
+  return (
+    <GroupedSection testID="my-birthday">
+      <Txt variant="title2" role="header">My birthday</Txt>
+      <Txt>{mine ? dateWords(mine.month, mine.day) : "Your birthday isn't added yet."}</Txt>
+      <Txt tone="muted">{PRIVACY}</Txt>
+      <Button label={mine ? 'Change my birthday' : 'Add my birthday'} variant="secondary" onPress={() => router.push('/more/birthdays?add=mine')} />
+    </GroupedSection>
+  );
+}
+
 function MeReady({ onBack }: { onBack?: () => void }) {
   const app = useApp();
   return (
@@ -47,6 +68,7 @@ function MeReady({ onBack }: { onBack?: () => void }) {
         {/* RD-15: viewers reach Me from More too, so say what each can do. */}
         <Txt tone="muted">{app.space?.can_post ? 'You can share photos and choose who sees them.' : 'You can look at photos and write back.'}</Txt>
       </GroupedSection>
+      <MyBirthday />
       {/* EF-HE-4 (Chase, Nov 24): Easy view and Light or dark live only in More, like Theme (RD-97). */}
       <HowToTell />
       <ReplyAudience />
