@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { seedPost } from '../../test/seed';
 import { expectGrandparentSafe, renderApp, screenWords } from '../../test/renderApp';
@@ -198,6 +198,7 @@ describe('Photos screen', () => {
 // Lets a test reach the app's stores (to simulate a background refresh).
 const probe: { app: ReturnType<typeof useApp> | null } = { app: null };
 function Probe() {
-  probe.app = useApp();
+  const a = useApp();
+  useEffect(() => { probe.app = a; });
   return <PhotosScreen />;
 }

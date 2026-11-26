@@ -513,6 +513,7 @@ export function BottomSheet({ testID, onClose, children }: { testID: string; onC
   const { c, os, reduceMotion } = useTheme();
   const close = React.useRef(onClose);
   useLayoutEffect(() => { close.current = onClose; });
+  // eslint-disable-next-line react-hooks/refs -- a gesture handler object (PanResponder) or a place ref is built once and handed to a View; its callbacks read refs only when a touch happens, never during render (Nov 26)
   const [drag] = useState(() => PanResponder.create(sheetPan(() => close.current())));
   const corner = os === 'android' ? 28 : 14;
   return (

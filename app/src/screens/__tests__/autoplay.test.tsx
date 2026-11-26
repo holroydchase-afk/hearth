@@ -26,7 +26,6 @@ import { renderApp, type SeedDataPrefs } from '../../test/renderApp';
 import { seedPost, seedVideoPost } from '../../test/seed';
 import { PhotosScreen } from '../PhotosScreen';
 
-/* eslint-disable @typescript-eslint/no-require-imports -- tests load modules after jest.mock or resetModules, which a top-level import cannot do */
 type Player = { source: unknown; muted: boolean; loop: boolean; playing: boolean; play: jest.Mock; pause: jest.Mock; __emit(e: string, p?: unknown): void };
 const players = (): Player[] => (jest.requireMock('expo-video') as { __players: Player[] }).__players;
 const playingNow = () => players().filter((p) => p.playing);

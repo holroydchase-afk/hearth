@@ -5,7 +5,6 @@
 // Loaded at run time so typecheck stays clean before it exists.
 
 type Rel = (iso: string, now: Date) => string;
-/* eslint-disable @typescript-eslint/no-require-imports -- tests load modules after jest.mock or resetModules, which a top-level import cannot do */
 const rel: Rel = (iso, now) => {
   const f = (require('../format') as { relativeTime?: Rel }).relativeTime;
   if (typeof f !== 'function') throw new Error('RD-51 relativeTime is not exported from src/ui/format.ts');

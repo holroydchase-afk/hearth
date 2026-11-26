@@ -85,6 +85,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
   useLayoutEffect(() => { zoomed.current = zoom; });
   const spread = (touches: readonly { pageX: number; pageY: number }[]) =>
     Math.hypot(touches[0]!.pageX - touches[1]!.pageX, touches[0]!.pageY - touches[1]!.pageY);
+  // eslint-disable-next-line react-hooks/refs -- a gesture handler object (PanResponder) or a place ref is built once and handed to a View; its callbacks read refs only when a touch happens, never during render (Nov 26)
   const [pinchHandlers] = useState(() => PanResponder.create({
     onMoveShouldSetPanResponderCapture: (e) => e.nativeEvent.touches.length === 2,
     onPanResponderGrant: (e) => {
@@ -142,6 +143,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
         ) : null}
       </View>
       {!entry ? (
+        // eslint-disable-next-line react-hooks/refs -- a gesture handler object (PanResponder) or a place ref is built once and handed to a View; its callbacks read refs only when a touch happens, never during render (Nov 26)
         state.loaded && state.status === 'idle' && (asked.current || pos === -1) ? (
           <View style={styles.pad}><Txt variant="title2">This was removed.</Txt></View>
         ) : (
@@ -155,6 +157,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
           {/* Zoomed: twice the size, moved around in both directions; swiping to the next photo waits until unzoomed.
               iPhone: the outer scroll view also pinches, up to 4x. */}
           <View style={{ flex: 1 }} onLayout={(ev) => setBox({ w: ev.nativeEvent.layout.width, h: ev.nativeEvent.layout.height })}
+            // eslint-disable-next-line react-hooks/refs -- a gesture handler object (PanResponder) or a place ref is built once and handed to a View; its callbacks read refs only when a touch happens, never during render (Nov 26)
             {...(zoom ? {} : swipe.panHandlers)}>
             <View testID="viewer-gestures" style={{ flex: 1 }} {...(Platform.OS === 'ios' ? {} : pinchHandlers.panHandlers)}>
             <ScrollView key={entry.media.media_id} testID="viewer-pinch" style={{ flex: 1 }} maximumZoomScale={4} minimumZoomScale={1}

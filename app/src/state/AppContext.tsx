@@ -263,6 +263,7 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
   }, [deps, register]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- loads data and resets its state when the id changes; a keyed remount would change when the old picture clears, so the refactor waits for a phone check (TRACKER R113) (Nov 26)
     void load();
   }, [load]);
 

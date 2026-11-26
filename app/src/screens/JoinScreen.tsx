@@ -67,16 +67,6 @@ export function JoinScreen({ code }: { code: string }) {
     }
   };
 
-  useEffect(() => {
-    if (app.status === 'loading' || started.current) return;
-    started.current = true;
-    if (app.session) {
-      void redeem(null);
-      return;
-    }
-    check();
-  }, [app.status]); // eslint-disable-line react-hooks/exhaustive-deps -- runs once per sign-in status change; redeem and check are re-made each render and the started ref guards a second run
-
   function check() {
     setStep('checking');
     setRetry(null);
@@ -88,6 +78,16 @@ export function JoinScreen({ code }: { code: string }) {
         setStep('bad');
       });
   }
+
+  useEffect(() => {
+    if (app.status === 'loading' || started.current) return;
+    started.current = true;
+    if (app.session) {
+      void redeem(null);
+      return;
+    }
+    check();
+  }, [app.status]); // eslint-disable-line react-hooks/exhaustive-deps -- runs once per sign-in status change; redeem and check are re-made each render and the started ref guards a second run
 
   const who = preview?.inviter_name ?? null;
   if (step === 'askData') return <DataQuestion onDone={nav.goPhotos} />;

@@ -7,7 +7,7 @@
 // The real Messages screen and ChatClient run over the real web store (sealed localStorage, key store in memory
 // for IndexedDB); the fake relay's fetch is held open so the messenger's save is in flight during sign-out.
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FakeBackend } from '../../api/fake/FakeBackend';
 import type { HearthApi } from '../../api/HearthApi';
 import { createSecureSessionStorage, type SecureSessionStorage } from '../../platform/secureSession.web';
@@ -64,7 +64,8 @@ afterEach(() => {
 
 let app: ReturnType<typeof useApp> | null = null;
 function Probe() {
-  app = useApp();
+  const a = useApp();
+  useEffect(() => { app = a; });
   return <MessagesScreen onClose={() => {}} />;
 }
 

@@ -56,7 +56,9 @@ export function GalleryGrid({ posts, scrollY, pinAt = 0, relayout = 0, onPinned 
     if (before !== pinned.current.size > 0) report.current?.(!before);
   }).current;
   return (
+    // eslint-disable-next-line react-hooks/refs -- a gesture handler object (PanResponder) or a place ref is built once and handed to a View; its callbacks read refs only when a touch happens, never during render (Nov 26)
     <View ref={grid.ref} testID="gallery-grid" style={{ gap: SPACE.xl }} onLayout={grid.onLayout}>
+      {/* eslint-disable-next-line react-hooks/refs -- a gesture handler object (PanResponder) or a place ref is built once and handed to a View; its callbacks read refs only when a touch happens, never during render (Nov 26) */}
       {months.map((m) => (
         <Month key={m.key} m={m} relayout={relayout} pinAt={pinAt} onPin={onPin} stick={scrollY && grid.place ? { scrollY, gridY: grid.place.y, pinAt } : null} />
       ))}
