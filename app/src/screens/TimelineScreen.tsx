@@ -26,7 +26,7 @@ export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { start
   const under = useTabBarSpace(); // RD-109: room under the web's floating tab bar
   const store = useMemo(
     () => new TimelineStore({ api: app.deps.api, space: app.space!.space_id, inviter: app.helper }),
-    [app.deps.api, app.space?.space_id], // eslint-disable-line react-hooks/exhaustive-deps
+    [app.deps.api, app.space?.space_id], // eslint-disable-line react-hooks/exhaustive-deps -- the store is rebuilt only when the api or the space id changes; the space object and app.helper change identity without changing meaning
   );
   const state = useSyncExternalStore(store.subscribe, store.getState, store.getState);
   const [years, setYears] = useState(false);

@@ -15,7 +15,7 @@
 import { memoryKV, type KV } from '../../platform/kv';
 import { DATA_PREFS_KEY } from '../../test/renderApp';
 
-/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-require-imports -- tests load modules after jest.mock or resetModules, which a top-level import cannot do */
 type Viewability = { itemVisiblePercentThreshold?: number; viewAreaCoveragePercentThreshold?: number; minimumViewTime?: number; waitForInteraction?: boolean };
 type DataPrefs = { autoplay: boolean; saveData: boolean | null };
 const autoplay = () => require('../autoplay') as { AUTOPLAY_VIEWABILITY: Viewability };

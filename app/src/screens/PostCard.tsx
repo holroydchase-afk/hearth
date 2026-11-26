@@ -35,7 +35,7 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
 
   useEffect(() => {
     if (post.comment_count > 0) void feed?.loadComments(post.post_id);
-  }, [feed, post.post_id, post.comment_count > 0]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [feed, post.post_id, post.comment_count > 0]); // eslint-disable-line react-hooks/exhaustive-deps -- the trigger is the boolean comment_count > 0, so comments load once when the first one appears, not on every count change
 
   const list: CommentView[] = comments ?? NO_COMMENTS;
   const newest = list[list.length - 1];

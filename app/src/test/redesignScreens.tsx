@@ -10,7 +10,7 @@
 import React from 'react';
 import { AppRoutes } from './appRoutes';
 
-/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-require-imports -- tests load modules after jest.mock or resetModules, which a top-level import cannot do */
 // ENG-R6: Gallery, Feed and More are the first screens of their tab's stack, and what they open (Search, the
 // timeline, More's rows) is pushed on it, so tests render them at their address under expo-router.
 export function GalleryScreen() {

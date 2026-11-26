@@ -122,7 +122,7 @@ expect.extend({
   },
 });
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
+  // eslint-disable-next-line @typescript-eslint/no-namespace -- jest's custom matchers are added by merging into the global jest namespace
   namespace jest {
     interface Expect { toBeAtLeast17(): unknown }
     interface Matchers<R> { toBeAtLeast17(): R }

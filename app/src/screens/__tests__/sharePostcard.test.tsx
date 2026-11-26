@@ -316,7 +316,7 @@ describe('SHARE-PC-8 tapping a tile picks it', () => {
 });
 
 describe('SHARE-PC-9 the To: line names the people', () => {
-  const namesLine = (names: string[]): string => (require('../../share/postcard') as { namesLine: (n: string[]) => string }).namesLine(names); // eslint-disable-line @typescript-eslint/no-require-imports
+  const namesLine = (names: string[]): string => (require('../../share/postcard') as { namesLine: (n: string[]) => string }).namesLine(names); // eslint-disable-line @typescript-eslint/no-require-imports -- tests load modules after jest.mock or resetModules, which a top-level import cannot do
   it('SHARE-PC-9 unit: ≤2 names, then "and N more"', () => {
     expect(namesLine([])).toBe('');
     expect(namesLine(['Gammy'])).toBe('Gammy');

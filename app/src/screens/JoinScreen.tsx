@@ -75,7 +75,7 @@ export function JoinScreen({ code }: { code: string }) {
       return;
     }
     check();
-  }, [app.status]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [app.status]); // eslint-disable-line react-hooks/exhaustive-deps -- runs once per sign-in status change; redeem and check are re-made each render and the started ref guards a second run
 
   function check() {
     setStep('checking');

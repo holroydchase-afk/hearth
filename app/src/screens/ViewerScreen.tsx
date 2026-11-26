@@ -63,7 +63,7 @@ export function ViewerScreen({ postId, index }: { postId: string; index: number 
     const n = next !== null ? entries[next] : undefined;
     // DEC-87 (DATA-4): with Save data on, the next photo's full size waits for the swipe.
     if (n && app.dataPrefs.saveData !== true) app.media?.prefetch(n.post.post_id, [n.media.media_id]);
-  }, [entry?.media.media_id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [entry?.media.media_id]); // eslint-disable-line react-hooks/exhaustive-deps -- prefetches once per photo shown; next, entries and the Save data pref change more often than the photo does
 
   const go = (to: number | null) => {
     const e = to === null ? undefined : entries[to];

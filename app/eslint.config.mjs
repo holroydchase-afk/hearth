@@ -17,6 +17,7 @@ const soften = (rules) => Object.fromEntries(Object.entries(rules).map(([k, v]) 
 }));
 
 export default [
+  { linterOptions: { reportUnusedDisableDirectives: 'warn' } },
   { ignores: ['dist*/**', 'node_modules/**', '.expo/**', 'public/**', 'coverage/**', '**/*.config.js', 'scripts/**'] },
   ...[js.configs.recommended, ...tseslint.configs.recommended].map((c) => (c.rules ? { ...c, rules: soften(c.rules) } : c)),
   {

@@ -52,8 +52,8 @@ export function useTypingField(): { onFocus: () => void; onBlur: () => void } {
   const id = useRef(Symbol('field')).current;
   const later = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cancel = () => { if (later.current) { clearTimeout(later.current); later.current = null; } };
-  useEffect(() => () => { cancel(); if (focused.delete(id)) emit(); }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
-  const onFocus = useCallback(() => { cancel(); if (!focused.has(id)) { focused.add(id); emit(); } }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => () => { cancel(); if (focused.delete(id)) emit(); }, [id]);
+  const onFocus = useCallback(() => { cancel(); if (!focused.has(id)) { focused.add(id); emit(); } }, [id]);
   const onBlur = useCallback(() => {
     cancel();
     later.current = setTimeout(() => { later.current = null; if (focused.delete(id)) emit(); }, SHOW_AGAIN_MS);

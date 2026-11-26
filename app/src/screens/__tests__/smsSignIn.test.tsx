@@ -3,7 +3,7 @@
 // BETA-SMS-2..6, -9..12, -14 (SPEC-SMS-SIGN-IN, DEC-57): text message sign-in with the build flag on, on the Fake.
 // Written first: red until the screens and the Fake's sendTextCode / verifyTextCode exist.
 // The flag is set before the app modules load (a build flag may be read once, at import), so they are required below.
-/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-require-imports -- tests load modules after jest.mock or resetModules, which a top-level import cannot do */
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import type { CreateInviteArgs, Session } from '../../api/types';

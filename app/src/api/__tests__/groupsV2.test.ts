@@ -22,7 +22,7 @@ describe('GRP-15..17 / FLAG-5 SupabaseApi wiring', () => {
     ['myFeatures', ['S'], 'my_features', { p_space: 'S' }],
   ] as const)('GRP-15 %s → %s', async (method, args, rpcName, rpcArgs) => {
     const c = mockClient(method === 'createLevel' ? 'new-id' : []);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the test calls one method by name from a table of RPC cases
     await (make(c) as any)[method](...args);
     expect(c.rpc).toHaveBeenCalledWith(rpcName, rpcArgs);
   });

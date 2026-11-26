@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 // grandparent-ux review of text sign-in (GUX-R1, GUX-R2). Flag on, on the Fake.
-/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-require-imports -- tests load modules after jest.mock or resetModules, which a top-level import cannot do */
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import type { CreateInviteArgs } from '../../api/types';

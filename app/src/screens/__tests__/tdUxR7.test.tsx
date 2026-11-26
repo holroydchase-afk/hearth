@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 // TD-UX-R7 (docs/reviews/2026-11-19-tech-debt/ux.md; SPEC-SMS-SIGN-IN, DEC-57): sign-out and Me words for text sign-in.
 // Written first (red). The flag is set before the app modules load, as in smsSignIn.test.tsx.
-/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-require-imports -- tests load modules after jest.mock or resetModules, which a top-level import cannot do */
 import { fireEvent, screen } from '@testing-library/react-native';
 import React from 'react';
 import type { Session } from '../../api/types';
