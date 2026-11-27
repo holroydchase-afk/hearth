@@ -5,8 +5,13 @@ const { test, expect } = require('../../e2e/node_modules/@playwright/test');
 const BASE = process.env.SITE_BASE || '/demo/hearth';
 const baseRe = BASE.replace(/[/]/g, '\\/');
 
-// DEMO-BAR: Grandma's view and Reset live in the Details drawer.
+// DEMO-BAR-HIDE-1: the public build (what demo-site.yml and the live check test) has no phone demo bar; only
+// `npm run e2e:site` builds it on, and sets EXPO_PUBLIC_HEARTH_DEMO_BAR=1 for these specs too.
+const BAR = process.env.EXPO_PUBLIC_HEARTH_DEMO_BAR === '1';
+// DEMO-BAR: Grandma's view and Reset live in the Details drawer. With the bar off they are in the laptop story panel,
+// always open, so there is nothing to open.
 const details = async (page) => {
+  if (!BAR) return;
   const t = page.getByRole('button', { name: 'Demo details' });
   if ((await t.getAttribute('aria-expanded')) !== 'true') await t.click();
 };
@@ -28,7 +33,7 @@ for (const tab of ['', 'photos', 'share', 'groups', 'me', 'help']) {
     page.on('response', (r) => { if (r.status() >= 400 && own(r.url())) failed.push(`${r.status()} ${r.url()}`); });
     page.on('pageerror', (e) => failed.push(String(e)));
     await page.goto(`${BASE}/${tab}`);
-    await expect(page.getByRole('button', { name: 'Demo details' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Demo details' })).toHaveCount(BAR ? 1 : 0);
     if (tab === '' || tab === 'photos') {
       await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible(); // RD-18: Gallery shows photos, not captions
       await expect.poll(() => page.evaluate(() => [...document.images].filter((i) => i.complete && i.naturalWidth > 0).length)).toBeGreaterThan(0);
@@ -56,6 +61,7 @@ test(`DEMO-5 every link inside the demo stays under ${BASE}/ or goes to chasehol
 });
 
 test(`DEMO-NAMES-5 DEMO-5 Grandma's view and Start over stay inside ${BASE}/`, async ({ page }) => {
+  if (!BAR) await page.setViewportSize({ width: 1280, height: 800 }); // DEMO-BAR-HIDE-1: the story panel holds the controls
   await page.goto(`${BASE}/`);
   await details(page);
   await page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
@@ -131,10 +137,9 @@ test('DEMO-META-2 the page carries link-preview tags and serves the preview pict
 });
 
 // DEMO-BAR-HIDE-1 (Chase, Nov 27): the public build (EXPO_PUBLIC_HEARTH_DEMO_BAR=0) has no demo bar on a phone, while the
-// laptop story panel still has Grandma Jo and Reset. Needs its own build: npm run e2e:site:public (e2e:site builds the
-// bar on, so this skips there).
+// laptop story panel still has Grandma Jo and Reset. Runs on the public build (the default); skips under e2e:site.
 test('DEMO-BAR-HIDE-1 a build with the bar off: no Demo details at 390 px, story panel keeps Grandma Jo and Reset at 1280 px', async ({ page }) => {
-  test.skip(process.env.EXPO_PUBLIC_HEARTH_DEMO_BAR !== '0', 'needs the bar-off build: npm run e2e:site:public');
+  test.skip(BAR, 'the bar-on build (npm run e2e:site) keeps the phone bar');
   await page.goto(`${BASE}/`);
   await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Demo details' })).toHaveCount(0);
