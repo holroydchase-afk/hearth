@@ -1,0 +1,7 @@
+dist*/
+node_modules/
+.expo/
+coverage/
+public/
+package-lock.json
+patches/
