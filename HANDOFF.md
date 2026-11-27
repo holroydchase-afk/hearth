@@ -11,6 +11,9 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 27: engineering standard (intake #205)
+- Added `security.yml` (gitleaks full-history scan, `npm audit` of app prod deps, high+), and pinned every Action in every workflow to a commit SHA (CodeQL moved v3 to v4.39.5, setup-node v5 to v7.1.0). Lint was already strict (`lint.yml`, STUDIO_LINT_STRICT=1). Open: the demo-site deploy workflow now runs pinned actions, so watch the next deploy; expo-doctor and typed env parsing are separate P1s.
+
 ## Nov 26: error, empty and help states (intake #208, R125, STATES-1..24; branch claude/project-thread-6ew09x, committed, not pushed)
 - **Done:** `FeedStore.failed` / `retry()`, `TimelineStore.failed` / `yearsFailed`, `errors/loadFailed.ts` (words), `ErrorState` and `EmptyState` in `ui/kit.tsx` (for the #192 library hand-over), screens Gallery/Feed, Timeline, Events, Groups, Help. New dep flag `helpPhoneIsInviters` (env `EXPO_PUBLIC_HELP_PHONE_IS_INVITERS`). Jest 209 suites green; typecheck only the two known ViewerScreen module errors. Test fixes where the old test was wrong: statesTimeline (`beforeAt`), statesGallery STATES-6 (two tabs mounted; check `router.navigate('/share')`), statesHelp STATES-22 (clear spy history), plus old tests changed by the spec (evalFindings, photos, groupsWords) and the harness default `helpPhoneIsInviters: true`.
 - **Next:** phone check STATES-M1..M5; ux-reviewer shots at 390 px; set the env flag for the beta build; then #213 leftovers.
