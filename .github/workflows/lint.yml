@@ -23,6 +23,7 @@ jobs:
           cache: npm
           cache-dependency-path: app/package-lock.json
       - run: npm ci
+      - run: bash scripts/tests/a11y_lint_test.sh
       - run: npm run lint
         env:
           STUDIO_LINT_STRICT: '1'

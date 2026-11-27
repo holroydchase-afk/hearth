@@ -16,6 +16,9 @@ All notable changes to Hearth that a user or visitor can see. The format follows
 - Public demo at chaseholroyd.com/hearth: a made-up family kept in your browser, free stock photos, and "See it as Grandma Jo" to show that each photo reaches only the people it was shared with.
 - Add to home screen on the web, and staying signed in on the web.
 
+### Changed
+- When a photo list can't load, the screen now says what happened (no signal, or something went wrong), says your photos are safe, and offers "Try again". Saved photos stay on screen with a line above them. Empty lists have a button for what to do next.
+
 ### Privacy
 - Photos are encrypted on the phone before upload and stored in the US. Hearth's server holds the photo keys today, so this is not end-to-end encryption.
 - Location and camera data are removed from photos on the phone.

@@ -14,7 +14,11 @@ blockers:
 ## Nov 27: engineering standard (intake #205)
 - Added `security.yml` (gitleaks full-history scan; `npm audit` stays in ci.yml: critical blocks, high and moderate warn, 3 high today in transitive Expo tooling node-forge and zod, `npm audit fix` available) and `.gitleaks.toml` (two fake test fixtures allowed by path). Fixed the one strict-lint error on main (GroupsScreen wrote a ref during render; now set in an effect). And pinned every Action in every workflow to a commit SHA (CodeQL moved v3 to v4.39.5, setup-node v5 to v7.1.0). Lint was already strict (`lint.yml`, STUDIO_LINT_STRICT=1). Open: the demo-site deploy workflow now runs pinned actions, so watch the next deploy; expo-doctor and typed env parsing are separate P1s.
 
-## Nov 26: error, empty and help states (intake #208, R125, STATES-1..24; branch claude/project-thread-6ew09x, committed, not pushed)
+## Nov 27: dev-loop basics, part 2 (intake #213, R124; branch claude/project-thread-6ew09x)
+- **Done:** React Native accessibility lint rules (`eslint-plugin-react-native-a11y`, 8 rules at error in strict; `scripts/tests/a11y_lint_test.sh` runs before lint in `lint.yml`). `src/` already had 0 findings. Also merged: lint fix for the Groups screen ref (PR 224) and the R125 duplicate renumbered to R128.
+- **Next in #213:** Prettier config and pre-commit hook (lint-staged and typecheck) as the next small PR; first release tag when a build is cut.
+
+## Nov 26: error, empty and help states (intake #208, R128, STATES-1..24; merged as PR 221)
 - **Done:** `FeedStore.failed` / `retry()`, `TimelineStore.failed` / `yearsFailed`, `errors/loadFailed.ts` (words), `ErrorState` and `EmptyState` in `ui/kit.tsx` (for the #192 library hand-over), screens Gallery/Feed, Timeline, Events, Groups, Help. New dep flag `helpPhoneIsInviters` (env `EXPO_PUBLIC_HELP_PHONE_IS_INVITERS`). Jest 209 suites green; typecheck only the two known ViewerScreen module errors. Test fixes where the old test was wrong: statesTimeline (`beforeAt`), statesGallery STATES-6 (two tabs mounted; check `router.navigate('/share')`), statesHelp STATES-22 (clear spy history), plus old tests changed by the spec (evalFindings, photos, groupsWords) and the harness default `helpPhoneIsInviters: true`.
 - **Next:** phone check STATES-M1..M5; ux-reviewer shots at 390 px; set the env flag for the beta build; then #213 leftovers.
 
@@ -29,6 +33,15 @@ blockers:
 ## Nov 26: fixed sleeps out of the web e2e (intake #206, R122; PR)
 - **Done:** 27 `waitForTimeout` replaced (helpers/settle.js), guard script and test, wired into test-all.sh and CI. e2e not run locally; CI is the proof.
 - **Next:** #205, #213, #208. Open P2: the 2 jest real-timer cases (not named in the intake).
+
+## Nov 27: Demo chip in the portfolio header (Chase; drawer on hold)
+- **Chase's direction:** no demo bar; "Demo" in the portfolio site's own top bar opens a bottom drawer with the bar's contents (sample-data note, Grandma Jo's view, Reset, way back). The drawer tests are written but not built (patch kept by the thread). Resume on Chase's word.
+- **Portfolio / public presence, intake for Product Studio (filing blocked: this project has no access to holroydchase-afk.github.io):** in the shared `demo-bar.js`, on the Hearth demo page only, add a small centered chip. Look: outlined pill, 32 px tall (48 px tap target), the word "Demo" plus a small up arrow, same ink as the bar. Accessibility: `aria-label="Demo info"`, `aria-haspopup="dialog"`, `aria-expanded` kept in step. Click runs `window.dispatchEvent(new Event('hearth-demo-drawer'))`, which toggles the demo's bottom drawer. Hearth will set `document.documentElement.dataset.hearthDemoDrawer` to `open` or `closed` and fire `CustomEvent('hearth-demo-drawer-state', {detail: {open}})` on window so the chip can follow. Until both ship, the phone demo has no Grandma Jo switch or Reset.
+
+## Nov 27: demo deploy check fixed for the bar-less public build (R127 follow-up; branch claude/project-thread-9bw6qr)
+- **Why:** PR #223 hid the phone bar, but `demo-site.yml`'s pre-deploy check and live check still expected "Demo details", so the deploy was blocked (run 46054356560). Specs now treat the public build as bar-less (`BAR` is true only under `npm run e2e:site`, which builds and tests with `EXPO_PUBLIC_HEARTH_DEMO_BAR=1`); on the public build the Grandma Jo and Reset flow runs at 1280 px through the story panel. `e2e:site:public` runs the whole suite on the public build.
+- **Checked here:** `e2e:site` 16 passed, 1 skipped; `e2e:site:public` 17 passed.
+- **Open:** earlier demo-site runs since #193 (Nov 25) also failed before #223; cause not yet read. The drawer work is on hold (Chase, Nov 27).
 
 ## Nov 27: public demo's phone bar hidden (DEMO-BAR-HIDE-1, R127; branch claude/project-thread-9bw6qr)
 - **Done, test-first** (qa-tdd red then green 3x): `EXPO_PUBLIC_HEARTH_DEMO_BAR=0` (the default in `scripts/build-demo.sh`) removes the slim demo bar on phone width. Other demo builds and `e2e:site` (built with `=1`) still show it; `e2e:site:public` checks the hidden build. Laptop story panel keeps Grandma Jo + Reset.
