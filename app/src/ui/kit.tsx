@@ -469,6 +469,31 @@ export function Notice({ text, onClose, tone = 'info' }: { text: string; onClose
   );
 }
 
+/** STATES-1..3 (intake #208): the list could not load. Words only, a "Try again" button, nothing to dismiss; it goes
+ *  away when a retry works. `title` is left out for the one-line version above a list that is still on the phone.
+ *  Small helper for the list screens: it belongs to the component library (intake #192), whose hand-over moves it. */
+export function ErrorState({ title, line, onRetry }: { title?: string; line: string; onRetry: () => void }) {
+  return (
+    <View accessibilityLiveRegion="polite" style={{ gap: 12 }}>
+      {title ? <Txt variant="title2" role="header">{title}</Txt> : null}
+      <Txt>{line}</Txt>
+      <Button variant="tinted" label="Try again" onPress={onRetry} />
+    </View>
+  );
+}
+
+/** STATES-6/7/12/16 (intake #208): a list with nothing in it says what to do next, with one verb button. Same
+ *  note as ErrorState: a small helper for the list screens that the component library (intake #192) takes over. */
+export function EmptyState({ title, line, button }: { title: string; line: string; button?: { label: string; onPress: () => void; busy?: boolean; text?: string } }) {
+  return (
+    <View style={{ gap: 12 }}>
+      <Txt variant="title2" role="header">{title}</Txt>
+      <Txt tone="muted">{line}</Txt>
+      {button ? <Button variant="tinted" label={button.label} text={button.text} busy={button.busy} onPress={button.onPress} /> : null}
+    </View>
+  );
+}
+
 /** RD-67 (UX-R24): an iOS-style alert over the screen: a short title, then two plain text buttons side by side with no
  *  fill. The safe choice (`keep`) is Semibold, the default; the destructive one is red Regular words (RD-72). */
 export function AlertDialog({ title, body, keep, destroy, onKeep, onDestroy }: {

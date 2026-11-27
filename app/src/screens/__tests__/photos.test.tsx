@@ -175,7 +175,9 @@ describe('Photos screen', () => {
 
   it('empty family: says what will happen, in plain words', async () => {
     await renderApp(<PhotosScreen />, { user: 'jo' });
-    expect(await screen.findByText("No photos yet. When Chase shares photos, they'll show up here.")).toBeTruthy();
+    // STATES-7: a title, the line, and a "Check again" button.
+    expect(await screen.findByText('No photos yet')).toBeTruthy();
+    expect(screen.getByText("When Chase shares photos, they'll show up here.")).toBeTruthy();
   });
 
   it.each(['jo', 'chase'] as const)('accessibility for %s: labels, 48 pt targets, 17 pt text, no passwords', async (user) => {

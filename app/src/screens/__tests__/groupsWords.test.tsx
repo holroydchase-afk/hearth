@@ -75,15 +75,16 @@ describe('UX-G Groups screen invites (BETA-AUD-19)', () => {
     expect(screen.queryByRole('button', { name: 'Invite someone to Everyone' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Invite someone to Lake weekend' })).toBeNull();
     expect(screen.queryByRole('button', { name: "Invite someone to Mom's side" })).toBeNull();
-    // and the parent is told where to go instead
-    expect(screen.getAllByText('To invite someone, use their household below.').length).toBeGreaterThan(0);
+    // and the parent gets a button to the household instead of a sentence (STATES-18)
+    expect(screen.getAllByRole('button', { name: 'Invite someone' }).length).toBeGreaterThan(0);
+    expect(screen.queryByText('To invite someone, use their household below.')).toBeNull();
   });
 
   it('RR-11 a family of plain groups (no households) is pointed to a group below, never to a household', async () => {
     await renderApp(<GroupsScreen />, { user: 'chase' });
     expect(await screen.findByRole('button', { name: "Invite someone to Grandparents – Dad's side" })).toBeTruthy();
     expect(screen.queryByText(/household/)).toBeNull();
-    expect(screen.getByText('To invite someone, use one of the groups below.')).toBeTruthy();
+    expect(screen.getAllByRole('button', { name: 'Invite someone' }).length).toBeGreaterThan(0); // STATES-18
   });
 
   it('UX-G5 BETA-AUD-19 the form says whose invite it is and what "all" means for that household', async () => {

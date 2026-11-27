@@ -43,7 +43,7 @@ export async function renderApp(ui: ReactElement, opts: { user?: FixtureUser | n
   const nav: jest.Mocked<Nav> = { openViewer: jest.fn(), close: jest.fn(), goPhotos: jest.fn(), goFeed: jest.fn(), goSignIn: jest.fn(), goJoin: jest.fn() };
   const deps: AppDeps = {
     // START-ON-1/2: a fake help address (never a real one) so Help and the start button behave as deployed.
-    api, kv, helpPhone: '+1 304 555 0100', helpEmail: 'help@example.test',
+    api, kv, helpPhone: '+1 304 555 0100', helpPhoneIsInviters: true /* STATES-23: like the beta build, where Chase is the inviter */, helpEmail: 'help@example.test',
     prepare: jest.fn(async () => preparedFixture()),
     pickPhotos: jest.fn(async () => ({ items: [{ uri: 'file:///pick/1.jpg', kind: 'photo' as const, width: 4032, height: 3024 }] })),
     saveToPhone: jest.fn(async () => 'saved' as const),

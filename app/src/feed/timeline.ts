@@ -5,6 +5,7 @@
 // like ui/format.ts). The server decides what the caller may see (get_timeline uses the same
 // visibility function as get_feed); nothing here filters for privacy.
 import type { FeedPost, HearthApi, TimelinePost, TimelineYear } from '../api/HearthApi';
+import { loadFailure, type LoadFailure } from '../errors/loadFailed';
 import { messageFor } from '../errors/messages';
 import { phoneTimeZone } from '../media/captureDate';
 
@@ -97,6 +98,10 @@ export interface TimelineState {
   hasMore: boolean;
   years: TimelineYear[] | null;
   notice: string | null;
+  /** STATES-9: the first open failed (apart from `loaded`, so "failed" is never read as "empty"). */
+  failed: LoadFailure | null;
+  /** STATES-10: the years list failed. */
+  yearsFailed: LoadFailure | null;
 }
 
 export interface TimelineStoreOptions {
@@ -109,7 +114,7 @@ export interface TimelineStoreOptions {
 }
 
 export class TimelineStore {
-  private state: TimelineState = { posts: [], startAt: null, status: 'idle', loaded: false, hasMore: false, years: null, notice: null };
+  private state: TimelineState = { posts: [], startAt: null, status: 'idle', loaded: false, hasMore: false, years: null, notice: null, failed: null, yearsFailed: null };
   private listeners = new Set<() => void>();
   private gen = 0;
   private readonly pageSize: number;
@@ -134,14 +139,14 @@ export class TimelineStore {
   /** Start over at a cursor (null = newest taken first). */
   async open(startAt: string | null): Promise<void> {
     const gen = ++this.gen;
-    this.set({ posts: [], startAt, status: 'loading', loaded: false, hasMore: false, notice: null });
+    this.set({ posts: [], startAt, status: 'loading', loaded: false, hasMore: false, notice: null, failed: null });
     try {
       const page = await this.o.api.getTimeline({ space: this.o.space, beforeAt: startAt, beforeId: null, limit: this.pageSize });
       if (gen !== this.gen) return;
       this.set({ posts: page, status: 'idle', loaded: true, hasMore: page.length === this.pageSize });
     } catch (e) {
       if (gen !== this.gen) return;
-      this.set({ status: 'idle', loaded: true, notice: messageFor(e, { inviter: this.o.inviter ?? null }) });
+      this.set({ status: 'idle', loaded: false, failed: loadFailure(e) });
     }
   }
 
@@ -163,11 +168,12 @@ export class TimelineStore {
   }
 
   async loadYears(): Promise<void> {
+    this.set({ years: null, yearsFailed: null });
     try {
       const years = await this.o.api.getTimelineYears(this.o.space, this.o.timeZone ?? phoneTimeZone());
       this.set({ years });
     } catch (e) {
-      this.set({ years: [], notice: messageFor(e, { inviter: this.o.inviter ?? null }) });
+      this.set({ years: [], yearsFailed: loadFailure(e) });
     }
   }
 }

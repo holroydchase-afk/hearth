@@ -9,7 +9,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { TimelinePost } from '../api/HearthApi';
 import { TimelineStore, startOfNextYear, timelineRows, type TimelineRow } from '../feed/timeline';
 import { useApp, useFeed, useSaveData } from '../state/AppContext';
-import { BackButton, Button, Card, Loading, Notice, Txt } from '../ui/kit';
+import { loadFailedWords, type LoadFailure } from '../errors/loadFailed';
+import { BackButton, Button, Card, EmptyState, ErrorState, Loading, Notice, Txt } from '../ui/kit';
 import { photos, shortDate } from '../ui/format';
 import { MIN_TARGET, useTheme } from '../ui/theme';
 import { MediaImage } from './MediaImage';
@@ -75,6 +76,12 @@ export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { start
     );
   }
 
+  // STATES-9/10: a failed load is said in words with "Try again", never read as "empty".
+  const failedState = (kind: LoadFailure, retry: () => void) => {
+    const w = loadFailedWords(kind, { helper: app.helper, photos: true });
+    return <ErrorState title={w.title} line={w.line} onRetry={retry} />;
+  };
+  const emptyAtMonth = state.loaded && state.posts.length === 0 && !!state.startAt;
   const showYears = () => {
     setYears(true);
     void store.loadYears();
@@ -89,7 +96,7 @@ export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { start
       <BackButton to={backTo} onPress={onClose} />
       <Txt variant="title1" role="header">Photos by date</Txt>
       {years ? null : <Button variant="secondary" label="Pick a year" onPress={showYears} />}
-      {!years && state.startAt ? (
+      {!years && state.startAt && !emptyAtMonth ? (
         <Button label="Show the newest photos first" text="Show the newest first" variant="secondary" onPress={() => void store.open(null)} />
       ) : null}
       {state.notice ? <Notice text={state.notice} onClose={() => store.clearNotice()} /> : null}
@@ -117,7 +124,11 @@ export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { start
               onPress={() => openYear(item.year)}
             />
           )}
-          ListEmptyComponent={state.years === null ? <Loading words="Loading the years…" /> : <Txt tone="muted">No photos yet.</Txt>}
+          ListEmptyComponent={
+            state.years === null ? <Loading words="Loading the years…" />
+              : state.yearsFailed ? failedState(state.yearsFailed, () => void store.loadYears())
+                : <Txt tone="muted">No photos yet.</Txt>
+          }
           contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 32 + under }}
         />
       </SafeAreaView>
@@ -136,7 +147,16 @@ export function TimelineScreen({ startAt, onClose, backTo = 'Gallery' }: { start
             : <TimelineCard post={item.post} onOpen={() => openPost(item.post)} />}
         ListHeaderComponent={header}
         ListEmptyComponent={
-          !state.loaded ? <Loading words="Loading the photos…" /> : <Txt tone="muted">No photos from before then.</Txt>
+          state.failed && state.status === 'idle' ? failedState(state.failed, () => void store.open(state.startAt))
+            : !state.loaded ? <Loading words="Loading the photos…" />
+              : state.startAt ? (
+                <View style={{ gap: 12 }}>
+                  <Txt tone="muted">No photos before that month.</Txt>
+                  <Button variant="tinted" label="Show the newest photos first" text="Show the newest first" onPress={() => void store.open(null)} />
+                </View>
+              ) : (
+                <EmptyState title="No photos yet" line="Photos show up here by the day they were taken." button={{ label: 'Go back', onPress: onClose }} />
+              )
         }
         ListFooterComponent={
           state.hasMore ? (
