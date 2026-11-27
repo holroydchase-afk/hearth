@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Animated, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { REACTIONS, type FeedPost, type Reaction } from '../api/HearthApi';
@@ -19,7 +19,6 @@ import { PhotoCollage } from './PhotoCollage';
  *  away (See all, More), so the card no longer stacks full-width rows.
  *  Prototype: prototype/moments.html. No "Seen by" count (DEC-21, RV-U1): it counts who didn't look (A2). */
 const LABEL: Record<Reaction, string> = { '❤️': 'Love it', '😂': 'Haha', '👍': 'Like it', '🎉': 'Hooray' };
-const WORD: Record<Reaction, string> = { '❤️': 'love', '😂': 'haha', '👍': 'like', '🎉': 'hooray' };
 // REACT-11 (Chase, Nov 5: "the standard, not 3D emojis, not line icons"): the phone's own emoji, the same
 // ones on its keyboard. This replaces REACT-10's flat line icons.
 
@@ -35,7 +34,7 @@ export const PostCard = memo(function PostCard({ post }: { post: FeedPost }) {
 
   useEffect(() => {
     if (post.comment_count > 0) void feed?.loadComments(post.post_id);
-  }, [feed, post.post_id, post.comment_count > 0]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [feed, post.post_id, post.comment_count > 0]); // eslint-disable-line react-hooks/exhaustive-deps -- the trigger is the boolean comment_count > 0, so comments load once when the first one appears, not on every count change
 
   const list: CommentView[] = comments ?? NO_COMMENTS;
   const newest = list[list.length - 1];
@@ -488,7 +487,7 @@ function ReactionButton({ emoji, n, on, onPress }: { emoji: Reaction; n: number;
   const { fontScale } = useWindowDimensions();
   // One tabular digit is about 0.6 of the text size on every phone font; 0.7 leaves room.
   const slot = Math.ceil(type.subheadline.fontSize * 0.7 * Math.max(fontScale || 1, 1));
-  const scale = useRef(new Animated.Value(1)).current;
+  const [scale] = useState(() => new Animated.Value(1));
   const press = () => {
     if (!on && !reduceMotion) {
       const native = Platform.OS !== 'web';

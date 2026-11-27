@@ -23,7 +23,7 @@ jest.mock('../../platform/haptics', () => ({ haptic: jest.fn() }));
 
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react-native';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AccessibilityInfo, BackHandler, StatusBar as RNStatusBar, StyleSheet, Text } from 'react-native';
 import { FakeBackend, FIXTURE } from '../../api/fake/FakeBackend';
 import { MediaCache } from '../../media/cache';
@@ -379,7 +379,7 @@ describe('VIEWER-11 Easy view On: a Zoom in / Zoom out pill (DS-4)', () => {
 describe('VIEWER-13 HARD-8 kept, and neighbours prefetched', () => {
   it('VIEWER-13 HARD-8 a new post arriving keeps the same photo (by media id and caption, not the counter)', async () => {
     let app: ReturnType<typeof useApp> | null = null;
-    const Grab = () => { app = useApp(); return null; };
+    const Grab = () => { const a = useApp(); useEffect(() => { app = a; }); return null; };
     const s = await setup();
     await renderApp(<><Grab /><ViewerScreen postId={s.newer.id} index={0} /></>, { be: s.be, user: 'jo' });
     await screen.findByText('Two at the lake');

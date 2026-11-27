@@ -20,7 +20,7 @@
 //     all of it at the bottom).
 import { fireEvent, screen, within } from '@testing-library/react-native';
 import React from 'react';
-import { Platform, StyleSheet, Text } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { memoryKV } from '../../platform/kv';
 import { seedPost } from '../../test/seed';

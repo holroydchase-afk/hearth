@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
-import React, { useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import type { SignInWith } from '../api/HearthApi';
 import { textsOn } from '../api/phone';
 import { useApp } from '../state/AppContext';
@@ -16,7 +16,7 @@ export function SignInScreen({ start }: { start?: SignInWith } = {}) {
   // DATA-1 (DEC-87): a first sign-in on a phone never asked about its data plan asks once, before Gallery.
   const [ask, setAsk] = useState(false);
   const asked = useRef(app.dataPrefs.saveData !== null);
-  asked.current = app.dataPrefs.saveData !== null;
+  useLayoutEffect(() => { asked.current = app.dataPrefs.saveData !== null; });
   if (ask) return <DataQuestion onDone={nav.goPhotos} />;
   return (
     <Screen>

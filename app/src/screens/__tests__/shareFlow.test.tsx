@@ -554,7 +554,6 @@ describe('FLOW-16 one day selected; the value sent is a real date', () => {
   });
   it('FLOW-16 dayPicker: dayLabel, quickDays, monthTitle', () => {
     // required here so the rest of the file runs red on its own while the module is missing
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { dayLabel, monthTitle, quickDays } = require('../../share/dayPicker') as typeof import('../../share/dayPicker');
     expect(dayLabel('2026-11-28')).toBe('Saturday, Nov 28');
     expect(dayLabel('2027-01-02')).toBe('Saturday, Jan 2');

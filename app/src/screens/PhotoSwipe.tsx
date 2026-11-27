@@ -64,7 +64,7 @@ export function PhotoSwipe(props: Props) {
     setPosState(to);
   };
 
-  useEffect(() => { onPos?.(pos); }, [pos]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { onPos?.(pos); }, [pos]); // eslint-disable-line react-hooks/exhaustive-deps -- only a position change reports; onPos is a new closure from the parent every render
 
   useEffect(() => {
     if (first.current) { first.current = false; return; }
@@ -85,7 +85,7 @@ export function PhotoSwipe(props: Props) {
     if (w > 0 && w !== width) setWidth(w);
   };
   // After a width change, stay on the same photo.
-  useEffect(() => { scrollTo(pos, false); }, [width]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { scrollTo(pos, false); }, [width]); // eslint-disable-line react-hooks/exhaustive-deps -- only a width change re-scrolls; scrollTo is re-made every render
 
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const w = e.nativeEvent.layoutMeasurement?.width || width;

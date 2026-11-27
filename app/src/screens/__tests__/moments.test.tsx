@@ -6,7 +6,7 @@
 // worded tap away. Prototype: prototype/moments.html. Written first.
 import { fireEvent, screen, waitFor, within } from '@testing-library/react-native';
 import React from 'react';
-import { StyleSheet, Text, TextInput } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { FIXTURE, FakeBackend } from '../../api/fake/FakeBackend';
 import { seedPost } from '../../test/seed';
 import { expectGrandparentSafe, renderApp } from '../../test/renderApp';

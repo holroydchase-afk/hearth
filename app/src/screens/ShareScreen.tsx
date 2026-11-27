@@ -113,7 +113,7 @@ export function ShareScreen() {
       if (alive) setLooks(r);
     })().catch(() => {});
     return () => { alive = false; };
-  }, [picked, previewBytes, switches]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [picked, previewBytes, switches]); // eslint-disable-line react-hooks/exhaustive-deps -- re-scans only when the picked photos, preview or switches change; app.deps and userId changes must not rescan every photo
   // FLOW-21: a hardware or gesture Back on step 2 returns to step 1 (never out of Share).
   useEffect(() => {
     if (step !== 'who') return;
@@ -148,7 +148,7 @@ export function ShareScreen() {
       }
     })();
     return () => { alive = false; };
-  }, [spaceId, userId, canPost]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [spaceId, userId, canPost]); // eslint-disable-line react-hooks/exhaustive-deps -- reloads the groups only when the space, user or posting right changes; app.helper and other app fields change identity every render
 
   if (app.status !== 'ready' || !app.space) return <AppGate />;
   if (!canPost || !app.queue) return <Screen><Txt variant="title2">{"You can't do that here."}</Txt></Screen>;

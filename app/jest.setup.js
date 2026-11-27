@@ -1,4 +1,3 @@
-/* global jest */
 // Deterministic, Node-backed stand-ins for native modules used by pure code.
 const nodeCrypto = require('crypto');
 

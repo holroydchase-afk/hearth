@@ -182,7 +182,6 @@ describe('WEB-APP-32 bytes are released when a post is done', () => {
 
 describe('WEB-APP-29 what the job JSON holds in localStorage', () => {
   it('WEB-APP-29 a staged web post is saved as hearth-q: uris only: no blob: or data: URI and no bytes in the queue JSON', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const uploadStore = require('../../platform/uploadStore.web') as object;
     const create = (uploadStore as unknown as { createUploadStore?: (o: unknown) => { stage(i: unknown[], p: () => Promise<Prepared>): Promise<{ items: { uri: string }[] }> } }).createUploadStore;
     if (typeof create !== 'function') throw new Error('platform/uploadStore.web.ts does not export createUploadStore({ db, sealer, report })');

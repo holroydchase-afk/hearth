@@ -1,5 +1,6 @@
 name: lint
-# Studio lint gate (intake #199). Warnings only until the repository variable STUDIO_LINT_STRICT is 1.
+# Studio lint gate (intake #199, #204). Strict: every rule at error level fails the job. Inline-style findings stay
+# warnings until the shared UI library hand-over (#192).
 on:
   pull_request:
   push:
@@ -24,4 +25,4 @@ jobs:
       - run: npm ci
       - run: npm run lint
         env:
-          STUDIO_LINT_STRICT: ${{ vars.STUDIO_LINT_STRICT }}
+          STUDIO_LINT_STRICT: '1'

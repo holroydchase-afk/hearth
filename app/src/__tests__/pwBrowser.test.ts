@@ -2,7 +2,6 @@
 // Copyright (C) 2026 Chase Holroyd
 // T12 / QA-R6: the web e2e must launch in the cloud sandbox, where Playwright's own Chromium build isn't
 // installed but /opt/pw-browsers/chromium is. CI (browsers installed) keeps Playwright's own choice.
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { launchOptions } = require('../../../e2e/browser.js');
 
 describe('T12 Playwright browser pick', () => {

@@ -35,6 +35,7 @@ function DarkPlayer({ postId, mediaId, onClose, keepFile = false }: { postId: st
 
   useEffect(() => {
     let alive = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- loads data and resets its state when the id changes; a keyed remount would change when the old picture clears, so the refactor waits for a phone check (TRACKER R113) (Nov 26)
     setUri(null);
     setFailed(false);
     if (!media) { setFailed(true); return; }
@@ -43,7 +44,7 @@ function DarkPlayer({ postId, mediaId, onClose, keepFile = false }: { postId: st
   }, [media, postId, mediaId, attempt]);
 
   // The decrypted file goes when the player closes.
-  useEffect(() => () => { if (!keepFile) media?.releaseVideo(mediaId); }, [media, mediaId]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => () => { if (!keepFile) media?.releaseVideo(mediaId); }, [media, mediaId]); // eslint-disable-line react-hooks/exhaustive-deps -- releases the decrypted file when the player closes or the video changes; keepFile is read at close time and must not re-run the cleanup
 
   const tryAgain = () => {
     media?.releaseVideo(mediaId);
@@ -88,9 +89,10 @@ function Playing({ uri, onError }: { uri: string; onError: () => void }) {
       player.addListener('playingChange', ({ isPlaying: p }) => setPlaying(p)),
     ];
     return () => subs.forEach((x) => x.remove());
-  }, [player]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [player]); // eslint-disable-line react-hooks/exhaustive-deps -- subscribes once per player; onError is a new closure every render and must not resubscribe
 
   const toggleSound = () => {
+    // eslint-disable-next-line react-hooks/immutability -- expo-video's player is mutated through its own setters; its docs set .muted in a handler (Nov 26)
     player.muted = !muted;
     setMuted(!muted);
   };

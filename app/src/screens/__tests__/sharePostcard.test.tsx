@@ -315,7 +315,7 @@ describe('SHARE-PC-8 tapping a tile picks it', () => {
 });
 
 describe('SHARE-PC-9 (DEC-91) the summary line names the people', () => {
-  const namesLine = (names: string[]): string => (require('../../share/postcard') as { namesLine: (n: string[]) => string }).namesLine(names); // eslint-disable-line @typescript-eslint/no-require-imports
+  const namesLine = (names: string[]): string => (require('../../share/postcard') as { namesLine: (n: string[]) => string }).namesLine(names);
   it('SHARE-PC-9 unit: ≤2 names, then "and N more"', () => {
     expect(namesLine([])).toBe('');
     expect(namesLine(['Gammy'])).toBe('Gammy');

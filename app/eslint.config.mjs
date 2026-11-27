@@ -17,6 +17,7 @@ const soften = (rules) => Object.fromEntries(Object.entries(rules).map(([k, v]) 
 }));
 
 export default [
+  { linterOptions: { reportUnusedDisableDirectives: 'warn' } },
   { ignores: ['dist*/**', 'node_modules/**', '.expo/**', 'public/**', 'coverage/**', '**/*.config.js', 'scripts/**'] },
   ...[js.configs.recommended, ...tseslint.configs.recommended].map((c) => (c.rules ? { ...c, rules: soften(c.rules) } : c)),
   {
@@ -29,7 +30,14 @@ export default [
         'react-native/no-unused-styles': 'warn',
         'react-native/no-inline-styles': 'warn',
         'react-native/no-raw-text': 'off',
+        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
       }),
     },
+  },
+  // INTAKE-204 (Nov 26): require() is how jest.mock/resetModules tests load a module after the mock is set, and the
+  // e2e and jest setup files are CommonJS Node scripts. Production code under src/ stays covered.
+  {
+    files: ['**/__tests__/**', 'src/test/**', 'e2e-web/**', 'jest.*.js'],
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
 ];

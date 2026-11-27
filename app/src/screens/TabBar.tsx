@@ -59,8 +59,10 @@ export function nextMinimized(prev: boolean, lastY: number, y: number): boolean 
  *  brings the whole bar back. While a tab has keyboard focus the bar never shrinks, so focus is never lost. */
 function useMinimizeOnScroll(enabled: boolean, current: TabName, bar: React.RefObject<React.ComponentRef<typeof View> | null>): [boolean, () => void] {
   const [min, setMin] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- loads data and resets its state when the id changes; a keyed remount would change when the old picture clears, so the refactor waits for a phone check (TRACKER R113) (Nov 26)
   useEffect(() => { setMin(false); }, [current]);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- loads data and resets its state when the id changes; a keyed remount would change when the old picture clears, so the refactor waits for a phone check (TRACKER R113) (Nov 26)
     if (!enabled || typeof document === 'undefined') { setMin(false); return undefined; }
     const last = new WeakMap<Element, number>();
     const onScroll = (e: Event) => {

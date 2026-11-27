@@ -93,7 +93,7 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   const closeWalk = useCallback(() => setWalk(null), []);
   // RD-11/RD-12: Gallery's greeting, folded into the top bar once the list scrolls past it.
   const familyName = useFamilyName(gallery);
-  const scrollY = useRef(new Animated.Value(0)).current;
+  const [scrollY] = useState(() => new Animated.Value(0));
   const [folded, setFolded] = useState(false);
   // RD-47: the "Search photos" field is the scroll's sticky header, so it pins under the bar; RD-61 (R18): each
   // month's title then sticks right under it (pinAt: the field's height with its 8 pt below).

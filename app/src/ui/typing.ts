@@ -3,7 +3,7 @@
 // UX-R1 / RD-35 (P0): while any text field is focused, Hearth's tab bar steps aside so the keyboard never covers the
 // field (Apple's own apps hide the tab bar while typing). Focus is the trigger, not Keyboard events, so the web build
 // (iPhone Safari) behaves the same. One small shared store: fields say focus and blur; the tab bar listens.
-import { useCallback, useEffect, useRef, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { Platform } from 'react-native';
 
 const focused = new Set<symbol>();
@@ -49,11 +49,11 @@ export const SHOW_AGAIN_MS = 250;
 
 /** Focus and blur handlers for one text field; an unmounted field never keeps the tab bar hidden. */
 export function useTypingField(): { onFocus: () => void; onBlur: () => void } {
-  const id = useRef(Symbol('field')).current;
+  const [id] = useState(() => Symbol('field'));
   const later = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cancel = () => { if (later.current) { clearTimeout(later.current); later.current = null; } };
-  useEffect(() => () => { cancel(); if (focused.delete(id)) emit(); }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
-  const onFocus = useCallback(() => { cancel(); if (!focused.has(id)) { focused.add(id); emit(); } }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => () => { cancel(); if (focused.delete(id)) emit(); }, [id]);
+  const onFocus = useCallback(() => { cancel(); if (!focused.has(id)) { focused.add(id); emit(); } }, [id]);
   const onBlur = useCallback(() => {
     cancel();
     later.current = setTimeout(() => { later.current = null; if (focused.delete(id)) emit(); }, SHOW_AGAIN_MS);

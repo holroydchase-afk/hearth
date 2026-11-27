@@ -39,7 +39,7 @@ describe('SupabaseApi RPC wiring (API.md names and args)', () => {
     ['invitePreview', ['CODE'], 'invite_preview', { p_code: 'CODE' }],
   ] as const)('%s → %s', async (method, args, rpcName, rpcArgs) => {
     const c = mockClient({ data: method === 'toggleHeart' || method === 'invitePreview' ? [{}] : [], error: null });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the test calls one method by name from a table of RPC cases
     await (make(c) as any)[method](...args);
     expect(c.rpc).toHaveBeenCalledWith(rpcName, rpcArgs);
   });

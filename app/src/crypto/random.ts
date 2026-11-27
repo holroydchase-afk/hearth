@@ -16,7 +16,7 @@ export function randomBytes(n: number): Uint8Array {
 }
 
 export function uuid(): string {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  // eslint-disable-next-line @typescript-eslint/no-require-imports -- expo-crypto is loaded on first use so the module imports on web and in Node tests that never call uuid()
   const { randomUUID } = require('expo-crypto') as typeof import('expo-crypto');
   return randomUUID();
 }

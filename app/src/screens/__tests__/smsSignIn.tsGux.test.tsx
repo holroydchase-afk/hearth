@@ -2,7 +2,6 @@
 // Copyright (C) 2026 Chase Holroyd
 // grandparent-ux review before texts go on (docs/reviews/2026-11-19-text-sign-in/gux.md): TS-GUX-R2, R4, R5, R6.
 // Written first (red). Flag on, on the Fake. R1 lives in backend/tests/templates, R3 in scripts/tests/grandparent_guide_test.sh.
-/* eslint-disable @typescript-eslint/no-require-imports */
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import type { CreateInviteArgs } from '../../api/types';

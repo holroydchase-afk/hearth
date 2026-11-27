@@ -1076,7 +1076,6 @@ test('SHARE-PC-13 (DEC-91) postcard Share: 3 photos, step 1, Next, nothing picke
   await page.getByLabel(/^Grandparents – Mom's side, \d+ people, not picked$/).click();
   const send = page.getByRole('button', { name: /^Send to .+/ });
   await expect(send).toBeEnabled();
-  const names = String(await send.getAttribute('aria-label') ?? await send.innerText()).replace(/^Send to /, '');
   await send.click();
   await expect(page.getByRole('heading', { name: 'Sent' })).toBeVisible(); // DEC-91: the sent page, no banner
   await expect(page.getByText(/^Shared with /)).toHaveCount(0);

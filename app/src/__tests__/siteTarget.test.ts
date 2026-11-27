@@ -2,7 +2,6 @@
 // Copyright (C) 2026 Chase Holroyd
 // DEMO-LIVE-1: the static-site checks can run against the live demo (SITE_URL) as well as a local build,
 // so demo-site.yml checks chaseholroyd.com/hearth/ right after Pages publishes it.
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { siteTarget } = require('../../../e2e/site-target.js');
 
 describe('DEMO-LIVE-1 where the site checks point', () => {

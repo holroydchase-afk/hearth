@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Chase Holroyd
 // A3 wiring: the app keeps photo files only through deps.mediaDisk, prunes them to the feed, and wipes them at sign-out.
 import { act, screen, waitFor } from '@testing-library/react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FakeBackend } from '../../api/fake/FakeBackend';
 import { memoryMediaStore } from '../../media/diskCache';
 import { memoryKV } from '../../platform/kv';
@@ -13,7 +13,8 @@ import { useApp } from '../AppContext';
 
 let app: ReturnType<typeof useApp> | null = null;
 function Probe({ postId, mediaId }: { postId: string; mediaId: string }) {
-  app = useApp();
+  const a = useApp();
+  useEffect(() => { app = a; });
   return <MediaImage postId={postId} mediaId={mediaId} />;
 }
 

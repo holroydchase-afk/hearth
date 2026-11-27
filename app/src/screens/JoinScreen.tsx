@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 // Invite link → "Chase invited you" → email → code → Photos (BETA-JOIN-1/-3, UX-REVIEW #16/#17).
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { isApiError, type InvitePreview } from '../api/HearthApi';
 import { textsOn } from '../api/phone';
 import { messageFor } from '../errors/messages';
@@ -25,7 +25,7 @@ export function JoinScreen({ code }: { code: string }) {
   const started = useRef(false);
   // DATA-1 (DEC-87): a phone never asked about its data plan asks once, before Gallery.
   const asked = useRef(app.dataPrefs.saveData !== null);
-  asked.current = app.dataPrefs.saveData !== null;
+  useLayoutEffect(() => { asked.current = app.dataPrefs.saveData !== null; });
   const opened = () => (asked.current ? nav.goPhotos() : setStep('askData'));
   // HARD-10: with no signal nothing retries on its own, so say so and offer Try again.
   const [retry, setRetry] = useState<(() => void) | null>(null);
@@ -67,16 +67,6 @@ export function JoinScreen({ code }: { code: string }) {
     }
   };
 
-  useEffect(() => {
-    if (app.status === 'loading' || started.current) return;
-    started.current = true;
-    if (app.session) {
-      void redeem(null);
-      return;
-    }
-    check();
-  }, [app.status]); // eslint-disable-line react-hooks/exhaustive-deps
-
   function check() {
     setStep('checking');
     setRetry(null);
@@ -88,6 +78,16 @@ export function JoinScreen({ code }: { code: string }) {
         setStep('bad');
       });
   }
+
+  useEffect(() => {
+    if (app.status === 'loading' || started.current) return;
+    started.current = true;
+    if (app.session) {
+      void redeem(null);
+      return;
+    }
+    check();
+  }, [app.status]); // eslint-disable-line react-hooks/exhaustive-deps -- runs once per sign-in status change; redeem and check are re-made each render and the started ref guards a second run
 
   const who = preview?.inviter_name ?? null;
   if (step === 'askData') return <DataQuestion onDone={nav.goPhotos} />;

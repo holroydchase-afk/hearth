@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Chase Holroyd
 // Session, family space, prefs and the long-lived stores (feed, upload queue, media cache).
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { AccessibilityInfo, AppState, Appearance, Platform } from 'react-native';
 import type { HearthApi, Session, Space } from '../api/HearthApi';
 import { FeedStore, clearFeedCache, type FeedState } from '../feed/store';
@@ -162,7 +162,7 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
   const [s, setS] = useState<Loaded>({ ...SIGNED_OUT, status: 'loading' });
   const live = useRef<Loaded>(s);
   const unlisten = useRef<(() => void) | null>(null);
-  live.current = s;
+  useLayoutEffect(() => { live.current = s; });
 
   const [pushAsk, setPushAsk] = useState(false);
   const [shared, setShared] = useState<string | null>(null);
@@ -265,6 +265,7 @@ export function AppProvider({ deps, children }: { deps: AppDeps; children: React
   }, [deps, register]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- loads data and resets its state when the id changes; a keyed remount would change when the old picture clears, so the refactor waits for a phone check (TRACKER R113) (Nov 26)
     void load();
   }, [load]);
 
