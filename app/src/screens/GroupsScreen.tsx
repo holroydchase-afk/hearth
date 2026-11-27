@@ -75,7 +75,7 @@ export function GroupsScreen({ onBack }: { onBack?: () => void } = {}) {
   const isParent = app.space?.role === 'owner' || app.space?.role === 'adult';
 
   const circlesRef = useRef<Circle[] | null>(null);
-  circlesRef.current = circles;
+  useEffect(() => { circlesRef.current = circles; }, [circles]);
   const load = useCallback(async () => {
     if (!spaceId) return;
     try {
