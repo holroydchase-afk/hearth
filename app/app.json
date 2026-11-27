@@ -9,8 +9,7 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "family.hearth.app",
-      "associatedDomains": ["applinks:hearth.family"],
+      "bundleIdentifier": "com.chaseholroyd.family",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Hearth lets you pick photos to share with your family.",
         "NSPhotoLibraryAddUsageDescription": "Hearth saves family photos to your phone when you tap Save to my phone.",
@@ -24,7 +23,7 @@
       }
     },
     "android": {
-      "package": "family.hearth.app",
+      "package": "com.chaseholroyd.family",
       "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#F7F7F4" },
       "predictiveBackGestureEnabled": false,
       "intentFilters": [

@@ -59,6 +59,11 @@ blockers:
 - **Follow-up:** studio-agents PR 175 (managed config) was not reachable from this thread. qa-tdd green 3x (`e2e/results/lint-gate-intake199-green-3x-2026-11-26.txt`); strict mode gives 166 errors.
 - **Next:** after studio-agents PR 175 merges, run studio-sync to swap in the managed config; fix warnings in small PRs; set `STUDIO_LINT_STRICT=1`. Open PR when the queue allows.
 
+## Nov 27: TestFlight prep (R126, TESTFLIGHT-1..2, NAME-1; branch claude/project-thread-7lthi5, PR)
+- **Done, test-first:** red checks in `app/scripts/tests/eas_test.sh`, then app ID `com.chaseholroyd.family` on iPhone and Android (Chase's pick, name-neutral), `app/eas.json` testflight profile, the build guard now keys on `**App ID locked:**` (yes since Chase's go), applinks for `hearth.family` removed. wrapper tests 15/15 x3. qa-tdd skipped: config only (no agent run).
+- **Found:** Expo cloud builds can't create the first signing certificate without an interactive Apple sign-in with a 2-step code, so the API key alone isn't enough. Plan: one Mac session (Remote Control or one command) does signing, build and submit; nothing sent to Apple yet.
+- **Waiting on Chase:** merge the PR; "Mac" or "command"; confirm the encryption answer; icon and privacy page before family testers.
+
 ## Nov 25: post kinds ON for the web demo only (R98, DEMO-KINDS-1..14; branch claude/project-thread-jtelk5, local, not pushed)
 - **Done, test-first** (qa-tdd red 2f3f0a6, r115; engineer 801fd7c touched no test or spec): `app/src/demo/seed.ts` `seedDemo` turns `post_kinds` on (global flag plus the space flag), `demoSeedVersion` includes it so returning visitors get it, Try this step 4 (`DemoFrame.tsx`) names Share, Event, News, Saying, and the architecture overview footer line says so. Real builds stay off.
 - **Proof:** all suites 3x via `bash test-all.sh`, green (r125, `e2e/results/demo-kinds-green-2026-11-25/`): jest 2623, e2e:demo 72, e2e:web 47, prototype 33. Deno and the starter-invites suite were skipped here (CI runs them).

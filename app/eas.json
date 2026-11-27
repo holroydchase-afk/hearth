@@ -1,0 +1,15 @@
+{
+  "cli": { "version": ">= 25.1.1", "appVersionSource": "remote" },
+  "build": {
+    "testflight": {
+      "distribution": "store",
+      "autoIncrement": true,
+      "environment": "preview",
+      "channel": "preview",
+      "ios": { "image": "latest" }
+    }
+  },
+  "submit": {
+    "testflight": { "ios": {} }
+  }
+}
