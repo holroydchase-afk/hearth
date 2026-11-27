@@ -7,6 +7,7 @@ import { Platform, View, useWindowDimensions } from 'react-native';
 import type { FakeBackend } from '../api/fake/FakeBackend';
 import { Txt } from '../ui/kit';
 import { DemoActions, DemoBar } from './DemoBar';
+import { DemoDrawer } from './DemoDrawer';
 import { DemoFrame, WIDE } from './DemoFrame';
 import { DEMO_BAR, DEMO_MODE } from './flags';
 import { webStorage } from '../platform/webStorage';
@@ -47,6 +48,13 @@ export function DemoChrome({ children }: { children: ReactNode }) {
   const [restored] = useState(() => DEMO_MODE && Platform.OS === 'web' && takeRestored());
   if (!DEMO_MODE || Platform.OS !== 'web' || !be) return <>{children}</>;
   const open = (url: string) => window.location.assign(url);
+  // DEMO-DRAWER-1: on the public build (no phone bar) the portfolio's top bar opens the demo's bottom drawer.
+  // DEMO-EASY-1: the drawer is the demo's, not the app's, so Easy view doesn't enlarge it.
+  const drawer = DEMO_BAR ? null : (
+    <BigTextContext.Provider value={false}>
+      <DemoDrawer be={be} reload={goPhotos} startOver={() => void startOver(be)} open={open} />
+    </BigTextContext.Provider>
+  );
   // DEMO-BAR-LAPTOP-1 (Chase, Nov 19): on a laptop the story panel already says "demo" and links back, so the bar
   // goes and its controls sit in the panel. The phone keeps the slim bar.
   if (width >= WIDE) {
@@ -62,11 +70,12 @@ export function DemoChrome({ children }: { children: ReactNode }) {
         )}
       >
         {children}
+        {drawer}
       </DemoFrame>
     );
   }
   // DEMO-BAR-HIDE-1 (Chase, Nov 27): no bar on the phone for now; where its controls go is being picked.
-  if (!DEMO_BAR) return <>{children}</>;
+  if (!DEMO_BAR) return <View style={{ flex: 1 }}>{children}{drawer}</View>;
   return (
     <View style={{ flex: 1 }}>
       {/* DEMO-EASY-1: the demo bar is the demo's, not the app's, so Easy view doesn't enlarge it. */}
