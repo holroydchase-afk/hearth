@@ -11,6 +11,9 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 27: npm audit, node-forge (intake #205)
+- `node-forge` 1.4.0 to 1.4.4 in `app/package-lock.json` (Expo code-signing tooling; clears 1 of the 3 high findings). Still high: `zod` (<4.6.6, memory exhaustion on oversized collections) and `@expo/cli` through it and glob. Both are pinned inside Expo SDK 58's build tooling; `npm audit fix` would move 84 packages including nested React Native ones, so left for the next Expo SDK bump rather than forced. CI audit still blocks only on critical.
+
 ## Nov 27: engineering standard (intake #205)
 - Added `security.yml` (gitleaks full-history scan; `npm audit` stays in ci.yml: critical blocks, high and moderate warn, 3 high today in transitive Expo tooling node-forge and zod, `npm audit fix` available) and `.gitleaks.toml` (two fake test fixtures allowed by path). Fixed the one strict-lint error on main (GroupsScreen wrote a ref during render; now set in an effect). And pinned every Action in every workflow to a commit SHA (CodeQL moved v3 to v4.39.5, setup-node v5 to v7.1.0). Lint was already strict (`lint.yml`, STUDIO_LINT_STRICT=1). Open: the demo-site deploy workflow now runs pinned actions, so watch the next deploy; expo-doctor and typed env parsing are separate P1s.
 
