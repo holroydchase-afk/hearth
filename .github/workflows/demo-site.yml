@@ -31,7 +31,7 @@ jobs:
       UMAMI_SCRIPT_URL: ${{ vars.UMAMI_SCRIPT_URL }}
       UMAMI_WEBSITE_ID: ${{ vars.UMAMI_WEBSITE_ID }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
           node-version: 22
@@ -83,7 +83,7 @@ jobs:
       SITE_URL: https://chaseholroyd.com
       SITE_BASE: /hearth
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
           node-version: 22
