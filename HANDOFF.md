@@ -11,6 +11,10 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 27: dev-loop basics, part 2 (intake #213, R124; branch claude/project-thread-6ew09x)
+- **Done:** React Native accessibility lint rules (`eslint-plugin-react-native-a11y`, 8 rules at error in strict; `scripts/tests/a11y_lint_test.sh` runs before lint in `lint.yml`). `src/` already had 0 findings. Also merged: lint fix for the Groups screen ref (PR 224) and the R125 duplicate renumbered to R128.
+- **Next in #213:** Prettier config and pre-commit hook (lint-staged and typecheck) as the next small PR; first release tag when a build is cut.
+
 ## Nov 26: error, empty and help states (intake #208, R128, STATES-1..24; merged as PR 221)
 - **Done:** `FeedStore.failed` / `retry()`, `TimelineStore.failed` / `yearsFailed`, `errors/loadFailed.ts` (words), `ErrorState` and `EmptyState` in `ui/kit.tsx` (for the #192 library hand-over), screens Gallery/Feed, Timeline, Events, Groups, Help. New dep flag `helpPhoneIsInviters` (env `EXPO_PUBLIC_HELP_PHONE_IS_INVITERS`). Jest 209 suites green; typecheck only the two known ViewerScreen module errors. Test fixes where the old test was wrong: statesTimeline (`beforeAt`), statesGallery STATES-6 (two tabs mounted; check `router.navigate('/share')`), statesHelp STATES-22 (clear spy history), plus old tests changed by the spec (evalFindings, photos, groupsWords) and the harness default `helpPhoneIsInviters: true`.
 - **Next:** phone check STATES-M1..M5; ux-reviewer shots at 390 px; set the env flag for the beta build; then #213 leftovers.
