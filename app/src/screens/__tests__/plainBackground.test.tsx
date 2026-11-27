@@ -234,6 +234,7 @@ const GREY_ALLOWED: Record<string, Record<string, string>> = {
   'screens/ShareKinds.tsx': { KindsRow: 'the Event / News / Saying tiles under the postcard (SHARE-ST-31)', KindCard: 'a kind\'s empty postcard face (SHARE-ST-31)' },
   'demo/DemoBar.tsx': { DemoBar: 'demo chrome, outside the app' },
   'demo/DemoFrame.tsx': { DemoFrame: 'demo chrome, outside the app' },
+  'demo/DemoDrawer.tsx': { DemoDrawer: 'demo chrome, outside the app (the bottom sheet the portfolio header opens)' },
 };
 /** A reaction chip in PostCard is a capsule too; it is allowed by its own line, not the whole card. */
 const LINE_ALLOWED: { file: string; re: RegExp }[] = [{ file: 'screens/PostCard.tsx', re: /styles\.chip\b/ }];

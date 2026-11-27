@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   layer: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, justifyContent: 'flex-end', alignItems: 'center', zIndex: 1000 },
   scrim: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.45)' },
   sheet: { width: '100%', maxWidth: MAX_WIDTH, borderTopLeftRadius: 22, borderTopRightRadius: 22, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 20, paddingTop: 10, paddingBottom: 22, gap: 10, maxHeight: '88%' },
-  grab: { alignSelf: 'center', width: 40, height: 5, borderRadius: 3, marginBottom: 4 },
+  grab: { alignSelf: 'center', width: 40, height: 5, borderRadius: 4, marginBottom: 4 },
   title: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   badge: { borderWidth: 1, borderRadius: 999, paddingHorizontal: 8 },
   badgeText: { letterSpacing: 0.8 },
