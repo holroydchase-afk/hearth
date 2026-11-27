@@ -31,6 +31,11 @@ blockers:
 - **Done:** 27 `waitForTimeout` replaced (helpers/settle.js), guard script and test, wired into test-all.sh and CI. e2e not run locally; CI is the proof.
 - **Next:** #205, #213, #208. Open P2: the 2 jest real-timer cases (not named in the intake).
 
+## Nov 27: demo deploy check fixed for the bar-less public build (R127 follow-up; branch claude/project-thread-9bw6qr)
+- **Why:** PR #223 hid the phone bar, but `demo-site.yml`'s pre-deploy check and live check still expected "Demo details", so the deploy was blocked (run 46054356560). Specs now treat the public build as bar-less (`BAR` is true only under `npm run e2e:site`, which builds and tests with `EXPO_PUBLIC_HEARTH_DEMO_BAR=1`); on the public build the Grandma Jo and Reset flow runs at 1280 px through the story panel. `e2e:site:public` runs the whole suite on the public build.
+- **Checked here:** `e2e:site` 16 passed, 1 skipped; `e2e:site:public` 17 passed.
+- **Open:** earlier demo-site runs since #193 (Nov 25) also failed before #223; cause not yet read. The drawer work is on hold (Chase, Nov 27).
+
 ## Nov 27: public demo's phone bar hidden (DEMO-BAR-HIDE-1, R127; branch claude/project-thread-9bw6qr)
 - **Done, test-first** (qa-tdd red then green 3x): `EXPO_PUBLIC_HEARTH_DEMO_BAR=0` (the default in `scripts/build-demo.sh`) removes the slim demo bar on phone width. Other demo builds and `e2e:site` (built with `=1`) still show it; `e2e:site:public` checks the hidden build. Laptop story panel keeps Grandma Jo + Reset.
 - **Known gap:** until the new home ships, the phone demo has no Grandma Jo switch or Reset, and no way back to the portfolio except the site bar.
