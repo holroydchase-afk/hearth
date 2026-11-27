@@ -36,6 +36,7 @@ jobs:
       - run: bash scripts/tests/check_public_privacy_test.sh
       - run: bash scripts/check-public-privacy.sh
       - run: bash scripts/tests/check_no_fixed_sleeps_test.sh
+      - run: bash scripts/tests/pre_commit_hook_test.sh
       - run: bash scripts/check-no-fixed-sleeps.sh
       # INTAKE-205-2: a secret scan on every PR (the demo-site grep only ran after merge).
       - run: bash scripts/tests/check_secrets_test.sh

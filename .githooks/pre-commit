@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Pre-commit (intake #213): format and lint the staged app files, then type-check. Docs-only and backend-only
+# commits skip it. Installed by `npm install` in app/ (the prepare script points git at .githooks).
+# Skip once, on purpose: git commit --no-verify
+set -euo pipefail
+root=$(git rev-parse --show-toplevel)
+if ! git diff --cached --name-only --diff-filter=ACMR | grep -q '^app/.*\.\(ts\|tsx\|js\|mjs\|json\)$'; then
+  echo "pre-commit: no app files staged, nothing to check"
+  exit 0
+fi
+cd "$root/app"
+if [ ! -d node_modules ]; then
+  echo "pre-commit: app/node_modules is missing, run npm install in app/ (or commit with --no-verify)" >&2
+  exit 1
+fi
+npx lint-staged
+npm run --silent typecheck
