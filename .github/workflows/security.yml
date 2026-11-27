@@ -1,6 +1,6 @@
 name: security
 # Secret scan over the full git history (a key committed once and deleted later still fails),
-# and an npm audit of production dependencies. (Dependency review needs the repo's dependency graph
+# (npm audit already runs in ci.yml: critical blocks, high and moderate warn). (Dependency review needs the repo's dependency graph
 # turned on in Settings, Code security; add the job back when it is.) Add a .gitleaks.toml for a real false positive. The repo's own
 # check-private (in CI) covers personal data; this adds keys and known-bad dependencies.
 on:
@@ -28,19 +28,3 @@ jobs:
           echo "${SHA256}  gitleaks.tgz" | sha256sum -c -
           tar xzf gitleaks.tgz gitleaks && rm gitleaks.tgz
           ./gitleaks git . --redact --no-banner --exit-code 1
-  audit:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: app/package-lock.json
-      - run: npm ci
-        working-directory: app
-      - name: npm audit (production dependencies, high and above)
-        working-directory: app
-        run: npm audit --omit=dev --audit-level=high
