@@ -13,15 +13,16 @@ Every outside account Hearth uses, which login it's under, and where the name "H
 | Resend | Sign-in code emails (custom SMTP), notices | Chase's personal email (set up Oct 17) | Sender name "Hearth"; sender email is `onboarding@resend.dev` until a domain is verified | Easy now; tied to the domain later |
 | Backblaze B2 | Photo storage (US East, `s3.us-east-005.backblazeb2.com`) | Chase's personal email (set up Oct 18) | None: bucket `family-photos-testing-kq7m` (milestone 1 test data, private, encrypted) | Easy (make a new bucket) |
 | Twilio (Verify) | Text-message sign-in codes (DEC-57, `docs/eng/SMS-PROVIDER.md`) | **Not created yet** (planned: Chase's personal email; $20 prepaid, auto-recharge off) | Verify service friendly name "Hearth", which appears in the code text | Easy (rename the service) |
-| Apple Developer ($99) | iPhone builds with push, TestFlight | Not set up yet | App ID `family.hearth.app` | **Permanent once on TestFlight** |
-| Google Play ($25) | Android builds | Not set up yet | App ID `family.hearth.app` | **Permanent once uploaded** |
+| Apple Developer ($99) | iPhone builds with push, TestFlight | Not set up yet | App ID `com.chaseholroyd.family` (name-neutral, Chase Nov 27) | **Permanent once on TestFlight** |
+| Google Play ($25) | Android builds | Not set up yet | App ID `com.chaseholroyd.family` | **Permanent once uploaded** |
 | Domain | Invite links, email sender, app links | Not bought yet (planned `hearth.family`) | Invite links, `app/app.json` link setup, email sender | **Hard once relatives have links** |
 
 ## Decide the name before
 
 **Name final:** no
+**App ID locked:** no
 
-While this says no, `npm run eas -- build` and `submit` refuse (they would lock the app ID). Only Chase changes it to yes. **Rule for Claude:** before any step below, or anything else that makes the name hard to change, stop and warn Chase first, even if he asked for the step.
+The name can still change (home-screen name and store listing); the app ID is name-neutral. While App ID locked says no, `npm run eas -- build` and `submit` refuse (they would lock the app ID). Only Chase changes it to yes. **Rule for Claude:** before any step below, or anything else that makes the name hard to change, stop and warn Chase first, even if he asked for the step.
 
 1. Buying the domain.
 2. The first Apple or Google build.

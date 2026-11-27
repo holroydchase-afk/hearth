@@ -34,13 +34,14 @@ check "EXPO-1: npm run eas uses the wrapper" "grep -q '\"eas\": \"bash scripts/e
 
 check "EXPO-2: app.json links the Expo project (eas init) and adds no permissions" "python3 -I -c \"import json,sys; e=json.load(open('app.json'))['expo']; sys.exit(not (e.get('extra',{}).get('eas',{}).get('projectId')=='676e8cec-57a6-472f-9086-9a9318eaf556' and e.get('owner')=='thefreighttrains-team' and 'permissions' not in e['android']))\""
 
-# NAME-1: store builds lock the app ID (family.hearth.app) forever, so `build` and `submit` refuse until
-# Chase has recorded "**Name final:** yes" in docs/product/ACCOUNTS.md. Everything else runs as before.
+# NAME-1: store builds lock the app ID (com.chaseholroyd.family, name-neutral, Chase Nov 27) forever, so `build` and `submit` refuse until
+# Chase has recorded "**App ID locked:** yes" in docs/product/ACCOUNTS.md. Everything else runs as before.
 cp ../docs/product/ACCOUNTS.md "$T/accounts.bak"
-check "NAME-1: ACCOUNTS.md records the name as not final yet" "grep -q '^\*\*Name final:\*\* no' ../docs/product/ACCOUNTS.md"
+check "NAME-1: ACCOUNTS.md records the app ID lock as a yes or no" "grep -q '^\*\*App ID locked:\*\* \(yes\|no\)' ../docs/product/ACCOUNTS.md"
+check "NAME-1: app.json uses the name-neutral app ID on iPhone and Android" "python3 -I -c \"import json,sys; e=json.load(open('app.json'))['expo']; sys.exit(not (e['ios']['bundleIdentifier']=='com.chaseholroyd.family' and e['android']['package']=='com.chaseholroyd.family'))\""
 for cmd in build submit; do
   rm -f "$T/out"; env -u EXPO_TOKEN STUB_OUT="$T/out" EAS_CLI="$T/eas" EXPO_ACCESS_TOKEN=tok-a bash scripts/eas.sh $cmd --profile preview >"$T/err" 2>&1; rc=$?
-  check "NAME-1: eas $cmd refuses while the name isn't final, says why, and never calls the CLI" "(( rc != 0 )) && [[ ! -f '$T/out' ]] && grep -q 'Name final' '$T/err' && grep -q 'family.hearth.app' '$T/err'"
+  check "NAME-1: eas $cmd refuses until the app ID is locked, says why, and never calls the CLI" "(( rc != 0 )) && [[ ! -f '$T/out' ]] && grep -q 'App ID locked' '$T/err' && grep -q 'com.chaseholroyd.family' '$T/err'"
 done
 # EXPO-4: `eas update` publishes only what the App Store's Expo Go can open (saved API answers, no network).
 APP_MAJOR=$(python3 -I -c "import json,re; print(re.search(r'(\d+)\.', json.load(open('package.json'))['dependencies']['expo']).group(1))")
@@ -50,9 +51,9 @@ rm -f "$T/out"; env -u EXPO_TOKEN STUB_OUT="$T/out" EAS_CLI="$T/eas" EXPO_ACCESS
 check "NAME-1: other EAS commands still run" "grep -q 'args=update --branch x' '$T/out'"
 rm -f "$T/out"; env -u EXPO_TOKEN STUB_OUT="$T/out" EAS_CLI="$T/eas" EXPO_ACCESS_TOKEN=tok-a EXPO_VERSIONS_FILE="$T/go-newer.json" bash scripts/eas.sh update --branch x >"$T/err" 2>&1; rc=$?
 check "EXPO-4: eas update refuses when Expo Go has moved past our SDK, says why, never calls the CLI" "(( rc != 0 )) && [[ ! -f '$T/out' ]] && grep -q 'Expo Go' '$T/err'"
-sed -i 's/^\*\*Name final:\*\* no.*/**Name final:** yes/' ../docs/product/ACCOUNTS.md
+sed -i 's/^\*\*App ID locked:\*\* no.*/**App ID locked:** yes/' ../docs/product/ACCOUNTS.md
 rm -f "$T/out"; env -u EXPO_TOKEN STUB_OUT="$T/out" EAS_CLI="$T/eas" EXPO_ACCESS_TOKEN=tok-a bash scripts/eas.sh build --profile preview >/dev/null 2>&1
-check "NAME-1: once the name is final, eas build runs" "grep -q 'args=build --profile preview' '$T/out'"
+check "NAME-1: once the app ID is locked, eas build runs" "grep -q 'args=build --profile preview' '$T/out'"
 cp "$T/accounts.bak" ../docs/product/ACCOUNTS.md
 
 echo "eas: $PASS passed, $FAIL failed"
