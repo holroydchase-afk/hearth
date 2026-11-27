@@ -37,8 +37,11 @@ check "EXPO-2: app.json links the Expo project (eas init) and adds no permission
 # NAME-1: store builds lock the app ID (com.chaseholroyd.family, name-neutral, Chase Nov 27) forever, so `build` and `submit` refuse until
 # Chase has recorded "**App ID locked:** yes" in docs/product/ACCOUNTS.md. Everything else runs as before.
 cp ../docs/product/ACCOUNTS.md "$T/accounts.bak"
+sed -i 's/^\*\*App ID locked:\*\* yes/**App ID locked:** no/' ../docs/product/ACCOUNTS.md  # refusal checks run against "no", whatever the repo says
 check "NAME-1: ACCOUNTS.md records the app ID lock as a yes or no" "grep -q '^\*\*App ID locked:\*\* \(yes\|no\)' ../docs/product/ACCOUNTS.md"
 check "NAME-1: app.json uses the name-neutral app ID on iPhone and Android" "python3 -I -c \"import json,sys; e=json.load(open('app.json'))['expo']; sys.exit(not (e['ios']['bundleIdentifier']=='com.chaseholroyd.family' and e['android']['package']=='com.chaseholroyd.family'))\""
+check "TESTFLIGHT-1: iPhone config has no applinks entry for a domain we don't own yet" "python3 -I -c \"import json,sys; e=json.load(open('app.json'))['expo']; sys.exit('associatedDomains' in e['ios'])\""
+check "TESTFLIGHT-2: eas.json has a store-distribution testflight build profile" "python3 -I -c \"import json,sys; b=json.load(open('eas.json'))['build']['testflight']; sys.exit(b['distribution']!='store')\""
 for cmd in build submit; do
   rm -f "$T/out"; env -u EXPO_TOKEN STUB_OUT="$T/out" EAS_CLI="$T/eas" EXPO_ACCESS_TOKEN=tok-a bash scripts/eas.sh $cmd --profile preview >"$T/err" 2>&1; rc=$?
   check "NAME-1: eas $cmd refuses until the app ID is locked, says why, and never calls the CLI" "(( rc != 0 )) && [[ ! -f '$T/out' ]] && grep -q 'App ID locked' '$T/err' && grep -q 'com.chaseholroyd.family' '$T/err'"

@@ -10,7 +10,6 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.chaseholroyd.family",
-      "associatedDomains": ["applinks:hearth.family"],
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Hearth lets you pick photos to share with your family.",
         "NSPhotoLibraryAddUsageDescription": "Hearth saves family photos to your phone when you tap Save to my phone.",
