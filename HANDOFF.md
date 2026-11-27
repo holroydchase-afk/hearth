@@ -31,6 +31,10 @@ blockers:
 - **Done:** 27 `waitForTimeout` replaced (helpers/settle.js), guard script and test, wired into test-all.sh and CI. e2e not run locally; CI is the proof.
 - **Next:** #205, #213, #208. Open P2: the 2 jest real-timer cases (not named in the intake).
 
+## Nov 27: Demo chip in the portfolio header (Chase; drawer on hold)
+- **Chase's direction:** no demo bar; "Demo" in the portfolio site's own top bar opens a bottom drawer with the bar's contents (sample-data note, Grandma Jo's view, Reset, way back). The drawer tests are written but not built (patch kept by the thread). Resume on Chase's word.
+- **Portfolio / public presence, intake for Product Studio (filing blocked: this project has no access to holroydchase-afk.github.io):** in the shared `demo-bar.js`, on the Hearth demo page only, add a small centered chip. Look: outlined pill, 32 px tall (48 px tap target), the word "Demo" plus a small up arrow, same ink as the bar. Accessibility: `aria-label="Demo info"`, `aria-haspopup="dialog"`, `aria-expanded` kept in step. Click runs `window.dispatchEvent(new Event('hearth-demo-drawer'))`, which toggles the demo's bottom drawer. Hearth will set `document.documentElement.dataset.hearthDemoDrawer` to `open` or `closed` and fire `CustomEvent('hearth-demo-drawer-state', {detail: {open}})` on window so the chip can follow. Until both ship, the phone demo has no Grandma Jo switch or Reset.
+
 ## Nov 27: demo deploy check fixed for the bar-less public build (R127 follow-up; branch claude/project-thread-9bw6qr)
 - **Why:** PR #223 hid the phone bar, but `demo-site.yml`'s pre-deploy check and live check still expected "Demo details", so the deploy was blocked (run 46054356560). Specs now treat the public build as bar-less (`BAR` is true only under `npm run e2e:site`, which builds and tests with `EXPO_PUBLIC_HEARTH_DEMO_BAR=1`); on the public build the Grandma Jo and Reset flow runs at 1280 px through the story panel. `e2e:site:public` runs the whole suite on the public build.
 - **Checked here:** `e2e:site` 16 passed, 1 skipped; `e2e:site:public` 17 passed.
