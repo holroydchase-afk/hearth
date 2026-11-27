@@ -20,7 +20,7 @@ Every outside account Hearth uses, which login it's under, and where the name "H
 ## Decide the name before
 
 **Name final:** no
-**App ID locked:** no
+**App ID locked:** yes
 
 The name can still change (home-screen name and store listing); the app ID is name-neutral. While App ID locked says no, `npm run eas -- build` and `submit` refuse (they would lock the app ID). Only Chase changes it to yes. **Rule for Claude:** before any step below, or anything else that makes the name hard to change, stop and warn Chase first, even if he asked for the step.
 
