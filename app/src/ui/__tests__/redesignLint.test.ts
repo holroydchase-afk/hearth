@@ -76,7 +76,7 @@ describe('RD 1a source scans', () => {
   it('RD-4 RD-114 the accent is used only by the tab bar, the kit (switch On, link words, main tap word or chip), New for you, the new-message dot and the picked reaction (PostCard)', () => {
     // Allowed homes for c.accent. Anything else (avatar letters, event card borders, video pills, spinners) is ink.
     // qa-tdd, Nov 20: RD-114 (DEC-76) adds the picked reaction's outline and count in PostCard.tsx.
-    const allowed = new Set(['ui/theme.ts', 'ui/kit.tsx', 'screens/TabBar.tsx', 'app/(tabs)/_layout.tsx', 'screens/NewForYou.tsx', 'demo/DemoBar.tsx', 'screens/PostCard.tsx']);
+    const allowed = new Set(['ui/theme.ts', 'ui/kit.tsx', 'screens/TabBar.tsx', 'app/(tabs)/_layout.tsx', 'screens/NewForYou.tsx', 'demo/DemoBar.tsx', 'demo/DemoDrawer.tsx', 'screens/PostCard.tsx']);
     // QA-R4 (PR #174 fix round, qa-tdd Nov 24): ShareKinds.tsx is no longer allowed whole; SHARE-ST-31's kind icon
     // color is its one exception (checked in the QA-R4 test below).
     expect(find(/\bc\.accent\b(?!Ink|Soft)/, sources(), (f) => allowed.has(f) || f === 'screens/ShareKinds.tsx')).toEqual([]);

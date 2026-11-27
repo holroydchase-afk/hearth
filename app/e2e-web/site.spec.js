@@ -147,3 +147,80 @@ test('DEMO-BAR-HIDE-1 a build with the bar off: no Demo details at 390 px, story
   await expect(page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Reset demo' })).toBeVisible();
 });
+
+// DEMO-DRAWER-E2E-1..4: the bottom demo drawer the portfolio's top bar opens, on the public (bar off) build. The contract is
+// window event 'hearth-demo-drawer' (toggles) -> documentElement.dataset.hearthDemoDrawer + 'hearth-demo-drawer-state'.
+// Runs on the public build (the default); skips under e2e:site.
+const toggleDrawer = (page) => page.evaluate(() => window.dispatchEvent(new Event('hearth-demo-drawer')));
+const drawerDialog = (page) => page.getByRole('dialog', { name: 'Demo info' });
+for (const width of [390, 1280]) {
+  test(`DEMO-DRAWER-E2E-1 at ${width} px the portfolio event opens a dialog with Grandma Jo and Reset, and Esc closes it`, async ({ page }) => {
+    test.skip(BAR, 'the bar-on build (npm run e2e:site) has the phone bar, not the drawer');
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto(`${BASE}/`);
+    await greeted(page, 'Graham');
+    await expect(drawerDialog(page)).toHaveCount(0);
+    await expect.poll(() => page.evaluate(() => document.documentElement.dataset.hearthDemoDrawer)).toBe('closed');
+    await toggleDrawer(page);
+    await expect(drawerDialog(page)).toBeVisible();
+    await expect.poll(() => page.evaluate(() => document.documentElement.dataset.hearthDemoDrawer)).toBe('open');
+    await expect(drawerDialog(page).getByRole('button', { name: 'See the photos as Grandma Jo sees them' })).toBeVisible();
+    await expect(drawerDialog(page).getByRole('button', { name: 'Reset demo' })).toBeVisible();
+    const box = await page.getByTestId('demo-drawer-sheet').boundingBox();
+    expect(box.width).toBeLessThanOrEqual(560 + 1);
+    if (width === 1280) { // on a laptop the sheet sits at the bottom of the phone-wide app column, centered in it
+      const col = await page.getByTestId('demo-app-column').boundingBox();
+      expect(Math.abs(box.x + box.width / 2 - (col.x + col.width / 2))).toBeLessThanOrEqual(2);
+    }
+    await page.keyboard.press('Escape');
+    await expect(drawerDialog(page)).toHaveCount(0);
+    await expect.poll(() => page.evaluate(() => document.documentElement.dataset.hearthDemoDrawer)).toBe('closed');
+  });
+}
+
+test('DEMO-DRAWER-E2E-2 the event toggles; the scrim and Done close it', async ({ page }) => {
+  test.skip(BAR, 'the bar-on build (npm run e2e:site) has the phone bar, not the drawer');
+  await page.goto(`${BASE}/`);
+  await greeted(page, 'Graham');
+  await toggleDrawer(page);
+  await expect(drawerDialog(page)).toBeVisible();
+  await toggleDrawer(page);
+  await expect(drawerDialog(page)).toHaveCount(0);
+  await toggleDrawer(page);
+  await page.getByRole('button', { name: 'Done' }).click();
+  await expect(drawerDialog(page)).toHaveCount(0);
+  await toggleDrawer(page);
+  await page.getByTestId('demo-drawer-scrim').click({ position: { x: 5, y: 5 } });
+  await expect(drawerDialog(page)).toHaveCount(0);
+});
+
+test('DEMO-DRAWER-E2E-3 Grandma Jo from the drawer changes the greeting after the reload; Reset asks first', async ({ page }) => {
+  test.skip(BAR, 'the bar-on build (npm run e2e:site) has the phone bar, not the drawer');
+  await page.goto(`${BASE}/`);
+  await greeted(page, 'Graham');
+  await toggleDrawer(page);
+  await drawerDialog(page).getByRole('button', { name: 'Reset demo' }).click();
+  await expect(page.getByText(/Put the sample data back\?/)).toBeVisible();
+  await page.getByRole('button', { name: 'Keep' }).click();
+  await expect(page.getByText(/Put the sample data back\?/)).toHaveCount(0);
+  await drawerDialog(page).getByRole('button', { name: 'See the photos as Grandma Jo sees them' }).click();
+  await greeted(page, 'Grandma Jo');
+  await toggleDrawer(page);
+  await expect(drawerDialog(page).getByRole('button', { name: "Back to Graham's view, the parent" })).toBeVisible();
+  await drawerDialog(page).getByRole('button', { name: "Back to Graham's view, the parent" }).click();
+  await greeted(page, 'Graham');
+});
+
+test('DEMO-DRAWER-E2E-4 a returning visitor: after a reload the event still opens the drawer and focus returns on close', async ({ page }) => {
+  test.skip(BAR, 'the bar-on build (npm run e2e:site) has the phone bar, not the drawer');
+  await page.goto(`${BASE}/`);
+  await greeted(page, 'Graham');
+  await page.reload();
+  await greeted(page, 'Graham');
+  await expect.poll(() => page.evaluate(() => document.documentElement.dataset.hearthDemoDrawer)).toBe('closed');
+  await toggleDrawer(page);
+  await expect(drawerDialog(page)).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Done' })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(drawerDialog(page)).toHaveCount(0);
+});

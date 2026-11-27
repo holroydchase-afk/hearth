@@ -16,7 +16,7 @@ export const PORTFOLIO_URL = 'https://chaseholroyd.com/#p-hearth';
 const DRAWER_ID = 'demo-details';
 // DEMO-PHOTO-14 (DEC-82): the stock photos' credit, once in Details (and once in README).
 export const PHOTO_CREDIT = 'Sample photos: Pexels (Elly Fairytale, Yan Krukov)';
-const COPY = 'This is the real Hearth, running on made-up sample data. Anything you change is saved only in this browser and is never sent anywhere. Reset demo puts the sample data back.';
+export const COPY = 'This is the real Hearth, running on made-up sample data. Anything you change is saved only in this browser and is never sent anywhere. Reset demo puts the sample data back.';
 
 export function DemoBar({ be, reload, startOver, open, restored = false }: {
   be: FakeBackend;
