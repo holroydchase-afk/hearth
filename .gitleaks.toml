@@ -1,0 +1,12 @@
+# Two false positives in the full-history scan, both made-up test values (a dummy JWT with an empty
+# payload and a storage key name), not credentials. Scoped to those files so a real key anywhere else
+# still fails the scan.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Fake session and storage-key fixtures in tests"
+paths = [
+  '''app/src/api/__tests__/SupabaseApi\.offlineSignOut\.test\.ts''',
+  '''app/src/state/__tests__/easyView\.test\.ts''',
+]

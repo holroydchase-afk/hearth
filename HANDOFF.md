@@ -11,6 +11,9 @@ blockers:
   - none. Nov 25 deploy done: migrations 0026-0034 and sign-media live; notify, cron and sign-in templates untouched (deploy.sh stops after migrations when functions/.env is comment-only)
 -->
 
+## Nov 27: engineering standard (intake #205)
+- Added `security.yml` (gitleaks full-history scan; `npm audit` stays in ci.yml: critical blocks, high and moderate warn, 3 high today in transitive Expo tooling node-forge and zod, `npm audit fix` available) and `.gitleaks.toml` (two fake test fixtures allowed by path). Fixed the one strict-lint error on main (GroupsScreen wrote a ref during render; now set in an effect). And pinned every Action in every workflow to a commit SHA (CodeQL moved v3 to v4.39.5, setup-node v5 to v7.1.0). Lint was already strict (`lint.yml`, STUDIO_LINT_STRICT=1). Open: the demo-site deploy workflow now runs pinned actions, so watch the next deploy; expo-doctor and typed env parsing are separate P1s.
+
 ## Nov 27: dev-loop basics, part 2 (intake #213, R124; branch claude/project-thread-6ew09x)
 - **Done:** React Native accessibility lint rules (`eslint-plugin-react-native-a11y`, 8 rules at error in strict; `scripts/tests/a11y_lint_test.sh` runs before lint in `lint.yml`). `src/` already had 0 findings. Also merged: lint fix for the Groups screen ref (PR 224) and the R125 duplicate renumbered to R128.
 - **Part 3:** Prettier (`app/.prettierrc.json`, `npm run format`) and a pre-commit hook (`.githooks/pre-commit`, installed by `npm install`) that runs lint-staged and typecheck on staged app files; docs-only commits skip it. No repo-wide reformat and no CI format check on purpose, so files are formatted as they are touched. Only the first release tag is left in #213 (when a build is cut).
