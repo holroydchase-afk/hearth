@@ -20,7 +20,9 @@
     "test:contract:real": "bash scripts/contract-real.sh",
     "eas": "bash scripts/eas.sh",
     "lint": "eslint .",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "format": "prettier --write .",
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true"
   },
   "dependencies": {
     "@expo-google-fonts/atkinson-hyperlegible-next": "0.4.1",
@@ -80,7 +82,9 @@
     "globals": "^17.14.0",
     "jest": "~30.5.2",
     "jest-expo": "~58.0.12",
+    "lint-staged": "16.4.0",
     "patch-package": "8.0.1",
+    "prettier": "^3.10.1",
     "react-test-renderer": "19.3.0",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.74.0"
@@ -111,5 +115,9 @@
   },
   "engines": {
     "node": ">=22"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs,json}": "prettier --write",
+    "*.{ts,tsx,js,mjs}": "eslint"
   }
 }
