@@ -6,7 +6,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 BASE=${1:-/demo/hearth}
 OUT=dist-demo-site
-HEARTH_BASE_URL="$BASE" EXPO_PUBLIC_HEARTH_DEMO=1 npx expo export --platform web --output-dir "$OUT" --clear
+HEARTH_BASE_URL="$BASE" EXPO_PUBLIC_HEARTH_DEMO=1 EXPO_PUBLIC_HEARTH_DEMO_BAR="${EXPO_PUBLIC_HEARTH_DEMO_BAR:-0}" npx expo export --platform web --output-dir "$OUT" --clear
 # HRT-WEB.2 (QA-R1): the manifest link is root-relative to the build's base path, so it resolves from every route.
 MANIFEST_HREF="${BASE%/}/manifest.webmanifest" perl -pi -e 's{href="/manifest\.webmanifest"}{href="$ENV{MANIFEST_HREF}"}' "$OUT/index.html"
 grep -q "href=\"${BASE%/}/manifest.webmanifest\"" "$OUT/index.html" || { echo "build-demo: manifest link missing from $OUT/index.html" >&2; exit 1; }

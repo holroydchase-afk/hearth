@@ -129,3 +129,16 @@ test('DEMO-META-2 the page carries link-preview tags and serves the preview pict
   expect(r.status()).toBe(200);
   expect(r.headers()['content-type']).toMatch(/image\/png/);
 });
+
+// DEMO-BAR-HIDE-1 (Chase, Nov 27): the public build (EXPO_PUBLIC_HEARTH_DEMO_BAR=0) has no demo bar on a phone, while the
+// laptop story panel still has Grandma Jo and Reset. Needs its own build: npm run e2e:site:public (e2e:site builds the
+// bar on, so this skips there).
+test('DEMO-BAR-HIDE-1 a build with the bar off: no Demo details at 390 px, story panel keeps Grandma Jo and Reset at 1280 px', async ({ page }) => {
+  test.skip(process.env.EXPO_PUBLIC_HEARTH_DEMO_BAR !== '0', 'needs the bar-off build: npm run e2e:site:public');
+  await page.goto(`${BASE}/`);
+  await expect(page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Demo details' })).toHaveCount(0);
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await expect(page.getByRole('button', { name: 'See the photos as Grandma Jo sees them' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Reset demo' })).toBeVisible();
+});

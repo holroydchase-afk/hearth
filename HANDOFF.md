@@ -23,6 +23,12 @@ blockers:
 - **Done:** 27 `waitForTimeout` replaced (helpers/settle.js), guard script and test, wired into test-all.sh and CI. e2e not run locally; CI is the proof.
 - **Next:** #205, #213, #208. Open P2: the 2 jest real-timer cases (not named in the intake).
 
+## Nov 27: public demo's phone bar hidden (DEMO-BAR-HIDE-1, R127; branch claude/project-thread-9bw6qr)
+- **Done, test-first** (qa-tdd red then green 3x): `EXPO_PUBLIC_HEARTH_DEMO_BAR=0` (the default in `scripts/build-demo.sh`) removes the slim demo bar on phone width. Other demo builds and `e2e:site` (built with `=1`) still show it; `e2e:site:public` checks the hidden build. Laptop story panel keeps Grandma Jo + Reset.
+- **Known gap:** until the new home ships, the phone demo has no Grandma Jo switch or Reset, and no way back to the portfolio except the site bar.
+- **Next:** Chase picked the direction (Demo centered in the nav bar, opens a bottom drawer with the bar's contents); a live tester awaits the hint pick (arrow, info, dot). Then build, test, check fresh and returning at 390 and 1280.
+- **Portfolio / public presence:** the public demo's phone view loses the slim demo bar once this merges (waits for Chase's merge word, DEC-48).
+
 ## Nov 26: STACK.md and architecture refresh (intake #207, R121; PR)
 - **Done:** `docs/eng/STACK.md`, `kind_counts` in 02/04, TypeScript decision (stay on ~6.0.3). Docs only.
 - **Next:** #206 (fixed sleeps in e2e), then #205, #213, #208.

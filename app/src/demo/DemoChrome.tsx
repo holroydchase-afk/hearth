@@ -8,7 +8,7 @@ import type { FakeBackend } from '../api/fake/FakeBackend';
 import { Txt } from '../ui/kit';
 import { DemoActions, DemoBar } from './DemoBar';
 import { DemoFrame, WIDE } from './DemoFrame';
-import { DEMO_MODE } from './flags';
+import { DEMO_BAR, DEMO_MODE } from './flags';
 import { webStorage } from '../platform/webStorage';
 import { demoKeysToClear } from './seed';
 import { BigTextContext } from '../ui/theme';
@@ -65,6 +65,8 @@ export function DemoChrome({ children }: { children: ReactNode }) {
       </DemoFrame>
     );
   }
+  // DEMO-BAR-HIDE-1 (Chase, Nov 27): no bar on the phone for now; where its controls go is being picked.
+  if (!DEMO_BAR) return <>{children}</>;
   return (
     <View style={{ flex: 1 }}>
       {/* DEMO-EASY-1: the demo bar is the demo's, not the app's, so Easy view doesn't enlarge it. */}
