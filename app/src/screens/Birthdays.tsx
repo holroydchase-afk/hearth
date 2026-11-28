@@ -99,17 +99,14 @@ export function TodayLine() {
   if (!line) return null;
   return (
     // TIDY-1 (Chase, Nov 28): one quiet line (Body 17, no card) under New for you, with a small See birthdays button.
-    <View
-      testID="today-line"
-      style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}
-    >
-      <Txt style={{ flexShrink: 1 }}>{line}</Txt>
+    <View testID="today-line" style={{ alignItems: 'flex-start' }}>
+      <Txt>{line}</Txt>
       <Button
         label="See birthdays"
         text="See birthdays"
         variant="quiet"
         onPress={openBirthdays}
-        style={{ minHeight: MIN_TARGET }}
+        style={{ minHeight: MIN_TARGET, paddingHorizontal: 16, marginLeft: -16 }}
       />
     </View>
   );
