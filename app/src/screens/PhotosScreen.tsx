@@ -8,7 +8,15 @@
 // Feed is the existing FlatList (Instagram-style posts, 32 pt apart, no lines: RD-48..54).
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, FlatList, RefreshControl, ScrollView, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import {
+  Animated,
+  FlatList,
+  RefreshControl,
+  ScrollView,
+  View,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useApp, useFeed } from '../state/AppContext';
 import { autoplayOn } from '../state/dataPrefs';
@@ -36,9 +44,16 @@ import { useTabBarSpace } from '../ui/tabBarSpace';
 function EarlierCard({ g, onOpen }: { g: EarlierGroup; onOpen: () => void }) {
   return (
     <Card testID={`earlier-card-${g.authorId}`}>
-      <Txt variant="title2" role="header">Older photos</Txt>
+      <Txt variant="title2" role="header">
+        Older photos
+      </Txt>
       <Txt>{`${g.authorName} added ${g.photoCount === 1 ? '1 older photo' : `${g.photoCount} older photos`} from ${monthSpan(g.fromAt, g.openAt)}.`}</Txt>
-      <Button variant="secondary" label={`See ${g.authorName}'s older photos by date`} text="See them" onPress={onOpen} />
+      <Button
+        variant="secondary"
+        label={`See ${g.authorName}'s older photos by date`}
+        text="See them"
+        onPress={onOpen}
+      />
     </Card>
   );
 }
@@ -48,15 +63,29 @@ function CheckAgain({ helper, onCheck }: { helper: string | null; onCheck: () =>
   const [checking, setChecking] = useState(false);
   const [checked, setChecked] = useState(false);
   const live = useRef(true);
-  useEffect(() => () => { live.current = false; }, []);
+  useEffect(
+    () => () => {
+      live.current = false;
+    },
+    [],
+  );
   const check = () => {
     setChecking(true);
-    void onCheck().finally(() => { if (live.current) { setChecking(false); setChecked(true); } });
+    void onCheck().finally(() => {
+      if (live.current) {
+        setChecking(false);
+        setChecked(true);
+      }
+    });
   };
   return (
     <EmptyState
       title="No photos yet"
-      line={checked ? "Still nothing yet. We'll show photos here as soon as they're shared." : `When ${helper ?? 'your family'} shares photos, they'll show up here.`}
+      line={
+        checked
+          ? "Still nothing yet. We'll show photos here as soon as they're shared."
+          : `When ${helper ?? 'your family'} shares photos, they'll show up here.`
+      }
       button={{ label: 'Check again', text: checking ? 'Checking…' : 'Check again', busy: checking, onPress: check }}
     />
   );
@@ -87,8 +116,12 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   useEffect(() => {
     if (!me || !gallery) return; // New for you lives on Gallery (the start screen); Feed never moves the last visit
     let live = true;
-    void loadLastSeen(kv, me).then((at) => { if (live) setLastSeen({ user: me, at }); });
-    return () => { live = false; };
+    void loadLastSeen(kv, me).then((at) => {
+      if (live) setLastSeen({ user: me, at });
+    });
+    return () => {
+      live = false;
+    };
   }, [kv, me, gallery]);
   const saved = useRef<string | null>(null);
   const fetchedAt = state.fetchedAt;
@@ -101,12 +134,17 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   // counts every new post. Until then New for you waits, so its count never jumps.
   const feedStore = app.feed;
   const [backTo, setBackTo] = useState<string | null>(null);
-  const backKey = gallery && me && lastSeen?.user === me && lastSeen.at && fetchedAt ? `${me}|${lastSeen.at}|${fetchedAt}` : null;
+  const backKey =
+    gallery && me && lastSeen?.user === me && lastSeen.at && fetchedAt ? `${me}|${lastSeen.at}|${fetchedAt}` : null;
   useEffect(() => {
     if (!backKey || !feedStore || !lastSeen?.at) return;
     let live = true;
-    void feedStore.loadBackTo(lastSeen.at).finally(() => { if (live) setBackTo(backKey); });
-    return () => { live = false; };
+    void feedStore.loadBackTo(lastSeen.at).finally(() => {
+      if (live) setBackTo(backKey);
+    });
+    return () => {
+      live = false;
+    };
   }, [backKey, feedStore, lastSeen?.at]);
   // OPEN-7 / RD-21: the new posts one at a time, in place; Back and Done return here.
   const [walk, setWalk] = useState<string[] | null>(null);
@@ -124,19 +162,29 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   const [under, setUnder] = useState(false);
   // RD-83: while a month title is pinned under the bar, the shade sits under the title instead (one pinned block).
   const [monthPinned, setMonthPinned] = useState(false);
-  const onScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const y = e.nativeEvent.contentOffset.y;
-    scrollY.setValue(y);
-    setFolded(y > FOLD_AT);
-    setUnder(y > Math.max(fieldAt.current, 0));
-  }, [scrollY]);
+  const onScroll = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const y = e.nativeEvent.contentOffset.y;
+      scrollY.setValue(y);
+      setFolded(y > FOLD_AT);
+      setUnder(y > Math.max(fieldAt.current, 0));
+    },
+    [scrollY],
+  );
   if (app.status !== 'ready' || !app.space || !app.feed) return <AppGate />;
   const feed = app.feed;
   if (walk) {
     // GUX-R7: finishing the walk (Done) marks those posts seen here, so New for you and its "N new" chip go away.
     const finish = () => {
-      const newest = Math.max(...state.posts.filter((p) => walk.includes(p.post_id)).map((p) => Date.parse(p.published_at)));
-      if (me && Number.isFinite(newest)) setLastSeen((s) => (s && s.user === me && s.at && Date.parse(s.at) >= newest ? s : { user: me, at: new Date(newest).toISOString() }));
+      const newest = Math.max(
+        ...state.posts.filter((p) => walk.includes(p.post_id)).map((p) => Date.parse(p.published_at)),
+      );
+      if (me && Number.isFinite(newest))
+        setLastSeen((s) =>
+          s && s.user === me && s.at && Date.parse(s.at) >= newest
+            ? s
+            : { user: me, at: new Date(newest).toISOString() },
+        );
       setWalk(null);
     };
     return <OneAtATime postIds={walk} onClose={closeWalk} onDone={finish} />;
@@ -156,7 +204,12 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   }
   // OPEN-1: others' posts since the last visit on this phone; none on a first open (OPEN-5) or for my own posts.
   const oldest = state.posts[state.posts.length - 1];
-  const caughtUp = backTo === backKey || !state.hasMore || !oldest || !lastSeen?.at || Date.parse(oldest.published_at) <= Date.parse(lastSeen.at);
+  const caughtUp =
+    backTo === backKey ||
+    !state.hasMore ||
+    !oldest ||
+    !lastSeen?.at ||
+    Date.parse(oldest.published_at) <= Date.parse(lastSeen.at);
   const fresh = gallery && me && lastSeen?.user === me && caughtUp ? newForYou(state.posts, lastSeen.at, me) : [];
   const senders = andList(state.posts.map((p) => p.author_name));
   // BETA-TIME-1: old photos added today don't take over the top; they go in a card.
@@ -169,24 +222,45 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   // A post card is edge to edge with its own 16 pt edge (UX-R8); everything else in Feed's list gets the 16 pt here.
   const side = gallery ? undefined : { paddingHorizontal: 16 };
   const renderRow = ({ item }: { item: PhotosRow }) =>
-    item.type === 'post' ? <PostCard post={item.post} />
-      : item.type === 'event' ? <View style={side}><EventCard eventId={item.eventId} eventName={item.eventName} post={item.post} onOpen={() => openEvent(item.eventId)} /></View>
-        : item.type === 'update' ? <View style={side}><EventUpdate eventId={item.eventId} eventName={item.eventName} photoCount={item.photoCount} onOpen={() => openEvent(item.eventId)} /></View>
-          : null;
+    item.type === 'post' ? (
+      <PostCard post={item.post} />
+    ) : item.type === 'event' ? (
+      <View style={side}>
+        <EventCard
+          eventId={item.eventId}
+          eventName={item.eventName}
+          post={item.post}
+          onOpen={() => openEvent(item.eventId)}
+        />
+      </View>
+    ) : item.type === 'update' ? (
+      <View style={side}>
+        <EventUpdate
+          eventId={item.eventId}
+          eventName={item.eventName}
+          photoCount={item.photoCount}
+          onOpen={() => openEvent(item.eventId)}
+        />
+      </View>
+    ) : null;
 
   const words = familyName === undefined ? null : greeting(new Date(), familyName);
   const header = (
     <View style={[{ gap: 12 }, side]}>
       {/* RD-11: Gallery's large title is the greeting (shown once the name is known, so it never flips mid-read);
           Feed's title is "Feed" (GUX-R5), the tab's own word. UI-26 still holds: no "Check for new photos" button; pull down to refresh. */}
-      {gallery ? null : <Txt variant="largeTitle" role="header">Feed</Txt>}
-      {/* CAL-16: on a day with a family date, one line at the top of Gallery ("Today is Grandma Jo's birthday"). */}
-      {gallery ? <TodayLine /> : null}
+      {gallery ? null : (
+        <Txt variant="largeTitle" role="header">
+          Feed
+        </Txt>
+      )}
       {/* RD-18: Gallery has no "Sent by" line; the grid tiles and New for you name the senders. */}
       {senders && !gallery ? <Txt tone="muted">{`Sent by ${senders}`}</Txt> : null}
       {fresh.length && lastSeen?.at ? (
         <NewForYouRow posts={fresh} since={lastSeen.at} onSee={() => setWalk(fresh.map((p) => p.post_id))} />
       ) : null}
+      {/* CAL-16 / TIDY-1: on a day with a family date, one quiet line under New for you. */}
+      {gallery ? <TodayLine /> : null}
       {/* SHARE-PC-11 (DEC-73): after a Send, Feed says who it went to, by name, until closed. */}
       {app.shared && !gallery ? <Notice tone="good" text={app.shared} onClose={() => app.setShared(null)} /> : null}
       {app.space.can_post ? <YourName /> : null}
@@ -195,42 +269,61 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
       {state.notice ? <Notice text={state.notice} onClose={() => feed.clearNotice()} /> : null}
       {/* STATES-3: a failed refresh with photos on the phone keeps them, and this line stays until a refresh works. */}
       {state.failed && state.posts.length ? (
-        <ErrorState line={state.failed === 'network' ? 'No signal right now. Showing the photos saved on this phone.' : 'Something went wrong. Showing the photos saved on this phone.'} onRetry={() => void feed.retry()} />
+        <ErrorState
+          line={
+            state.failed === 'network'
+              ? 'No signal right now. Showing the photos saved on this phone.'
+              : 'Something went wrong. Showing the photos saved on this phone.'
+          }
+          onRetry={() => void feed.retry()}
+        />
       ) : null}
       {/* BETA-TIME-1 on Feed; on Gallery old photos sit in their own months in the grid (RD-18, QA-R2). */}
-      {gallery ? null : earlier.map((g) => (
-        <EarlierCard key={g.authorId} g={g} onOpen={() => openTimeline(startOfNextMonth(g.openAt))} />
-      ))}
+      {gallery
+        ? null
+        : earlier.map((g) => (
+            <EarlierCard key={g.authorId} g={g} onOpen={() => openTimeline(startOfNextMonth(g.openAt))} />
+          ))}
     </View>
   );
 
   // STATES-1..8: failed, loading, or empty, in that order of care. "Failed" is never read as "empty".
   const failedWords = state.failed ? loadFailedWords(state.failed, { helper: app.helper, photos: true }) : null;
-  const empty = state.failed && !state.posts.length ? (
-    <View style={side}>
-      {state.status === 'idle' && failedWords
-        ? <ErrorState title={failedWords.title} line={failedWords.line} onRetry={() => void feed.retry()} />
-        : <Loading words="Loading the photos…" />}
-    </View>
-  ) : state.loaded && (gallery ? state.posts.length : earlier.length) ? null : !state.loaded ? (
-    <View style={side}><Loading words="Loading the photos…" /></View>
-  ) : (
-    <View style={side}>
-      {app.space.can_post ? (
-        <EmptyState
-          title="No photos yet"
-          line="Share your first photos and your family will see them here."
-          button={{ label: 'Share photos', onPress: () => router.navigate('/share') }}
-        />
-      ) : (
-        <CheckAgain helper={app.helper} onCheck={() => feed.refresh()} />
-      )}
-    </View>
-  );
+  const empty =
+    state.failed && !state.posts.length ? (
+      <View style={side}>
+        {state.status === 'idle' && failedWords ? (
+          <ErrorState title={failedWords.title} line={failedWords.line} onRetry={() => void feed.retry()} />
+        ) : (
+          <Loading words="Loading the photos…" />
+        )}
+      </View>
+    ) : state.loaded && (gallery ? state.posts.length : earlier.length) ? null : !state.loaded ? (
+      <View style={side}>
+        <Loading words="Loading the photos…" />
+      </View>
+    ) : (
+      <View style={side}>
+        {app.space.can_post ? (
+          <EmptyState
+            title="No photos yet"
+            line="Share your first photos and your family will see them here."
+            button={{ label: 'Share photos', onPress: () => router.navigate('/share') }}
+          />
+        ) : (
+          <CheckAgain helper={app.helper} onCheck={() => feed.refresh()} />
+        )}
+      </View>
+    );
 
   const older = state.hasMore ? (
     <View style={side}>
-      <Button label="Show older photos" variant="secondary" busy={state.status === 'loadingMore'} onPress={() => void feed.loadMore()} />
+      <Button
+        label="Show older photos"
+        variant="secondary"
+        busy={state.status === 'loadingMore'}
+        onPress={() => void feed.loadMore()}
+      />
     </View>
   ) : undefined;
   const refresh = <RefreshControl refreshing={state.status === 'refreshing'} onRefresh={() => void feed.refresh()} />;
@@ -254,20 +347,46 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
           keyboardShouldPersistTaps="handled"
         >
           {/* RD-11 / RD-55: the greeting is the large title; RD-47: the "Search photos" field right under it. */}
-          <View style={words ? null : { marginBottom: -16 }}>{words ? <LargeGreeting words={words} scrollY={scrollY} /> : null}</View>
+          <View style={words ? null : { marginBottom: -16 }}>
+            {words ? <LargeGreeting words={words} scrollY={scrollY} /> : null}
+          </View>
           {/* RD-82 (Chase, Nov 17): the pinned bar's backing spans the full screen width (it steps out of the scroll's
               16 pt padding and puts it back inside), so nothing shows past its edges; a soft shade below it once
               content is under it, none at the top. */}
           <View
-            style={{ backgroundColor: c.bg, paddingBottom: 8, marginBottom: -8, marginHorizontal: -16, paddingHorizontal: 16 }}
-            onLayout={(e) => { setPinAt(e.nativeEvent.layout.height); fieldAt.current = e.nativeEvent.layout.y; }}
+            style={{
+              backgroundColor: c.bg,
+              paddingBottom: 8,
+              marginBottom: -8,
+              marginHorizontal: -16,
+              paddingHorizontal: 16,
+            }}
+            onLayout={(e) => {
+              setPinAt(e.nativeEvent.layout.height);
+              fieldAt.current = e.nativeEvent.layout.y;
+            }}
           >
             <SearchField testID="search-field" onPress={openSearch} />
-            {under && !monthPinned ? <View testID="search-bar-shade" pointerEvents="none" accessible={false} style={[shadeLine(dark), { backgroundColor: c.line }]} /> : null}
+            {under && !monthPinned ? (
+              <View
+                testID="search-bar-shade"
+                pointerEvents="none"
+                accessible={false}
+                style={[shadeLine(dark), { backgroundColor: c.line }]}
+              />
+            ) : null}
           </View>
           {header}
           {empty}
-          {state.posts.length ? <GalleryGrid posts={state.posts} scrollY={scrollY} pinAt={pinAt} relayout={relayout} onPinned={setMonthPinned} /> : null}
+          {state.posts.length ? (
+            <GalleryGrid
+              posts={state.posts}
+              scrollY={scrollY}
+              pinAt={pinAt}
+              relayout={relayout}
+              onPinned={setMonthPinned}
+            />
+          ) : null}
           {older}
         </ScrollView>
       </SafeAreaView>
@@ -277,25 +396,25 @@ export function PhotosScreen({ mode = 'feed' }: { mode?: PhotosMode } = {}) {
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: c.bg }}>
       <AutoplayContext.Provider value={autoplay.now}>
-      <FlatList
-        {...autoplay.listProps}
-        scrollEventThrottle={16}
-        data={rows}
-        keyExtractor={(r) => r.key}
-        renderItem={renderRow}
-        ListHeaderComponent={header ?? undefined}
-        ListEmptyComponent={empty ?? undefined}
-        ListFooterComponent={older}
-        onEndReached={() => void feed.loadMore()}
-        onEndReachedThreshold={0.5}
-        refreshControl={refresh}
-        // RD-52: 32 pt between posts, no lines: this 16 pt gap plus each post's own 16 pt below it. No side padding:
-        // a post keeps its own 16 pt edge (UX-R8), and the rest get theirs above.
-        contentContainerStyle={{ paddingTop: 16, gap: 16, paddingBottom: 32 + tabRoom }}
-        keyboardShouldPersistTaps="handled"
-        automaticallyAdjustKeyboardInsets // UX-R1: on iPhone the comment field scrolls up above the keyboard
-        removeClippedSubviews={false}
-      />
+        <FlatList
+          {...autoplay.listProps}
+          scrollEventThrottle={16}
+          data={rows}
+          keyExtractor={(r) => r.key}
+          renderItem={renderRow}
+          ListHeaderComponent={header ?? undefined}
+          ListEmptyComponent={empty ?? undefined}
+          ListFooterComponent={older}
+          onEndReached={() => void feed.loadMore()}
+          onEndReachedThreshold={0.5}
+          refreshControl={refresh}
+          // RD-52: 32 pt between posts, no lines: this 16 pt gap plus each post's own 16 pt below it. No side padding:
+          // a post keeps its own 16 pt edge (UX-R8), and the rest get theirs above.
+          contentContainerStyle={{ paddingTop: 16, gap: 16, paddingBottom: 32 + tabRoom }}
+          keyboardShouldPersistTaps="handled"
+          automaticallyAdjustKeyboardInsets // UX-R1: on iPhone the comment field scrolls up above the keyboard
+          removeClippedSubviews={false}
+        />
       </AutoplayContext.Provider>
     </SafeAreaView>
   );
@@ -308,9 +427,16 @@ function PushAsk() {
   const app = useApp();
   return (
     <Card testID="push-ask">
-      <Txt variant="title2" role="header">Get a notice when the family shares photos?</Txt>
+      <Txt variant="title2" role="header">
+        Get a notice when the family shares photos?
+      </Txt>
       <Txt>Your phone will ask next. Tap Allow to get a notice for new photos.</Txt>
-      <Button variant="secondary" label="Turn on notices" icon={{ sf: 'bell', md: 'notifications' }} onPress={() => void app.askPush()} />
+      <Button
+        variant="secondary"
+        label="Turn on notices"
+        icon={{ sf: 'bell', md: 'notifications' }}
+        onPress={() => void app.askPush()}
+      />
       <Button label="Not now, maybe later" text="Not now" variant="quiet" onPress={app.skipPushAsk} />
     </Card>
   );
