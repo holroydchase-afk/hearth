@@ -154,6 +154,72 @@ Findings: **ARCH-WEB-R1 (P1)** one sealing key owner; the upload store must not 
 
 **Lanes:** architect → qa-tdd red (WEB-APP-25..34) → engineer → qa-tdd green 3x → privacy-security → grandparent-ux. Minor, not in scope: the web manipulator's `blob:` URLs are never revoked (memory only, P2, TRACKER if it shows up in perf).
 
+## HRT-WEB.4: notices on web (PR 4)
+
+**Bet.** An Android grandparent who signs in on Chrome hears about new photos by email, in words she can read, and can tell if it will reach her. Chrome web push stays out (after the beta).
+
+**Today (checked Nov 28 from `notify/index.ts`, migrations 0003/0026/0034, `push.ts`, `Preferences.tsx`).**
+- **Who gets an email.** `claim_notification_batches` picks the channel: push if wanted and a token exists; else `email` if push was wanted (default `true`) or a digest is chosen, and the account has an email address; else closed. So a web-only email account with default prefs already falls back to the **evening email** (once, from 6 pm Eastern; the sender runs every minute). Covered for the fallback by the SQL tests (BETA-NOTIFY-5, "push wanted but no phone registered"). A phone-sign-in (text) account has no email and gets **nothing** on web (BETA-SMS-13); Preferences hides the email choices for it, so on web it is told "tells you on this phone", which is false there.
+- **Words are fine.** `summary()` gives the same plain line for push and email: "From Gammy on Hearth", counts, kinds, never a caption or child's name; tests: BETA-NOTIFY-2/5/7, NOTIFY-K-1..5. HTML is 20px, no image.
+- **Gap 1, the link.** The email has no link unless `APP_LINK_BASE` is set, and then it is `<base>/p/<post id>`. The app has no `/p/` route and `APP_LINK_BASE` is empty (`.env.example`), so today the email says "Open Hearth on your phone", which a web-only person has no icon to follow. Needs the web URL as base and a deep link that opens the post after sign-in.
+- **Gap 2, the Notices screen on web.** `pushStatus()` returns `off` on web, so the "Turn on notices" card never shows (fine), but `Preferences` still offers "A sound on your phone when there are new photos (Recommended)" and its saved line, which are untrue on web. Choosing it still sends email (fallback), by accident.
+- **Gap 3, no opt-out in the email.** No unsubscribe line, no way to stop except in the app. A grandparent who only has the email cannot stop it (A1/A2).
+- **Gap 4, no proof the address works.** Sign-in by 6-digit code proves she can read that inbox once; nothing tells her which address gets notices or that one arrived.
+- **No migration needed** for any of this: prefs, channel fallback and the email address already exist. A migration only if Chase wants the 10-minute immediate email (the email is evening/Sunday only today); recommend not now (A1: one calm email a day).
+
+**Change (small, reuse).** (a) On web, the notice choices say email, with "Every evening" as the recommended default; the sound choice is hidden. (b) Emails get one plain "Stop these emails" line that opens the web Preferences page (no token link; she is signed in on the home-screen icon). (c) `APP_LINK_BASE` set to the web URL and the app opens `/p/<id>` to that post after sign-in. (d) A "Send me a test email" button on the notices choice, using the existing sender, one email to her own address, rate-limited, no post content. (e) Phone-sign-in accounts on web see a plain note that notices need an email address, with a way to add one only if it is already in the app; otherwise log as not supported.
+
+### Acceptance criteria
+
+| ID | Given / When / Then | Type |
+|---|---|---|
+| WEB-APP-37 | Given an email account with default prefs and no push token (web-only), when a post is shared to her group, then the outbox claim at 6 pm Eastern returns one `email` batch to her address and no push batch; nothing earlier than 6 pm | auto (backend SQL; existing BETA-NOTIFY-5 case plus an explicit web-only account) |
+| WEB-APP-38 | Given a text-sign-in account (no email) with no token, when a post is shared, then no batch is returned and the notice is closed, not retried forever | auto (SQL; BETA-SMS-13 exists, add the web-only wording) |
+| WEB-APP-39 | Given the web build, when the notice choices show, then the sound choice is absent, "An email every evening" is selected by default and says Recommended, "Every Sunday morning" is offered, and no string says "sound" or "on your phone" | auto (jest on `Preferences` with `Platform.OS = 'web'`; e2e:web) |
+| WEB-APP-40 | Given the web build and a saved choice, when it saves, then the server prefs are `push: false` plus `daily` or `weekly` (not `push: true`), and the saved line names email | auto (jest, `serverPrefs` web path; `notifySync`) |
+| WEB-APP-41 | Given the sender with `APP_LINK_BASE` set, when an email is built for a post, then text and HTML carry one link `<base>/p/<id>` with the words "Open Hearth to see it", and no post words or photo | auto (Deno, extends BETA-NOTIFY-5) |
+| WEB-APP-42 | Given a signed-in web session, when `/p/<id>` is opened, then that post shows; signed out, then after the 6-digit sign-in it opens that post; a post she can't see shows "not found" (privacy rule 2) | auto (e2e:web) |
+| WEB-APP-43 | Given any notice email, when it is built, then it ends with one line "Don't want these emails? Open Hearth, tap More, then Notices." plus the plain words (not a tracking link), and the sender logs no address (existing privacy test still passes) | auto (Deno) |
+| WEB-APP-44 | Given the test-email button, when pressed, then one email "A test from Hearth" goes to her own address only, a second press inside 5 minutes says "Sent already, check your email", and the run reports counts only | auto (Deno + jest; needs a tiny authenticated route in `notify`, architect to confirm it is not a new vendor or migration) |
+| WEB-APP-45 | Given a phone-sign-in account on web, when notices are opened, then it says in one line that notices need an email address and shows no broken choice | auto (jest) |
+| WEB-APP-46 | Given a real Android phone in Chrome with an email account, when a sibling posts, then the evening email lands in the inbox (not spam), reads clearly at default text size, and its link opens the post in the home-screen app or Chrome | manual (real phone) |
+| WEB-APP-47 | Given the same phone, when "Send me a test email" is tapped, then the email arrives within 2 minutes and the person says in her own words that she knows it worked (no help) | manual (real phone, AG tester) |
+| WEB-APP-48 | Given Gmail, Yahoo and AOL addresses (grandparent reality), when a notice is sent from the Resend domain, then it is delivered to inbox or the tester is told where to look; SPF/DKIM pass in the headers | manual (3 inboxes; ties to the unfinished domain, ACCOUNTS.md) |
+
+**Done when:** WEB-APP-37..45 green 3x with all suites; 46..48 logged on a real phone and three inboxes before a grandparent relies on email for notices. Rule 6: no new data stored; update the notices row in `docs/architecture/` "Last checked" only if the link base or test route changes data flow (it does not log or store anything new).
+
+### Words (grandparent-ux)
+
+| Where | Words | Why |
+|---|---|---|
+| Notices, web, choice 1 (default) | `An email every evening with the day's new photos (Recommended)` | Same words as phones, now first on web. |
+| Notices, web, choice 2 | `An email every Sunday morning` | Unchanged. |
+| Saved, evening | `Saved. We'll email you every evening when there are new photos.` | Unchanged. |
+| Which address | `We'll send it to <her address>.` under the choices | She sees where it goes (A1). |
+| Test button | `Send me a test email` | Verb label. |
+| Test sent | `Sent. Look in your email for "A test from Hearth". It can take a minute.` | Says what to look for. |
+| Test sent already | `Already sent. Look in your email, or check your junk folder.` | Spam tip in her words. |
+| Test email subject / body | `A test from Hearth` / `This is the test you asked for. If you can read this, Hearth emails reach you.` | No post words. |
+| Text-sign-in on web | `You signed in with a text, so Hearth can't email you. Open Hearth on your phone to hear about new photos.` | True and plain; adjust if (e) is built. |
+| Email footer | `Don't want these emails? Open Hearth, tap More, then Notices.` | One plain way out; no link to click. |
+| Email link line | `Open Hearth to see them` | Existing. |
+
+**Automatable vs manual.** Auto: 37..45. Manual on real hardware: 46 (Android Chrome inbox and link), 47 (AG tester confirms test email), 48 (Gmail/Yahoo/AOL delivery).
+
+**Not doing here.** Chrome web push; instant email (needs a migration, breaks "one calm email"); an unsubscribe-by-link token (needs a migration and a public route); per-group mute.
+
+**Needs other lanes first.** architect: the test-email route and `APP_LINK_BASE`; privacy-security: the address is shown to its owner only, no address in logs; grandparent-ux: the words above. Decisions for Chase: (1) email default for web-only people is the evening email, not instant (recommend yes); (2) set `APP_LINK_BASE` to the web URL now (recommend yes, one secret).
+
+**Lanes:** architect → qa-tdd red (WEB-APP-37..45) → engineer → qa-tdd green 3x → privacy-security → grandparent-ux.
+
+**Architect call (Nov 28).** Verdict: OK with changes. Rung: existing Supabase edge function plus existing Resend sender; no new vendor, no migration.
+- **ARCH-WEB4-R1 (P1) test-email route lives in `notify`.** Same `POST /functions/v1/notify`, body `{"test_email":true}`. `authorized()` stays service-only for the batch run; the test branch is checked first and validates the caller by `GET ${SUPABASE_URL}/auth/v1/user` with the user's JWT (`verify_jwt` is already false, so the function does its own auth). Send to that user's auth `email` only, never an address from the body; no email (text sign-in) returns 400. One Resend call reusing `RESEND_URL`/`env`. Report counts only, log no address.
+- **ARCH-WEB4-R2 (P1) rate limit without a migration.** `notification_outbox` needs a `post_id`, so it can't hold a test row. Use the auth user's `app_metadata.last_test_email_at` via the admin API (`PUT /auth/v1/admin/users/{id}`, service key already in the function): read from the `/user` response, refuse inside 5 minutes ("Sent already"), write on success. No table, no secret. A rare double tap racing is harmless (two emails to herself). Not an in-memory check (isolates reset). A migration is unavoidable only if Chase wants a per-day cap across all users; not needed.
+- **ARCH-WEB4-R3 (P1) `/p/<id>` route.** `APP_LINK_BASE` alone is enough for the email (`buildEmail` already builds `<base>/p/<id>`); set it to the web origin. Reuse the existing `viewer/[postId].tsx`: add one thin `app/src/app/p/[id].tsx` that is a `<Redirect href={{pathname:'/viewer/[postId]',params:{postId:id}}}/>`, same on web and native (expo-router, so no Platform branch). Not-found and RLS stay in `ViewerScreen` (rule 2). Native universal links (`app.json` intent filter pathPrefix `/p`) stay out of the web beta.
+- **ARCH-WEB4-R4 (P1) signed-out return.** `AppGate`/`goSignIn` keep no return target, so WEB-APP-42's "after sign-in it opens that post" needs a small keep-and-resume of the path (web: sessionStorage via `platform/webStorage.ts`, cleared on read). Add to the engineer's scope and to e2e:web.
+- **ARCH-WEB4-R5 (P2) hosting.** The web build is `output: single`; the host must rewrite `/p/*` to `index.html` (RR-15 shows `/viewer/<id>` has no file). Confirm on the chosen host before relying on the link.
+- **ARCH-WEB4-R6 (P2) deploy (waits for Chase's word).** `bash backend/scripts/deploy.sh` redeploys `notify` (nothing in the cron changes); set `APP_LINK_BASE` as a function secret (needs the web URL final, ACCOUNTS.md name rule); `RESEND_FROM` domain must be verified before WEB-APP-48. No migration, so no schema step. Update `docs/architecture/02-data-flow.md` only to add the user-JWT test route and `app_metadata` timestamp (a small stored value), with its footer.
+
 ## Not doing (now)
 
 - Chrome web push: after the beta; email covers notices (HRT-WEB.4).

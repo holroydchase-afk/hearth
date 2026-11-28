@@ -296,6 +296,25 @@ select tests.ok_sql(format($$select tests.v('n')::int >= 1
                              and (select channel = 'email' from tests.batches where recipient_id = %L)$$, :gma_riv),
                     'prefs: push wanted but no phone registered -> falls back to the evening email');
 
+-- WEB-APP-37 (HRT-WEB.4): a web-only email account (default prefs, no row, no phone token) gets the one evening
+-- email at 6 pm Eastern and no push batch; nothing earlier.
+:as_admin
+delete from public.notification_prefs;
+delete from public.push_tokens where user_id = :gma_riv;
+update public.notification_outbox set sent_at = now() where sent_at is null;
+select tests.mkpost(:alex, :c_a_gp, 1, 'web-only');
+select tests.queued_at('2026-11-17 10:00 America/New_York');
+select tests.claim('2026-11-17 12:00 America/New_York');
+select tests.ok_sql(format($$select tests.batch_count(%L) = 0$$, :gma_riv), 'WEB-APP-37 a web-only email account gets nothing at noon');
+select tests.claim('2026-11-17 17:59 America/New_York');
+select tests.ok_sql(format($$select tests.batch_count(%L) = 0$$, :gma_riv),
+                    'WEB-APP-37 a web-only email account gets nothing before 6 pm Eastern');
+select tests.claim('2026-11-17 18:01 America/New_York');
+select tests.ok_sql(format($$select (select count(*) from tests.batches where recipient_id = %L and channel = 'email'
+                                    and email = 'grandma.rivera@example.com' and push_tokens = '{}') = 1
+                               and (select count(*) from tests.batches where recipient_id = %L and channel = 'push') = 0$$, :gma_riv, :gma_riv),
+                    'WEB-APP-37 at 6 pm a web-only account with default prefs gets one email batch to her address and no push batch');
+
 -- ======================================================================
 -- Sender-only functions are not callable by app users
 -- ======================================================================

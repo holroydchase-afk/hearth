@@ -60,6 +60,8 @@ begin
   update public.posts set status = 'published' where id = v_post;
   return v_post;
 end $$;
+create function tests.batch_n(p_now timestamptz, p_user uuid) returns int language sql as $$
+  select count(*)::int from public.claim_notification_batches(p_now) where recipient_id = p_user $$;
 create table tests.batches as select * from public.claim_notification_batches(now()) limit 0;
 grant execute on all functions in schema tests to authenticated, anon;
 
@@ -204,6 +206,16 @@ select tests.ok_sql($$select not exists (select 1 from tests.batches where chann
 select tests.ok_sql($$select exists (select 1 from tests.batches where recipient_id = 'a0000000-0000-0000-0000-0000000000a1'
                                      and channel = 'email' and email = 'grandma.rivera@example.com')$$,
                     'BETA-SMS-13 an email account with no phone registered still gets her evening email');
+
+-- WEB-APP-38 (HRT-WEB.4): a text-sign-in account on the web (no email, no push token) gets no batch, and the notice
+-- is closed, never retried forever. Papa is phone only and has no token.
+select tests.ok_sql($$select not exists (select 1 from tests.batches where recipient_id = 'e0000000-0000-0000-0000-0000000000e7')$$,
+                    'WEB-APP-38 a text-sign-in account with no token and no email is given no batch');
+select tests.ok_sql($$select exists (select 1 from public.notification_outbox where recipient_id = 'e0000000-0000-0000-0000-0000000000e7')
+                        and not exists (select 1 from public.notification_outbox where recipient_id = 'e0000000-0000-0000-0000-0000000000e7' and sent_at is null)$$,
+                    'WEB-APP-38 his notice is closed (sent_at set), not left to be retried forever');
+select tests.ok_sql($$select tests.batch_n('2026-11-16 19:30 America/New_York', 'e0000000-0000-0000-0000-0000000000e7'::uuid) = 0$$,
+                    'WEB-APP-38 the next run still gives him nothing');
 
 -- ======================================================================
 -- BETA-SMS-15: an error report never keeps a phone number

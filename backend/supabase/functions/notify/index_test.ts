@@ -406,3 +406,137 @@ Deno.test("NOTIFY-K-5 photo-only batches keep today's words (with and without th
                   taken_to: "2024-07-20T15:00:00Z", kind_counts: { photos: 48 }, post_kinds: ["photos"] } as Batch;
   eq(buildPush(bulkB)[0].body, "Alex added 48 photos from July 2024. Tap to see them.", "bulk unchanged");
 });
+
+// ---------- HRT-WEB.4 (SPEC-WEB-APP, ARCH-WEB4-R1..R2): notices on web ----------
+// WEB-APP-41: with APP_LINK_BASE set, one link <base>/p/<id> and the words "Open Hearth to see it" (a single post).
+Deno.test("WEB-APP-41 the email carries exactly one link <base>/p/<id> with 'Open Hearth to see it', and no post words or photo", () => {
+  const e = buildEmail(emailBatch({ comment_count: 1, post_count: 0 }))!; // one thing to see: "see it"
+  const link = `https://hearth.family/p/${P1}`;
+  eq(e.text.split("http").length - 1, 1, "one URL in the text");
+  eq(e.html.split("href=").length - 1, 1, "one link in the html");
+  assert(e.text.includes(link) && e.html.includes(link), "the link is <base>/p/<id>");
+  assert(e.text.includes("Open Hearth to see it") && e.html.includes("Open Hearth to see it"), "words: " + e.text);
+  assert(!/<img/i.test(e.html), "no photo");
+});
+
+// WEB-APP-43: one plain way out, in words, never a tracking link.
+const FOOTER = "Don't want these emails? Open Hearth, tap More, then Notices.";
+Deno.test("WEB-APP-43 every notice email ends with the plain 'Don't want these emails?' line (text and html)", () => {
+  for (const b of [emailBatch(), emailBatch({ comment_count: 1, post_count: 0 }), emailBatch({ is_batch: true, photo_count: 48, post_count: 5 })]) {
+    const e = buildEmail(b)!;
+    assert(e.text.trimEnd().endsWith(FOOTER), "text ends with the footer: " + JSON.stringify(e.text));
+    assert(e.html.includes(FOOTER.replace("'", "&#39;")) || e.html.includes(FOOTER), "html has the footer: " + e.html);
+    assert(e.html.indexOf("Don't want") === -1 || !/<a [^>]*>[^<]*Don(&#39;|')t want/.test(e.html), "the footer is words, not a link");
+  }
+});
+
+Deno.test("WEB-APP-43 the footer is there with no website link too, and it is the only 'http' change (still no link)", () => {
+  const saved = Deno.env.get("APP_LINK_BASE");
+  Deno.env.delete("APP_LINK_BASE");
+  try {
+    const e = buildEmail(emailBatch())!;
+    assert(e.text.trimEnd().endsWith(FOOTER), "footer without a base");
+    assert(!e.text.includes("http") && !/<a /.test(e.html), "still no link or tracker");
+  } finally { if (saved) Deno.env.set("APP_LINK_BASE", saved); }
+});
+
+Deno.test("WEB-APP-43 a run that sends the email logs no address, even with the footer", async () => {
+  const logged: string[] = [];
+  const orig = { log: console.log, error: console.error, warn: console.warn };
+  console.log = console.error = console.warn = (...a: unknown[]) => { logged.push(a.map(String).join(" ")); };
+  try {
+    mockFetch({ batches: [emailBatch()], resend: () => new Response("no", { status: 500 }) });
+    await run();
+  } finally { Object.assign(console, orig); }
+  assert(!logged.join("\n").includes("@example.com"), "no address in logs");
+});
+
+// WEB-APP-44: the test-email button's route (ARCH-WEB4-R1/R2): POST {"test_email":true} with the person's own JWT.
+type AuthUser = { id: string; email: string | null; app_metadata?: Record<string, unknown> };
+function mockTestEmail(user: AuthUser | null) {
+  const log: { url: string; method: string; body: unknown; auth: string | null }[] = [];
+  globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit) => {
+    const url = String(input);
+    const method = init?.method ?? "GET";
+    const body = init?.body ? JSON.parse(String(init.body)) : null;
+    log.push({ url, method, body, auth: new Headers(init?.headers).get("authorization") });
+    const ok = (b: unknown) => new Response(JSON.stringify(b), { status: 200 });
+    if (url === "https://proj.supabase.co/auth/v1/user") return user ? ok(user) : new Response("{}", { status: 401 });
+    if (url.startsWith("https://proj.supabase.co/auth/v1/admin/users/")) return ok({});
+    if (url === "https://api.resend.com/emails/batch") return ok({ data: [{ id: "e" }] });
+    throw new Error("unexpected fetch " + url);
+  }) as typeof fetch;
+  return log;
+}
+const runTest = (jwt = "Bearer user-jwt", body: unknown = { test_email: true }) =>
+  handler(new Request("https://fn/notify", { method: "POST", headers: { authorization: jwt, "content-type": "application/json" }, body: JSON.stringify(body) }));
+const GMA = { id: "a0000000-0000-0000-0000-0000000000a1", email: "gma@example.com" };
+const resendCalls = <T extends { url: string }>(log: T[]) => log.filter((c) => c.url === "https://api.resend.com/emails/batch");
+
+Deno.test("WEB-APP-44 the test email goes to the signed-in person's own address only, subject 'A test from Hearth', no post words", async () => {
+  const log = mockTestEmail({ ...GMA, app_metadata: {} });
+  const res = await runTest("Bearer user-jwt", { test_email: true, to: "someone-else@example.com", email: "other@example.com" });
+  eq(res.status, 200, "status");
+  const who = log.find((c) => c.url.endsWith("/auth/v1/user"))!;
+  eq(who.auth, "Bearer user-jwt", "she is identified by her own JWT");
+  const sent = resendCalls(log);
+  eq(sent.length, 1, "one Resend call");
+  const emails = sent[0].body as { to: string[]; subject: string; text: string; html: string }[];
+  eq(emails.length, 1, "one email");
+  eq(emails[0].to, ["gma@example.com"], "her own address, never one from the body");
+  eq(emails[0].subject, "A test from Hearth", "subject");
+  assert(emails[0].text.includes("This is the test you asked for. If you can read this, Hearth emails reach you."), "body words: " + emails[0].text);
+  assert(!/photo|caption/i.test(emails[0].text.replace("Hearth emails", "")), "no post content");
+  assert(!JSON.stringify(await res.json()).includes("@"), "the run reports counts only, no address");
+  assert(!log.some((c) => c.url.includes("claim_notification_batches")), "a test press never claims anyone's notices");
+});
+
+Deno.test("WEB-APP-44 a press inside 5 minutes says 'Sent already' (429): nothing sent, nothing written", async () => {
+  const log = mockTestEmail({ ...GMA, app_metadata: { last_test_email_at: new Date(Date.now() - 60_000).toISOString() } });
+  const res = await runTest();
+  eq(res.status, 429, "too soon");
+  eq(resendCalls(log).length, 0, "no second email");
+  eq(log.filter((c) => c.method === "PUT").length, 0, "no new timestamp");
+});
+
+Deno.test("WEB-APP-44 ARCH-WEB4-R2 the limit lives in app_metadata: success writes last_test_email_at with the service key; after 5 minutes it sends again", async () => {
+  const log = mockTestEmail({ ...GMA, app_metadata: {} });
+  await runTest();
+  const put = log.find((c) => c.method === "PUT")!;
+  assert(put && put.url === `https://proj.supabase.co/auth/v1/admin/users/${GMA.id}`, "admin update of her own record");
+  eq(put.auth, "Bearer service", "the admin write uses the service key");
+  const at = (put.body as { app_metadata: { last_test_email_at: string } }).app_metadata.last_test_email_at;
+  assert(Math.abs(Date.now() - Date.parse(at)) < 60_000, "stamped now: " + at);
+  const later = mockTestEmail({ ...GMA, app_metadata: { last_test_email_at: new Date(Date.now() - 6 * 60_000).toISOString() } });
+  eq((await runTest()).status, 200, "6 minutes later it sends");
+  eq(resendCalls(later).length, 1, "and sends one");
+});
+
+Deno.test("WEB-APP-44 a text-sign-in account (no email address) gets 400 and nothing is sent", async () => {
+  const log = mockTestEmail({ id: "e0000000-0000-0000-0000-0000000000e6", email: null, app_metadata: {} });
+  const res = await runTest();
+  eq(res.status, 400, "no email, no test");
+  eq(resendCalls(log).length, 0, "no Resend call");
+  eq(log.filter((c) => c.method === "PUT").length, 0, "nothing written");
+});
+
+Deno.test("WEB-APP-44 a token that does not check out gets 401 and sends nothing; the batch run still needs the service key", async () => {
+  const log = mockTestEmail(null);
+  eq((await runTest("Bearer forged")).status, 401, "forged jwt");
+  eq(resendCalls(log).length, 0, "nothing sent");
+  eq((await handler(new Request("https://fn/notify", { method: "POST", headers: { authorization: "Bearer user-jwt" } }))).status, 401, "a user jwt cannot run the batch");
+});
+
+Deno.test("WEB-APP-44 the test route logs no address, token or URL", async () => {
+  const logged: string[] = [];
+  const orig = { log: console.log, error: console.error, warn: console.warn };
+  console.log = console.error = console.warn = (...a: unknown[]) => { logged.push(a.map(String).join(" ")); };
+  try {
+    mockTestEmail({ ...GMA, app_metadata: {} });
+    await runTest();
+    mockTestEmail({ ...GMA, app_metadata: { last_test_email_at: new Date().toISOString() } });
+    await runTest();
+  } finally { Object.assign(console, orig); }
+  const all = logged.join("\n");
+  assert(!all.includes("@example.com") && !all.includes("user-jwt") && !all.includes("http"), "nothing private in logs: " + all);
+});
