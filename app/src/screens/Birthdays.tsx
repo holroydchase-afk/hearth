@@ -12,19 +12,7 @@ import { isApiError, type FamilyDate, type FamilyDateKind } from '../api/HearthA
 import { MONTHS, dateName, dateWords, daysIn, soonestFirst, todayLine, whenWords } from '../calendar/dates';
 import { calendarMissing, markMissing, useFamilyDates } from '../calendar/useFamilyDates';
 import { useApp } from '../state/AppContext';
-import {
-  AlertDialog,
-  BackButton,
-  Button,
-  Card,
-  Choice,
-  Field,
-  Loading,
-  Notice,
-  Screen,
-  SystemIcon,
-  Txt,
-} from '../ui/kit';
+import { AlertDialog, BackButton, Button, Choice, Field, Loading, Notice, Screen, SystemIcon, Txt } from '../ui/kit';
 import { MIN_TARGET, useTheme } from '../ui/theme';
 import { backToMore } from './MoreScreen';
 
