@@ -1024,3 +1024,5 @@ blockers:
 
 ## Repo best-practices pass (2026-11-25)
 - Done: SUPPORT.md README-AI-line codeql(actions, javascript-typescript, python) ci-permissions. Added from the GitHub, Linux Foundation and Syracuse checklists (studio-agents docs/repo-standards.md). Left for this project to review: CHANGELOG.md, THIRD_PARTY_NOTICES, wording of the README AI-use line against the claims register, repo description and topics.
+
+- Nov 28 (thread 'Tidy the New for you section', TIDY-1): Gallery start now shows New for you first; the birthday line is one quiet Body-17 line under it. PR waits for Chase's merge word (app/**).
